@@ -1,5 +1,26 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C3 correction Grant revision02 activation — 2026-10-19
+
+Independent ordinary DOC_PASS by /root/batch_authority_review at control
+403c7a202c96528084707df531100549c7f06cf7: Ticket30 blob2da48b99,
+LF3ddf4b6ebdc1ea2a2c11393355e79bb452a6b2f7616bfcfb9d0a594964ea0f23
+matches registry. Same frozen closure08, evidence-only E01/E02 corrective
+MODIFY3/CREATE0/DELETE0; no new product AC, public authority or Host effect.
+Peer decoded archival bytes in memory only, exact gzip/raw lengths and digests
+matched, JSON parsed; initial PowerShell overload ambiguity corrected without IO.
+
+Root fresh toolf5f517 independently reads clean author HEAD
+2f6b3fd5584014c5c80c631dbca2204737b27e4c, branch
+codex/skill-improvement-30n3-native-seam, repository-contained linked Git pointer
+and all non-reparse ancestors. Same named implementation owner
+/root/ticket30n2_native_impl, Root sole reviewer/orchestrator, same context and
+existing owned fixture/outputs/TTL/Review holds. Child development Grant
+grant-ticket30n3-directory-readback-20261019 revision02 is ACTIVE for this
+same-lifetime correction under batch-checklist-local-20261019-uncapped.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT E01/E02 only; history retained.
+No qualified admission, formal integration, installation or security change.
+
 ## C3 initial ordinary review / evidence corrections E01–E02 — 2026-10-19
 
 Root conclusion CHANGES_REQUESTED / EVIDENCE_DEFECT / SOURCE_ENGINEERING_ONLY /
