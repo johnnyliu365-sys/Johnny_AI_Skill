@@ -57,6 +57,137 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — Protected payload/enrollment readback construction / closure01
+
+Current local building slice, not a new Ticket/PRD or operational enrollment.
+Parent=batch-checklist-local-20261019-uncapped; effective Owner policy at85028a76
+and a75d9992, first-CVQ source-order exception retains its exact limits. Baseline
+88b707c8585501173bb6898f332ad52a5765ed66 is reviewed source construction only;
+N2's native counter-oracle investigation remains separate and cannot be hidden
+by N3. N3 does not invoke N2/Host or use its unfinished native result as authority.
+
+Architecture/reuse readback: runbook03 sections2/3/6; N1 source0a2e0661
+NativeManifest/ProtectionPlan/WindowsReadback were read in full. N1 `inspect`
+observes ACL/owner/file identity, but does not compare full payload/config hashes
+to an enrolled manifest. 30G source20bd6e30 ledger remains the sole future grant
+store; an injected PeerFrame/AuthorityPeer is not OS identity. N3 fills only this
+readback/comparison prerequisite. No service/issuer/pipe or second authority engine.
+
+Root chooses these separate responsibilities, not a monolithic installer:
+
+| Exact source path under library/local_orchestration/native_windows/ | Phase / responsibility |
+| --- | --- |
+| CREATE NativeEnrollment.cs | A: immutable bounded enrollment/payload values and strict parser only; reuse NativeSetupManifest, named SID/path/hash values and ProtectionPlan's canonical setup digest; no OS calls |
+| CREATE NativeEnrollmentSelfTests.cs | A: ordinary constructor/negative/JSON checks; later same shared finite fake-observer cases, no duplicated compiler/test runner |
+| MODIFY JohnnyAuthority.Tools.csproj | A: explicit compile entries only |
+| MODIFY Program.cs | A: enrollment-contract-self-test composition/finite output only; B: readonly verify-enrollment composition after actual constructor preflight |
+| MODIFY tests/test_native_authority_tools.py | A: reuse sole typed fixture/nonincremental offline builder; bounded pure mode/schema tests; later B owns actual fixed-fixture readback checks |
+| CREATE NativeEnrollmentVerifier.cs | B ONLY, not A: pure expected-versus-observed comparison and finite SOURCE_ONLY_UNQUALIFIED refusal result |
+| MODIFY WindowsReadback.cs | B ONLY, not A: bounded handle-based payload hash/inventory observation, reuse current native object/ancestor/reparse/ACL readback |
+
+A CREATE2/MODIFY3; B adds only the declared verifier CREATE and readonly adapter
+MODIFY after actual new type construction/independent preflight. DELETE0. No edits
+to N1 NativeManifest/ProtectionPlan/SelfTests, N2 job sources, grant_authority,
+mainline_readback, Router, specs/skills/tickets/index/docs or package dependencies.
+If constructor dependencies require a different path, return finding before edit;
+Root may limit/review a necessary batch-local change, never silently cross scope.
+
+Minimum typed semantics for A, with exact actual signature mapping returned for
+preflight: enrollment identity (bounded canonical identifier), revision exactly1,
+existing setup manifest plus its exact canonical SHA256, one finite payload entry
+set containing the setup executable and one explicit configuration entry, other
+declared dependencies, each exact absolute path/role/digest. Entries stay within
+the setup code root, unique using Windows case-insensitive path identity; no
+relative/ADS/device/reparse assumption, outside-root config, duplicate alias,
+blank/malformed digest, missing executable/config or inconsistent setup digest.
+Executable entry path/hash must equal setup's existing path/hash, not a separately
+caller-chosen executable. Configuration path/digest must match its payload entry.
+Reuse named primitives; don't add speculative service/session/VM/Grant types.
+List/JSON bytes/depth/individual file bytes have explicit finite positive bounds;
+initial payload<=128 entries, JSON<=131072 UTF8 bytes, depth<=12 and file<=64MiB.
+These are local verifier bounds, not operational granted cost/Host policy.
+Collections are immutable/copied; no dynamic dictionaries beyond JSON boundary.
+
+Observation/result shapes for B must have a real observed-object/failed-read
+alternative, not fabricated successful metadata. Success carries observed owner/
+SDDL, volume/file identity, content hash/size and actual closed inventory; missing,
+denied, reparse/identity change or unavailable has no fabricated digest. Compare
+expected N1 plan owner/protected DACL and exact declared payload/config inventory;
+never accept merely because caller wrote OBSERVED. Preserve uncertainty rather
+than normalizing a descriptor/path into permission. Exact approved SDDL binary
+semantic comparison is allowed; string-format equality alone is not provenance.
+Read file metadata/hash under the same native handle, no write/delete sharing;
+reparse ancestors, identity drift, extra entries, overflow and unknown kinds refuse.
+Do not claim the returned hashes alone pin later execution or authenticate a
+service/issuer; protected composition and operational qualification remain later.
+
+A acceptance E1: validating constructors plus bounded JSON roundtrip preserve all
+fields and reject every required omission/null/extra/unknown tag, duplicate fields,
+oversize/depth/invalid UTF8, wrong setup digest, payload/config/executable mismatches,
+case-insensitive duplicates, outside-root paths and mutable input substitution.
+E2: legitimate finite manifest and explicit failed observation/result variants
+remain constructible; invalid input calls no OS/file observer. E3: actual source
+checker, explicit project compile/CLI mode and strict offline pure tests/imports.
+Root verifies new actual types before B; no resolver/filesystem call in A. This
+is the same construction-before-behavior ordering already used in N1/N2, not a new
+Gate or authority exemption. Test fakes are evidence of comparisons only.
+
+B acceptance (conditional, NOT_DISPATCHED): exact fake observation gives match;
+each hash/owner/DACL/file identity/config/inventory change refuses; missing/denied/
+unavailable/reparse/overflow remain refusal. Native read-only tests only on exact
+registered seat-owned fixture tree, no ProgramFiles/ProgramData creation or ACL
+writes. A complete real protected-enrollment positive remains UNVERIFIED until
+its separately approved OS setup; no all-reject claim of functional completion.
+Root/peer actual predicate weakening must fail named test then exact restore green;
+reuse N1/N2 unchanged tests, no broad unrelated rerun/fixture proliferation.
+
+Conditional precise child Grant (source metadata, not production issuer record):
+
+```yaml
+grant_id: grant-ticket30n3-enrollment-20261019
+parent_authority: batch-checklist-local-20261019-uncapped
+ticket: workflow-governance/30
+slice: 30N3
+closure: 1
+stage: CONSTRUCTOR_ONLY
+baseline: 88b707c8585501173bb6898f332ad52a5765ed66
+implementation_owner: /root/ticket30_native_tools_impl
+reviewer_orchestrator: /root
+independent_evidence_peer: /root/ticket30_native_tools_review
+worktree: .worktrees/skill-improvement-30n3-enrollment
+branch: codex/skill-improvement-30n3-enrollment
+context_view: ctx-ticket30n3-enrollment-20261019
+profile: HIGH_ASSURANCE_SOURCE_ENGINEERING_STAGING_ONLY
+implementation_profile: implementation-standard
+review_profile: ticket-review
+create: [library/local_orchestration/native_windows/NativeEnrollment.cs, library/local_orchestration/native_windows/NativeEnrollmentSelfTests.cs]
+modify: [library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj, library/local_orchestration/native_windows/Program.cs, tests/test_native_authority_tools.py]
+delete: []
+```
+
+Conditional on different-seat ordinary DOC consistency, fresh exact committed
+ticket/blob/LF/baseline/clean contained non-reparse worktree and live named role
+readback; Root pins those before same-lifetime author dispatch. Phase B paths above
+are not yet granted. No operational trusted source/enrollment/Host qualification
+or formal integration follows from a pure constructor pass. Existing first-entry
+exception cannot be reused to clear30B/43/TAL independent-review requirements.
+
+Resource/asset declaration: initial command60s/child55s, no cumulative/attempt cap
+under current batch, retain old timings/failures. No identical unchanged retry.
+Seat-owned output C:/Users/GameBoy/AppData/Local/Temp/johnny30n3-enrollment-owner-20261019;
+worktree/ref/output/SDK cache/fixture owner=30N3/named seat, TTL through exact review
+and evidence seal, Recovery/Review hold overrides expiry, teardown via existing
+admission only; no automatic deletion or denied-cleanup retry. No screenshot/docs
+generation by author. Product/test growth signals300/350 and500+ structure review
+are not compression/split targets. No prompt/ticket narratives in source.
+
+Return fixed candidate/files/actual constructor symbols, pure tests/strict checker
+results, findings/deviations/remaining nonclaims. Root/peer narrow review then
+the next original N3 B-slice preparation, not a Human Owner technical question.
+No service/user/ACL/AppContainer/firewall/config install, persistent permission,
+real pipe/listener/Host/model/provider/target/remote/native job effects, push,
+release/deploy/formal gate activation. R0/DAP/Recovery/denied44 unchanged.
+
 ## 30N1 — Native protection planning/readback tool / closure revision01
 
 State: SOURCE_ENGINEERING_PASS / QUALIFIED_AUDIT_BLOCKED / NOT_INTEGRATED. Development
