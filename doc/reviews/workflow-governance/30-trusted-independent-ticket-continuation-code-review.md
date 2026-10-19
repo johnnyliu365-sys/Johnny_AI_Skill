@@ -1,4 +1,15 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H8-A ticket direction correction — 2026-10-20
+
+Before source mutation the admitted author correctly reported closure24's reversed
+sentence "Do not import production from tests" contradicting H8T1 actual-model
+tests. Root classifies TICKET_DEFECT, not author/source failure. Correct only that
+sentence: production must not import tests; tests import/exercise real product,
+not a copy. No new AC/type/path/permission/budget, same baseline/owner/allocation,
+not a reason to ask Owner. Original bad wording/DOC_PASS remains in Git history.
+Conditional Grant revision02 rebinds only corrected exact original30 leaf/D8,
+same A_ONLY scope from2afbb80b; NOT_ACTIVE until distinct narrow clarification
+review. Author reported no source mutation. B remains NOT_ACTIVE, no external effect.
 ## H7 bounded wire decoder source seal / exact source-stage addition — 2026-10-20
 
 Final2106b8de1cba49c96383abd681ae5925643a47e4 parent82107c1c, exact2MOD,

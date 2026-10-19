@@ -60,7 +60,8 @@ One product responsibility = owning subject job lifetime; one shared fake native
 job fixture/matrix. No per-case scripts. Reuse existing _StrictModel, exact native
 PyHANDLE checker and handle information helper from H3, canonical metadata aliases,
 and H6 same-thread/alias ownership conventions. C# N2 bounds/order/ABI are reference
-proofs, not an executable ownership transfer. Do not import production from tests.
+proofs, not an executable ownership transfer. Production code must not import tests;
+tests must import and exercise the actual production model/implementation, not a copy.
 
 A only one private frozen strict required _SubjectJobLimits:
 active_process_limit literal integer1 (bool rejected);
