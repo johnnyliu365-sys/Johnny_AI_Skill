@@ -39,6 +39,77 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N5-N6 — finite offline HTTP stimulus adapter / closure22 proposal
+
+Original30/runbook03 section3, same uncapped batch/first-CVQ source-order scope.
+N5 codec969aa0ee already source reviewed; next reuse it at the existing fixture
+module's HTTP edge, not a new mock-server framework/provider or qualification.
+This slice builds and tests handler code ONLY with in-memory socket doubles;
+it never binds/listens/connects or launches CLI/Host/model. Real wire compatibility
+with the installed CLI remains UNVERIFIED and may later yield UNAVAILABLE.
+
+Sourcebaseline969aa0ee05c83720cdd1e25b71ac0594f91c8e2a.
+MODIFY ONLY tests/staging/readonly_host_protocol.py and tests/test_readonly_review_host.py.
+CREATE0/DELETE0; CVQ/Runner/process lifecycle/config/product/native/tooling READ_ONLY.
+Reuse existing FunctionCallStimulus/encode_function_call_sse and independent literal
+SSE oracle/shared fixtures. No additional request/result DTO, policy engine,
+Response schema copy, token counter, permanent test script or parallel listener.
+One factory takes exact valid FunctionCallStimulus and returns a typed standard
+library BaseHTTPRequestHandler subclass. It creates no socket/process/thread/file,
+never reads env/auth config, calls API, executes arguments or emits a PASS verdict.
+No new constructor bootstrap: existing reviewed six-field carrier is sufficient.
+
+Exactly one accepted POST /v1/responses per factory/fixture lifetime, shared finite
+thread-safe attempt claim before body processing, all later attempts fixed429.
+Invalid attempts consume the same one-attempt allowance; no internal retry/reset.
+Fixed endpoint is fixture data, not a claim every CLI uses it. Other paths/methods
+refuse with finite fixed response, never generic proxy/echo/arbitrary route.
+Exactly one Content-Length ASCII decimal, inclusive1..65536bytes; missing/duplicate/
+invalid/oversize refuses before body read. Any Transfer-Encoding, Authorization
+or Proxy-Authorization refuses; this fixture must never receive real credentials.
+Exact body length, strict UTF8/JSON object, reject duplicate keys/nonfinite values/
+malformed/deep failures. Consumed fields: exact model==stimulus.model, stream is
+True, tools list contains exactly one matching type=function/name==tool_name.
+Other roster entries may remain: fixture does NOT hide or qualify Host tools.
+Do not persist raw body/headers/prompts; no handler logging of request/error data.
+
+On legal request, return HTTP200, Content-Type text/event-stream, correct byte
+Content-Length, Connection close and exactly existing bounded six-event SSE bytes.
+Use stdlib HTTP parser, not handwritten HTTP grammar. Header/request-line limits
+retain stdlib finite limits; connection timeout5s before parsing, one request per
+connection, finite output error/timeout handling. This is transport stimulus ONLY,
+not observed denial/effect evidence. The future protected observer and qualified
+Host must prove actual dispatch and restrictions; input IDs/fixture response never
+become Observation/CaseResult or trusted authority.
+
+N6F1 actual BaseHTTPRequestHandler.handle path over finite in-memory connection
+double: legal literal request/headers/JSON returns200 and independent N5 literal
+six-event oracle, Unicode/control preserved, exactly one attempt across instances.
+N6F2 wrong method/path/framing/duplicate Content-Length/Transfer-Encoding/auth,
+truncated or oversize body, invalidUTF8/JSON/duplicate key/nonfinite/deep input,
+model/stream/tools mismatch or duplicate selected tool reject with fixed response;
+boundary65536 legitimate input remains legal. No body/secret echo or log output.
+N6F3 timeout set before request parsing, connection close, write/read failures finite,
+second/concurrent attempt rejected; no socket bind/connect/process/API/env access.
+Block real socket/process/provider effects, use one shared connection fake and
+parameterized matrix; no per-case files/servers or new process runner.
+N6F4 actual source weakening request allowance/body bound/model binding/framing or
+auth rejection, SSE source substitution =>namedRED/exactrestoreGREEN; independent
+Root different door. Reuse prior103 codec construction/behavior proofs unchanged;
+affected full test file, strict2, guarded memorycompile/import/source hashes.
+Forecast product+160/test+220 effective; >500 structural review not minify/split.
+
+Root reviewer/orchestrator; released N5/C8 author /root/grant_transport_impl,
+distinct /root/batch_authority_review source helper. Preregister contained
+.worktrees/skill-improvement-30n5-finite-http and matching-review, codex/same,
+ctx-ticket30n5-finite-http-20261020; ownedTemp/johnny30n5-http-owner-20261020 and
+-review-20261020, owner+TTLthroughreview/seal/holds, no cleanup authority.
+Conditional grant-ticket30n5-finite-http-20261020 rev01 NOT_ACTIVE until DOC_PASS,
+fresh exact baseline/nonreparse Git/carrier-constructor preflight. Child55/outer60,
+one ownedTemp mypy cache, full raw/timing/no ineffective retry. No actual network,
+socket/Host/CLI/model/cost/config/security/install/cleanup/qualification/30B43
+release/formal integration/push/release/deploy; later operational Grant separate.
+
 ## 30N3-C8 — observed enrollment output / closure21 proposal
 
 Original30/runbook03 section2, same batch/first-entry source-order scope. Bounded
