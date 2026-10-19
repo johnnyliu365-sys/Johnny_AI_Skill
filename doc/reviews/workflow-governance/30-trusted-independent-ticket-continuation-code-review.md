@@ -990,3 +990,23 @@ boundary still compares to the original source baseline, never the A commit.
 Author450/typeA120 and reviewer300/preflight80 totals persist across phases;
 one final initial+correction maximum, not a new budget/lane per constructor.
 No mandatory audit/Host qualification is invented; no early source integration.
+
+### 30G-A command accounting correction / same initial construction
+
+The author initially returned BLOCKED after confusing elapsed session/model time
+with the A120 command-time allocation. Root recovered the original transcript at
+`C:/Users/GameBoy/.codex/sessions/2026/10/19/rollout-2026-10-19T13-42-07-01a152ae-7674-79d1-b3f5-69a5966c581a.jsonl`
+(captured snapshot832086 bytes, SHA256
+3a4b315d3d6daaf04c3df84abf68a2d773dea823b2cda9dffed2e5377b3a43ae)
+and obtained an evidence-only clarification. In-shell ISO timers total23.9075521s:
+pytest3.4514077s, 27 passed/one Literal[1]-accepts-True failure; strict mypy19.3142815s,
+PASS; remaining time covers reads/Git. Two patches add52ms. Charge35/120 including
+transport reserve, within the SAME author450. No budget reset or increase.
+
+Pytest and mypy ran concurrently, contrary to the frozen serial command plan.
+Retain that deviation; no process/session remains active. Three allowed CREATE
+files remain dirty and uncommitted. The exact-int schema_revision boundary fix
+and serial validation continue the SAME initial construction, not another final
+review/correction round. Remaining A85; no helpers or Phase B before a committed
+constructor cut receives different-seat type preflight. The erroneous elapsed-time
+BLOCKED claim is superseded only by the recovered command evidence above.
