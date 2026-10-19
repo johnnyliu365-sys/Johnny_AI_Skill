@@ -1,5 +1,17 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N3 DOC correction / configuration responsibility — 2026-10-19
+
+Independent ordinary DOC reviewer /root/batch_authority_review read b441d055,
+leaf blob aaeeabb72882543c46458adf9482c662c6c82dfc, LF677ece5429ced96b36cedfc33f52813ae089fa87eca3768efbaa206242ba9dc9.
+Found a real positive-path contradiction: original N3 required all payload files
+under CodeRoot, but existing runbook03 section6 pins policy.json under DataRoot.
+Root corrected only the original ticket: executable/dependencies CodeRoot,
+configuration DataRoot, exact corresponding N1 ACL comparison and negative
+wrong-role-root cases. No operational install, security change or new authority.
+Original finding retained; corrected exact document awaits the same peer's narrow
+verification before N3 constructor dispatch. This is not Host qualification.
+
 ## N2 B6 minimal J3 evidence correction / Architecture decision — 2026-10-19
 
 Root reread exact original N2 J3: actual fixed child attempts same tool, OS denies

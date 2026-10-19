@@ -96,9 +96,11 @@ Minimum typed semantics for A, with exact actual signature mapping returned for
 preflight: enrollment identity (bounded canonical identifier), revision exactly1,
 existing setup manifest plus its exact canonical SHA256, one finite payload entry
 set containing the setup executable and one explicit configuration entry, other
-declared dependencies, each exact absolute path/role/digest. Entries stay within
-the setup code root, unique using Windows case-insensitive path identity; no
-relative/ADS/device/reparse assumption, outside-root config, duplicate alias,
+declared dependencies, each exact absolute path/role/digest. Executable and
+dependency entries stay within setup CodeRoot; the one protected configuration
+entry stays within setup DataRoot, matching runbook03 section6's policy location.
+Paths are unique using Windows case-insensitive identity; no
+relative/ADS/device/reparse assumption, wrong-role root, duplicate alias,
 blank/malformed digest, missing executable/config or inconsistent setup digest.
 Executable entry path/hash must equal setup's existing path/hash, not a separately
 caller-chosen executable. Configuration path/digest must match its payload entry.
@@ -112,7 +114,8 @@ Observation/result shapes for B must have a real observed-object/failed-read
 alternative, not fabricated successful metadata. Success carries observed owner/
 SDDL, volume/file identity, content hash/size and actual closed inventory; missing,
 denied, reparse/identity change or unavailable has no fabricated digest. Compare
-expected N1 plan owner/protected DACL and exact declared payload/config inventory;
+expected N1 plan owner/protected DACL and exact declared payload/config inventory,
+using CodeRootSddl for executable/dependencies and DataRootSddl for configuration;
 never accept merely because caller wrote OBSERVED. Preserve uncertainty rather
 than normalizing a descriptor/path into permission. Exact approved SDDL binary
 semantic comparison is allowed; string-format equality alone is not provenance.
@@ -124,7 +127,8 @@ service/issuer; protected composition and operational qualification remain later
 A acceptance E1: validating constructors plus bounded JSON roundtrip preserve all
 fields and reject every required omission/null/extra/unknown tag, duplicate fields,
 oversize/depth/invalid UTF8, wrong setup digest, payload/config/executable mismatches,
-case-insensitive duplicates, outside-root paths and mutable input substitution.
+case-insensitive duplicates, outside-root/wrong-role paths (including config under
+CodeRoot or executable/dependency under DataRoot) and mutable input substitution.
 E2: legitimate finite manifest and explicit failed observation/result variants
 remain constructible; invalid input calls no OS/file observer. E3: actual source
 checker, explicit project compile/CLI mode and strict offline pure tests/imports.
