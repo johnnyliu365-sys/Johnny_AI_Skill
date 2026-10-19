@@ -255,3 +255,10 @@ def test_h1_heading_ends_the_required_section() -> None:
     assert TicketContentIssue(
         field=TicketContentField.EXPECTED, reason=TicketContentReason.MISSING
     ) in inspect_ticket_content(changed.encode("utf-8"))
+
+
+def test_same_title_h1_does_not_start_the_required_section() -> None:
+    changed = _TICKET.replace(_OUTCOME, f"# {_OUTCOME[3:]}", 1)
+    assert TicketContentIssue(
+        field=TicketContentField.EXPECTED, reason=TicketContentReason.MISSING
+    ) in inspect_ticket_content(changed.encode("utf-8"))

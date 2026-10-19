@@ -55,7 +55,7 @@ _FIELD_SPECS: tuple[tuple[TicketContentField, str, str], ...] = (
 )
 _FENCE_OPEN = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 _FENCE_CLOSE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
-_HEADING = re.compile(r"^#{1,2}(?!#)[ \t]+(.*?)[ \t]*#*[ \t]*$")
+_HEADING = re.compile(r"^(#{1,2})(?!#)[ \t]+(.*?)[ \t]*#*[ \t]*$")
 _BULLET = re.compile(r"^- (.+?)[：:](.*)$")
 _ANGLE = re.compile(r"<([^<>\n]+)>")
 _GENERIC_ARGUMENTS = re.compile(
@@ -139,8 +139,8 @@ def _section_lines(lines: list[str], title: str) -> tuple[int, list[str]]:
     for line in lines:
         heading = _HEADING.fullmatch(line)
         if heading:
-            heading_title = heading.group(1).strip().rstrip("# ").strip()
-            active = heading_title == title
+            heading_title = heading.group(2).strip().rstrip("# ").strip()
+            active = heading.group(1) == "##" and heading_title == title
             if active:
                 count += 1
         elif active:
