@@ -1,0 +1,24 @@
+{
+  "schema_revision": 1,
+  "scope": "LOCAL_VERIFICATION_ONLY",
+  "commands": [
+    {
+      "command_ref": "local:ticket-content",
+      "argv": [
+        "python", "-m", "pytest",
+        "tests/test_ticket_content.py",
+        "tests/test_ticket_template_contract.py",
+        "-q", "-p", "no:cacheprovider"
+      ]
+    },
+    {
+      "command_ref": "local:test-inventory",
+      "argv": [
+        "python", "-m", "pytest",
+        "tests/test_test_dependency_source_adapter.py",
+        "tests/test_test_dependency_inventory.py",
+        "-q", "-p", "no:cacheprovider"
+      ]
+    }
+  ]
+}

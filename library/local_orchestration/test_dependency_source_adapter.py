@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import math
 import os
 import re
@@ -18,6 +19,7 @@ from library.local_orchestration.test_dependency_inventory import (
     PythonTestConsumerInventory,
     RetirementInventory,
 )
+from library.local_orchestration.test_command_source import read_command_plan
 
 
 class TestDependencySourceFailure(StrEnum):
@@ -30,6 +32,9 @@ class TestDependencySourceFailure(StrEnum):
     INVALID_PATH = "INVALID_PATH"
     UNSUPPORTED_TREE_ENTRY = "UNSUPPORTED_TREE_ENTRY"
     INVALID_UTF8 = "INVALID_UTF8"
+    COMMAND_PLAN_MISSING = "COMMAND_PLAN_MISSING"
+    COMMAND_PLAN_INVALID = "COMMAND_PLAN_INVALID"
+    COMMAND_PLAN_DIGEST_MISMATCH = "COMMAND_PLAN_DIGEST_MISMATCH"
 
 
 class TestDependencySourceError(RuntimeError):
@@ -106,6 +111,44 @@ class GitTestDependencySourceAdapter:
             commit_sha=canonical_commit,
             source_refs=tuple(source.source_ref for source in sources),
             inventory=inventory,
+        )
+
+    def read_inventory_from_command_plan(
+        self,
+        repository_root: str | Path,
+        commit_sha: str,
+        test_ref: str,
+        expected_plan_sha256: str,
+    ) -> GitPinnedTestDependencyInventory:
+        """Load a digest-pinned local command plan and Python blobs from one commit."""
+        if not isinstance(expected_plan_sha256, str) or not re.fullmatch(
+            r"[0-9a-fA-F]{64}", expected_plan_sha256
+        ):
+            raise TestDependencySourceError(TestDependencySourceFailure.COMMAND_PLAN_INVALID)
+        deadline = time.monotonic() + self._timeout_seconds
+        root = self._validate_repository_root(repository_root, deadline)
+        canonical_commit = self._validate_commit(root, commit_sha, deadline)
+        entries = self._read_tree_entries(root, canonical_commit, deadline)
+        plan_entry = next((entry for entry in entries if entry.path == "tests/verification-commands.json"), None)
+        if plan_entry is None:
+            raise TestDependencySourceError(TestDependencySourceFailure.COMMAND_PLAN_MISSING)
+        plan_bytes = self._run_git(
+            root, ("cat-file", "blob", plan_entry.object_id), max_stdout_bytes=65_536, deadline=deadline
+        )
+        if hashlib.sha256(plan_bytes).hexdigest() != expected_plan_sha256.lower():
+            raise TestDependencySourceError(TestDependencySourceFailure.COMMAND_PLAN_DIGEST_MISMATCH)
+        try:
+            commands = read_command_plan(plan_bytes)
+        except ValueError as error:
+            raise TestDependencySourceError(TestDependencySourceFailure.COMMAND_PLAN_INVALID) from error
+        python_paths = {entry.path for entry in entries if entry.path.endswith(".py")}
+        if any(target not in python_paths for command in commands for target in command.argv[3:-3]):
+            raise TestDependencySourceError(TestDependencySourceFailure.COMMAND_PLAN_INVALID)
+        sources = self._read_python_sources(root, entries, deadline)
+        return GitPinnedTestDependencyInventory(
+            commit_sha=canonical_commit,
+            source_refs=tuple(source.source_ref for source in sources),
+            inventory=PythonTestConsumerInventory(tuple(sources), commands).retirement_inventory(test_ref),
         )
 
     def _validate_repository_root(
@@ -198,6 +241,7 @@ class GitTestDependencySourceAdapter:
 
         entries: list[_GitTreeEntry] = []
         seen_paths: set[str] = set()
+        plan_entry: _GitTreeEntry | None = None
         for record in records:
             header, separator, raw_path = record.partition(b"\t")
             fields = header.split(b" ")
@@ -218,6 +262,8 @@ class GitTestDependencySourceAdapter:
                 raise TestDependencySourceError(
                     TestDependencySourceFailure.UNSUPPORTED_TREE_ENTRY
                 )
+            if raw_path == b"tests/verification-commands.json":
+                plan_entry = _GitTreeEntry(mode, object_type, object_id, "tests/verification-commands.json")
             if not raw_path.endswith(b".py"):
                 continue
             if len(entries) >= self._max_python_files:
@@ -246,15 +292,18 @@ class GitTestDependencySourceAdapter:
                     path=path,
                 )
             )
+        if plan_entry is not None:
+            entries.append(plan_entry)
         return tuple(entries)
 
     def _read_python_sources(
         self, root: Path, entries: tuple[_GitTreeEntry, ...], deadline: float
     ) -> list[PythonSource]:
-        if not entries:
+        python_entries = tuple(entry for entry in entries if entry.path.endswith(".py"))
+        if not python_entries:
             return []
 
-        object_ids = tuple(entry.object_id for entry in entries)
+        object_ids = tuple(entry.object_id for entry in python_entries)
         batch_input = "".join(f"{object_id}\n" for object_id in object_ids).encode("ascii")
         output_limit = (
             self._max_total_source_bytes
@@ -272,7 +321,7 @@ class GitTestDependencySourceAdapter:
         sources: list[PythonSource] = []
         offset = 0
         total_source_bytes = 0
-        for entry in entries:
+        for entry in python_entries:
             header_end = batch_output.find(b"\n", offset)
             if header_end < 0:
                 raise TestDependencySourceError(

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import subprocess
 import tempfile
 import unittest
@@ -17,6 +19,7 @@ from library.local_orchestration.test_dependency_source_adapter import (
     TestDependencySourceError as SourceError,
     TestDependencySourceFailure as SourceFailure,
 )
+from library.local_orchestration.test_command_source import read_command_plan
 
 
 class GitTestDependencySourceAdapterTests(unittest.TestCase):
@@ -63,6 +66,108 @@ class GitTestDependencySourceAdapterTests(unittest.TestCase):
             result.inventory.transitive_consumers,
         )
         self.assertFalse(result.inventory.retirement_authorized)
+
+    def test_checked_in_plan_is_exact_and_rejects_non_closed_input(self) -> None:
+        commands = read_command_plan(Path(__file__).with_name("verification-commands.json").read_bytes())
+        self.assertEqual(("local:ticket-content", "local:test-inventory"),
+                         tuple(command.command_ref for command in commands))
+        self.assertEqual("tests/test_ticket_content.py", commands[0].argv[3])
+        self.assertEqual("tests/test_test_dependency_source_adapter.py", commands[1].argv[3])
+        invalid = (
+            b'{"schema_revision":1,"schema_revision":1,"scope":"LOCAL_VERIFICATION_ONLY","commands":[]}',
+            b'{"schema_revision":1,"scope":"LOCAL_VERIFICATION_ONLY","commands":[],"extra":0}',
+            b'{"schema_revision":true,"scope":"LOCAL_VERIFICATION_ONLY","commands":[]}',
+            b'{"schema_revision":1,"scope":"CI","commands":[]}',
+            b'{"schema_revision":1,"scope":"LOCAL_VERIFICATION_ONLY","commands":[]}',
+            self._command_plan_records(("local:fixture", "tests/a.py"), ("local:fixture", "tests/b.py")),
+            self._command_plan_records(("local:fixture", "tests/a.py", "tests/a.py")),
+            *(self._command_plan_records(("local:fixture", target)) for target in
+              ("tests/a;rm.py", "$TARGET.py", "tests/../a.py", "tests//a.py", "tests/*.py")),
+            self._command_plan_records(("local:fixture", "tests/a.py", "--collect-only")),
+            b"\xff",
+        )
+        for payload in invalid:
+            with self.subTest(payload=payload[:32]), self.assertRaises(ValueError):
+                read_command_plan(payload)
+
+    def test_command_plan_builds_transitive_inventory_and_never_authorizes_retirement(self) -> None:
+        self._write("tests/test_helper.py", "def helper() -> None: pass\n")
+        self._write("tests/test_wrapper.py", "from tests.test_helper import helper\n")
+        self._write("tests/test_consumer.py", "from tests import test_wrapper\n")
+        plan = self._command_plan_bytes()
+        self._write_bytes("tests/verification-commands.json", plan)
+        commit = self._commit("local-command-plan")
+        result = self._read_plan(commit, plan)
+        self.assertEqual(InventoryStatus.COMPLETE, result.inventory.status)
+        self.assertEqual(("tests/test_wrapper.py",), result.inventory.direct_consumers)
+        self.assertEqual(("local:fixture", "tests/test_consumer.py"), result.inventory.transitive_consumers)
+        self.assertFalse(result.inventory.retirement_authorized)
+
+    def test_missing_invalid_wrong_digest_and_unpinned_targets_fail_closed(self) -> None:
+        self._write("tests/test_helper.py", "def helper() -> None: pass\n")
+        missing = self._commit("without-command-plan")
+        with self.assertRaises(SourceError) as error:
+            self._read_plan(missing, None)
+        self.assertEqual(SourceFailure.COMMAND_PLAN_MISSING, error.exception.reason)
+
+        malformed = b'{"schema_revision":1,"scope":"LOCAL_VERIFICATION_ONLY","commands":[]}'
+        self._write_bytes("tests/verification-commands.json", malformed)
+        malformed_commit = self._commit("malformed-plan")
+        with self.assertRaises(SourceError) as error:
+            self._read_plan(malformed_commit, malformed)
+        self.assertEqual(SourceFailure.COMMAND_PLAN_INVALID, error.exception.reason)
+
+        valid = self._command_plan_bytes()
+        self._write_bytes("tests/test_consumer.py", b"def test_consumer() -> None: pass\n")
+        self._write_bytes("tests/verification-commands.json", valid)
+        valid_commit = self._commit("valid-plan")
+        with self.assertRaises(SourceError) as error:
+            self._read_plan(valid_commit, valid, expected_sha256="0" * 64)
+        self.assertEqual(SourceFailure.COMMAND_PLAN_DIGEST_MISMATCH, error.exception.reason)
+        oversized = b" " * 65_537
+        self._write_bytes("tests/verification-commands.json", oversized)
+        oversized_commit = self._commit("oversized-plan")
+        with self.assertRaises(SourceError) as error:
+            self._read_plan(oversized_commit, oversized)
+        self.assertEqual(SourceFailure.LIMIT_EXCEEDED, error.exception.reason)
+        plan = self._command_plan_bytes(target="tests/not_committed.py")
+        self._write_bytes("tests/verification-commands.json", plan)
+        commit = self._commit("unknown-plan-target")
+        with self.assertRaises(SourceError) as error:
+            self._read_plan(commit, plan)
+        self.assertEqual(SourceFailure.COMMAND_PLAN_INVALID, error.exception.reason)
+
+    def test_pinned_plan_ignores_worktree_head_and_git_replace(self) -> None:
+        self._write("tests/test_helper.py", "def helper() -> None: pass\n")
+        self._write("tests/test_wrapper.py", "from tests.test_helper import helper\n")
+        self._write("tests/test_consumer.py", "from tests import test_wrapper\n")
+        old_plan = self._command_plan_bytes()
+        self._write_bytes("tests/verification-commands.json", old_plan)
+        old_commit = self._commit("old-plan")
+        old_blob = self._git_text("rev-parse", f"{old_commit}:tests/verification-commands.json")
+        self._write("tests/test_new_consumer.py", "from tests import test_wrapper\n")
+        new_plan = self._command_plan_bytes(target="tests/test_new_consumer.py", command_ref="local:new-plan")
+        self._write_bytes("tests/verification-commands.json", new_plan)
+        new_commit = self._commit("new-plan")
+        self._git("replace", old_commit, new_commit)
+        self._git("replace", old_blob, self._git_text("rev-parse", f"{new_commit}:tests/verification-commands.json"))
+        self._write_bytes("tests/verification-commands.json", b"working-copy-only")
+        self._write("tests/test_wrapper.py", "def wrapper() -> None: pass\n")
+
+        old = self._read_plan(old_commit, old_plan)
+        new = self._read_plan(new_commit, new_plan)
+        self.assertEqual(("tests/test_wrapper.py",), old.inventory.direct_consumers)
+        self.assertEqual(("local:fixture", "tests/test_consumer.py"), old.inventory.transitive_consumers)
+        self.assertEqual(("tests/test_wrapper.py",), new.inventory.direct_consumers)
+        self.assertEqual(
+            ("local:new-plan", "tests/test_consumer.py", "tests/test_new_consumer.py"),
+            new.inventory.transitive_consumers,
+        )
+        with self.assertRaises(SourceError) as error:
+            self._read_plan(new_commit, new_plan, expected_sha256=hashlib.sha256(old_plan).hexdigest())
+        self.assertEqual(SourceFailure.COMMAND_PLAN_DIGEST_MISMATCH, error.exception.reason)
+        self.assertFalse(old.inventory.retirement_authorized)
+        self.assertFalse(new.inventory.retirement_authorized)
 
     def test_pinned_result_does_not_drift_with_worktree_or_new_head(self) -> None:
         self._write("tests/test_helper.py", "def helper() -> None: pass\n")
@@ -331,6 +436,40 @@ class GitTestDependencySourceAdapterTests(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(content)
         self._git("add", "--", relative_path)
+
+    def _command_plan_bytes(
+        self,
+        *,
+        target: str = "tests/test_consumer.py",
+        command_ref: str = "local:fixture",
+    ) -> bytes:
+        return self._command_plan_records((command_ref, target))
+
+    def _read_plan(
+        self, commit: str, plan: bytes | None, *, expected_sha256: str | None = None
+    ) -> GitPinnedTestDependencyInventory:
+        digest = expected_sha256 or (hashlib.sha256(plan).hexdigest() if plan is not None else "0" * 64)
+        return GitTestDependencySourceAdapter().read_inventory_from_command_plan(
+            self.repository_root, commit, "tests/test_helper.py", digest
+        )
+
+    @staticmethod
+    def _command_plan_records(*records: tuple[str, ...]) -> bytes:
+        commands = [
+            {
+                "command_ref": record[0],
+                "argv": ["python", "-m", "pytest", *record[1:], "-q", "-p", "no:cacheprovider"],
+            }
+            for record in records
+        ]
+        return json.dumps(
+            {
+                "schema_revision": 1,
+                "scope": "LOCAL_VERIFICATION_ONLY",
+                "commands": commands,
+            },
+            separators=(",", ":"),
+        ).encode("utf-8")
 
     def _commit(self, message: str) -> str:
         self._git("commit", "--quiet", "-m", message)
