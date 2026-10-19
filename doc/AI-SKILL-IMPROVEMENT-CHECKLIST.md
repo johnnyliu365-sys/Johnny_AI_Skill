@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `44`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `45`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision44）
+## 當前工程接續與精確證據（revision45）
 
 同票F1最終7fa12f0c已把共用候選build與實體fixture拆開，預設零symlink探測，
 非真實reparse/denied/fault仍標INJECTED。獨審發現DLL綁定oracle退化後，原作者
@@ -39,9 +39,13 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 及無損raw JSON格式修正d58ebc70，前次Root cp950缺輸出仍UNVERIFIED、不冒充PASS。
 這僅SOURCE_TEST_INFRA_ENGINEERING_STAGED_PASS，未整合、不提升Host資格。
 
-C2同handle內容讀回CREATE2/MODIFY4原票closure06，08b38aef經不同席DOC PASS、
-Root6291ed3c讀回精確cee基準與角色後已派工；實作者本地源碼與離線診斷進行中，
-尚無最終候選、全驗證或審閱結論。F1與C2不同worktree，沒有自動混入彼此改動。
+C2最終b42ae444沿原CREATE2/MODIFY4，closure07／Grant revision02經DOC PASS與
+Root9ff8cca3精確啟用。Root實跑獨立4097／196625-byte Expected、現有writer拒絕、
+missing／directory／empty／oversize與exclusive reopen，原兩個zero-red各已具名紅→
+精確還原綠，原獨審窄複驗E01–E03關閉，seal c5d98249。strict／compile／import及
+N1實際getter通過，歷史缺輸出與失敗保留。這僅SOURCE_FILE_READBACK_ENGINEERING_STAGED_PASS，
+不是保護來源或Host資格，未整合。接續同票有界封閉目錄讀回建置，不重做已關閉C2或04。
+F1與C2不同worktree，沒有自動混入彼此改動。
 01–12勾選狀態不變；原生服務/保護安裝與完整來源/資格/Host效應仍未完成。
 
 ## 前次工程接續與精確證據（revision43歷史）
