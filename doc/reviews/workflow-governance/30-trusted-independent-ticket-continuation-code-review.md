@@ -1,4 +1,34 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H6-A corrected preflight / H6-B admission — 2026-10-20
+
+Finalcff4ee574cfcea4735c9b3626997d67e32ff78c9, product37017bd7ea7c34b21e5200ffb85301353cc30968 /
+testc91bddbabaf153b80a4510d4c1a5dcc85bed1c9b. Source peer corrected narrow PASS.
+Root actual-source62tests PASS2.609s, strict2PASS2.015s, clean exactblob readback.
+E01 baseline raw shows THREE intended failures plus existing None rejection PASS,
+not four failures as author summary claimed. Actual guard-off mutation FOUR RED,
+exactrestoreFOUR GREEN. Root different membership-validator door on actual file
+=> named membership-unavailable RED3.108s (28 other cases pass), exactrestore all29
+GREEN2.816s. Full raw baseline/repair/mutation stdout read. Valid minimal Close-only
+owner and lifetime remain legal; constructor is pure, not OS observation/authority.
+E01 CLOSED for A source; original counterexample and imprecise summary preserved.
+
+Root derives grant-ticket30n4-retained-process-20261020 revision02 H6_B_ACTIVE,
+same parent/closure20 at55c0358158bcbb406e61f514243bf1724a3a363c,
+LF7c648a638ddfb5753e0db7c3f52a1f4bdd0d45f8a8b21e3c93780e85e5620037.
+New sourcebaseline exactcff4ee57 above, fresh clean author/review Git readback.
+Same author /root/ticket30n4_peer_impl, Root reviewer/orchestrator, distinct native
+tools source peer, retained WT/branch/context/ownedTemp/history. MODIFY ONLY the
+two A-created files, CREATE0/DELETE0. Implement frozen same-owning-handle reader,
+typed ABI wrappers, same-process FILETIME/job/token/session/image observations,
+token close/poison/retention and zero borrowed close; no new public authority DTO,
+Protocol or expected-value substitution. Same-thread/strongref explicitly not an
+exclusive lease or live writer proof. Fake DLLs BELOW real bindings, actual source
+mutants namedRED/exactrestoreGREEN, Root different door, strict2/compile/import.
+Block real WinDLL/native functions during tests; no native probe/Host/SCM/launch/
+permission/config/network/operational Grant/qualification/30B43 release. One
+existing ownedTemp mypy cache, child55/outer60, preserve raw/time/history.
+ACTION_COMPLETED -> AUTO_CONTINUE H6-B; no Owner technical renewal.
+
 ## H6-A E01 noncallable cleanup member / same-scope correction — 2026-10-20
 
 5bfd9ebb65a2b93ec5d5f10b9b557f8a0f8b4b83, exact2CREATE, author58tests/strict2/
