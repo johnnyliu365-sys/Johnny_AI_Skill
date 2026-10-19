@@ -1,5 +1,23 @@
 # Ticket 37 independent review — 2026-10-18
 
+## Closure02 local activation — 2026-10-20
+
+Distinct /root/ticket30_native_tools_review DOC_PASS for exact0d14087ddf09759ee805dd4ec378f4a5a038b16d,
+leafLFe9df7e617e8cbb23ac5bf72d98c6eee24022491602c9cf51bce23f7818be20d8.
+Root original precommit D8 command computed leaf correctly but registry text decode
+used Windows cp950 and failed; a subsequent committed Git UTF8 readback verified
+both exact leaf/registry at0d14087d. Preserve that failed read, not a reset/pass.
+Fresh recorded allocation checks prove new paths absent, all ancestors nonreparse,
+exact contained WTs/branches and linked Git. Ordinary current SkillReference JSON
+roundtrip PASS, clean0d14087d. Root derives grant-wg37-normalization-20261020
+revision01 ACTIVE, parent batch-checklist-local-20261019-uncapped. Exact3MOD/0CREATE/
+0DELETE and roles/context/ownedTemp perclosure02; no other scope or author selfapproval.
+H3 owner allocation released to SOURCE_REVIEW_HOLD before this new sole source lane;
+its original candidates/evidence/residue holds persist. This starts only ordinary
+governance text/pin/regression correction, not source/Host qualification or formal
+operational activation. ACTION_COMPLETED -> AUTO_CONTINUE same-lifetime owner
+/root/grant_transport_impl in new37 context; direct receipt/Runner NOT_REQUIRED.
+
 ## Same-lineage normalization source proposal — 2026-10-20
 
 Root read current Workflow ownership, specification-ticketing Dispatch normalization,
