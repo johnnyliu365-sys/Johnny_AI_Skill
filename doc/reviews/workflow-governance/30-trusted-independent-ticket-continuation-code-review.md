@@ -1,4 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H1 exact source-only Grant activation — 2026-10-20
+
+Distinct /root/batch_authority_review DOC_PASS exact05936bb2c4127b906c4c980c686c327736805f42,
+Ticket30 closure13 LFf4fa70013f85e24313faec30390442c84ae8f7fafe6fd702f3d5d8e9a50bf763
+and D8 match; only2CREATE, no MODIFY/DELETE, no public authority DTO/port. Actual
+WTs/outputs created b9eebc AFTER preregistration; Root b37a10/b3c45c confirms both
+clean5449c0634866b3334e3963c87b8603eb973e39bd, exact branches/linkedGit/contained
+nonreparse roots. Normal existing GrantReadRequest/codec roundtrip plus malformed
+control PASSb37a10, no native API. N4 strict/schema/full98tests engineering proof
+remains version-bound; no new private helper is pretended already built/qualified.
+grant-ticket30n4-bounded-pipe-io-20261020 ACTIVE under original uncapped batch.
+Named standard offered Luna/xhigh implementation owner /root/grant_transport_impl,
+Root sole reviewer/orchestrator and distinct source peer, fresh context exactly
+ctx-ticket30n4-bounded-pipe-io-20261020; receipt/Runner NOT_REQUIRED direct lane.
+Only source and patched-call offline tests, no actual pipe/event/token/Host/SCM/
+security/install/network/model effects. ACTION_COMPLETED -> AUTO_CONTINUE
+IMPLEMENT H1 then immutable review/mutations/correction/staging only.
+
 ## H1 source slice architecture decision — 2026-10-20
 
 Reuse existing native transport responsibility, not a service/policy framework.
