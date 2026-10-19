@@ -1,4 +1,16 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H7 exact source-stage admission activation — 2026-10-20
+
+Distinct native-tools peer DATA_INTEGRITY_PASS/MAPPING_DOC_PASS at306b2f9d:
+original43records/prefix14/archive hashes exact, clean876223b3/parent35rows/
+required imports match, both H7 paths absent and exact source blobs confirmed.
+Root independently rechecks clean exact stage/common Git/nonreparse root and
+absence/source Git objects immediately before transfer. Activate ONLY conditional
+source-composition Grant revision03 from306b2f9d: Root source stage/context/Temp
+unchanged, two exact CREATE blobs from reviewed2106b8de, no manual rewriting,
+no other parent change. Check affected74/strict2/compile/hash in composed context,
+then immutable source stage; not formal integration/Host qualification/30B43
+clearance/cleanup/OSinstall/push/deployment. ACTION_COMPLETED -> AUTO_CONTINUE transfer.
 ## H8-A ticket direction correction — 2026-10-20
 
 Before source mutation the admitted author correctly reported closure24's reversed
