@@ -57,6 +57,35 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 或新實作 admission。29→30 是本票實際重用純投影的能力依賴，不是清單順序。
 本輪文件工作有下節獨立授權；不因此將完整票30改成 admitted/completed。
 
+## 30N3 — C6 E01 output-failure evidence correction / same closure12
+
+Root immutable candidate1e5ce16cc9a6be2cd95ab0cd30a7312223a94405 original six paths
+strict/default/enrollment green25c4ea, distinct source peer SOURCE_PASS, product
+91/newtest274/helper17lines cohesive. Root different serialization reason door
+named REDd38fe0/exactrestorea77cf5GREEN. Separate actual product output-write
+failure catch return2->0 leaves alltestsGREENc79d79; exactrestore10adceGREEN.
+Distinct source peer confirms missing non-null failing output stream cell in
+existing C6-RESULT/exception truth contract. E01 EVIDENCE_DEFECT, not product bug,
+new requirement, additional output policy or need to change functioning product.
+
+Same grant-ticket30n3-enrollment-command-20261019 revision02 /closure12 /parent
+uncapped batch; exact correctionbaseline1e5ce16cc9a6be2cd95ab0cd30a7312223a94405,
+same author/WT/branch/context, Root/distinct peer. CREATE0/DELETE0; MODIFY only
+library/local_orchestration/native_windows/NativeEnrollmentCommandSelfTests.cs.
+Reuse existing normal matching fixture and add typed non-null faulting output
+Stream. Through actual Program.Run valid parse/readback/Verify then Write failure
+must return2, fixed enrollment_output_failed stderr, no raw sentinel, one callback;
+assert output state actually reached, not null-output early rejection. Keep
+legal normal MATCH positive. No separate test framework/product/API change.
+Actual output catch2->0 =>new namedRED; exact productrestore/rebuildGREEN.
+No false defective-baseline-red claim for the presently correct product; original
+ZERO_RED and author newline-only assertion correction stay in history.
+Other original source predicate proofs carry forward unchanged. Direct offline
+strict rebuild/default/enrollment only, no legacy Python physical fixture or
+native/job/Host execution. Existing registered Temp/TTL/teardown holds preserved.
+Distinct DOC consistency then fresh clean1e5/source/Git/leaf/index readback activates
+this bounded correction without Owner renewal. No qualification/formal integration.
+
 ## 30N3 — C6 enrollment command composition / closure12
 
 Original PRD009/CHG009, batch-checklist-local-20261019-uncapped and existing
