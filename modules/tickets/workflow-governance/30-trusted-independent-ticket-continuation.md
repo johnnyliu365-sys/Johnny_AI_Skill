@@ -39,6 +39,89 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N3-C8 — observed enrollment output / closure21 proposal
+
+Original30/runbook03 section2, same batch/first-entry source-order scope. Bounded
+Architecture Owner readback finds C7 WindowsEnrollmentReadback already measures
+closed CodeRoot plus configuration/ancestors on actual handles, and its verifier
+checks complete inventory/protection/content. EnrollmentCommand only exposes
+MATCH/refusal, so it cannot populate later observed image/config hashes. Do not
+copy expected digests into H2 or create a persistent helper/second authority.
+Reuse actual C7 objects and command/test seams; no native observer redesign.
+
+Sourcebaseline7a24e165391bbc3beea2d13fb492555d3b8f485e. MODIFY ONLY
+library/local_orchestration/native_windows/EnrollmentCommand.cs,
+library/local_orchestration/native_windows/Program.cs,
+library/local_orchestration/native_windows/NativeEnrollmentCommandSelfTests.cs.
+CREATE0/DELETE0; parser/manifest/readback/verifier/job/C#project/Python/tests and
+all external configuration READ_ONLY. Same original PRD/CHG/SPEC, no new policy.
+Existing typed NativeEnrollment/Readback/ObjectObservation/Verification ordinary
+construction already exists; no new public DTO or constructor bootstrap needed.
+
+One exact new command selector observe-enrollment, one argument only, same strict
+bounded enrollment stdin/parser and ONE existing readback callback. Existing
+verify-enrollment and every old mode keep byte-for-byte output/exit semantics.
+Only internal output selection/helper as needed, no generic query/command option.
+Observe output root exact scope/status/reason plus executable/configuration.
+Scope always SOURCE_ONLY_UNQUALIFIED; status/reason are existing verifier result,
+never caller approved=true or a new qualification/PASS. Each payload is null if
+no uniquely selected OBSERVED FILE exists at its corresponding enrollment path;
+otherwise exact fields path, sha256, size_bytes, owner, descriptor_sha256,
+volume_serial, file_id from that ACTUAL observation, not expected payload data.
+Do not emit content, full SDDL, credentials, process/Grant identity or timestamps.
+Executable selection searches actual CodeInventory; configuration actual DataObjects.
+No first-match on ambiguity. Missing/unavailable observations cannot give MATCH.
+For a verifier refusal, available genuine selected observations may remain in
+the diagnostic output with REFUSED/nonzero exit; these never authorize a consumer.
+This permits pinning actual wrong hash/size rather than laundering expected data.
+Readback null/exception gives REFUSED/READBACK_FAILED with both payloads null.
+
+Serialize the complete UTF8 JSON plus LF into one bounded in-memory buffer <=262144
+bytes before a single external write; reuse a fixed-capacity MemoryStream rather
+than new counting-stream framework. Overflow/output exception finite exit2/fixed
+error, never success or native exception detail. This is bounded buffering, NOT
+an atomic OS write claim: a faulted downstream stream can retain partial bytes,
+which are unusable incomplete evidence. Old verify error shapes remain unchanged.
+All observed values immutable existing types. Later consumer must separately
+revalidate exact source/argv/binary/protection and status/paths/schema; this command
+does not attest running client code or supply an exclusive retained-handle lease.
+Service and client payload/config identity remain distinct enrollments, never
+silently substituted. No subprocess/SCM/Host/session/ACL/pipe call in this slice.
+
+C8F1 old verify/default/enrollment/job-CONTRACT fake self-tests unchanged green;
+new selector legal result pinned to literal observed file IDs/digests/size/owner/
+descriptor/volume and one callback. Unknown/extra args and invalid input =>0reads.
+C8F2 real Program->EnrollmentCommand seam with existing shared matching builder;
+wrong observed hash or size REFUSED and reports ACTUAL wrong value, missing/
+unavailable/null/throw/selection mismatch no invented values; no output success
+after failed verifier. Exact independent JSON schema/oracle, Unicode/escaping.
+C8F3 finite buffer/output fault/error sanitization, no full SDDL/raw source/secret;
+no new physical fixture or per-case scripts. Do not invent unreachable overflow
+input; inspect/prove static bound and test genuine writer failure at current seam.
+C8F4 actual source mutations at observed-vs-expected digest/size, wrong payload
+selection/file ID, missing-result success or verification bypass =>namedRED and
+exactrestoreGREEN. Root different door, full raw output. Existing reader/verifier
+unchanged evidence reused; no unchanged full matrix campaign required.
+
+Offline pinned .NET10.0.302 net10.0-windows, warnings-as-errors/nullable; existing
+NuGet.Config clears sources. Build/output/cache only owned Temp, no restore from
+network/package install/shared compiler. Execute self-test, enrollment-contract-
+self-test and job-contract-self-test (fake only); NEVER inspect/verify/observe
+against real paths, job-self-test/job-fixture modes, full native Python tests,
+symlink/ACL/Host/IPC/permissions/network/service/installation effects. New command
+is exercised through fake injected existing callback inside self-tests only.
+Forecast product+100/test+120 effective; structure review >500, not minify/split.
+
+Root reviewer/orchestrator, implementation-standard author named only after its
+current lane returns/releases; independent source peer separate. Preregister
+.worktrees/skill-improvement-30n3-observed-enrollment and matching-review, codex/same,
+context ctx-ticket30n3-observed-enrollment-20261020, owned Temp/johnny30n3-observed-
+owner-20261020 and -review-20261020; owner+TTL through review/seal, holds override.
+Conditional grant-ticket30n3-observed-enrollment-20261020 rev01 NOT_ACTIVE until
+DOC_PASS/exact baseline/nonreparse Git/ordinary prior-constructor checks. Child55/
+outer60, raw argv/time/stdout evidence, no renewed cumulative/count ceiling.
+No formal integration/qualification/30B43 clearance/cleanup/push/release/deploy.
+
 ## 30N4-H6 — retained process facts / closure20 proposal
 
 Same original30/runbook03/local batch. Architecture readback of C7 at7a24e165:
