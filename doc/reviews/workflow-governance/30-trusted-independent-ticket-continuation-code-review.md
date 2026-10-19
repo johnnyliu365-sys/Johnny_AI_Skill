@@ -1,5 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## C2 correction exact selector activation — 2026-10-19
+
+Different /root/batch_authority_review ordinary DOC_PASS at a5e6279eecab2d1c8c5a50a0d5d0cb4190b7f57c,
+leafblob6a228e8a15e0b326c3d4aa6aca76e3f2827afdfb / LF
+776e3d111503fa9695e8431d9bfed9ca1126b164972096fb54db0e98fff35829 matches registry.
+Root rereads actual source HEAD767af007, same owner WT/branch and contained Git
+metadata, nonreparse seat. Existing dirty source/test corrections are only within
+prior six-path Grant; they are NOT authority, review evidence or an integrated
+candidate. This is same-ticket correction, not a reset or falsely clean new lane.
+Activate development Grant revision02/closure07 for further exact optional negative
+selector tests after typed invalid-input handling. First pre-binding run remains
+historical/not counted. Same parent/roles/holds/commands, no Host/security authority.
+
 ## C2 generic fixture correction registration — 2026-10-19
 
 C2-E03 uses new exact ordinary child payload-readback-fixture beneath already
