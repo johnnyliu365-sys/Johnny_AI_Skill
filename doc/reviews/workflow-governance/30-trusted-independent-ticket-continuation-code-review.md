@@ -1,5 +1,36 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N9 seal QA / N10 DOC admission and asset reservation — 2026-10-21
+
+Different-seat /root/ticket30_native_tools_review verified N9 archives:
+80b6a1f1 all61 entries exactly match original bytes/length/SHA/UTF8;
+8e938aaa composition archive hashes/lengths match; source-stage fcb373a6 has
+two exact reviewed blobs, prior101 unchanged/103total, clean. No qualification.
+Old mutation candidate bindings and extra diagnostic limitations preserved.
+N10 closure46 exact ed1af8f533b828327e19919540ba5a809333e691,
+leaf25a7a2eae973424a157483f5320d749f3e211b88 LFd928ab752223ba618cc4d3b460b5caec2d44a45984d039ac8057ce2362c994c6:
+DOC_PASS, not Owner/Host approval. Baseline fcb373a6; three CREATE only; architecture
+keeps native ownership/ABI separate from wholefile/member policy, no publicDTO/
+Grantwire/policyengine. Existing _FILETIME present, actual source review pending.
+
+Reserve before creation, exact owner /root/ticket30n4_peer_impl:
+.worktrees/skill-improvement-30g-snapshot-reader branch codex/same;
+Root-owned .worktrees/skill-improvement-30g-snapshot-reader-review branch codex/same.
+Both exact fcb373a680b21397bf0e22d7ec8b8894c0eb00c5, fresh ordinary directories
+under real nonreparse repository .worktrees. Context ctx-ticket30n10-snapshot-reader-20261021.
+Author Temp C:/Users/GameBoy/AppData/Local/Temp/johnny30-snapshot-reader-owner-20261021;
+Root Temp C:/Users/GameBoy/AppData/Local/Temp/johnny30-snapshot-reader-review-20261021.
+Purpose only bounded offline fake-native source/test/evidence, no Native execution.
+TTL through sealed independent review/composition; exact designated owners handle
+later teardown only if existing policy permits and no evidence/Recovery reference.
+Evidence/Recovery holds override expiry; no automatic expiration cleanup.
+N9 allocations/views now immutable held, not reused/deleted. Precheck all four
+new paths absent; creation must recheck, freshGitidentity/containment/clean baseline.
+No implementation Grant active until existing N9 input constructor preflight and
+fresh worktree identity readback. AUTO_CONTINUE bounded allocation/preflight.
+No newcost, Host/session/security/install/service/account/ACL or external effects.
+
+
 ## N9 exact source composition — 2026-10-21
 
 Grant26/80b6a1f1 replay completed at fcb373a680b21397bf0e22d7ec8b8894c0eb00c5,
