@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `81`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `82`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,19 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision81）
+## 當前工程接續與精確證據（revision82）
+
+H10H候選a2476000回件：Root591guarded綠，但兩silent borrow-exit門實證
+create前alias drift仍產生一次create／最終identity drift錯回成功；不是合格隔離
+結果。normal strict失敗，作者skip fixture配置產生Any，Rootdiagnostic3錯。
+原30 closure40／e53f6a0c經DOC_PASS，只加舊fixture單行import identity修正，
+ab28dfd5派生同票revision02 Grant；原作者修F01/F02/E01中，不另開PRD或框架。
+C13候選79507b04回件：Root426guarded／strict2綠、不同合法BAgroup被錯拒門
+具名紅→精確綠，但F01重做native token acquisition違反凍結共用責任。
+不同席whole-source確認，377268ac原Grant revision02派原作者刪除平行實作、
+接回H10E raw query-only seam；原兩paths、原Context/WT/歷史不重置。
+兩候選均未source-stage組合；有效初候選測試不是整體PASS。仍僅04勾選，
+Host資格/真Grant正向/30B43/其餘必要效應驗收保持未完成。
 
 C13 PhaseA候選5b548dbd僅私有finite error及constructor tests，Root guarded13綠、
 不同property門8具名紅／5綠→精確還原13綠、最終strict2綠；不同席source
