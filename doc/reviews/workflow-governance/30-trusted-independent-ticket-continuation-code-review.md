@@ -1,5 +1,32 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N10 SDK factory-kind correction / same active scope — 2026-10-21
+
+New discriminating passive SDK readback on installed pywin32311: export
+pywintypes.SECURITY_DESCRIPTOR is builtin_function_or_method, not a type;
+HANDLEType is type, OVERLAPPED is also a constructor function. Only attribute
+inspection ran in a minimal-env Python child0.078s, no constructor/native API.
+Raw n10_pywin32_export_kind_readback retained by Root.
+
+F10 N10T1/T2 test truthfulness: current f490 _owner_and_descriptor checks
+type(descriptor) is pywintypes.SECURITY_DESCRIPTOR. A real descriptor's type
+cannot equal that constructor function: all actual lawful reads reject.
+The fake replaces the factory export with a class, masking the mismatch.
+Use the actual SDK factory/object contract and existing typed security descriptor
+methods/value validation; do not require a generated stub's class-shaped export
+or invent a parallel security model. Add a lawful fake factory function returning
+the descriptor object, preserving malformed/null-DACL negatives and native guards.
+No actual SDK constructor or security/Host effect is needed to reproduce this
+source defect. This is frozen legal-read/test-truthfulness, not a new AC.
+
+Same active Grant01/closure46/three paths and additive correction remain; no
+new permissions/source scope. Earlier F08/F09/E02 and exact current failure
+evidence remain. Send this committed same-scope finding to active original author;
+do not read active implementation workspace or reset its work. Root remains
+sole final reviewer. No qualification/SourceStage replay/closure follows.
+
+
+
 ## N10 correction review / same-scope narrow continuation — 2026-10-21
 
 Root CHANGES_REQUESTED at f49084101c22399cd7984fd5f088320e7ff07677 parent3a9053ef.
