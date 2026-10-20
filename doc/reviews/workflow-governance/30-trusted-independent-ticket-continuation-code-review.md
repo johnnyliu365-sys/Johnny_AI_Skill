@@ -1,5 +1,41 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N10 archive parity QA and N11 minimum continuation decision — 2026-10-21
+
+Different-seat /root/ticket30_native_tools_review actually decoded both immutable
+archives1c9cc2df/2660b9ae: all34 strictUTF8 originals, byte lengths/SHA and exact
+registered file bytes matched,0mismatches; composition original15474bytes exact.
+Source-stage43abc3cc parentfcb clean,3exactadds, prior103 unchanged/106total.
+No archived command/Native execution or qualification inferred. Checklist94/
+75c5c0f2 records engineering progress only; only04 remainschecked.
+
+AO narrows the next source construction to ONE fixed installed-approval registry
+read leaf plus existing-model decode, not a service loop/issuer engine/publicDTO.
+Proposed N11 exact threeCREATE paths are recorded in closure47; no effect or
+implementation Grant exists until its own bounded DOC/preflight/allocation.
+Reuse GrantPlan/AuthorityPeer/N9, duplicate/depth JSON checks, C13 later issuer
+identity and N10 later source bytes; do not add a second ownership/policy engine.
+
+Correction to earlier helper phrase: C13 requires LocalSystem+enabledserviceSID;
+CodeRoot serviceSID RX does NOT remove SYSTEM full control. Actual approved
+AC17R14 (adaptive SPEC lines662-680) protects issuer/approval against Agent/plugin/
+CLI runtime, not against compromise of its trusted issuer/OS administrators.
+The trusted issuer is TCB and enforces exact immutable approved plan+ledger
+in code/durable state. Do not claim issuer-self-write prevention or silently
+introduce restricted-service-SID requirements/requalification. No such issuer
+restricted-token path exists. Runbook03 section6 virtual-account text remains
+UNAPPROVED_OPERATION_PROPOSAL, not an override of C13. The future exact install
+packet must resolve account/startup/runtime/import/registry protections and
+actual binaries before effects; no Owner ordinary engineering choice required now.
+
+N11 only builds the fixed protected-registry source adapter and private validated
+values; it does NOT qualify SCM/PythonClass/pre-import startup, runtime/import
+closure, privileged issuer or a Host. RegQueryValueEx high-level wrappers allocate
+and retry internally; source construction must use a bounded native buffer rather
+than treating post-read length checks as allocation bounds. b311 primary wrapper
+source was read, no registry API executed. Registry source and file snapshot
+source are different native boundaries; no duplicate file reader/service loop.
+
 ## N10 exact source composition / continuation — 2026-10-21
 
 Grant27/1c9cc2df exact replay committed43abc3cc81ee2c162d95035dd5f2e62cfd60745b,
