@@ -36,7 +36,7 @@ H10H a41d3945完成同票修正：Root593guarded／strict3（不skip，拒絕Any
 兩舊silent-exit探針轉綠、不同合法plan門紅→精確綠；不同席source delta通過。
 4302a155封存六份原始bytes／Grant18，原pair3/4還原身份缺口保留、不回造，
 由Root最後精確候選三blob與具名2綠補當前證據；舊錯inverse原始缺失維持UNKNOWN。
-精確組合1ddd50e0三blob等受審版、其餘原60不變／總62，stage593tests／strict3綠。
+精確組合1ddd50e0三blob等受審版；原60中指定fixture一檔修改，其餘59不變／總62，stage593tests／strict3綠。
 僅engineering source-stage，不是正式main或Host資格，仍僅04勾選。
 C13 f316070d已刪平行acquisition並接真H10E，卻新發現unknown raw-return把None
 當owner保留；Root真H10E+fake門實證，ac00cfd2同Grant revision03派原作者窄修，

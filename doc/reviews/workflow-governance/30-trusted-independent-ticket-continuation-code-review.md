@@ -4,7 +4,8 @@
 Grant18/4302a155 replayed reviewed a41d3945 into Rootowned source-stage
 1ddd50e03ab9ca59ebd4fa05f6604afce4d3d915, parentexact23113241.
 Exact3pathdiff:2CREATE and oneoldfixture one-lineimportMODIFY. Three Gitblobs
-matchcandidatec7fa9532/a08a1328/474f2492; every other prior60pathblob unchanged.
+matchcandidatec7fa9532/a08a1328/474f2492; of prior60paths only the specified
+fixtureimport changes, the other59blobs remain unchanged.
 Total engineeringstage62paths vs18bf, clean. This is NOT main/authority
 integration, APPROVED_SOURCE, trustedissuerpositive or Hostqualification.
 Actualstage593guardedPASS7.65s/effects[], strict3PASS3.313s no skip +
