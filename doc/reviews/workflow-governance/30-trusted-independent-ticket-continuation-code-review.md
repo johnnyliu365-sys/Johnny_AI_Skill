@@ -1,4 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Native tooling payload readback preparation / local review build — 2026-10-21
+
+Parent original30/runbook03 installation-detail preparation; no new ticket/PRD/
+Host admission. Root source-review allocation: exact stage801af021 native_windows
+project/global.json/NuGet.Config/explicit compile inputs only, no source edits.
+H10I active author writes separate worktree/Python paths only. Root may build
+current existing tooling and run only pure fake self-test/contract commands to
+obtain actual build metadata for the eventual decision package. This binary is
+a TOOL, not yet an SCMservice; never claim its Program supports service hosting.
+
+Preregister owned passive Temp johnny30-native-payload-readback-20261021,
+Root owner, TTLthroughreadback/reviewseal, hold overridesTTL. obj/bin/home/cache/
+evidence live only there; no in-repo output, no directoryreuse/cleanup. Exact
+.NET SDK10.0.302 global, cleared NuGet feeds/RestoreIgnoreFailedSources=false/
+NuGetAudit=false/no telemetry/firsttime/update/workloadadvertising, explicit
+nonsecret childenvironment, no inherited credentialenv. --disable-build-servers,
+UseSharedCompilation=false/nodeReuse:false, child55/outer60 and timed result.
+Only existing self-test, enrollment-contract-self-test, job-contract-self-test;
+NOT job-self-test/job-fixture/inspect/observe/Host/model/SCM/security/ACL/pipe/
+network/native operational effects. Do not start compiler servers or installers.
+Read build output precisepath/size/SHA/version and source Gitblobs before sealing.
+No existing raw historical build relabeled; actual setup/account/privilege/
+service process and all qualification remain unapproved/unbuilt as applicable.
+ACTION_COMPLETED -> AUTO_CONTINUE bounded build/readback while H10I author works.
+
+
 ## H10I source admission / precise local child Grant — 2026-10-21
 
 Original30 closure42 at14e05a542e5ef9a14b01564d64fec7b838489ffe,
