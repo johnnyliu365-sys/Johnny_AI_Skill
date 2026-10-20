@@ -1,5 +1,43 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Next native reader API preparation — 2026-10-21
+
+N9 construction ACTIVE, do not read author uncommitted source or admit reader
+against nonexistent constructors. Root next bounded design remains original
+runbook same-process snapshot bytes, not a new service/Router/policy engine.
+Use private single-member operation bound to normal N9 member, controller-owned
+threading.Event and finite monotonic deadline; external service callback later
+resolves opaqueID against issuer-owned membership BEFORE this internal call.
+No external caller path/offset/digest/handle injection; constructor data alone
+never becomes approved membership. Return bounded bytes only after wholefile/
+fixedrange digests and native pre/post identity match; don't add redundant
+Grant/Report/observation DTOs or put32KiB through16KiB grantframe.
+
+Actual local distribution metadata pywin32=311, types-pywin32=312.0.0.20260817.
+Bundled function docstrings are None; stubs have incomplete/misleading legacy
+ReadFile return annotations, not runtimeproof. Primary API references:
+- https://raw.githubusercontent.com/mhammond/pywin32/b311/win32/src/win32file.i
+- https://mhammond.github.io/pywin32/win32file__ReadFile_meth.html
+- https://mhammond.github.io/pywin32/win32file__GetOverlappedResult_meth.html
+- https://learn.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-cancelio
+Use a preallocated retained readbuffer and actual completion count, not buffer
+capacity or success-status-as-bytecount. Same-thread CancelIo requests cancellation
+only; independently confirm completion or retain originalowners/buffer/overlap
+as RECOVERY_REQUIRED and forbid reuse, never rawclose or retry. Existing
+message-pipe lifecycle is precedent, not safe object-level reuse/refactor.
+
+Native GetFileInformationByHandle wraps times as Python datetime. For exact
+100ns pre/post time facts, bounded ctypes ABI capture (existing FILETIME type
+reused) is preferable to lossy timestampfloat conversion; freeze exact ABI and
+strict result shapes before reader dispatch. Current docs/tag are design
+evidence, not installed wheel/OS behavior qualification. Actual nativecalls/
+Host/security effects remain unexecuted; fake-only source tests cannot prove
+their native behavior. No N10 Grant or additional source paths active yet.
+ACTION_COMPLETED -> AUTO_CONTINUE N9 return/constructor review, then freeze
+only the necessary reader source/negative/lifetime closure in originalTicket30.
+
+
+
 ## N9 exact constructor-only implementation Grant01 — 2026-10-21
 
 Root derives grant-ticket30n9-snapshot-contracts-20261021 revision01 ACTIVE_CONSTRUCTION_ONLY
