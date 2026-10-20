@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N10 F08 returned-status supplement / finite SDK grammar — 2026-10-21
+
+Same frozenT2/T3 F08, not a new requirement: current f490 start_read treats a
+returned tuple status38 as confirmed EOF and other integers as known failed
+initiation, clearing pending and closing owners without completion evidence.
+b311 MyReadFile raises EOF38; its ordinary supplied-buffer tuple statuses are0/
+997 (234 is a different unsupported MORE_DATA path, not a generic no-IO proof).
+Distinguish a genuine raised nonpending API failure from an unknown/unsupported
+returned tuple. Reject the latter conservatively with original pending memory/
+owners retained; do not promote tuple38 to EOF success. Preserve the two genuine
+raised EOF positive positions and known raised5 failure semantics.
+Root n10_root_tuple_status_probe.py on frozen f490:38 empty input wrongly succeeds;
+87/234 return NATIVE_CALL_FAILED instead of recovery,3 intendedRED/effects[].
+All Native calls remain fakes; no real OS read. Current active same3path Grant01
+correction includes these finite status cases with F08/F09/F10/F11/E02; no new
+Agent/permission/publicprotocol/cleanup or count reset. No further source widening.
+
+
+
 ## N10 Python3 read-buffer representation / same active correction — 2026-10-21
 
 F11 frozenN10T1/T2 legal actual buffer: pywin32b311 AllocateReadBuffer calls
