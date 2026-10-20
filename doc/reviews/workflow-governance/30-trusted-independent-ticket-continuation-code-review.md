@@ -1,4 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H9 composed-source readback seal — 2026-10-20
+
+Root stageb605c88c33a8e6f5fb78ed65edc8460758b15540 parent1ae18b76 adds exactly
+two reviewed f22 H9 blobs6ab2693f/168ce045. Distinct batch-authority mapping PASS:
+all39 earlier mapped changes and other parent files unchanged, total41vs18bf.
+Root changed-context75guardedPASS1.953s/strict2PASS1.593s, memorycompile and actual
+loaded-source path/SHA/blob; no unpatched native/process/network calls. Root owned
+Temp/johnny30g-protected-source-review-20261020/source-composition-h9-root-evidence-
+20261020.json SHA f8f6926f3b4346e0c14a17840580b12249ab14dbb2b0f05153ebc5b2160f9261.
+Distinct archive DATA_INTEGRITY_PASS04ba5ff8: four UTF8 files byte-for-byte equal,
+all packet/gzip/file sizes and hashes match. No embedded commands executed.
+Native-helper continuation failed once with agent thread limit while another
+helper was active; after archive helper completed, that existing helper accepted
+the next mapping task. No activity polling/new agent/security workaround.
+Source engineering only, not qualified source/Host, formal main or30B/43 clearance.
+Checklist61 reflects H8/H9 finished engineering and active H10A, same single04
+checkbox retained. ACTION_COMPLETED -> AUTO_CONTINUE H10A source return/review and
+bounded next process ABI design, no push/release/deploy/Host/native/setup effects.
+
 ## H9-B source evidence seal / exact composition admission — 2026-10-20
 
 Root SOURCE_APPROVED (engineering only) candidate
