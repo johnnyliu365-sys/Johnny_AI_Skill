@@ -1,4 +1,34 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Remaining native dependency decisions — source preparation only — 2026-10-20
+
+Bounded install-inventory helper confirms existing NativeTools is plan/readback,
+not an SCM host, protection applier or independently protected observer. Python
+windows_service.py decodes observations, not a service/request loop. Existing
+ledger/client/peer/pipe/owner/observer components remain reuse sources; their
+presence is not qualified composition. Active B2 ABI remains the exact two-path
+slice, unaffected by these later choices; no active author source was inspected.
+
+Future H6 migration must NOT broaden shared _require_borrowed_handle_owner or
+_require_original_borrowed_alias: H9 token code imports both and its alias path
+also passes INVALID_PROCESS. A failure-enum branch would therefore confuse token
+and process roles. Keep those PyHANDLE-only helpers unchanged. Any later exact
+_CreatedKernelHandleOwner PROCESS acceptance belongs solely to the retained
+process reader's process path; job/token native-owner paths remain unchanged.
+The exact source interface and two-path migration are frozen only after B2 review.
+
+Root rejects the preliminary read-baseline-then-SetSecurityInfo recovery design:
+no atomic descriptor CAS is proven, so checked-read then restore cannot claim
+preservation of concurrent user changes. No such source Grant or effect exists.
+The next protection-settings source mechanism is limited to new owned objects
+with protection at creation and fail-closed existing-target refusal; partial
+setup remains Recovery, never automatic delete/unsafe overwrite. Reuse existing
+NativeEnrollment's bounded payload/config/dependency list and ProtectionPlan,
+not invent a second manifest or rollback framework. Actual exact target set,
+privileges/SID/security settings and installation remain later Owner-confirmed
+operations. Build/fake verification is separate from applying permissions.
+This is a technical narrowing under the original batch, not weakening RWW6,
+granting an operation or modifying R0/DAP/TAL/Recovery.
+
 ## H10B2 exact same-lifetime source admission — 2026-10-20
 
 Original30 closure28 exact committedbc192979d460eabef30b3b4ab05119687dbcf5c0,
