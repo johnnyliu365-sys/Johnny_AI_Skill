@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Fixed first-entry bootstrap source determination — 2026-10-21
+
+Bounded readonly existing-source query by /root/ticket30_native_tools_review,
+stagefcb373a6 and current runbook03 sections2/3, confirms no protected approval
+planstore/service entry. GrantPlan/digest, ledger.issue and value-only H11/C8 do
+not prove approval or native protection. Do not call source containment completion.
+Minimal next source responsibility after N10: protected fixed bootstrap plus
+existing protected transport/claim-before-read/settlement composition, not a new
+public Grant model, online approval API/UI, Router or policy framework.
+A single fixed installation manifest CAN be proposed as the first approval entry
+only when Owner later explicitly accepts exact business plan/snapshot content and
+installer independently seals/proves protected issuer/code/config/ledger/source
+identity; this is a design inference consistent with runbook, NOT current approval.
+Require a root trust anchor not caller path/hash/flag; every effect rechecks actual
+protected bindings. Constructed manifest or expected N9 values alone authorize none.
+Current C13 requires SYSTEM+enabledserviceSID, which is not the old proposed virtual
+account. No account choice/privilege expansion accepted implicitly; the eventual
+single exact external operation package must disclose it and request risk consent.
+No current authority/Host qualification, service installation, source reader call,
+manifest acceptance, newpath Grant or operational effect follows from this note.
+N10 fake-native implementation continues separately; do not read its active WT.
+
+
 ## N10 exact construction Grant01 — 2026-10-21
 
 grant-ticket30n10-snapshot-reader-20261021 revision01 ACTIVE_CONSTRUCTION_ONLY.
