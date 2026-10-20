@@ -1,4 +1,52 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10G initial CHANGES_REQUESTED / same-scope correction — 2026-10-20
+
+Candidate50c49a355934dc4085ef8a2b6a78796b59abf787, closure36/Grant72cb001e,
+exacttwoCREATE, NOT integrated. Root375guardedPASS7.313s/effects[] and strict2
+PASS26.312s do not close frozen boundary evidence. Product326/test715 lines,
+one privateassignment lifetime and reused H8/B2 fixture/H6 parser matrices,
+actual structure reviewed; no forcedfile split or newharness requested.
+
+G-F01 FROZEN_REUSE_NONCONFORMANCE: _require_registered_original_pair manually
+reimplements H10D originalpair validation despite explicit frozenreuse obligation.
+Delegate to existing H10D _require_live_pair/_require_same_open_pair as appropriate,
+do not add thirdguard or widen other files. Helper initially hypothesized caller
+forgedpublicview, then RETRACTED: B2 readonly properties return privateowners.
+Root class-property monkeypatch probe fails expectedrefusal but changes trusted
+classcode, NOT proof ordinarycaller canforge a publicview or unsafeauthority.
+Preserve exact probe/hypothesis/correction, no securityexploit claim.
+
+G-F02 RECOVERY_REVALIDATION_DEFECT: _read_checked_membership exception path
+returns NATIVE_CALL_FAILED without afterboundary owner/pair validation. Root
+fake validrecord/queryhook changes original PI processalias then raises:
+finite error/noAssign, but record remainsSUCCEEDED instead of retaining drift
+Recovery. This is Recovery evidence/state nonconformance, not observed unsafe
+Assign or Grant success. Require postquery guards on exceptional exits too;
+retain same original resources when drift is observed, while known no-drift
+prequery failures remain ordinary refusal, not unconditionalpoison/rejectall.
+Two Root probesactualRED/noexternalcalls, unchangedcandidate bytes; raw
+h10g-root-initial-findings-20261020.json includes fullcommands/outputs.
+
+G-E01 H10GT2 evidence: title says closed_or_expired but only closed/wrongowner
+executed. Add actual admission tests wrongjobtype, expired, poisoned, nestedborrow
+and existing negatives before membership/Assign, legitimate path staysgreen.
+Reusing H8unit proof alone does not pin this consumer's connection to thatgate.
+G-E02 H10GT4 evidence: author four namedmutationRED; pairs1-3 source/testbound
+restoredGREEN, pair4 GREEN missing per-run identities (manifest/note only).
+Keep as gap, no reconstructedhistory. Corrected finalsource needs affected
+behavior/counter proof including actualsource/test blobs/patch/argv/fulloutput
+before/after eachrun. No unrelated oldcampaigns or baselinepreflight rerun.
+
+CHANGES_REQUESTED under original Grant/batch: SAME author, worktree/branch,
+closure36, baseline/Context/remainingauthority, exacttwofiles only, additive
+commit. Root provides existing pure probe command in registeredraw, author adds
+maintainable regression to existingfocusedtest (no newprobe script/framework).
+No AC relaxation/role/permission/budget reset; uncapped correction remains
+evidence-progress, no unchangedfailure retry. Preserve all earlierhistory/
+fixturefailures/claimedraw/missingM4metadata; no formal qualification.
+AUTO_CONTINUE -> originalauthor narrowfix / affected375+newcells/strict2/
+memorycompile/import/finalmutations / Rootdifferentdoor/distinctsourcecheck.
+C12 independentcandidate returned and is under source review; neither is done.
 ## Operational prerequisite readback — not an effect authorization — 2026-10-20
 
 Fixed source-stagef8754baa windows_subject_token.py108-113 calls
