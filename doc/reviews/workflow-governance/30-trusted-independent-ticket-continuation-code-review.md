@@ -1,5 +1,48 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N11 initial engineering review / same-Grant correction — 2026-10-21
+
+Candidate5bcb131ef92b21cc550db628e61b4311a65905de is CHANGES_REQUESTED,
+NOT_INTEGRATED. Root read all three files; guarded173 and strict3 PASS do not
+override the following four frozen closure47 defects. Different-seat immutable
+source helper /root/ticket30_native_tools_review actualFINAL independently
+identified/consolidated them; ordinary source evidence, NOT qualified audit.
+
+F01 / N11T3 exact-owned-once and alias uncertainty: registry _open accepts an
+already retained/parent HKEY, and does not exclude INVALID_HANDLE_VALUE success
+output. Root fake Advapi exports returned777 at every open; real private entry
+returned a record instead of RECOVERY_REQUIRED. Never double-close an alias;
+retain original owners/output holders and poison uncertain ownership.
+F02 / N11T2-T3 controller between native operations: cancellation set during
+get_security still allowed one query_last_write. Root expected zero and observed1;
+known owners must still close once on a clean cancellation path.
+F03 / N11T3 deadline/cancellation return boundary: monotonic100/deadline120,
+final close advancing to121 still returned a record. Recheck after known-owner
+closure and after decoding before success; preserve finite failure and ownership.
+F04 / N11T2 leaf protection: Parameters accepted two trusted effective allows plus
+an untrusted inherit-only allow. Root pure real parser reproduced acceptance;
+ancestor inherit-only remains a legal positive. Leaf's exact trusted ordinary
+allow rule must not be weakened to an effective-allow-only filter.
+
+Root original unfiltered probe4cells:3FAIL/1legalPASS4.20s, plus separate leaf
+FAIL with legal ancestorPASS; unpatched effects[] in both. Raw commands/results,
+exact candidate/blobs, strict/guard sessions and limitations retained in registered
+RootTemp n11-root-initial-review.json; executed probe n11-root-independent-01.py
+immutable. No product mutation pending, review WT candidate remains exact/clean.
+Author final index b4a53b43 claims four pairs; combined initial index/source read
+truncated, so it is not a full independent raw-evidence PASS. Read final correction
+original pairs with bounded full outputs before any eventual source seal.
+
+AUTO_CONTINUE IMPLEMENT correction under original Grant01/closure47, same owner,
+Context/worktree/branch/three CREATE paths, baseline43abc3cc and batchuncapped.
+Only repair F01-F04 and corresponding reusable/parameterized regression cells;
+no new source path/DTO/framework/AC/budget reset or operational permission.
+Freeze clean additive candidate before final-byte pairs; affected tests/strict3/
+memorycompile/import, four author named pairs and Root different legal-positive
+door remain required. Normal legal entry must still pass. Owner cannot approve
+itself; Root reviews and controls any exact-blob source-stage composition only.
+No Host qualification,30B43解除, checklist checkmark, push/release/install/effect.
+
 ## N11 final-return admission / bounded Root probe reservation — 2026-10-21
 
 Actual owner FINAL candidate5bcb131ef92b21cc550db628e61b4311a65905de,
