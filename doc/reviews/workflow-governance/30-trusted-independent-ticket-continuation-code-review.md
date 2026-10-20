@@ -1,4 +1,36 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10B1 same-lifetime exact local admission — 2026-10-20
+
+ACTION_COMPLETED77016e4d -> AUTO_CONTINUE IMPLEMENT original30 closure27.
+Distinct native-tools DOC_PASS exact ticketblob3ad733aadbe56fe3e3f552630d458895b2cdf8d1 /
+LF988c4923b0a587cbaefff18276a6bbac0c6286ebd477bf774116d2744d4bc475,
+registry D8 match. Actual source00a9c90d has existing owner/lock/recovery seams;
+no speculative DTO precondition or operational source qualification invented.
+Normal strict _SubjectJobLimits/_PrimarySubjectIdentity constructors and existing
+owner-class imports PASS022000, no native owner created or OS effect. Fake test
+interleaving must discriminate actual borrow locking, not just wrong-thread guard.
+
+Child grant-ticket30g-owner-borrow-20261020 revision01 B1_ONLY ACTIVE under
+batch-checklist-local-20261019-uncapped. Exact sourcebaseline
+00a9c90d82f04a1cbeb906331f6a5d4059974657; implementation owner
+/root/ticket30n4_peer_impl, its prior H9 allocation RELEASED_TO_IMMUTABLE_HOLD;
+Root sole reviewer/orchestrator, distinct native-tools helper.
+Fresh contained nonreparse WTs .worktrees/skill-improvement-30g-owner-borrow and
+matching-review / codex/same created clean at exactbaseline; context
+ctx-ticket30g-owner-borrow-20261020, no old raw H9 view. MODIFY ONLY existing
+grant_authority/windows_subject_lease.py, its namedtest, windows_subject_token.py,
+its namedtest; CREATE0/DELETE0. Full closure27 acceptance/negative tests unchanged.
+OwnedTemp/johnny30g-borrow-owner-20261020 and -review-20261020 created, owners
+respectively author/Root, purpose fake verification/evidence/one cache each,
+TTL through review/seal then referenced immutable hold; no expiry deletion.
+
+Runtime/private source seam only, no callable production dispatch/issuer effect.
+B2/native ABI/process launch remains NOT_ACTIVE. No native jobs/tokens/processes,
+Host/service/SCM/account/ACL/install/network/model/cleanup/push/release/deploy/
+formal activation or30B43 clearance. Child55/outer60 initial bounds/resources
+monitored, historical usage retained, uncapped amendment unchanged. No further
+Owner technical renewal or new Agent/PRD/parallel workflow.
+
 ## H10A composition / bounded B1 preparation — 2026-10-20
 
 Source-stage00a9c90d82f04a1cbeb906331f6a5d4059974657 parentb605c88c adds
