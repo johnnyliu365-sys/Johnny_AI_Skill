@@ -1,5 +1,50 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N11 exact local construction Grant01 — 2026-10-21
+
+grant-ticket30n11-installed-approval-20261021 revision01 ACTIVE_CONSTRUCTION_ONLY.
+Parent batch-checklist-local-20261019-uncapped / original30/PRD009/CHG009/
+Context04/runbook03 section2 and same first-CVQ source-order exception only.
+Exact closure47 6f067d85a881007c1336429bba099af0354b23c7,
+ticketblob5f0baf2d447eda537e3147183667c9c182465ea2,
+LF9129c24c87ecf85c205b4dd9989c862df8d6f270f19e1f5d20c50bedf32f7eb8;
+different-seat DOC_PASS, initial contradiction+additive correction retained.
+Asset reservationc7ed2d75 actually allocated/readback: both exactregistered,
+ordinary nonreparse worktrees/metadata backlinks, matching clean43abc3cc81ee2c162d95035dd5f2e62cfd60745b.
+Owner /root/ticket30n4_peer_impl retained approvedLuna/xhigh, branch/worktree
+codex/skill-improvement-30g-installed-approval / repository .worktrees/same;
+Root reviewer codex/skill-improvement-30g-installed-approval-review / .worktrees/same.
+Context ctx-ticket30n11-installed-approval-20261021; registered Temp/TTL/holds as
+c7ed2d75, old N10 views immutableheld and not reused. One ownerlane only.
+
+Root existing ordinary-constructor preflight on actual43abc source PASS:
+GrantPlan+JSON, AuthorityPeer+JSON, N9Source/Member+JSON, Event/finitefloatdeadline,
+existing planDigest; fakegeneric data only, no historicalobject/bypass/cast success.
+Native registry/file/token/SCM/ctypes/process/socket guard calls[], no realIO.
+Initial Root command assembly syntax failed before imports; corrected escaped
+newlines with no product or assertion change, original failed command retained.
+Raw n11-root-preflight.json in exact registered RootTemp. New private native/
+record types explicitly NOT_YET_BUILT; construct/test in this slice before any
+later consumer. No new public successDTO/schema-preexistence exception required.
+
+CREATE ONLY exact three closure47 files: windows_approval_registry.py,
+windows_installed_approval.py and tests/test_grant_authority_windows_installed_approval.py
+under declared directories.0MODIFY/DELETE/exports/dependencies. Private registry
+read+decode only, not issuer/service/ledger/SCM/Pythonstartup qualification.
+No new caller-supplied approval/path/root/hash/input envelope; source-only return
+does not authorize operational effects. Preserve final nativebounded/fake tests,
+four author RED/exactGREEN pairs, Root differentdoor, strict3/focusedregression/
+memorycompile/actualloadedsource and original unreduced commands/outputs.
+Root is sole reviewer/orchestrator/finalintegrator, owner cannot approve itself.
+No helpers/delegation by implementation owner or sibling/control edits.
+
+Router AUTO_CONTINUE IMPLEMENT same-lifetime direct, bridgeNOT_REQUIRED.
+No cumulative command-time/fixed-correction ceiling reset, preserve history;
+defaultchild55/outer60, diagnose before adjustment/repeatedfailure. No actual
+Native/registry/SCM/Host campaign, installer/security/accounts/permissions/services,
+network/provider/model/newfees/push/release/deploy/formalactivation/deniedcleanup.
+30B43/TAL/R0/DAP/Recovery and unchecked wholechecklist states unchanged.
+
 ## N11 closure47 DOC pass / exact asset reservation — 2026-10-21
 
 Different-seat /root/ticket30_native_tools_review FINAL DOC_PASS_NOT_OWNER_APPROVAL
