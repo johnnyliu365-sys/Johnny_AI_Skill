@@ -1,5 +1,51 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Next existing-service composition seam / bounded preparation — 2026-10-21
+
+While exact N11 source owner works, Root and the retained readonly helper used
+only existing committed sources and primary SDK startup source, no activeowner
+reads/Host effects. Do NOT create an empty service shell or equate metadataIPC
+with app-serverSTDIO. Reuse installed win32serviceutil.ServiceFramework for
+SCM callbacks, SvcRun/status and SvcDoRun/SvcStop rather than another engine.
+
+Actual b311 PythonService.cpp startup initializes Python and imports
+servicemanager BEFORE the project class. PythonClass is a defaultREG_SZ in its
+service subkey; an optional path prefix is inserted into sys.path. DLLmain cwd
+change occurs too late to protect the preceding EXE/DLL import. Exact pre-import
+OS protection of host, PythonDLL, servicemanager, pywintypes, registry PythonClass,
+runtime/import/dependency closure, path/env/cwd inputs must precede service launch.
+A project self-check cannot retroactively prove it. Owner install/SCM/account/
+security/effect package remains NOT_AUTHORIZED, not a request for an unbuilt product.
+Primary source https://raw.githubusercontent.com/mhammond/pywin32/b311/win32/src/PythonService.cpp
+spans743-825,994-1005,1062-1118,1156-1194,1351-1399; CPython3.11 Windows finding-modules
+and Windows DLL search documentation support the separate startup boundary.
+
+Existing passive pythonservice.exe20992bytes SHA
+9286c09f74c96d895989198e098f88fe117abf82cacaeac1d9a6d0880fc4ba92
+has no FileVersion/ProductVersion; pywin32 distributionVersion311 is separate
+package evidence, NOT a fabricated dotted executable FileVersion or proof N1's
+NativeSetupManifest executable_version accepts it. NativePayloadEntry dependency
+role already pins path/hash/size without PEversion, and N9 file identities likewise.
+Retain N1 manifest meaning, don't weaken it or guess unbuilt service version.
+
+Before a useful issuer service entry, a private fixed factory needs genuine N11
+readback, C13 currentissuer verification and protected store admission. Existing
+SQLiteGrantLedger constructor accepts callerPath and creates schema; issue at139
+does no OS-protection/Owner check. Parent/DB/auxiliary files/protection and a fixed
+store path must be admitted before initialization/issue. No caller path/plan/hash
+or C8 pure MATCH marker substitutes. N11 approval_ref/operation_ref/peer/members
+are not fields in GrantRecord; keep their exact binding in protected source/
+factory and later peer enrollment, never infer all of it from issue.
+
+Existing pipe factory, bounded message IO, message-identity observer and retained
+process observer are real source seams, but H11 consumes supplied enrollment/
+observation and only ledger.read. It is NOT snapshot-byte read/claim/response and
+is not provenance. claim remains a separate durable CAS before actualread.
+Source for next minimum slice should close store/factory admission then service
+composition, not immediately wrap fake callbacks or add a second broker/runner.
+No next source path/Grant is active from this preparation; N11 remains the one
+active implementation lane. Actual runtime/Host/CI/formalactivation holds remain.
+
 ## N11 exact local construction Grant01 — 2026-10-21
 
 grant-ticket30n11-installed-approval-20261021 revision01 ACTIVE_CONSTRUCTION_ONLY.
