@@ -41,6 +41,134 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
+## 30N12 — fixed protected-store admission / closure48 proposal
+
+Original30/PRD009/CHG009/Context04/runbook03 section2 and same uncapped
+batch/first-CVQ source-construction order. Source baseline
+a6071d5f2734091934a8645884c7db2068f62569 is engineeringhold only.
+N11 final1d72c996/sealc1d875ec and independent43-original QA retained;
+N10/N11/C13/ledger and all old consumers/tests remain unchanged.
+
+CREATE ONLY:
+- library/local_orchestration/grant_authority/windows_protected_store_native.py
+- library/local_orchestration/grant_authority/windows_protected_store.py
+- tests/test_grant_authority_windows_protected_store.py
+MODIFY/DELETE/export/dependency0. AO bounded review selects three cohesive
+responsibilities: platform file protection/ownership, fixed-source composition,
+shared parameterized tests. No security helper framework, copied binary ACL
+parser, ledger, generic factory, service loop, public Grant DTO or new engine.
+Reuse installed pywin32 structured descriptor APIs, N10 _OwnedHandle/facts
+where exact, N11 actual reader and C13 actual issuer check.
+
+Private _open_protected_grant_store(cancellation:threading.Event,
+deadline:float)->_ProtectedGrantStore has NO caller path/approval/peer/plan/
+hash/marker. Imports and ordinary private constructors perform no native IO.
+Exact Event, finite future float monotonic deadline <=60s, same issuing thread,
+check before/after bounded operations, cancellation/deadline cannot return success.
+Fixed order: actual N11 _read_installed_approval -> actual C13
+_verify_current_wts_issuer_identity(approval.peer) -> native pre-admission ->
+existing SQLiteGrantLedger(fixed_database_path) -> native post-readback ->
+private lifetime-bound store. N11/C13 failure means zero later native/store calls.
+Keep exact approval/peer/member binding private; no raw ledger getter or
+issue/read/claim/settle forwarding, export, target/remote read, dispatch or receipt.
+This is SOURCE_ONLY_UNQUALIFIED construction, not operational Grant issuance.
+
+Resolve only native KnownFolder ProgramData through existing SDK bounded string
+boundary; no env/cwd/caller/registry fallback. Exact local canonical drive path,
+bounded UTF16, no UNC/device/relative/dot/ADS/reparse route. Derive only
+JohnnyGrantAuthority/state/grants.sqlite3. Pre-created DB and managed directories
+must exist; OPEN_EXISTING only, never let SQLite create a missing DB or change ACL.
+Managed root must later be protected-at-creation by separately approved installer;
+source fake evidence cannot prove no pre-existing dangerous native handle exists.
+
+Retain volume root and every prefix through ProgramData/managed root/state/DB:
+READ_CONTROL|FILE_READ_ATTRIBUTES, FILE_SHARE_READ|FILE_SHARE_WRITE, no SHARE_DELETE,
+OPEN_EXISTING/OPEN_REPARSE_POINT; directory BACKUP_SEMANTICS, noninheritable owner.
+Do not reuse N10 SHARE_READ-only open. Reuse _OwnedHandle once-close/alias checks
+and query_facts(include_security=False) where exact; N10 finite64MiB DB admission
+cap retained explicitly, never truncate/read DB contents or weaken N10 policy.
+Actual path/volume/file-ID/disk/nonreparse checks before construction. Every opened
+owner distinct, no raw/borrowed/invalid/pseudo alias, native owner uncertainty
+retains original wrappers/backing and poisons; no raw close fallback or GC cleanup.
+
+Protection via bounded valid immutable self-relative descriptor and existing SDK
+ACL/GetAce getters; no copied registry binary parser or process/pipe-specific policy.
+Managed root/state: protected nonnull DACL, exact SYSTEM/Admin full file access
+ordinary allows with directory inheritance; DB same principals/full access with
+no inheritance flags. No extra principal/object/conditional/unknown ACE, null DACL,
+untrusted owner or mutable/unproven descriptor. SYSTEM/Admin are trusted TCB;
+service SID RX does not constrain SYSTEM and no restricted SID policy is added.
+Unmanaged ancestors are NOT forced into managed two-ACE/protected policy and
+no OS ACL change is allowed. Still reject effective untrusted authority capable
+of replacing/deleting/reparsing the retained child or changing parent owner/DACL;
+identity pins alone do not prove safety. Ordinary ancestor allow/deny grammar and
+effective-vs-inherit-only flags bounded; unsupported actual descriptors fail closed
+UNAVAILABLE, not blanket ACL rewrite. Descriptor checks use the retained handles.
+
+Before constructor, fixed -journal/-wal/-shm must all be absent. Presence or unknown
+status refuses before constructor; never read/delete/rename/recover them. Do not
+pin auxiliary files (would block legitimate SQLite journal cleanup). After constructor
+check their absence again: residue/unknown means RECOVERY_REQUIRED. Pins for main
+DB/parents remain alive throughout constructor and store lifetime, not check-drop-open.
+Postcheck compares exact path/volume/file-ID/nonreparse/protection; DB size/time may
+legitimately change due schema creation, but size must remain <=64MiB. Managed
+parent metadata time need not remain unchanged when journal creation is legitimate.
+
+Before constructor, known refusal closes known owners in reverse once; close
+uncertainty retains exact owners/backing and poisons. Once constructor invoked,
+exception/post-drift/aux residue/cancellation or ownership uncertainty implies
+possible schema/journal effect: retain pins, any produced ledger/native backing,
+return finite RECOVERY_REQUIRED; no fabricated rollback, close/retry/delete.
+Successful private store holds pins and exact approval, exposes only checked
+same-thread finite close; no auto destructor/finalizer or raw ledger escape.
+Unknown close retains/poisons; known close releases each once. Errors/log/public
+outputs contain no raw paths/approval/bytes/SID/ACL/native exception.
+No grant state machine or second authorization source is introduced.
+
+N12T1 real composition entry+real admission over shared fake native/ledger boundary:
+N11->C13->pre->constructor->post exact trace; pins alive; exact64MiB legal DB,
+empty DB, canonical Unicode paths, valid inherited ancestor versus managed policy.
+No Actual->Expected copying. Record actual loaded source/candidate/exact3blobs.
+N12T2 N11/C13 failure, caller argument/env fallback, missing DB, bad canonical
+path/identity/owner/reparse/DACL/ACE/mask, cap+1, preexisting/unknown auxiliary:
+constructor0, finite sanitized refusal, no hidden effect. Ancestor replacement
+rights must fail; legal ordinary ancestor/managed policy must still pass.
+N12T3 constructor exception, post identity/protection drift/aux residue,
+deadline/cancel between operations/final return, alias/unknown ownership/close,
+wrong-thread/reuse: exact retention+terminal poison, no retry/fallback/cleanup;
+successful close once. Include interrupted native outcome, not Exception-only.
+N12T4 author four groups RED/exactrestoredGREEN on final candidate:
+protection/share-delete, preconstructor admission order, postcheck/residue,
+ownership/recovery. Root different legitimate positive boundary door. A mutation
+that merely changes failure classification is labelled as such, not escaped effect.
+
+Newtest + existing N11 installed-approval and grant ledger tests; strict3
+--strict --disallow-any-unimported --explicit-package-bases, memorycompile/import,
+actual-loaded-source check, Native/file/registry/token/SCM/SQLite/process/network
+denyguards. Test only approved fake boundaries; no real SQLite file/constructor
+or SDK/native effect even in temporary directories. Existing native models/
+normal constructors are preflight sources; new private constructors checked on
+candidate before source approval, no fictional operational qualification
+prerequisite to build this first capability. No public typed contract migration.
+Forecast native400/composition180/tests450 effective lines: >500 is structural
+review signal, not forced split/minify or permission for duplicate scripts.
+TEST->A->B N/A: no old behavior moved/retired, old tests unchanged.
+
+Root AO/sole reviewer/orchestrator; retained /root/ticket30n4_peer_impl Luna/xhigh,
+Root independent source review plus distinct retained sourcehelper evidence only.
+Fresh owner .worktrees/skill-improvement-30g-protected-store / codex/same;
+Root -review same baseline; Context ctx-ticket30n12-protected-store-20261021.
+Reserve exact LOCALAPPDATA/Temp johnny30-protected-store-owner-20261021 and
+johnny30-protected-store-review-20261021 before create, owner-specific TTL through
+seal/hold; references/Recovery override expiry, no automatic deletion. N11 prior
+allocations immutable-held, not reused. ChildGrant candidate
+grant-ticket30n12-protected-store-20261021 revision01 NOT_ACTIVE until exact DOC,
+preflight/allocation/readback; direct same-lifetime bridgeNOT_REQUIRED.
+Batch uncapped historical accounting retained; child55/outer60 initial finitebounds.
+No actual Host/Native campaign/install/security/account/ACL/service/config/registry/
+remote/model/network/newfees/push/release/deploy/formalactivation/deniedcleanupretry.
+30B43/TAL/R0/DAP/Recovery and unchecked checklist states unchanged.
+
 ## 30N11 — fixed installed-approval registry source / closure47 proposal
 
 Original30/PRD009/CHG009/Context04/runbook03 section2, same uncapped local batch
