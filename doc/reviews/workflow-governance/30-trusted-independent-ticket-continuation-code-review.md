@@ -1,4 +1,62 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C13 malformed Close capability / same-ticket correction Grant revision04 — 2026-10-21
+
+Revision03 return e6dc0417d4caafe09d9388e9c555f44077e30014, parent f316070d,
+exacttwoMOD. Root actualH10E fake-native None probe nowGREEN, 429guarded affected
+testsPASS2.83s/effects[]. These close the narrow None/primitive case, not all T3.
+Root own different legitimate BAgroup rejection door produces namedRED; source
+exactlyrestored b39131d3/b95de6c3. No author all-reject completion is accepted.
+
+C13-F03 IMPLEMENTATION_DEFECT under unchanged closure39/T3 unknown-return and
+Close-capable owner requirement: H5 runtimeProtocol recognizes attribute presence,
+not callability. Distinct helper static finding independently reproduced by Root:
+actualH10E fake OpenProcessToken returns object(handle=13398,Close=17); C13
+eventually refuses/poisons but retains that nonclosable object as acquiredowner.
+Root assertion NONCALLABLE_CLOSE_MUST_NOT_BE_RETAINED_AS_OWNER is namedRED,
+unpatched external effects[]. No source rewrite or actual Native invocation.
+Root raw c13-root-noncallable-owner-review-20261021.json SHA256
+18c00af9299036dea683fa8b08e537fb76dad8b6134f49debcc40dae26da871e.
+Root asynchronous strict22.265s overlapped temporarycounter (coordinationerror);
+that result is EXCLUDED as final-byte strict evidence. Subsequent strict must
+finish before any mutation, then exactrestore before next verification. Preserve
+this error rather than relabeling it as final original-source validation.
+
+grant-ticket30g-issuer-identity-20261020 revision04 ACTIVE_CORRECTION,
+parent batch-checklist-local-20261019-uncapped, original30 closure39/Context,
+same owner /root/ticket30n4_peer_impl, Root finalreviewer, same author/reviewWTs,
+branches, Temps, allocation, old usage/findings and Recoveryholds. Exact additive
+baseline e6dc0417d4caafe09d9388e9c555f44077e30014. MODIFY ONLY
+library/local_orchestration/grant_authority/windows_issuer_identity.py
+tests/test_grant_authority_windows_issuer_identity.py.
+CREATE0/DELETE0/export0/dependency0; overalltwoCREATE vs23113241. All other source
+readonly, including H5; no general owner-framework/parser or scope expansion.
+Recognize actual callable Close before an opened value becomes an owningresource.
+Missing/noncallable/exceptional Close recognition must fail closed without calling
+unknown Close or inventing owner. Valid callable owner with invalid queryalias
+must still retain exactoriginal; healthy callable owner must succeed/closeonce.
+No blanket rejection, fallback ownership, extra native producer/retry/Recoveryclear.
+
+Beforefix record noncallable-Close baselineRED, add narrow parameterized regression
+with None/primitive/unusable Close recognition vs valid recognized/invalidalias and
+healthy positive. Reuse actual H10E through nativefake and existing H5/H9 helpers.
+Run affected tests, strict(no Any skip), compile/load/blobs. New reverse mutation
+must detect dropped callable check; exactrestore GREEN. Prior frozen T1-4 mutation
+evidence may be reused only where source/test identities and dependency impact
+actually justify it; do not rerun unrelated inventories. Report final identities,
+full raw outputs before display, exact argv/env/deadline/timing and any evidencegap.
+Root own fresh probe plus distinct legitimatepositive mutation remains required.
+No actual Native/Host/token/process/job/SD/pipe/SCM/service/security/rights/account/
+ACL/install/network/model/provider/newcost/cleanup/push/release/deploy/activation.
+Only bounded offlinefake controlchildren/passiveownedoutputs, child55/outer60
+unless diagnosed otherwise. No cumulative/count reset or new Owner question.
+ACTION_COMPLETED -> AUTO_CONTINUE sameauthor correction; qualification staysBLOCKED.
+
+H10H final artifact QA from distinct /root/ticket30_native_tools_review:
+SOURCE_MAPPING_ARCHIVE_PASS at control9b967596/stage1ddd50e0; six embeddedfiles
+byte-identical, gzip43143/packet415889 verified, exactthreecandidateblobs,
+59otherpriorpathsunchanged/62total, diffcheck0. Pair3/4 historical evidence limits
+remain; not CVQqualification/main integration. Original12 only04checked.
+
 ## H10H exact source-stage composition readback — 2026-10-21
 
 Grant18/4302a155 replayed reviewed a41d3945 into Rootowned source-stage
