@@ -1,4 +1,62 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C13 PhaseB source review / same-ticket correction Grant revision02 — 2026-10-21
+
+Root CHANGES_REQUESTED at79507b0470189be8f97dc500f7e5f521399dbf41:
+product9831da37267685b25c364f1c02232b61c4de7f67 / test
+60f35e1dc431b498cef1190a2204e630d671f3d6, exacttwoCREATE overall,
+clean matchingreview. Root426guardedPASS2.55s/effects[], strict2PASS3.406s.
+Own differentdoor rejects legitimate BA group at actualgroupvalidator: normal
+SYSTEM/PRIMARY/serviceSIDpositive namedRED, exacttwooriginalblobs/restoredGREEN.
+These passes are not source approval, trusted Grant or Host qualification.
+
+C13-F01 IMPLEMENTATION_DEFECT closure39 reuse requirement:
+product _native_open_process_token_query reimplements ctypesOpenProcessToken
+and constructs retained_process._OwnedTokenHandle. Frozen scope permits one new
+GetCurrentProcess producer only; reuse H10E windows_created_process_identity.
+_native_open_process_token rawTOKEN_QUERY, not its positive-session record reader.
+Existing fakeharness exercises the duplicate, not requiredsharedopen.
+Remove duplicated native acquisition/owner creation, keep smallest role-specific
+validation/recovery through existing H5/H9helpers; preserve borrowedpseudo rule.
+No new authority, DTO, owner lifecycle, publicentry or parallel parser needed.
+Distinct /root/ticket30_native_tools_review wholeproduct/test/contract inspection
+independently confirmsF01, no further frozen defect established, SOURCE_PREFLIGHT
+CHANGES_REQUESTED. Both406/489physicalfiles represent one issueridentity concern;
+no line-count-only split or additional best-practice acceptance requirement.
+Author first TokenUser mutant0RED is retained notPASS; v2RED/restoredGREEN only.
+Author environment_overrides do not prove full inherited environment, no assumed
+safe/qualified claim. Root raw ownchecks provide independent guarded proof.
+Original author final -vv output first view truncated; no claim Root reviewed all
+authorraw yet. Missing/oldcapture retained, do not fabricate previous observations.
+Root raw c13-root-phase-b-initial-review-20261021.json SHA256
+378395c53f0a3765dfc4f9a9d924cb9c93dfd72e2b606b390c1139022a20ba24
+in existing registeredreviewTemp; no activeproductmutation remains.
+
+grant-ticket30g-issuer-identity-20261020 revision02 ACTIVE_CORRECTION:
+parentbatch unchanged, same original30 closure39/leaf88886144 LFd52d8fe3/
+PhaseAsealca8ccba6, additivebaseline79507b0470189be8f97dc500f7e5f521399dbf41.
+Same author /root/ticket30n4_peer_impl, Root solefinalreviewer/orchestrator,
+existing distincthelper; same containedauthor/reviewworktrees/branches/context/
+ownedTemps/retainedhistory. MODIFY ONLY existingtwoC13paths
+library/local_orchestration/grant_authority/windows_issuer_identity.py
+tests/test_grant_authority_windows_issuer_identity.py.
+CREATE0/DELETE0/export0; all other source/tests readonly. Overall2CREATEvs23113241.
+Beforewrites exactHEAD/index/blobs/worktree check; additive commit, no reset/amend.
+Use normaltypedexisting constructors; no newtypebootstrap or Owner question.
+Tests must execute actual H10E rawopen under faked nativeproducer, not fakeaway
+that dependency; query-only access/currentpseudo/exactowner/close confirmation/
+badowner/drift/recovery and original C13T1–4 stay. Reuse existing typed fakes
+before only missing smallissuer-specific cases, no secondacquisitionharness.
+Record baseline defect/reuse tests, final-byte mutationRED/exactrestoreGREEN,
+guardedfocused/directaffected, strict/compile/load/blobs and legitimatepositives.
+No actual Native/token/process/job/SD/pipe/Host/SCM/service/account/ACL/security/
+privilege/install/network/model/provider/newcost/cleanup/push/release/deploy/
+formalactivation. Only boundedcontrolchildren/offlinefakes/ownedpassiveoutputs,
+explicitminimalenv, rawbeforedisplay, child55/outer60 initial, diagnoses before
+timeoutchange, historicaluse/corrections retained with uncappedlocalpolicy.
+ACTION_COMPLETED -> AUTO_CONTINUE sameauthorcorrection -> finitewait -> Root
+same-ticket review; no source-stage composition until all findings closed.
+H10H revision02 additivecorrection active independently; unfinished12/30B43/
+qualifiedHost/issuerpositive and Recovery holds remain OPEN.
 ## H10H exact additive correction Grant revision02 — 2026-10-21
 
 DOC_PASS /root/ticket30_native_tools_review at e53f6a0cca7099da53c1cafa166d8b8819d94186,
