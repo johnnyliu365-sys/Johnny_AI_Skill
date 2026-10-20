@@ -1,4 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C10-F2 local managed-runtime semantic reproduction — 2026-10-20
+
+Root independently supplements officialsource inspection with bounded offline
+managed-only probe in registered RootC10reviewTemp/managed-close-probe.
+Twoephemeralfiles ManagedCloseProbe.csproj/Program.cs, separate contained
+managed-close-probe-obj/bin outputs, authorRoot/Ticket30, review/evidenceseal TTL
+thenrestrictedcleanup, noexpirydelete. SafeHandle subclass uses fakeIntPtr and
+ReleaseHandle override returningfalse, ZERO actualnative/OS handles/calls.
+SDK10.0.302 offlinebuild0W/E; runtime .NET10.0.10 prints managed_closed=true,
+release_returned=false, release_calls=1, native_effects=0. This directly confirms
+IsClosed isnotnativecloseproof; doesnot claim C10nativefailurequalification.
+Raw c10-managed-close-semantics-proof.json SHA256
+8489758685c6027026e1f0e4c9b8982b0068f9b0240d2ae05c2de71419bee98a,
+actualargv/whitelistenv/artifact/sourcehash/fulloutputs/exit/timing preserved.
+Rootreview temporaryprobe only, no product/test source edits or newframework.
+C10-F1/F2 remainOPEN pending originalauthor's boundedcorrection; H10Econtinues.
+
 ## C10 initial source review / same-ticket correction — 2026-10-20
 
 CHANGES_REQUESTED candidate7300d83b33cb930f7ee06182e64dc3a31bc35dc0,
