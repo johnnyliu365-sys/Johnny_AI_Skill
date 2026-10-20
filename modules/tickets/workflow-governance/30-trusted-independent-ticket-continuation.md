@@ -39,6 +39,102 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-C13 — distinguish issuer account from service SID / closure39 proposal
+
+Original30/runbook03 source-only protectedissuer preparation, existing uncapped
+batch/first-entry source-order bounds; baseline
+2311324147c93fa463ce6e1566a148ce78f0c793. H10H closure38/Grantbec453bd remains
+separate at exactly this unchanged source baseline and two disjoint paths.
+Architecture readback /root/ticket30n4_peer_impl confirms a single issuer may
+have LocalSystem TokenUser plus its independent NT SERVICE service-SID group;
+there is no need for a new broker/Agent/service/VM. This fixes identity meaning,
+NOT an approved LocalSystem installation/account/privilege setting.
+AuthorityPeer.service_sid remains the S-1-5-80 service identity; pipe's existing
+SYSTEM/BA collision rejection and H9 nonstandard-subject rejection stay unchanged.
+Do not change any effective operational security settings or claim service trust.
+
+One private source precondition:
+_verify_current_wts_issuer_identity(peer: AuthorityPeer) -> None.
+Existing AuthorityPeer is revalidated before native acquisition; service_sid must
+be an exact canonical S-1-5-80 identifier with five uint32 subauthorities, never
+SYSTEM/BA/ordinary user SID. The function owns one current PROCESS primary-token
+query-only acquisition, not an incoming client/thread/WTS subject token or caller
+supplied observation/owner. Current-process pseudohandle is borrowed, never closed.
+Reuse H5 token USER/TYPE/SID decoders/query/close-owner tools, H9 raw GROUPS query
+wrapper (not its subject-specific administrator rejection), original alias
+validation/recovery lock/hold helpers. No parallel token parser, owner lifecycle,
+native process launcher, new public DTO or permission engine.
+
+Read actual TokenUser == S-1-5-18 and PRIMARY; read GROUPS using existing strict
+native tuple/pair/SID/uint32 grammar. Validate the entire returned tuple, no
+first-match wins. Require exactly one matching peer.service_sid group with actual
+SE_GROUP_ENABLED and without SE_GROUP_USE_FOR_DENY_ONLY. ENABLED_BY_DEFAULT alone
+does not qualify. Other canonical groups including SYSTEM/BA are not mistaken for
+a forbidden subject token; H9's separate WTS subject checks do not change.
+Wrong/missing/disabled/deny-only/duplicate group, wrong account/token type or
+malformed later entry refuse, not transform or normalize values.
+Capture original native token owner/alias/issuing thread and revalidate before/
+after each boundary and close. Use finite typed private failures, no raw OS text.
+No SeTcb assertion/enablement, no clean-thread/SCM/code-protection/approved-owner/
+Grant/Host qualification claim; this only observes current process token fields.
+
+Known nativequery/identity mismatch with a stable known owner closes exactly
+that owner through existing checked close, then refuses. Invalid/changed/unknown
+native owner, alias/thread drift, interrupted or uncertain close retains original
+resource/evidence under existing H9 recovery hold/poison; no second close, native
+retry, unknown-object Close, reset or Recoveryclear. Native open failure cannot
+invent an acquired owner. Nothing starts/stops a service or changes impersonation.
+Existing resources and healthy old user-token semantics remain unchanged.
+
+CREATE EXACT:
+library/local_orchestration/grant_authority/windows_issuer_identity.py
+tests/test_grant_authority_windows_issuer_identity.py
+MODIFY0/DELETE0/export0; windows_service.py stays its current decoder responsibility,
+no issuer/process-token behavior piled into wire decoding. Existing sources/tests
+readonly. One independent token-observation responsibility warrants the two files;
+first reuse existing fake PyHANDLE/SID/native-query fixtures before adding only
+small issuer-specific cases locally. Not a new test harness or security framework.
+Inputs/normal AuthorityPeer constructor already exist; output None uses no new DTO.
+If private finite error constructors need bootstrap, first implement pure private
+error definitions/constructor tests only, review that commit before native-query
+body under the SAME ticket/Grant, no additional Owner decision or budget reset.
+
+C13T1 normal AuthorityPeer/actual dependency-through-fake path: exact current
+process token QUERY-only, SYSTEM primary + one enabled service group succeeds;
+known token closes once, pseudohandle never closes. Subject role values cannot
+stand in for issuer; no all-reject completion.
+C13T2 invalid peer/SID before open; wrong account/type; absent/disabled/deny-only/
+enabled-by-default-only/duplicate group, valid first followed by malformed entry,
+noncanonical SID/attributes/shape fail before success. H9/pipe guard behavior intact.
+C13T3 native fail/unknown return/query exception/owner or alias/thread drift/
+close false/throw/interruption preserve exact required holds and poison, no
+retry/secondclose/privilege effect; stable known refusal can close without poison.
+C13T4 guarded focused + directly affected H5/H9/pipe tests, strict exacttwofiles,
+memorycompile/import/actualloadedsource/blobs. Final-byte reverse mutations pin
+TokenUser, enabled vsdefault flag, deny-only, later duplicate/malformed inspection
+and recovery/close confirmation; namedRED and exactrestoreGREEN. Root differentdoor.
+Do not bypass actual helper behavior by replacing every function with PASS.
+
+Profile HIGH_ASSURANCE source-only; proposedauthor /root/ticket30n4_peer_impl
+C12 allocation/context releasedaee411f4; subsequent architecture reads are complete,
+no source edits. Root sole finalreviewer/orchestrator; existing distincthelper.
+Freshctx-ticket30g-issuer-identity-20261020, proposed contained
+.worktrees/skill-improvement-30g-issuer-identity and matching-review, codex/same.
+OwnedTemp johnny30g-issuer-identity-20261020 and -review-20261020 author/Root,
+raw/typecache TTLreviewseal then protectedreferencedhold, no expirycleanup.
+Conditional grant-ticket30g-issuer-identity-20261020 revision01 NOT_ACTIVE until
+DOCreview/D8/normalconstructorpreflight/exactallocation/role/baseline readback.
+Forecast product<=200/test<=350 effective lines, not compression/split targets;
+>500 structural responsibility/reuse review. All historicaluse/failures retained;
+uncapped local cumulative/count policy, child55/outer60 initialfinite deadlines.
+No actual native/token/process/job/Host/SD/pipe/SCM/service/account/ACL/privilege/
+security/install/network/model/provider/newcost/cleanup/push/release/deploy/
+activation. Only bounded offline fake tests/control children/passiveownedoutputs.
+Return COMPLETED/BLOCKED/CHANGE_DETECTED exactcandidate/files/checks/findings/
+deviations; technicalcomments only, no ownerprompt/ticketstory, no selfapproval.
+Actual protected approval/service entry/client/observation and ultimate setup
+manifest/Owner effect approval remain necessary, not supplied by this check.
+
 ## 30N4-H10H — bind suspended creation to existing leases / closure38 proposal
 
 Original30/runbook03 source-only construction under batch-checklist-local-20261019-uncapped

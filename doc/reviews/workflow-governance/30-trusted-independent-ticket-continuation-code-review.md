@@ -1,4 +1,46 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Issuer account / service SID source distinction — 2026-10-20
+
+Bounded architecture /root/ticket30n4_peer_impl at fixed23113241:
+there is no existing checked runbook section2 invariant forbidding one issuer
+whose process TokenUser is SYSTEM and whose token separately contains its
+S-1-5-80 service SID. Earlier alternatives (different token acquisition or a new
+broker) are NOT selected and no new broker/service/Agent/VM is introduced.
+Root selects only source-side distinction/precondition preparation. Existing
+runbook virtual-account installation example remains non-executable proposal,
+not an approved new account setup; future LocalSystem/SeTcb deployment requires
+the precise reviewed manifest and Owner's actual effect approval.
+No principal/privilege is assigned merely by implementing a checked reader.
+
+Official source readback2026-10-20:
+https://learn.microsoft.com/en-us/windows/win32/api/wtsapi32/nf-wtsapi32-wtsqueryusertoken
+requires LocalSystem plus SE_TCB_NAME for WTS acquisition.
+https://learn.microsoft.com/en-us/windows/win32/api/winsvc/ns-winsvc-service_sid_info
+describes adding the service SID to the process token. Its listed default/owner
+attributes are not proof the observed group is currently enabled.
+https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_groups
+defines actual ENABLED vs USE_FOR_DENY_ONLY membership. No native observation
+or configuration operation was made here.
+https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw
+also documents distinct creation privileges; no privilege presence/enablement or
+cross-session job compatibility has been established.
+
+C13 closure39 proposal isolates one current issuer PROCESS-token reader in its
+own source/test, not WindowsService wiredecoder or H9 standard-subject policy.
+Input existingAuthorityPeer, serviceSID remains actual S-1-5-80 capabilitygroup;
+currentprocessTokenUser mustSYSTEM, primarytype and actual enabled/nondeny group
+checked. H9 subject still nonSYSTEM/nonAdmin; existingpipe rejects serviceSID
+SYSTEM/BA. No new public DTO/readyflag/parallel engine or security setting.
+No approval provenance, loaded code protection, clean thread, SeTcb, serviceentry,
+SCM identity or Host qualification inferred from the check.
+H10H activeGrantbec453bd stays pinned6ce9fac8/closure38/source23113241 and its
+two disjoint paths; this documents-only newproposal does not amend that Grant.
+
+ACTION_COMPLETED -> AUTO_CONTINUE C13 DOCpreflight/exact sourceadmission only
+after D8/constructors/containedallocation, while H10H implementation continues.
+No premature owner request for ordinary type/SDK choice; no silent actual
+security/permission installation, provider costs, cleanup retry, push/release/
+deploy/formalactivation. Only04 checked; all final issuer/Host/30B43 blockers stay.
 ## H10H closure38 source admission / exact Grant — 2026-10-20
 
 DOC_PASS distinct /root/ticket30_native_tools_review at
