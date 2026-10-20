@@ -1,5 +1,59 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N8 exact local implementation Grant01 — 2026-10-21
+
+Root derives grant-ticket30n8-readonly-control-wire-20261021 revision01 ACTIVE
+under batch-checklist-local-20261019-uncapped; no new resource/Owner ceremony.
+Exact original30 closure44 d4ba21fb3864c0a027324c0ba153cc32dba849d3,
+leaf40dc83aafc98ee513a4b1ace7820b3db869a597f,
+LF6dd2f2126ea7fb4ddff9c082d61016f27925dc65b9ab7047639a4800c49b24ad.
+Different helper DOC_PASS for exact proposed source-only wire contract and held
+native schemas. Reservation584db65b798ce1a1df5457d57eec7d608cf7cf18.
+Baseline9c999a1ea3d819c3454f36ab39b9fddb1192ff5f, existingN7 sourceb661aa8b,
+oldtest41223d3f exact; schema source3bd6495a DATA_MAPPING_PASS reused.
+
+MODIFY ONLY library/local_orchestration/readonly_review_host.py boundedimports/
+adapters/helper plus four private outgoing builders in closure44. Existing N7
+classes/codec functions/constants remain AST-equivalent. CREATE ONLY
+tests/test_readonly_review_control_wire.py. MODIFY oldtest/otherpaths, DELETE,
+exports/newdependencies=0. No newDTO/parallel runner/config loader/parser.
+Root ordinary existing BoundedText1..128/strictnativeRequestId/opaque fileID
+schema constructors positive/negative PASS, loaded exactreviewroot/effects[].
+Qualificationvalues LF5c63460f, codec LFb8e63361, oldtestLF2de63db1 readback.
+Fresh owner and Root-review WTs both clean exact9c999a1e, respectivecodex
+branches, contained nonreparse ancestors and registered .git pointers verified.
+Preflight original command/output retained registeredreviewTemp n8-root-preflight.json.
+
+Owner /root/ticket30n4_peer_impl approved retained Luna/xhigh; Root AO/sole
+finalreviewer/orchestrator; existing distinct helper evidence only.
+Owner .worktrees/skill-improvement-30g-readonly-control-wire codex/same,
+Root matching -review; ctx-ticket30n8-readonly-control-wire-20261021 ACTIVE.
+Old N7 view closed/immutableholds preserved. Temp exactroots/owners/TTL/
+evidence/Recovery override584db65b; fresh run children only, no cleanup.
+Same-lifetime direct synchronous native lane, bridgeNOT_REQUIRED; no fabricated
+receipt/queue/runner. Root controls delegate/wait; implementer no agenttools.
+
+Tests N8T1–T4 frozen at ticket: exact literal bytes/validschema/positivefinite
+bounds and Unicode, negative types/subclasses/limits, source-only guard/import,
+existingN7/protocol affected219cells. Strictproduct+newtest noAny, memorycompile,
+loadedsource/blobs, oldfunctionAST/oldtestexact. Author discriminatingmethod/
+policy/tool/boundary RED/exactGREEN; Root own different-door negative mutation.
+Command child55/outer60 initial, explicit minimal nonsecret env/no inherited
+provider creds, no sockets/subprocess inside guarded tests; preload runtime
+stdlib dependencies before guards. Preserve original raw before display;
+explicit short parameterIDs, bounded pytest formatting not output reduction.
+Return COMPLETED/BLOCKED/CHANGE_DETECTED with candidate/files/checks/findings/
+scope_deviations/raw evidence locations; not review/qualification claims.
+Existinguncappedhistory preserved, diagnose unchanged failures, no blindretry.
+
+No actual subject/Host/server/model/thread/turn/process/pipe/SCM/security/
+account/ACL/install/rights/network/provider effects or cost; no push/release/
+deploy/activation/qualifiedCVQ/30B43/TAL/checkmark/normalcleanup claims.
+Root local compiler/test child controls only, not Native subject execution.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT exact N8 owner only.
+
+
+
 ## N7 archive QA / N8 reserved assets — 2026-10-21
 
 Independent /root/ticket30_native_tools_review SOURCE_MAPPING_ARCHIVE_PASS:
