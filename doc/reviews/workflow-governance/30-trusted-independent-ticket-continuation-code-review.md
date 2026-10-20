@@ -1,4 +1,49 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C12 closure37 source admission / exact Grant — 2026-10-20
+
+DOC_PASS distinct /root/ticket30_native_tools_review at
+f62366e8cf1be00f76efbc79e9f4897c40152681, original30leaf
+b0053ae6da108380437b982314fd7f2d165a167a LF
+7b723520cde7b3f65642ebe90ece52d3ded76d79825cd722f540a5aaeeac6a1f,
+D8 registry matched. Observed matching C9/C10 bounded component predicate and
+existing NativeManifest.InputRules; no publicpathgrammar orpolicy change.
+Installed reusable-modules selector used; no delivered Windows component card
+adopted/invented. This is existing target-owned internal source reuse under the
+already bounded architecture/ticket, not another Wayfinder or module framework.
+
+grant-ticket30g-native-component-reuse-20261020 revision01 ACTIVE under existing
+uncapped12 batch/source-order exception. Baseline
+f8754baabc13196e1f8974201737daf30f0a3982. CREATE0/DELETE0; MODIFY EXACT five
+library/local_orchestration/native_windows/ files: NativeManifest.cs
+(InputRules ONLY), NativeOwnedDirectoryCreation.cs,
+NativeOwnedPayloadFileCreation.cs, NativeOwnedDirectoryCreationSelfTests.cs,
+NativeOwnedPayloadFileCreationSelfTests.cs. All other files readonly.
+Frozen C12T1-4 TEST->A actualconsumers/mutation transfer, no retirement/new
+validation semantics. Normal primary behavior remains, no merely delegation
+assertions/helper-only mirror. Existing constructors and parser/fakes reused.
+
+Author /root/ticket30n4_peer_impl C11allocation/context RELEASEDd7350c9f;
+readonly design query ended withno sourcechanges. Fresh
+ctx-ticket30g-native-component-reuse-20261020; Root sole reviewer/orchestrator,
+existing distinctsourcehelper. Allocated contained
+.worktrees/skill-improvement-30g-native-component-reuse and matching-review,
+codex/same, absentbefore/nonreparseancestors/.git/common-dir/cleanexactHEAD.
+OwnedTemp johnny30g-native-component-reuse-20261020 and -review-20261020
+author/Root, offlineobj/bin/cache/raw, TTLreviewseal then protectedreferencehold,
+no expirydelete or Recoveryclear. Preflight samebaseline actualfiveblobs,
+SDK10.0.302 offlinerestore1.360/build4.453 zeroW/E/fake self-test0.438 PASS.
+c12-preflight-allocation-20261020.json SHA256
+17edff4f6ae07648eb4c879cd931a588fe45aff57cf9f0d1aeafc27de120b5f0.
+H10G activePythonlane remains pinned unchanged closure36/Grant72cb001e.
+
+Retain historicalusage/failures, no cumulative/countcaps; child55/outer60 initial
+deadline, diagnose beforeadjustment/no unchangedretry. No real native/SD/Host/
+process/job/SCM/service/account/security/ACL/install/network/model/provider/
+newcost/cleanup/push/release/deploy/activation; onlyordinarybounded offlinecontrol
+build/test and registeredpassiveoutputs. No source ownerprompt/ticketstory.
+AUTO_CONTINUE -> namedauthor IMPLEMENT / finitewait / Rootdifferentdoorreview /
+distinctsourcecheck / exactstaging, never mainintegration/Host qualification.
+Unfinished12, issuerpositive, 30B43 and Recovery obligations remain OPEN.
 ## H10G closure36 source admission / exact Grant — 2026-10-20
 
 DOC_PASS distinct /root/ticket30_native_tools_review at
