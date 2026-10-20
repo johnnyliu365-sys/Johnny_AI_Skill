@@ -1,4 +1,49 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10D closure31 source admission / exact Grant — 2026-10-20
+
+DOC_PASS /root/ticket30_native_tools_review at19c2b34b99ae07db5898a3dbfe761eecb0a06955
+closes H10D-D01: bothOPEN applies wait/terminate/exit-code, close-phase retains
+THREAD CLOSED/PROCESS OPEN checks. Root Architecture accepted teardown-only helper
+design, reused B2 errors/registry/lock/poison instead of proposed new DTO/enum/port.
+Exact original30leafebc0b487a222007efeee276ee7078be2953c583a,
+LF849fe1dd5b533616868049d3fefe85646f1aed85c4e4b96734a006e9574ddf87;
+D8 explicit readbackPASS. Prior positional Select-String argument error retained,
+corrected named-parameter verification is current proof, not old command success.
+
+grant-ticket30g-process-teardown-20261020 revision01 ACTIVE under existing
+batch-checklist-local-20261019-uncapped / first-entry source-order exception.
+CREATE ONLY library/local_orchestration/grant_authority/windows_subject_process_teardown.py
+and tests/test_grant_authority_windows_subject_process_teardown.py.
+MODIFY0/DELETE0/export0. No real native/Host/process/job/token/SD/service/security/
+account/ACL/install/network/provider/model/cost/push/release/deploy/activation/cleanup.
+Normal bounded control compiler/test processes and registered passive output only.
+Baseline63d44d47ad984a75f513ce20fb10da5803c94d8c, mapped48path source stage,
+not qualified source. Both newfunction/testing and ordinary strict checks are
+source construction; qualified CVQ/30B/43 remain blocked.
+
+Author /root/grant_transport_impl, userselected Luna/xhigh continuing existingseat;
+Root sole reviewer/orchestrator, distinct source-evidence helper.
+Fresh ctx-ticket30g-process-teardown-20261020 replaces closedH10C context; no
+old raw/inferred context authority. Source refs exact closure31/B2/H10C only.
+Root allocated author .worktrees/skill-improvement-30g-process-teardown and
+matching-review, respective codex/same branches, clean exactbaseline and .git/
+common-dir identities read back, all existing path ancestors checked nonreparse.
+Owned Temp johnny30g-process-teardown-20261020 and -review-20261020,
+author/Root, bounded fakechecks/raw/onecache, TTLthroughreview/seal thenreferenced
+hold; no expirydelete. Registry/stronghold does not prove Host security.
+
+Existing ordinary ABI construction+H6 positive preflight2PASS2.422s with guardempty;
+memorycompile/actualsource/LF/blob readback exact. Newfunction has no publicDTO to
+require before building itself. Full allocation/preflight raw
+h10d-preflight-allocation-20261020.json SHA256
+11201718ed603d20f78d668f98dcae2f94e6ef1949bf9c4b882ff9b908635221
+in registered RootreviewTemp. Reuse inherited constructor evidence, don't rerun
+unaffected old campaigns. Explicit child55/outer60 initial bounds, retained
+historical accounting, no cumulative/correction ceiling or unchanged retry.
+AUTO_CONTINUE -> direct same-lifetime namedauthor IMPLEMENT then wait; return
+COMPLETED/BLOCKED/CHANGE_DETECTED, source/evidence review+differentdoor counters,
+exact source composition later separately recorded. No finalqualification claim.
+
 ## H10C exact source composition / continuation — 2026-10-20
 
 ACTION_COMPLETED: Root Grant10 at629d1266 replayed only final04667fcbb62c4b1377b68fe0f6de1d27bc5aca86
