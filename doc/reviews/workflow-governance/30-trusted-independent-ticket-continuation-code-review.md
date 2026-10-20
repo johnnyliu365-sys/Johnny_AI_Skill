@@ -1,4 +1,42 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C9 F1 continuation / B2 composition readback — 2026-10-20
+
+C9 correction0e35ed593eb009c101ef47f3f99a7aa74147994f closes stale error-on-throw
+and adds DATA policy assertions, but F1 is not fully closed. Same existing
+uncertainty requirement: after native FALSE183/80 plus retained ancestor ID
+drift, port returns ReparseOrIdentityMismatch; unchanged creator maps that
+non-Unavailable failure plus later MISSING to clean CREATE_REFUSED. Root actual
+production-port fake joined to creator/readback reproduces named RED
+root_identity_uncertainty_cannot_become_clean_refusal_on_later_missing. Test
+probe precisely restored, offline fake build/self-test GREEN; no real effects.
+Raw c9-f1-continuation-root-review-20261020.json SHA256
+cffcfadfb78e08711f8e5e4ea8dcbcf6beaf2be37bf4c427d794eaee88725e64.
+CHANGES_REQUESTED SAME F1, not new scope/review criterion. Preserve new E2 PASS.
+Minimal architecture direction: a failed-call result after post-snapshot
+uncertainty must carry the existing Unavailable outcome into creator Recovery,
+not a clean known-no-effect status. Created=true can retain its exact mismatch
+failure because that branch already requires Recovery. No new enum/framework.
+Add actual port+creator coupled mismatch/later-MISSING regression (183 and80,
+ordinary denial if the same uncertainty path applies); retain lawful clean
+existing/refusal and CODE/DATA success. Same original owner/five paths/Grant;
+no broad campaigns or Owner renewal. Known candidate0e35 stays unapproved.
+
+Author's126556byte log25a35d36 contains duplicated parsed JSON rows22–34/35–47;
+preserve, do not rewrite/deduplicate raw. Its earlier claim that original prefix
+changed is superseded by direct current first44613byte SHA55797ef9, matching
+original log. Prior8254 hash observation/precise duplicate-append command remain
+UNKNOWN; do not invent encoding causes or rerun the seven old valid pairs.
+Independent data check pending; qualification remains unproved.
+
+B2 exact composition Grant08 created source-stage
+c1b609466b8048e0a487df1d45450168807d48b6, parentbeb7a463. Only two reviewed
+CREATE paths; blobs582d0a98/781ddfef match f377 exactly, previous43 paths unchanged,
+now45 paths versus18bf1e9f. Composition environment actual91 guarded tests
+PASS2.344s, strict2 PASS1.625s, memorycompile/import/SHA/diffcheck pass. Clean
+stage, not main integration orHost qualification. Bounded independent byte/mapping
+readback still required before treating this stage as next implementation baseline.
+ACTION_COMPLETED -> AUTO_CONTINUE C9 same-F1 correction and B2 mapping/preparation.
+
 ## H10B2 correction source approval / composition Grant08 — 2026-10-20
 
 APPROVED_SOURCE_ENGINEERING_ONLY: final f377e16fde1098e55350ac407d87aee74e028445,
