@@ -1,4 +1,48 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C10 closure32 source admission / exact Grant — 2026-10-20
+
+DOC_PASS /root/ticket30_native_tools_review reads committed29a90ffd22be7423571ef4a81de099d3e4975709,
+original30leaf0d39ba03f6095c9764372ed549249e46b74e7527,
+LF09b167b76d8b4164ca520bcbc4279e2b3b3218f93ffb884df300e2c4171f984d,
+D8matched. Root accepts bounded ordinaryengineering plan, not newOwnerpolicy.
+ExistingEnrollment/C9/ProtectionPlan/readback reuse, no competinginstaller.
+
+grant-ticket30g-owned-payload-file-20261020 revision01 ACTIVE under same
+batch-checklist-local-20261019-uncapped / first-entry source-order exception.
+CREATE ONLY native_windows/NativeOwnedPayloadFileCreation.cs,
+native_windows/Win32OwnedPayloadFileCreationPort.cs,
+native_windows/NativeOwnedPayloadFileCreationSelfTests.cs under library/local_orchestration/.
+MODIFY ONLY same directory JohnnyAuthority.Tools.csproj/SelfTests.cs fakewiring.
+DELETE0/export0/operationalCLI0. No actual filecreation/native/security/ACL/account/
+service/install/Host/CLI/provider/model/network/cost/push/release/deploy/cleanup/
+formalactivation. Bounded control offlinebuildprocesses/registeredoutputs only.
+
+Sourcebaseline63d44d47ad984a75f513ce20fb10da5803c94d8c, qualifiedreviewnotclaimed.
+Author /root/ticket30n4_peer_impl priorC9 allocation RELEASED immutableholdec9e4eb1;
+new ctx-ticket30g-owned-payload-file-20261020, no oldinferred/rawauthority.
+Root sole reviewer/orchestrator, different source-evidence helper.
+Allocated contained .worktrees/skill-improvement-30g-owned-payload-file and
+matching-review, codex/samebranches, originalbaseline/clean/pointer/common-dir
+verified, targetabsent beforeallocation/allancestors nonreparse. Registered
+ownedTemp johnny30g-owned-payload-file-20261020 and -review-20261020,
+author/Root, offlineobj/bin/NuGetcache/DOTNET_CLI_HOME/raw, TTLreview/seal then
+referencedhold. Noexpirydelete or retry of previousrejectedcleanup.
+
+Existing ordinary Enrollment/ProtectionPlan/C9 fake self-test preflight:
+SDK10.0.302, sourceclearedoffline restore1.328s/build4.547s zeroW/E,
+self-testPASS0.375s, fiveexistingLF/blob sourcechecks, actualartifactSHA
+10930b510fa6b5256746f0c105496f76ec725f5b305c5bc1f24a20e749e43e0d.
+No native selectors or effectCLI. New internal DTOs have restricted construction
+bootstrap: author builds ordinary constructor/validation fakecells first, checks
+before filebehavior tests; no demandnewtype beforebuildingitself, no ceremonial
+stubred. Existing public constructors already green. Captured raw
+c10-preflight-allocation-20261020.json SHA256
+03f9f0c0351845834722f7fca2cede48a74e18328ea2d78c2aa8c709d3542597.
+Initial child55/outer60 retained, no cumulative/countreset; no unchangedretry.
+AUTO_CONTINUE -> same-lifetime namedauthor IMPLEMENT then wait, independent
+source/evidence/differentdoorreview before controlled exactsource composition.
+Sourceconstruction does not qualifyHost/issuer or close30B/43/checklist12.
+
 ## H10D closure31 source admission / exact Grant — 2026-10-20
 
 DOC_PASS /root/ticket30_native_tools_review at19c2b34b99ae07db5898a3dbfe761eecb0a06955
