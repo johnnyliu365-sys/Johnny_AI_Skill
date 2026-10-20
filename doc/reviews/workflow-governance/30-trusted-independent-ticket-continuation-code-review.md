@@ -1,5 +1,42 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N11 correction1 / original F01 still open — 2026-10-21
+
+Actual FINAL d5edc1cfc6759fdce91078adfaeb2b4581e36db6(parent5bcb), exact
+three paths; Root read entire source/test delta and ff-only reviewWT. Root179
+guardedPASS0.82s, old independent fourcellsPASS3.88s and leaf-refusal/legitimate
+ancestorPASS; effects[] throughout. F02 cancellation-between-operations,
+F03 terminal close/decode deadline and F04 leaf-only trusted allows now CLOSED.
+These PASS remain valid for exact unchanged parts, not whole-candidate approval.
+
+Original F01 alias uncertainty remains OPEN, not a new AC: HKLM parent integer
+is signed-LONG -2147483646; the native output carries its unsigned pointer bit
+pattern. _open compares opened_handle==parent without normalizing the parent.
+Root's fake first open returned ctypes.c_void_p(-2147483646).value; the REAL
+entry returned _InstalledApprovalRecord, made10value queries and6closes instead
+of refusing/retaining BEFORE any query or close. Root raw1.609s exit1, effects[].
+Distinct sourcehelper immutable delta FINAL independently confirmed same hole.
+Normalize native pointer identity before comparison; add the root pseudo-parent
+alias row to the EXISTING shared fake/parametrized regression, no new framework.
+
+CHANGES_REQUESTED_NOT_INTEGRATED, same Grant01/closure47/owner/worktree/Context
+and three CREATE paths. No replay, new PRD/authority or budget reset. Preserve
+d5ed evidence and earlier failed candidates, fix only remaining F01 plus affected
+regression/evidence. Final decoder39eaaccc has passed affected checks; do not
+modify it for unrelated work or claim another candidate's exact-byte evidence.
+Root final counter-mutation waits for repaired immutable candidate.
+
+Reserve registered Root reviewTemp n11-root-correction1-review.json for these
+original commands/raw results/identity facts and helper conclusions, same owner,
+TTL through final seal, evidence hold, no automatic deletion. The two fresh
+pytest basetemps root-n11-correction1-01/root-independent-correction1-01 are
+Root-owned review children; no repo files or product fixtures created by them.
+Initial15-artifact failure seal f855a7e0 now has different-seat actualFINAL QA:
+15/15 exact original bytes/hash, gzip/raw digests match; first AsSpan comparison
+diagnostic failed0verified, corrected readonly structural comparison PASS15.
+No archived commands executed; this is evidence integrity, not qualification.
+No checkmarks, formal source/Host/effect activation,30B43解除 or external changes.
+
 ## N11 initial failure-evidence seal — 2026-10-21
 
 Original15 UTF8 artifacts sealed exactly, not reconstructed: Root original command/
