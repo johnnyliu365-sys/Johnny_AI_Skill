@@ -1,5 +1,29 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N11 final-return admission / bounded Root probe reservation — 2026-10-21
+
+Actual owner FINAL candidate5bcb131ef92b21cc550db628e61b4311a65905de,
+baseline43abc3cc81ee2c162d95035dd5f2e62cfd60745b, exactly3CREATE/0MOD/DELETE;
+Root review allocation ff-only to that committed candidate, explicit baseline diff
+check PASS. Final native/decoder/test blobs231f898a/52fedee0/224d5c5b.
+Root minimal-environment guarded new+N9+C8 tests173PASS0.83s, strict3 with
+disallow-any-unimported PASS19.546s; loaded source and three exact blobs read back.
+No unpatched external-effect calls. These are source-engineering checks only,
+not final review, Host qualification or whole-checklist completion.
+
+Reserve Root-owned existing registered reviewTemp child
+n11-root-independent-01.py and n11-root-initial-review.json, fresh pytest
+root-independent-01 plus later distinct root-counter-red-01/root-counter-green-01
+basetemps. Purpose bounded fake-native ownership/controller/ABI/ordinary-schema
+probes and one different legitimate-positive source mutation. TTL through review
+seal; original Root-only teardown subject to policy and evidence holds, no automatic
+expiry deletion. Original commands/raw outputs retained, no actual OS registry,
+handles, SCM, token, filesystem native, process-under-test or network effect.
+Normal controlled compiler/test process is permitted, child55/outer60 finite.
+No source changes by Root except exact temporary reviewer mutation/restoration;
+ordinary helper reads immutable Git blobs only. Original owner allocation retained
+for any same-closure findings; no early source-stage replay or integration.
+
 ## Next existing-service composition seam / bounded preparation — 2026-10-21
 
 While exact N11 source owner works, Root and the retained readonly helper used
