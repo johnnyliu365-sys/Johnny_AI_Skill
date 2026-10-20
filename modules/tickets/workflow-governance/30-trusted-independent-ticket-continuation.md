@@ -39,6 +39,131 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-C10 — new protected enrolled payload file / closure32 proposal
+
+Original30/runbook03 protected payload setup, existing uncapped local batch and
+first-entry source-order exception; necessary construction, not installer/CLI/
+authority effect. Architecture Root accepts bounded topology helper's file
+analogue of C9. Baseline63d44d47ad984a75f513ce20fb10da5803c94d8c, independent
+of H10D Python teardown. B2/C9/H10C source seals/mapping retained, not Host proof.
+Existing new-directory primitive cannot create enrolled executable/dependency/
+configuration FILE bytes. No existing-object replace, ACL edit, rollback/delete,
+rename fallback, CAS claim or new framework. Source-byte match is not acquisition
+provenance or permission to install; actual protected enrollment still required.
+
+CREATE EXACT library/local_orchestration/native_windows/NativeOwnedPayloadFileCreation.cs,
+library/local_orchestration/native_windows/Win32OwnedPayloadFileCreationPort.cs,
+library/local_orchestration/native_windows/NativeOwnedPayloadFileCreationSelfTests.cs.
+MODIFY EXACT library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
+and library/local_orchestration/native_windows/SelfTests.cs ONLY three Compile
+entries/one existing fake self-test invocation. DELETE0. Program/manifest/policy/
+C9/core-readback/oldtests remain readonly. No new operational command/export.
+Extend EXISTING Win32ReadbackPort partial/privateNativeMethods. Reuse C9
+OpenRetainedAncestor/SnapshotRetainedAncestor/NativeSecurityAttributes plus
+PathPrefixes/OpenAncestorForCreation/SnapshotAncestorForCreation/
+IsValidDirectorySnapshot/TryCapturePayloadSnapshot/SnapshotsMatch/MapError.
+Reuse exact existing readback observations and enrollment/path/SID/digest types.
+Do not copy ancestor opening/normalization/SDDL policy or create another runner.
+Private constructor may initialize existing C9 delegate fields in same partial
+plus file-specific create/write/flush/read/snapshot delegates for offline fakes;
+no production-configurable command/port capability.
+
+Internal NativeOwnedPayloadFileCreator.Create(enrollment:NativeEnrollment,
+target:AbsoluteWindowsPath,candidate:ReadOnlySpan<byte>) returns one bounded
+OwnedPayloadFileCreationResult (CREATED_VERIFIED/TARGET_EXISTS_REFUSED/
+CREATE_REFUSED/RECOVERY_REQUIRED, NativeReadFailure, optional existing
+NativeEnrollmentObjectObservation). Derive unique actual enrollment entry by
+canonical case-insensitive target; never caller role/digest/size/entry.
+NativeOwnedPayloadBytes.Capture eagerly copies <=64MiB exact enrolled positive
+length and checks copied SHA256, then exposes immutable/read-only owned bytes
+only; no mutable array escape or lazy/path/URI/stream/network source. Reject
+unknown/ambiguous entry, invalid/case-ambiguous Windows component, file-directory
+collision, length/digest mismatch BEFORE native/file port. Reuse C9 target
+derivation for parent/path collision validation, not another lexical grammar.
+Owner from ProtectionPlan.Build only, descriptor ONLY
+ProtectionPlan.PayloadFileSddl(manifest,entry.Role). No new ACL policy table.
+
+Low-level owned-file port: retain every root-to-parent original ancestor handle
+with C9 exact READ_CONTROL|FILE_READ_ATTRIBUTES, shareREAD only, OPEN_EXISTING,
+OPEN_REPARSE_POINT|BACKUP_SEMANTICS. Validate original path/nonreparse/directory/
+nonzero volume+fileID and stable identity; hold ALL through file creation/write/
+flush/same-handle readback/post-ancestor-check. One CreateFileW target attempt,
+exact CREATE_NEW1/share0/noninherit SECURITY_ATTRIBUTES with owned pinned full
+derived SD at creation, required READ_CONTROL/read/write access and explicit
+normal-file/open-reparse flags. Not CREATE_ALWAYS, OPEN_ALWAYS or delete sharing.
+Existing80/183 refuses without adopting/reading/writing target. Native exception/
+ambiguous output after entry -> RECOVERY_REQUIRED even laterMISSING/stale80/183.
+Never infer clean refusal from exception-populated error code.
+
+Write only owned copied bytes with explicit offset and bounded byte/chunk count;
+no retry of failed/zero/short native write. Flush before readback. Verify contents
+through SAME created handle, not reopen by path: snapshot postwrite before read,
+read/hash exactly enrolledsize, EOFprobe0, second snapshot identical; no digest
+copied from input/manifest as actual result. Require non-directory/nonreparse,
+exactfinalpath/nonzero stablevolume+fileID, stabletimes/size/owner/fullSD,
+SYSTEMowner and exact rolefileSDDL, enrolled digest/size. Ancestor postchecks also
+exact. Keep created/ancestorhandles until all proofs; dispose only ownedhandles
+once reverseorder; any uncertain disposal -> RECOVERY_REQUIRED. No auto-delete
+partial file. Native sizes and operations finite; fake tests cannot qualify OS
+cancellation/driver/privilege/locking, which remain later Host bounds/admission.
+
+Before create: invalid input/descriptor/ancestor refusal -> CREATE_REFUSED.
+Exact known exists + stable ancestors -> TARGET_EXISTS_REFUSED/None.
+Known create failure with no createdhandle and proven stable ancestors may refuse;
+any uncertain create/post-ancestor outcome takes precedence -> RECOVERY_REQUIRED.
+Once a file may exist, write/flush/read/EOF/descriptor/content/identity/ancestor/
+close failure is RECOVERY_REQUIRED with known observation if available, never
+success/no-effect claim. No adoption/overwrite/fixup/recovery attempt.
+
+TEST real Creator->Win32 port fake delegates, shared existing C9/enrollment
+self-test helpers where safely accessible; no copied browser/image/mock harness.
+A:new private primitive; B:N/A, no test retirement or publicbehavior move.
+C10T1 existing ordinary enrollment/ProtectionPlan constructors beforedispatch;
+legal EXE/DEPENDENCY/CONFIG select exact fileSDDL, copiedbytes unchanged after
+callerbuffer mutation, content read/hash independently, all ancestors+created
+handle retained through proof; normal valid path must succeed.
+C10T2 precise CREATE_NEW/access/share/flags/noninherit/binarySD/address/lifetime,
+unique enrolled membership and byte/hash/size limits; unknown/pathcollision/
+reservedcomponents/digest mismatch -> zero create/write; exists -> zero
+write/flush/file-read/adopt. Normalcase-insensitive match allowed.
+C10T3 before/after ancestor drift, create unknown/error/exception/staleexists,
+short/zero/failed write, flushfailure, EOFtrailing, bad content/size/owner/SD,
+fileidentity/time drift, handle disposal uncertainty -> finite refusal/recovery
+with original evidence; no delete/overwrite/ACLrewrite/retry/foreigncleanup.
+C10T4 offline.NET10.0.302 build zero warnings/errors, existing self-test selector
+fake-only (never native selectors), current C9/enrollment regressions inherited
+through that selector; final-byte discriminating reverse mutations CREATE_ALWAYS,
+share/noninherit, early ancestorrelease, wrong directory/roleSDDL, skipprehash,
+path-reopen/digest-from-expected, omittedflush/EOF and partial-success.
+Parameterize related forms, one cell per distinctproperty not duplicated huge
+campaign. Root counter differentdoor. Capture exact files/blobs/LF/patchhash/
+argv/env/version/elapsed/exit/full unreduced stdout/stderr beforeeachrun, restore
+exactbytes/rebuildGREEN. Assemblyhash difference from GitSourceRevision is not
+source mismatch or artifact equivalence. No runtimequalification from fakes.
+
+Profile HIGH_ASSURANCE source-only bootstrap order; distinct independent source
+review then eventual originalCVQ. Author /root/ticket30n4_peer_impl, C9 allocation
+already RELEASED immutablehold; Root sole reviewer, distinct source-evidence
+helper. Fresh ctx-ticket30g-owned-payload-file-20261020. Proposed contained WT
+.worktrees/skill-improvement-30g-owned-payload-file and matching-review,
+codex/same, exactbaseline/no reparse. Owned Temp
+johnny30g-owned-payload-file-20261020 and -review-20261020, respectiveauthor/Root,
+offline obj/bin/NuGetcache/DOTNET_CLI_HOME/raw; TTLthroughreview/seal thenreferenced
+hold, no expirydelete or rejectedcleanupretry. Forecast core220/port350/test350
+effective lines; >500 actual responsibilityreview signal, not minify/tiny-file.
+Conditional grant-ticket30g-owned-payload-file-20261020 revision01 NOT_ACTIVE until
+committed DOC review, normal existingconstructor/fakeselftest reuse and exact
+allocation/baseline/roles readback. New private constructors built/tested before
+filebehavior; no pre-existing newtype cycle or ceremonialstubred.
+Offline sourceclearedNuGet/noaudit/no telemetry/workloadchecks/node reuse/build
+servers; bounded child55/outer60 initial, no cumulative/countreset. No live
+native filecreate/write/flush/SD/account/ACL/security/service/install/Host/CLI/
+provider/network/cost/cleanup/push/release/deploy/formalactivation. Only ordinary
+control buildprocesses/registeredoutputs. Return typed candidate/files/checks/
+findings/deviations; no source/prompt narrative, no mainintegration/checkmarks.
+30B/43/R0/DAP/TAL/Recovery and originalaccounting unchanged.
+
+
 ## 30N4-H10D — successful-created-process exit-proof teardown / closure31 proposal
 
 Original30/runbook03 and batch-checklist-local-20261019-uncapped; approved first
