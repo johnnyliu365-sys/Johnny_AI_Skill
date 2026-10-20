@@ -1,4 +1,51 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10H closure38 source admission / exact Grant — 2026-10-20
+
+DOC_PASS distinct /root/ticket30_native_tools_review at
+6ce9fac8727dc9e79c61b1c044cd5a640a98a0b2, original30 leaf
+c5046eb1ea2a672f54909a60bbeda690f5ebd3ac LF
+4ad2998d43597773f30783c19cbd7494fe6cb8b70389eff892a719e3d6aed05c,
+D8 registry matched. No exact Owner decision needed for this already authorized
+local source construction. Existing original parent batch/first-entry order
+exception only; not a formal trusted operational Grant source.
+
+grant-ticket30g-subject-preparation-20261020 revision01 ACTIVE:
+baseline2311324147c93fa463ce6e1566a148ce78f0c793;
+CREATE EXACT library/local_orchestration/grant_authority/windows_subject_preparation.py
+and tests/test_grant_authority_windows_subject_preparation.py.
+MODIFY0/DELETE0/export0, all other source/fixtures/CLI readonly.
+Frozen H10HT1-4 closure38, owned create-to-check; reuse existing H9/H8/B2/H10D/E/F/G/H6,
+no caller provided process record/readyDTO/rawtokenalias/authority marker.
+RECOVERY->JOB->CREATION outerlocks, token borrow spans call; initial jobborrow
+ends before H10G nestedborrow; allpostcreation failures retain exact originals,
+no resume/close/terminate/rollback/retry or unqualified ready/issuerclaim.
+
+Author /root/grant_transport_impl H10G allocation/context RELEASEDe2e554cc.
+Fresh ctx-ticket30g-subject-preparation-20261020 after registeredimmutableholds.
+Root sole finalreviewer/orchestrator, existing distinctsourcehelper.
+Allocated .worktrees/skill-improvement-30g-subject-preparation and matching-review,
+codex/same, exactbaseline above; targets absentbefore/all existing ancestors
+nonreparse/cleanHEAD/.git/worktree/common-dir readback confirmed.
+OwnedTemp johnny30g-subject-preparation-20261020 author and -review-20261020 Root,
+registered boundedfakeoutputs/typecache, TTLreviewseal then referencedhold;
+no automatic expiry cleanup or Recoveryrelease.
+Preflight3 existing normal plan/identity/joblimit constructors PASS0.75s,
+wrapper3.047s/unpatched effectcalls[]; source actualthreeblobs pinned and
+memorycompiled. NewtwoH10Hpaths confirmed absent, no newtypepreexistencefiction.
+h10h-preflight-allocation-20261020.json SHA256
+3bd10e4ea03f8f25f71df23fcbe78fe0fc28837d3936220f36d836f7e86a94d1.
+All priorusage/failures preserved; no cumulative/count cap; child55/outer60
+finiteinitialdeadline, diagnose timeout/stagnantfailures beforeadjustment.
+
+Only ordinaryboundedcontroltestchildren/passiveownedoutputs. No actual
+native/token/process/job/SD/pipe/SCM/Host/service/account/ACL/security/install/
+network/model/provider/newcost/cleanup/push/release/deploy/formalactivation.
+No owner prompts/ticketnarrative/sourceauthorizationclaims. Existing interfaces
+and verified behaviors untouched. Return exactcandidate/files/checks/findings/
+deviations; author cannot approve, delegate or integrate itself.
+ACTION_COMPLETED -> AUTO_CONTINUE namedauthor IMPLEMENT / finitewait /
+Rootdifferentdoor + distinctsourcecheck / exactsource-stagecomposition.
+30B43, true Grant/source success, qualifiedisolation and unfinished12 remain OPEN.
 ## H10G exact source composition / H10H bounded design — 2026-10-20
 
 ACTION_COMPLETED composition2311324147c93fa463ce6e1566a148ce78f0c793,
