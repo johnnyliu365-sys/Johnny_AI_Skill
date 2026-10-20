@@ -1,5 +1,44 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Remaining protected read-entry reuse decision — 2026-10-21
+
+Bounded distinct source query at9c999a1e (no source/Host mutation) confirms:
+windows_pipe_factory owns protected pipe creation/verification; transport owns
+bounded frame I/O; messageidentity and retainedprocess readers own actual
+same-thread observations; windows_peer joins values only; windows_read_dispatch
+accepts constructed observation and returns GrantRecord metadata, not filebytes.
+C8 native Win32ReadbackPort.ReadFile already checks opened-handle path/reparse,
+bounded bytes and pre/post file/owner/descriptor identity; CLI observe-enrollment
+only emits metadata. Neither CLI JSON nor C8 model has same-process provenance.
+
+Runbook03 sections2/3 already require issuer-owned accepted plan, exact snapshot
+membership/opaque fileID and bounded bytes. Current GrantPlan has no snapshot
+membership; ledger.issue structurallyvalid plan alone is not Owner approval.
+Current two-ref readprotocol/16KiB body is NOT a snapshot-blob service; C8 64MiB
+observation limit is NOT the minimal Host readlimit. N7 codec bytes/digest does
+not read protected nativefiles. No matcher or caller marker can close this gap.
+
+Architecture direction within originallocal construction: reuse existing C8
+observedfile facts and bounded32KiB N7snapshot limit for a private same-process
+snapshot file reader, with independently sourced membership supplied later by
+protected issuer entry. Freeze exact ordinary input/return/error+owning-handle
+lifetime before any derived Grant; test actual native wrappers only with fakes,
+positive exactbytes plus path/reparse/fileID/volume/owner/descriptor/hash/size/
+short-read/pre-postdrift and cleanup-uncertainty negatives. Do not yet activate
+an undeclared newsource or call puremembership an approval source.
+Existing installed module catalog narrow grant/native/readonly/issuer lookup has
+no matching READY card; reuse target-owned exact components, no plugin runtime.
+
+This is a concrete unresolved source boundary, not a new policy/principal,
+second Grant engine or request that Owner supply a finished service. Exact
+protected approval/config/service install and actual independent OS evidence
+still require the later single operational manifest. N8 outgoingframes remain
+a separate necessary disjoint wire seam now implementing, not a substitute.
+ACTION_COMPLETED -> AUTO_CONTINUE existing N8 implementation wait and prepare
+only the next closed source boundary;30B43/TAL/Recovery unchanged.
+
+
+
 ## N8 exact local implementation Grant01 — 2026-10-21
 
 Root derives grant-ticket30n8-readonly-control-wire-20261021 revision01 ACTIVE
