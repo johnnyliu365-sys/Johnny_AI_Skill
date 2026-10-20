@@ -1,5 +1,15 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N10 initial seal independent QA — 2026-10-21
+
+/root/ticket30_native_tools_review FINAL DOC/ARCHIVE_PASS for99391a23:
+all17 original file byte lengths/SHA256/UTF8 match held originals; gzip20119
+SHA5a70bf40 and raw167467 SHAcab49c83; candidate3a9053ef/parentfcb373a6 and
+three CREATE blobs match. Same Grant01 correction stays closure46/P0, no new
+effect/qualification. Missing overwritten historical import raw not reconstructed.
+Root final source conclusion remains CHANGES_REQUESTED; active author correcting,
+no source composition or realHost operation. Ordinary helper is not qualified audit.
+
 ## N10 initial source review / same-ticket correction binding — 2026-10-21
 
 Root conclusion CHANGES_REQUESTED; candidate
