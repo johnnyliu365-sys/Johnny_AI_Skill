@@ -1,5 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Next issuer seam / bounded architecture determination — 2026-10-21
+
+Distinct helper FINAL confirms existing runbook03 section2 can proceed as a private
+installed-approval loader plus one-request issuer composition, not another public
+Grant DTO/engine. Existing GrantPlan/digest, C13 issuer identity, N9 membership,
+ledger issue/claim/settle, pipe/message/retained-process observers, N10 reader and
+readonly_review_host codec are reuse targets. windows_service remains pure C8;
+windows_read_dispatch metadata is NOT snapshot content or proof of approval.
+
+A fixed installed SCM/service configuration, independently read and checked for
+owner/DACL/current issuer/binary/protected CodeRoot, must anchor the later exact
+Owner-accepted approval record under CodeRoot, not service-mutable DataRoot.
+No caller argv/env/path/expected hash/plan/marker supplies that authority.
+Read exact approved member only after durable claim; retry/uncertain completion
+does not issue/execute again. Actual service packaging/SCM/runtime protection and
+independent observation still must be built/proved; NativeTools is not a service.
+Potential precise source paths: windows_installed_approval.py, windows_issuer_service.py
+and focused test under existing grant_authority/tests responsibility. This is
+preparation, NOT_ACTIVE: final contracts/paths/baseline/preflight/Grant are not yet
+frozen, N10 correction is prerequisite. No new public protocol/gate/framework or
+qualification/installation/OS effect follows. No user is asked to supply an unbuilt
+service. Operational account/ACL/SCM/Host/model effects await one exact later packet.
+
+
+
 ## N10 initial seal independent QA — 2026-10-21
 
 /root/ticket30_native_tools_review FINAL DOC/ARCHIVE_PASS for99391a23:
