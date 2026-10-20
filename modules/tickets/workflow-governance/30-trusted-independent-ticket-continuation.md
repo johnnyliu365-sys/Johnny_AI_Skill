@@ -40,6 +40,133 @@ committed rules/ticket/index/runbook versions; subsequent exact child bindings r
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
 
+
+## 30N10 — same-process bounded snapshot reader / closure46 proposal
+
+Original30/PRD009/CHG009/Context04/runbook03 sections2/3, uncapped local batch
+batch-checklist-local-20261019-uncapped and unchanged first-CVQ minimalreadonly
+source construction order. Baseline fcb373a680b21397bf0e22d7ec8b8894c0eb00c5,
+engineeringhold only. N9 exact constructors7cafff9a/e9092823, N7/N8 codecs,
+H11 readcomposition and all old tests/source remain unchanged. No new PRD/Grant
+protocol/result envelope/Router/authority source or engine. This does NOT authorize
+actual Native calls: tests replace native boundaries; Host qualification remainsOPEN.
+
+CREATE ONLY:
+- library/local_orchestration/grant_authority/windows_snapshot_native.py
+- library/local_orchestration/grant_authority/windows_snapshot_reader.py
+- tests/test_grant_authority_windows_snapshot_reader.py
+MODIFY/DELETE/export/dependency0. Three responsibilities are justified by bounded
+Architecture review: no existing checked same-process Python file-read ABI exists.
+Do not copy the600line message-pipe class or C# reader into orchestration.
+Reuse N9 ordinary models/scalar meanings, existing _FILETIME rawlayout and retained
+owner/thread/deadline/completion semantics; no second ownership/policy framework.
+Private native file facts/finite errors are implementation details, not new public
+authorization DTOs. They must be typed, bounded and tested, not dynamicdict/Any.
+
+Internal operation _SnapshotBlobReader(member:_SnapshotBlobMember,
+cancellation:threading.Event, deadline:float).read()->bytes. Constructors/imports
+perform no Native IO. Exact normalN9 member revalidation before IO; reject invalid,
+subclass/bypass-built or mutated values, invalid event, nonfinite/nonpositive/expired
+monotonicdeadline and wrong thread; deadline at most60seconds ahead at admission.
+Reader single-use/nonreentrant; failure or success cannot reopen/read again.
+No incoming external path/offset/hash/handle/approval field. Member is an internal
+issuer-resolved expected value, NOT read authority. This unexposed primitive cannot
+prove provenance and has no production caller in this slice; later protected
+issuer membership resolution must occur BEFORE it is called, with no caller DTO
+shortcut. Do not claim this construction has enabled a trusted source entry.
+
+Native leaf alone owns exact file/directory/event handles, OS ABI and completion.
+All imports/constructors no-effect. Open only requested canonical localdrive path,
+OPEN_EXISTING, noninheritable, OPEN_REPARSE_POINT/BACKUP_SEMANTICS; final file
+READ_CONTROL|FILE_READ_DATA, shareREAD only (no write/delete share), OVERLAPPED.
+Retain and check every opened directory prefix with no delete sharing through
+the entire operation, reject reparse/alias/type escape and wrong finalpath; do
+not reopen by pathname to hash. Bound prefixcount<=256 before effects; deeper
+paths explicitly unsupported in this construction, not silently truncated.
+Regular disk file only. Internal Win32 extended-prefix handling is exact and
+explicit, not Unicode normalization/casefold/firstmatch of caller paths.
+Compare exact expected canonical spelling after documented extendedprefix removal;
+a differently spelled actual path fails closed, not silently normalized.
+No protected-ancestry claim without observations.
+
+Capture before/after on retained final handle: attributes, creation/write raw100ns
+FILETIME (no PyDateTime rounding), size, volumeSerial, fileID, finalpath, ownerSID,
+owner+DACL descriptor digest. Reuse _FILETIME layout and validate native integer/
+tuple/buffer/handle shapes at boundary. Owner/DACL required(non-null DACL);
+descriptor SHA256 is exact UTF8 of native OWNER|DACL SDDL text from
+ConvertSecurityDescriptorToStringSecurityDescriptor revision1; no normalization.
+This is explicitly its serialization, not proof the old .NET formatter is byte
+equivalent. Cross-formatter qualification remainsUNVERIFIED; don't reuse a digest
+by assuming SDDL text equivalence. Compare initial facts to all N9 expected fields,
+and complete before/after stablefacts (access time is not a stable invariant).
+Identity/owner/descriptor/size/path mismatch refuses, even matching content hash.
+
+Reader streams entire source<=67108864 through the SAME retained file handle,
+fixedchunks<=32768, hashes complete file and captures ONLY pinned memberrange
+<=32768. Actual approved inventory/sizes remainUNKNOWN, no assumption every source
+fits one frame. Check trueEOF with extra1byte including emptyfile; detect premature
+EOF/truncation/growth and wholefile changes outside capturedrange. Wholefile digest
+AND member digest AND exact returnedlength AND all postfacts must match before
+any bytes escape. Emptyfile/member SHA rules preserve valid N9 constructor cases.
+
+Preallocate and retain exact overlapped readbuffer/OVERLAPPED until completion.
+ReadFile status/capacity are not bytes transferred: use GetOverlappedResult actual
+count (0..requested); exactpositive shortreads may advance, premature0 refuses.
+Check one controller cancellation event/finite monotonicdeadline before/after each
+bounded step and during pending polling. Each wait bounded, no sleep/unboundedjoin.
+Same-issuing-thread CancelIo is a request only. Cancel/drain bounded<=1000ms and
+separate completion observation required; knowncompleted abort can teardown once,
+unknown/incomplete/exception retains original file/event/ancestor owners+buffer+
+OVERLAPPED in explicit recovery hold, poisons future reads. Close only ORIGINAL
+owners exactlyonce after completion; closeexception/aliasdrift also retained and
+no rawhandle fallback/retry/GC/policy change. Finite sanitized failure, no paths/
+contents/SDDL/nativeexception text in result/error/log. No nonempty bytes success
+or empty-success fallback on failure. No claim synchronous metadata syscalls have
+qualified hard wall bounds; actual Native qualification is still required.
+
+N10T1 positive fake-native endtoend REAL leaf+reader: normal/full/internalrange,
+emptyfile/member, maximumslice, Unicode path exact, immediate/pending and shortread.
+Expected hashes come independently from pinned fixturebytes, not Actual.
+N10T2 malformed/bypass input shapes, wrongthread/reuse, bad native tuples/status/
+count/bufferidentity, reparse/path/disk/directory/owner/DACL/volume/fileID/size/
+attribute/rawcreation/rawlastwrite mismatch before/after and deadline/cancellation.
+N10T3 wholefile tamper OUTSIDE capturedrange, rangehash/length mismatch,
+prematureEOF/growth and partial/pending timeout, observedabort vs unknowndrain,
+close/alias uncertainty. Assert no bytes escape, exact effects/order, original
+owners/buffer/overlap retained and refused reuse; user/unowned assets neverdeleted.
+N10T4 named author reverse mutations for wholehash, identity/postfacts, exact
+completioncount and recovery hold RED/exactGREEN; Root different legitimate door.
+Tests must reach native-boundary leaf, not merely stub reader to expectedfixture.
+Use shared parameterization/helper in this suite, no external repo/clone/process/
+browser/container/server/OS calls or newframework/permanent probe artifacts.
+
+Existing typed input constructors are reviewed and exercised before delegation;
+new private ABI internals are built/tested under that established N9 input contract,
+not asserted to preexist. Constructor-only source ordering does not waive final
+readbehavior gates. Strict3 --disallow-any-unimported --explicit-package-bases,
+newtest + N9 tests + existing C8 tests, memorycompile/actualsource/import under
+Native/socket/subprocess deny guards; normal unreduced pytest, short caseIDs.
+Forecast native<=400effective/reader<=220/test<=480; signal not forcedsplit/minify.
+Over500 triggers existing structuralreview, not newGate. No gratuitous source
+narrative/prompt/ticket identifiers, dependency or baseline test edits.
+TEST->A->B N/A: no old behavior moved/retired; inherited behavior untouched.
+
+Root AO/solefinalreviewer/orchestrator; retained /root/ticket30n4_peer_impl uses
+approvedLuna/xhigh in a fresh owner allocation after N9 immutablehold; distinct
+sourcehelper. ctx-ticket30n10-snapshot-reader-20261021.
+Proposed author .worktrees/skill-improvement-30g-snapshot-reader codex/same and Root
+matching -review; registered Temp johnny30-snapshot-reader-owner-20261021 and
+-review-20261021 to reserve beforecreate. Exactowners+TTLthroughreviewseal, active
+Recovery/evidenceholds overrideexpiry; no cleanupclaim/expirydeletion.
+Grant candidate grant-ticket30n10-snapshot-reader-20261021 revision01 NOT_ACTIVE
+until DOC/D8/asset/actualexistingconstructor preflight. Bridge NOT_REQUIRED direct,
+no queue/receipt/gateway invented. Return candidate/files/checks/findings/deviations
+and original raw commands/terminal outputs; preserve uncapped historical failures.
+Child55/outer60 finite commandbounds, diagnose no-progress repeatedfailures.
+No Host/nativecampaign/SCM/service/account/security/ACL/install/model/provider/
+network/newcost/push/release/deploy/formalactivation, no refusedcleanupretry,
+30B43/TAL/R0/DAP/Recovery statechange or checklist/fullTicket30completion.
+
 ## 30N9 — bounded snapshot membership values / closure45 proposal
 
 Original30/PRD009/CHG009/Context04/runbook03 sections2/3 and existing12localbatch
