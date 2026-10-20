@@ -1,4 +1,49 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10F closure34 source admission / exact Grant — 2026-10-20
+
+DOC_PASS distinct /root/ticket30_native_tools_review reads committed
+dcf4f0fa4d489507ced803646f36086fc2642cc1, original30leaf
+2ef24e3fa4332a8076b0993f06c2bfa0cbb26c87 LF
+88883198094c05f158b6a52cfa2e200c1d58d1b3dab152b0e58ef70ee27cd951 / D8matched.
+No new policy/role/DTO; private shared SD predicate extraction preserves B2
+constructor and uses fixed actual-installed mask wrapper, no copied parser.
+GetSecurityInfo source construction only, no actualnative permission/effect.
+
+grant-ticket30g-created-process-protection-20261020 revision01 ACTIVE under
+batch-checklist-local-20261019-uncapped / originalfirst-entry source-order
+exception. Exactbaseline6f563a7bfd0b8ff71fb6f913cd68db7b687cf883. CREATE ONLY
+library/local_orchestration/grant_authority/windows_created_process_protection.py
+and tests/test_grant_authority_windows_created_process_protection.py.
+MODIFY ONLY library/local_orchestration/grant_authority/windows_subject_process_abi.py
+and tests/test_grant_authority_windows_subject_process_abi.py, minimum shared
+fixed-descriptor extraction / mask preservation tests. DELETE0/export0, other
+source readonly. Original30closure34 contains full H10FT1-4 frozen closure.
+
+Author /root/grant_transport_impl oldH10Eallocation/context RELEASED immutable
+hold9c0f3267; fresh ctx-ticket30g-created-process-protection-20261020. Root sole
+reviewer/orchestrator; different source helper for evidence. Directsame-lifetime
+bridgeNOT_REQUIRED, not a qualifiedHostaudit or new persistedreceipt.
+Allocated contained .worktrees/skill-improvement-30g-created-process-protection
+and matching-review / codexsame; bothabsentbeforeallocation, allancestors
+nonreparse, exactGitpointer/common-dir/HEAD readback and clean. OwnedTemp
+johnny30g-created-process-protection-20261020 and -review-20261020, author/Root,
+fakechecks/raw/onecache, TTLreviewseal thenreferencedhold, noexpirydelete.
+Known existing B2 ordinarycreation/buffer constructors guarded2PASS2.437s,
+no unpatched externalcalls; preflight wrapper prints existingH10Esource, not
+a claim newH10Fproducer alreadyexists. Raw h10f-preflight-allocation-20261020.json
+SHA25651b40ba327d27231d0bb1f8230cb36616231c5ce307b66118da949c04ed872b3.
+
+Only boundedcontroltestprocesses/passiveoutputs; actual subject/nativeGetSecurityInfo/
+SDconverter/token/job/process/Host/CLI/model/provider/network/account/security/
+ACL/service/install/cost/cleanup/push/release/deploy/formalactivation forbidden.
+All guards must include GetSecurityInfo before newmodule/test imports, with fakes
+patching only declared seam. Child55/outer60 initialdeadline, recordhistory and
+failures, no cumulative/countcaps, no unchangedretry/ceremonialOwnerquestion.
+ACTION_COMPLETED -> AUTO_CONTINUE namedauthorIMPLEMENT, finitecompletionwait,
+Rootguarded/strict/differentcounter + distinctsourcecheck then exactcomposition.
+C10sourceengineering remains separate. Installedactualprotection/issuerpositive/
+Hostqualification/30B43 and remainingchecklistitems still OPEN.
+
 ## C10 F1/F2 source approval / exact composition Grant13 — 2026-10-20
 
 APPROVED_SOURCE_ENGINEERING_ONLY candidate105877f0956757bda63570b1ecd6bde683e7f724,
