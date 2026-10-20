@@ -1,4 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Native CLI offline schema-tool readback / local preparation — 2026-10-21
+
+Original30/runbook03 minimalreadonly adapter, existing uncapped local source/
+offline verification authority. Official OpenAI docs config-reference/app-server
+(fetched2026-10-21) identify version-specific app-server schema generation and
+experimental native dynamic tool protocol. Current docs are not proof that the
+installed0.163 alpha binary supports them, nor that any setting enforces isolation.
+No docs/toolallowlist/prompt substitutes for nativequalification. Prefer native
+bounded API tool over rebuilding an MCP/Broker when exact schema supports it;
+this is source interface determination, not another Wayfinder or Hostcampaign.
+
+Root preregisters passive Temp johnny30-codex-schema-readback-20261021, Rootowner,
+TTLthroughreview/seal/holdoverride; only version/help/offline schema output,
+one foreground generator at a time, command60/child55. Exact Get-Command
+codex.exe resolved userwritable
+C:/Users/GameBoy/AppData/Local/OpenAI/Codex/bin/896a0166b774037a/codex.exe;
+hash/version independently read before use, NOT trusted protected payload.
+Get-AppxPackage discovery failed module load Operation is not supported on this
+platform (0x80131539); no Import-Module/policy/install workaround or Desktopclaim.
+No CLI Hostsession/server/listener/turn/attack/model/login/provider request.
+No service/ACL/account/security/install/network effect or actualconfig change.
+Explicit nonsecret minimal childenv, CODEX_HOME/USERPROFILE/AppData/TEMP owned
+emptyTemp, no auth/key/PATH/envinheritance. Execute only --version, bounded
+app-server generate-json-schema --help then exact supported generator subcommand
+to owned output after help. Never plain app-server, exec, login, model request or
+fallback/upgrader. Unknown unsupported returns NOT_AVAILABLE_FOR_THIS_BINARY,
+not substitute anotherHost/version. All output originals retained, no cleanup.
+This tooling executes bounded control child only, not subjectNative/CVQtest.
+ACTION_COMPLETED -> AUTO_CONTINUE precise offline interface readback.
+
+
 ## CVQ exact dependency replay seal / engineeringhold — 2026-10-21
 
 Root Grant22 revision02 activated55101d43 after distinct DOC_PASS2921ca38.
