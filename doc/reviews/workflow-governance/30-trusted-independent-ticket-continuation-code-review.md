@@ -1,4 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
++## N7 DOC admission / reserved assets — 2026-10-21
+
+Independent /root/ticket30_native_tools_review DOC_PASS at429dfceb8594677ede79e530fbf6cfa77696d8ba,
+ticketblob a7f835d1e24ff8c3678bd3b4814804447ce054a2,
+LF f7c5e3b128f96fed4a9ceb95d5fdd57bc0dc2d5384eff9fc9fe8a4fb94de38c8.
+Exact2CREATE absent at7e3c12197bb127313813f7e968c12d3ba5658088; strict
+constructor-only PhaseA and conditionalB, existing CVQ/genericJSON helpers and
+sealed generated native schemas independently matched. DOC_PASS is not Host
+qualification or permission for operational effects.
+
+Root reserves repo-contained .worktrees/skill-improvement-30g-readonly-wire
+codex/same for /root/ticket30n4_peer_impl, and Root-owned matching -review.
+Owner allocation priorC13 remains RELEASED_TO_IMMUTABLE_REFERENCED_HOLD cc46a184;
+N7 fresh Context ctx-ticket30n7-readonly-wire-20261021 shares no prior raw context.
+Registered Temp roots C:/Users/GameBoy/AppData/Local/Temp/
+johnny30-readonly-wire-owner-20261021 and johnny30-readonly-wire-review-20261021.
+Each asset has named owner above, TTL until source review/seal, with candidate/
+evidence/Recovery holds overriding expiration; no automatic deletion or refused
+cleanup retry. No existing directory may be overwritten or reparse-traversed.
+Fresh run subdirectories belong to this bounded source-only verification plan.
+These are asset reservations, NOT_ACTIVE Grant. Ordinary existing-base model
+construction/import preflight and fresh Git/containment identity precede PhaseA.
+Historical uncapped accounting preserved. H10I independent correction unaffected.
+ACTION_COMPLETED -> AUTO_CONTINUE fresh reserved allocation and base preflight.
+
+
 ## Exact native CLI wire schema source snapshot — 2026-10-21
 
 Root offline readback e2d4c774: exactexe SHA256
