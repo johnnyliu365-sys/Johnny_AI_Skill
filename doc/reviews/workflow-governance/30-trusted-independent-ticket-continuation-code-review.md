@@ -1,4 +1,55 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10I initial review / same-closure correction Grant revision02 — 2026-10-21
+
+Root CHANGES_REQUESTED at b4bdd7f79d207c3006ec2e25527f1623d94d0d44,
+exact3blobs1f4e0dcd/b7fd509d/3b1cbc8a, reviewWTclean. Candidate source381/
+test545 plus oneoldbool, structural signal not forcedsplit; both Root and
+different helper found one launch responsibility/shared oldcompositionfakes.
+Root187guardedPASS2.15s/effects[], serial strict3 noAnyPASS19.516s completed
+before probe. JS saved-command-key lookup failed after green suite; no strict
+ran in that failed wrapper, corrected from exact savedcommand before any probe.
+No source mutation remains. Healthy path not blanketrefused.
+
+H10I-F01 IMPLEMENTATION_DEFECT H10IT3 finalborrow uncertainty:
+different helper identified closed/closeattempted/poison not revalidated after
+borrow exit; Root own actualcandidate/sharednativefake probe proves five
+named failures: tokenclose_attempted, tokenclosed, H9_RECOVERY_POISONED,
+H8_CREATION_POISONED, B2_CREATOR_POISONED silently changed after tokenborrowexit
+(count3, alias unchanged) return successful record rather than Recovery.
+All five DID_NOT_RAISE, not nativeeffects. Existing alias-only cell missed these.
+H10I-F02 IMPLEMENTATION_DEFECT H10IT2/3 owning reservation beforeeffect:
+Root wraps actualH10H return and clears originaljob reservation. Current code
+detects only finalreturn; one ResumeThread call occurs before refusal, expected0.
+Six raw namedRED3.98s/effects[] from same exactcandidate; no sourceedited.
+Root original h10i-root-initial-review-20261021.json SHA256
+651b40616c161952edae8fd97d40588285eae151f3788643c094524271da1085;
+temporary data/probe in preregisteredreviewTemp retained; not formal test authoring.
+
+Root derives same grant-ticket30g-subject-launch-20261021 revision02,
+same original30/closure42 ticket14e05a54/sourcebaseline801af, author/WT/context/
+history/uncappedpolicy unchanged; exact additive correction baselineb4bdd7f.
+MODIFY ONLY alreadycreated windows_subject_launch.py and its existing test;
+oldlease thirdpath stays exact3b1cbc8a, no CREATE/DELETE/extraexports/deps.
+No new requirements/policy/roles. BeforeResume revalidate existing reservation
+and usable original token/job/process recovery/closed flags through cohesive
+existing/private guards; after borrowexit revalidate same flags before success.
+Do not reborrow infinitely or add anotherowner engine, restore false flags or
+clear Recovery. Post-child uncertainty retains exact originalowners/evidence
+through existinghelpers; beforeeffect drift must cause zeroResume. Formalize
+Root's counterexamples in originaltests, baseline-red against b4bdd7f,
+validunchanged positives, affected regressions/strict/compile/load, discriminating
+reverse pairs and exactrestores. Preserve earlier187/strict/fourauthorpairs
+as thatcandidate's evidence, never relabel them final correctedsource.
+
+Root remains solefinalreviewer; same lowcost owner correction, distinct source
+helper later rechecks delta. Registered assets/TTL/holds preserved. Original
+CVQ dependency source-stage7e3c1219 only independent28CREATE; H10I authorbaseline
+notadvanced or scopeexpanded. No wholemain/Host/issuerqualification/30B43/cleanclose.
+No actual subjectNative/Host/pipe/token/job/process/model/network/SCM/security/
+ACL/account/service/install/rights/cleanup/push/release/deploy/activation.
+ACTION_COMPLETED -> AUTO_CONTINUE exactsameauthor correction, no Ownerquestion.
+
+
 ## Native CLI offline schema-tool readback / local preparation — 2026-10-21
 
 Original30/runbook03 minimalreadonly adapter, existing uncapped local source/
