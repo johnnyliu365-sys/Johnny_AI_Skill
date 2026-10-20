@@ -1,4 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H8 composed-source readback seal — 2026-10-20
+
+Root-owned source-stage1ae18b760e3416ec78b73727e6be8cc94b338cda parentd7ca3e9c
+adds exactly two reviewed H8 blobs334aa8f2/a8f4c2f5 from5260cfbc. All37 earlier
+mapped changes and remaining parent files unchanged; total39 vs18bf1e9f.
+Root changed-context94guardedPASS2.422s/strict2PASS2.218s, memorycompile and actual
+loaded-source byte/blob proof; distinct native-tools SOURCE_MAPPING_PASS.
+No unchanged C#/H1-H7 rerun. Source composition only, not main/authority/qualified
+integration, source approval qualification or actual protected service.
+Root ownedTemp/johnny30g-protected-source-review-20261020/
+source-composition-h8-root-evidence-20261020.json SHA
+fa4e338619f4072755a0eb6848ee92ce6d7d4a1c93b3aa75360752ce699e6bbc.
+Distinct archive helper DATA_INTEGRITY_PASS187ffaf2: four files byte/hash equal;
+five fresh Root actual patch hashes/unfilteredRED/GREEN records match; old UNKNOWN
+fields remain unknown. No embedded command execution. H9 checkpointf22a5aed has
+ordinary source helperPASS and Root75guarded/strict2, different LUIDjoin namedRED/
+restoreGREEN, final author five-door proof still in progress; no premature seal.
+ACTION_COMPLETED -> AUTO_CONTINUE H9 evidence and next necessary local prerequisite,
+no new Agent/Gate/PRD, cleanup/Host/security/installation/push/release effect.
 ## H8-B source review seal / controlled source-stage admission — 2026-10-20
 
 Root SOURCE_APPROVED (engineering only) final5260cfbc4c25fcece3d38c847e1b2dc3fbfb3c58,
