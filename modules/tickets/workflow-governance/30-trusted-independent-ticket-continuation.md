@@ -109,7 +109,9 @@ original owners/native output holders+buffer in an explicit bounded recovery hol
 and poisons further use. Cancellation/deadline/invalid input refuse before next
 effect; incomplete/unknown outcome cannot return payload. Retain existing Recovery
 and evidence, no cleanup retry/expiry deletion or clearing poison to rerun.
-No error/result/log may include paths, bytes, SID/DACL text or native exception.
+Failure/error/log/public output contains no paths, bytes, SID/DACL text or native
+exception. The private success record alone retains its exact validated path/SID
+fields for later issuer binding; no raw registry bytes/SDDL/exception is exposed.
 
 One private strict record schema_revision1 / approval_ref / grant_ref /
 operation_ref / plan:GrantPlan / peer:AuthorityPeer /
