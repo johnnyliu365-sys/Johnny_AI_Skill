@@ -1,4 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Continuation tool-capability record — 2026-10-21
+
+After exact PhaseA source-helper PASS and Root sealca8ccba6, an additional
+followup_task to /root/ticket30_native_tools_review for archive-byte/rebind
+cross-check returned exactly: agent thread limit reached.
+No unchanged retry, replacement helper or new spawn was made; the requested
+supplement is NOT_EXECUTED, not a qualified review or silent PASS.
+Prior independent SOURCE_PREFLIGHT_PASS and Root final conclusion remain their
+actual scopes. C13 PhaseB namedauthor and independent H10H active lanes continue.
+Only04 checked, no integration/qualification/issuer-positive claim.
+
+Root next-source bounded inventory tried a guessed native_windows subpath and
+a guessed install-manifest leaf: paths absent, no write/effect occurred.
+Corrected with rg --files; actual tool path library/local_orchestration/native_windows,
+existing runbook is grant-and-readonly-host-implementation.md revision03 in
+control. Source-stage retains historical revision02; never substitute it for
+the current control-plane authority. These instrumentation errors are not
+product findings, qualification evidence or grounds for another Owner ask.
+
 ## C13 PhaseA source review / exact same-Grant PhaseB rebind — 2026-10-21
 
 Root APPROVED_CONSTRUCTOR_SOURCE_ONLY at candidate
