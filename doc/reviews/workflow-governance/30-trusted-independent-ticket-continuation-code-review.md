@@ -1,4 +1,67 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Quota-interruption resume / bounded dependency readback — 2026-10-20
+
+User resumes the original12 batch after platform quota interruption. Parent
+batch-checklist-local-20261019-uncapped, active H10E Grantcc5861d2 and C10
+Grant5892c5c0 remain unchanged; no reset of usage/failures, new scope or fees.
+ControlHEAD05f230a4 and primarymaina1cb6c13 are clean. Same author allocations
+continue; no progress polling or reads of uncommitted author worktrees.
+
+C10 author reports final-harness compile failure: SafeFileHandle is sealed.
+Retain c10-correction-final-harness-build.json exit1 as instrumentation failure,
+not product-negative proof. Non-owning synthetic SafeFileHandle plus explicit
+release-delegate calls can express false/throw/partial release safely; F2 still
+requires exact remaining-owner strong hold, stopped cleanup, no automatic/retry
+release and normal exactly-once success. Root's existing managed SafeHandle
+probe remains corroboration, not a substitute for product regression.
+
+A distinct bounded source-helper followup now returns agent thread limit reached.
+No unchanged retry, alternate Agent or policy workaround. Existing authors still
+own their lanes; future source approval still requires independent evidence.
+This is platform capability, not removed local command-second/count ceilings.
+
+Root narrows next original30 prerequisite using immutable stage21ddef2a only:
+installed process/thread owner+DACL cannot be inferred from B2 desired SDDL or
+H6 process facts. B2 windows_subject_process_abi.py:492-545 validates exact
+GENERIC_ALL mask0x10000000, control0x9004, ownerSYSTEM and two allowed ACEs;
+:548-574 validates/copies descriptor buffer. H10D:158-211 checks original
+registered same-thread open process/thread pair and detects identity drift.
+Neither performs installed security readback.
+
+Microsoft GetSecurityInfo documentation confirms handle-based process/thread
+owner/DACL readback requires READ_CONTROL and is not an atomic race-proof API:
+https://learn.microsoft.com/en-us/windows/win32/api/aclapi/nf-aclapi-getsecurityinfo
+Microsoft generic-rights and current SDK winnt.h distinguish generic masks from
+object-specific mapped masks:
+https://learn.microsoft.com/en-us/windows/win32/secauthz/generic-access-rights
+https://raw.githubusercontent.com/microsoft/win32metadata/main/generation/WinSDK/RecompiledIdlHeaders/um/winnt.h
+SDK lines12254-12279 maps modern PROCESS_ALL_ACCESS/THREAD_ALL_ACCESS to
+0x001fffff, unlike pre-Vista forms. Installed win32con.py:2063 still exports
+PROCESS_ALL_ACCESS with0xFFF, so blindly importing that constant is not proof.
+Pywin32 upstream win32security.i:1184-1206 wraps native GetSecurityInfo, copies
+PySECURITY_DESCRIPTOR and frees its native temporary; source inspection only,
+not a claim about the installed binary or actual returned control bits.
+
+Next-slice candidate design, NOT_ACTIVE/NOT_DISPATCHED: reuse one semantic SD
+validator via a minimal private extraction rather than duplicate the ACE parser;
+preserve existing B2 fixed-GENERIC_ALL constructor entry unchanged. A fixed
+installed-kernel wrapper may require the modern mapped mask, never caller-
+selected policy, expected SDDL or transformed observation. Read both original
+aliases with SE_KERNEL_OBJECT / OWNER|DACL under B2 lock, use H10D identity
+checks before/after each read/validation, refuse reentry and retain original
+record on identity/protection uncertainty. No SetSecurityInfo, PID reopen,
+CloseHandle, assign/resume, new DTO, Grant source or public effect interface.
+No atomic-protection claim: final effect admission and real native qualification
+remain separate. Actual native SD shape/permissions remain UNVERIFIED.
+
+Before any dispatch, freeze exact baseline/paths/closure, test the existing
+normal constructor, independently review the proposed reuse delta and issue
+a bounded child Grant. Required fake cases include both legal mapped descriptors,
+wrong owner/control/null/extra/duplicate/weak/generic ACEs, wrong record/role/
+thread/alias, native error, callback drift/reentry and zero calls before refusal.
+Legal work must still pass. This preparation changes no source or active Grant;
+C10 F1/F2 and H10E remain the immediate admitted work. All12 checkmarks unchanged.
+
 ## C10-F2 local managed-runtime semantic reproduction — 2026-10-20
 
 Root independently supplements officialsource inspection with bounded offline
