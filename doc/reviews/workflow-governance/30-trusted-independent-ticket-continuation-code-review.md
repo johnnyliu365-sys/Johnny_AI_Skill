@@ -1,4 +1,43 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10C exact same-lifetime source admission — 2026-10-20
+
+Original30 closure30 committedd06afcb77a2bbbc079016be4ffa539b39b320121,
+leafabb70717b4d47555f8699666d8106c3362ef5e51,
+LFe09f0487c4d42ad259a26564c78d1117dc97ea5adcebda15fcdc9c4f364c370e;
+registryD8 matched. Distinct native-tools helper DOC_PASS: exact two existing
+MODIFY paths, process-only admission, shared H9/job helpers unchanged, no
+new Host authority. The prior B2 archive52 byte/hash checks and source-stage
+mapping are independently PASS; do not repeat unchanged campaigns.
+
+Child grant-ticket30g-created-owner-reader-20261020 revision01 ACTIVE under
+batch-checklist-local-20261019-uncapped and first-CVQ source-order exception.
+Baselinec1b609466b8048e0a487df1d45450168807d48b6, author
+/root/grant_transport_impl (prior B2 allocation released to immutable hold),
+Root sole reviewer/orchestrator, same declared lower-cost capability/effort
+selection, no extra paid service. Exact MODIFY ONLY
+library/local_orchestration/grant_authority/windows_retained_process.py and
+tests/test_grant_authority_windows_retained_process.py; CREATE0/DELETE0.
+Original blobsbf92c1eb/e4574122 unchanged since reviewed H6. Job/token shared
+helpers, ABI and all other files read-only. No widening through INVALID_PROCESS.
+
+Fresh contained nonreparse WTs .worktrees/skill-improvement-30g-created-owner-reader
+and matching-review, codex/same, Git pointers/branches/clean baseline observed.
+Fresh ctx-ticket30g-created-owner-reader-20261020. OwnedTemp/johnny30g-created-owner-reader-20261020
+and -review-20261020 belong author/Root for bounded fake tests/evidence/onecache,
+TTLthroughreview/seal then referenced hold; no expiry deletion. Both allocation
+paths and all ancestors verified not reparse. No denied cleanup or old allocation
+was reused or deleted. Existing normal ABI producer and native-owner H6 reader
+constructors tested at actual stage: two selected PASS2.000s, guarded no real
+native/external effects; new custom-owner reader admission still must be built.
+Preflight/allocation full raw SHA7b30aa4b2f9a9460d849f3e226b760addbabc7eeab5d6c59506a0271ae7351a2.
+B2 stage raw SHA74e8c998e6c275839bfa9fc14b1903f976ff0170083a79a78ef4e31d07b5d467.
+
+Per-command child55/outer60 and resources retained; old usage/failures preserved,
+no cumulative/count renewal. No real OS/native/SD/Host/SCM/security/account/ACL/
+install/network/model/cleanup/push/release/deploy/formal activation. This is
+source/fake migration, not qualification; no30B43 release or false checkbox.
+ACTION_COMPLETED admission -> AUTO_CONTINUE IMPLEMENT exact named owner.
+
 ## C9 F1 continuation / B2 composition readback — 2026-10-20
 
 C9 correction0e35ed593eb009c101ef47f3f99a7aa74147994f closes stale error-on-throw
