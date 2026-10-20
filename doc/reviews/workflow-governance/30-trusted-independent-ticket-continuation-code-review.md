@@ -1,4 +1,46 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H9-B checkpoint bounded source review / correction — 2026-10-20
+
+Immutable c410cb788400b1df4eb3996b39e9aede75a636b4 parentb99943a9,
+productae8cd1d8ac897133335cd10a81fe0979024dd895 /
+test44a3723d9a31424493ea6928314e2b995fff8125, exact two MODIFY paths.
+Root read both complete committed files, not active author mutations. Cohesive
+token ownership/native observation/restriction with one shared fake matrix; keep
+separate from job/process/transport, no line-count split or new framework.
+Root CHANGES_REQUESTED on frozen H9T2-T3 and AGENTS P0, not new policy:
+- H9B-I1: WTS acquisition wrapper failure returns without recovery poison. Root
+  below-native MemoryError at actual WTS wrapper: two NATIVE_CALL_FAILED, poison
+  False, attempts2; intended assertion RED2.344s/tool ee166f. Uncertain acquisition
+  must record owner-unknown recovery and stop another attempt, not invent ownership.
+- H9B-I2: BaseException escapes ownership-sensitive native reads/alias handling,
+  restricted creation or close. Root fake base-owner Close KeyboardInterrupt after
+  both owners exist: raw interruption, poisonFalse/hold0/both owners unretained;
+  intended assertion RED1.593s/tool218df6. Catch/retain at the owning boundary for
+  interrupted known/unknown outcomes, preserving every identified owner without
+  duplicate/alternate close, GC cleanup, role promotion or fake success.
+- H9B-I3: owner_ref is arbitrary object, only None rejected before WTS; it is not
+  a validated named metadata boundary. Architecture Owner selects existing
+  OpaqueMetadataId, strict exact validation/no transformation before native work,
+  matching H8 owner metadata meaning. Compare metadata values, separately preserve
+  exact native-owner identity/alias/thread. Do not create another owner DTO/authority.
+  Empty/space/wrong-type/dynamic inputs refuse before WTS; valid opaque IDs and the
+  legitimate full lifecycle still pass. No source/effect Grant arises from an ID.
+
+Same original30closure25 / Grant02 / owner/WT/context/two MODIFY paths/history.
+Finish any pending exact-restored GREEN pair, then repair these batched defects
+additively before further final mutation campaign. Preserve defective checkpoint
+red evidence, actual-output fakes, full source/test/patch/command/output/time.
+No repeated unchanged fullsuite or Host/native/token/process/security effects.
+Primary pywin32 b311 source read (no native call):
+https://raw.githubusercontent.com/mhammond/pywin32/b311/win32/src/win32security.i
+GetTokenInformation elevation implementation returns Python integer, despite its
+Boolean comment; current exact integer check is not a defect. Privilege removal
+uses actual LUID/attribute pairs with flags0. Do not change ABI based on comments
+or fake outputs. A mistyped checkpoint SHA in one Git-show failed; exact committed
+SHA readback succeeded, no absence of source inferred. Helper dispatch hit a
+concurrent-seat limit, not isolation qualification; Root owns this independent
+review and does not rerun a rejected tool call unchanged.
+ACTION_COMPLETED -> AUTO_CONTINUE same-ticket correction; no Owner renewal.
 ## H8 correction candidate / interrupted-seat recovery checkpoint — 2026-10-20
 
 Candidate10a528857abb80810026bb582bf72a6b521be2b6 parent9b42277f,
