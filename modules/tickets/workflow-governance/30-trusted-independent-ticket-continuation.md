@@ -62,8 +62,18 @@ query-only acquisition, not an incoming client/thread/WTS subject token or calle
 supplied observation/owner. Current-process pseudohandle is borrowed, never closed.
 Reuse H5 token USER/TYPE/SID decoders/query/close-owner tools, H9 raw GROUPS query
 wrapper (not its subject-specific administrator rejection), original alias
-validation/recovery lock/hold helpers. No parallel token parser, owner lifecycle,
-native process launcher, new public DTO or permission engine.
+validation/recovery lock/hold helpers, and H10E raw query-only process-token open.
+Obtain only the current-process pseudohandle from GetCurrentProcess, never a
+caller-supplied alias; this one thin native producer is allowed and its borrowed
+pseudohandle must not be closed or duplicated. Pass its checked alias to H10E's
+existing query-only open; do not use its positive-session record reader for issuer
+facts. Do not hard-code the pseudohandle value in place of the native producer.
+Only issuer-specific GROUPS tuple/pair/attribute/full-scan validation is allowed
+locally: H9's existing group validator rejects the SYSTEM/BA entries this role
+must permit and provides no neutral parsed entries. Reuse H5 SID conversion and
+CanonicalSid validation; do not duplicate native query/open, USER/TYPE/SID decoding
+or copy the subject-policy rejection. No parallel general token parser, owner
+lifecycle, native process launcher, new public DTO or permission engine.
 
 Read actual TokenUser == S-1-5-18 and PRIMARY; read GROUPS using existing strict
 native tuple/pair/SID/uint32 grammar. Validate the entire returned tuple, no

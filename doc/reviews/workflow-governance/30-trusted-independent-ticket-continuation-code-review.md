@@ -1,4 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C13 documentation correction — 2026-10-20
+
+Same-ticket DOCfinding: H9 _read_groups is a standard-subject POLICY and rejects
+SYSTEM/BA, so it cannot implement issuer positive and exports no neutral parsed
+groups. Narrowed closure39 explicitly permits issuer-only GROUPS tuple/pair/flag/
+full-scan validation locally, reusing H5 SID decoder/CanonicalSid and H9 raw GROUPS
+nativequery. Do not duplicate general parsers or weaken old subject policy.
+Reuse H10E raw TOKEN_QUERY process-token open, not its positive-session record
+reader. One thin GetCurrentProcess producer is allowed; its borrowed pseudo
+handle is never closed/duplicated/caller-supplied. Preliminary uncommitted draft
+said fixed-1; official GetCurrentProcess docs recommend the function for future
+compatibility, so final contract uses actual producer, not a hardcoded value:
+https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocess
+No source implementation/Native call/newrights occurred during this correction.
+ExacttwoCREATE remains, no addedexistingfile refactor, DTO/engine/Owner question.
+Only final leaf/registry digest is authority for renewed DOCreview; preliminary
+digest969289b5 never a committed authority. H10H Grant unchanged.
 ## Issuer account / service SID source distinction — 2026-10-20
 
 Bounded architecture /root/ticket30n4_peer_impl at fixed23113241:
