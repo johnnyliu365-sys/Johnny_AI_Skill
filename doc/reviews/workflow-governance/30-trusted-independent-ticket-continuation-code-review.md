@@ -1,4 +1,41 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H8 correction candidate / interrupted-seat recovery checkpoint — 2026-10-20
+
+Candidate10a528857abb80810026bb582bf72a6b521be2b6 parent9b42277f,
+productd30f09268e1dd3efaa509089a365d2671c95881e /
+test4d618a984d62beac01bf3ae660416cbaa52a209e, exact same two MODIFY paths.
+Root91guardedPASS2.328s/strict2PASS2.797s; different expiry equality door
+namedRED2.125s/exactrestoreGREEN2.813s, full unfiltered output read, no active
+mutant. These close neither all H8 findings nor qualification.
+Source I1 indeterminate-create poison and I2 serialized creation/close publication
+are corrected structurally. Two residual frozen H8T3/test-truthfulness findings:
+- H8B-I3: post-create original alias getter and later alias-validation paths catch
+  only Exception. A BaseException before entering cleanup loses the known owner.
+  Root actual product + fake PyHANDLE getter KeyboardInterrupt: raw outcome
+  KeyboardInterrupt, poisonFalse, hold0, owner not retained; assertion RED3.266s,
+  tool47f19d. Sanitize interruption at ownership-sensitive reads, strongly hold
+  exact identified owner/poison, never close an unverified alias or retry.
+- H8B-E1: concurrency test gives every real worker fake thread741; main-created
+  lease closes on another actual worker. Use actual get_ident for this case,
+  create and close the first lease on its own worker, and gate the other worker's
+  creation. Prove the ordering with both legal same-thread owners, bounded events/
+  joins, below-native fakes. Retain all original baseline failures.
+Root CHANGES_REQUESTED, same scope/Grant03/lineage/history, no new authority.
+Consolidate duplicate I1 MemoryError/KeyboardInterrupt assertions as parameterized
+cases/shared assertion within the existing test file where semantics agree; do
+not add files, delete necessary cells or minify to meet a line count.
+
+H8 raw export and H9B final mutation handoff were interrupted by platform usage
+errors. This is not ticket-budget exhaustion or permission to remint/clean.
+H9 immutable checkpoint c410cb788400b1df4eb3996b39e9aede75a636b4 remains
+CHECKPOINT_NOT_APPROVED; any interrupted uncommitted mutation must be recovered
+by its owning seat with exact patch/source evidence before further writes.
+Fresh account readback ordinaryUsageAllowed=true / rateLimitReachedType=null,
+credits0/resetcredits0; no reset/purchase/paid expansion performed. Permit one
+evidence-backed resume of existing owners, not unchanged usage-error loops.
+Preserve prior agent errors, source/evidence holds and all historical usage.
+No Host/OS/service/security/installation/network/push/release/deploy effects.
+ACTION_COMPLETED -> AUTO_CONTINUE existing same-ticket corrections/evidence recovery.
 ## H9-A source seal / same-slice B admission — 2026-10-20
 
 Exact candidate b99943a92421e7800ae389b31ca1ae7c0a972d39 parentd7ca3e9c,
