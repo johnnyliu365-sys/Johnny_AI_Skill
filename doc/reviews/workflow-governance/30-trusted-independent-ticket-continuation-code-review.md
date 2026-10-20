@@ -1,4 +1,40 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10A exact local construction admission — 2026-10-20
+
+ACTION_COMPLETED proposal cfe69068ad9020539532f5a824dd314347379cf5 ->
+AUTO_CONTINUE IMPLEMENT, original30 closure26 only. Distinct native-tools
+DOC_PASS verifies ticket blob98088700c0aaf779485bbc13f88bdd632299ca2a /
+LF SHA518cd6f8292351c4a2d134e5dcf8976ce8530001e7cddb4e49db3b66484ead9f;
+all four required fields, shared H7 fixture and no operational/native permission.
+The separately found stale registry H8 status is corrected in this control commit,
+not treated as a constructor finding or reason to repeat passed H8 tests.
+
+Child grant-ticket30g-subject-process-20261020 revision01 A_ONLY ACTIVE derives
+only from batch-checklist-local-20261019-uncapped, not operational issuer authority.
+Exact sourcebaseline1ae18b760e3416ec78b73727e6be8cc94b338cda; author
+/root/grant_transport_impl (prior H8 allocation released to immutable hold),
+Root sole reviewer/orchestrator; distinct native-tools source helper.
+Author .worktrees/skill-improvement-30g-subject-process / codex/same and reviewer
+.worktrees/skill-improvement-30g-subject-process-review / codex/same created clean
+at that SHA, existing root-contained nonreparse .worktrees parent retained.
+CREATE ONLY library/local_orchestration/grant_authority/windows_subject_process.py
+and tests/test_grant_authority_windows_subject_process.py; MODIFY0/DELETE0.
+Full closure26 A-only acceptance and prohibited effects unchanged; B NOT_ACTIVE.
+Context ctx-ticket30g-subject-process-20261020 is a fresh bounded view, not H8 raw
+history. OwnedTemp/johnny30g-process-owner-20261020 and -review-20261020 created;
+owner respectively author/Root, purpose A evidence/cache, TTL through review/seal,
+then immutable hold if still referenced; explicit teardown only under later valid
+cleanup admission, no expiry deletion or automatic Recovery clearing.
+
+Existing H7 normal constructor/shared fixture import preflight PASS: actual
+_ObservedEnrollmentMatch.model_validate(_match_values()) retained
+SOURCE_ONLY_UNQUALIFIED and file_id0, no native effect. This preflight does not
+pretend the not-yet-built H10 type already exists; A constructs and validates it.
+Single-command defaults child55/outer60, one owned cache, no cumulative/fixed
+attempt reset; retain raw errors and diagnose repeated failures. No spawn by
+subject code/author, Host campaign/model/service/ACL/account/network/install,
+push/release/deploy, formal activation or 30B/43 clearance.
+
 ## H8 composed-source readback seal — 2026-10-20
 
 Root-owned source-stage1ae18b760e3416ec78b73727e6be8cc94b338cda parentd7ca3e9c
