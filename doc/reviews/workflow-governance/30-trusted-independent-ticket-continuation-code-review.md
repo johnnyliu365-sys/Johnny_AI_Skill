@@ -1,4 +1,65 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C13 closure39 source admission / constructor-first Grant — 2026-10-20
+
+DOC_PASS distinct /root/ticket30_native_tools_review at
+3416b1b90dbe83d82ab2482d7f71296d0aece6ed, original30 leaf
+8888614405237bb60109e54db1355e9692f7da3d LF
+d52d8fe3665c38c9ff8e7ca0cbdb4fbaf9755f409fb2b2dd994632f928da87f4,
+D8 registry matches. Prior narrow DOCfinding retained and resolved without
+Owner renewal, policy weakening, newexistingfile refactor or new framework.
+All public input models/normal AuthorityPeer constructors already exist.
+New private finite error constructors use the ticket's limited pure PhaseA
+before query-body PhaseB, not a new Stage/Agent/permanent Gate.
+
+grant-ticket30g-issuer-identity-20261020 revision01 ACTIVE PHASE_A_ONLY:
+baseline2311324147c93fa463ce6e1566a148ce78f0c793;
+CREATE EXACT library/local_orchestration/grant_authority/windows_issuer_identity.py
+and tests/test_grant_authority_windows_issuer_identity.py.
+MODIFY0/DELETE0/export0, all other source/tests/CLI/dependencies readonly.
+PhaseA only smallest private finite failure enum and sanitized exception plus
+normal/invalid constructor tests and strict/compile/import. No query/native
+producer/function body, process/token acquisition, new DTO or readyflag.
+Return exact immutable PhaseA commit for Root constructor/source review; SAME
+ticket/Grant/context/allocation/lineage/historical usage stays, no Owner reask.
+PhaseB is NOT_ACTIVE until Root records PhaseA review and exact reviewed source
+baseline; only then existing C13T1-4 body/tests/reverse mutations are admitted.
+No ceremonial newfeature Stub First-red required; genuine defect red retained.
+
+Freshctx-ticket30g-issuer-identity-20261020; author /root/ticket30n4_peer_impl,
+C12 allocation/context RELEASEDaee411f4; bounded architecture reads finished
+without source edits. Root sole reviewer/orchestrator, existing distincthelper.
+Contained .worktrees/skill-improvement-30g-issuer-identity and matching-review,
+codex/same, targets absentbefore/nonreparseexistingancestors/cleanbaseline/
+.git/worktree/common-dir readback. Temps johnny30g-issuer-identity-20261020
+author and -review-20261020 Root, registeredfakeoutputs/typecache,
+TTLreviewseal then immutable referencedhold; no expirydelete/Recoveryrelease.
+Existing AuthorityPeer actualconstructor PASS2.718s/effectcalls[], three direct
+helper sources memorycompiled/blobs recorded; both newpaths absent, no fake
+preexistenceclaim for C13 errors or native verifier.
+c13-preflight-allocation-20261020.json SHA256
+c1052a8bcce2bb6f1091849c91f313ed1826a8fe61c403c5ac6c935a87c3c3b6.
+
+PhaseB retained frozen direction: actual currentPROCESS token (not H9 subject/
+thread token), serviceSID group S-1-5-80 separate from SYSTEM TokenUser/PRIMARY;
+actualenabled/non-deny-only/unique/fulltuple checks. Existing pipeSYSTEM/BA
+collision rejection and standard-subject checks unchanged. One thin native
+GetCurrentProcess producer only, pseudohandle borrowedneverclose/duplicate;
+do not apply positive owned-token handle validators to its sentinel pseudoalias.
+Reuse H10E rawTOKEN_QUERYopen/H5USER-TYPE-SID-close/H9rawGROUPS-alias-recovery.
+Only role-specific GROUPS tuple/flag validator locally, no general parser copy.
+No SeTcb/cleanthread/SCM/codeprotection/ownerapproval/issuer or Host trustclaim.
+
+Parent uncapped12 batch/source-order exception only; pastusage/failures never
+reset. Child55/outer60 initial deadline/resource monitoring, diagnose before
+adjusting and never unchanged failed retry. No actual native/SD/process/token/
+job/pipe/SCM/Host/service/account/ACL/privilege/security/install/network/model/
+provider/newcost/cleanup/push/release/deploy/activation. Only boundedcontrol
+offlinefake tests and ownedpassiveoutputs. Technicalcomments only, no source
+ownerprompt/ticketstory, no unrelatedinterfacechanges or author orchestration.
+ACTION_COMPLETED -> AUTO_CONTINUE PhaseA namedauthor / finitewait /
+Rootconstructorreview -> sameGrant exactPhaseB rebind (no Human renewal).
+H10H independent active Grantbec453bd remains unchanged; unfinished12/30B43/
+trustedissuerpositive/qualifiedHost and Recovery holds remain OPEN.
 ## C13 documentation correction — 2026-10-20
 
 Same-ticket DOCfinding: H9 _read_groups is a standard-subject POLICY and rejects
