@@ -1,4 +1,46 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## N6 existing fixture exact source-composition Grant19 — 2026-10-21
+
+Parent batch-checklist-local-20261019-uncapped; original30 closure22 N5/N6,
+runbook03 section3 and first-entry construction order exception unchanged.
+Reuse already independently source-reviewed candidate
+47216919a6c226f48d543b155e8a3e1b79723fc7, original source seal089413d4 and
+Root133guarded/strict2/own Transfer-Encoding RED→restoredGREEN. No new product
+design, PRD, author implementation, fixture/server/framework or Host capability.
+The earlier missing path read in protected-source was a branch-composition gap,
+NOT absence in repository; immutable candidate/source seal was then resolved.
+
+Root exact source-stage composition only, baseline
+1ddd50e03ab9ca59ebd4fa05f6604afce4d3d915, repo-contained
+.worktrees/skill-improvement-30g-protected-source / codex/same, Root sole owner/
+reviewer orchestrator, existing stage Context/ownedTemp/evidence and Recoveryhold.
+Conditional Grant19 activates only after distinct ordinary DOCpreflight and
+fresh stage HEAD/clean/nonreparse Git/readback. CREATE exactly two reviewed blobs:
+tests/staging/readonly_host_protocol.py blob520460f876e04646b34e074e7d55978eda4d7685,
+LF SHA256918518aec7dad3ee3246c9735da9957f48efe5fd852041799703021c4f905399;
+tests/test_readonly_review_host.py blobc13d3a868d124fb6db833b6cb7dac24bbcb921bc,
+LF SHA256ae74ba8e4b180812aa899b97c244ddd861b7a6896ab10ed668f23fdeae271522.
+No MODIFY/DELETE/exports/dependency/version change; all prior62paths byte-identical.
+No code adaptation allowed; if integration requires edits, stop this replay,
+document exact need under original scope before any author modification.
+Root may apply exact reviewed blobs only, not become production/test author.
+
+After replay verify64total changedpaths vs18bf, exacttwo blobs and prior62mapping,
+diffcheck/compile/loadsource, guarded focused133 (no actual socket/process/HTTP/
+Host/model/effect) and strict2 with ownedTemp cache. Historical source-review
+effects/guard limitations remain historical, do not claim original childenv was
+minimal. New stage check uses explicit minimal nonsecret env and preload SSL/
+HTTP/Pydantic before effectguard; full command/raw result/time before judgement.
+This integrates existing reusable source into ENGINEERING_SOURCE_HOLD only;
+it is NOT main/APPROVED_SOURCE/CVQqualification/realCLI compatibility or permission
+to run request/listener/Host, and cannot unblock30B43 or close checklist.
+Preserve historical mutation-test SHA UNKNOWN and all original source evidence.
+No need to rerun original unchanged full mutation campaign; source-byte mapping
+plus focused composition verification is required. C13 correction independent.
+No Native/security/account/ACL/service/install/network/provider/cost/cleanup/
+push/release/deploy/activation. Initial child55/outer60, evidence-progress and
+historical accounting retained. ACTION_COMPLETED -> AUTO_CONTINUE next admittedwork.
+
 ## C13 malformed Close capability / same-ticket correction Grant revision04 — 2026-10-21
 
 Revision03 return e6dc0417d4caafe09d9388e9c555f44077e30014, parent f316070d,
