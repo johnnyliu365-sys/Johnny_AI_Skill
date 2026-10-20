@@ -1,4 +1,43 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10C initial Root review — CHANGES_REQUESTED — 2026-10-20
+
+Exactc923b4dbe782e8cd0d39585d25cc987212111e11, parentc1b60946,
+product4e66ca230bf2989774be718fe5a4e84b9692dfa1,
+testfaea3784a7e65dbb70204a5ae44a10b5d8ab37e0, original30 closure30/86e0891e.
+Root actual H6/ABI/H9 affected275 PASS3.625s, strict4 PASS19.219s (initial
+session18210 completion retained), actual compile/import/source path proven.
+Root different door removes ONLY final PID checkpoint's process-owner recheck:
+after-final-pid cell RED1 then exact restoration GREEN1; shared native helpers
+unchanged. No native or external effect reached. Author337 includes additional
+existing tests; no claim Root reran337 or all extra coverage was necessary.
+
+H10C-F1 IMPLEMENTATION_DEFECT/T1/T4/test reuse contract: existing ticket explicitly
+requires focused collection-order independence. Root selects ABI normal-positive
+first then H6 custom-owner-positive in one fresh guarded process: ABI PASS, H6
+ERROR during setup, fixture fake_native not found. The H6-first275 green cannot
+substitute. Current pytest_plugins bare test-module registration does not make
+that fixture available after the module was collected first. This is same frozen
+fixture/wiring requirement, not another framework, Gate or new best practice.
+
+Same author/worktree/Grant/2MOD correction, additive commit. Prefer explicit
+reuse/re-export of existing ABI decorated fixtures within the H6 test module,
+not module-as-plugin registration, copied fake harness or new conftest/path.
+Reproduce the two selected nodes in BOTH argument orders in fresh processes,
+then affected tests/strict and actual imports; no subprocess-launcher added to
+production/tests just to test pytest. The control verification commands are
+the finite regression. Preserve role/live/alias/shared-helper proof at its old
+test revision; supplement only changed wiring/final-byte necessary evidence.
+Keep original wrong-hunk ZERO_RED as mis-targeted, not proof or quota failure.
+
+Root raw h10c-initial-root-review-20261020.json SHA256
+3ff61609a54a61f504855849a1672d46cede0e1f27db1b1ce9bf264c159582b9
+holds full commands, unfiltered output, elapsed, strict session completion,
+actual counter patch/hash and exact two-order error. Root source hashes are LF
+normalized; author raw CRLF hashes differ while both Git blobs match, not a
+different product baseline. Review tree restored/clean, NOT_APPROVED/NOT_COMPOSED.
+ACTION_COMPLETED REVIEW -> AUTO_CONTINUE original-owner H10C-F1 correction;
+source/Host/30B43 boundaries and independent C9 staged evidence unchanged.
+
 ## C9 archive and composition independently confirmed — 2026-10-20
 
 Distinct helper passively decoded ec9e4eb1 C9 packet: gzip24599/
