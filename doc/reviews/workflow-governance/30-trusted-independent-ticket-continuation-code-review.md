@@ -1,4 +1,62 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C13 correction readback / unknown-owner finding / revision03 — 2026-10-21
+
+Candidatef316070d64ce313b34a753803955c61308150978 exacttwofiles, F01 source
+reuse corrected: actual H10E _native_open_process_token is called, duplicated
+ctypesacquisition/owner gone. Test spy delegates realhelper/fakesnativebelow;
+normal PyHANDLE close invalidates alias0, no forced originalalias afterclose.
+Official source-only compatibility read:
+https://github.com/mhammond/pywin32/blob/main/win32/src/PyHANDLE.cpp
+No actual Native close or token acquisition invoked by Root.
+
+C13-F02 IMPLEMENTATION_DEFECT frozen closure39/T3 unknown-return rule:
+on malformedrawopen, catch retains raw_opened_owner even if no Close-capable
+owner was recognized. Root runs actual H10E through a fake native returningNone:
+refusal+poison occur but _RECOVERY_OWNERS containsNone, not the required empty
+hold when noowneracquired; named probe NO_ACQUIRED_OWNER_MUST_NOT_RETAIN_NONE_AS_OWNER
+fails at immutablef316. Distinct sourcehelper independently confirms defect.
+Existing open-false fixture raises instead, so it did not cover this boundary.
+Do not turn absence/non-owner primitive into a claimed acquiredowner. Retain
+recognized original Close-capable owners on invalid queryalias/uncertainty;
+unknown nonowner evidence may remain diagnostics, never an owningresource.
+No close/retry/alternativeowner/Recoveryclear, no new owner-lifecycle framework.
+Root raw c13-root-missing-owner-review-20261021.json SHA256
+8a32db912605c0906d7bbb3d3f88b6d380926ac83e28952e39364f87fd3e1ce2
+retained in registeredTemp; product notedited; effects[].
+EarlierF01 passes/author457tests remain only their actual scope, not finalPASS.
+
+grant-ticket30g-issuer-identity-20261020 revision03 ACTIVE_CORRECTION,
+same parentbatch/original30 closure39/Context/owner /root/ticket30n4_peer_impl/
+Rootfinalreviewer/worktrees/branches/Temps/allocation/history. Additive exact
+baselinef316070d64ce313b34a753803955c61308150978; MODIFY ONLY
+library/local_orchestration/grant_authority/windows_issuer_identity.py
+tests/test_grant_authority_windows_issuer_identity.py,
+CREATE0/DELETE0/export0/otherpathsreadonly; overall2CREATEvs23113241.
+No requirement/permission change, no Owner renewal, no counter/budget reset.
+F02 baselineRED plus missing/primitive vsrecognizedowner matrix, actual H10E
+helper/nativefake, finite refusals and normalpositive/close/H9/pipe guards.
+Minimal fix reuses H5recognition and H9 existingholds; don't add paralleltype,
+parser/fixture/capability or blanket rejection. Frozen final-byte C13T1–4
+mutations must map to the final candidate: SystemUser, enabledvsdefault,
+deny-only, duplicate/latermalformed inspection, closeconfirmation/recovery.
+Also retain F01sharedopen/PyHANDLEinvalidation proofs at applicable finalbytes;
+oldinitialTokenUser0RED/intermediatecapture remain nonproof history.
+Run affectedfocused/regression, strict/compile/import/load/blobs; Root own
+missingownerprobe and different legitimatepositive door then exactrestore.
+No actual Native/Host/token/process/job/SD/pipe/SCM/service/security/rights/
+account/ACL/install/network/model/provider/newcost/cleanup/push/release/deploy/
+activation. Only boundedofflinefake/controlchildren/passiveownedoutputs;
+explicitminimalchildenv/rawbeforedisplay/finitecommands/evidence-progress.
+ACTION_COMPLETED -> AUTO_CONTINUE sameauthor correction, not Human wait.
+
+H10H immutablea41 correctiondiff has distinct SOURCE_CORRECTION_PASS and
+Root593guarded/strict3(no skip+disallow-any-unimported)/two oldprobes GREEN/
+ownlegitplan-overreject counterRED/exactGREEN. Author finalsevenpairs still
+pending; no composition or sourceapproval yet. Earlier optionalhelper followup
+for this supplement hit agent thread limit reached and was not retried unchanged;
+only after C13authorFINAL changed capacity was a fresh combinedcorrection
+sourcepreflight successfully dispatched. Failures/history preserved, no newAgent.
+All unfinishedchecklist/qualifiedHost/30B43/Recovery holds unchanged.
 ## C13 PhaseB source review / same-ticket correction Grant revision02 — 2026-10-21
 
 Root CHANGES_REQUESTED at79507b0470189be8f97dc500f7e5f521399dbf41:
