@@ -39,6 +39,112 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H10D — successful-created-process exit-proof teardown / closure31 proposal
+
+Original30/runbook03 and batch-checklist-local-20261019-uncapped; approved first
+CVQ source-order exception only. Architecture Root narrows topology helper's
+successful-process lifecycle to teardown ONLY: no assign/resume/launch/job/token
+composition until actual child token SID/LUID and installed process/thread DACL
+readback exist. H6's five facts and B2 desired descriptors cannot supply that proof.
+This implements the existing B2 exit-before-close obligation, not new policy.
+Source baseline63d44d47ad984a75f513ce20fb10da5803c94d8c after independently
+mapped H10C exact composition. Context04 and original SPEC/PRD/CHG unchanged.
+
+CREATE EXACT library/local_orchestration/grant_authority/windows_subject_process_teardown.py
+and tests/test_grant_authority_windows_subject_process_teardown.py.
+MODIFY0/DELETE0/export0. B2/H6/H8/H9/H10A and native tools read-only.
+One private _terminate_confirm_exit_and_close(creation:_SuspendedProcessCreation)->None.
+Reuse B2 module namespace, _ProcessCreationError/_CreationFailureReason,
+_CREATION_LOCK, _CREATION_RECORDS and _retain_recovery_record. No new public
+DTO/error/state machine, generic native port, caller-trust flag, raw-handle/PID,
+job/token argument, configurable native operation or effect entry.
+A private fixed binder supplies kernel32 DLL plus typed callables for
+WaitForSingleObject(HANDLE,DWORD)->DWORD, TerminateProcess(HANDLE,UINT)->signed32BOOL,
+GetExitCodeProcess(HANDLE,PDWORD)->signed32BOOL. Tests patch only fixed native
+boundary, no public injected arbitrary callbacks. Hold DLL/function references.
+
+Before DLL load and EVERY native operation require exact current B2 record type,
+same issuing thread, registered identity, SUCCEEDED and both exact original
+PROCESS/THREAD owner views OPEN. Use checked .handle getters, never raw PI/cached
+alias fallback. Wrong foreign/type/thread -> INVALID_INPUT with zero teardown
+calls; existing recovery/drift preserves B2 error/hold, never re-adopts partial
+records. Hold B2 RLock through whole operation. A minimal private active-record
+guard refuses same-thread recursive teardown; original record is retained/poisoned,
+and outer operation rechecks state after every callback before another native
+call or Close. This is a reentrancy guard, not another ownership engine.
+
+Read exact original process handle with WaitForSingleObject(handle,0) once.
+WAIT_OBJECT_0(0) -> exit-code proof, no terminate. WAIT_TIMEOUT(258) -> one
+TerminateProcess with fixed private nonzero exit code, then one finite
+WaitForSingleObject(handle,5000). No INFINITE/polling/retry. Exact uint32 wait
+returns only: bool/negative/out-of-range/WAIT_FAILED/unexpected reject.
+Native BOOL exact signed32 accepts any nonzero including2/-1, zero/malformed
+reject. GetExitCodeProcess writes owned DWORD, initialized STILL_ACTIVE259;
+only successful native return AND output !=259 proves exit. Recheck original
+owners/aliases after each native call and immediately before closing. Both
+owners must stay OPEN/strongly registered until proof; only then thread.Close
+followed by process.Close. Thread Close uncertainty prevents process Close.
+Process Close uncertainty retains original B2 record; never alternate CloseHandle.
+After confirmed thread Close require thread CLOSED, process OPEN, original
+registered SUCCEEDED record and checked unchanged process alias before process
+Close. Final success requires both CLOSED and original registry entry removed.
+After any native-entry unknown/exception/BaseException, timeout, bad result or
+identity change: B2 RECOVERY_REQUIRED/poison/strong retention, zero unsafe cleanup
+or retry. Before native entry binder failure retains original valid record and
+reports NATIVE_CALL_FAILED; no disposal claim. Repeated invocation after confirmed
+both closes refuses without native effects. No __del__/GC/automatic recovery.
+Borrowed H8 job is not received or closed; no effect permissions are issued.
+
+TEST entry is real private teardown over real B2 successful record constructed
+by existing fake_native/launch_plan, imported decorated fixtures as in H10C.
+Use same ABI fixture/SD harness, no duplicated creator/mockserver/framework.
+A is this new bounded seam; B:N/A, no behavior migration/test retirement.
+H10DT1 ordinary existing B2 constructor/import before dispatch; already-exited
+and active-then-terminated succeed, exact event order wait0/optional terminate/
+wait5000/exit-code/threadClose/processClose, both owners retained until proof,
+no job/token/creator side effect. Non-1 signed BOOL success remains legal.
+H10DT2 invalid type/foreign record/subclass/wrong parent/role/thread/closed/
+recovery/alias/registry state refuse before teardown native entry; B2 partial/
+unknown output never adopted. Same-thread reentrant callback and bounded thread
+interleaving cannot double terminate/wait/close; outer detects poisoned state.
+H10DT3 malformed/failed first wait, terminate false/exception, finitewait timeout/
+failed/malformed, exit false/malformed/STILL_ACTIVE, drift after each native step,
+KBI/SystemExit, thread/process Close uncertainty preserve exact record and no
+further unsafe effect. No failure retried; no raw PID/alias recovery.
+H10DT4 guarded focused+affected ABI/H6 suites, strict new2 plus imported contracts,
+memorycompile/actual import/Git blobs/diffcheck; both fresh collection orders.
+Named final-byte mutations cover exit-proof refusal, finite timeout beforeClose,
+thread-before-proof, both-owner release, reentry and original-alias recheck.
+One discriminating cell per distinct obligation; Root different-door counter.
+Capture full stdout/stderr, argv/env whitelist, elapsed/exit, actual patch/hash/
+product+test identities before runs, exactrestore thengreen. Zero red is finding.
+
+Profile HIGH_ASSURANCE source construction under first-entry order exception;
+ordinary engineering independent source review is not qualified CVQ/Host audit.
+Author /root/grant_transport_impl prior H10C allocation/context closed to immutable
+hold629d1266; Root sole reviewer/orchestrator, distinct source-evidence helper.
+Fresh ctx-ticket30g-process-teardown-20261020. Proposed contained author WT
+.worktrees/skill-improvement-30g-process-teardown and matching-review, codex/same.
+Owned Temp johnny30g-process-teardown-20261020 and -review-20261020, respective
+author/Root, bounded fake checks/evidence/onecache, TTLthroughreview/seal then
+referencedhold; no expirydelete or retry of old cleanup. Forecast product250/
+test300 effective lines, >500 actualstructuralreview signal, never forcedsplit.
+Conditional grant-ticket30g-process-teardown-20261020 revision01 NOT_ACTIVE until
+committed DOC review, source mapping, normal existing-constructor reuse and
+exact nonreparse allocation/baseline/branch readback. New private function has no
+public DTO preflight cycle; ordinary B2 constructors remain checked first.
+Child55/outer60 initial limits; uncapped cumulative/corrections with retained
+history and no unchanged retries. New paths authorized ONLY by ACTIVE Grant.
+
+No real native calls/process/token/job/SD/SCM/account/ACL/install/security changes,
+Host/CLI/model/provider/network/cost/push/release/deploy/activation/cleanup.
+Guard precedes imports; all subject OS calls faked. Only bounded ordinary control
+verification processes and registered outputs. No recovery holds released.
+Source completion leaves30B/43 blocked and checklist01/02 open; no main integration.
+Return COMPLETED/BLOCKED/CHANGE_DETECTED with candidate/files/checks/findings/
+deviations and passive evidence. No prompt/ticket narration in product comments.
+
+
 ## 30N4-H10C — exact created-process owner admission into H6 / closure30 proposal
 
 Original30/runbook03, batch-checklist-local-20261019-uncapped and the approved
