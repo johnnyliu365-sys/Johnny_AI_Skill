@@ -1,4 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10C exact source composition / continuation — 2026-10-20
+
+ACTION_COMPLETED: Root Grant10 at629d1266 replayed only final04667fcbb62c4b1377b68fe0f6de1d27bc5aca86
+H6 product4e66ca230bf2989774be718fe5a4e84b9692dfa1 and test1cb4bddb191dd684038eec388ec8cef26ec86d2c
+into source-stage63d44d47ad984a75f513ce20fb10da5803c94d8c, parent6c825a01.
+CREATE0/DELETE0, exactly2MOD; remaining46 of48 paths vs18bf unchanged.
+Root actual-source memorycompile/import/LF/blob checks, guarded275 PASS3.125s,
+strict4 PASS1.797s with process-local MYPYPATH=tests. Exact reviewed blobs,
+not merely equivalent output. Unified replay initially matched repeated trailing
+test context incorrectly; pre-test/pre-commit blob comparison caught relocation,
+then apply_patch replay of complete reviewed test restored exact bytes. No authoring
+or weakened assertion. Worktree clean after commit.
+
+Distinct /root/ticket30_native_tools_review independently returns SOURCE_MAPPING_PASS /
+DATA_INTEGRITY_PASS: exact parent,2MOD,48pathset/46unchanged, clean stage; 19-entry
+H10C archive packet164491/gzip19514 and every embedded original byte/hash match.
+No embedded command executed. This is source engineering staging only, not main
+integration, CVQ/Host qualification, trusted issuer positive acceptance or12-item
+closure. 30B/43 retain REVIEW_BLOCKED; no checkbox changes. Root remains sole reviewer.
+Root composition raw source-composition-h10c-root-evidence-20261020.json SHA256
+6e1254061b0224953400d3b7d6d6c4347a145b92e3d1735bd95ab584d740c45b
+in registered H10C review Temp; immutable evidence hold, no denied cleanup retry.
+AUTO_CONTINUE -> original30 next minimal successful-created-record lifecycle
+contract, reusing B2 ownership and existing finite native interfaces. No resume
+or SID/LUID/installed-DACL claim inferred from H6's five observed process facts.
+
 ## H10C final source approval / composition Grant10 — 2026-10-20
 
 APPROVED_SOURCE_ENGINEERING_ONLY final04667fcbb62c4b1377b68fe0f6de1d27bc5aca86,
