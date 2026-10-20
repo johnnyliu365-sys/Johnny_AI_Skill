@@ -39,6 +39,120 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H10H — bind suspended creation to existing leases / closure38 proposal
+
+Original30/runbook03 source-only construction under batch-checklist-local-20261019-uncapped
+and the approved first-entry ordering exception. Baseline
+2311324147c93fa463ce6e1566a148ce78f0c793 (H10G source composition only).
+Architecture narrow readback /root/ticket30n4_peer_impl at fixedf227430c found that
+B2 accepts a raw token alias and an unrelated caller plan cannot bind an existing
+record to that token/plan. Root selects owning the create-to-check call, NOT
+adding DTOs, ready flags, mutable binding fields or accepting a caller-supplied
+record. H10G source review is now closed and composed; its original native/
+qualification restrictions remain. No new PRD/SPEC/security policy or resume right.
+
+One outcome: private _prepare_suspended_subject(plan, token, job, owner_ref)
+-> existing _SuspendedProcessCreation. Exact typed inputs existing
+_SubjectLaunchPlan, _PrimarySubjectTokenLease, _SubjectJobLease, OpaqueMetadataId.
+No supplied existing process record/rawtokenalias/proof boolean/callback injection.
+The function itself passes the exact borrowed token alias and validated immutable
+plan to existing B2 once, then joins existing H10D/E/F/G/H6 observations.
+Returned record remains SUSPENDED_SOURCE_ONLY, not a new runtime state or authority,
+not a permission-to-resume object. No ResumeThread, shell, arbitrary endpoint,
+account/token acquisition, new Job, runtime activation, issuer or effect API.
+
+CREATE EXACT:
+library/local_orchestration/grant_authority/windows_subject_preparation.py
+tests/test_grant_authority_windows_subject_preparation.py
+MODIFY0/DELETE0/export0; existing sources, tests, __init__, CLI and dependencies
+readonly. Reuse H9 lease/identity/recovery, H8 lease/limits/recovery, B2 checked
+ABI/record, H10D pair guards, H10E child identity, H10F installedprotection,
+H10G assignment and H6 retained-process reader. No parallel native parser, DTO,
+fixture server, owner lifecycle, job policy, runner or ready-state machine.
+Tests first search existing H8/B2/H6/H9/H10E/H10F/G fakes/fixtures; only missing
+small composition-specific assertions/hooks may live in this exact test file.
+
+Freeze internal lock order H9 _RECOVERY_LOCK -> H8 _LIFECYCLE_LOCK ->
+B2 _CREATION_LOCK across the whole synchronous composition, including borrow
+exit and uncertainty retention. Existing locks are RLocks; no inverse acquisition
+or asynchronous wait/delegation. Token borrow spans creation and all checks.
+Validate exact lease/plan types, owner/thread/poison and initial job borrow
+admission BEFORE create. End that initial job borrow before H10G's own borrow;
+never nest H8 job borrows. Keep outer locks to serialize lifecycle through the
+existing source seams; no claim these locks exclude another OS principal.
+
+Capture original token owner/alias/identity and job owner/alias; validate identity
+through existing model, use existing alias/pair guards before and after dependency
+boundaries. Require token owner object and alias remain the originals, not merely
+same-number replacement. Call B2 with exact captured token alias and validated
+plan once. Verify the returned exact live registered original pair using H10D,
+read child primary identity via H10E and compare all existing SID/session/LUID/
+PRIMARY fields with the captured token identity; verify both installed process/
+thread descriptors via H10F. Assign/readback via H10G; no raw Assign copy.
+Borrow exact job only for H6 reader after assignment. Observe twice, with actual
+reader validation, and require identical five facts, PID==creation.process_id,
+session==captured token identity, MEMBER, and full image path exact spelling
+==validated_plan.files.executable.path (existing windows_peer equality semantics,
+not suffix/casefold/new normalization). Creation time is positive and stable,
+not an invented expected OS creation timestamp. Revalidate original resources,
+identity and job lifetime at the final boundary/borrow exit before return.
+No false claim that identity tuple proves exact token object/restrictions, file
+bytes/provenance, continuing OS suspension or absencefromalljobs.
+
+Before any child creation, known invalid input/lease refusal remains finite with
+zero create/query/assignment/close and no invented process record. Existing B2
+known no-child failure remains its finite refusal. Once a valid child exists,
+any failure/unknown/alias/identity/protection/observation/borrow-exit mismatch must
+retain that exact creation record plus original token+job owners using existing
+recovery holds/poison; never return SUCCEEDED as a completed preparation. Preserve
+B2 exception.creation_record when creation outcome is uncertain; if unknown
+creation outcome lacks an identifiable child, retain known original leases and
+existing native recovery evidence, do not invent a PID/record. No automatic
+close/terminate/rollback/retry/replacement/Recoveryclear; failure handling cannot
+resume or discard owners. Technical sanitizer errors use existing finite enums.
+
+H10HT1 actual normal constructors + fake creation-to-check path: exact alias/
+plan/owners, order of child identity/protection/assignment/readback, same returned
+registered record, no Resume/Close/Terminate calls. Actual dependency functions
+execute through patched native boundaries, not all helpers replaced by PASS.
+H10HT2 wrong type/owner/thread/closed/expired/poisoned/nested token/job borrow,
+invalid plan and pre-create refusal; no child effects, no blanket rejectall.
+H10HT3 child identity mismatch each existing field, installed protection mismatch,
+PID/session/image/membership mismatch, changed creation time or other five facts,
+process/thread/token/job owner/alias drift and dependency/borrow-exit exceptions:
+finite failure, exact retained originals and Recovery, no duplicate create.
+Known no-child B2 refusal is distinguished from post-create uncertainty.
+H10HT4 focused+direct affected tests, strict twofiles, memorycompile/import and
+actual loaded-source paths/blobs; guarded native/SD/network/subprocess boundaries.
+Final-byte reverse mutations independently pin token-to-B2 alias binding,
+child identity comparison, installed protection, H10G assignment connection,
+actual observed image/stability and recovery retention, namedRED/exactrestoreGREEN.
+Root uses a different door, including a legitimate-work positive. Zero RED finding.
+No source/model self-description counts as authority or actual OS isolation.
+
+Profile HIGH_ASSURANCE source-only; final CVQ and protected issuer requirements
+stay mandatory and unfulfilled. Author /root/grant_transport_impl H10G allocation/
+Context RELEASED e2e554cc; Root sole reviewer/orchestrator, existing distinct helper.
+Fresh ctx-ticket30g-subject-preparation-20261020; proposed contained
+.worktrees/skill-improvement-30g-subject-preparation and matching-review,
+codex/same. Temps johnny30g-subject-preparation-20261020 and -review-20261020
+for bounded fake outputs/typecache, author/Root respectively; TTLreviewseal then
+immutable referencedhold, no expirycleanup/Recoveryrelease.
+Conditional grant-ticket30g-subject-preparation-20261020 revision01 NOT_ACTIVE
+until exact DOC review/D8/contained allocation/current baseline/constructor
+preflight; same batch usage and failures retained, no count/cumulative cap.
+Initial child55/outer60 finite deadline; diagnose timeout and stagnant failures.
+Forecast product<=250/test<=400 effective lines, not compression targets or a
+license for newfiles; >500 triggers actual responsibility/reuse structure review.
+No owner prompts/ticket narratives in source; no unrelated interface changes.
+Return COMPLETED/BLOCKED/CHANGE_DETECTED candidate/files/checks/findings/deviations.
+
+No actual subject token/process/job/native/SD/pipe/SCM/Host effect, service/account/
+ACL/security/install/network/model/provider/newcost/cleanup/push/release/deploy/
+formal activation. Only registered ordinary bounded control test/build children.
+Source composition cannot satisfy trusted Grant issuance/readback, readonly/
+no-code/no-delegation/egress evidence, 30B43 qualification or checklist closure.
+
 ## 30N4-C12 — reuse existing component-name admission / closure37 proposal
 
 Original30/runbook03 source-only construction, existing uncapped batch and
