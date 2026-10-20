@@ -1,4 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C11 exact source composition / continuation — 2026-10-20
+
+Grant14 d7350c9fa71c50005a8ef8c56fc2981a0353394b consumed for exact source
+composition2154a3331acf24fe1570dcdedf71212c2107ffa1, parent77a8cb4b.
+Six blobs equal reviewed e295d626, exact1CREATE+5MOD, other50priorpaths unchanged,
+total56vs18bf1e9f, source-stage clean. Root actualsource build restore1.328s/
+build4.719s zeroW/E/fake self-test0.469 PASS. Raw
+source-composition-c11-root-evidence-20261020.json SHA256
+08b4d99f45958c8c6ca00414800354943f47003661bf3eb571e56b9c00017a33.
+Distinct helper independently confirms parent/scope/all6blobs/other50unchanged,
+three archivefilebytes/hash passively; no embeddedcommand executed.
+Not mainintegration/qualifiedaudit/Host/30B43 or overall checklist completion.
+
+H10F candidateece2571 Root168guardedPASS/strict4PASS and differentdoor reentry
+predicate removal namedRED1/exactrestoreGREEN1. Initial mypy duplicate module
+mapping is control instrumentation error, corrected MYPYPATH dot, no product
+fix for tooling. Author original9pair fullstdout/argv/patch capture missing:
+transcribed19records preserve UNKNOWN, never count as originalraw. SameGrant
+freshfinite9pair evidence supplement pending, separatelylabeled, candidatefixed.
+No repeated unchanged productfailure or authority/attempt reset.
+Bounded architecture-helper query hit agent thread limit; do not unchangedretry
+or replace with another spawnedseat. Root proceeds ordinary scope design using
+fixed source, no additional privilege/policy/account choice implied.
+ACTION_COMPLETED -> AUTO_CONTINUE H10F evidence completion and original30
+minimum owned-job assignment source preparation, noresume/nativecampaign.
+Recovery/cleanupholds and unfinished checklist items remain protected/open.
 ## C11 source approval / exact composition Grant14 — 2026-10-20
 
 APPROVED_SOURCE_ENGINEERING_ONLY candidate e295d626cadc9f98039dbea37aaf09d9daae708f,
