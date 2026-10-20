@@ -39,6 +39,101 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N8 — native control-wire request builders / closure44 proposal
+
+Same original30/PRD009/CHG009/Context04/runbook03 minimalreadonly entry and
+batch-checklist-local-20261019-uncapped; first-CVQ source-order exception only.
+Baseline9c999a1ea3d819c3454f36ab39b9fddb1192ff5f engineeringhold, not main/
+trustedissuer/Host source. N7 finalc3ff3fb1 codec is reused; do not rewrite it.
+Native exactgenerated controlschemas sealed3bd6495a, originally same offline
+binaryf6dbf48c/version0.163.0-alpha.10.2, DATA_MAPPING_PASS; no liveHosttested.
+Schema supported initialization clientInfo(name/version), capability
+experimentalApi; DynamicToolSpec function(name/description/inputSchema/type),
+thread SandboxMode read-only; initialized notification methodONLY; turn input
+text with text_elements. Root actual source span read, no guessed currentdocs.
+
+Necessary gap: currentcodec only handles incoming tool calls/results; minimal
+native adapter still lacks its fixed initialization/thread/turn outgoing frames.
+Build these as same nativewire responsibility, not another Runner/state-machine/
+configuration loader. No new Grant issuer or independent policy engine.
+
+MODIFY ONLY library/local_orchestration/readonly_review_host.py:
+bounded imports/adapters/private serialization helper and append four private
+builders below. Existing _SnapshotToolCall, decoder/encoder bodies/constants
+must remain semantically/AST unchanged; existing605-effective test file remains
+EXACT41223d3f34d8b3b19e58e2f1e157e321ff51a429, not modified.
+CREATE ONLY tests/test_readonly_review_control_wire.py, separate outgoing
+control-request AC from existing incoming tool/result matrices; no helper/
+browser/server/PNG fixture duplicate, exports/dependencies/DELETE0.
+Reuse _SnapshotRequestId/_validated_native_identifier, existing CVQBoundedText
+(1..128characters) and OpaqueMetadataId TypeAdapter.json_schema for fileID.
+Exact builtin int/str checks before adapters; no Any/cast/model_construct/
+normalization/ambient model/profile/config reads. Model/provider/version are
+bounded opaque inputdata, not fixed vendor names or capability/authority proof.
+No new typed model/DTO needed; real existing scalar constructor preflight first.
+
+_encode_initialize_request(request_id:_SnapshotRequestId,
+client_version:CVQBoundedText)->bytes|None:
+id/method initialize/params clientInfo{name:johnny-readonly-source,
+version:exactvalue},capabilities{experimentalApi:true}. No otherfields.
+_encode_initialized_notification()->bytes:
+exact {"method":"initialized"} plus LF, no id/params/auth.
+_encode_thread_start_request(request_id:_SnapshotRequestId,
+model_id:CVQBoundedText,provider_id:CVQBoundedText)->bytes|None:
+id/method thread/start/params exact model/modelProvider values,
+allowProviderModelFallback:false, ephemeral:true, approvalPolicy:never,
+sandbox:read-only, environments:[], experimentalRawEvents:false,
+dynamicTools exactly one function read_snapshot_blob with technicaldescription
+"Read a bounded immutable snapshot blob by opaque identifier." and inputSchema
+object with file_id existingCVQschema, required[file_id],additionalProperties:false.
+Do not add config/cwd/permissions/capabilityRoots or guessed feature flags.
+_encode_turn_start_request(request_id:_SnapshotRequestId,
+thread_id:bounded_native_identifier,input_text:CVQBoundedText)->bytes|None:
+id/method turn/start/params threadId exactvalidated, input exactly one
+{type:text,text:exactvalue,text_elements:[]}, approvalPolicy:never,environments:[].
+No model/sandbox/permissions/config/path/role override. Text is callerdata,
+not source-code Owner instruction or policy. Unicode preserved, no normalization.
+Each frame compact UTF8JSON+singleLF <=existing65536 limit; invalid values incl
+subclasses/bool/null/overflow/empty/overlong returnNone, no truncation.
+Only byte construction, no init/session/model action. These readonly/fallback
+fields are requested metadata, NOT proof nativeHost honors them or closes tools;
+actualconfig/roster/OS protection/observer/native mediation remain UNVERIFIED.
+
+N8T1 independent literal initialize/initialized frames, exactunicode version and
+signed64/stringIDs/validlimits; literalExpected not derived from functionActual.
+N8T2 independent thread/turn frame/schema/field checks, fileID schema matches
+existingCVQ contract; caller cannot inject alternate method/tools/permissions/
+config or silently enablefallback/write; legitimateprofile values stillaccepted.
+N8T3 negative primitive/subclass/bound/input matrix, preservedUnicode/newlines,
+deterministic exactbytes, import effectguards; no native calls/paidAPI/network.
+N8T4 discriminating method/policy/tool/boundary reverse mutations -> namedRED/
+exactrestoredGREEN plus Rootdifferent legitimate gate. Preserve fullraw, use
+bounded pytest formatting/explicitparameterIDs; do not emit massive binary
+failure values or diagnostic outputs outside registeredTemp. No evidence hiding:
+original raw failures retained even if displayed output is bounded.
+Focusednewtest plus existingN7/protocol219 affectedcells, strictproduct+newtest
+(no Any/skippedimports), compile/loadedsource/Gitblob and oldfunctionAST/source
+identity checks. Newfeature no invented defective-baseline stub-red claim.
+TEST->A->B N/A(no responsibility transfer or testretirement).
+
+Root architecture/solefinalreviewer; retained /root/ticket30n4_peer_impl
+approvedLuna/xhigh implementer after N7 immutablehold, different existing
+sourcehelper. Fresh .worktrees/skill-improvement-30g-readonly-control-wire
+codex/same, Root matching -review; freshContext
+ctx-ticket30n8-readonly-control-wire-20261021. Temp roots
+johnny30-readonly-control-wire-owner-20261021 and -review-20261021; namedowners,
+TTLthroughreview/seal, evidence/Recovery holds overrideTTL, no deletion.
+Forecast product+<=130effective/test<=320; review structural/reuse signal
+without forcedsplit/minification. Entire originalbatchhistory/uncappedpolicy,
+child55/outer60/resources/raw/diagnose unchangedfail preserved, no reset.
+Grant candidate grant-ticket30n8-readonly-control-wire-20261021 revision01
+NOT_ACTIVE pending DOC_PASS/D8/fresh Gitcontainment/baseconstructor preflight.
+No neednewOwner approval for this necessary bounded source-only construction.
+No actual Host/server/thread/turn/model/process/pipe/security/SCM/account/ACL/
+install/rights/network/cleanup/push/release/deploy/activation, qualification,
+30B43/TAL/Recovery relief or checklistcompletion.
+
+
 ## 30N7 — bounded native snapshot-tool wire codec / closure43 proposal
 
 Original30/runbook03 minimal readonly adapter, existing12 local batch and first
