@@ -1,4 +1,15 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Native tooling independent artifact QA — 2026-10-21
+
+Existing distinct /root/ticket30_native_tools_review SOURCE_MAPPING_ARCHIVE_PASS:
+6ea38cab embedded gzip8207/JSON42918 exacthashes and byte-identical original.
+All36 source IDs match clean801af021, all5bin sizes/SHA exact, EXE actual
+FileVersion/ProductVersion matches. Earlier failed1/1 exits remain failures;
+only finalbuild/contracts0 used. No actual native operation/Host qualification.
+Next source reuse lookup binds CVQ01 ticket20/closure06 and final24c79d22,
+B3b55b47e7 separate; no candidate promoted, copied or called qualified.
+
+
 ## Existing native tooling actual payload / offline build seal — 2026-10-21
 
 Root review-build registration1a70fd86 at exact engineering stage801af021;
