@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 DOC admission / construction reservation — 2026-10-21
+
+Distinct retained /root/ticket30_native_tools_review actual FINAL
+DOC_PASS_NOT_OWNER_APPROVAL on a9bd144c1dcb5ea0ef19dd7dcb819af9b60ae279,
+ticket733e85f6c862a236d46aa03b792c42d4de2d35cb,
+LF67e4edd0fdd9d5107f7570e722413bf22df923bd7883ccc0e0cab9ec27864e0e.
+Runbook03 section2, actual unchanged N11/C13 signatures and existing ledger
+constructor compatible; fixed protected store requires pre-existing DB and
+retained protection before constructor, source fake tests not OS qualification.
+
+Root reserves repository-contained ordinary nonreparse owner
+.worktrees/skill-improvement-30g-protected-store branchcodex/same for retained
+/root/ticket30n4_peer_impl; Root review allocation corresponding -review.
+Exact clean source baselinea6071d5f2734091934a8645884c7db2068f62569,
+fresh Contextctx-ticket30n12-protected-store-20261021. Registered Temp directories
+johnny30-protected-store-owner-20261021 (owner retainedimplementer) and
+johnny30-protected-store-review-20261021 (ownerRoot), LOCALAPPDATA/Temp,
+TTL through reviewseal; evidence/Recovery holds override expiry.
+Expected final state immutable referenced hold until authorized exact teardown;
+no automatic expiry deletion, reset/clean/GC or rejected-cleanup retry.
+
+N11 allocations released to immutable hold in c1d875ec; no active second lane.
+Permit metadata allocation/readback only; implementation Grant01 remains
+NOT_ACTIVE until actual root/parent/Git backlink/branch/clean baseline/three
+absent paths are checked. Existing N11 actual constructors/strict source proof
+reused unchanged, new private constructor validation on candidate before approval.
+No source/test writes, operational Native/SQLite/Host/SCM/security effect now.
+
 ## N11 independent seal / progress-index QA — 2026-10-21
 
 Distinct retained /root/ticket30_native_tools_review actual FINAL QA_PASS:
