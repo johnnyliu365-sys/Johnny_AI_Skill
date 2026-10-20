@@ -39,6 +39,97 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H10I — one owned verified subject launch / closure42 proposal
+
+Original30/runbook03 section3 minimum readonly entry, same parent
+batch-checklist-local-20261019-uncapped and sealed Context04/SPEC lineage.
+No PRD/SPEC change or new authority source. Baseline
+801af02174ba9bc1b752b70c7ee58f4777482472 engineeringhold.
+Actual source inventory: Python H10H only returns a suspended B2-owned process;
+C# NativeJobGuard already resumes its own SafeHandle-owned fixture process.
+Reuse C# behavior as native-contract reference, not a second unmanaged owner;
+C# fixture ownership/JSON cannot safely replace the retained Python B2 pair.
+No existing card claims a protected readonly launch. Reuse actual private
+H10H/H9/H8/B2/H6/H10G owners/validators/recovery and shared composition_fakes.
+No new process runner, DTO, policy engine, parser, service or general fixture.
+
+CREATE EXACT
+library/local_orchestration/grant_authority/windows_subject_launch.py
+tests/test_grant_authority_windows_subject_launch.py.
+MODIFY ONLY library/local_orchestration/grant_authority/windows_subject_lease.py:
+one private bool _subject_launch_attempted=False in existing lease constructor.
+No other lease behavior/limits changes; DELETE0/export0/dependency0.
+The private bit is an owning-lifecycle reservation, not a Grant or public trust
+claim. It lives on the existing original job owner, not a new global owner map.
+
+One private _launch_verified_subject(plan:_SubjectLaunchPlan,
+token:_PrimarySubjectTokenLease,job:_SubjectJobLease,
+owner_ref:OpaqueMetadataId)->_SuspendedProcessCreation.
+Use existing exact constructor/validator paths and finite errors. Reject
+wrong exact types/owner/thread/expired/recovery before creation. Under existing
+RECOVERY_LOCK -> LIFECYCLE_LOCK -> CREATION_LOCK, require exact false reservation;
+one launch attempt claims it before child creation, never resets even on failure.
+Reject repeat/reentry on same original job before another create or resume.
+Job native active-process-limit1 remains necessary, not replaced by this bit.
+
+Call real _prepare_suspended_subject once itself; never accept caller-supplied
+creation as proof of preparation. Reuse its original input/pair checks, job
+membership/image/session observations and installed protection checks. Capture
+original owners/aliases/identity, recheck after preparation and immediately
+before native resume. Re-borrow original token/job as needed only AFTER H10H
+borrow exits; do not nest an active borrow around H10H. Reuse original check
+helpers and existing Recovery retention; do not copy token/ACL/job parsers.
+Bind only kernel32 ResumeThread with exact HANDLE/DWORD ABI, retain DLL owner,
+call once on original primary thread; exact integer previous suspend count1
+alone succeeds. 0,>1,0xffffffff,bool/other type, exception, alias/owner/thread/
+identity/job drift or uncertain borrow exit refuses. Check original owner pair,
+leases and observation identity at final return. Preserve creation SUCCEEDED
+for H6 teardown compatibility; no invented RESUMED enum or second state machine.
+No close/terminate/cleanup fallback. Any post-child uncertainty retains original
+process/thread/token/job owners and RECOVERY_REQUIRED through existing helpers;
+no false success, retry/reset or clearing previous recovery. Known pre-child
+refusal creates no fictional process record. Actual Host/token/job/process/
+ResumeThread effects are forbidden this source phase: every Win32 seam is fake.
+
+H10IT1 use real ordinary plan/token/job constructors and existing
+tests.test_grant_authority_windows_subject_preparation composition_fakes via
+pytest plugin/import. Real H10H through actual source dependencies + fake native
+edges, ordered prepare/verify/assign/readback/resume once; exact original record
+returned, both original handles stay owned/open, legal finite input passes.
+H10IT2 owner/type/thread/expiry/poison/recovery and repeat/reentry negative
+cells prove zero extra create/resume; marker not reset after failed attempt.
+H10IT3 parameterize resume ABI/results/exceptions and pre/post boundary drift,
+silent borrow-exit mutation, wrong retained pair/identity/membership/image,
+uncertain native result. Assert exact original resources retained/recovery,
+no close/terminate/native retry. Malformed bypasses rejection evidence only.
+H10IT4 reverse weaken reservation, pre-resume check, strict count1 and final
+post-borrow check -> namedRED/exactrestoredGREEN; Root different legal-positive
+door. Guarded affected launch/preparation/joblease suite, strict3 exact(no skip/
+Any), memorycompile/import/load/Gitblob and single oldconstructor-line diff.
+No ceremonial first-red for new behavior. TEST->A->B N/A: new composition,
+no old responsibility/test retirement. Shared fixtures reused, not duplicated.
+
+Forecast product<=240/test<=420effective, oldlease oneconstructorline, docs only
+original30/registry/review/context metadata, screenshot0. >500effective triggers
+structural/reuse review, not line compression/forcedsplits/delete. No ownerprompt
+or ticket narrative in code. Per-run fresh registered basetemp, no old-rootclean.
+Assets owner+TTLthroughreview/seal; candidate/evidence/Recovery holds overrideTTL.
+
+Root Architecture Owner/control/finalreviewer. Implementation owner
+/root/grant_transport_impl after H11 allocation RELEASED_TO_IMMUTABLE_REFERENCED_HOLD
+c60a5026; distinct existing /root/ticket30_native_tools_review source helper.
+Fresh author .worktrees/skill-improvement-30g-subject-launch, branch codex/same;
+Root review matching -review. Context ctx-ticket30g-subject-launch-20261021.
+Temps johnny30g-subject-launch-owner-20261021 / -review-20261021.
+Grant candidate grant-ticket30g-subject-launch-20261021 revision01 NOT_ACTIVE
+until distinct DOC_PASS, D8, exact baseline/nonreparse/containment/Git allocation
+and ordinary constructors preflight. Existing types only, no typed bootstrap.
+Same uncapped batch/history; command60/child55, resources tracked, raw results
+saved before output, no identical failed retry. No native subject/Host/model/
+network/pipe/SCM/service/security/account/ACL/install/rights/cleanup/push/release/
+deploy/activation. No actual protection, qualified/main/30B43 or checklist pass.
+
+
 ## 30N4-H11 — one source-only bound read dispatcher / closure41 proposal
 
 Original30/runbook03 section2, parent batch-checklist-local-20261019-uncapped.
