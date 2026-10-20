@@ -1,4 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C9 archive and composition independently confirmed — 2026-10-20
+
+Distinct helper passively decoded ec9e4eb1 C9 packet: gzip24599/
+d3203f9d09db4924abe990700e879420de575564fe58f16522de4772cb3c5f65,
+packet225431/607c580ccf383c89a8a2ce735d0753ed3f7bef21cbe6be20d59c67d0fb444a5e;
+all five embedded UTF8 files byte/hash equal registered Temp originals. No
+embedded command execution, cleanup or old mutation rerun. Root final guard
+and different DATA counter raw remain separate fresh proof, not claimed repair
+of missing contemporaneous author mutant hash.
+
+Grant09 stage6c825a01b346b07b0a0361acf52f63bdc78b6764 parentc1b60946 is clean;
+exact3CREATE/2MODIFY match five reviewed20639b8b blobs. Clarification of the
+earlier 'other45 paths' shorthand: the previous45-path set includes the two
+explicitly authorized modified native project/self-test paths; those two change,
+the remaining43 do not, and three new paths give48 versus18bf1e9f. No scope
+expansion or claim that all45 original blobs stayed unchanged. Independent
+SOURCE_MAPPING_PASS confirms the exact set.
+
+Root composition actual five-source hashes, offline.NET10.0.302 zero-warning/
+error build and fake-only self-test pass. SDK embeds SourceRevisionId in
+AssemblyInformationalVersion: review20639 and precommit-stagec1b yield different
+DLL hashes despite exact five source blobs. Diagnosed via generated metadata,
+not presumed artifact equivalence; after commit, rebuilt/retested stage6c825,
+actual AssemblyInformationalVersion=1.0.0+6c825a01b346b07b0a0361acf52f63bdc78b6764,
+DLL SHA5c9165269150c63fe9c104ac42731216dad4475393a5711ac85c0b4ecd664d69.
+Raw source-composition-c9-root-evidence-20261020.json SHA256
+da4d98dfe18b76e8c17e04d02c1e3546ce8db232fa84ffb21383d768a8ce80d0.
+This is engineering source staging only; main/authority/Host/issuer qualification
+unchanged. H10C remains on its admitted c1b60946 two-Python-file baseline, no
+active source override/rebase. ACTION_COMPLETED -> existing source continuation.
+
 ## C9 final source approval / composition Grant09 — 2026-10-20
 
 APPROVED_SOURCE_ENGINEERING_ONLY final20639b8b531f667924d103db47ca5ea444496a1a,

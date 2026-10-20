@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `66`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `67`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision66）
+## 當前工程接續與精確證據（revision67）
 
 C6／H1／H2-A／C7已封存工程證據沿用，不重跑。H2-B a4a3d23c完成純peer／
 record比對，Root274tests／strict3、不同門disposition突變紅→綠，來源獨審與
@@ -140,7 +140,13 @@ Recovery；不把純DTO當可信來源或隔離資格。獨立C9原票closure29 
 僅三CREATE／兩MODIFY，新owned目錄creation-time保護工具初候選72309824
 離線build綠，但Root查到例外誤判exists與DATA策略ZERO_RED。0e35ed59修正後
 E2已閉合，F1跨層identity drift→later MISSING仍會降成clean refusal；Root
-具名RED證實、精確還原，4c9447ff同F1原作者窄修中，未核准／未組合。作者
+具名RED證實、精確還原。最終20639b8b同F1修復，Root離線build／fake self-test
+綠，final postguard移除時183／80／一般拒絕三格同輪具名紅→精確還原綠，
+不同DATA門final test也具名紅→還原綠。ec9e4eb1來源封存五原始檔，另一席
+byte/hash讀回PASS；作者舊mutant SHA缺失仍DERIVED，不冒充恢復。精確組合
+6c825a01三CREATE／兩MODIFY五blob相同，原45中兩檔按授權修改、其餘43不變，
+共48paths。提交後.NET build零warning/error與fake self-test通過，SDK Git
+版本metadata／DLL SHA明確讀回，另一席mapping PASS，不等於main整合。作者
 初稱log prefix改變，直接byte與另一席核對證明原44613bytes／55797ef9仍完整；
 13新record重複與錯誤hash觀察原因UNKNOWN，保留不重寫／不重跑舊七對。
 以上仍僅offline fake驗證，不是Host資格。既有ACL覆寫／unsafe rollback
