@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `94`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `95`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,19 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision94）
+## 當前工程接續與精確證據（revision95）
+
+N11 final1d72c996修正F01–F05：Root194guarded／strict3及原四反例、十個
+predefined HKEY、兩個Native interruption、三個真入口合法邊界通過；不同
+合法256-member門反向突變紅→精確還原綠。另席SOURCE_DELTA_PASS，
+c1d875ec封存43份原始資料／最終index38筆與組合證據，另席逐byte QA_PASS。
+Root Grant28組合a6071d5f：精確三blob331f14d7／39eaaccc／339ae3b0、
+原106路徑不動／共109，組合後194guarded／strict3通過。失敗及錯selector
+歷史保留，M2只證明分類拒絕，不改稱資料外洩。僅固定核准來源工程建置，
+不是可信Grant成功／Host資格／main整合；只有04勾選，30B43及Recovery不變。
+N11 worktree／Temp轉immutable referenced hold，沒有刪除或清理完成宣稱。
+下一片只準備既有ledger前的固定protected-store admission，先重用既有
+型別／issuer／Native ownership，禁止另建授權引擎或假合格入口。
 
 N10最終1de2f833已關閉原F01–F11及當前E01/E02：Root205guarded／strict3、
 19個獨立合法與負向格通過；不同合法256prefix門改壞真實native predicate時
