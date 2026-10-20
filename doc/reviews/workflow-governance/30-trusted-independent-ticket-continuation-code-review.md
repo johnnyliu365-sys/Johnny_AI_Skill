@@ -1,4 +1,41 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Operational prerequisite readback — not an effect authorization — 2026-10-20
+
+Fixed source-stagef8754baa windows_subject_token.py108-113 calls
+win32ts.WTSQueryUserToken; H9 remains source-only, not an installed issuer.
+Current runbook03 proposed principals table uses NT SERVICE\\JohnnyGrantAuthority
+and explicitly no LocalSystem. Microsoft WTSQueryUserToken documentation states
+the caller must be LocalSystem with SE_TCB_NAME, intended for highly trusted
+services:
+https://learn.microsoft.com/en-us/windows/win32/api/wtsapi32/nf-wtsapi32-wtsqueryusertoken
+Readback on2026-10-20; no nativecall/account/privilege/service modification.
+Therefore that proposed account recipe is NOT an executable compatible setup
+for the current H9 path. No silent service-account switch, extra privilege,
+new broker, password acquisition or approval implication. This is an operational
+compatibility/safety decision for one eventual exact Owner package, not a new
+source permission or reason to halt disjoint source/fake-test construction.
+Current Program.cs source roster is tools/plan/readback/fake/selftest commands,
+not SCM service entry; windows_service.py is enrollment decoder only. Build
+the necessary approved local capabilities before requesting actualinstallation,
+do not ask Owner to supply a nonexistent protected issuer.
+
+AssignProcessToJobObject official native boundary additionally documents
+failure cases which can terminate the process and a specific-session condition:
+https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-assignprocesstojobobject
+This supports frozen H10G recovery after any attempted native failure. It does
+NOT prove actual service/user-session job compatibility; that operational
+precondition remains UNVERIFIED until separately authorized native qualification.
+Specific-job MEMBER is not absencefromalljobs, standard-account authority or
+Host five-restriction proof. Native/enforcement probes remain unauthorized.
+
+Two read-only retrieval/tooling deviations retained: Root PS loop-to-pipe
+syntax inventory failed beforeexecution, corrected with explicit array wrapper;
+brace expansion passed toPowerShell failed parser, corrected with exactknown
+fivepaths. No productfindings/effects or originalfailedcommand unchangedretry.
+C12 author broad review grep exposed unrelated historical embeddedraw, recorded
+retrieval-scope deviation; bounded closure/topGrant reads resumed, no source or
+authority change and no reset. No historicraw treated as freshqualification.
+ACTION_COMPLETED -> AUTO_CONTINUE wait for admitted H10G/C12 source returns.
 ## C12 closure37 source admission / exact Grant — 2026-10-20
 
 DOC_PASS distinct /root/ticket30_native_tools_review at
