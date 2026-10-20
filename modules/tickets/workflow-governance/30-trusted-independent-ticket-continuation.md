@@ -41,6 +41,134 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
+## 30N11 — fixed installed-approval registry source / closure47 proposal
+
+Original30/PRD009/CHG009/Context04/runbook03 section2, same uncapped local batch
+and first-CVQ source-construction order, no new PRD/authority engine. Baseline
+43abc3cc81ee2c162d95035dd5f2e62cfd60745b is engineeringhold only. N10 exact
+source/archive seals1c9cc2df/2660b9ae and QA a9436988 retained, not Host qualification.
+
+CREATE ONLY:
+- library/local_orchestration/grant_authority/windows_approval_registry.py
+- library/local_orchestration/grant_authority/windows_installed_approval.py
+- tests/test_grant_authority_windows_installed_approval.py
+MODIFY/DELETE/export/dependency0. Native registry handle/security/buffer boundary
+is distinct from N10 file IO; decoder only composes existing GrantPlan,
+AuthorityPeer, N9 _SnapshotBlobMember and existing bounded duplicate/depth JSON
+helpers. No copied ledger, file reader, generic registry API, service loop,
+new Router/Gate/public Grant DTO or arbitrary commands. Existing tests unchanged.
+
+Private entry _read_installed_approval(cancellation:threading.Event,
+deadline:float) returns one private immutable validated record or raises a finite
+sanitized error. Imports/constructors perform no native IO. Exact Event, finite
+positive future monotonic deadline at most60s, single issuing thread, single-use
+native read, check controller between all bounded operations. The caller supplies
+NO path, expected digest, plan, approval marker, registry hive, service name,
+Grant ID or observation. Private decoded values remain SOURCE_ONLY_UNQUALIFIED
+and confer no permission; there is no production consumer/export in this slice.
+
+Compiled product namespace JohnnyGrantAuthority, no project/model/ticket literal.
+The fixed bootstrap value is a REG_BINARY UTF8 JSON value named ApprovalV1 below
+HKLM SYSTEM/current selected ControlSet/Services/JohnnyGrantAuthority/Parameters.
+This is construction data only: no real key/value/service/account exists by
+assertion, and its actual creation/approval/protection needs the later exact
+Owner install package. Never choose a caller/environment/DataRoot/root-relative
+fallback. Resolve SYSTEM Select Current as a bounded native REG_DWORD1..999;
+retain opened key handles and derive ControlSetNNN without trusting environment
+or a transparent CurrentControlSet link. Explicit registry64 view. Open existing
+keys read-only, no create/set/delete/flush/connect/remote-registry or impersonation.
+Reject registry links at each actual opened component; do not follow them.
+
+Read protection before reading approval contents: same retained native handles,
+owner SYSTEM or BuiltinAdministrators, present nonnull DACL. Every fixed ancestor
+must deny effective write/owner/DACL/delete/link/subkey-creation authority to
+untrusted principals; native unknown/conditional/object ACE shape fails closed.
+Allow only known ordinary ACE grammar, preserve deny semantics conservatively;
+inherited-only entries do not count as effective grants. Owner/protection/native
+metadata absence refuses. Leaf Parameters carrying ApprovalV1 requires protected
+DACL, only SYSTEM/Admin full-control ordinary allow entries, no Agent/controller/
+Users/readable service-data grant. Do NOT infer service-self-write prevention:
+LocalSystem issuer is trusted TCB under existing AC17R14. Never add a restricted
+service SID policy or weaken C13. Fixed ancestors with a genuine unsupported
+descriptor return finite UNAVAILABLE; no broad HKLM ACL change is authorized.
+
+Registry Native boundary uses fixed preallocated buffers, not unbounded SDK
+RegQueryValueEx allocation/retry loops: ApprovalV1 max262144 bytes; value type
+REG_BINARY only; Select Current exact DWORD4 bytes; security descriptor bounded
+<=65536; opened prefixes bounded by fixed namespace. Validate exact native status,
+type, actual returned byte count and tuple/buffer/handle shapes before decoding;
+no capacity-as-length, truncation or value-to-string transform. MORE_DATA refuses,
+never allocate supplied size/retry. Native APIs remain fake in tests, not executed.
+Capture native key lastwrite raw FILETIME/protection before/after, re-read Select
+Current under its retained handle, and refuse selection/protection/value/metadata
+movement; do not claim multi-object atomicity or operational race qualification.
+
+Close ONLY exact owned HKEYs once using their proper native close operation,
+never CloseHandle/raw fallback/GC. Unknown return/close/alias/exception retains
+original owners/native output holders+buffer in an explicit bounded recovery hold
+and poisons further use. Cancellation/deadline/invalid input refuse before next
+effect; incomplete/unknown outcome cannot return payload. Retain existing Recovery
+and evidence, no cleanup retry/expiry deletion or clearing poison to rerun.
+No error/result/log may include paths, bytes, SID/DACL text or native exception.
+
+One private strict record schema_revision1 / approval_ref / grant_ref /
+operation_ref / plan:GrantPlan / peer:AuthorityPeer /
+members:tuple[_SnapshotBlobMember,...] / plan_digest and literal source scope.
+Reuse existing metadata types; no new role/public result statuses/Grant lifecycle.
+Normal constructors and JSON validation, reject bypass/subclasses/extra/duplicate/
+nonfinite/depth/invalid UTF8 and missing fields, no normalize/transform.
+1..256 members, unique blob_ref, same-path expected source identity must agree;
+no first-match-wins. plan_digest must equal existing grant_plan_digest(plan);
+only READ_REVIEW_SNAPSHOT in this initial fixed read plan. Other valid enum values
+are unsupported here, not silently activated or removed from old enums. No
+caller-provided self-consistency is provenance: only this factory's fixed native
+read supplies bytes, and even its result is unqualified private construction.
+Future issuer must independently verify C13/current service, exact SCM/PythonClass/
+startup/runtime/import/code/config protection, protected Owner acceptance,
+peer/session membership and durable claim-before-read before any real operation.
+This slice does not issue/read/claim/settle SQLite, invoke N10, run a service,
+read target/remote, dispatch a tool/Agent or generate receipt/approval UI.
+
+N11T1 real entry+real decode over fake native boundary: independent literal valid
+protected record reconstructs exact plan/peer/member values unchanged; min/max
+source sizes/members, Unicode and empty N9 ranges, legal exact262144-byte payload,
+normal cancellation/deadline/close once. Expected independently pinned fixtures.
+N11T2 forged caller argument/API route, caller-root/env fallback, missing/wrong/
+mutable/extra-principal leaf protection, owner/null/unprotected DACL, link/view/
+Select drift, invalid native count/type/status/handle/descriptor, payload overcap
+and malformed JSON all refuse BEFORE exposing bytes/record; assert exact order
+and no issue/claim/read/dispatch/process/network/OS mutation.
+N11T3 duplicate/mismatched blob/source identity, wrong digest/operation/scope,
+pre/post key/protection/selection drift, close/alias/owner uncertainty and
+same-thread/reuse/deadline negatives preserve exact holds+poison and no payload.
+N11T4 author named source-protection, byte-count cap, exact membership/digest and
+recovery mutation RED/exactrestoredGREEN on finalcandidate; Root different legal
+positive door. Read original unfiltered outputs, bind actual loaded source/3blobs.
+
+Focused newtest + existing N9 snapshot-contract and C8 service-wire tests; strict3
+--strict --disallow-any-unimported --explicit-package-bases, memorycompile/
+import under native registry/file/SCM/token/ctypes/process/network denyguards.
+No actual Registry/SCM/Host API or SDK constructor; fake boundary must model actual
+native return/count/owner semantics, not generated-stub assumptions. Forecast
+native450/decoder180/test500 effective lines is structural-review signal, not
+minification/forced splitting. Shared fake/parameterized cases, no permanent
+one-off probe pile/source prompt/work-order narratives. TEST->A->B N/A no old
+behavior moved/retired; no existing consumer or public gate is changed.
+
+Root AO/sole reviewer/orchestrator; retained /root/ticket30n4_peer_impl approved
+Luna/xhigh, distinct retained sourcehelper evidence only. Proposed owner allocation
+.worktrees/skill-improvement-30g-installed-approval / codex/same, Root matching
+-review; Context ctx-ticket30n11-installed-approval-20261021. Reserve exact owned
+Temp johnny30-installed-approval-owner-20261021 and -review-20261021 under
+LOCALAPPDATA/Temp beforecreate, TTL through reviewseal, active holds overrideexpiry.
+Prior N10 allocations immutable-held, no reuse/deletion. Grant candidate
+grant-ticket30n11-installed-approval-20261021 revision01 NOT_ACTIVE until exact
+DOC/constructor/preflight/allocation; bridgeNOT_REQUIRED same-lifetime direct.
+Uncapped historical accounting preserved; child55/outer60 initial finitebounds.
+No real Native/Host campaign, install/service/registry/security/account/ACL changes,
+remote/model/network/newcost/push/release/deploy/formalactivation/deniedcleanupretry.
+30B43/TAL/R0/DAP/Recovery and unchecked checklist states unchanged.
+
 ## 30N10 — same-process bounded snapshot reader / closure46 proposal
 
 Original30/PRD009/CHG009/Context04/runbook03 sections2/3, uncapped local batch
