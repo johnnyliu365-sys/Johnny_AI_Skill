@@ -1,4 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## N6 / C13 exact engineering-stage composition readback — 2026-10-21
+
+Reviewed existingN6 two blobs replayed under DOC_PASS Grant19/c3142bb7 into
+3279f52e1d36751489054d617e364742df1c3d2d, parent1ddd50e0; guarded133PASS0.36s/
+strict2PASS0.813s, explicit minimal nonsecret environment, effects[].
+No listener/HTTP/socket/CLI request, no reimplementation of N5/N6.
+C13 final e5ad7e7d two blobs replayed under Grant20/cc46a184 into
+3f9ca3ae1defa69f1e52d943ef9463472b91ebfa, parent3279f52e; exactproduct13ee66ae/
+testae19dba3. Prior64paths byte-identical, total66 vs18bf, clean/diffcheck0.
+Jointaffected stage732guardedPASS3.41s/effects[] and strict4PASS1.531s,
+--disallow-any-unimported/no skip, actual source/hash readbacks match candidates.
+n6-c13-root-stage-verification-20261021.json SHA256
+8e9599b7e57bb3beff8c0616ab42debcfa0da5f23d571a01b9986f72d96568ca.
+The Root-managed ordinary control test child is not the restricted Host subject;
+these tests do not demonstrate qualified isolation/realissuer/actualCLI operation.
+No main/APPROVED_SOURCE/30B43 qualification or checklist completion.
+H11 stays independently active at sourcebaseline3279f52e, exactclosure41;
+later C13 addition neither auto-expands its scope nor invalidates unchanged inputs.
+ACTION_COMPLETED -> AUTO_CONTINUE admitted H11 review and next source dependency.
+
 ## C13 final engineering source seal / exact composition Grant20 — 2026-10-21
 
 Root APPROVED_ENGINEERING_SOURCE_ONLY at additive
