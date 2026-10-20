@@ -63,7 +63,7 @@ WaitForSingleObject(HANDLE,DWORD)->DWORD, TerminateProcess(HANDLE,UINT)->signed3
 GetExitCodeProcess(HANDLE,PDWORD)->signed32BOOL. Tests patch only fixed native
 boundary, no public injected arbitrary callbacks. Hold DLL/function references.
 
-Before DLL load and EVERY native operation require exact current B2 record type,
+Before DLL load and EVERY wait/terminate/exit-code native operation require exact current B2 record type,
 same issuing thread, registered identity, SUCCEEDED and both exact original
 PROCESS/THREAD owner views OPEN. Use checked .handle getters, never raw PI/cached
 alias fallback. Wrong foreign/type/thread -> INVALID_INPUT with zero teardown
@@ -81,7 +81,7 @@ returns only: bool/negative/out-of-range/WAIT_FAILED/unexpected reject.
 Native BOOL exact signed32 accepts any nonzero including2/-1, zero/malformed
 reject. GetExitCodeProcess writes owned DWORD, initialized STILL_ACTIVE259;
 only successful native return AND output !=259 proves exit. Recheck original
-owners/aliases after each native call and immediately before closing. Both
+owners/aliases after each wait/terminate/exit-code call and immediately before closing. Both
 owners must stay OPEN/strongly registered until proof; only then thread.Close
 followed by process.Close. Thread Close uncertainty prevents process Close.
 Process Close uncertainty retains original B2 record; never alternate CloseHandle.
