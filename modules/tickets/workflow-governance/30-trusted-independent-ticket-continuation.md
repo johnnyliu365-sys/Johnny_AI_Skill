@@ -39,6 +39,112 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H10E — created-process primary-token facts / closure33 proposal
+
+Original30/runbook03, same uncapped batch and first-CVQ source-order exception.
+Root Architecture identifies next missing producer before any future assign/
+resume: H9 observes source token, H6 observes five process facts; neither reads
+the created child's token SID/Session/LUID/PRIMARY type. This is an observation
+primitive, not Grant/standard-account qualification or resume permission.
+Baseline21ddef2a4ed274a68725576bfd981f2c8c213ff7 contains approved B2/H10C/H10D,
+independent of active native C10. Original SPEC/PRD/CHG/Context04 unchanged.
+
+CREATE EXACT library/local_orchestration/grant_authority/windows_created_process_identity.py
+and tests/test_grant_authority_windows_created_process_identity.py.
+MODIFY0/DELETE0/export0. Existing B2/H6/H9/H10D/peer/message/native files readonly.
+Private _read_created_process_primary_identity(creation:_SuspendedProcessCreation)
+returns existing H9 _PrimarySubjectIdentity. No new DTO/enum/error/rolepolicy,
+expected SID/session/LUID argument, PID reopen, caller trust flag, process launch/
+assign/resume, DACL proof or effect interface. Reuse H9 namespace
+_query_base_identity/_require_subject_handle_owner/_require_subject_alias/
+_close_known_owner/_retain_and_poison, existing _SubjectTokenError/Failure and
+message identity parsers; do not copy token-query grammar or weaken shared
+native-only helpers. H10D namespace _require_live_pair/_require_same_open_pair
+and B2 registry/checked owners supply exact process record identity.
+
+Fixed lock order H9 _RECOVERY_LOCK THEN B2 _CREATION_LOCK, held through whole read/
+cleanup, matching existing token-borrow->B2 creation order; never inverse B2->H9.
+Exact registered SUCCEEDED creation, same issuing thread, both original OPEN
+owners and original aliases required before token open. Use checked original
+process handle only. A private active-record set prevents same-thread recursive
+read before a second open; existing BORROW_IN_USE refusal, no new owner engine.
+Such refused reentry need not poison the valid outer read when no effect began.
+Existing H9 RECOVERY_POISONED refuses before native open. No rawPI fallback.
+
+Only new fixed native wrapper win32security.OpenProcessToken(originalprocessalias,
+TOKEN_QUERY0x0008). Runtime return must be exact current native PyHANDLE via
+existing H9 validation; not structural/duck object, int, None or token lease.
+Reject token alias equal to process/thread alias without closing foreign alias.
+Unknown exception/malformed open retains identifiable raw output through H9
+existing recovery hold/poison; never invent unknown handle. Original valid B2
+record stays retained; successful-process teardown remains a separate caller
+action, never implicit. Do not auto-adopt B2 recovery/partial/foreign record.
+
+Read USER/SESSION_ID/STATISTICS/TYPE through actual existing H9 _query_base_identity,
+which checks token's original alias before each query and uses normal strict
+DTO constructor; canonical SID, positive uint32 session, signed-native64 LUID
+converted existing uint64 including0, PRIMARY only. No values filled from source
+token, plan, expectation or fixture equality. These are observed values only:
+SYSTEM-like SID may be observed, but no standard-subject/expected match is claimed.
+Recheck original B2 pair after open, after identity reads and before/after owned
+token close; callback drift stops result. Wrong owner/thread/registry/closed/
+recovery/alias before open => zero native calls. After original record drift,
+retain exact token through H9 hold and original B2 recovery, no unsafe close.
+Known original token on ordinary query/validation failure closes exactly once
+through existing H9 original-alias helper before propagating sanitized error.
+Close uncertainty/alias drift => retain/poison, no retry/alternate Close/GC.
+Native-open BaseException handled finitely, unknown owner not fabricated.
+Return identity only AFTER confirmed token Close and final B2 identity check.
+Never close borrowed process/thread/job/source-token owners, or release holds.
+
+TEST real new reader over ordinary B2 fake successful record, actual H9 query
+path + existing _PrimarySubjectIdentity constructors. Reuse B2 decorated
+fake_native/launch_plan, H9 native_surface/_FakeHandle/_FakeNativeSurface; arrange
+B2 creation BEFORE installing H9 query fake (its sys.modules/WinDLL swap).
+One thin fixture adds OpenProcessToken to existing fake surface, no copied
+SD/ABI/token-parser harness. Both new-first/ABI-first fresh collection orders.
+A:new private observation seam, B:N/A; no test retirement.
+H10ET1 ordinary existing H9 DTO and B2 constructors preflight, legal child facts
+different from launch/source expectation returned unchanged inclLUID0/boundaries,
+TOKEN_QUERYexact/processoriginalalias, four native queries, ownedtokenCloseonce
+BEFORE result, borrowedowners untouched. No grant/provenance/installedDACL claim.
+H10ET2 wrong record/type/parent/role/thread/registry/readiness/alias and existing
+recoverypoison refuse beforeopen; malformed native owner/foreign alias retained
+without structural Close, unknown open/interrupt finite and no retries.
+H10ET3 malformed SID/session/LUID/type, ordinaryquery failure, token/process alias
+or parent drift at each native phase, closeexception/KBI/nonNone, reentrant read
+and bounded two-thread lock order retain/refuse safely; no return after failed
+cleanup, no duplicateopen/Close/deadlock, known queryfailure cleans onlyownedtoken.
+H10ET4 guarded focused+affected B2/H9/H10D (not unrelatedoldcampaigns), strict new2/
+directimports, memorycompile/actualimport/LF/blob/diffcheck; final-byte named
+mutations pin source-handle query, actualfact return vs expectedcopy, pre-open
+identity, tokenclose-before-return, drift/poison refusal and reentry. One cell
+perdistinct obligation; Rootdifferentdoor. Capture actualpatchhash/currentproduct+
+test identities/argv/nonsecret whitelistenv/elapsed/exit/fullunreduced output,
+exactrestore andGREEN. No ceremonialfirstred for new behavior.
+
+Profile HIGH_ASSURANCE source construction only, eventual originalqualifiedCVQ
+stillrequired. Proposed author /root/grant_transport_impl, H10D allocation closed
+to immutablehold3a4572ba; Root sole reviewer, distinct source-evidence helper.
+Fresh ctx-ticket30g-created-process-identity-20261020; contained WT
+.worktrees/skill-improvement-30g-created-process-identity and matching-review,
+codex/same. Owned Temp johnny30g-created-process-identity-20261020 and
+-review-20261020, respectiveauthor/Root, fakechecks/raw/onecache, TTLreviewseal
+thenreferencedhold, noexpirydelete. Forecast product180/test250 effective lines,
+>500actualstructuralreview signal not forcedsplit. Conditional
+grant-ticket30g-created-process-identity-20261020 revision01 NOT_ACTIVE until
+committedDOCreview, existingnormalconstructorpreflight and exactallocation
+identity/baseline/roles readback. Newfunction reuses existingDTO, no newtype cycle.
+Child55/outer60 initial bounds; retain usage/failures, no cumulative/countcaps or
+unchanged retries. No live native/Host/CLI/model/provider/SD/security/ACL/account/
+service/install/network/cost/cleanup/push/release/deploy/formalactivation. Only
+ordinary controlverificationprocesses and registeredpassiveoutputs.
+Sourceapproval is not actual child-token, installedDACL or Host qualification.
+30B/43/R0/DAP/TAL/Recovery/checklistcompletion unchanged. Return typed
+COMPLETED/BLOCKED/CHANGE_DETECTED with exactcandidate/files/checks/findings/
+deviations; sourcecomments technicalonly, no ownerprompt/ticketnarrative.
+
+
 ## 30N4-C10 — new protected enrolled payload file / closure32 proposal
 
 Original30/runbook03 protected payload setup, existing uncapped local batch and
