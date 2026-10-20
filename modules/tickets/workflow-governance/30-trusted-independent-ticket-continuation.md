@@ -39,6 +39,109 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H10G — original suspended process to owned job / closure36 proposal
+
+Original30/runbook03 bounded native construction under existing uncapped batch/
+first-entry source-order exception. Baseline f8754baabc13196e1f8974201737daf30f0a3982
+contains source-reviewed H8 lease, B2 creation, H6 observation, H10D original pair,
+H10E identity and H10F installed protection. Context04, originalPRD/CHG/SPEC,
+no new requirement or safety policy. No claim any producer/Host is qualified.
+
+One observable result: one exact live suspended B2 record assigned once to one
+exact live owned H8 job, with actual specific-job membership readback; noresume.
+CREATE ONLY library/local_orchestration/grant_authority/windows_created_process_job.py
+and tests/test_grant_authority_windows_created_process_job.py. MODIFY0/DELETE0/
+exports0. Existing H6/H8/B2/H10D/H10E/H10F/nativeWindows files readonly.
+New product file owns only job assignment/readback lifetime, not another launcher,
+lease, policy engine, DTO/parser or authorization source. Reuse existing H6
+_read_job_membership(nativeKernel32, originalprocessalias, originaljobalias)
+and _JobMembership; do not duplicate IsProcessInJob ctypes/output parser.
+Use B2 record._kernel32, not newloader or PID/path-based reopening.
+Reuse existing H8 normal constructor/limits/borrow/recovery and H10D exactrecord
+sameoriginalpair checks, existing fake job+ABI support where safe; no copied
+large standalone harness. Product forecast200effective/test450, >500 triggers
+actual structural review, not forcedsplit/compactcode. Full-round oldusage and
+findings retained; no renewed cumulative/countcaps.
+
+Private input contract _assign_created_process_to_job(creation: B2
+_SuspendedProcessCreation, job: H8 _SubjectJobLease, owner_ref: existing
+OpaqueMetadataId)->None. No callerexpectedmembership, rawalias, admissionflag,
+grantrecord, arbitrary nativecall or close callback as success authority.
+Exact actual types, ordinary constructors; no new public DTO bootstrap cycle.
+Finite errors reuse B2 _ProcessCreationError/_CreationFailureReason and existing
+H8 _SubjectJobError for pre-borrow owner/lifetime refusals, no raw exceptions.
+Later issuer/launch composition must still prove H10E/F/source/Grant/standardness;
+this seam does not substitute for those obligations or executeactualqualification.
+H8 owner_ref does not bind a B2 creation to a subject authorization; specific-job
+membership is not proof of absence from all other jobs. No such claim is made.
+
+Acquire outer H8 _LIFECYCLE_LOCK, then B2 _CREATION_LOCK, and enter
+job._borrow_native_owner(owner_ref) while BOTH outer locks remain held. Catch
+borrow-exit failure and retain originals BEFORE releasing either outer lock;
+never allow kill-on-close between borrow failure and recovery publication.
+This first composite entry freezes H8-before-B2 order; neither existing source
+has an inverse composite consumer. Bind ORIGINAL job owner+originalalias
+for the entire operation; require job.require_live and H10D live original
+registeredSUCCEEDED/same-issuing-thread OPEN process/thread pair before/after
+each membership and assignment boundary. A fixed private active-record guard
+refuses reentrant samecreation/differentjob before another query/assign.
+Pre-read specificjob must be NOT_MEMBER; MEMBER is known refusal beforeAssign,
+never repeatAssign/idempotent authorization. Query failure/malformed data refuses
+without Assign. Native AssignProcessToJobObject uses exact original aliases,
+fixed pywin32 wrapper result must be None; no truthiness/expected flag.
+After attempt, actual same specific-job readback must be MEMBER; before/after
+guards include job lease identity/expiry and both B2 owners. Return None only
+after borrow exit also completes. Do not query nulljob/globalmembership instead.
+
+A native assignment failure/throw/non-None/unknown does NOT prove no effect
+(Windows may terminate on job limit failure). Once attemptbegins, any bad return,
+missing/notmember/malformed postread, alias/thread/record/lifetime drift, reentry
+effect or borrow-exit failure retains BOTH original B2 record and original job
+owner+alias via existing _retain_recovery_record/_retain_recovery_resource;
+job._recovery_required prevents laterclose/reborrow, globalexistingpoison applies.
+Never close/resume/terminate/retry/replace/move either resource or clearRecovery.
+Beforeattempt known wrongowner/closed/expired/preexistingmembership refusal
+must not be falsely reported as assignment happened; retain any existing drift
+Recovery truthfully. Existing unrelated Recovery state remains untouched.
+
+H10GT1 ordinary H8 limits/B2 constructors preflight; legal fake originalpair/
+ownedlease performs NOT_MEMBER -> exactAssign(None) -> MEMBER, preserves owners,
+zero nativeClose/resume, expectedcallorder and exactborrowifetime. Tests reach
+real production boundary and existing actual membership parser, not testcopy.
+H10GT2 wrongrecord/type/role/thread/registration/readiness/alias, wrongjob/owner,
+closed/expired/poisoned/nestedborrow, MEMBER or invalid/unavailableprequery:
+zero Assign/effect and no success. Legitimate normal path must remain green.
+H10GT3 failed/throw/non-None Assign, postquery missing/failure/notmember/invalid,
+job/process/threadalias drift at each nativeboundary and borrowexitexpiry:
+both original owners/aliases strongly held, finiteRecovery, no cleanup/retry;
+reentrant samecreation/differentjob cannot issue secondAssign.
+H10GT4 guarded focused+affected H8/B2/H6/H10D tests (no unrelated campaigns),
+strict new2, memorycompile/import+actual loadedsource/hash, finite smoke.
+Final-byte reverse mutations must discriminate pre-membership refusal, fixed
+originalAssignargs/return, postMEMBER check and bothowner recovery retention;
+each actualnamedRED/exactrestoredGREEN with complete captured argv/stdout/stderr,
+patchtext and product/test blobs. Store results BEFORE display; no retrospective
+transcription as original output. Root differentdoor and distinctsourcehelper.
+Responsibility transfer/retirement B=N/A; no oldcoverage deleted.
+
+Profile HIGH_ASSURANCE source-only, original finalCVQ stillrequired. Proposed
+author /root/grant_transport_impl; H10F allocation/context RELEASED immutablehold
+6ff7292f; fresh ctx-ticket30g-created-process-job-20261020. Root sole reviewer/
+orchestrator, existing distinctsourcehelper. Proposed contained
+.worktrees/skill-improvement-30g-created-process-job and matching-review,
+codex/same. Registered ownedTemp johnny30g-created-process-job-20261020 and
+-review-20261020 author/Root, fakechecks/raw/typecache TTLreviewseal then held
+while referenced; no automatic expirydelete or Recoveryclear.
+Conditional grant-ticket30g-created-process-job-20261020 revision01 NOT_ACTIVE
+until exactcommittedDOCreview/D8/preflight/allocation/baseline/roles readback.
+No true nativejob/process/token/SD/pipe/Host/SCM/service/account/security/ACL/
+install/network/model/provider/newcost/cleanup/push/release/deploy/activation.
+Only ordinary boundedcontroltest/build processes/passiveregisteredoutputs,
+child55/outer60 initialdeadline, timeoutdiagnosis/nounchangedretry, historical
+usage retained. Return COMPLETED/BLOCKED/CHANGE_DETECTED exactcandidate/files/
+checks/findings/deviations, technicalcomments only no ownerprompt/ticketstory.
+All formal30B43/issuer/Host/checklist/Recovery obligations remain open.
+
 ## 30N4-C11 — shared checked setup-handle release / closure35 proposal
 
 Original30/runbook03 source-only construction under existing uncapped batch/

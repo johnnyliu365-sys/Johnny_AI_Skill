@@ -1,4 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10F exact source composition / original30 continuation — 2026-10-20
+
+Grant15 6ff7292f3793bc4e00c50e6531b58216d17b3c10 consumed for exact stage
+f8754baabc13196e1f8974201737daf30f0a3982 parent2154a333. Four blobs equal
+candidateece2571, exact2CREATE+2MOD, other54priorpaths unchanged, total58vs18bf,
+source-stage clean. Root actualloaded stage168PASS4.25s/effects[] and strict4
+PASS2.594s, compile/import/hash readback. Fullraw
+source-composition-h10f-root-evidence-20261020.json SHA256
+3b903f0eb076cbefcc467b416a38f71abb3722b58bcb9f3305f822a16372b8a9.
+Distinct helper finalmapping/archive DATA_PASS: expectedparent/all4blob/scope/
+54unchanged and all5embeddedoriginalfiles byte/hash. No rerun of settledproofs,
+embeddedcommand execution or qualifiedHostclaim. Author allocation/contextheld
+immutable, not expirydelete. 30B43/checklist formal admission remainsblocked.
+ACTION_COMPLETED -> AUTO_CONTINUE minimum owned-job assignment source preparation.
+
+H10G bounded source design query from released C11 author confirms reuse of H6
+membership parser/H8 borrow/H10D originalpair and failurecanterminate semantics.
+Root freezes outer H8 lifecycle -> B2 creation -> borrow insideboth, including
+borrowexit/catch before either lockrelease, rather than helper's proposed inverse
+order; existing inspected sources have no combined inverse consumer. No public
+input/type/authorization expansion. Private reentryguard only denies this entry;
+postboundary drift is detected/held, not a claim all arbitrary sameprocess code
+has been prevented from native effects. No Host isolation claim from fake tests.
 ## H10F source approval / exact composition Grant15 — 2026-10-20
 
 APPROVED_SOURCE_ENGINEERING_ONLY candidateece2571fa6059c9535c046006c0725b81280c049,
