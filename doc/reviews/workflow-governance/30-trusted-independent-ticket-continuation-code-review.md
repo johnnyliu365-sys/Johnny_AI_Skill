@@ -1,5 +1,36 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N11 closure47 DOC pass / exact asset reservation — 2026-10-21
+
+Different-seat /root/ticket30_native_tools_review FINAL DOC_PASS_NOT_OWNER_APPROVAL
+on6f067d85a881007c1336429bba099af0354b23c7, ticketblob
+5f0baf2d447eda537e3147183667c9c182465ea2, LF
+9129c24c87ecf85c205b4dd9989c862df8d6f270f19e1f5d20c50bedf32f7eb8.
+Initiala7d8 single impossible blanketresultban corrected narrowly; D8 twoedges
+independently verified,3CREATE/0MOD scope unchanged. No new Owner/Host approval.
+Root chooses constructor-first private implementation ordering under the existing
+N9/GrantPlan/AuthorityPeer inputs, not a new public schema pre-existence demand;
+new private native/record types are built+tested before consumer composition.
+
+Reserve exact N11 owner /root/ticket30n4_peer_impl:
+.worktrees/skill-improvement-30g-installed-approval, branchcodex/same;
+Root .worktrees/skill-improvement-30g-installed-approval-review, branchcodex/same;
+both fresh exact43abc3cc81ee2c162d95035dd5f2e62cfd60745b engineeringhold.
+Context ctx-ticket30n11-installed-approval-20261021, one ownerlane only.
+Author Temp C:/Users/GameBoy/AppData/Local/Temp/johnny30-installed-approval-owner-20261021;
+Root Temp C:/Users/GameBoy/AppData/Local/Temp/johnny30-installed-approval-review-20261021.
+Purpose solely bounded fake-native registry source/decoder tests and original
+verification evidence; no real registry/SCM/Host reads or effects. TTL through
+independent reviewseal/composition; holds override expiry. Designated original
+owners only later teardown if policy/refs permit, no automatic expirationcleanup.
+N10 remains immutableheld, not reused/deleted. All four paths absent and matching
+branches absent by for-each-ref; root/.worktrees/Temp parents actualordinarydirs,
+nonreparse, actualmetadata rechecked beforecreation. Prior show-ref absence
+diagnostic returned128/not-valid-ref; it is NOT task-binding proof. No reset/retry
+cleanup. Allocate+existinginput constructorpreflight next; Grant NOT_ACTIVE until
+fresh actualWTidentity/cleanbase/preflight success. Same batch/uncapped history,
+firstCVQ source-order only, bridgeNOT_REQUIRED, no effects/activation/newcost.
+
 ## N10 archive parity QA and N11 minimum continuation decision — 2026-10-21
 
 Different-seat /root/ticket30_native_tools_review actually decoded both immutable
