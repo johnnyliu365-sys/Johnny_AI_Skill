@@ -39,6 +39,105 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H10C — exact created-process owner admission into H6 / closure30 proposal
+
+Original30/runbook03, batch-checklist-local-20261019-uncapped and the approved
+first-entry source-order exception. Necessary bounded migration after B2 source
+approval26867c76; not a new capability/authority, SPEC, PRD or Host permission.
+Sourcebaselinec1b609466b8048e0a487df1d45450168807d48b6 (B2 engineering stage);
+independent stage mapping must pass before this proposal can become ACTIVE.
+No dependency on C9 implementation or its unresolved F1.
+
+MODIFY EXACT library/local_orchestration/grant_authority/windows_retained_process.py
+and tests/test_grant_authority_windows_retained_process.py. CREATE0/DELETE0.
+ABI/B2, token/H9, job/H8 and all other source/test files are read-only. Retain
+existing H6 observation DTO/error enum, native calls and all five fact checks;
+do not add Grant issuer, process launcher, arbitrary handle protocol or public
+effect entry. Source boundary is ONLY _ThreadBoundRetainedProcessReader's
+process-owner admission/revalidation, not the shared native-owner helpers.
+
+Keep _require_borrowed_handle_owner and _require_original_borrowed_alias unchanged
+and PyHANDLE-only: H9 imports both and also passes INVALID_PROCESS, so a failure
+enum branch cannot safely select a process owner. Job input continues through
+the original native-only path. Add localized process-only validation which
+accepts the original native owner OR exact current
+windows_subject_process_abi._CreatedKernelHandleOwner PROCESS view. Reject
+subclasses, structural lookalikes, THREAD role, wrong parent/view/thread,
+PREPARED/CLOSING/CLOSED/RECOVERY, changed original alias and invalid aliases before
+new reader native calls. Reuse B2's checked .handle boundary for its current
+creation/owner readiness, original parent/role/thread/alias; do not read raw PI
+fields to bypass it, reopen PID, duplicate/close the borrowed owners or weaken
+B2. Revalidate the same owner and original process alias at every existing H6
+before/after observation checkpoint. Existing INVALID_PROCESS remains the
+sanitized reader error for rejected process input; no new error engine.
+
+Use a module namespace import for the ABI dependency, not a cached class alias:
+the existing ABI fake fixture reloads that module. Dependency stays H6 -> ABI
+-> H10A/H7 (none imports H6), no runtime circular fallback. Keep
+_QueryableTokenOwner's existing typed surface and runtime class validation;
+do not replace with unchecked object/Any/duck typing or caller role strings.
+An exact Python object is only an internal service ownership boundary, NOT
+trusted Grant provenance or a same-process security sandbox.
+
+TEST: preserve the real H6 reader.observe entry, its same-handle native fake
+observations and all five returned facts. A: add process-only owner admission
+at existing constructor/revalidation, no native behavior move. B:N/A, no test
+retirement; existing native-owner, token and job consumers remain live.
+Reuse H6 _FakeKernel32/_reader/_install_fake_native_handle_type and B2 existing
+fake_native/launch_plan fixtures for normal creation, never copy their ABI/SD
+harness. Register/reload B2 fake creation before installing H6 observation fakes;
+do not confuse H6 token Close fake with process/thread ownership. Namespace
+dependency must work regardless of focused test collection order.
+
+H10CT1 ordinary constructors/import: old native process+job remains accepted;
+normal B2 fake creation yields a live PROCESS owner accepted by H6, observe
+returns the same five expected facts through the real reader, never closes
+borrowed process/thread/job. Independently assert actual observed fake aliases,
+not just delegation or fixture equality; no baseline-only candidate claim.
+H10CT2 invalid custom THREAD/parent/view/type/thread/readiness/alias refuses before
+reader DLL/native calls; live -> closed/recovery/alias mutation between reader
+construction and observe refuses. Preserve correct legal native path and
+confirmed creation owner lifetime; no all-input rejection.
+H10CT3 H9 shared helper and job boundaries remain native-only. A custom created
+PROCESS owner passed to either shared helper or job slot is rejected despite
+INVALID_PROCESS reuse; unmodified H9 tests remain affected consumer regression.
+Existing H6 before/during/after alias substitution and token-close/poison tests
+remain executable; no suppressing failures or weakening assertions.
+H10CT4 guarded affected H6/ABI/H9 suites, strict modified2 plus affected imported
+contracts, memory compile/actual import/blob check and baseline range diff check.
+Final-byte named mutations pin PROCESS role/live-state gate, original alias
+revalidation and shared-helper/job non-widening; one behavioral cell per
+obligation, not a new full campaign. Root uses a different counter door.
+Full unreduced outputs/command/elapsed/exit/patch/source-test identities and
+exact restore retained; keep old failures, no budget reset. No test retirement.
+
+No new files; forecast product+90/test+180 effective lines is a review signal,
+not forced minification or tiny-file splitting. Existing large H6 test uses its
+same shared native fake; source comments technical only, no owner prompts/ticket
+narrative. A true contract/scope difference returns CHANGE_DETECTED before effect.
+
+Proposed author /root/grant_transport_impl, prior B2 allocation RELEASED to
+immutable evidence hold by26867c76; Root sole reviewer/orchestrator, distinct
+source-evidence helper. Fresh ctx-ticket30g-created-owner-reader-20261020,
+proposed contained WTs .worktrees/skill-improvement-30g-created-owner-reader
+and matching-review, codex/same. OwnedTemp/johnny30g-created-owner-reader-20261020
+and -review-20261020 for author/Root bounded fake checks/evidence/one cache,
+TTLthroughreview/seal then referenced hold, no expirydelete.
+Conditional grant-ticket30g-created-owner-reader-20261020 revision01 NOT_ACTIVE
+until committed DOC review, stage mapping, existing ordinary constructor/import
+evidence reuse and exact nonreparse worktree/roles/baseline readback.
+New admission logic cannot be demanded before building itself. Child55/outer60
+initial bounds; no cumulative/count ceiling, preserve historical accounting.
+
+No real native process/token/job/SD/converter/Host call, CLI/model/provider,
+service/SCM/account/ACL/security/install/network/cleanup/push/release/deploy or
+formal gate activation. Native/external guard precedes import and all OS calls
+are fakes. Ordinary bounded control verification processes/registered outputs
+only. Engineering source approval never qualifies CVQ/30B/43. R0/DAP/TAL/Recovery
+and previous denied cleanup unchanged. Return COMPLETED/BLOCKED/CHANGE_DETECTED
+with exact candidate, paths, checks, findings, deviations and passive evidence;
+COMPLETED is implementation return only, not review/integration/qualification.
+
 ## 30N4-C9 — new owned directory protection-at-creation / closure29 proposal
 
 Original30/runbook03 and same uncapped local batch; source-only protection-tool
