@@ -1,5 +1,29 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N10 Python3 read-buffer representation / same active correction — 2026-10-21
+
+F11 frozenN10T1/T2 legal actual buffer: pywin32b311 AllocateReadBuffer calls
+PyBuffer_New; [implementation](https://raw.githubusercontent.com/mhammond/pywin32/b311/win32/src/PyWinTypesmodule.cpp)
+lines40–47 allocates bytearray and returns its memoryview. A slice is memoryview,
+not bytes. Current complete_read casts the buffer to a Protocol whose slice claims
+bytes, then rejects the real memoryview. The custom fake silently converts slices
+to bytes, so it masks another actual-lawful-input rejection.
+Root pure-Python memoryview(bytearray(capacity)) plus fake Native IO, exact lawful
+ReadFile returned-buffer tuple, full real reader: one intendedRED/effects[].
+Original registered probe n10_root_memoryview_probe.py / Root raw retained;
+no SDK allocator, Native IO, Host campaign or constructor was executed.
+
+Copy only the observed completed count into bytes AFTER bounded completion/count
+validation, accepting the SDK's actual buffer representation; never use capacity/
+precompletion data as actual count. Prefer the standard memoryview in the fake
+over a nonrepresentative custom slice wrapper; retain malformed buffer/count/
+ownership negatives. Strict3 must describe the true boundary, not bless a cast
+that changes runtime shape. Same active three-path Grant01/closure46/additive
+correction as3466453c/e1450569; preserve history, no new AC/permissions or user
+decision. Combine F08/F09/F10/F11/E02 before final-byte tests/mutations/review.
+
+
+
 ## N10 SDK factory-kind correction / same active scope — 2026-10-21
 
 New discriminating passive SDK readback on installed pywin32311: export
