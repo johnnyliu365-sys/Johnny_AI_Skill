@@ -1,4 +1,46 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10H exact additive correction Grant revision02 — 2026-10-21
+
+DOC_PASS /root/ticket30_native_tools_review at e53f6a0cca7099da53c1cafa166d8b8819d94186,
+closure40 leaf34654b6b5a7ee8267edbc4839045b6e8252b7bf0 LF
+bd127c6cfd7109c72cc2e5fda7909261d482fa0893197ec9b58264b556ae2fe7,
+D8 registry exact. Parent batch-checklist-local-20261019-uncapped unchanged.
+grant-ticket30g-subject-preparation-20261020 revision02 ACTIVE_CORRECTION,
+supersedes revision01 path restriction ONLY by one existing fixture import line.
+Additive baseline a247600007bfd1c1dd7651fbac1e7bded89d26e9; original23113241/
+H10H closure38/T1-4 and original findings/history stay. Author /root/grant_transport_impl,
+Root sole finalreviewer/orchestrator; same contained author/review worktrees,
+codex/same, ctx-ticket30g-subject-preparation-20261020 and registered Temps.
+No newallocation/context/budget/PRD, author cannot approve its own source.
+
+MODIFY EXACT relativea247:
+library/local_orchestration/grant_authority/windows_subject_preparation.py
+tests/test_grant_authority_windows_subject_preparation.py
+tests/test_grant_authority_windows_retained_process.py ONLY the one
+fake_native/launch_plan import top-level ABI -> tests.qualified ABI.
+CREATE0/DELETE0/export0 relativecandidate; overall2CREATE+1one-lineMOD vs23113241.
+All other paths readonly. No fixture/assertion rewrite or helper duplication.
+Existing typed constructors exercised in Root591guardedtests; no newtype needed.
+Before correction check exactauthorHEAD/cleanindex/currentfileblobs and preserve
+others; inability to safely bind this singleimport migration returns BLOCKED,
+not extra permissions. Same-seat additive correction, no reset/amend/force.
+
+Repair F01/F02 boundary revalidation with genuine defective-candidate baseline
+RED for silent exit drift; preserve actualhelpers and legitimate unchanged PASS.
+Repair E01 by exact shared fixture import, no skip/ignore/stub/Any laundering.
+Run affected focused+direct suites, strict newtargets plus changed fixture without
+skip and diagnostic disallow-any-unimported, compile/import/actualsource/blobs,
+final-byte namedreverseRED/exactrestoreGREEN; Root replays own distinct probes.
+Root/helper structure review permits one cohesive parametrized suite, not
+line-count-only split/forcedcompression or deletion of permanent regression.
+Newnative/Hostcampaign/SD/process/token/job/pipe/SCM/service/account/ACL/security/
+rights/install/network/model/provider/newcost/cleanup/push/release/deploy/
+activation remain forbidden; only bounded offlinefake/controlchildren and owned
+passiveoutputs. Child55/outer60 initial, diagnose/record beforedeadlinechange;
+uncappedlocal history retained, no unchanged-failure retry.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT sameauthor -> finitewait -> Root
+same-ticket correctionreview, exactsourcecomposition only after all findings
+closed. C13 independent review and unfinished12/30B43/Recovery unaffected.
 ## H10H initial source review / same-ticket correction — 2026-10-21
 
 Root CHANGES_REQUESTED at a247600007bfd1c1dd7651fbac1e7bded89d26e9,
