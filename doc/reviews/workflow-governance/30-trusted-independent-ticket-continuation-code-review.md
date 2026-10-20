@@ -1,4 +1,67 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10B2 initial Root review — CHANGES_REQUESTED — 2026-10-20
+
+Exact candidate0df6e061dc9939578118f1c0224853ca52cf0ebb, parentbeb7a463,
+product08b1132132a8cde1012c92ac4f34f8ccf8be8173,
+testa3e04decedd969052a7a960249db8edf7a42f331. Original30 closure28 / Grant
+cf9c090f unchanged, same author/worktree/branch/context/allocation and parent
+uncapped authority. Candidate is NOT_APPROVED/NOT_COMPOSED, no Host clearance.
+
+Root final-source affected83 tests PASS2.219s (newABI40+unchanged H10A43),
+strict2 PASS19.562s, actualimport/memorycompile/SHA/blob proven. Author157 adds
+unchanged H7 coverage; Root need not rerun that suite. Minimal child env excludes
+ambient provider credentials; unpatched converter/native/external guard empty.
+Source/evidence helper independently confirms final157/strict2/import evidence
+and eight original named mutation doors, plus mechanical partial-output repair.
+Historical transcript-derived partial artifact remains explicitly not raw proof.
+
+Consolidated frozen-closure findings, not new best-practice requirements:
+- F1 IMPLEMENTATION_DEFECT/P0: creation _state is an unrestricted string convention,
+  not a named finite domain. Replace with one small private finite state type;
+  do not introduce a second workflow or enum framework.
+- F2 IMPLEMENTATION_DEFECT/H10B2T3: a recovery-held record still returns its alias
+  through process_owner.handle. Root actual fake Close-failure probe confirms
+  RECOVERY_OWNER_HANDLE_USE_REFUSED=False. Require ready/live own-record and
+  owner state before use; prepared/closing/recovery/closed must not expose a
+  usable alias. Known legitimate explicit teardown must remain possible.
+- F3 IMPLEMENTATION_DEFECT/H10B2T3: Close sets success only after native return,
+  without a before-call attempt/reentrant guard under an RLock. Root fake native
+  callback invokes Close on same owner and proves TWO native attempts, no refusal.
+  Set the one-attempt/in-progress boundary before call; nested use/close refuses
+  before a second native call, unknown outcome retains/poisons and never retries.
+  Do not let outer success erase a recovery raised during nested work.
+- E4 EVIDENCE_DEFECT/H10B2T2/T4: Root removes ONLY readonly-buffer rejection;
+  the supposedly mutable/noncontiguous/wide negative cell remains GREEN (ZERO_RED).
+  Existing type-name/bytes provider filter rejects those fixtures before the
+  actual shape predicates. Pin actual readonly/dimension/itemsize/contiguity
+  boundaries and positive copied bytes, not a surrogate early filter. Root
+  technical direction: delete the unneeded class-name/fake-bytes production
+  heuristic; use one localized strict Buffer static bridge and memoryview's
+  actual runtime protocol/shape checks, retain fixed internal converter and full
+  SD semantic checks. This is not accepting caller SD at the public primitive;
+  its two-input signature and owner/ACL policy stay unchanged.
+- E5 EVIDENCE/FORMAT: real baseline..candidate git diff --check is NONZERO for
+  test:809 new blank EOF line (Root captured2, helper reported1; do not collapse
+  platform observations). Cached check claimed0 was not this range check. Remove
+  extra blank line and record actual full range check, no history rewrite.
+
+Root different-door ZERO_RED is a finding, not success. Original source restored
+exactly after counter; clean review tree. Raw full commands/env/timing/exit/
+stdout/stderr/actual patch/Gitdiff/identities in registered Root Temp file
+h10b2-initial-root-review-20261020.json; native calls/conversions remain fake.
+Source604 physical/526 nonblank and test809/707 exceed forecast signals, so actual
+structure reviewed: one ABI/creation-owner boundary and one shared fake harness,
+not a second capability. No line-only forced split or new path; remove heuristic
+and fix lifecycle within original two files. Source comments remain technical.
+
+ACTION_COMPLETED REVIEW -> AUTO_CONTINUE original-owner correction F1–F3/E4–E5
+under same exact Grant, no Owner renewal/new PRD or broader caller migration.
+Add discriminating regressions first, preserve old 0df/evidence/ZERO_RED, then
+affected tests/strict/import, actual range check and finite final-byte proof of
+changed boundaries. Retain unaffected evidence with precise version disclosure;
+do not rerun unrelated H7/H8/H9/whole CVQ campaigns. Root independently rechecks
+all findings after additive return. C9 disjoint source work continues.
+
 ## C9 exact same-lifetime source admission — 2026-10-20
 
 Original30 closure29 committed1035210e11863dae50ce2c1907fd40132149e0c5,
