@@ -39,7 +39,141 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
-## 30N4-H10B1 — checked original-owner borrowing / closure27 proposal
+## 30N4-H10B2 — one suspended-create ABI boundary / closure28 proposal
+
+Original30/runbook03, same batch-checklist-local-20261019-uncapped and first-CVQ
+source-order exception. Root Architecture and distinct topology helper narrow
+the next missing producer to ONE native ABI boundary. H10B1 is reviewed source,
+not operational permission. Do not start another capability/options exploration.
+Reuse H10A _SubjectLaunchPlan and UTF16 bounds, stdlib quoting, H3 checked native
+boundary/strong recovery patterns (not pipe ACL policy), H7 test _match_values.
+Catalog workflow-control contains only workflow-router-poc READY; no native
+process module card exists, so no invented catalog match/adoption. No second
+Runner/VM/Agent/Policy/owner framework or generic security-descriptor parser.
+
+Sourcebaselinebeb7a4635d7529d424cc320ea01a2e53574f88a1, exact reviewed43-path
+engineering stage. CREATE ONLY library/local_orchestration/grant_authority/
+windows_subject_process_abi.py and tests/test_grant_authority_windows_subject_process_abi.py.
+MODIFY0/DELETE0. H6/H8/H9/H10A and native-tool source remain read-only in this
+slice. Later H6 exact-owner migration is a necessary separately bounded2MOD,
+not a claim this ABI result already passes its PyHANDLE-only admission.
+
+Private _create_suspended_process_as_user_w(plan:_SubjectLaunchPlan,
+borrowed_primary_token_alias:int) returns one _SuspendedProcessCreation with
+exact process/thread owner views and observed positive uint32 PID/TID. Revalidate
+normal existing plan at the boundary; exact positive pointer-sized token alias,
+reject bool/zero/signed or unsigned sentinel. It is a private trusted-service
+primitive, not an effect gateway, Grant issuer, caller-controlled process API,
+same-process sandbox or provenance proof. Later consumer must obtain the token
+alias inside B1 job-then-token borrow and retain both contexts across creation,
+assignment/observation. No such production composition is activated here.
+
+One finite private _CreateProcessFailure: INVALID_INPUT, CREATOR_POISONED,
+NATIVE_CALL_FAILED, INVALID_NATIVE_RESULT, RECOVERY_REQUIRED. Sanitized error
+may carry the exact creation record iff RECOVERY_REQUIRED. Never log native
+handles, argv/environment contents, raw native exception or descriptor bytes.
+No dynamic Any or unchecked object crosses the checked external boundary.
+
+Before native entry allocate/strongly register one record containing actual
+PROCESS_INFORMATION storage, two pre-existing role-fixed owner views, issuing
+thread identity and retained checked DLL/function references. Owner views read
+their own PI field directly: no post-return PyHANDLE adoption window. Exact
+_CreatedKernelHandleOwner class/parent identity/PROCESS-or-THREAD role, same
+thread and original alias must be revalidated before use/close. No structural
+lookalikes, substitution, role swap, zero/sentinel aliases or wrong-thread use.
+RLock serializes creation, registry/poison publication and explicit Close.
+Known successful records remain strongly registered until BOTH exact explicit
+Close calls confirm; this supersedes helper's proposed accept_transfer removal
+and avoids a new transfer state/API and abandonment gap. Returning success does
+not implicitly release ownership, close, resume, terminate or claim cleanup.
+
+FALSE with exactly untouched zero PI -> finite NATIVE_CALL_FAILED, remove only
+that no-output construction record, never say a process was cleaned. Once native
+entry begins, exception/KBI/SystemExit, FALSE with any output, malformed TRUE
+output or unknown return -> retain full record and all known raw outputs, poison
+creator, RECOVERY_REQUIRED. Do NOT automatically CloseHandle: closing a process
+handle is not termination and may orphan a suspended unassigned process.
+No alternate raw close, automatic terminate/wait, PID reopen, retry, __del__ or
+GC cleanup. New creation fails before effect while poisoned. Explicit Close
+after successful creation is one checked original-handle attempt, idempotent
+only after confirmed success; uncertainty retains complete record/poison and
+prohibits retry. Future high-level recovery must prove process exit before its
+explicit process/thread closes; ABI alone cannot claim that proof.
+
+Do not accept caller SD/memoryview. Internally convert independently named
+_PROCESS_OBJECT_SDDL and _THREAD_OBJECT_SDDL, both exactly
+O:SYG:SYD:P(A;;GA;;;SY)(A;;GA;;;BA), with revision1. Verify native descriptor
+IsValid/IsSelfRelative are exact True, control/revision exact fixed selfrelative
+DACL-present/protected revision1 without defaulted/auto/inherited/SACL flags,
+owner SYSTEM and exactly the two unflagged allow GENERIC_ALL ACEs for SYSTEM
+and Builtin Administrators, no extras/duplicates/null DACL. Reject malformed
+native return before process entry. Use one localized checked buffer-protocol
+adapter for the pywin32 self-relative readonly, 1-D contiguous byte-sized buffer,
+20..65535 bytes, copy independently into Python-owned native storage retained
+through call. Do not cast Python object addresses or invent another unmanaged
+LocalFree owner. Semantic validation of owned fixed converter output plus real
+buffer protocol avoids unsafe arbitrary relative offsets without another parser.
+Actual process/thread installed DACL readback still belongs to later composition.
+
+Exactly one checked Advapi32!CreateProcessAsUserW binding, no wrapper fallback.
+Non-NULL exact enrolled application path; mutable command rendered only with
+list2cmdline([plan.files.executable.path,*arguments]); allocate terminal-NUL by
+UTF16LE units (not Python len). Explicit Unicode environment block, never ambient
+parent environment: empty exactly4 zero bytes; nonempty NAME=VALUE entries each
+NUL plus final NUL, bounded per H10A, no BOM/implicit extra terminator. Exact cwd,
+non-NULL independent process/thread SECURITY_ATTRIBUTES, length exact,
+bInheritHandle=False, bInheritHandles=False; flags only CREATE_SUSPENDED |
+CREATE_UNICODE_ENVIRONMENT; STARTUPINFOW.cb exact. No shell/breakaway/searchPATH,
+defaults or implicit startup handles. Retain all buffers and ABI references.
+Two output handles distinct, positive pointer-sized nonsentinel; PID/TID exact
+positive uint32. Child must remain suspended; this slice has NO Resume/Assign/
+Terminate/wait/SCM/host or token acquisition calls.
+
+H10B2T1 normal existing plan/strict import and fake exact ABI args/storage/flags/
+owner roles/PI-before-call registration; successful positive paths and explicit
+single close/idempotence, no qualification claim.
+H10B2T2 empty/astral/bounded UTF16, mutable command, exact fixed descriptor inputs/
+copies; malformed SD controls/owner/ACL/buffer, caller lookalikes and invalid
+token refuse before fake create. Boundary SID/ACL checks do not broaden H3.
+H10B2T3 partial outputs on FALSE/raise/KBI, malformed TRUE/IDs/aliases and Close
+uncertainty -> exact strong retention/poison/no auto close/terminate/wait/reopen/
+retry; valid false-zero path does not manufacture cleanup. Actual issuing-thread
+tests, role/parent/alias substitution refused, DLL/buffer lifetimes retained.
+H10B2T4 guarded focused pytest, strict new2, memorycompile/actualimport/hash,
+actual final-byte named weakeners for distinct fixed ABI flags/noninheritance/
+NULL pointer, empty+astral bytes, pre-registration/partial-output retention/
+poison and original-owner close/no retry. One discriminating cell per logical
+obligation, parameterize related cases; no 30-pair duplication of unchanged
+H8/H9 campaigns. Root counter enters a different behavior door, full unreduced
+outputs and actual patch/hash/source-test identities captured at execution.
+
+Forecast <=450 effective product lines and <=500 test lines for this one ABI
+responsibility; line count is review signal, not permission to minify/split into
+tiny files. Reuse fixtures, no duplicate browser/mock/PNG infrastructure. If a
+real responsibility cannot fit, return precise boundary finding before adding
+a path; Root may revise under batch, no new PRD or permission invention.
+
+Proposed author /root/grant_transport_impl (prior H10A allocation released hold),
+Root sole reviewer/orchestrator, native-tools helper for bounded source facts.
+Fresh ctx-ticket30g-process-abi-20261020; contained WTs .worktrees/
+skill-improvement-30g-process-abi and matching-review, codex/same, proposed
+ownedTemp/johnny30g-process-abi-20261020 and -review-20261020 respectively
+author/Root, owner+purpose+TTLthroughreview/seal/referencedhold, no expirydelete.
+Conditional grant-ticket30g-process-abi-20261020 revision01 NOT_ACTIVE until
+committed document review, existing normal plan-constructor/import preflight
+and exact contained nonreparse WT/roles/baseline readback. New native wrapper
+cannot be demanded as a precondition to building itself; existing approved
+first-entry order exception applies only to source/fake construction.
+Child55/outer60 initial command bounds, resource/old-history accounting retained.
+
+No actual native job/token/process/SD conversion/Host/CLI/model/service/SCM/
+security/account/ACL/install/network/cleanup/push/release/deploy/formal activation.
+Tests must replace every native loader/converter/call with bounded fakes and
+guard unpatched external effects before import. No live credentials or target
+data. Source engineering review is not qualified CVQ/30B/43 admission. R0/DAP/
+TAL/Recovery and rejected cleanup untouched.
+
+## 30N4-H10B1 — checked original-owner borrowing / closure27 source sealed
 
 Original30/runbook03 same uncapped batch and first-entry source-order boundary.
 Architecture readback confirms H8/H9 expose no protected original native owner to
