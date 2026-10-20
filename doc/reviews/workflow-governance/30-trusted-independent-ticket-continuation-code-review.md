@@ -1,5 +1,64 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N11 local construction approval / exact replay Grant28 — 2026-10-21
+
+Root conclusion APPROVED for closure47 LOCAL_SOURCE_CONSTRUCTION_ONLY at exact
+1d72c996a1b777208994b47ec59acea3911d0816. F01-F05 CLOSED; sourcehelper actual
+FINAL SOURCE_DELTA_PASS_NOT_QUALIFICATION confirms scoped fixes; F02-04 unchanged
+PASS reused by exact decoder/delta identity, not reopened. This is NOT qualified
+HIGH_ASSURANCE audit, original30B/43 integration, main/authority integration,
+native/Host qualification or whole12 completion. First-CVQ source-order exception
+retains its limits; every formal effect and operational acceptance remains OPEN.
+
+Root194guardedPASS0.87s(58N11+62N9+74C8), strict3 PASS1.625s, compile/actual-loaded
+source and three exact blobs read back, no unpatched effects. Original four probes
+nowPASS4; ten known pseudo-roots all refuse before any query/close with retained
+poison; open/close interruptions both finite recovery/hold/poison. Leaf refuses
+extra inherit-only allow while ancestor legal positive staysPASS. Three additional
+REAL_ENTRY legal cases PASS: exact262144payload+ControlSet999,256members+maximum
+source facts+exactUnicode, empty source/range+exactUnicode. No all-reject substitute.
+
+Independent Root different door: real members validator upper <=256 became <256,
+legitimate256-member cell RED ValidationError, mutant decoder32d68fbb0aa7fb6918f65afbf9f1dc7e41944240;
+exact apply_patch restoration decoder39eaaccc and same cellGREEN1, all three blobs
+equal final candidate and worktree clean. Original unfiltered stdout/stderr read.
+Author final M1/M2/M3a/M3b/M4 raw+patches fully read and artifact hashes verified;
+M2 only refusal classification, first wrong-selector0collected/exit4 notRED.
+M3a digest and M3b duplicate membership are separate subpairs, no false claim of
+duplicate-path mutation. Inline patch-text hashes differ from physical patch-file
+hashes only by serialization/newline representation; both hashes independently
+verified, normalized contents equal. Final indexf1837f9b,38artifacts hash-verified.
+Earlier failures and original evidence retained; no old candidate re-labelled.
+
+Structure review: native ABI/registry ownership and descriptor policy one coherent
+platform boundary; separate immutable decoder; shared fake Advapi adapter/fixture
+and parameterized matrices reused rather than independent repeated scripts.
+Over500effective lines remains review signal, not forced minification/splitting.
+No new dependency/public export, source prompt/work-order narrative or old consumer
+behavior removed. Reserve registered Root reviewTemp n11-root-final-review.json,
+same Root owner/TTL through seal/hold/teardown restrictions; original probes and
+intermediate packets immutable. No policy-denied cleanup retry or new OS effect.
+
+Root-only grant-ticket30n11-source-replay-20261021 revision28 ACTIVE_ENGINEERING_STAGE:
+parent batchuncapped/original30/closure47/implementationGrant01, reviewed candidate
+above. Root-owned stage .worktrees/skill-improvement-30g-protected-source,
+branchcodex/same, exact clean parent43abc3cc81ee2c162d95035dd5f2e62cfd60745b;
+actual ordinary nonreparse root/parent and all3target paths absent read back.
+CREATE ONLY exact reviewed blobs:
+library/local_orchestration/grant_authority/windows_approval_registry.py
+331f14d79e0f5ae04ae9bc13f0b799d2aae891f7;
+library/local_orchestration/grant_authority/windows_installed_approval.py
+39eaaccce8c550f4a75687c5be6a5917a53213c0;
+tests/test_grant_authority_windows_installed_approval.py
+339ae3b04e1a1deeef4867199a73600cd1882d73.
+No hand-edit, existing-path modify/delete/export/dependency; previous106changed
+paths versus18bf1e9f62ccbde7d4556187dfb7967471ce93a1 must stay identical,
+total109after replay. Re-run affected194/strict3 at exact composition, compare all
+three blobs before commit. Root may commit only after these checks; mismatchHALT.
+This exact-blob replay is not Root authorship or formal main integration. No push,
+release/deploy/install/service/account/ACL/Registry/Host campaign/network/newfees/
+formalactivation,30B43解除, Recovery clearing or checklist checkmark.
+
 ## N11 bounded native-ownership supplement / original T3 — 2026-10-21
 
 Original F01 pseudo-owner family is now fully enumerated, not ten new policies:
