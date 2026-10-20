@@ -1,5 +1,55 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 exact source-construction Grant01 — 2026-10-21
+
+AUTO_CONTINUE -> IMPLEMENT / bridgeNOT_REQUIRED same-lifetime direct lane.
+Parent batch-checklist-local-20261019-uncapped/original30/PRD009/CHG009/
+Context04/runbook03 section2/first-CVQ construction order. Distinct retained
+sourcehelper actual FINAL DOC_PASS_NOT_OWNER_APPROVAL on closure48 a9bd144c
+and narrow fake-only command correction1e53b97a53962f4c5755a264a4d477a058b81456.
+Exact leaf606da7080e4827b4a651edcc6ed9de29e0efc72c,
+LFad231b21aef5e65a264a64c2370707ba34ac42210cc96468eaa850e980574755,
+both registry placements independently readback. Old machineadmissionnull remains
+inactive; this is scoped engineering control authority, not trusted operational Grant.
+
+grant-ticket30n12-protected-store-20261021 revision01 ACTIVE_CONSTRUCTION_ONLY.
+Exact3CREATE closure48, zeroMODIFY/DELETE/export/deps. Source baseline
+a6071d5f2734091934a8645884c7db2068f62569; owner retained
+/root/ticket30n4_peer_impl Luna/xhigh, Root sole AO/reviewer/orchestrator,
+different retained sourcehelper evidence. One owner lane after N11 release,
+fresh ctx-ticket30n12-protected-store-20261021. Actual owner worktree
+.worktrees/skill-improvement-30g-protected-store / codex/same and Root
+-review / codex/same: clean baseline, ordinary nonreparse root/parents,
+exact .git pointer/Gitdir backlink/branch, threeabsentCREATE paths PASS.
+Registered owner/Root Temp same reserved names through reviewseal/holds.
+
+Root metadata/preflight raw reserved and preserved in Root registered Temp
+n12-root-admission.json. Earlier metadata command ended1 solely trailing
+test-name rg in control WT (new stage files absent there), not claimedPASS;
+correct stage command-entry read and final explicit dualallocation assertions0.
+Existing exact N11 constructors/strict proof reused; new private constructors
+reviewed on candidate before source approval. No fictional Host gate blocks
+source construction; no relaxation of operational isolation/qualification.
+
+Owner executes only N12T1-4 and exact fake-only four-suite set; strict3, memory
+compile/import, actual loaded source/candidate/blobs, four author groups reverse
+mutation RED/exactGREEN on finalcandidate. Existing SQLite test suite is excluded
+because it creates actual files; old ledger source/tests remain unchanged.
+Ordinary technical choices/corrections stay same scope/Grant/lineage, additive
+commits; no cumulative caps or fixed attempts reset, child55/outer60 with diagnosis.
+No subagent/tools orchestration by implementer. Root waits with wait_agent,
+does not poll or read active uncommitted worktree; review only actualFINAL.
+
+All Native registry/file/KnownFolder/SDK constructor/token/SCM/SQLite effects
+are replaced at approved test boundaries, no actual system call/real DB operation.
+No source prompt/ticket narrative, duplicate helper framework or unrelated fix.
+SOURCE_ONLY_UNQUALIFIED; no operational issuer, main/Host qualification,
+30B43解除, service/install/account/ACL/config/permission/remote/network/model/
+newfees/push/release/deploy/formalactivation, cleanup retry or Recovery clearing.
+Expected typed ImplementationReturn IMPLEMENTED|BLOCKED|CHANGE_DETECTED with
+exactcandidate/changedfiles/checkcommands/rawrefs/findings/deviations; Root then
+independent source/reverse review, not automatic integration or checklist check.
+
 ## N12 DOC admission / construction reservation — 2026-10-21
 
 Distinct retained /root/ticket30_native_tools_review actual FINAL
