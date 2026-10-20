@@ -39,7 +39,97 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H11 — one source-only bound read dispatcher / closure41 proposal
+
+Original30/runbook03 section2, parent batch-checklist-local-20261019-uncapped.
+No new PRD, SPEC semantics, authority source, Router, host or policy engine.
+Source baseline3279f52e1d36751489054d617e364742df1c3d2d (engineeringhold only).
+Independent bounded handoff confirms client accepts an injected channel, transport
+owns bounded server I/O, windows_service.py is pure enrollment decoding, and no
+caller joins peer match -> strict request -> exact existing ledger read -> response.
+N5/N6 codec/HTTP already exist and are reused, never rebuilt. C13 issuer-identity
+correction is separate; this value/read composition does not depend on it or
+declare an actual protected issuer. All existing qualification holds remain.
+
+CREATE EXACT
+library/local_orchestration/grant_authority/windows_read_dispatch.py
+tests/test_grant_authority_windows_read_dispatch.py.
+MODIFY ONLY tests/test_grant_authority_windows_peer.py: qualify its single existing
+import of _peer/_plan as tests.test_grant_authority_protocol; no fixture/assertion/
+behavior change. This bounded test-import migration enables reuse of its existing
+_matching_enrollment/_observation instead of duplicating the peer fixture.
+DELETE0/export0/dependency0. windows_service.py remains pure wire decoding:
+the separate new product owns ONLY ordered read composition, not another service
+framework or production policy. All other files readonly, no unrelated UI/API fix.
+
+One private function _read_bound_grant_frame(request_frame: bytes,
+enrollment: _ProtectedPeerEnrollment, observation: _ProtectedPeerObservation,
+ledger: SQLiteGrantLedger) -> bytes | None. These exact input/value constructors,
+LedgerResult, GrantRecord and GrantReadRequest already exist; no new DTO/Protocol/
+enum/state machine. Output None is explicit refusal; bytes are existing
+encode_read_response wire only, never a success/qualification/approval receipt.
+Reuse _match_protected_peer, decode_read_request, _bind_existing_record and
+encode_read_response, real SQLiteGrantLedger.read. No copied validators/parsers.
+
+Revalidate exact enrollment/observation through existing helpers before read;
+peer mismatch/malformed input refuses. Decode bounded frame and verify both exact
+request identifiers against enrollment.request_binding BEFORE any ledger read.
+Only then call read exactly once for that grant_ref, bind existing record/plan
+through _bind_existing_record, and encode matching bytes. Invalid/missing/refused/
+malformed stored result, mismatch, exception or encode failure returns None,
+no issue/claim/settle/fallback/retry. No arbitrary command/path/source/Grant minting.
+This function assumes no native provenance from its arguments: it is explicitly
+SOURCE_ONLY_UNQUALIFIED ordered composition, not authentication. Actual server
+must later supply independently observed/enrolled inputs and qualify OS protection.
+Read does not consume or authorize the underlying operation; existing lifecycle/
+expiry/CAS semantics are NOT silently changed by this source-only metadata read.
+
+H11T1 reuse ordinary real peer/plan constructors and existing test factories.
+One actual disposable SQLite ledger prepopulated by fixture before call returns
+a record response accepted by existing GrantAuthorityClient through a fake channel;
+assert exact request IDs/plan/record and SOURCE_ONLY_UNQUALIFIED. No trustedissuer/
+operationalGrant/real30B success claim. Known healthy path must not be blanket denied.
+H11T2 parameterize peer/session/SID/creation/job/image/config mismatch, malformed/
+oversize/duplicate-key request and wrong request identifiers: assert no ledger
+read. Missing grant/refused/error result/record grant or plan mismatch refuse;
+exact one legitimate read; spy on real read rather than substitute all expected
+values for Actual. No source authority by caller self-report.
+H11T3 forbid issue/claim/settle during dispatch, repeat calls remain read-only,
+ledger exception/encoding refusal finite, no socket/process/native/Host/Git/
+provider/log/credential effect. SQLite access only under registered disposable
+fixture roots, no real data. Reuse existing peer/plan/codec/SQLite test seams,
+no new general fake/runner. Preserve all unknown Recovery/current user artifacts.
+H11T4 weaken peer ordering, pre-read request binding, post-read plan binding,
+or response operation binding -> namedRED/restoredGREEN; Root must use a
+different legitimate-positive counter. Guarded focused+direct peer/protocol/
+ledger tests, strict exact3(no skipped imports/Any), memorycompile/import and
+actual source/test blob readback; fixture import is the only allowed olddiff.
+TEST->A->B N/A: no responsibility moved; existing entry/helpers unchanged.
+
+Expected increment product<=90/test<=240effective, oldfixture1line; docs limited
+this existing ticket/registry/review/context metadata, screenshots0. >500lines
+triggers structure/reuse review, not minify/split/deletion. Test output in registered
+ownerTemp, per-run fresh basetemp child registered before run and retained to
+review/seal (no pytest cleanup of previous roots); owner+TTLthroughreview/seal,
+holds override TTL. No evidence deletion or denied-cleanup retry.
+
+Root Architecture Owner/control/finalreviewer; implementation owner
+/root/grant_transport_impl only after H10H allocation released/sealed4302a155 and
+advisory final returned. Distinct /root/ticket30_native_tools_review sourcehelper.
+Preregister author .worktrees/skill-improvement-30g-read-dispatch and matching
+-review, branches codex/same; Context ctx-ticket30g-read-dispatch-20261021;
+Temps johnny30g-read-dispatch-owner-20261021 and -review-20261021.
+Conditional grant-ticket30g-read-dispatch-20261021 revision01 NOT_ACTIVE until
+distinct DOC_PASS, D8, fresh exactbaseline/containment/nonreparse Git and ordinary
+shared constructor preflight. No new private type constructor bootstrap needed.
+Same cumulative uncapped policy/history, child55/outer60, resource monitoring,
+raw before display and no unchanged failing retry. Only offline source/tests/
+bounded control processes/registered passive outputs. No actual native pipe/
+token/job/process/SCM/service/Host/model/network/security/install/rights/cleanup/
+push/release/deploy/activation; no qualifiedsource/main/30B43/checklist completion.
+
 ## 30N4-H10H correction / closure40 limited fixture-import migration — 2026-10-21
+
 
 Same original30/H10H requirement, source baseline23113241, returned candidate
 a247600007bfd1c1dd7651fbac1e7bded89d26e9; retain closure38 C13-independent T1-4,
