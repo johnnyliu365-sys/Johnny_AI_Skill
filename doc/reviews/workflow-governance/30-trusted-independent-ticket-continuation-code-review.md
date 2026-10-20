@@ -1,4 +1,69 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C10 initial source review / same-ticket correction — 2026-10-20
+
+CHANGES_REQUESTED candidate7300d83b33cb930f7ee06182e64dc3a31bc35dc0,
+original30closure32/Grant5892c5c0. Root reads complete fivepaths/actualdiff;
+offline SDK10.0.302 build0W/E/fake self-testPASS. Root differentdoor changes
+enrolledtarget matching to case-sensitive: namedlegalEXECUTABLE caseRED, exact
+productrestore/rebuildGREEN. No native/ACL/Host effects. Source notintegrated.
+
+C10-F1 IMPLEMENTATION_DEFECT C10T3 stableoriginalfileidentity:
+VerifyCreatedFile captures empty-file before, then postwrite readBefore/after
+but only compares lattertwo. Root alters existing fake WrongFileIdentityAfterRead
+to start at snapshot2 instead3 (test-only probe), leaves product unchanged:
+named changed_file_identity_actual_CREATED_VERIFIED RED. Thus a volume/fileID
+change duringwrite can remainstable throughread and beaccepted. Frozen stable
+identity requires comparison across initialcreatedempty snapshot -> postwrite ->
+postread; size/lastwrite may legitimatelychange duringwrite, do not require
+fullSnapshotsMatch acrosswrite or restore old zero-size defect. Preserve original
+creationtime/volume/fileID/path/owner/fullSD and before/afterread fullstability.
+Add named originalcandidate baselineRED/regression for this earlierdrift, retain
+existing late-drift and twochunkpositive, no weakeningexpectation. Rootrestore
+of originaltest/rebuildGREEN doesnot closeF1; finalproduct must turnnewcaseGREEN.
+
+C10-F2 IMPLEMENTATION_DEFECT/EVIDENCE_DEFECT C10T3 disposal uncertainty:
+DisposeOwnedHandle uses Dispose then IsClosed as native-close success. Distinct
+sourcehelper independently finds samegap and confirms .NET SafeHandle closedbit
+is set before ReleaseHandle; returnedbool is ignored. Root reads pinned official
+v10.0.10 source (installedruntimes10.0.7/10.0.10, SDK10.0.302):
+https://github.com/dotnet/runtime/blob/v10.0.10/src/libraries/System.Private.CoreLib/src/System/Runtime/InteropServices/SafeHandle.cs
+InternalRelease source lines~235-267; this is APIbehavior evidence, not native
+qualification. Actual nativefalse/exception can leave managedIsClosed=true;
+oldtestsfakeownsHandle:false and only assertmanagedclosed, no closefailurecell.
+Introduce smallest private checked release boundary for C10 owned file/ancestors,
+actual native result observed, exact originalhandle/lifetime pinned/retained
+beforeentry. Known successfulclose suppresses automatic duplicate release;
+false/exception/unknown keeps exact originalowners strongly in recovery with no
+GC/finalizer/alternateClose/retry. Stop cleanup sequence on uncertainty and retain
+remaining ownedhandles instead of releasing hierarchy indiscriminately. No new
+publicownership engine/framework or files. Test normalonceclose, nativefalse,
+exception/partialclose/remainingownerhold and no automatic/repeatedclose under
+samefivepathGrant; baseline defect via managedfalse-close simulator/probe can
+express nativefailure semantically, no actualOS call permitted.
+
+Helper validates all11 authorfinal-source namedRED/exactrestoreGREEN pairs;
+initial no-argv dotnet record is instrumentationonly, not productRED.
+Those proofs remainvalid for their coveredcells, not F1/F2 completion. Test642
+effective lines remains one fake lifecycle/matrix, no rowcount-basedsplitting.
+Rootraw c10-initial-root-review-20261020.json SHA256
+40e091776cbe44a935e23e3b7f016deba7047ade125c6d229e3baf11f5ffef09
+preserves all5sourceidentities/actualpatches/commands/buildartifact/fulloutputs/
+elapsed/exits and exactrestores. RootreviewWT clean, no pendingmutant.
+
+AUTO_CONTINUE -> sameauthor/sameWT/samebaseline additivecorrection, original
+fivepaths only, budget/history retained. Fix original frozeninvariants, no new
+authority/Ownerapproval/PRD/Policy. Beforecallbackimplementation, retain both
+newfailuretests and normalpositive. Only affectedC10 build/selftest/counters/
+sourcehelperreview, don'trerun unchanged11campaigns asnewproofs; record versions.
+
+Related C9 stageddirectory helper also uses managed Dispose, so actual native
+cleanup remains NOT_QUALIFIED with disposal-proof followup within original30
+before anyHostclaim. Do not silentlyedit readonlyC9 in thisC10Grant; Root later
+derives narrow shared-release reuse migration after C10 producerreview. Same for
+the currentlyprivate Windows leaf-validation duplication: bounded reusable
+componentexposure mustbeexplicit later, not another copiedgrammarframework.
+These are local dependencywork, not a requestforOwnertechnicaldecisions.
+
 ## H10E closure33 source admission / exact Grant — 2026-10-20
 
 DOC_PASS /root/ticket30_native_tools_review at598d704b34209f1580af45aba9ce169b1f72da9e,
