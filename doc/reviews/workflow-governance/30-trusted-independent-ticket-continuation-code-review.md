@@ -7,8 +7,9 @@ version0.163.0-alpha.10.2. --version and exact app-server generate-json-schema
 --help each0.047s exit0; supported --experimental/--out used once0.500s exit0,
 452passive JSONschema files in registeredTemp, inventory60654bytes
 SHA4aba9897e8b4bbe4fd9747619bb57bfbdd550342522dd55dbe92265d7e4652a6.
-Actual generation, not merely help/docs; NO server/thread/turn/model/socket/
-qualification was invoked. Explicit minimal nonsecret env/CODEX_HOME nonexistent
+Actual generation, not merely help/docs; no Hostserver/thread/turn/model or
+qualification request issued. Native egress UNOBSERVED, not an OS-denial claim.
+Explicit minimal nonsecret env/CODEX_HOME nonexistent
 retained PATHalias warning; no fallback to userprofile/auth or directoryaliasfix.
 Get-AppxPackage modulefailure0x80131539 remains inventorylimitation, notCLIabsence.
 
@@ -24,8 +25,9 @@ anotherMCP/Broker; actual commandchannel/control/OSrestrictions remain necessary
 Four original schemas DynamicToolCallParams/Response,RequestId,ServerRequest
 UTF8 bytepacket61558 SHA256571afaae8196917fe9d1cbe1c320b48ff2b59ea9849905657edd9157229a8b1d;
 gzip6432 SHA256d035944fe864308b345cb6fc6d2201fcc938ec9112a5e324ec8533db76f7bf87, dataonly below.
-Raw rootmetadata schema-tool-root-record-20261021.json hash is saved in Root
-readback; original generatedfiles/evidence held, TTLthroughreviewseal/holdoverride.
+Raw rootmetadata schema-tool-root-record-20261021.json SHA256
+5a2fdd69ffd476148ec63c639cffdbd07bc636912162624f733978fed0b5b3cc;
+original generatedfiles/evidence held, TTLthroughreviewseal/holdoverride.
 No product/Hostconfig/source copied from externalproject, no activeupdate.
 Native launch H10I has realcounter6RED and same-closure correctiond60f27c4,
 notaccepted/merged; CVQdependency artifact mapping7e3c1219 PASS retained.
