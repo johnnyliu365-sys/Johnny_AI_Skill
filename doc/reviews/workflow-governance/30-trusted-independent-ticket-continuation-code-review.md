@@ -1,4 +1,38 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+
+## N7 archive QA / N8 reserved assets — 2026-10-21
+
+Independent /root/ticket30_native_tools_review SOURCE_MAPPING_ARCHIVE_PASS:
+ba63c57f PhaseB34 unique UTF8 originals, packet670212/gzip35878 and exact
+digests recorded in original seal; four final-source named counter pairs have
+actual RED and exact-restored GREEN. Original content-red display truncation
+does not relabel Root's separate complete normal-output confirmation.
+de72f6ed stage raw11975/gzip3355 matches original;9c999a1e two exact reviewed
+blobs,98 previous paths unchanged/100total,clean. Asset deviation diag-out.tmp/
+diag-err.tmp remains held without read/delete. Not Host/CVQ/30B43/TAL relief.
+
+N8 closure44 source-only proposal d4ba21fb3864c0a027324c0ba153cc32dba849d3,
+leaf40dc83aafc98ee513a4b1ace7820b3db869a597f,
+LF6dd2f2126ea7fb4ddff9c082d61016f27925dc65b9ab7047639a4800c49b24ad,
+baseline9c999a1ea3d819c3454f36ab39b9fddb1192ff5f. Pending independent DOC
+query and preflight, NOT_ACTIVE Grant; no source effect authorized by reservation.
+Root reserves contained .worktrees/skill-improvement-30g-readonly-control-wire
+branchcodex/same for /root/ticket30n4_peer_impl, matching -review for Root.
+Prior N7 author allocation/view RELEASED_TO_IMMUTABLE_REFERENCED_HOLD atba63c57f.
+New Context ctx-ticket30n8-readonly-control-wire-20261021 carries only exact
+N8 references, not N7 raw working context. Registered Temp roots
+C:/Users/GameBoy/AppData/Local/Temp/johnny30-readonly-control-wire-owner-20261021
+and C:/Users/GameBoy/AppData/Local/Temp/johnny30-readonly-control-wire-review-20261021,
+respective named owners; TTL through review/seal, active evidence/Recovery holds
+override expiry. No overwrite/reparse traversal or deletion/cleanup retry.
+Per-run outputs must remain under respective roots, fresh nonexisting pytest
+basetemp child; root service/Host/network/security effects remain unauthorized.
+Ordinary existing-base scalar/schema preflight and exact contained freshGit
+readback follow; no nonexistent-newmodel bootstrap needed. Original uncapped
+batch history and finite command bounds retained.
+ACTION_COMPLETED -> AUTO_CONTINUE prepare fresh reserved preflight only.
+
+
 ## N7 exact source composition readback — 2026-10-21
 
 Root owned source-stage9c999a1ea3d819c3454f36ab39b9fddb1192ff5f parent6db2fe51:
