@@ -1,4 +1,31 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## Resumed native-source archive QA / active continuation checkpoint — 2026-10-21
+
+Distinct /root/ticket30_native_tools_review SOURCE_MAPPING_ARCHIVE_PASS:
+control341926da C13 gzip78363/packet708777 exactdeclaredSHA, 47/47 original
+UTF8 file bytecounts/hashes match, zero missing/mismatch. N6 stage3279f52e
+exacttwoCREATE/prior62unchanged/64total; C13 stage3f9ca3ae exacttwoCREATE/
+prior64unchanged/66total. Rootstage raw18998bytes SHA8e9599b7 matches.
+Historical F02/F03 labels/derivedcomparison/strict overlap/versionlimits retained;
+ordinary data/static readback only, no tests/effects or qualification by helper.
+
+Grant19 first optional DOCfollowup returned exact tool error
+"agent thread limit reached"; NOT_DELIVERED, no unchangedretry/replacement.
+After actual C13 authorFINAL changed capacity, one fresh combined DOC/source
+request delivered and returned SOURCE_CORRECTION_PASS/DOC_PASS. Tool failure
+did not silently confer admission or become a Host-capability claim.
+Subsequent H11 DOC_PASS/fresh constructors/activeGrant0f6633bf remain exact.
+H11 author reports two overbroad/truncated readonly ticket extracts (one
+FindIndex overload error); not authority reconstruction, no mutation inferred.
+Root directed use exactalreadyread H11 span and stop unchangedhistoryreads.
+One H11 mutation output truncated atmax1000 is not proof; author must restore
+then recapture just that pair with raw-before-display. CRLF checkout-vs-LFblob
+restoreflag mismatch likewise remains originalfalse until actualidentities
+are separatelymeasured; no automatic PASS based on narrative. Root awaits
+immutable return and will inspect raw/direct behavior without polling activity.
+No new scope/Ownerapproval/qualifications/cleanup or checklist checkmark.
+ACTION_COMPLETED -> AUTO_CONTINUE H11 original admitted work and bounded review.
+
 ## N6 / C13 exact engineering-stage composition readback — 2026-10-21
 
 Reviewed existingN6 two blobs replayed under DOC_PASS Grant19/c3142bb7 into
