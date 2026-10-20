@@ -123,7 +123,7 @@ H10B1最終862f2089僅四既有檔修改，借用期間鎖定原owner／拒絕�
 Root實測200聚焦tests、strict4及實際載入來源通過，silent valid alias drift
 不同門突變具名紅→精確還原綠，封存5ff96a1b；兩次作者ZERO_RED與早期型別
 失敗照實保留，不洗成成功。精確組合beb7a463仍43paths，只替換四受審blob；
-組合200tests／strict4通過，資料與mapping待另一席讀回。下一必要B2原生
+組合200tests／strict4通過，另一席資料byte/hash與mapping讀回PASS。下一必要B2原生
 程序／thread保護與wide ABI切片仍未准入，不把純DTO當可信來源或隔離資格。子代理續接曾
 回覆agent thread limit reached，保留具體失敗，不當票預算或繞路增派理由。
 01–12勾選維持原狀，真實Host及正式效應仍未驗收。

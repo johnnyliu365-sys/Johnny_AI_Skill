@@ -1,4 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10B1 composition and data readback sealed — 2026-10-20
+
+Root stagebeb7a4635d7529d424cc320ea01a2e53574f88a1 parent00a9c90d:
+only four pinned reviewed blobs changed; total43 distinct mapped paths unchanged.
+Affected200 guarded PASS2.578s, strict4 PASS1.672s, actualpath/hash/compile verified.
+Root ownedTemp/protected-source-review/source-composition-h10b1-root-evidence-
+20261020.json SHA256f1dea6807ce49853d9226e3d17d6bfb7d0fead32a89f9d425413941a3f9b9265.
+Distinct batch-authority helper DATA/MAPPING PASS: all earlier tree entries
+unchanged; archive5ff96a1b raw/gzip lengths and SHA match, inner two UTF8 files
+exactly equal original ownedTemp bytes. Root27446 bytes SHA256
+9e0096085608dd04aa2b23b9b22661a153610ca0dace076a8994d4437e4b668b;
+author232593 bytes SHAdcc821f6ace7f34c933a8c53812eaa8b7d7dd709a77f39e73aec0255298e4ea8.
+Outer null projection did not affect packet; no embedded command executed.
+One attempted whole-object display exceeded output bound before parse, applied
+nothing; transfer then used complete bounded Git diff and exact hash checks.
+Two readonly path lookups used a wrong name/CWD and failed without mutation;
+correct stage/readback resolved the known file, not a missing Host capability.
+Historical diagnostics retained, no unnecessary test rerun or cleanup.
+
+ACTION_COMPLETED source composition -> AUTO_CONTINUE bounded next native source
+ticket preparation under original30 and batch; no formal integration/activation,
+30B43 clearance, native/Host call or new Owner engineering decision.
+
 ## H10B1 checked borrow — Root source approval and exact composition Grant07 — 2026-10-20
 
 Root sole reviewer APPROVED SOURCE_ENGINEERING_ONLY exact candidate
