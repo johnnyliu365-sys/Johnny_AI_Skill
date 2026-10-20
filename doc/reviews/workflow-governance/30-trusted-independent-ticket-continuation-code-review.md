@@ -1,4 +1,56 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H11 closure41 source admission / exact local Grant — 2026-10-21
+
+Original30 ticket0dd96543c2709326a076e2893adc991c5a75c63c,
+leaf69b108148e47ce0d9a657dbd1b60dbcdd3d4d71c,
+LF SHA2563fc6d6b801d010b599cc6f644cf20c44e251726b9998523e43469411e1f24980,
+matching D8 registry. Distinct /root/ticket30_native_tools_review DOC_PASS:
+existing peer/wire/record/ledger constructors support exact ordered composition,
+one import qualification enables fixture reuse; no permission/framework conflict.
+
+Fresh Root allocation3279f52e1d36751489054d617e364742df1c3d2d clean/nonreparse/
+contained exact .git/worktree/common-dir/branch checks pass. Ordinary exact shared
+constructors and match/decode/record-binding positive pass under minimal nonsecret
+child env with forbidden native/socketconnect/process. Source readback only,
+not peer provenance or runtime Grant. h11-root-preflight-20261021.json SHA256
+0d9f65b5a4b57827a2175f0c8d9ecadf7a7238d36b50f88feffc14ff0d46067e.
+Root explicit legacy test import-path insertion is preflight-only to construct
+the preexisting helper; the one approved import qualification remains required.
+
+grant-ticket30g-read-dispatch-20261021 revision01 ACTIVE_IMPLEMENTATION,
+derived by Root from parent batch-checklist-local-20261019-uncapped, original30
+closure41/PRD/CHG/SPEC/Context lineage. Baseline3279f52e exact above.
+Owner /root/grant_transport_impl (priorH10H allocation released4302a155 and
+advisory source handoff completed); Root sole finalreviewer/orchestrator,
+distinct native-tools sourcehelper. New view ctx-ticket30g-read-dispatch-20261021
+contains only closure41/exactGrant/direct named contracts/references. No old raw
+working Context is authority for this new slice. Author/rootreview worktrees
+.worktrees/skill-improvement-30g-read-dispatch and matching-review, codex/same.
+OwnedTemps johnny30g-read-dispatch-owner-20261021 and -review-20261021,
+owner+TTLthroughreview/seal, active Review/Recovery holds override TTL, no cleanup.
+
+CREATE exactly library/local_orchestration/grant_authority/windows_read_dispatch.py
+and tests/test_grant_authority_windows_read_dispatch.py.
+MODIFY only tests/test_grant_authority_windows_peer.py single _peer/_plan import
+to tests.test_grant_authority_protocol. DELETE0/export0/dependency0; all others
+readonly, windows_service decoder not expanded. Existing nullable bytes return/
+models sufficient; no new DTO/Port/bootstrap. Full H11T1–T4 in exact closure41,
+no fresh unspecified requirements. Strong typing, actual ledger read/codec
+positive, pre-read mismatch zero calls, bounded failures, mutation→exactrestore,
+strict3/compile/load/blobs and independent Root different door. No blanket reject.
+SQLite test writes only registered fresh disposable basetemp children; preserve
+old roots/evidence, no startup cleanup of preexisting basetemp. No real ledger/data.
+
+Same-lifetime direct reviewer-owned lane, bridge/receipt/queue/Runner NOT_REQUIRED,
+not a cross-lifetime host qualification. Native collaboration tool call bound
+to this Grant is legitimate development delegation, not subject under test.
+Child55/outer60 initial finite commands, monitor/timing/full raw before display,
+uncapped cumulative/count policy retains history/no unchanged failed retries.
+No actual Native/Host/token/job/process/pipe/service/SCM/account/ACL/security/
+install/network/provider/model/newcost/cleanup/push/release/deploy/activation,
+no trustedissuer/qualifiedsource/main/30B43/checklist completion claim.
+ACTION_COMPLETED -> AUTO_CONTINUE H11 implementation, then Root review/correction.
+
 ## N6 existing fixture exact source-composition Grant19 — 2026-10-21
 
 Parent batch-checklist-local-20261019-uncapped; original30 closure22 N5/N6,
