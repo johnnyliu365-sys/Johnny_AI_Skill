@@ -1,5 +1,69 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N10 correction review / same-scope narrow continuation — 2026-10-21
+
+Root CHANGES_REQUESTED at f49084101c22399cd7984fd5f088320e7ff07677 parent3a9053ef.
+Exact native715f2463ebbb629618c350e5ea5c652c9a2fc443,
+reader e760ffe6c89df5dc5b2b9d2add5a044c8b1037a8,
+test4d55f8ada8e402f87ea49f8b5c7bbd2853ddcc94. Three CREATE versus fcb373a6.
+F01–F07 corrections are present; Root full three-file read, guarded191 PASS0.86s
+and required strict3 PASS2.359s. Distinct helper FINAL SOURCE_CHANGES_REQUIRED,
+not Host qualification. Only04 remains checked; no source replay.
+
+Frozen remaining findings, batched from full current candidate:
+- F08 N10T2 preallocated native buffer identity: ReadFile supplied-buffer/
+  OVERLAPPED must return the exact buffer for statuses0/997. Current start_read
+  ignores tuple item2; fake returns(0,"") on lawful path. Root lawful same-buffer
+  positive0/997 both PASS, substituted object0/997 both incorrectly succeed.
+  Reject swapped/malformed buffer with retained pending owners/buffer/OVERLAPPED;
+  fix fake to model documented pending tuple, not only raised997. No str-only check.
+- F09 N10T2/T3 unknown owning return: CreateFileW/CreateEvent returned unrecognized
+  Close-capable owner is rejected before registration. Root pure fake finalizer
+  runs after exception disposal/GC at BOTH edges: explicit hold is absent.
+  Retain exact unknown return at boundary and poison before reference loss;
+  recognized owning-return invalid alias/property failure must likewise retain
+  original, never invoke its close or rely on exception traceback/GC as ownership.
+  No rawhandle fallback, retry, alternate cleanup or new public ownership framework.
+- E02 remains OPEN: git diff --check fcb373a6 f4908410 exits1 at reader353 extra
+  blank EOF. Author raw n10-correction-final-diff-check.json argv was only
+  git diff --check, which cannot certify the committed baseline diff. Correct exact
+  bytes and run explicit originalbaseline..candidate; preserve wrong-scope evidence.
+
+Root independent14cases:10 PASS/4 intended RED, effects[]; nonzeroBOOL2/-1,
+both EOF positions, Unicode, cancellation, legal256/refused257 and native supplied
+same-buffer statuses remain valid. No all-refusal repair. Raw probes/commands/
+stdout and current checks retained at registered reviewTemp
+n10-root-correction-failures.json and n10_root_corrected_probe.py; original run
+sources are not overwritten. Previous prefix-preparation v1 failed due review
+fake's numeric filename assumption, NOT product; separate v2 preserved basename
+and passed2 on rejected3a. That is preparation, not final candidate acceptance.
+The14-case guard explicitly adds CreateFileW. Earlier191 guard patched CreateFile
+but not W; fixture did replace W, nevertheless no blanket unpatched-W claim.
+
+Primary b311 implementation overrides conflicting generated type stub:
+[MyReadFile](https://raw.githubusercontent.com/mhammond/pywin32/b311/win32/src/win32file.i)
+lines785–871 returns supplied buffer itself when overlapped, including997.
+Helper's temporary str-only suggestion was withdrawn after this source read;
+neither unsafe identity-free tuple nor rejecting lawful buffer is acceptable.
+
+Structural review recognizes native958/861effective, reader353/319, test1155/981:
+larger than forecast, but one native ABI/ownership leaf and shared parameterized
+fake/cases, no unrelated framework or forcedsplit/minify. Collapse real duplication
+only. Existing C13 unknown-owner retention pattern is a reuse target, not copy
+an entire token subsystem or weaken typed boundary. E03 old raw still UNAVAILABLE.
+
+Same Grant01 a0d88287/closure46/owner/worktree/Context/three paths remains valid
+for additive scoped correction from f490; no reset/newPRD/newpath/dependency/export.
+Preserve all historical failures and index; create unique final raw evidence.
+After repair: normal focused191+new boundary regressions, strict3, compile/import
+under complete native/socket/process guards, exact final-byte author fourpairs,
+Root different-door counter and independent source followup. No actual Native/
+Host/SCM/install/account/ACL/network/model/newcost/push/release/deploy/activation/
+cleanup retry; no 30B43/TAL/R0/DAP/Recovery change.
+Router ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT; no repeated Owner approval.
+
+
+
 ## Next issuer seam / bounded architecture determination — 2026-10-21
 
 Distinct helper FINAL confirms existing runbook03 section2 can proceed as a private
