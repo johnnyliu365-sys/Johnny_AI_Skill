@@ -39,6 +39,97 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-C11 — shared checked setup-handle release / closure35 proposal
+
+Original30/runbook03 source-only construction under existing uncapped batch/
+first-entry order exception. Baseline77a8cb4b59fa19dd06cd7bc4d4891adbd202b5b5
+contains reviewed C9 and C10 source. C10 F2 closed only its file path; C9 still
+uses SafeFileHandle.Dispose without native release proof. Root managed-runtime
+false-release reproduction05f230a4 and C9 finally source confirm affected
+shared invariant. Do not claim existing qualified native cleanup or reopen
+unrelated accepted C9 behavior. H10F Python lane is independent.
+
+One observable outcome: directory and payload-file setup share ONE checked
+release lifetime, preserving normal behavior and refusing uncertain cleanup.
+CREATE EXACT library/local_orchestration/native_windows/NativeOwnedHandleRelease.cs,
+a small internal owned-handle release component extracted from C10, not a new
+Policy/Owner/cleanup framework. MODIFY EXACT same-directory
+Win32OwnedDirectoryCreationPort.cs, Win32OwnedPayloadFileCreationPort.cs,
+NativeOwnedDirectoryCreationSelfTests.cs, NativeOwnedPayloadFileCreationSelfTests.cs,
+JohnnyAuthority.Tools.csproj. DELETE0. No domain/manifest/ProtectionPlan/parser/
+SelfTests.cs/CLI/SCM/WindowsReadback contract changes. Newfile has one responsibility
+and both named consumers; no new independent test harness or screenshot/artifact.
+
+Move, do not copy, C10's original SafeFileHandle+rawalias retention and explicit
+checked native close into the shared component. Reuse the existing finite close
+delegate seam (or bounded internal rename within allowed files), one actual
+CloseHandle binding, no new public DTO/enum/Grant or configurable policy. Exact
+original owner/lifetime must be strongly retained before native entry. Normal
+knownsuccess unregisters after disabling automatic duplicate release. False/
+throw/unknown stops native cleanup, keeps exact remaining owners+aliases strongly
+held with finalizer suppressed, no retry/alternateClose/GC teardown. Previously
+retained/closed/ambiguous owners cannot be reissued for close. No actualnative
+calls in tests. Caller supplies only its original owned SafeFileHandle, not
+arbitrary rawalias adoption, PID, path or issuer authority.
+
+Both creators close in reverse lifetime order only after their full proof.
+Once close uncertainty occurs, stop later closes and retain remaining originals
+through the SAME component. Preserve C10 exit/recovery behavior and unchanged
+normal/negative file-creation matrix. C9 normal success remains Created/None;
+close uncertainty becomes failureUnavailable, keeps truthful Created boolean
+but TargetAlreadyExists=false even after knownexists, so high-level creator
+cannot mask recovery as TARGET_EXISTS_REFUSED. No target delete/rollback/adoption,
+no changes to directory admission, ACLs, derivation or existing-object refusal.
+The existing C9 constructor fake seam may gain the same checked-close injection;
+update all bounded callers, never let old fakehandles fall through to realclose.
+No default fake-alwayssuccess in production or optional ignored check.
+
+TEST -> A: freeze existing C9/C10 real creator->port->owned-release paths and
+reusable FakeNativeApi assertions before transfer. B:N/A, no test retirement.
+C11T1 ordinary existing enrollment/ProtectionPlan constructors and both existing
+fake self-test primary paths; legal directory and multichunk file outcomes,
+actual explicitclose once per original handle, reverse order after lastproof,
+no recoveryhold onknownsuccess. Shared helper is private infrastructure, not a
+new public contract whose absence blocks its own construction.
+C11T2 directory nativeclose false/throw at first and later ancestor, knownexists
+plus uncertainclose, partial success and missing observation: exact remaining
+owners/aliases retained, no subsequentclose/retry/finalizer, highlevel recovery
+not success/exists/ordinaryrefusal. Keep all C9 existing error cases and C10 F1/F2.
+C11T3 shared resource release normal/invalid/alreadyretained/closed boundaries,
+duplicate/reentry refusal and no release of unrelated/foreign owners; fake
+ownsHandle:false, injected close delegate, no OS SafeFileHandle finalization.
+C11T4 offline SDK10.0.302 restore/build0warnings0errors/fake self-test, exact
+source/artifact mapping/diff. Record C9 defectbaseline evidence honestly: native
+false-close semantics corroborated by existing puremanagedprobe; new test seam
+wiring is not present in originalC9, so never call compilefailure a behavioral
+baseline-red. Where a normal existing release-call-count cell can execute on
+oldC9, capture it before correction with exactsource/test/wiring identities;
+state any instrumentation change, do not claim unchanged testbytes. Final-byte
+reverse mutations MUST independently show directory closefailure masking,
+shared remaining-owner retention and file consumer still reaching checked close
+each namedRED/exactrestoreGREEN. Root differentdoor; oldC10 campaigns remain
+on their actual oldbytes, not rerun wholesale or relabeled asnewproofs.
+
+Profile HIGH_ASSURANCE source-only, eventual originalCVQ stillrequired. Proposed
+author /root/ticket30n4_peer_impl, oldC10allocation/context RELEASEDimmutablehold
+8827753b; Root sole reviewer/orchestrator, existing distinctsourcehelper.
+Fresh ctx-ticket30g-shared-handle-release-20261020; proposed contained
+.worktrees/skill-improvement-30g-shared-handle-release and matching-review,
+codex/same. OwnedTemp johnny30g-shared-handle-release-20261020 and -review-20261020,
+respective author/Root, offline obj/bin/cache/raw, TTLreviewseal thenreferencedhold,
+noexpirydelete. Forecast extractedshared100effective lines, originalC10shrinks,
+C9smallwiringdelta/testmatrix expansion; >500 triggers real structural review,
+not forcedsplit/minification. Conditional grant-ticket30g-shared-handle-release-
+20261020 revision01 NOT_ACTIVE until committedDOCreview/normalpreflight/
+exactallocation/roles/baseline readback. No new public type-preexistence cycle.
+No actualnative/SD/Host/CLI/SCM/service/account/security/ACL/install/network/
+model/provider/cost/cleanup/push/release/deploy/formalactivation. Only bounded
+controlbuild/test processes and registeredpassiveoutputs, child55/outer60
+initialdeadline; usage/failures retained, no cumulative/countcaps/unchangedretry.
+Return exact COMPLETED/BLOCKED/CHANGE_DETECTED+candidate/files/checks/findings/
+deviations. Technicalcomments only, no ownerprompt/ticket narrative. Allformal
+issuer/Host/30B43/checklist/Recovery qualifications andholds remain unchanged.
+
 ## 30N4-H10F — installed created-object protection readback / closure34 proposal
 
 Original30/runbook03, uncapped local batch/first-entry source-order exception.

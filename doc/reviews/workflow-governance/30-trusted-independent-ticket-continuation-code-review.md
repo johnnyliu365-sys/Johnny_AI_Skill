@@ -1,4 +1,31 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10E/C10 exact source composition / continuation — 2026-10-20
+
+ACTION_COMPLETED H10E stage6f563a7bfd0b8ff71fb6f913cd68db7b687cf883 parent21ddef2a:
+two exactreviewed CREATE blobs32c04936/f3c6fd70, prior50unchanged/total52.
+Rootstage guarded218PASS3.844s/strict4PASS1.828s, actualimport/compile/LF/blobs.
+Distincthelper independently validates mapping and3filearchive byte/hash.
+Compositionraw source-composition-h10e-root-evidence-20261020.json SHA256
+488786e40f8620ca654103534582aa6b0db989b3e74151187b8f5179b2d3236f.
+
+ACTION_COMPLETED C10 stage77a8cb4b59fa19dd06cd7bc4d4891adbd202b5b5 parent6f563a7:
+exact3CREATE+2MODIFY equals candidate105877f0, other50priorpaths unchanged,
+total55vs18bf. Rootstage offline .NET10.0.302 restore1.297/build4.453 zeroW/E/
+fake self-test0.437s PASS, actual5sourceblobs. StageDLL55a05b320a0da3b0a87a957b9a192aae6251a4e9892924c7cf0be2e3fd672272
+differs from authorreview because GitSourceRevision identity is stage-specific,
+not altered source proof; actualblob parity checked. Distincthelper independently
+maps source and C10 gzip116480/packet1377152, all78 embeddedfiles byte/hash equal
+74registeredauthorJSON+4Root originals; no embeddedcommands executed.
+Compositionraw source-composition-c10-root-evidence-20261020.json SHA256
+6a946f958771463498ee1bc7e08e1a1f54c91eb7912a9f7d67356fc5e9b84547.
+
+No primarymain integration/Hostqualification/issuerGrantpositive/30B43unblock
+orcheckmark. C10author released8827753b. AUTO_CONTINUE H10FadmittedIMPLEMENT
+while Root freezes bounded C9 shared checked-release reuse (C11proposal),
+not an unrelated policy/PRD/framework. Historicalfailures/Recovery/cleanuphold
+retained. ExactchildGrant follows committedDOCreview/preflight/allocation, no
+newOwnerapproval withinoriginalbatch.
+
 ## H10F closure34 source admission / exact Grant — 2026-10-20
 
 DOC_PASS distinct /root/ticket30_native_tools_review reads committed

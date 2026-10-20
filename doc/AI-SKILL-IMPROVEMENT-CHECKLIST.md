@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `71`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `72`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,18 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision71）
+## 當前工程接續與精確證據（revision72）
+
+H10E候選6d98edcc完成來源獨審、218tests／strict4及Root不同權限mask突變
+紅→精確綠，3筆raw封存9c0f3267，組合6f563a7b兩CREATE／原50不變。
+C10候選105877f0關閉F1/F2：跨寫入身分比較、原生close結果確認與剩餘owner
+保留；原作者三組修正突變、Root不同retention門紅→還原綠、build零W/E。
+8827753b封存78筆原始raw（含失敗不洗白），組合77a8cb4b五blob等受審版、
+原52中兩指定wiring改／其餘50不變、總55；不同席位mapping/archive PASS。
+只完成本地source engineering，不是主線整合或Host資格。H10F closure34／
+23d0d794精確Grant已派原Luna席位，2CREATE+2最小B2 validator重用；C11在
+原票準備共用checked-release遷移，避免目錄再複製檔案的資源生命週期程式。
+不增加勾選；30B／43、真issuer正向、原生攔截與全部必要資格仍開放。
 
 額度中斷後沿原批次接續：H10E closure33／Grantcc5861d2兩CREATE由原作者
 實作；C10候選7300d83b經Root實測抓出跨寫入fileidentity漏驗與native close
