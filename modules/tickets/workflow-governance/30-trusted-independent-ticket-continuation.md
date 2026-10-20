@@ -39,6 +39,106 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H10F — installed created-object protection readback / closure34 proposal
+
+Original30/runbook03, uncapped local batch/first-entry source-order exception.
+Architecture Root narrows the next missing prerequisite before future assign/
+resume: desired B2 SDDL is not installed process/thread protection. No new
+product requirement, security policy, operational Grant, public effect or DTO.
+Baseline6f563a7bfd0b8ff71fb6f913cd68db7b687cf883 (52path source engineering
+stage, H10E source approved). C10 native-file correction is disjoint and not
+an implementation dependency. Original PRD/CHG/SPEC/Context04 unchanged.
+
+CREATE EXACT library/local_orchestration/grant_authority/windows_created_process_protection.py
+and tests/test_grant_authority_windows_created_process_protection.py.
+MODIFY EXACT library/local_orchestration/grant_authority/windows_subject_process_abi.py
+and tests/test_grant_authority_windows_subject_process_abi.py, only minimal
+shared fixed-descriptor validator extraction and existing/new mask regression.
+DELETE0/export0. H9/H10C/H10D/H10E/nativeWindows/peer/service files readonly.
+Reuse B2 SD semantic/buffer checker, H10D exact original-record/pair checks and
+B2 recovery registry. Do not copy the ACE parser or build a permissions engine.
+
+Private _verify_created_process_protection(creation:_SuspendedProcessCreation)
+returns None only after both actual object descriptors validate. Only new
+native wrapper win32security.GetSecurityInfo(originalalias,SE_KERNEL_OBJECT=6,
+OWNER_SECURITY_INFORMATION|DACL_SECURITY_INFORMATION=5), exactly process then
+thread. No caller-supplied descriptor/mask/expectedSD/trust flag/PID/path, no
+SetSecurityInfo, CloseHandle, token/process creation, assign/resume or new
+authority source. Actual standardness/Grant/Host qualification not inferred.
+
+B2 original _verify_security_descriptor entry retains its fixed GENERIC_ALL
+creation semantics and signature. Extract its existing grammar into one
+private shared validator; new fixed installed-kernel wrapper selects modern
+PROCESS_ALL_ACCESS/THREAD_ALL_ACCESS0x001fffff, never caller-selected mask.
+Microsoft current winnt.h and process/thread rights document modern Windows
+mapping; win32con.PROCESS_ALL_ACCESS currently contains old0xFFF, do not use
+it as observed-policy truth. New wrapper rejects generic0x10000000 and weak/
+extra masks for installed descriptors. Both wrappers retain exact valid
+self-relative readonly bounded buffer, control0x9004/revision1, ownerSYSTEM,
+two unflagged ACCESS_ALLOWED ACEs for SYSTEM/Admins only, no missing/extra/
+duplicate/deny/NULL ACE acceptance, no normalization/observed-data rewriting.
+Do not weaken existing constructor to admit installed forms. Source helpers
+are not a new untrusted authorization API.
+
+Hold B2 _CREATION_LOCK through read/validation, check exact registered SUCCEEDED
+same-issuing-thread original OPEN process/thread owners via H10D before first
+native entry and before/after each query/descriptor validation. Private active
+record set rejects same-thread reentry before extra query; no new owner engine.
+Original wrong type/thread/parent/role/registry/readiness/alias/recovery refuses
+before any native calls. Recheck after native exception as well; known read
+failure with unchanged original pair yields sanitized NATIVE_CALL_FAILED and
+keeps successful record for separate teardown. Unknown/malformed/protection
+mismatch or pair drift retains B2 record as RECOVERY_REQUIRED; no unsafe close,
+retry, rollback, hold release or automatic teardown. Descriptor wrapper owns
+its Python copied buffer; do not fabricate a native object/LocalFree owner.
+GetSecurityInfo is not atomic against concurrent ACL changes: do not claim a
+permanent protection proof, replace final admission or real CVQ qualification.
+
+TEST reuses decorated B2 fake_native/launch_plan/_FakeSecurityDescriptor/_FakeAcl/
+_FakeAce and original successful record, adding only exact GetSecurityInfo
+fake seam. No second SD/ABI harness or real SD converter. Preserve B2 existing
+constructor success and negative matrix unchanged. A:new actual-readback seam,
+B:N/A; no test retirement or existing behavior refactor beyond shared predicate.
+H10FT1 normal B2 constructor + fixed installed validator through ordinary native
+fake descriptors, both aliases/flags/order, no borrowed closes, success None;
+valid mapped descriptor passes while original generic creation still passes,
+original creation must reject mapped mask and installed must reject generic.
+H10FT2 null/absolute/invalid/short/long/writable buffer/control/revision/owner,
+missing/bad/extra/duplicate/deny/flagged ACE, weak/extra/noninteger masks and
+SID mismatch -> exact refused/recovery, never transformed into a legal result.
+H10FT3 wrong original record/type/thread/role/parent/registry/state/alias before
+query, native throw/BaseException, callback drift before/after each read and
+validation, reentry and bounded thread case -> finite refusal, no extra query,
+no borrow close/GC/teardown or lost recovery record. Legal reader remains usable
+when a nested call is refused before effects.
+H10FT4 guarded focused+affected ABI/H10D/H10E only, strictnew2+modified2, actual
+memorycompile/import/LF/blob/diff, new-first/ABI-first fresh order; final-byte
+mutations independently pin actual-read vs desired-copy, both-role queries,
+fixed objecttype/info/mask, pre/post original identity and recovery retention.
+One named cell per distinct obligation; Root different door, full unfiltered
+red/exactrestoregreen/raw patch+source/test identities, no ceremonial firstred.
+No new checklist completion or claim of actual OS evidence from fakes.
+
+Profile HIGH_ASSURANCE source construction; final original CVQ still required.
+Proposed author /root/grant_transport_impl (H10E released to immutablehold by
+9c0f3267), Root sole reviewer/orchestrator, existing distinct source helper.
+Fresh ctx-ticket30g-created-process-protection-20261020; proposed contained
+.worktrees/skill-improvement-30g-created-process-protection and matching-review,
+codex/same. Owned Temp johnny30g-created-process-protection-20261020 and
+-review-20261020, respective author/Root, fakechecks/raw/onecache; TTLreviewseal
+thenreferencedhold, noexpirydelete. Forecast newproduct100/test220 effective,
+minimal existing shared-validator delta; >500 is actual structure review only.
+Conditional grant-ticket30g-created-process-protection-20261020 revision01
+NOT_ACTIVE until committed independent DOCreview, normal existing constructor
+preflight, exact allocation/roles/baseline readback. No new-type preexistence loop.
+Child55/outer60 initial deadline, no cumulative/countcap or unchangedretry.
+No actual native/Host/CLI/model/provider/security/ACL/account/service/install/
+network/cost/cleanup/push/release/deploy/formalactivation. Only ordinary bounded
+control verification processes and registered passive outputs. Return exact
+COMPLETED/BLOCKED/CHANGE_DETECTED with candidate/files/checks/findings/deviations;
+comments technicalonly, no ownerprompt/ticket narrative. 30B/43/R0/DAP/TAL/
+Recovery and unfinished checklist items unchanged.
+
 ## 30N4-H10E — created-process primary-token facts / closure33 proposal
 
 Original30/runbook03, same uncapped batch and first-CVQ source-order exception.
