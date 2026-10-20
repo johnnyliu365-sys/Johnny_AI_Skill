@@ -1,4 +1,48 @@
 # Ticket 30 source-contract decision review — 2026-10-18
++## N7 Phase A preflight / exact-type correction Grant revision02 — 2026-10-21
+
+Root read exact PhaseA e62bb469fa42eb22e0e4f22cd295e4b3881c2ec5,
+2CREATE source23b554ff997789d8857cf707421ba840b4b4f382 /
+test3a75bcb105b3ba93ea91f30f2a97093acf066173. Root63guardedPASS0.21s/effects[],
+strict2/noAnyPASS17.953s before anymutation; author128boundpair full raw read.
+Different Root signed-int64 minimum positive gate mutant ge0 RED0.26s/exact
+GREEN0.13s. Initial overlybroad target-string replace also altered compilepath,
+raising OSError22 BEFORE pytest in red/green wrappers; retained, not accepted
+as mutationevidence. Corrected onlypytestargv and freshbasetemp, exactrestores.
+
+N7-F01 IMPLEMENTATION_DEFECT existing exacttype/no-transform closure43:
+Pydantic strict string/int constraints accept Python str/int subclasses then
+transform to builtin primitives. Root actuale62 ordinaryconstructor probe:
+DerivedText('thread-1') in thread_id ACCEPTED -> str; DerivedInteger(7)
+request_id ACCEPTED -> int; trailingLF correctly REJECTED; effects[].
+Thus strict=True alone does not prove exacttype contract. PhaseB remains
+NOT_ACTIVE, no source composition. Preserve all e62 positives/63/strict as
+thatversion's evidence, not final correctedsource. No newpolicy/AC/paths.
+
+Root derives same grant-ticket30n7-readonly-wire-20261021 revision02
+ACTIVE_PHASE_A_CORRECTION under sameparent, baselinee62bb469 additive;
+MODIFY ONLY its two alreadycreated files, CREATE/DELETE/export/dependency0,
+cumulative twoCREATE measured against7e3c baseline. Same namedowner/WT/Context/
+registeredTemps/uncappedhistory and Rootfinalreviewer, no newOwnerquestion.
+Add exact primitive rejection at existing private constructorboundary without
+normalizing/substituting/weakening valid signed64/nativeASCII/CVQ file grammar.
+Keep reuse of QualificationModel/CVQ IDs rather than duplicate DTO/source.
+Formalize subclass negatives (requeststr/int, nativeIDs, fileID) baselineRED;
+legal exactbuiltin cases stillpass; focused/strict/compile/import/readback plus
+discriminating guardmutation/fullraw/exactrestore. Author returns corrected
+PhaseA only; no codec or hostfunctions until Rootactualconstructor rebind.
+No effects/security/install/Host/model/network/qualification/30B43relief.
+
+Root exact observation (unfiltered):
+```text
+OBSERVATION str-subclass ACCEPTED 'thread-1' str
+OBSERVATION int-subclass ACCEPTED 7 int
+OBSERVATION trailing-linefeed REJECTED
+UNPATCHED_EXTERNAL_EFFECTS []
+```
+ACTION_COMPLETED -> AUTO_CONTINUE sameauthor restricted PhaseA correction.
+
+
 +## H10I immutable evidence/source mapping QA — 2026-10-21
 
 Distinct /root/ticket30_native_tools_review SOURCE_MAPPING_ARCHIVE_PASS on
