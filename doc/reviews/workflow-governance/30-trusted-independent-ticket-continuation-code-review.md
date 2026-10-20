@@ -1,4 +1,47 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10B2 exact same-lifetime source admission — 2026-10-20
+
+Original30 closure28 exact committedbc192979d460eabef30b3b4ab05119687dbcf5c0,
+leafbe3c532355cde17e9f9ecbb995f176c4c501827e,
+LF10c967894394e72b4caecaed5c0cfa08fd0ec313a7170c4dca63a65088dc2cff
+independent native-tools DOC_PASS / D8 registry matched. Initial unreachable
+failure finding closed in same ticket; no fifth failure state or unsafe partial
+creation cleanup. Root technical narrowing also keeps successful records held
+until both confirmed closes, without a new transfer API/state. Native BOOL any
+signed32 nonzero success remains subject to full output checks.
+
+Existing normal _ObservedEnrollmentMatch and _SubjectLaunchPlan constructors
+PASS0115d6 in exact source-stage with unpatched-native/external guard empty.
+No native SD/owner/process or future wrapper is demanded as build prerequisite.
+Fresh contained nonreparse WTs allocated at beb7a4635d7529d424cc320ea01a2e53574f88a1,
+.worktrees/skill-improvement-30g-process-abi and matching-review, codex/same,
+actual Git metadata/pointers/cleanbaseline and all ancestor reparse checks read
+back. Broad worktree-list diagnostic display truncated; exact two allocations
+independently read back without relying on unrelated workspace inventory.
+
+Child grant-ticket30g-process-abi-20261020 revision01 ACTIVE under parent
+batch-checklist-local-20261019-uncapped and existing source-order exception.
+Author /root/grant_transport_impl (H10A RELEASED_TO_IMMUTABLE_HOLD); Root sole
+reviewer/orchestrator; distinct native-tools evidence helper. New context
+ctx-ticket30g-process-abi-20261020, no previous raw ticket context. CREATE ONLY
+library/local_orchestration/grant_authority/windows_subject_process_abi.py and
+tests/test_grant_authority_windows_subject_process_abi.py; MODIFY0/DELETE0.
+OwnedTemp/johnny30g-process-abi-20261020 and -review-20261020 newly registered,
+author/Root respectively, fake verification/evidence/one cache purpose, TTL
+through review/seal then referenced immutable hold; no expiry deletion.
+
+Normal source constructor preflight and exact ticket govern the new wrapper;
+fake-only tests must block unpatched native/SD converter calls before import.
+Single child55/outer60 initial bounds/resources retained, uncapped historical
+accounting unchanged. Ordinary source review only, no live Host/native test,
+privileges/account/SCM/security/network/model/install/push/release/deploy/cleanup
+or formal activation. H6 owner migration/job assignment/observation/resume and
+actual protection/readback remain separately bounded subsequent source work.
+No30B43 clearance/checklist tick, R0/DAP/TAL/Recovery unchanged.
+
+ACTION_COMPLETED admission -> AUTO_CONTINUE IMPLEMENT exact named source owner;
+on return Root performs closure28 review, not a new Owner engineering question.
+
 ## H10B1 composition and data readback sealed — 2026-10-20
 
 Root stagebeb7a4635d7529d424cc320ea01a2e53574f88a1 parent00a9c90d:
