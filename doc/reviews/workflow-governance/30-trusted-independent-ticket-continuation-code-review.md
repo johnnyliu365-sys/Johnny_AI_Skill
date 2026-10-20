@@ -1,5 +1,65 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N9 exact constructor-only implementation Grant01 — 2026-10-21
+
+Root derives grant-ticket30n9-snapshot-contracts-20261021 revision01 ACTIVE_CONSTRUCTION_ONLY
+under batch-checklist-local-20261019-uncapped and original minimalreadonly
+first-entry source-construction order, not a new Host effect exception.
+Exactticket36d2875266c4f898f585273ce31e1f243de403e7 closure45,
+leafc4af5b79e27f507cfec8096dc8b9b3bea3ed02af,
+LF7c2fbed8f920f5cc48362469e165f38f6101d60d31b08a346d6682631431132d,
+DOC_PASS by different existinghelper, reservation2c0a81b4140f4a6cd6791d010d4d9a72602a06af.
+Sourcebaselinef6e6b946b916afa60e0eaef9808527b2fa4f3635 exactclean fresh
+owner/root-review contained nonreparse WTs/Gitpointers/branches read back.
+ONLY CREATE library/local_orchestration/grant_authority/windows_snapshot_contracts.py
+and tests/test_grant_authority_windows_snapshot_contracts.py;
+allMODIFY/DELETE/exports/dependencies/ABI/readerstubs=0.
+
+Ordinaryexisting C8 model roundtrip/path/digest/opaqueID/unsigned finite values
+preflight PASS/effects[], C8 size0 still rejects unchanged, proving need for
+snapshot0-capable expected facts. Existingbase source LF34751f42/2143507c/
+2fc964f6 readback; registeredreviewTemp n9-root-preflight.json preserves raw.
+This is EXISTING_BASE_PREFLIGHT_PASS_NEW_CONSTRUCTORS_PENDING, not a claim
+new DTOs exist or passed. Scope authorizes pure construction/normalvalidation/
+constructor negative and reverse tests ONLY; new ordinary constructor tests
+must pass independent Root/helper review before any later reader is admitted.
+Same restricted N7 construction-first pattern, not permission to relax final
+source/Host/security/Grant/effect gates.
+
+Owner /root/ticket30n4_peer_impl retainedapprovedLuna/xhigh; Root AO/sole
+finalreviewer/orchestrator, different existinghelper. Fresh
+ctx-ticket30n9-snapshot-contracts-20261021 ACTIVE; priorN8view released/held.
+Author .worktrees/skill-improvement-30g-snapshot-contracts codex/same;
+Root matching -review. RegisteredTemp owners/TTL/holds per2c0a81b4 remain,
+fresh nonexisting runchildren only. No old source/Temp/candidate deletion.
+Same-lifetime direct lane/bridgeNOT_REQUIRED, no receipt/runner/queue.
+Only Root delegates/waits/reviews/integrates, author no Agent tools.
+
+Frozen N9T1–T4 normalempty/full/pinnedrange/boundary/Unicode/data identities,
+strictnegative/subclass/bool/null/overflow/range/hash/frozen cases; actual
+constructor and JSONroundtrip, malformed bypass onlynegative. Newfeature no
+ceremonialStub-red. Author named source-size/builtin/range/digest mutations
+RED/exactGREEN; Root own different validcase counter. Strict2noAny,
+memorycompile/guardedimport/loadedsource/blobs, source+newtest file scope.
+Local pytest newtest plus tests/test_grant_authority_windows_service.py
+affected existingC8 regression; no unchanged peer/fullrepo suites necessary.
+Defaultnormal unfiltered pytest; smallnamedcell diagnosticverbosity only,
+explicitshortIDs/fullraw retained. Minimalnonsecretenv; preload stdlib/pytest/
+Pydantic before denying all actual Native/socket/subprocess calls inside tests.
+Use only ownerTemp for exactJSON/patch outputs; no outside diagnostics.
+Forecast160product/260testeffective, structural/reuse review notforcedsplit.
+Originalhistory/failures/UNKNOWN/uncappedpolicy unchanged, child55/outer60
+finite deadlines and stagnant-failure diagnosis remain; no newcosts.
+
+Return COMPLETED/BLOCKED/CHANGE_DETECTED exactcandidate/paths/checks/findings/
+deviations/raw refs; no selfapproval/integration/qualification. No actual
+file/nativeAPI/Host/process/pipe/service/security/SCM/account/rights/ACL/
+install/network/model/provider/cleanup effect or push/release/deploy/activation.
+No genuineGrantpositive/30B43/TAL/Recovery relief/checklistcompletion.
+ACTION_COMPLETED -> AUTO_CONTINUE exactnamedowner constructor-only IMPLEMENT.
+
+
+
 ## N9 DOC admission / reserved assets — 2026-10-21
 
 Distinct /root/ticket30_native_tools_review DOC_PASS constructor-only
