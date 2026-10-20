@@ -1,4 +1,13 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H11 independent artifact QA — 2026-10-21
+
+Existing distinct /root/ticket30_native_tools_review returns SOURCE_MAPPING_ARCHIVE_PASS:
+c60a5026 gzip20653/packet168276 exact hashes; all20 UTF8 datafiles exact original
+bytes/length/SHA, zero missing/mismatch. Stage801af021 parent3f9ca3ae clean;
+2CREATE/1specifiedMOD, exact3 reviewed candidate blobs, other65 unchanged/68total,
+diffcheck0. Earlier invalid M1 capture/restoreflag/CRLF and collection/archive
+failures remain historical limitations. Static/data QA only, not qualified audit.
+
 ## H11 exact source-stage readback / continuation — 2026-10-21
 
 Grant21 c60a5026 replayed reviewed candidate d1ab22b0 into source-stage
