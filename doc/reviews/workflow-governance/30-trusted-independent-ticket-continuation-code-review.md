@@ -1,4 +1,91 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## CVQ dependency exact source-stage composition / Grant22 proposal — 2026-10-21
+
+Source reuse prerequisite ONLY for original30 minimal readonly adapter and Owner
+first-entry CVQ method-order exception. Batch-checklist-local-20261019-uncapped,
+originalCVQ01 PRD/CHG051 and original30 lineages unchanged; no new PRD/sourcepolicy.
+Trusted existing control7d157e2348f5cb04e963a976868bc0e01866308a:
+CVQ01 ticketdocument20/closure06, original schema-preflight review23 finalseal
+binds24c79d2278b36afcc816a9eab1e6c2c18caabbd7 treeb6e4dbad81e3247789947d6f05d836348607d1a7.
+Root read full finalseal before archive: actual34tests, full24strict, graph and
+202corpus, distinct public outcome/revision/observer/domain counters, exactrestores.
+Old execution-scope incident/timeouts remain UNVERIFIED, not rewritten.
+State SOURCE_BEHAVIOR_STAGED_PASS / QUALIFIED_REVIEW_BLOCKED /
+EXECUTION_SCOPE_UNVERIFIED / NOT_INTEGRATED unchanged. No formal source approval.
+
+Existing helper SOURCE_DEPENDENCY_RESOLVED: b55b47e7 is ancestor, not compatible
+API substitute. Full24c package13 interdependent modules must stay versioncoherent;
+readonly binding/bounds/method/invocation provenance absent at older b55. No concrete
+protected Hostconfig/observer/port supplied by these purevalues. Stage801af021
+contains zero CVQ package/these testpaths. Do not reimplement or mix oldcontracts.
+Plugincatalog no matchingcard; exact targetowned source reuse, no pluginadoption.
+Readonly adapter requires genuine native providers later, no DTOqualification.
+
+Exact Root-only replay proposed into Root's existing sourcehold
+.worktrees/skill-improvement-30g-protected-source codex/same, clean baseline
+801af02174ba9bc1b752b70c7ee58f4777482472. 27CREATE listed below, 0MOD/DELETE,
+13product +14existing test/fixture/sourcegate files, no sourceadaptation/authoring,
+newdeps/exports/rolechanges/activation. All68 prior paths byte-identical, expected
+95paths vs18bf. This is immutable engineeringhold composition, NOT integration
+or qualifiedAPPROVED_SOURCE. If exact replay cannot compile/import/strict,
+return to existing bounded authoring contract before any adaptation. Never copy
+B3 older API or make another CVQ/Context/Router.
+
+Root reviewer/replayowner, distinct existing /root/ticket30_native_tools_review
+DOC+artifacthelper; H10I author stays separate WT/closure42 baseline801af unchanged.
+Context ctx-cvq-source-dependency-replay-20261021 contains only exactcandidate/
+review/indexsource refs. Preregister Root passiveTemp johnny30-cvq-dependency-
+review-20261021 (singleactualname without linebreak), ownerRoot,
+TTLthroughreview/seal, holds overrideTTL. Fresh basetemp children only, no cleanup.
+After DOC_PASS/readback, exact27blob replay with apply_patch and memorycompile,
+guarded only publicadmission/roster34 tests (no defaultpytest/Host/sourceexecution),
+strict existing fullchanged24path closure and pureimport. Reuse reviewed202corpus/
+graph/firstred/mutation evidence when exactblobs unchanged, do not rerun campaign.
+Actualcandidate source identities independently read fromstage before acceptance;
+positive and tampered result cases remain covered, not an all-reject claim.
+Raw commands/results preserved before output. Child55/outer60 initially; diagnose
+timeout, no unchanged retry; uncapped historical command/countpolicy retained.
+
+No actual Native/token/job/process/pipe/Host/model/SCM/service/account/ACL/
+permissions/install/network/provider/cleanup/push/release/deploy/activation.
+27existingfiles are not new productcapability or giantnewtestscript; existing
+source structural review retained (report513, tests2960/717), no forcedsplit/
+compression or newtests added. Qualification/30B43/TAL/R0/DAP/Recovery unchanged.
+Grant22 NOT_ACTIVE until distinct DOC_PASS and freshsource/containmentidentity.
+ACTION_COMPLETED -> AUTO_CONTINUE exactRootreplay only after those conditions.
+
+Exact path/blob allowlist (immutable24c snapshot):
+```text
+100644 blob 9a78abe091ba8d142b4bfae26c68a17bbd367c37	library/controlled_verification/__init__.py
+100644 blob 22ca5e7437eed772f4875fbf5f4ccf3b81118ade	library/controlled_verification/binding_contracts.py
+100644 blob 61b10973dd694675035874e0dbcfea4e9a4ce90a	library/controlled_verification/manifest_contracts.py
+100644 blob 1bddfaa56a5ef11a0372cea3c7f9fe83acace2fc	library/controlled_verification/prerequisite_admission.py
+100644 blob a2e9dc53b297de7e75480a99e92056dbe4f15565	library/controlled_verification/prerequisite_contracts.py
+100644 blob de058bcf0935af5cb2974f18114fa249705a15ca	library/controlled_verification/qualification_admission.py
+100644 blob 8c57bf1f8e0fcda5783013a066b390ba51239a1d	library/controlled_verification/qualification_contracts.py
+100644 blob b807b79b4d1377b1347c39e558b370334d2fcfcf	library/controlled_verification/qualification_ports.py
+100644 blob 78966aee122bb03e6e200a65d6041f8955fff1b3	library/controlled_verification/qualification_values.py
+100644 blob e8de32ece0cc8a7087a62aa342f5b0d2408a1483	library/controlled_verification/report_admission.py
+100644 blob 8601c3f380db0b4d7177ab7f0e2373c6bc3f7a1b	library/controlled_verification/report_contracts.py
+100644 blob ba65e3f619c6b05793dda50ddc513bb12960e927	library/controlled_verification/roster_admission.py
+100644 blob 8303c6ad40c0a11485719734bf797778d2c5720d	library/controlled_verification/roster_contracts.py
+100644 blob b49fdb53aa1a26e474622fa06b8041b0593178ff	tests/test_verification_qualification_admission.py
+100644 blob 7830e5445da785b2f04738c5c050d90ca36c24a2	tests/test_verification_qualification_boundaries.py
+100644 blob 27c75aa51dbdff2b484551a30e7e4ea4cd0b30da	tests/test_verification_qualification_contracts.py
+100644 blob 672d9bf08838a11392a2d9bc792a0798bb0de188	tests/test_verification_qualification_domains.py
+100644 blob a78ad43c6f2fb49d6bb92a549a9ecf323743b6ac	tests/test_verification_qualification_evidence.py
+100644 blob 26015c8b99061948cd585f6d2cde481c5c0df169	tests/test_verification_qualification_manifests.py
+100644 blob f75a1d3fb2934988d5d0773bcb164bb7aea8688f	tests/test_verification_qualification_roster.py
+100644 blob 35427d45818782168f11a082323263ddbca514d6	tests/test_verification_qualification_scalars.py
+100644 blob a42a1b4ab54e16414d94391a374ea7a5a8380b98	tests/verification_qualification_catalog.py
+100644 blob 301c52277dbe1a6fdfc1b07b8587a309fdb97f7e	tests/verification_qualification_fixtures.py
+100644 blob e99f8a760f8ce83934e6d67654315694a9f16526	tests/verification_qualification_source_corpus.py
+100644 blob 7669fcaf91bfa5d4846f977aa206a7f2feec37a8	tests/verification_qualification_source_gate.py
+100644 blob 4d527b18e2384f98668b8c66323fffc5f538f9d3	tests/verification_qualification_source_policy.py
+100644 blob d0a02f3b6460deb5bec2844e4d4321568b153ca7	tests/verification_qualification_source_symbols.py
+```
+
+
 ## Native tooling independent artifact QA — 2026-10-21
 
 Existing distinct /root/ticket30_native_tools_review SOURCE_MAPPING_ARCHIVE_PASS:
