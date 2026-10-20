@@ -1,4 +1,26 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## CVQ exact dependency replay Grant22 revision02 ACTIVE_LOCAL_SOURCE — 2026-10-21
+
+Root derives from original uncapped batch/first-entry CVQ exception, not operational
+Grant. Distinct helper DOC_PASS2921ca381360ac33a5520c3556364216f36a3412:
+28unique exactcandidate blobs, allstrict24closure present, ASTlocalimports complete,
+allpaths absentstage. Root fresh stage801af021 clean/codex-bound/registered .git/
+nonreparse/28paths absent; no unexpected source/adaptation. Exact originalCVQ01
+ticket20/closure06 at7d157e23 and final24c79d22/review23 retained. Root-only replay
+owner in existing .worktrees/skill-improvement-30g-protected-source, separate new
+Context ctx-cvq-source-dependency-replay-20261021; H10I owner scope unchanged.
+Activate exact28CREATE allowlist in priorrevision02 proposal, MODIFY/DELETE0,
+preserve68prior paths, expected96. No new CVQ or Hostlogic authoring. If mismatch
+STOP affectedreplay, no dirtyworktree override/reset. Temp exact preregistered
+johnny30-cvq-dependency-review-20261021, ownerRoot/TTLthroughreviewseal/holdoverride.
+Guarded public34, originalstrict24, all28memorycompile/import/load/blob check;
+unchangedreviewed202corpus/counters reused by actualidentity, no ceremonial rerun.
+Sourcehold not sourceapproval/qualifiedintegration/Host/cross-ticket admission.
+Same commandbounds/resources/history/effectprohibitions; no model/native/Host/
+network/security/install/cleanup/push/release/deploy/formalactivation.
+ACTION_COMPLETED -> AUTO_CONTINUE exactRootreplay then independent mapping.
+
+
 ## CVQ dependency exact source-stage composition / Grant22 revision02 proposal — 2026-10-21
 
 Source reuse prerequisite ONLY for original30 minimal readonly adapter and Owner
