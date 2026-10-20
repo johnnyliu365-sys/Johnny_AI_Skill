@@ -142,7 +142,10 @@ protection/share-delete, preconstructor admission order, postcheck/residue,
 ownership/recovery. Root different legitimate positive boundary door. A mutation
 that merely changes failure classification is labelled as such, not escaped effect.
 
-Newtest + existing N11 installed-approval and grant ledger tests; strict3
+Newtest + existing N11 installed-approval, C13 issuer-identity and grant protocol
+tests; strict3. Existing ledger test file creates real SQLite stores and is NOT
+in this fake-only execution set; ledger/contracts remain unmodified, actual
+signature and pure protocol constructor evidence are reused instead.
 --strict --disallow-any-unimported --explicit-package-bases, memorycompile/import,
 actual-loaded-source check, Native/file/registry/token/SCM/SQLite/process/network
 denyguards. Test only approved fake boundaries; no real SQLite file/constructor
