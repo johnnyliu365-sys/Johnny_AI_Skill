@@ -39,6 +39,77 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H10 — bounded subject launch input / closure26 proposal
+
+Original30/runbook03 controlled readonly-subject producer, same uncapped local
+batch/first-entry source-order boundary. Root and distinct architecture helper
+confirm H8 owns job limits/handle, H9 owns primary token, H6 observes retained
+processes; none creates the actual suspended subject. Put process ownership in
+one separate module, not append process/thread/token orchestration to H8's job
+file. This supersedes only closure24's earlier future "same module" direction;
+no new PRD/SPEC/Runner/Agent/Gate or operational permission. It is a necessary
+producer for the original restricted Host, not another pure authority resolver.
+
+A sourcebaseline1ae18b760e3416ec78b73727e6be8cc94b338cda, exact reviewed engineering
+stage (not qualified/formal source). CREATE ONLY
+library/local_orchestration/grant_authority/windows_subject_process.py and
+tests/test_grant_authority_windows_subject_process.py; MODIFY0/DELETE0.
+All H1-H9/native/ledger/client paths read-only. Reuse _StrictModel,
+_CanonicalWindowsPath, H7 _ObservedEnrollmentMatch and stdlib list2cmdline;
+tests reuse H7 _match_values from tests.test_grant_authority_windows_service,
+not duplicate its enrollment fixture/native harness. This is an explicit test
+dependency; H7 cannot be retired while that consumer exists.
+
+A exactly one private frozen strict required _SubjectLaunchPlan with four fields:
+files:_ObservedEnrollmentMatch; arguments:immutable tuple of0..16 exact strings;
+working_directory:_CanonicalWindowsPath; environment:immutable tuple of0..32
+exact(name,value) string pairs. No defaults/null/extras/coercion or ambient values.
+Each argument/value <=4096 Unicode codepoints, no NUL or unpaired surrogate;
+empty argument/value permitted. Environment name ASCII[A-Za-z_][A-Za-z0-9_]{0,63},
+preserve exact case/codepoints; reject case-insensitive duplicate names, never
+first-match/normalize. Render [files.executable.path,*arguments] ONLY with stdlib
+list2cmdline; resulting command line including final NUL <=16384 UTF16 code units.
+Explicit environment block (name=value plus NUL per entry and final NUL; empty
+block has two NULs) <=16384
+UTF16 units. Finite internal parser limits, not authority/resource-budget grants.
+No shell, quoting reimplementation or implicit parent-environment inheritance.
+Nested C8 file values remain SOURCE_ONLY_UNQUALIFIED; constructor cannot confer
+protected provenance, Grant, file lease, executable identity or permission to run.
+Do not log raw argv/environment/config contents into Router/evidence metadata.
+
+H10T1 normal direct/JSON/bounds/required/frozen/deep-immutable/extras/null/type/
+Unicode preservation and UTF16-vs-codepoint/quoting expansion cells; legal empty
+explicit environment and args; invalid key/NUL/surrogate/duplicate/overflow refuse.
+H10T2 guard native/process/network/filesystem/environment/clock operations while
+calling actual pure constructor; one shared fixture, no per-case scripts.
+H10T3 actual required-field, duplicate-env and rendered UTF16-bound weakeners each
+namedRED/exactrestoreGREEN; Root different door, full source/test SHA+Gitblob,
+exact patch/text/hash/argv/env/exit/time/unfiltered stdout and stderr captured
+programmatically at execution, not reconstructed summaries. Strict2/import/compile.
+Forecast A source+100/test+250; >500 real structure review, no minify/forced split.
+
+B is NOT_ACTIVE. After exact reviewed A and final H8/H9 source mapping, freeze a
+separate same-ticket B binding for real suspended-process ownership: borrow checked
+same-thread original owners, create one fresh job, fixed protected-source plan,
+no inheritable handles/shell/fallback, assign job and independently observe H6
+identity/membership before any resume. Process/thread object protection must prevent
+an untrusted peer resuming the suspended thread before admission; no default-DACL
+assumption. Unknown/partial/termination/wait/close outcomes retain owners/poison,
+finite explicit teardown. Exact native ABI/security/readback and minimum existing
+owner-borrow changes are to be frozen before B, not authorized as incidental work.
+No actual native process/token/job/Host/service/security or setup now.
+
+Root sole reviewer/orchestrator; released H8 /root/grant_transport_impl author,
+distinct /root/ticket30_native_tools_review source helper. Proposed contained WTs
+.worktrees/skill-improvement-30g-subject-process and matching-review, codex/same,
+ctx-ticket30g-subject-process-20261020; ownedTemp/johnny30g-process-owner-20261020
+and -review-20261020, owner+TTLthroughreview/seal/holds, no cleanup authority.
+Conditional grant-ticket30g-subject-process-20261020 revision01 A_ONLY NOT_ACTIVE
+until committed doc review/contained nonreparse Git and constructor preflight.
+Child55/outer60/one owned cache/evidence-progress; history/no fixed-count/cumulative
+limit unchanged. No operational Grant, WTS/OS/Host/model/permission/install/
+cleanup/push/release/deploy/formal integration/30B43 clearance. No Owner renewal.
+
 ## 30N4-H9 — owned standard-subject primary token / closure25 proposal
 
 Original30/runbook03 protected issuer/readonly subject scope, same uncapped local
