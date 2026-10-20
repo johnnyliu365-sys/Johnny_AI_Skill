@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Checklist06 narrow independent-entry check — 2026-10-21
+
+Read existing Ticket26/AC17 worker claim, document_mutation_gate and control-plane
+integration door, target_document_management apply/rollback, CAP-RWW6-01 and
+current adaptive SPEC AC17R13/14 plus ticket registry. Claim uniqueness and
+integration-boundary guards do not intercept arbitrary worktree writes/commits.
+The legacy document writer's baseline/digest check then os.replace is NOT an
+AtomicConditionalReplace capability; do not reuse it to claim prewrite protection.
+CAP investigation executed tuplesNO, then approvedR13 superseded R09B2 with the
+remote-authority route; R14 requires independently protected Host effect Grant.
+This check does NOT reopen R09B2/CAP investigations, touch R0 or repair old writers.
+No independently admissible write-effect slice was established from these doors:
+source/ownership/prewrite effect proof and genuine protected Grant remain open.
+A separate duplicate snapshot/check-then-write engine would not discharge06, so
+none is created. Current local N10 construction continues; this dependency does
+not freeze its offline source/test work. The initial Windows wildcard-spec lookup
+was invalid shell syntax; exact existing paths above were read afterward.
+
+
 ## Fixed first-entry bootstrap source determination — 2026-10-21
 
 Bounded readonly existing-source query by /root/ticket30_native_tools_review,
