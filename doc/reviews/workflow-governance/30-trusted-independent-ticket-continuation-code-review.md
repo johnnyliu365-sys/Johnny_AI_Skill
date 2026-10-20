@@ -1,4 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## B2 ABI technical choice retained without operational admission — 2026-10-20
+
+Root Architecture narrows the later native boundary, while B1 alone is active.
+One checked CreateProcessAsUserW binding for all environments, no wrapper fallback.
+The existing pywin32 SD conversion plus a Python-owned immutable buffer copy is
+preferred over a new LocalFree lifecycle: primary b311
+[PySECURITY_DESCRIPTOR.cpp buffer implementation](https://github.com/mhammond/pywin32/blob/b311/win32/src/PySECURITY_DESCRIPTOR.cpp)
+lines665-693 exposes a read-only buffer of exact descriptor length and SetSD keeps
+self-relative storage. At the eventual strict boundary, read/validate the native
+descriptor, bounded-copy its buffer using a typed Buffer boundary, retain the copy
+and mutable ctypes storage through the call. Do not cast a Python object address
+to a descriptor pointer or add a second unmanaged allocation owner solely for SDDL.
+This is a reuse/reduction choice, not proof a real installed descriptor is safe.
+
+Root pure-memory diagnostic0daf34 (no native load/owner/process) verifies Windows
+WCHAR=2, an explicit empty environment allocated as two WCHARs is exactly4 zero
+bytes, and an astral-value block has5 Python codepoints but6 UTF16 units. Allocate
+wide buffers by encoded unit count, not Python len. Keep explicit double-NUL env
+and mutable command terminal-NUL, no implicit parent environment. Later ABI tests
+must cover these actual buffer bytes and lengths, not just echo A's model values.
+Primary [CreateProcessAsUserW contract](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw)
+supplies the wide mutable buffer, explicit descriptors, suspended/Unicode flags
+and noninheritance requirements. Native operation remains uncalled/unqualified.
+
+An owning process boundary and, only if independently needed, one narrow ABI
+module are to be exactly frozen before B2 dispatch; no extra framework/DTO tree.
+Current process and created process/thread security readback must reject unknown
+owners/ACEs/defaulted protection before resume. Source tests do not establish
+standard-peer isolation, protected issuer authority or actual Host admission.
+No B2 Grant/paths active yet; no new Owner technical question or operational effect.
+
 ## H10B1 same-lifetime exact local admission — 2026-10-20
 
 ACTION_COMPLETED77016e4d -> AUTO_CONTINUE IMPLEMENT original30 closure27.
