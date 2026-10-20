@@ -1,4 +1,55 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C9 initial Root review — CHANGES_REQUESTED — 2026-10-20
+
+Candidate72309824d1bb1983959b3e7e24771a539965bf41, parentbeb7a463;
+original30 closure29 / Grantbb4a0094 retained. Exact three CREATE/two MODIFY,
+range diff check clean. Root owns the final conclusion; the native-tools helper
+only read fixed source and complete44613byte author JSONL55797ef9. Seven author
+named RED/exact-restored GREEN pairs and five candidate blobs match; initial
+PowerShell MSB1008 wrapper failure remains diagnostic, not a test result.
+
+Root offline.NET10.0.302 Release build: zero warnings/errors; existing fake-only
+self-test PASS. Actual five source blobs and compiled DLL SHA recorded. First
+minimal child environment omitted required .NET special-folder variables and
+NuGet ConfigurationDefaults initialization failed; corrected only explicit
+nonsecret directory metadata, retained the failed output, no network/package
+source or credential inheritance. No actual directory/ACL/Host effect occurred.
+
+Consolidated existing-closure findings:
+- C9-F1 IMPLEMENTATION_DEFECT/T2–T3: Win32OwnedDirectoryCreationPort.cs catches a
+  CreateDirectoryCall exception without invalidating its already-written out
+  error183/80. Its later branch returns TargetAlreadyExists solely from that
+  error, overriding the recorded Unavailable outcome; the same branch ignores
+  ancestor post-snapshot failure. Unknown/exception/identity uncertainty must
+  dominate a clean existing-target outcome and preserve finite Recovery.
+  Root changed ONLY fake ThrowCreate's out error5 to183: build passes, named
+  production_port_keeps_unknown_create_exception_and_closes_all_handles fails,
+  exit1. Original production bytes unchanged; exact test restoration passes.
+  Add finite actual-port fake FALSE183/80, ordinary known failure, throw after
+  writing183/80 and post-snapshot failure cases; no native calls, fallback or
+  existing-object adoption. Preserve the legitimate known exists/refusal path.
+- C9-E2 EVIDENCE_DEFECT/T2/T4: creator tests only exercise CODE protection. Root
+  changed ONLY DATA mapping from plan.DataRootSddl to plan.CodeRootSddl; actual
+  rebuilt self-test stays GREEN (ZERO_RED). Pin DATA target creation with its
+  exact current data descriptor and independent readback, plus legal CODE;
+  do not copy production expectations or broaden the policy/API. This is a
+  missing frozen two-tree assertion, not a new feature or hardening scope.
+
+All five source blobs restored exactly, review tree clean, same original DLL
+digest restored. Root full commands/explicit environment/elapsed/exit/unreduced
+stdout/stderr/actual patches/identities are in owned Temp
+c9-initial-root-review-20261020.json SHA256
+30497b7134a6522abbdc773eb05426cdb0ca071774026ca7fb8e68f504fd31e4.
+ZERO_RED remains a finding. Product350/310 effective, port247/220 and fake
+test515/458 are cohesive policy/native/fake responsibilities with reused nested
+enrollment fixture, no forced split/framework. No source prompts or new effect CLI.
+
+ACTION_COMPLETED REVIEW -> AUTO_CONTINUE original-owner same-ticket correction
+C9-F1/E2 under original five-path Grant/context/worktree. Keep historical candidate
+and all failed evidence, add regression, affected fake build, bounded final-byte
+proof and range check; no unrelated campaign reruns. Not approved/composed, not
+qualified isolation or30B43 clearance. B2 independent correction continues.
+
 ## H10B2 initial Root review — CHANGES_REQUESTED — 2026-10-20
 
 Exact candidate0df6e061dc9939578118f1c0224853ca52cf0ebb, parentbeb7a463,
