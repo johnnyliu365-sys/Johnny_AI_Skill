@@ -1,4 +1,57 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C11 closure35 source admission / exact Grant — 2026-10-20
+
+DOC_PASS distinct /root/ticket30_native_tools_review at4ee648ea3aacd9b21c0e93ca34c6b00500546fef,
+original30leaf92b767195528c99e8f9fcc506f100bdc911363c9 LF
+7a6632c34d33c7a42eaaba990c482f48527fbd7f07854c71c4e82b4557de070b/D8matched.
+C9 Dispose-only branch79-88 and highlevel exists-first classification294-313
+require uncertainty to overrideexists; shared component moves reviewed C10
+release instead of another copy. No new policy/operational permission/framework.
+
+grant-ticket30g-shared-handle-release-20261020 revision01 ACTIVE under original
+batch-checklist-local-20261019-uncapped / source-order exception, baseline
+77a8cb4b59fa19dd06cd7bc4d4891adbd202b5b5. CREATE ONLY
+library/local_orchestration/native_windows/NativeOwnedHandleRelease.cs.
+MODIFY ONLY same-directory Win32OwnedDirectoryCreationPort.cs,
+Win32OwnedPayloadFileCreationPort.cs, NativeOwnedDirectoryCreationSelfTests.cs,
+NativeOwnedPayloadFileCreationSelfTests.cs, JohnnyAuthority.Tools.csproj.
+DELETE0; domain/manifest/grammar/ProtectionPlan/SelfTests.cs/CLI/SCM readonly.
+Full frozen C11T1-4/test-transfer and knownbaseline-seam caveat in closure35.
+New internal release resource has two consumers/one lifetime responsibility,
+not another public contract/pre-existing-type gate or cleanup permission.
+
+Author /root/ticket30n4_peer_impl C10allocation/context RELEASEDimmutablehold
+8827753b; freshctx-ticket30g-shared-handle-release-20261020. Root sole reviewer/
+orchestrator, existing distinctsourcehelper. Allocated contained
+.worktrees/skill-improvement-30g-shared-handle-release and matching-review,
+codex/same, absentbeforeallocation/nonreparseancestors/cleanexactHEAD/.git/
+common-dir verified. OwnedTemp johnny30g-shared-handle-release-20261020 and
+-review-20261020 author/Root, offlineobj/bin/cache/raw, TTLreviewseal then
+referencedhold, noexpirydelete or Recoveryclear.
+Normal existing C9/C10 enrollment/ProtectionPlan/fake selftest preflightPASS:
+offlineSDK10.0.302 restore1.312/build4.344 zeroW/E/self-test0.438s.
+Raw c11-preflight-allocation-20261020.json SHA256
+ec32832185617529eaaf10a341b70cfe6a2621626e8c79e7825dc35c497d77a7.
+No true nativecalls or newtype needed before its implementation.
+
+All subjectnative/SD/Host/CLI/model/provider/network/account/security/ACL/service/
+install/cost/cleanup/push/release/deploy/activation forbidden. Only ordinary
+boundedcontrolbuild/test processes/passive registeredoutputs, cleared offline
+NuGet sources/telemetry/audit/buildservers disabled, minimal nonsecret env.
+Child55/outer60 initialdeadline; history/failures retained, no cumulative/countcap
+or unchangedretry. Scope repairs and independent checks continue autonomously.
+AUTO_CONTINUE -> namedauthor IMPLEMENT / wait / Rootreview+counter / distinct
+sourcecheck / exactsourcecomposition, not mainintegration/qualification.
+H10F independentPythonlane continues, all unfinished12 and30B43 remain OPEN.
+
+Artifact identity caveat for prior C10 staging: generated AssemblyInfo observed
+at RootC10Temp/obj/Release/net10.0-windows/JohnnyAuthority.Tools.AssemblyInfo.cs:16
+contains 1.0.0+6f563a7bfd0b8ff71fb6f913cd68db7b687cf883 (precommit stageHEAD).
+This explains expected Gitmetadata variation, but original reviewartifact's
+generated metadata was not separatelycaptured; do not present a proved binary
+diff or exact oldmetadata. Sourceblobparity/build/fake behavior is the measured
+staging evidence, not equalDLLdigest or native qualification.
+
 ## H10E/C10 exact source composition / continuation — 2026-10-20
 
 ACTION_COMPLETED H10E stage6f563a7bfd0b8ff71fb6f913cd68db7b687cf883 parent21ddef2a:
