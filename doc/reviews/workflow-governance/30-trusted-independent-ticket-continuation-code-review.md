@@ -1,5 +1,5 @@
 # Ticket 30 source-contract decision review — 2026-10-18
-## CVQ dependency exact source-stage composition / Grant22 proposal — 2026-10-21
+## CVQ dependency exact source-stage composition / Grant22 revision02 proposal — 2026-10-21
 
 Source reuse prerequisite ONLY for original30 minimal readonly adapter and Owner
 first-entry CVQ method-order exception. Batch-checklist-local-20261019-uncapped,
@@ -23,10 +23,10 @@ Readonly adapter requires genuine native providers later, no DTOqualification.
 
 Exact Root-only replay proposed into Root's existing sourcehold
 .worktrees/skill-improvement-30g-protected-source codex/same, clean baseline
-801af02174ba9bc1b752b70c7ee58f4777482472. 27CREATE listed below, 0MOD/DELETE,
-13product +14existing test/fixture/sourcegate files, no sourceadaptation/authoring,
+801af02174ba9bc1b752b70c7ee58f4777482472. 28CREATE listed below, 0MOD/DELETE,
+13product +15existing test/fixture/sourcegate files, no sourceadaptation/authoring,
 newdeps/exports/rolechanges/activation. All68 prior paths byte-identical, expected
-95paths vs18bf. This is immutable engineeringhold composition, NOT integration
+96paths vs18bf. This is immutable engineeringhold composition, NOT integration
 or qualifiedAPPROVED_SOURCE. If exact replay cannot compile/import/strict,
 return to existing bounded authoring contract before any adaptation. Never copy
 B3 older API or make another CVQ/Context/Router.
@@ -37,7 +37,7 @@ Context ctx-cvq-source-dependency-replay-20261021 contains only exactcandidate/
 review/indexsource refs. Preregister Root passiveTemp johnny30-cvq-dependency-
 review-20261021 (singleactualname without linebreak), ownerRoot,
 TTLthroughreview/seal, holds overrideTTL. Fresh basetemp children only, no cleanup.
-After DOC_PASS/readback, exact27blob replay with apply_patch and memorycompile,
+After DOC_PASS/readback, exact28blob replay with apply_patch and memorycompile,
 guarded only publicadmission/roster34 tests (no defaultpytest/Host/sourceexecution),
 strict existing fullchanged24path closure and pureimport. Reuse reviewed202corpus/
 graph/firstred/mutation evidence when exactblobs unchanged, do not rerun campaign.
@@ -48,10 +48,15 @@ timeout, no unchanged retry; uncapped historical command/countpolicy retained.
 
 No actual Native/token/job/process/pipe/Host/model/SCM/service/account/ACL/
 permissions/install/network/provider/cleanup/push/release/deploy/activation.
-27existingfiles are not new productcapability or giantnewtestscript; existing
+28existingfiles are not new productcapability or giantnewtestscript; existing
 source structural review retained (report513, tests2960/717), no forcedsplit/
 compression or newtests added. Qualification/30B43/TAL/R0/DAP/Recovery unchanged.
-Grant22 NOT_ACTIVE until distinct DOC_PASS and freshsource/containmentidentity.
+Grant22 revision02 NOT_ACTIVE until distinct DOC_PASS and freshsource/containmentidentity.
+Correction before anyreplay: decoding originalreview23 authenticatedraw recovered
+actual24path strictargv including test_verification_invocation_contracts.py;
+qualification-name filtering missed it. Exactadditional candidateblob below,
+no invented consumer/retirement. Earlier27proposal neveractivated. Preserve original
+strict24 selected closure, actual testimport chain readback; no defaultpytest.
 ACTION_COMPLETED -> AUTO_CONTINUE exactRootreplay only after those conditions.
 
 Exact path/blob allowlist (immutable24c snapshot):
@@ -83,6 +88,7 @@ Exact path/blob allowlist (immutable24c snapshot):
 100644 blob 7669fcaf91bfa5d4846f977aa206a7f2feec37a8	tests/verification_qualification_source_gate.py
 100644 blob 4d527b18e2384f98668b8c66323fffc5f538f9d3	tests/verification_qualification_source_policy.py
 100644 blob d0a02f3b6460deb5bec2844e4d4321568b153ca7	tests/verification_qualification_source_symbols.py
+100644 blob 06f48aa6ccf7ab34e87fb16b4400243fb39f2b59	tests/test_verification_invocation_contracts.py
 ```
 
 
