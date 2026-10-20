@@ -69,7 +69,7 @@ alias inside B1 job-then-token borrow and retain both contexts across creation,
 assignment/observation. No such production composition is activated here.
 
 One finite private _CreateProcessFailure: INVALID_INPUT, CREATOR_POISONED,
-NATIVE_CALL_FAILED, INVALID_NATIVE_RESULT, RECOVERY_REQUIRED. Sanitized error
+NATIVE_CALL_FAILED, RECOVERY_REQUIRED. Sanitized error
 may carry the exact creation record iff RECOVERY_REQUIRED. Never log native
 handles, argv/environment contents, raw native exception or descriptor bytes.
 No dynamic Any or unchecked object crosses the checked external boundary.
@@ -91,8 +91,12 @@ FALSE with exactly untouched zero PI -> finite NATIVE_CALL_FAILED, remove only
 that no-output construction record, never say a process was cleaned. Once native
 entry begins, exception/KBI/SystemExit, FALSE with any output, malformed TRUE
 output or unknown return -> retain full record and all known raw outputs, poison
-creator, RECOVERY_REQUIRED. Do NOT automatically CloseHandle: closing a process
-handle is not termination and may orphan a suspended unassigned process.
+creator, RECOVERY_REQUIRED.
+Native BOOL return is an exact signed32 integer: zero is FALSE, any nonzero
+(including2/-1) is TRUE; reject malformed/noninteger wrapper values, not valid
+non-1 success. All successful outputs still require independent exact checks.
+Do NOT automatically CloseHandle: closing a process handle is not termination
+and may orphan a suspended unassigned process.
 No alternate raw close, automatic terminate/wait, PID reopen, retry, __del__ or
 GC cleanup. New creation fails before effect while poisoned. Explicit Close
 after successful creation is one checked original-handle attempt, idempotent
