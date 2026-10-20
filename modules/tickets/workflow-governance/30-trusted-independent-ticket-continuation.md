@@ -39,7 +39,81 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
-## 30N4-H10 — bounded subject launch input / closure26 proposal
+## 30N4-H10B1 — checked original-owner borrowing / closure27 proposal
+
+Original30/runbook03 same uncapped batch and first-entry source-order boundary.
+Architecture readback confirms H8/H9 expose no protected original native owner to
+the later suspended-create call. Checking an alias then reading a private field
+outside the owning lifetime is not an acceptable seam; native calls release the
+GIL and a same-thread callback can reenter close despite an RLock. First add the
+small checked borrowing seam inside each existing owner boundary. This is a
+bounded part of H10B, not a new stage, Gate, Broker, public capability or authority.
+
+Sourcebaseline00a9c90d82f04a1cbeb906331f6a5d4059974657, reviewed source stage;
+all H10A models unchanged/read-only. MODIFY ONLY
+library/local_orchestration/grant_authority/windows_subject_lease.py,
+tests/test_grant_authority_windows_subject_lease.py,
+library/local_orchestration/grant_authority/windows_subject_token.py,
+tests/test_grant_authority_windows_subject_token.py. CREATE0/DELETE0. Reuse each
+module's existing owner/alias/metadata/thread validation, lifecycle RLock and
+recovery hold; no common ownership framework, new DTO or duplicate native harness.
+
+Add one private context-managed _borrow_native_owner(owner_ref) to each lease,
+yielding the exact original native owner (not numeric alias/duplicate/serialized
+handle). Hold its existing lifecycle lock through entry, body and exit. Validate
+exact bound metadata, issuing thread, actual native owner class/original alias,
+closed/recovery/global-poison state before yield; job also requires unexpired
+lease. Do not expose an owner from an invalid/expired/poisoned/closed lease.
+Track one per-lease active borrow; nested/reentrant borrowing and close while
+borrowed fail with a finite BORROW_IN_USE reason before any native Close.
+This narrowly extends the existing private failure enum, not a Router state.
+
+On exit (including Exception/BaseException from body), clear active-borrow state
+in a guaranteed finally path and revalidate the original owner/alias. For job,
+also recheck finite clock/expiry; expiry refuses further use but legitimate
+teardown after expiry remains possible. Owner/alias uncertainty uses existing
+strong recovery retention/poison, never retries alias access or alternate Close.
+A body exception alone is not proof the borrowed owner was lost: preserve known
+ownership and propagate it if exit validation succeeds. No implicit Close,
+duplication, native acquisition, retry, finalizer or poison clearing. Confirmed
+normal close stays idempotent after borrow completion. Existing non-borrowed
+ownership/failure semantics must not regress.
+
+Private trusted-service source seam only: a consumer must not retain/close the
+borrowed owner or bypass context use. It is not a sandbox against arbitrary Python
+in the same process, an external handle API, protected issuer or Host qualification.
+Later H10B2 must acquire contexts in fixed job-then-token order through the whole
+create/assign/observe operation; its exact ABI and operational guards are NOT_ACTIVE.
+
+H10B1T1 legal borrowed identity/lifetime and post-exit close; wrong metadata,
+thread, closed, global poison, alias drift/lookalike/recovery and expired job refuse
+before body. H10B1T2 actual same-thread callback attempting close/nested borrow is
+refused with no Close, and bounded two-thread interleaving cannot race close while
+borrow is active; real threading.get_ident in those tests, not a shared constant.
+H10B1T3 Exception/BaseException body and alias-read interruption preserve exact
+known owners/poison and no repeated native access; normal legal cleanup survives.
+H10B1T4 targeted existing H8/H9 tests, strict4, memorycompile/actualimport and
+guarded no-native effects. Each new job/token borrow/close refusal predicate gets
+one named weakener RED/exactrestoreGREEN on final source and test bytes; Root
+different door. Capture actual full patch/text/hash, source/test SHA/Gitblob,
+command/env/timing/exit/full stdout/stderr at execution. No unchanged old campaigns.
+Forecast each module +60 source/+130 test; >500 actual cohesive-boundary review,
+not forced splitting, test fixture duplication or compression of readable code.
+
+Proposed author /root/ticket30n4_peer_impl (H9 allocation released hold), Root sole
+reviewer/orchestrator, native-tools distinct helper. Fresh ctx-ticket30g-owner-borrow-
+20261020; proposed contained WTs .worktrees/skill-improvement-30g-owner-borrow and
+matching-review, codex/same, ownedTemp/johnny30g-borrow-owner-20261020 and -review-
+20261020, respective author/Root owner and TTLthroughreview/seal/referencedholds.
+No automatic expiry deletion. Conditional grant-ticket30g-owner-borrow-20261020
+revision01 NOT_ACTIVE until exact committed doc review, contained nonreparse
+source/roles and existing normal value-constructor/import preflight. Native owner
+operations are verified only by bounded fake tests, not an operational probe. Same child55/outer60
+defaults, one owned cache and historical uncapped accounting; no resource reset.
+No actual process/token/job/native/Host/service/SCM/security/account/ACL/install/
+network/model/cleanup/push/release/deploy/formal activation or30B43 clearance.
+
+## 30N4-H10 — bounded subject launch input / closure26 source sealed
 
 Original30/runbook03 controlled readonly-subject producer, same uncapped local
 batch/first-entry source-order boundary. Root and distinct architecture helper

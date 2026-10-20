@@ -1,4 +1,40 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10A composition / bounded B1 preparation — 2026-10-20
+
+Source-stage00a9c90d82f04a1cbeb906331f6a5d4059974657 parentb605c88c adds
+exact2H10A blobs6c6000e5/9dea20e3. Root43guardedPASS1.907s/strict2PASS1.594s,
+actual loaded-path/hash/import; unchanged H7 suite not rerun. Distinct mapping
+PASS: earlier41 mapped paths/allparentfiles unchanged, total43vs18bf1e9f.
+Root ownedTemp/protected-source-review/source-composition-h10a-root-evidence-
+20261020.json SHA96d8da5c21c6aca4b816b4e2f47c8caf38ced1f949a44e0c6ef59284344ad5a5.
+Archive helper DATA_INTEGRITY_PASS b0051427: three files exact byte/hash equal;
+no embedded command execution. This is not formal integration or Host qualification.
+
+Architecture Root and distinct native-tools helper select checked original-owner
+borrowing inside existing H8/H9 boundaries before suspended process creation.
+Original30 closure27 limits four existing files, zero CREATE/DELETE, no public
+owner API/framework/authority or native launch. H6 observer remains unchanged.
+The process-before-job interval needs creation-time process AND thread object
+protection plus protected issuer handles, not a post-creation check.
+[CreateProcessAsUserW primary API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw)
+defines token-derived default descriptors, explicit inheritance, mutable command
+buffer and explicit environment requirements. Source/fake tests cannot prove
+actual account/ACL isolation; later operating packet and CVQ must do that.
+[Installed-version pywin32 b311 source](https://github.com/mhammond/pywin32/blob/b311/win32/src/win32process.i)
+CreateEnvironmentString lines437-564 keeps bIsUnicode false and allocates one
+byte for an empty mapping. Passing explicit Unicode flags does not turn that into
+the A-required two-WCHAR empty block. Thus the wrapper is not silently accepted
+for that case. Later B2 will freeze one checked wide-API binding and safe native
+owner adoption, not use ambient environment, empty-case fallback or duplicate
+quoting. No such source change is admitted by B1 and no OS call has been made.
+Future LocalSystem/SeTcb/assign-token/quota rights remain separately unapproved;
+source engineering does not replace runbook03's existing account proposal.
+
+ACTION_COMPLETED -> AUTO_CONTINUE committed closure27 DOC review/preflight,
+then exact B1 child admission under existing batch, without Owner technical
+renewal or host operation. H10A old allocation hold protected; checklist04 alone
+remains checked. No cleanup/push/release/deploy/activation.
+
 ## H10A source seal / exact composition admission — 2026-10-20
 
 Root SOURCE_APPROVED engineering candidateab4ef4267b66b35daee8ea895a4c7d02f4759d38
