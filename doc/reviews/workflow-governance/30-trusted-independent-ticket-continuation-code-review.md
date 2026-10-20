@@ -1,4 +1,45 @@
 # Ticket 30 source-contract decision review — 2026-10-18
++## N7 Phase A precise child Grant / same-lifetime admission — 2026-10-21
+
+Root derives grant-ticket30n7-readonly-wire-20261021 revision01 ACTIVE_PHASE_A_ONLY
+from batch-checklist-local-20261019-uncapped. Original30 closure43 committed
+429dfceb8594677ede79e530fbf6cfa77696d8ba, ticketblob
+a7f835d1e24ff8c3678bd3b4814804447ce054a2,
+LF f7c5e3b128f96fed4a9ceb95d5fdd57bc0dc2d5384eff9fc9fe8a4fb94de38c8;
+DOC_PASS distinct /root/ticket30_native_tools_review and asset reservationff02c8c4.
+Sourcebaseline7e3c12197bb127313813f7e968c12d3ba5658088.
+CREATE ONLY library/local_orchestration/readonly_review_host.py and
+tests/test_readonly_review_host_wire.py; MODIFY/DELETE/export/dependency0.
+PhaseA only private bounded aliases/_SnapshotToolCall ordinary validators and
+pure constructor/roundtrip/negative tests, no codec stubs/effects. Cumulative
+two-create scope remains originalbaseline after PhaseA. Root must review actual
+constructors, negatives, strict2, memorycompile and different boundcounter, then
+seal/rebind PhaseB to exact reviewed commit; author may not selfactivateB.
+
+Owner /root/ticket30n4_peer_impl, retained approved Luna/xhigh profile, Root
+ArchitectureOwner/sole finalreviewer/orchestrator, distinct sourcehelper.
+Fresh author .worktrees/skill-improvement-30g-readonly-wire branchcodex/same;
+Root matching -review. Both clean7e3c, contained fresh nonreparse Gitpointers/
+branches independently read back. Allocation ACTIVE under freshContext
+ctx-ticket30n7-readonly-wire-20261021, not C13 rawcontext transfer.
+Registered owner/review Temp roots/TTL and holdoverrideff02c8c4 remain; only
+fresh nonexisting perrun basetemp children, no cleanup.
+Root ordinary realbase QualificationModel/Digest/OpaqueMetadataId constructors,
+invalid values, duplicate/nonfinite/commondepth helpers compile/import PASS
+with denied socket/subprocess hooks/effects[]. Exact existingvalues LF
+5c63460fd8f0c55f9fd65f3bac0fc512eb28bd226ff69a066cea182ffc2a054c
+and client LF23324dacc5e4a147cc9958cc75f1a292cf7dc32526fe3d86bac3ec66c858a6db.
+These existing-base probes are not nonexistent newmodel evidence or Host isolation.
+
+Same-lifetime direct lane/NOT_REQUIRED bridge; no fabricatedreceipt/runner.
+Keep original history/uncappedpolicy, child55/outer60 finite bounds, raw captures
+before display, actual loadedsource/Gitblobs, legalpositive and rejection cases.
+No native subject/Host/server/thread/turn/pipe/token/job/process/model/socket/
+SCM/service/account/ACL/install/rights/security/network/cleanup/push/release/
+deploy/activation. No qualified CVQ/30B43/TAL/checkmark claim.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT PhaseA exactnamedowner only.
+
+
 +## N7 DOC admission / reserved assets — 2026-10-21
 
 Independent /root/ticket30_native_tools_review DOC_PASS at429dfceb8594677ede79e530fbf6cfa77696d8ba,
