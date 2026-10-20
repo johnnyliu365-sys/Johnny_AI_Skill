@@ -1,5 +1,50 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N10 exact construction Grant01 — 2026-10-21
+
+grant-ticket30n10-snapshot-reader-20261021 revision01 ACTIVE_CONSTRUCTION_ONLY.
+Parent batch-checklist-local-20261019-uncapped; same original30 lineage.
+Exact closure46 ed1af8f533b828327e19919540ba5a809333e691,
+leaf25a7a2eae973424a157483f5320d749f3e211b88,
+LFd928ab752223ba618cc4d3b460b5caec2d44a45984d039ac8057ce2362c994c6.
+DOC_PASS and prior N9/sourcearchive QA recorded9dab5a8e. Fresh registered WT
+allocation actually created/readback at exact fcb373a680b21397bf0e22d7ec8b8894c0eb00c5,
+clean matching codex branches/nonreparse paths; no candidate source yet.
+Implementation owner /root/ticket30n4_peer_impl, retained approvedLuna/xhigh,
+Root AO/solefinalreviewer/orchestrator, distinct helper evidence only.
+Owner .worktrees/skill-improvement-30g-snapshot-reader, branch codex/same;
+Root .worktrees/skill-improvement-30g-snapshot-reader-review, branch codex/same;
+ctx-ticket30n10-snapshot-reader-20261021. Prior N9 allocation immutable held,
+not repurposed/deleted. Exact registered Temp owners/TTLs per9dab5a8e.
+
+CREATE3 ONLY native file ABI leaf, one-member reader, focused test listedclosure46;
+MODIFY/DELETE/export/dependency0. Native/filetypes/operations are NOT authorized
+for actual execution; tests only fake the native-boundary calls under denyguards.
+No paths or content from arbitrary caller may be promoted to issuer approval.
+No runtime entry/protocol change/publicGrant/resultDTO/policyengine or service.
+Actual candidate byte/diff/source-only qualification stays open until independent
+review; owner cannot approve itself or edit control artifacts.
+
+Existing N9 ordinary typed input preflight PASS on actual fcb373source: empty/full
+membership constructor/JSON preservation, exact bool rejection, controller Event
+and finite monotonicdeadline inputs. Native/socket/subprocess calls empty.
+Initial Root path literal had doubled separators and correctly rejected; corrected
+canonical literal passed without product change. Both raw records retained in
+registered reviewTemp/n10-root-preflight.json; new private reader/ABI implementation
+does not yet exist and is NOT falsely described as preflighted. N9 constructor-only
+construction order and first-CVQ source exception unchanged, no finalgate waiver.
+
+Router AUTO_CONTINUE IMPLEMENT same-lifetime direct; bridge NOT_REQUIRED, no
+queue/receipt/newgateway. Exact bounded normalpytest/strict3/compile/import,
+author four targeted mutant pairs and Root different valid-door counter perclosure46.
+No cumulative/fixed correction ceiling, retain all oldfailure/UNKNOWN/timing.
+Initial child55/outer60 command bound; diagnose before bound change/retry,
+no paid expansion/unbounded wait/load. No actualHost/session/Native APIcampaign,
+SCM/service/account/rights/security/ACL/install/model/provider/network/newcost,
+push/release/deploy/formalactivation or refusedcleanupretry.30B43/TAL/R0/DAP/
+Recovery unchanged; only04 checked, no source-engineering-to-Host promotion.
+
+
 ## N9 seal QA / N10 DOC admission and asset reservation — 2026-10-21
 
 Different-seat /root/ticket30_native_tools_review verified N9 archives:
