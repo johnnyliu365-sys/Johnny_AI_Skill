@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `64`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `65`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision64）
+## 當前工程接續與精確證據（revision65）
 
 C6／H1／H2-A／C7已封存工程證據沿用，不重跑。H2-B a4a3d23c完成純peer／
 record比對，Root274tests／strict3、不同門disposition突變紅→綠，來源獨審與
@@ -123,14 +123,19 @@ H10B1最終862f2089僅四既有檔修改，借用期間鎖定原owner／拒絕�
 Root實測200聚焦tests、strict4及實際載入來源通過，silent valid alias drift
 不同門突變具名紅→精確還原綠，封存5ff96a1b；兩次作者ZERO_RED與早期型別
 失敗照實保留，不洗成成功。精確組合beb7a463仍43paths，只替換四受審blob；
-組合200tests／strict4通過，另一席資料byte/hash與mapping讀回PASS。下一必要B2原生
+組合200tests／strict4通過，另一席資料byte/hash與mapping讀回PASS。B2原生
 程序／thread保護與wide ABI原票closure28 bc192979文件複驗PASS，cf9c090f精確
-兩CREATE准入並派原實作者；僅fake驗證，不啟動程序／實際SD轉換或Host。
-失敗不得把CloseHandle當termination，部分輸出保留Recovery；不把純DTO當可信
-來源或隔離資格。後續H6須只在process路徑辨識新owner，不放寬H9共用token helper。
-保護設定工具只準備新owned物件creation-time保護；既有ACL覆寫／unsafe rollback
-方案已撤回，沒有實作／效應授權。子代理續接曾
-回覆agent thread limit reached，保留具體失敗，不當票預算或繞路增派理由。
+兩CREATE准入。初候選0df6e061雖Root83聚焦tests／strict2通過，Root另實測
+Recovery owner仍可取handle、重入Close造成兩次native呼叫，readonly保護被刪
+負例仍綠；另有未具名state及range diff格式缺陷。6f75347d一次列出F1–F3／
+E4–E5，原作者同票修正中，未核准／未組合。失敗不得把CloseHandle當termination，
+部分輸出保留Recovery；不把純DTO當可信來源或隔離資格。後續H6須只在process
+路徑辨識新owner，不放寬H9共用token helper。獨立C9原票closure29 1035210e
+僅三CREATE／兩MODIFY，新owned目錄creation-time保護工具bb4a0094准入／作者
+建置中；僅offline fake驗證，尚無候選或Host資格。既有ACL覆寫／unsafe rollback
+方案已撤回，沒有實作／效應授權。額度中斷後沿原Grant／worktree接續，
+沒有重做04、重置舊帳或變更主線。額外唯讀helper續接回覆agent thread limit
+reached，保留具體失敗、不原樣重試或繞路增派；Root自行準備必要後續。
 01–12勾選維持原狀，真實Host及正式效應仍未驗收。
 不新增Resolver／Gate／Runner；未啟動CLI／模型或實際Host，來源成果不冒充原生派送。
 
@@ -143,7 +148,7 @@ join被刪除時具名紅→還原綠，合法pure與HostDiscovery注入案例�
 
 01–12勾選不變、04不重做；正式source／issuer／Host效應與30B／43尚未驗收。
 沒有push／release／deploy／安裝／主機安全設定或正式閘門啟用。
-本段原revision63由Git保留，不為相同進度重複堆疊另一份正文。
+本段先前revision由Git保留，不為相同進度重複堆疊另一份正文。
 
 ## 前次工程接續與精確證據（revision49歷史）
 
