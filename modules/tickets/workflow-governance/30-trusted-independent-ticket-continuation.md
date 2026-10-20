@@ -39,6 +39,63 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-H10H correction / closure40 limited fixture-import migration — 2026-10-21
+
+Same original30/H10H requirement, source baseline23113241, returned candidate
+a247600007bfd1c1dd7651fbac1e7bded89d26e9; retain closure38 C13-independent T1-4,
+original context/worktree/owner/remaining history and uncapped local batch.
+Root CHANGES_REQUESTED, not a new PRD or new security/functional requirement:
+H10H-F01 initial job-borrow exit can silently drift captured token before B2;
+Root guarded actual dependency wrap produced create_calls1 instead of required0.
+H10H-F02 final token-borrow exit can silently change identity and return success;
+Root guarded exact-candidate probe DID_NOT_RAISE. Both are existing before/final
+boundary checks in closure38. Revalidate captured token/job/identity and original
+process pair immediately after applicable borrow exits and before create/return.
+Use existing finite refusals/Recovery/original-owner retention, no reset/close/
+terminate/resume, no new DTO/framework/parser. Add parameterized corresponding
+baseline-red regressions including valid unchanged positive, exact originals/
+no-child vs post-child outcome. Do not replace tests with blanket refusals.
+
+H10H-E01 strict evidence: ordinary exacttwofile mypy fails on old retained test's
+unqualified ABI fixture import. The reported alternative skips that imported
+retained module; _FakeKernel32 consequently becomes Any (Root diagnostic
+disallow-any-unimported produces3target errors). Do not use skip/ignore/stub or
+casts to hide fixture typing. Smallest reuse repair is one existing fixture's
+import identity, not another fake/helper or new test framework:
+tests/test_grant_authority_windows_retained_process.py ONLY change the import
+of fake_native/launch_plan from top-level test_grant_authority_windows_subject_process_abi
+to tests.test_grant_authority_windows_subject_process_abi.
+No fixture/assertion/behavior rewrite, deletion or extra paths. Demonstrate
+duplicate-import-safe strict checking without fixture skip, including new target
+test and this affected fixture, and run focused+direct affected regressions.
+
+Exact overall allowlist vs23113241: originaltwo CREATE
+library/local_orchestration/grant_authority/windows_subject_preparation.py
+tests/test_grant_authority_windows_subject_preparation.py
+plus ONLY above one-line existing retained-test import MODIFY; DELETE0/export0.
+Relative additive correction baselinea2476000: same2newfiles may MODIFY and exact
+one oldimport MODIFY; no other source/test/CLI/dependency edits.
+This is a local child-scope amendment under the Owner batch, not operational
+authority or an expansion of final AC. Conditioned on distinct DOCpreflight/D8
+and Root derived revision02 Grant before author writes the extra path.
+One shared fake composition fixture/parameterized cells remain; >500effective
+test lines trigger responsibility/reuse review, not forced split/minify/deletion.
+Current425/1141physicalfiles reviewed as one create-to-check responsibility,
+reusing H8/B2/H6 fixtures, no duplicate runner/server/pixel/browser framework.
+Correctness/type fixes must not grow a parallel lifecycle system.
+
+Root initial raw h10h-root-initial-review-20261021.json SHA256
+81e7739e0a332e437619aaf8500646cb8414eb88655e908b25abf28d0d82d66a:
+591guardedPASS7.07s/effects[] does not discharge two silent-exit probes.
+Distinct existinghelper independently found both source gaps and Any gap.
+Seven author mutation pairs remain source evidence with exact final restores;
+two intermediate inverse misplacements/nonbaselineGREEN remain invalid history.
+No claim of initial strict proof/complete source review/Host qualification.
+All closure38 operational restrictions continue unchanged: no actual Native/
+Host/token/process/job/SD/pipe/SCM/service/security/rights/install/network/model/
+provider/newcost/cleanup/push/release/deploy/activation. Only bounded offline
+fake/control tests and registered passive outputs. C13 PhaseB unaffected.
+
 ## 30N4-C13 — distinguish issuer account from service SID / closure39 proposal
 
 Original30/runbook03 source-only protectedissuer preparation, existing uncapped

@@ -1,4 +1,36 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10H initial source review / same-ticket correction — 2026-10-21
+
+Root CHANGES_REQUESTED at a247600007bfd1c1dd7651fbac1e7bded89d26e9,
+exact2CREATE f4a4b294/e6219c2b, clean matching-review. Root actual-loaded
+591guardedPASS7.07s/effects[] includes all direct H5/H6/H8/H9/H10D/E/F/G/B2
+related suites; green does not discharge two different silent-exit paths.
+F01: actual initialjobborrow wrapped after its real exit silently changes token
+alias; candidate performs one B2 create before refusing, Root expectation of
+zero creation fails PRECREATE_DRIFT_MUST_STOP_BEFORE_B2_CREATE.
+F02: actual tokenborrow wrapped after real exit changes authentication LUID;
+candidate returnsSUCCEEDED, Root expected failure DID_NOT_RAISE.
+Both are closure38 pre-effect/finalboundary invariants, not new best practices
+or claims that ordinary caller code can control trusted helpers in production.
+E01: normal strict exacttwofiles fails on unqualified oldfixture import.
+Author skipretainedfixture config hides _FakeKernel32 typing; Root diagnostic
+--disallow-any-unimported with that exactskip reports3Any errors in target.
+Initial diagnostic command construction missed intended flags (quote mismatch)
+and instead ran normalstrict; full actual argv/error retained, not counted as
+the Any-specific proof. Subsequent corrected diagnostic gives actual3errors.
+Distinct /root/ticket30_native_tools_review independently identifies both missing
+rechecks and fixture Any gap, source-prefight CHANGES_REQUESTED, no Host claim.
+Product425/test1141physical lines receive actual responsibility/reuse review:
+one privatecreate-to-check owner/6narrowhelpers and shared compositionfixture
+reusing existing ABI/H8/H6 fakes; no line-only split or regressiontest deletion.
+No remaining unrelated architecture improvement is imposed as this ticket's AC.
+Root raw h10h-root-initial-review-20261021.json 81e7739e0a332e437619aaf8500646cb8414eb88655e908b25abf28d0d82d66a
+retained in registered reviewTemp; no product mutation or Nativecall performed.
+closure40 proposal adds only one oldfixture import-identity change to the
+originaltwofiles, avoiding a newfake/typefacade or relaxed checker; DOC/derived
+Grant before writes, sameowner/worktree/context/history, no Owner renewal.
+C13 independent Grant and all Recovery/30B43/qualification holds unchanged.
+
 ## Continuation tool-capability record — 2026-10-21
 
 After exact PhaseA source-helper PASS and Root sealca8ccba6, an additional
