@@ -39,7 +39,157 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
-## 30N4-H10B2 — one suspended-create ABI boundary / closure28 proposal
+## 30N4-C9 — new owned directory protection-at-creation / closure29 proposal
+
+Original30/runbook03 and same uncapped local batch; source-only protection-tool
+build, independent of active H10B2 Python ABI. This is not another installer,
+Policy Engine, Gate or authority. Withdrawn existing-object SetSecurityInfo/
+Recover design stays NOT_ADMITTED: no proven descriptor CAS, no unsafe rollback.
+Create only a new enrollment-derived managed directory with full protection at
+creation; never adopt/edit/delete/recover an existing object. Actual OS privilege,
+ACL/account/service/install/Host effects remain separately ungranted.
+
+Baselinebeb7a4635d7529d424cc320ea01a2e53574f88a1. CREATE EXACT
+library/local_orchestration/native_windows/NativeOwnedDirectoryCreation.cs,
+library/local_orchestration/native_windows/Win32OwnedDirectoryCreationPort.cs,
+library/local_orchestration/native_windows/NativeOwnedDirectoryCreationSelfTests.cs.
+MODIFY EXACT library/local_orchestration/native_windows/SelfTests.cs and
+library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj,
+only fake-test wiring and three explicit Compile includes. DELETE0. Program.cs,
+NativeManifest.cs, NativeEnrollment.cs, ProtectionPlan.cs and old native/readback
+files are read-only. New Win32 source extends the EXISTING Win32ReadbackPort
+partial class/private NativeMethods, not a second I/O framework or new effect CLI.
+
+Reuse NativeEnrollment's canonical setup digest, configuration and <=128 typed
+payload/dependency entries; ProtectionPlan.Build is the ONLY owner/descriptor
+policy. Reuse AbsoluteWindowsPath/SidValue, NativeReadFailure/NativeReadResult,
+NativeObjectObservation, WindowsReadback.ReadDirectoryMetadata, PayloadFileSnapshot,
+PathPrefixes/NormalizeFinalPath/TryGetDescriptor/TryGetFinalPath and same existing
+partial NativeMethods. Do not copy manifest validators, path/readback harnesses
+or add another target manifest. Fake tests accept existing SelfTests manifest,
+reuse NativeEnrollmentVerificationSelfTests.CreateNestedMatchForCommand when
+nested enrollment is needed, instead of duplicating its full fixture. This is
+an explicit retained test dependency, not evidence those tests may retire.
+
+Finite internal NativeManagedTree CODE/DATA and private-constructed immutable
+NativeOwnedDirectoryTarget(Path,Tree), derived only from current enrollment.
+NativeOwnedDirectoryTargets.Derive returns stable parent-first case-insensitive
+unique targets, excluding trusted Environment ProgramFiles/CommonApplicationData
+stop roots. Include managed code/data roots, intermediate descendants below stop
+roots, executable/dependency parent paths and configuration parents. Reject any
+file-as-directory prefix collision, wrong tree/outside stop, >1024 unique
+directories or >32767 path characters before effect; never normalize ambiguity
+into a guessed target. Creator rederives/checks membership against THIS enrollment,
+not trust a target made for another plan/path. Desired owner/SDDL always rebuilt
+from exact current ProtectionPlan CodeRootSddl/DataRootSddl, no caller path/SDDL
+or approval marker can supply policy.
+
+Minimal internal OwnedDirectoryCreationStatus: CREATED_VERIFIED,
+TARGET_EXISTS_REFUSED, CREATE_REFUSED, RECOVERY_REQUIRED. Result binds existing
+NativeReadFailure plus optional NativeObjectObservation, no new failure engine.
+One NativeDirectoryCreateResult(Created,TargetAlreadyExists,Failure) for the
+private native port. Contradictory/unknown result combinations cannot become
+verified. INativeOwnedDirectoryCreationPort.CreateNew(path,owner,descriptor)
+is an internal I/O boundary only; NativeOwnedDirectoryCreator.Create(enrollment,
+target) is the private policy composition, not a public/operational entrypoint.
+
+Before effect, independently observe exact parent with existing directory
+readback; missing/denied/reparse/non-directory refuses with zero create calls.
+The PRODUCTION creation port must hold ALL ancestor handles simultaneously
+through call AND post-snapshot, not just check paths then act. Open parent-first
+using READ_CONTROL|FILE_READ_ATTRIBUTES, FILE_SHARE_READ ONLY (no WRITE/DELETE),
+OPEN_EXISTING, OPEN_REPARSE_POINT|BACKUP_SEMANTICS. Verify each retained handle's
+directory/nonreparse attributes, exact normalized final path and volume/file ID.
+Any denied share/open/verification fails before CreateDirectoryW; no weaker flags,
+fallback or retry. Bound the chain by admitted target derivation; no recursive
+filesystem discovery. Existing trusted stop roots are observation-only, never
+created, changed or adopted as managed targets.
+
+Use exactly THREE localized typed fake-native delegates in the new partial file:
+OpenRetainedAncestor(path,desiredAccess,shareMode,creationDisposition,flags,
+out PayloadFileSnapshot,out NativeReadFailure)->SafeFileHandle;
+SnapshotRetainedAncestor(handle,expectedPath,out PayloadFileSnapshot,
+out NativeReadFailure)->bool; CreateDirectoryCall(path,ref NativeSecurityAttributes,
+out int win32Error)->bool. Default bindings reuse existing private native helpers;
+one internal constructor accepts the fake bindings. No new parallel port hierarchy.
+Fake handles use SafeFileHandle(...,ownsHandle:false), never actual CloseHandle.
+The actual production-port methods, not merely a high-level fake, must execute
+in the offline tests so changing its native flags/lifetimes turns tests red.
+
+Own/pin a binary RawSecurityDescriptor copy from the plan for one CreateDirectoryW
+call. Validate owner/protected nonnull DACL and exact noninheritable
+SECURITY_ATTRIBUTES size/pointer; no ambient ACL or caller buffer, no precheck
+then overwrite. The API itself makes the exists decision atomically. Existing
+target/error183 or80 always refuses, never open-and-adjust. Hold all ancestors
+through same-handle post-snapshots in original order; recheck nonreparse/final
+path/volume/fileID. Dispose retained handles on every path, including exceptions,
+without a second create, polling, deletion or cleanup. Independent post-create
+WindowsReadback directory observation must exactly match planned owner AND full
+descriptor before CREATED_VERIFIED; same-handle snapshots are not independent
+readback and cannot replace it.
+
+Known failed call plus confirmed missing target can CREATE_REFUSED. Missing/
+unreadable observations do not turn an UNKNOWN/exception call into proof no
+effect happened: NativeReadFailure.Unavailable, contradictory outputs, any
+successful-call post-snapshot/readback mismatch always RECOVERY_REQUIRED even
+if a later target is missing. Preserve observations/finite result as recovery
+evidence, never clear existing Recovery, roll back ACLs or delete partial setup.
+SYSTEM ownership may require unavailable privileges; source compilation/fakes
+do not prove them. Never fall back to current-user owner, weaker sharing or
+existing-object adoption. Actual simultaneous ancestor-lock compatibility and
+trusted-root protection require later separately authorized Host qualification.
+
+C9T1 pure target derivation/normal constructor and nested code/config/dependency
+coverage, canonical source/digest membership, dedupe/order/stop-root exclusion,
+file-parent conflicts/count/path bounds and other-plan target rejection.
+C9T2 high-level positive creation and exists/safe refusal, exact owner/full
+descriptor independent readback, wrong owner/descriptor/kind/missing/read-denied/
+unknown outcome -> finite Recovery; zero create on invalid source/parent.
+C9T3 ACTUAL production port with fake-native delegates: every ancestor handle
+open through create and post-snapshot; exact access/share/open/reparse/backup
+flags, non-NULL owned descriptor pointer/bytes/noninheritance/size, one call;
+bad ancestors/changed identity/finalpath/reparse/native exceptions and all
+deterministic disposals, no writes/deletes/retries. Tests must not invoke the
+default real native delegates or allocate owning real native handles.
+C9T4 offline pinned.NET10.0.302 build warnings-as-errors and existing fake-only
+self-test selector, actual artifact/source identities, bounded final-byte
+reverse mutations for real native port retention/share/flags/descriptor pointer,
+plan-target binding, independent post-readback and unknown-result handling.
+Batch related cases without redundant old campaigns; full unreduced outputs/
+named failure labels/actual patches+SHA/source-test blobs/timing/exit captured.
+New fake helper emits a fixed technical failed-cell label before throwing, so
+the existing Program self-test error wrapper does not hide the intended RED;
+passing public self-test JSON remains unchanged. No Program.cs mutation.
+
+Forecast new core/port <=350 effective lines EACH, new test <=500; these are
+structure signals, not forced tiny splitting/minification. Existing SelfTests
+gets only one RunContracts(manifest) call; project gets three Compile entries.
+No prompts, owner directions or ticket narrative in source. One responsibility
+per new file: derived-policy composition, actual native I/O, reusable fake tests.
+No payload-file writer/service/SCM/new observer implementation in this slice.
+
+Proposed author /root/ticket30n4_peer_impl, previous H10B1 allocation RELEASED;
+Root sole reviewer/orchestrator, distinct native-tools helper. Fresh context
+ctx-ticket30g-owned-directory-20261020; proposed contained WTs .worktrees/
+skill-improvement-30g-owned-directory and matching-review, codex/same. OwnedTemp
+johnny30g-owned-directory-20261020 and -review-20261020 respectively author/Root,
+purpose fake test/build/evidence, TTLthroughreview/seal/referencedhold, no expiry
+deletion. Conditional grant-ticket30g-owned-directory-20261020 revision01
+NOT_ACTIVE before committed DOC review, existing normal manifest/enrollment/plan
+construction preflight, exact nonreparse WT/baseline/role readback. New native
+setter/actual directory cannot be demanded before building its source.
+Child55/outer60 initial bounds, explicit offline NuGet.Config(clear sources),
+no workload update/network/paid expansion and one owned build/cache root.
+
+No actual managed native directory/file/ACL/account/service/SCM/Host effect or
+qualification, real native selector, native SD/subject call, model/network/clone/cleanup/push/
+release/deploy/formal activation. Only fake self-test modes may execute.
+Control-plane contained worktree/registered Temp allocation and bounded local
+build outputs remain allowed; they are not invocation of the tested creator.
+Root continues B2 independently; no30B43 clearance or new PRD. R0/DAP/TAL/Recovery
+and earlier denied cleanup remain untouched.
+
+## 30N4-H10B2 — one suspended-create ABI boundary / closure28 active
 
 Original30/runbook03, same batch-checklist-local-20261019-uncapped and first-CVQ
 source-order exception. Root Architecture and distinct topology helper narrow
