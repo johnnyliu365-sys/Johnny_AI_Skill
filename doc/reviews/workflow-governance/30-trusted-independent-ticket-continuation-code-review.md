@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N9 exact dependency correction — 2026-10-21
+
+Candidate a51c164744795cdb5cd02bdcf13bb39b5f2f753c is SOURCE_CHANGES_REQUIRED,
+not qualified Host evidence. Independent helper /root/ticket30_native_tools_review
+and Root source readback confirm that windows_snapshot_contracts.py imports
+OpaqueMetadataId from workflow_router.contracts, but closure45 explicitly binds
+the existing CVQ-owned alias. Equal current regexes do not make owners equivalent.
+Same-ticket/owner/worktree/Grant d3fe625d correction is limited to that import and
+affected exact-candidate verification; no new path, requirement, authority or reset.
+Original two candidate blobs 131ef542/e9092823 and original evidence index
+d878ca11e96893ce5430cbe54193086ef5e6192a564c92adf0adccf68d443cad remain held.
+Root read the original four unfiltered named RED/restored-GREEN outputs and
+retained failed test/type instrumentation diagnostics; these original observations
+are not relabelled as tests of a later corrected candidate. Initial combined
+source/index display was truncated; separate raw record readback was complete.
+The corrected candidate must pass independent actual-source checks before replay.
+Continuation AUTO_CONTINUE same-ticket correction; no checklist completion,
+Host/30B/43/TAL qualification, cleanup, push/release/deploy or formal activation.
+
+
 ## Next native reader API preparation — 2026-10-21
 
 N9 construction ACTIVE, do not read author uncommitted source or admit reader
