@@ -1,5 +1,38 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N9 DOC admission / reserved assets — 2026-10-21
+
+Distinct /root/ticket30_native_tools_review DOC_PASS constructor-only
+closure45 at36d2875266c4f898f585273ce31e1f243de403e7,
+leafc4af5b79e27f507cfec8096dc8b9b3bea3ed02af,
+LF7c2fbed8f920f5cc48362469e165f38f6101d60d31b08a346d6682631431132d.
+Two value-model semantics/normalconstructors coherent; reuse existing scalar
+contracts, emptyfile/range support does not weaken C8 file-observation model.
+No realfile reader/Grant authority/source/Host qualification in this slice.
+
+Bounded architecture query source refs now rebound to exactf6e6b946: only N8
+codec and newtest differ from9c999a1e, previously inspected native transport/
+peer/retainedreader/C8 files unchanged. Message-pipe overlap class is not safely
+a genericfile reader; don't copy/extract it without a separate justified semantic
+change. Futurefile reader needs its own bounded originalfile/event/OVERLAPPED/
+buffer ownership, deadline/cancel/drain and retainedRecovery, no rawclose retry.
+No exact approved snapshot inventory was available; larger-file sizes UNKNOWN.
+Pinned opaque blob ranges solve value representation, not provenance or approval.
+
+Root reserves .worktrees/skill-improvement-30g-snapshot-contracts codex/same for
+/root/ticket30n4_peer_impl, matching -review Root-owned, baselinef6e6b946b916afa60e0eaef9808527b2fa4f3635.
+Old N8 allocation/view released atd5b099b5; candidate/worktrees/raw/recovery
+holds not repurposed or deleted. Fresh ctx-ticket30n9-snapshot-contracts-20261021.
+Registered Temp C:/Users/GameBoy/AppData/Local/Temp/
+johnny30-snapshot-contracts-owner-20261021 and
+johnny30-snapshot-contracts-review-20261021, respective owners above.
+TTL through review/seal with evidence/Recovery hold override, fresh run children
+only; no overwrite/reparse traversal/refusedcleanup retry. NOT_ACTIVE Grant
+pending freshidentity and ordinary existingbaseconstructor preflight.
+ACTION_COMPLETED -> AUTO_CONTINUE reserved allocation/preflight only.
+
+
+
 ## N8 final archive QA — 2026-10-21
 
 Distinct /root/ticket30_native_tools_review SOURCE_MAPPING_ARCHIVE_PASS:
