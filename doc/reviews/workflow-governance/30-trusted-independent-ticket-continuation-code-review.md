@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N8 final archive QA — 2026-10-21
+
+Distinct /root/ticket30_native_tools_review SOURCE_MAPPING_ARCHIVE_PASS:
+24unique registered UTF8 entries equal original bytes/length/digest, zero missing/
+outside/mismatch. Four actual named pairs final89aa9ed7/test90d8abce, distinct
+mutants and exactpatchSHA,REDexit1/exactGREENexit0. Earlier wrong restoration
+stays invalid. Reviewer's first extractor assumed older bytes/data_utf8 keys;
+correct length/utf8 schema then proved equality, not changedoriginalevidence.
+Stage452a4bbd raw/gzip match exactregistered file; f6e6b946 parent9c999a1e
+two reviewed changes only, other99paths unchanged/101total,oldtest41223d3f/clean.
+Root14olddeclreadback and originaldiagnostic/Unicode/rawreading limitations
+preserved; no Host/qualification/cleanup/30B43/TAL/checklistcompletion claim.
+ACTION_COMPLETED -> AUTO_CONTINUE next exact protectedreader closure
+preparation under originalbatch; no newOwner ceremony or baseline repeat.
+
+
+
 ## N8 exact source composition readback — 2026-10-21
 
 Root source-stage f6e6b946b916afa60e0eaef9808527b2fa4f3635 parent9c999a1e,
