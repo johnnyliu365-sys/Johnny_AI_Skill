@@ -39,6 +39,104 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+
+## 30N9 — bounded snapshot membership values / closure45 proposal
+
+Original30/PRD009/CHG009/Context04/runbook03 sections2/3 and existing12localbatch
+batch-checklist-local-20261019-uncapped; first-CVQ minimalreadonly source-order
+exception unchanged. Baseline f6e6b946b916afa60e0eaef9808527b2fa4f3635 is
+engineeringhold only, not main/qualified source. N8 wire seal d5b099b5/452a4bbd
+and N7 codec are reused unchanged; do not alter their cap/fields or oldtests.
+
+Necessary gap from bounded query56ed1491: native same-process file reader needs
+fixed wholefile identity plus opaque blob/range membership; C8 JSON/GrantRecord
+and caller markers confer no provenance. GrantPlan/readprotocol has no snapshot
+blobfield; do NOT expand that public wire or pass32KiB through16KiB pipeframe.
+Native tool callback will later resolve opaqueID inside protected ownership;
+no request accepts caller path/offset/hash/content or mints authority.
+This slice ONLY constructs its reusable immutable value contracts, not a reader,
+approvalstore/service/Grantissuer/Host effect or positive trustedGrant evidence.
+
+CREATE ONLY library/local_orchestration/grant_authority/windows_snapshot_contracts.py
+and tests/test_grant_authority_windows_snapshot_contracts.py.
+MODIFY/DELETE/export/dependency0; no ABI/reader stubs or duplicate parser/runner.
+Two private named models, reusing _StrictModel, _CanonicalSid, C8
+_ObservedSha256, windows_peer _CanonicalWindowsPath/_Uint32/_Uint64 and
+existing CVQ OpaqueMetadataId. C8 _ObservedEnrollmentFile is deliberately NOT
+subclassed/copied as another C8 observation: its file size1..64MiB excludes
+empty sourcefiles, while snapshot membership must represent size0..64MiB.
+Reuse its scalar meanings; distinguish expected facts from OS observations.
+No new observation/qualification/result/Grant model or state machine.
+
+_SnapshotSourceFile(_StrictModel) EXACT fields:
+path:_CanonicalWindowsPath; sha256:_ObservedSha256;
+size_bytes:strict exactbuilt-in int0..67108864;
+owner:_CanonicalSid; descriptor_sha256:_ObservedSha256;
+volume_serial:_Uint32; file_id:_Uint64.
+All string/int inputs require exact builtin before existing adapters; reject
+bool/subclasses/coercion, preserve exactcodepoints/path/digest with no transform.
+For size0, sha256 must be SHA256(emptybytes), intrinsic content consistency.
+Frozen/extra-forbid/revalidatealways inherited, ordinary constructors only.
+
+_SnapshotBlobMember(_StrictModel) EXACT fields:
+blob_ref:CVQOpaqueMetadataId; source_file:_SnapshotSourceFile;
+offset:strict exactbuiltin int0..67108864;
+length:strict exactbuiltin int0..32768; sha256:_ObservedSha256;
+scope:Literal SOURCE_ONLY_UNQUALIFIED default samevalue.
+blobref/digest/scope exactbuiltinstr, source_file exactnormal model instance
+or exactdict validated by its ordinary constructor; no bypass/create/update/cast.
+offset+length must be <=source_file.size_bytes; zero-length blob SHA256(empty).
+When offset0 and length==source_file.size_bytes, blobsha==sourcefilesha.
+A bounded blob is allowed to be one pinned range of a larger sourcefile; exact
+wholefile identity/digest and fixedrange/digest must both survive later native
+read. This does not infer any actual approved snapshot inventory or filesizes.
+No normalization/partialhash-as-wholehash/path-from-caller/implicit membership.
+No claimed approved/source-only boolean can authorize a read; all values remain
+SOURCE_ONLY_UNQUALIFIED. Actual issuer-owned binding/native proof laterrequired.
+
+N9T1 ordinary constructor/roundtrip exactempty/full/range and32768 boundary,
+source file up to64MiB with in-range pinned slice, genericfictional values only.
+N9T2 reject each invalidfield shape/null/bool/subclass/overflow, wrongdigest/
+path/SID/opaqueid per reused grammar, extra/mutability and nested badfacts;
+malformed bypass inputs are rejection evidence only.
+N9T3 crossfield negative range end/zero digest/fullrange digest and legal
+neighbors, frozen source binding, no policy/authority promotion by values.
+N9T4 named bounded reverse mutations for source-size/builtin check/range/digest
+conditions RED/exactGREEN, plus Root different legitimate-case counter.
+No ceremonial nonexistent-newmodel Stub-red requirement. Constructor-only
+first construction follows same admitted N7 source-order method; Root verifies
+new ordinary constructors before any later reader logic is admitted.
+No public effect port in this slice, TEST->A->B N/A(no responsibilitytransfer).
+
+Focused pytest newtest + existing windows_service C8 value tests if applicable;
+strict2 --disallow-any-unimported --explicit-package-bases, memorycompile/import
+under denied Native/socket/subprocess guards, actualloadedsource/Gitblobs.
+Use default normal unfiltered pytest output; verbose only for a diagnosed
+small namedcell, not verboseentiresuites. ExplicitparameterIDs/fullraw preserve
+errors without massive binaryassertion dumps. No permanent duplicate helper.
+Forecast product<=160effective/test<=260; structural signal not forcedsplit.
+
+Root AO/solefinalreviewer/orchestrator; retained /root/ticket30n4_peer_impl
+approvedLuna/xhigh, existing distinct sourcehelper. PriorN8 allocation/context
+immutableheld; fresh ctx-ticket30n9-snapshot-contracts-20261021, author
+.worktrees/skill-improvement-30g-snapshot-contracts codex/same, Root matching
+-review. Registered fresh Temp roots to reserve before creation:
+johnny30-snapshot-contracts-owner-20261021 and -review-20261021; exactowners,
+TTLthroughreviewseal/holds, no expiration deletion or refusedcleanupretry.
+Grant candidate grant-ticket30n9-snapshot-contracts-20261021 revision01
+NOT_ACTIVE until exact DOC/D8/asset/ordinaryexisting-base constructor admission.
+Original batch uncapped history, failures/UNKNOWN unchanged, child55/outer60
+finite bounds; no new fees/blank privileges. Return typed result with candidate/
+files/checks/findings/deviations/raw refs; author cannot approve/integrate.
+
+No actual file/nativeapi/Host/process/pipe/service/account/security/ACL/rights/
+install/network/model/Provider/cleanup effects. Local compiler/test control
+children only. No push/release/deployment/activation or qualifiedCVQ/30B43/TAL/
+Recovery relief/checklistcompletion. After reviewed contracts, freeze a bounded
+same-process native reader/cancel/drain/retainedowner failure seam in original
+Ticket30 and derive precise nextscope, not an additional authority system.
+
+
 ## 30N8 — native control-wire request builders / closure44 proposal
 
 Same original30/PRD009/CHG009/Context04/runbook03 minimalreadonly entry and
