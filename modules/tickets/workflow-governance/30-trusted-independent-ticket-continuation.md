@@ -39,6 +39,88 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N4-C12 — reuse existing component-name admission / closure37 proposal
+
+Original30/runbook03 source-only construction, existing uncapped batch and
+C10 recorded shared-grammar followup, baseline
+f8754baabc13196e1f8974201737daf30f0a3982. No new PRD/SPEC/policy/Host capability.
+Current C9 NativeOwnedDirectoryTargets.ValidateComponent127-144 and C10
+NativeOwnedPayloadFileCreator.HasValidLeaf152-170 implement the SAME bounded
+component/device-name predicate twice. NativeManifest.cs InputRules already
+owns common pure input predicates. Reuse it, no newfile/framework/parser.
+H10G Python assignment lane is disjoint, remains bound to unchanged closure36
+atd485ff3b/Grant72cb001e; this source-only docs revision does not change its
+committed input/AC/paths or issue any effect authority.
+
+One outcome: C9 directory components and C10 payload leaf admission use ONE
+existing InputRules predicate with unchanged accepted/rejected values.
+CREATE0/DELETE0. MODIFY EXACT library/local_orchestration/native_windows/
+NativeManifest.cs, NativeOwnedDirectoryCreation.cs,
+NativeOwnedPayloadFileCreation.cs, NativeOwnedDirectoryCreationSelfTests.cs,
+NativeOwnedPayloadFileCreationSelfTests.cs. Other ports, checkedrelease,
+ProtectionPlan/enrollment/WindowsReadback/SelfTests.cs/csproj/CLI readonly.
+NativeManifest change ONLY shared internal InputRules component predicate;
+do not change public AbsoluteWindowsPath or manifest/source/SD validation.
+Directory derivation/exception/result classification and file uniqueness/
+hash/size/role/root/ProtectionPlan rules stay unchanged. No new public DTO,
+enum, port, configurable grammar or duplicated third implementation.
+
+Freeze predicate already present: .NET UTF16Length1..255, no trailing space/dot;
+stem beforefirstdot rejects OrdinalIgnoreCase CON/PRN/AUX/NUL/CONIN$/CONOUT$ and
+exactfour-character COM1..9/LPT1..9. Preserve legal Unicode/codepoints/case and
+non-device COM0/COM10/LPT0/LPT10 and ordinary dotted stems. No normalization or
+new Unicode/OS security policy. Whole-path syntax/control/invalidcharacter
+admission remains existing AbsoluteWindowsPath, not copied into this helper.
+Keep totalpath32767/directories1024 where each existing caller owns those
+distinct boundaries; do not merge unrelated file/directory result contracts.
+
+TEST -> A freeze actual NativeOwnedDirectoryTargets.Derive/Create and
+NativeOwnedPayloadFileCreator.Create paths with existing enrollment/fake ports.
+Shared InputRules method is private source infrastructure, need not preexist
+before this source-only transfer. Tests invoke real creators/derivation,
+not a second expected predicate or only helper/direct delegation assertions.
+Move both checks to existing InputRules, remove both old device-rule bodies.
+B=N/A no second responsibility split or retired test/entry; preserve coverage.
+
+C12T1 ordinary existing enrollment/ProtectionPlan/C9/C10 constructors and legal
+directory/file primary paths; normal and inclusive255 componentlength,
+legal Unicode/COM0/COM10 values still accepted where original contracts allow.
+C12T2 both real consumers reject reserved devicecase/extension variants,
+length0/256/trailingdot/space before nativecreation; exact root/entry/bytes/hash/
+status boundaries preserved, no native/SD/actualfilesystemeffect.
+C12T3 final-source reverse mutations: loosen shared predicate reservedname/
+bounds so corresponding directory AND file consumer cells red, then exact
+restoreGREEN; bypass each consumer's shared check separately, that consumer
+namedRED/restoreGREEN. Zero red is finding; tests must discriminate transfer,
+not just helper callcounts/testmirror. Root own differentdoor.
+C12T4 offline SDK10.0.302 build0W/E/fake self-test plus actual fivefile blobs/
+diff/import; unchanged C11release and C9/C10 matrices staygreen, no unrelated
+old campaigns rerun. Persist full argv/stdout/stderr/actualpatch/blobs before
+display, exactrestore green required. No ceremonial newfeature first-red;
+this behavior-preserving split follows TEST->A and negative finalmutations.
+
+Profile HIGH_ASSURANCE source-only, original CVQ stillmandatory later.
+Proposedauthor /root/ticket30n4_peer_impl, C11allocation/context RELEASED
+d7350c9f; bounded architecture query completed no sourcechanges.
+Freshctx-ticket30g-native-component-reuse-20261020, proposed contained
+.worktrees/skill-improvement-30g-native-component-reuse and matching-review,
+codex/same. OwnedTemp johnny30g-native-component-reuse-20261020 and
+-review-20261020 author/Root for offlineobj/bin/cache/raw, TTLreviewseal then
+protected referencedhold; no expirydelete/Recoveryclear.
+Root sole reviewer/orchestrator, existing distinctsourcehelper. Conditional
+grant-ticket30g-native-component-reuse-20261020 revision01 NOT_ACTIVE until
+DOCreview/D8/normalpreflight/exactallocation/baseline/roles readback.
+Forecast netproductreduction, tests bounded expansion~100lines each in existing
+coherent matrices; >500 effective triggers actualstructure review, not forced
+split/minify. Prior usage/failures kept, no cumulative/countcap; child55/outer60,
+diagnose beforeadjusting and no unchangedfailure retry.
+No realnative/SD/Host/job/process/pipe/SCM/service/account/security/ACL/install/
+network/model/provider/newcost/cleanup/push/release/deploy/activation.
+Only ordinaryboundedcontrolbuild/test and registeredpassiveoutputs.
+Return COMPLETED/BLOCKED/CHANGE_DETECTED with exactcandidate/files/checks/
+findings/deviations; technicalcomments only. Source-only evidence, no whole12/
+Host/30B43/issuerpositive or general Windows-path security completion claim.
+
 ## 30N4-H10G — original suspended process to owned job / closure36 proposal
 
 Original30/runbook03 bounded native construction under existing uncapped batch/
