@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `65`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `66`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision65）
+## 當前工程接續與精確證據（revision66）
 
 C6／H1／H2-A／C7已封存工程證據沿用，不重跑。H2-B a4a3d23c完成純peer／
 record比對，Root274tests／strict3、不同門disposition突變紅→綠，來源獨審與
@@ -128,11 +128,22 @@ Root實測200聚焦tests、strict4及實際載入來源通過，silent valid ali
 兩CREATE准入。初候選0df6e061雖Root83聚焦tests／strict2通過，Root另實測
 Recovery owner仍可取handle、重入Close造成兩次native呼叫，readonly保護被刪
 負例仍綠；另有未具名state及range diff格式缺陷。6f75347d一次列出F1–F3／
-E4–E5，原作者同票修正中，未核准／未組合。失敗不得把CloseHandle當termination，
-部分輸出保留Recovery；不把純DTO當可信來源或隔離資格。後續H6須只在process
-路徑辨識新owner，不放寬H9共用token helper。獨立C9原票closure29 1035210e
-僅三CREATE／兩MODIFY，新owned目錄creation-time保護工具bb4a0094准入／作者
-建置中；僅offline fake驗證，尚無候選或Host資格。既有ACL覆寫／unsafe rollback
+E4–E5。最終f377e16f同兩檔修復，Root91guarded／strict2及原lifecycle probe全綠，
+不同雙Close registry門具名紅→精確還原綠；另一席source／七final-byte pairs通過，
+26867c76封存52原始檔並經另一席byte/hash核對。舊capture失敗／baseline誤標／
+restore順序錯誤完整保留，不用新證據冒充修復舊raw。精確組合c1b60946僅加兩
+blob、原43不變／共45paths，組合91／strict2綠，另一席mapping PASS。後續只在
+H6 process reader辨識新owner，原票closure30 d06afcb7文件預審PASS；86e0891e
+兩既有檔MODIFY精確Grant與fresh worktree/context准入，原作者實作中。H9共用
+token／job helper不放寬。失敗不得把CloseHandle當termination，部分輸出保留
+Recovery；不把純DTO當可信來源或隔離資格。獨立C9原票closure29 1035210e
+僅三CREATE／兩MODIFY，新owned目錄creation-time保護工具初候選72309824
+離線build綠，但Root查到例外誤判exists與DATA策略ZERO_RED。0e35ed59修正後
+E2已閉合，F1跨層identity drift→later MISSING仍會降成clean refusal；Root
+具名RED證實、精確還原，4c9447ff同F1原作者窄修中，未核准／未組合。作者
+初稱log prefix改變，直接byte與另一席核對證明原44613bytes／55797ef9仍完整；
+13新record重複與錯誤hash觀察原因UNKNOWN，保留不重寫／不重跑舊七對。
+以上仍僅offline fake驗證，不是Host資格。既有ACL覆寫／unsafe rollback
 方案已撤回，沒有實作／效應授權。額度中斷後沿原Grant／worktree接續，
 沒有重做04、重置舊帳或變更主線。額外唯讀helper續接回覆agent thread limit
 reached，保留具體失敗、不原樣重試或繞路增派；Root自行準備必要後續。
