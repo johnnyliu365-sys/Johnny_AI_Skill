@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N11 bounded native-ownership supplement / original T3 — 2026-10-21
+
+Original F01 pseudo-owner family is now fully enumerated, not ten new policies:
+Microsoft winreg.h L98-108 declares ULONG_PTR((LONG)0x80000000/01/02/03/04/
+05/06/07/50/60) predefined roots. Root's d5ed real-entry fake returned each at
+the first open; all10 returned a record with10value queries/6closes,1.594s,
+effects[]. Reject known pseudo-roots, parent and retained aliases and invalid
+sentinel through one exact native ownership predicate/shared parameter rows.
+Prior cached-primary diagnostic accidentally printed string-index keys/truncated;
+that diagnostic is not source proof. Narrow header span was then read intact.
+
+F05 / same frozen N11T3 unknown-native-exception retention, not a new AC:
+fake open wrote its output then raised KeyboardInterrupt; fake close likewise
+raised after its action. Real entry propagated KeyboardInterrupt, poisonFALSE,
+explicit recovery holds0 in both cases (open1/close0; open6/close1). Unknown
+ownership was neither retained nor made terminal. Root1.625s exit1, effects[].
+Retain exact owners/output buffers and poison on interrupted uncertain native
+outcomes; return finite RECOVERY_REQUIRED, no retry/raw close/GC fallback.
+This does not require swallowing unrelated exceptions in pure JSON validation.
+Batch corresponding native-operation interruption cases with the same shared fake,
+not a new runner. F02/F03/F04 stay CLOSED; no unrelated code/review reopening.
+
+Same Grant01/closure47/original3paths/owner/Context and additive correction only;
+no budget or requirement reset, new file/framework, actual Native/Host effect or
+Owner question. Reserve Root registered reviewTemp n11-root-owner-supplement.json
+for exact two inline commands/raw results and source span; same Root/TTL/hold/
+teardown policy. No Root product mutation pending or source-stage changes.
+
 ## N11 correction1 / original F01 still open — 2026-10-21
 
 Actual FINAL d5edc1cfc6759fdce91078adfaeb2b4581e36db6(parent5bcb), exact
