@@ -1,4 +1,47 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10G closure36 source admission / exact Grant — 2026-10-20
+
+DOC_PASS distinct /root/ticket30_native_tools_review at
+d485ff3b3bfd21ba46815cd974eb1e7eb4e476cd, original30leaf
+839ff15d800654587de97c530608494f777c994e LF
+529f95868e70a472ed697e4c14494c14f6dbfc9164b788962f050ed46dc54259,
+D8 registry matched. H10F finalsource/archive/mapping passed before this step;
+no older unresolved candidate is treated as formal qualification.
+
+grant-ticket30g-created-process-job-20261020 revision01 ACTIVE under
+batch-checklist-local-20261019-uncapped/source-order exception, baseline
+f8754baabc13196e1f8974201737daf30f0a3982. CREATE ONLY
+library/local_orchestration/grant_authority/windows_created_process_job.py and
+tests/test_grant_authority_windows_created_process_job.py. MODIFY0/DELETE0/
+exports0; full private contract/frozenH10GT1-4/nonclaims in closure36.
+Root architecture fixed H8outer lifecycle -> B2creation -> borrow insideboth;
+exitfailure recovery must publish before either outerrelease. No existing
+inverse composite consumer in inspected sources; no public policy/Grant change.
+Reuses actual H6 membership parser, originalH8/B2/H10D types and existingfakes;
+no second launcher or authorization source. Ordinary private helper need not
+pre-exist before its source-only construction, no preflightbootstrap cycle.
+
+Author /root/grant_transport_impl previousH10F context/allocation RELEASED hold
+6ff7292f; freshctx-ticket30g-created-process-job-20261020. Root sole reviewer/
+orchestrator, same existing distinctsourcehelper. Allocated contained
+.worktrees/skill-improvement-30g-created-process-job and matching-review,
+codex/same; absentbefore, allancestorsnonreparse, .git/common-dir, exactbaseline
+andcleanHEAD verified. OwnedTemp johnny30g-created-process-job-20261020 and
+-review-20261020 author/Root, fakechecks/raw/typecache; TTLreviewseal thenheld
+while referenced, never expirydelete/Recoveryclear. Preflight existing H8limits,
+normalfakejobconstructor and B2ordinaryABI primary cell3PASS2.157s/effects[].
+Wrapper prints pre-existingH10F source only, not newH10G preexistence proof.
+Full h10g-preflight-allocation-20261020.json binds exact command/result,
+roles/paths/metadata; registered before implementation allocation use.
+
+No cumulative command/countcap, history/failedtools preserved; child55/outer60
+initialdeadline, diagnose beforeadjusting, no unchangedfailedretry. Explicit
+testguard all real native/SD/job/process/token/pipe/Host/SCM/service/account/
+security/ACL/install/network/model/provider/newcost/cleanup/push/release/deploy/
+activation. Only ordinarybounded controltest/build/passive registeredoutputs.
+Technicalcomments only, no ownerprompt/ticketstory in products/tests.
+AUTO_CONTINUE -> namedauthor IMPLEMENT / finitewait / Rootdifferentdoorreview /
+distinctsourcecheck / exactstaging. No mainintegration/Host/CVQ/30B43/checkmarks.
 ## H10F exact source composition / original30 continuation — 2026-10-20
 
 Grant15 6ff7292f3793bc4e00c50e6531b58216d17b3c10 consumed for exact stage
