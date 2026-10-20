@@ -39,6 +39,120 @@ This amendment becomes effective after independent consistency review of its exa
 committed rules/ticket/index/runbook versions; subsequent exact child bindings refer
 to that reviewed revision. Current N1 immutable source/evidence hold is unchanged.
 
+## 30N7 — bounded native snapshot-tool wire codec / closure43 proposal
+
+Original30/runbook03 minimal readonly adapter, existing12 local batch and first
+CVQ source-order exception; originalPRD/CHG/SPEC/Context references unchanged.
+Baseline7e3c12197bb127313813f7e968c12d3ba5658088 engineeringhold includes exact
+CVQ24c package; not qualified/integrated source. ActiveH10I closure42/ticket14e05a54/
+correctiond60f27c4 remain bound to own immutable inputs; this independent additive
+source slice does not revoke/redefine that scope or alter its authorworktree.
+
+Reuse determination: N6 owns finite Responses HTTP stimulus, not native dynamic
+tool request/result wire. tests/staging narrow search tools/list/tools/call/jsonrpc/
+Streamable/MCP found no existing matchingcodec; do not build anotherMCPserver/
+HTTPframework. Native app-server dynamic tools are already supported in exact
+offline-generated0.163.0-alpha.10.2 schema, executableSHAf6dbf48c... . Root seal
+af639057 / prior d9e7c527 contains original ServerRequest,DynamicToolCallParams/
+Response,RequestId data/digests; official docs URLs there. This is versioned wire
+design evidence only, not trusted/enrolledbinary, native dispatch or Host proof.
+Prefer that native protocol over duplicate MCP/broker; later stdio/launch/control
+channel and restriction qualification remain separate necessary boundaries.
+
+CREATE EXACT library/local_orchestration/readonly_review_host.py
+and tests/test_readonly_review_host_wire.py. MODIFY/DELETE0, exports/deps0.
+New module is originalplanned readonly adapter wire boundary ONLY; no process/
+filesystem/socket/provider/CLI/config loading/runner/qualification invocation.
+New test file separates native request/result codec from N6 Responses HTTPfixture;
+reuse common production grant_authority.client _unique_object,
+_reject_json_constant,_check_json_depth (generic JSON validation only), existing
+CVQ QualificationModel/Digest/OpaqueMetadataId, hashlib/base64/json/Pydantic.
+No copied JSONdepth/duplicate parsers, browser/mock/PNG helpers or framework.
+
+Private immutable _SnapshotToolCall(QualificationModel) fields:
+request_id = exact strict signedint64 or bounded_native_identifier;
+thread_id,turn_id,call_id = bounded_native_identifier;
+file_id = existing CVQOpaqueMetadataId;
+scope Literal SOURCE_ONLY_UNQUALIFIED defaultsame.
+bounded_native_identifier is exactstr1..128 ASCII letters/digits/underscore/
+dot/colon/hyphen only; native IDs may startdigit, unlike CVQfile IDs. No coercion,
+normalization, Any/cast/model_construct or ambientrole. Unknownfields reject.
+This is a bounded native wire profile, not all arbitrary JSONRPC implementation
+conformance. Actual CLI response compatibility remains UNVERIFIED until qualified.
+
+PhaseA CONSTRUCTOR_ONLY: only these private aliases/model with ordinary validators
+and pure constructor/roundtrip/negative tests, no JSONcodec/effect/functionstub.
+No publicsuccessDTO changes. Root must independently construct/strict/mutate
+private bounds and seal exactPhaseA before the same Grant may rebind PhaseB.
+This is restricted construction order using existing localbatch precedent, not
+waiving complete typed preflight, new authority or stage. No fake first-red
+claim for absent new code, budget/history unchanged.
+
+PhaseB private functions, after reviewed constructorbaseline:
+_decode_snapshot_tool_call(frame:bytes,expected_thread_id:str,
+expected_turn_id:str)->_SnapshotToolCall|None.
+Accept exactly one complete UTF8 JSON object <=65536bytes; optional one terminal
+LF delimiter only, no secondobject/trailingdata. StrictJSON commonhelpers reject
+duplicates/nonfinite/depth; all structural/domain input validated at boundary.
+Exact topkeys id/method/params; method item/tool/call only. Params exact required
+arguments/callId/threadId/tool/turnId, optionalnamespace; namespace absent/null only,
+tool read_snapshot_blob only; arguments exactly {file_id: CVQOpaqueMetadataId}.
+Reject method/tool/namespace/unknownkeys/wrongthread/turn/invalidRPCid orshape,
+invalidUTF8/control/oversize/exception with None. Native IDs validated before
+exact expected comparisons. No arbitrarypath, command, callback, permission or
+actual refusal evidence: decoder refusal is NOT proof Host denied anything.
+
+_encode_snapshot_tool_result(call:_SnapshotToolCall,expected_file_id:OpaqueMetadataId,
+expected_digest:Digest,content:bytes)->bytes|None.
+Revalidate exactcall class/ordinary constructor, fileID and digest; source content
+exactbytes0..32768, sha256 must equal expectedDigest and requestedfileID exact.
+No truncation/retry/normalization. Valid output canonical compact UTF8 JSON+LF,
+top id/result; result contentItems=[{type:inputText,text:<compactJSON>}],success=true.
+Innertext exact {file_id,sha256,encoding:base64,data:<base64 originalbytes>}.
+Return None for mismatch/invalidinput, never filesystemread or successauthority.
+success only native wirecontent flag, not Grant/readapproval/CVQReport/admission.
+ExpectedIDs/digests are assertions until genuine protected source provides them;
+codec neither authenticates nor consumes/approves grants. Replaycount/ownership/
+Native denial/actual loadedsource observed by later existinghost mechanisms.
+
+N7T1 ordinary model constructors/roundtrip exactsigned64/string IDs, immutability,
+scope/unknownfield/boolean/null/whitespace/control/Unicode/boundary rejects;
+PhaseA focusedpytest/strict2/memorycompile/sourceblobs and one independent bound
+reverse gate before PhaseB.
+N7T2 phaseB valid exact native frame -> typedcall -> digestbound rawbytes result,
+independent literal expectedwire (not Expected derived from Actual), zero-byte/
+Unicode rawsource and maxbyte legal positives. ExistingJSONhelpers really invoked.
+N7T3 malformed/duplicate/nonfinite/deep/oversize/secondframe, tool/namespace/
+method/key/ID/context/file/digest/body mismatch, subclasses/null/booleans/integer
+edges; no read/effect/callback, no blanketdenial of valid fixtures.
+N7T4 remove contextbinding, filebinding, digest or limit check -> namedRED/
+exactrestoredGREEN; Root different valid-positive boundary. Final guarded
+focused plus affectedexisting commonclient/protocol consumers, strict2(noAny/
+skippedimports), compile/import/Git exacttwo sourceblobs. TEST->A->B N/A,
+no moved responsibility/testretirement. No arbitrary Host/model/version literals
+in generic policy; exactnative schema identity is projectdata, not claimedglobal.
+
+Profile HIGH_ASSURANCE source-only, Python3.11 strict, XSS_NOT_APPLICABLE (data
+codec no renderer). Forecast product<=230/test<=360effective, no screenshots/
+persistent executable evidence. >500effective triggers structural/reuse review,
+not forcedsplitting/minifying/deletion. No prompts/Owner or ticketnarrative in code.
+Root architecture/control/finalreviewer; original released C13 implementation
+owner /root/ticket30n4_peer_impl (allocationheldcc46a184), Luna/xhigh existing
+approved profile; distinct existing native-tools sourcehelper. Oneactive lane.
+Fresh author .worktrees/skill-improvement-30g-readonly-wire codex/same and Root
+-review; Context ctx-ticket30n7-readonly-wire-20261021. Temps
+johnny30-readonly-wire-owner-20261021 and -review-20261021; owner+TTLthrough
+review/seal/holdoverride, freshperrunbasetemp no reuse/cleanup. Grant candidate
+grant-ticket30n7-readonly-wire-20261021 revision01 NOT_ACTIVE until DOC_PASS/D8/
+fresh containment/Gitbaseline/commonconstructors. Root may bind PhaseA only,
+PhaseB conditional on reviewedactual model, no new Ownerquestion.
+Uncapped localhistoricalpolicy, percommand60/child55, resources/raw records;
+diagnose no-evidence repeat, no hard platform/policylimitbypass. No actualsubject
+Native/Host/server/thread/turn/model/socket/pipe/SCM/service/account/ACL/security/
+install/rights/network/cleanup/push/release/deploy/activation. No qualifiedsource/
+30B43/TAL/Recovery relief or newcheckmark. This is not fullHostadaptercompletion.
+
+
 ## 30N4-H10I — one owned verified subject launch / closure42 proposal
 
 Original30/runbook03 section3 minimum readonly entry, same parent
