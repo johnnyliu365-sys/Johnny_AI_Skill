@@ -1,4 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## H10D exact source composition / continuation — 2026-10-20
+
+ACTION_COMPLETED Root compositionGrant11: stage21ddef2a4ed274a68725576bfd981f2c8c213ff7
+parent63d44d47, exact2CREATE a6122342/718a93b2 equal reviewedcandidatea027765b;
+original48changedpaths unchanged, total50vs18bf. Rootguarded234PASS3.625s,
+strict4PASS2.110s, actualsource/memorycompile/import/LF/blobs, cleancommit.
+Distinct source/evidence helper SOURCE_MAPPING_PASS/DATA_INTEGRITY_PASS verifies
+parent/scope/bytes and available3filearchive gzip11611/packet92416 length/hash.
+No embeddedcommands executed, oldUNKNOWNraw not recreated. Rootcompositionraw
+source-composition-h10d-root-evidence-20261020.json SHA256
+05b9a733f38d4ab1e8f31db3c07ea808e3cff02833246fd585eb1cf4d63578ef.
+No mainintegration/Hostqualification/checkmark/30B43unblock. C10authorcontinues.
+Ancillary readonly architecturefollowup twice met agentthreadlimit atdifferent
+observedcapacitychanges; no unchangedretry/newAgent/policyworkaround. This is
+platformcapacity, not oldticketseconds. Root does necessary ordinaryarchitecture
+analysis from existing immutable producers instead. Next narrow child-token
+identity observation reuses H9 DTO/query/cleanup and B2 checkedowner; actual
+installedprocess/threadDACL and resume remain absent, not guessed fromsession.
+
 ## H10D source approval / exact composition Grant11 — 2026-10-20
 
 APPROVED_SOURCE_ENGINEERING_ONLY candidatea027765bf1e0a1f3b9370c345ccadd746bc57a39
