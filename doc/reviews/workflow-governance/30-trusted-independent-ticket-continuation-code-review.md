@@ -1,4 +1,50 @@
 # Ticket 30 source-contract decision review — 2026-10-18
+## C9 exact same-lifetime source admission — 2026-10-20
+
+Original30 closure29 committed1035210e11863dae50ce2c1907fd40132149e0c5,
+leaf2a5c0c602f12e80d53c5eb29cf3ad2b5e40fb313,
+LFde0b5c58697db6993c289da4e2e1269ae592187b95577170a789fd0e57965d11,
+independent native-tools DOC_PASS, D8 registry matched. This is only new owned
+directory creation with protection from the start; existing-object ACL mutation,
+unsafe Recover/rollback/delete remain not admitted. Actual native port uses
+retained ancestor handles and fake-native behavioral coverage, not source scan.
+
+Normal NativeSetupManifest/NativeEnrollment/ProtectionPlan constructor evidence
+is REUSED from exact C8 source57812f34 fake-selector build/constructor checks,
+sealefa2badc; Git diff57812f34..beb7a463 over the entire native_windows subtree
+is empty. Direct readback of four underlying blobs is unchanged (NativeEnrollment
+6cac5030, NativeManifest7c1f0ab4, ProtectionPlanb8dc2d84, SelfTests01dc4afe).
+Do not rerun an unchanged C8 campaign or demand not-yet-built C9 types to build
+themselves. New source/fake verification uses the same source-order exception.
+
+Child grant-ticket30g-owned-directory-20261020 revision01 ACTIVE under parent
+batch-checklist-local-20261019-uncapped. Sourcebaseline
+beb7a4635d7529d424cc320ea01a2e53574f88a1; author /root/ticket30n4_peer_impl,
+H10B1 allocation RELEASED_TO_IMMUTABLE_HOLD; Root sole reviewer/orchestrator,
+distinct native-tools helper. Fresh ctx-ticket30g-owned-directory-20261020.
+CREATE ONLY native_windows/NativeOwnedDirectoryCreation.cs,
+Win32OwnedDirectoryCreationPort.cs, NativeOwnedDirectoryCreationSelfTests.cs;
+MODIFY ONLY existing SelfTests.cs (fake RunContracts(manifest) wiring) and
+JohnnyAuthority.Tools.csproj (three Compile includes); DELETE0. Program/old
+readback/manifest/policy stay read-only; no operational effect CLI.
+
+Fresh contained nonreparse WTs .worktrees/skill-improvement-30g-owned-directory
+and matching-review / codex/same allocated clean at exactbaseline; linked Git
+pointers/metadata, roots/ancestors and owned Temp nonreparse checks read back.
+OwnedTemp/johnny30g-owned-directory-20261020 and -review-20261020 registered to
+author/Root respectively for bounded fake build/test/evidence/one cache; TTL
+through review/seal then referenced hold, no expiry deletion. No active B2 path
+is inspected or modified; Python B2 and these native C# paths are disjoint.
+
+Child55/outer60 initial bounds/offline.NET10.0.302/source-cleared NuGet and
+resource history retained; only fake self-test selector may execute, not native
+job/fixture/inspect/create/account/ACL/SCM/Host/network/model/cleanup commands.
+Source compilation cannot establish privileges, lock compatibility, protected
+issuer/observer, qualification or30B43 clearance. No push/release/deploy/formal
+activation; R0/DAP/TAL/Recovery remain unchanged. Actual settings/install stay
+one later exact Owner package, not this child Grant.
+ACTION_COMPLETED admission -> AUTO_CONTINUE IMPLEMENT named independent owner.
+
 ## Remaining native dependency decisions — source preparation only — 2026-10-20
 
 Bounded install-inventory helper confirms existing NativeTools is plan/readback,
