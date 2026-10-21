@@ -1,5 +1,29 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B frozen reverse-mutation Grant13f — 2026-10-21
+
+Candidate650f1c37ebef9741ec1691e0e5f22fe7f60e8c85/treeca11fc39 has exact five
+authorized blobs and baseline7606a21d; Root own registered review WT clean exactFF.
+Independent helper actual FINAL ENGINEERING_SOURCE_PASS_NOT_QUALIFICATION on
+these immutable bytes/full guard04 evidence, no mapped source finding. New test
+867effective lines: one focused composition responsibility/shared fakes, reviewed
+structure signal, no unrelated engine or forced split. Formal qualification open.
+
+AO actual FINAL PLAN_PASS for registered n14b-mutation-plan-r01.json,
+SHA256cab60c087cfc68e1385777844e0256e9d04978101aac85ccc12eaaf9a491c3fd:
+8selectors/9exact edits/pins match; same SDK-deny prefix SHAa507cac3 and three
+fakeowner guard SHA55835e32. Selected FunctionDef-only AST compile with original
+future-annotations, no class/Enum recreation. Root Grant13f under same batch may
+execute seven closure54T5 red/exact-restored-green pairs plus Root independent
+final-controller door in this exact review snapshot. Register RootTemp per-run
+root-n14b-mut-<probe>-<RED|GREEN> and n14b-mut-<probe>-<RED|GREEN>-original.json,
+Rootowner/TTLthroughreviewseal/holds; no overwrite/cleanup. Source disk stays exact;
+memory-only mutation dies with process, no Git history/scratch commit mutation.
+Each child55s/bounded selected test/noSDK or external effect; RED requires named
+call-phase failure, GREEN restored exact source+pass, both zero guarded attempts.
+Full raw saved/read before verdict, zero red is finding. This is engineering
+truthfulness evidence, not qualified native/Host review or 30B43 completion.
+
 ## N14B green source snapshot Grant13e — 2026-10-21
 
 Guard04 full original13906bytes SHA86d1abf380fc1ac97bfae48992a7f67294427ee34ef2cde4325d5d60388f3ddc:
