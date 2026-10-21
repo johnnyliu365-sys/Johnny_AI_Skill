@@ -1,5 +1,15 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Exact metadata-only continuation admission
+
+Different-seat /root/native_service_impl DOC_PASS on d185e9be, ticket blob
+f285ba18865b70e9a5ac98e9f97a17ce68a11c19 / LF e376fd07b3ac04fe9d8b25872981f101ea797a1a55588584678d5e419cad7c1d,
+two matching registry edges and checklist107. Root activates only that exact
+grant-ticket30-host-api-metadata-20261021. CLI help/offline schema output is a
+temporary metadata artifact, not filesystem read-only, session/qualification,
+Host test or model permission. No SDK package download/use/install until the
+pending explicit license decision. Original source/OS/30B/43 holds remain.
+
 ## Provisioning500e10f1 — source engineering acceptance, not installation
 
 Original same five-path Grant revision01; immutable500e10f17ebcd0b5e40bcd012cdc0f91d04c05c0,
