@@ -41,6 +41,103 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
+## 30N14C — one protected read session / closure55 local construction
+
+Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03; unchanged
+uncapped batch and first-CVQ construction-order exception. Baseline immutable
+650f1c37ebef9741ec1691e0e5f22fe7f60e8c85 engineering hold, NOT formal authority.
+This is shortest step2 below: connect actual retained subject/OS peer proof to
+existing trusted-source/store consume. It directly prepares30B R1 and43 protected
+observation; fake positive is not Host qualification or either ticket completion.
+State PREFLIGHT_REQUIRED; no production edit until independent exact DOC_PASS
+and Root child Grant. No new PRD/SPEC/framework/Runner or operational authority.
+
+Exact scope, zero DELETE/dependencies/exports/SCM/Registry/ABI/permissions edits:
+MODIFY library/local_orchestration/grant_authority/windows_protected_store.py
+CREATE library/local_orchestration/grant_authority/windows_protected_read_session.py
+CREATE tests/test_grant_authority_windows_protected_read_session.py
+Reuse original store/native/ledger/snapshot/transport/pipe/message-identity/process
+reader/peer/token/job/teardown modules and their shared fakes. No copied SDK harness.
+Store change only adds bound opener and real settled-record return via one common
+consume implementation; old _read_installed_snapshot()->tuple[bytes,...] unchanged.
+_open_bound_protected_grant_store(expected_approval,cancellation,deadline) requires
+fresh exact approval equality BEFORE native pins/SQLite constructor. Existing
+unbound private opener behavior remains; it cannot become this new entry's bypass.
+_read_installed_snapshot_record()->GrantRecord returns actual SETTLED/COMPLETE
+record from the SAME single consume, not synthetic record, second ledger read,
+callback, exposed ledger/approval getter or repeated snapshot read.
+
+Private _serve_one_protected_read(launch:_RetainedProtectedSubjectLaunch,
+cancellation:threading.Event,cancellation_event_owner:PyHANDLE,deadline:float)->None.
+Borrow service-lifetime exact native event owner: positive original .handle alias,
+retain exact owner throughout, check alias drift; never accept bare integer or
+close caller-owned cancellation event. Private trusted composition, not arbitrary
+same-process mutation isolation. Exact typed source/controller/thread validation,
+finite deadline<=10s; retain original enrollment/token/job/creation/identity/refs.
+
+Order is mandatory:
+1 Original creation.process_owner + job native owner -> existing retained reader
+  first observation. Require original PID/session/job MEMBER/enrolled image.
+2 Build existing ProtectedPeerEnrollment ONLY from protected approval/record and
+  actual retained identity/process facts: grant/operation/plan/peer/session/SID/
+  session/LUID/PID/creationtime/jobref/image+configuration paths/digests. No caller
+  observation, plan, ref, SID, path or trusted flag. Use normal strict constructors.
+3 Existing protected pipe -> existing bounded MessagePipeIO owns pipe; connect,
+  read_message once. No stitch/second-message/unknown alias fallback.
+4 AFTER read, existing last-message observer proves identity and RevertToSelf;
+  observe retained process again, then existing N14B _member_for_file/N10 reader
+  reprove executable and configuration (empty-range bytes only, fullfile proof).
+5 Build actual ProtectedPeerObservation, existing exact peer match. Before match:
+  zero store/SQLite/issue/claim/snapshot. Then decode existing request, exact twoIDs.
+6 Existing _read_installed_subject_enrollment(expected_approval,cancellation,
+  deadline) rereads protected bundle; require current approval/record equal retained
+  pair. Then bound store open -> original issue/CLAIMED_NEW/orderedread/COMPLETE.
+7 Encode existing read response from ACTUAL settled record, close store before
+  write_frame, then close pipe. Do not send private snapshot tuple over pipe.
+8 Existing windows_subject_process_teardown._terminate_confirm_exit_and_close
+  proves actual original subject exit before original handles close; then
+  job.close(owner_ref), token.close(owner_ref). No PID reopen/substitute owners.
+
+Recovery: never mask fatal RevertToSelf or active-IO uncertainty as ordinary
+refusal. Stop native cleanup immediately, strongly hold original launch/pipeIO/
+store/event owner and original error; fail closed, no new read/retry. Claim/member/
+settle/store-close/write uncertainty keeps original terminal/recovery semantics.
+Known pre-effect refusal may use existing safe pipe close/subject teardown;
+first uncertain close/teardown stops all later close. Bounded private recovery
+container/poison only if necessary to keep these original resources alive; no
+parallel recovery engine/state machine or clearing existing Recovery. No swallowed
+BaseException, unsafe finalizer or cancellation-owner close.
+
+Closure55 tests: T1 full positive ordering/one request/one consume/real terminal
+record response and exact retained derivation; T2 malformed types/borrowed event
+alias/thread/controller and first/second process PID/session/time/job/image drift;
+T3 last-message SID/session/LUID/token/level mismatch, malformed/mismatched request;
+T4 either file reproof or fresh protected approval/enrollment drift rejects before
+storage; bound-opener mismatch zero nativepins/SQLite; T5 claimed/terminal/replay
+does not reread, no fabricatedCOMPLETE; T6 fatalrevert/pendingIO/store/member/
+settle/write/teardown faults retain exact owners/no retry/no subsequentunsafeclose.
+T7 preserve old store/snapshot semantics and all affected N10/N13/N14A/N14B/transport/
+peer suites. Named reverse mutations: bound-opener check, second process proof,
+each file reproof, actual terminalrecord binding, exit-before-close; intended cell
+RED/exact restoredGREEN. Root independently different door. Full originals read,
+SDK-deny fake-only not OS proof. New behavior no ceremonial stub-first-red.
+
+Owner retained /root/ticket30n4_peer_impl, current Luna/xhigh; Root AO/sole reviewer/
+orchestrator, retained different source helper. Reuse clean author/review N14B
+worktrees and branches at650f1c37; completed N14B allocation released, immutable
+evidence held. Python3.11 strict/noAny/no bypass constructors; new private entry
+construction need not exist before source-only bootstrap. Author SOURCE_EDIT_ONLY
+first; Root inspect exact diff/fakes/import before separate checker/test/commit
+admission. Initial child55/outer60s, uncapped cumulative/count, preserve old ledgers.
+Expected growth store40..80/app250..380/test350..500; >500effective requires
+structure review, not split/minify/loosenassertions. Temp existing exact registered
+owner/Root directories; per-run exact files/basetemps named in execution grant,
+TTLthroughseal, evidence/Recovery holds overrideexpiry; no unauthorized cleanup.
+XSS/UI N/A; no product refactor or unrelated capability. Return fullcandidate/
+parent/tree/threeblobs/checks/findings/deviations/holds. No actual SDK/native
+campaign, install/account/security/config/network/model/newfees/push/release/
+deploy/formalactivation. 30B43/R0/DAP/TAL/E01/Recovery remain unchanged.
+
 ## 30N14B — retained protected launch provenance / closure54 engineering accepted
 
 Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03 sections3/6;
