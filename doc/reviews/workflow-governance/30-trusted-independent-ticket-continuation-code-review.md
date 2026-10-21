@@ -1,5 +1,17 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Exact active branch binding correction — 2026-10-21
+
+Grant16's earlier codex/same shorthand was not an exact branch name. Fresh
+readback confirms author WT skill-improvement-30g-protected-launch is on
+codex/skill-improvement-30g-protected-launch at b016aed2; native author WT
+skill-improvement-30-native-service is on codex/skill-improvement-30-native-service
+at 0014778d with its owned source changes. Current leaf now names these exact
+branches. No branch/source baseline/owner/scope/authority changes or new Host
+effect. Historical shorthand is retained below and corrected by this entry.
+Execution remains pending Root source and fake-effect admission; two worker
+files have only source-ready evidence, not passing tests or qualification.
+
 ## Narrow correction checkpoint / remaining acceptance boundaries — 2026-10-21
 
 N14B is not repeated. N14C b016aed2 accepted as engineering source only and own

@@ -34,7 +34,8 @@ runtime/observer are subsequent direct dependencies, not new governance projects
 Precise closure57 / derived Grant16 candidate under existing uncapped parent:
 baseline b016aed2ee9c20145be5069fa98cdc501702df35; author retained
 /root/ticket30n4_peer_impl, existing Luna/xhigh capability and repo-contained own
-.worktrees/skill-improvement-30g-protected-launch, branch codex/same; Root sole
+.worktrees/skill-improvement-30g-protected-launch,
+branch codex/skill-improvement-30g-protected-launch; Root sole
 reviewer/orchestrator with different-seat source helper. Existing private constructor
 bootstrap/source-only ordering remains; no true Host qualification prerequisite
 for writing its source. Commit this allocation and independently review before
@@ -144,6 +145,7 @@ library/local_orchestration/native_windows/WindowsPayloadReadback.cs
 library/local_orchestration/native_windows/NativePayloadReadbackSelfTests.cs
 Original seven paths remain allowed, zero other CREATE/MODIFY/DELETE/dependencies.
 Source baseline0014778d, parent650f1c37 preserved; same own native-service WT,
+branch codex/skill-improvement-30-native-service,
 original Luna/xhigh author/Root reviewer/different helper, original batch lineage.
 This exact amendment needs ordinary independent DOC_PASS and Root child15f
 activation; no additional Owner decision or operational Grant. Initial edits only,
