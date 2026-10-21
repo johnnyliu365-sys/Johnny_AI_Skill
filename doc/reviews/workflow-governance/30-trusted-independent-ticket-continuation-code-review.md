@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Existing native reader correction Grant15f activation — 2026-10-21
+
+Independent retained helper DOC_PASS exact60cfec0a2949543af72fa2736492f8d64a4198dc,
+leaf3d91116db7341bc9e660df660dff77df64cd8d27 LF aaf2236289121487c8bedc41be896c5b85fe649aa4a67dd81a96bb24965fb165,
+both D8 edges, only two-doc correction. Root derives original30 child15f under
+uncapped batch: same native author/own WT/source baseline0014778d(parent650f1c37),
+exact original seven paths plus three existing-reader MODIFY paths in that leaf.
+Zero other CREATE/MODIFY/DELETE/dependencies. Fresh readback shows only author's
+owned F1/F2 Bootstrap d06aa1e3/test4348c80d changes; these remain pending work, not
+authority or approved source. Preserve them; no overwrite from stale candidate.
+Same source-only initial admission, Root sole reviewer, existing retained helper;
+no import/test/compiler/commit or SDK/Host/process effect by author yet. Exact
+source/fakes must return before Root admits execution and source integration.
+This amendment leaves reviewed closure57/Grant16 unchanged and does not revoke
+its independent two-create work. Formal main/30B/43/qualification remain blocked.
+Existing payload producer is absent; exact ._pth validation is not package proof.
+Root read Microsoft QueryFullProcessImageName/Executable Images/CreateFile sharing
+documentation: stable path correlation is not claimed to solve pre-open ABA.
+No reflection, fixed-version fabrication, new authority source or permission grant.
+
 ## Fixed worker source Grant16 activation — 2026-10-21
 
 Independent retained /root/ticket30_native_tools_review DOC_PASS exact5bc50acfc570d30232e5d1762bd18f5feee37e4f,
