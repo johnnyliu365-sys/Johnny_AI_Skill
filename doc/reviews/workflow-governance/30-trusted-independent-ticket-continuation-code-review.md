@@ -1,5 +1,32 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Native offline self-test admission15d / N14C recovery assertion — 2026-10-21
+
+Original30/closure56/uncapped local parent only. Root read current seven source
+blobs c047b829/acbafa45/4a36ed28/cf038250/1f357a4a/b85049c3/d109e689,
+explicit Compile list and injected service/bootstrap/worker/Registry fakes. Build09
+original confirms matching Compile inputs, offline SDK10.0.302 build0warnings/errors.
+Author report had incorrect SHA strings; actual bytes, not report, are authority.
+Root may independently build the same exact project using atomic Python argv,
+cleared NuGet sources, existing packs, no package download, shared compiler/server
+or first-run certificate creation. Fresh outputs under registered Root native
+review Temp; child55s. Then ONLY self-test/enrollment-contract-self-test/
+job-contract-self-test verbs may run against that exact output, injected ports
+and in-memory data. No service/job-self-test/inspect/observe/install/ACL/Registry/
+account/network/native adversarial execution. Inspect full raw before verdict.
+An injected-port test is not independent OS observation or CVQ qualification.
+
+N14C strict07 passed3, genuine positive07 passed with SDK attempts empty; source
+test7ade67d9, product cfd44570/ff204208. Full affected behavior03 is419PASS/1FAIL,
+SDK attempts empty, original18043bytes SHA89fa4ff3259ce4560f7ba46bccf84c715f2fc9506ae009d8dd25a4333b740e7e.
+Sole failure asserts hold.pipe_io is None after a completed pipe close followed
+by original-process teardown uncertainty. Product intentionally retains that
+exact already-closed IO/store as recovery evidence. Same14f author corrects
+test ownership expectation, retains close-once/no job/token close assertions;
+no product relaxation, no new path or repeated whole-batch run before changed bytes.
+Original failures/stale handoff pin and N14C source06/strict06/positive04..06
+diagnostics remain preserved in registered Temp; no cleanup or qualification claim.
+
 ## Native direct compiler admission / Grant15c — 2026-10-21
 
 Native15b02/03 failed before source compilation at identical NuGet defaults
