@@ -1,5 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Exact operational paths correction — 2026-10-21
+
+No security/Registry/service operation performed. Frozen650f1c37 actual store
+windows_protected_store_native._path_entries fixes CommonAppData/JohnnyGrantAuthority/
+state/grants.sqlite3, NOT earlier proposed ProgramData/Johnny/GrantAuthority.
+Fixed source windows_approval_registry selects HKLM/SYSTEM/ControlSetNNN from
+SYSTEM/Select.Current then Services/JohnnyGrantAuthority/Parameters, REG_BINARY
+ApprovalV1 and SubjectEnrollmentV1. No caller-selected Software key or stale
+ControlSet guess may be used. Exact current filesystem metadata-only Test-Path:
+C:/ProgramData/JohnnyGrantAuthority, its state and grants.sqlite3 all false.
+Earlier alternate-path absence was narrower, not proof of actualstore absence.
+This corrects installation preparation only, grants no write/effect or qualification.
+
 ## N14C direct-session admission / child Grant14a — 2026-10-21
 
 Same original30 closure55 ticket3e7a8a95ecd8e0864cc2a2270e58ba1b072aa88d /
