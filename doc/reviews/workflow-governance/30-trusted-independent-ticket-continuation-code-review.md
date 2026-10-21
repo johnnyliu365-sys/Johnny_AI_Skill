@@ -1,5 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 source findings / bounded Root baseline-probe Grant10 — 2026-10-21
+
+Sourcehelper actual FINAL finds F1 legal AUTO_INHERITED ancestor globally rejected,
+F2 shared facts cap rejects directories although closure48 cap is DB-only, and
+F3 local known-malformed descriptor rejection conflated with uncertain SDK call.
+Root verifies exact source predicates and frozen T1/T2/T3. Candidate remains
+CHANGES_REQUESTED, no source-stage integration. Existing 236green does not cover
+these masked paths. Native/test size signal reviewed: cohesive responsibilities
+and shared parameterized helpers, no forced split or duplicate framework.
+
+Root Grant10 permits three registered temporary baseline probes in exact reviewed
+guard r06 on immutableae9d1955, fresh RootTemp root-n12-findings-baseline-01.
+Packet n12-root-finding-probes.json contains Python-only fake augmentation and
+memory-attached tests, not production edits: safe inherited ancestor, directory
+metadata cap distinction, known malformed descriptor closes known owners without
+unknown poison. Expected baselineRED, full unfiltered output/guarddenials retained;
+unknown SDK exceptions remain separately recovery-required. No source commit,
+Native/SDK/SQLite/Host effect or weakened guard. Same owner/TTL/holds/bounds.
+
+Four-group mutation plan independently static PLAN_PASS onae9d1955 remains
+NOT_EXECUTED, must rebind after repairs. AO chooses minimum shared-facts reuse
+repair under batch, then original ticket/registry exact allowlist update and
+independent consistency review before any extra-path edit. No new PRD/engine or
+Owner technical question. E01 UNKNOWN/rawmissing/30B43/checklist unchanged.
+
 ## N12 immutable candidate / Root engineering review Grant09 — 2026-10-21
 
 Retained author actual FINAL commit-only COMPLETED candidate
