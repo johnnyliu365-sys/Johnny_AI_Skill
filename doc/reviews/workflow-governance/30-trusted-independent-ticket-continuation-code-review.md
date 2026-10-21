@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Exact codec construction admission — 2026-10-21
+
+Actual different-seat /root/native_service_impl FINAL returns DOC_PASS for
+control1b2e36b54805e5cfb5d3d026d059c99d5a646db7, ticket blob
+e9174f7fd0cebcc3c83ef67175124dc7aba119ad / LF
+d2f45c44568252b94d7fc6ccc95ae5b8b85397ff7d0ff0957485d071a946b8d8.
+Root activates grant-ticket30-host-websocket-codec-20261021 revision01 ONLY for
+the existing exact three-path SOURCE_EDIT_ONLY slice at baseline6a4dd605.
+Released channel author /root/ticket30n4_peer_impl may clean-fast-forward its own
+protected-launch worktree from21f5b760 to6a4dd605, then create the two named test
+harness files and add the dev-only pin. No tests/import/checker/commit/native/
+Host effect is admitted in this first construction action. Return SOURCE_READY
+with exact source identities; Root then admits the bounded verification action.
+The helper is not a qualified isolation reviewer. No checklist item,30B/43 hold,
+runtime payload, formal authority or Host qualification changes by this admission.
+ACTION_COMPLETED -> AUTO_CONTINUE: this exact construction, not another plan.
+
 ## Engineering-hold readback and installed-version wire evidence
 
 Different-seat /root/ticket30n4_peer_impl actual FINAL verifies hold clean6a4dd605,
