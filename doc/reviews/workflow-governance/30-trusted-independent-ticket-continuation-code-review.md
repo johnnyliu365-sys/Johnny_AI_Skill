@@ -1,5 +1,49 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 corrective Grant02 / SOURCE_EDIT_ONLY — 2026-10-21
+
+Distinct sourcehelper actual FINAL on5accec04: ticket689e097f and registry
+LF6730477e392bde847446d67eb6d7b5799cb9d895ff752fdc4554a81c314ab4c2,
+revision96/only04checked; exact3CREATE scope unchanged, same-path static correction
+fits closure48. Guardr02 CHANGES_REQUIRED: original owner constructor reads handle
+before close gate; real HANDLE factory must be denied. Oldr02 never executed.
+
+Derive grant-ticket30n12-protected-store-20261021 revision02 ACTIVE_SOURCE_EDIT_ONLY,
+parent originalbatch/Grant01/closure48. SAME retained owner/Context/worktree/branch,
+source baselinea6071d5f, WIPa195c96d/e1047dde/17208857 independently readback
+unchanged, only3untracked paths. Original WIP/incident bytes immutable in6b61dfb3,
+not candidate authority. Permit ONLY same3path source/test edits and registered
+ownerTemp evidence/patch preparation plus ordinary read/Gitmetadata. No pytest,
+candidate import, SDK/native/SQLite execution, debug script, compile/checker,
+source commit, cleanup/rollback/reset or other effect in this edit-only window.
+This is narrower than ticket's possible static-check lane; no test permission
+restored while guard remains pending. No other active implementer lane.
+
+Correct frozen gaps together: SYSTEM/Admin only (remove TrustedInstaller);
+protected DB DACL as well as managed dirs; exact typed/bounded readonly valid
+self-relative SDK descriptor (reuse existing mechanical copy routine where exact,
+not process-specific policy/copyparser/newframework); per-operation/final controller,
+explicit pseudo/borrowed aliases/recovery; independent literal ABI oracles, not
+product constants. Preserve legal ordinary/inherited/inherit-only ancestor semantics,
+do not use all-reject or blanket managed policy. Complete existing N12T1-4 cases
+using shared parameterized fakes; no new requirement/path/helper framework.
+Author may describe four mutant groups, not execute them in this window.
+
+Root r03 draft now restricts init BEFORE any property read to exact fake type,
+empty during candidate import; HANDLE/HANDLEType constructor denied, directclose
+fake-only. Registered RootTemp n12-root-guard-r03.json SHA
+7cc83edc55ebb13b62f4f47e7b5d7bb1884e45507f6662f2c79a5884de08c2b2
+is NOT_EXECUTED and needs distinct delta review/selfcheck before any candidate test.
+Root alone will run pinned fake diagnostics after actualFINAL and audit; final
+committed-candidate review/mutations remain necessary. No Host isolation claim.
+
+Return actualFINAL BLOCKED / STATIC_SOURCE_READY_ROOT_VERIFICATION_PENDING,
+exact3hashes/status/no commit/remaining gaps. Missing original raw and unknown
+Native calls stay independent E01 hold; no retrospective approval/Owner risk
+acceptance or incident discharge. No actual Host/install/security/service/network/
+models/newfees/push/release/deploy/formalactivation/cleanupretry/30B43解除.
+Historical costs/failures remain, no reset or ordinaryOwnerquestion.
+
 ## N12 guard correction plan / source-static lane proposal — 2026-10-21
 
 Distinct helper actual FINAL verifies E01 seal5/5 and WIP exact3blobs; original
