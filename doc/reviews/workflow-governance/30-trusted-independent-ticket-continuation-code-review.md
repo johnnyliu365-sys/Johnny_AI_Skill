@@ -1,5 +1,32 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 Root guard selfcheck Grant03 — 2026-10-21
+
+Distinct helper actual FINAL GUARD_PLAN_PASS_LOCAL_SELFCHECK_ONLY on r03
+SHA7cc83edc55ebb13b62f4f47e7b5d7bb1884e45507f6662f2c79a5884de08c2b2:
+init exact fake before any property, directclose fake-only, HANDLE factory/type
+construction denied. Same helper DOC_PASS for ticket689e097f/LF6730477e and
+revision96/only04. No tests/Native qualification performed by helper.
+
+Root-only grant-ticket30n12-guard-selfcheck-20261021 revision03 ACTIVE_SELFCHECK_ONLY.
+Permit one finite Root controlled Python child using accepted Root stage
+a6071d5f (NOT active authorWT/candidate). Registered RootTemp
+n12-root-guard-selfcheck-r03.py SHA3923de22185dcc6254fd9cf6750b9b18342a7e4bf79643646016024e4709a39a
+prepared from exact r03 guard prefix, strips all N12/candidate/test imports.
+Only patched Python denial functions and Python-only GoodFake/BadFake owners;
+temporarily bind HANDLEType to fake for exact-type existing constructor semantics.
+Assert BadFake denied before handle property/Close; GoodFake closes once;
+KnownFolder/SQLite/file/security/DLLloaders/handleconstructors/process/socket calls
+must hit already-installed Python denials, never actual APIs. No real SDKhandle
+constructed, no target/source read or production/candidate execution.
+Minimal nonsecret childenv/noUserSite/-B, timeout55/outer60; preserve complete
+original stdout/stderr/elapsed/exit before parsing, mismatch stops unchanged rerun.
+No source/test mutation, cleanup, install/account/service/ACL/config, network,
+model/newfees, push/release/deploy/formalactivation or qualifiedHost claim.
+A selfcheckPASS would permit only later scoped guard/candidate admission decision,
+not automatically restore candidate tests or author execution. AuthorGrant02 stays
+SOURCE_EDIT_ONLY; E01 UNKNOWN/rawmissing/Recoveryholds/30B43 unchanged.
+
 ## N12 corrective Grant02 / SOURCE_EDIT_ONLY — 2026-10-21
 
 Distinct sourcehelper actual FINAL on5accec04: ticket689e097f and registry
