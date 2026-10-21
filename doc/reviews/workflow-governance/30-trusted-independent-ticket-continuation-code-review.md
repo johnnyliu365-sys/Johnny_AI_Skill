@@ -1,5 +1,26 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Integrated launch evidence QA and passive setup scope
+
+Actual different-seat BYTE_QA_PASS confirms both integrated06 originals in
+control19198c36: byte lengths/digests/full JSON match, source unchanged, actual
+hold source root,338PASS/SDK[]. Provenance JSON carries commit/paths/blobs/raw
+checkout hashes; it has NO tree field. The c1480637 tree is separate trusted Git
+readback, not an invented JSON observation. The helper explicitly corrected this
+attribution without rerunning source. Its unnecessary PowerShell byte-cast blob
+probe failed before its fallback; no Start-Process or Remove-Item executed and
+both possible generic scratch paths were observed absent. No cleanup was needed
+or retried. Those diagnostic errors do not replace the successful two-record QA.
+
+Root passive Get-Acl on the pinned installed CLI and its parents shows the image
+in GameBoy AppData owned by controller SID...1001, with inherited RX for SID...1002;
+Get-LocalUser found no matching local1002 user. Do NOT equate that orphan/unresolved
+ACE with the not-yet-created review account, infer access or alter user-home ACLs.
+Actual review-account SID/session, exact image accessibility, final executable and
+protected service/Registry setup still require their separate bounded OS package.
+One initial PowerShell foreach pipeline syntax failed before any read; the fixed
+read-only query returned these ACLs. No file, account, ACL or service was changed.
+
 ## Host launch committed/integrated readback and narrow continuation
 
 Author8814531b26ccb99e2c83e6c3218062f961bc15e5 has exact parent25c49074,
