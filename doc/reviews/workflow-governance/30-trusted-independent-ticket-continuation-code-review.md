@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 lifecycle backing/terminal state probes / Root Grant17 — 2026-10-21
+
+Immutableb3e3117 final strict4/399/three original Root cases green; four author
+mutation groups and independent exact60 door all namedRED/exactGREEN, effects[].
+Sourcehelper actual FINAL SOURCE_DELTA_PASS_NOT_QUALIFICATION for F1/F2/F3.
+No conclusion of full approval yet: Root identifies original N12T3 retention/
+terminal risks in _retain_unknown's early _retained return and close_known lacking
+a retained-state guard. Newer ledger/approval may not join an earlier owners-only
+hold; clearing cancellation after failed close may permit another close effect.
+
+Grant17 permits two registered Python-only baseline probes on exactb3e3117 under
+unchanged r06 guards, RootTemp root-n12-retention-baseline-01, child55/outer60.
+Packet n12-root-retention-probes.json captures fake produced-ledger identity and
+asserts it is held; then asserts cleared cancellation cannot retry held owners.
+No production mutation, true SQLite/Native/Host/thread process or cleanup effect;
+fake subclass constructor only Python path/event bookkeeping. Original T3 not
+new best practice or scope expansion; any actual RED routes same-ticket bounded
+repair, no silent approval. Evidence/qualification/E01 holds remain unchanged.
+
 ## N12 closure49 immutable candidate / Root review Grant16 — 2026-10-21
 
 Author actual FINAL commit-only b3e3117b55d30be8762808440e7da4c7d1e4a450,
