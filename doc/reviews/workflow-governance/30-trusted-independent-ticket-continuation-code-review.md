@@ -1,5 +1,34 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14C source-ready construction diagnostics / Root Grant14b — 2026-10-21
+
+AuthoractualFINAL SOURCE_READY, baseline650f1c37 unchanged/threeauthorizedpaths:
+storecfd4457084d4e906297032101f55cd5ed1e35944,
+appfad42a35bfee5b4fe2ef8c4fc3761c7c6474b637,
+test2de00055904396d6d94e940081d3c091bbe18626. No tests/commit claimed. Retrieval
+scope deviation (earlier wrongticket/broadtruncated read) recorded, exactclosure55
+then reread; no authority inferred from truncated history. Source888/test1255
+physical lines trigger structure review, not accepted as normal delivery yet.
+
+Root read full3path diff/app/test and existing direct contracts. Initial source
+finding: app _validate_launch reuses PRE-launch _require_original_inputs after
+successful launch although it requires job._subject_launch_attempted is False;
+this necessarily rejects genuine retained launches. Do not clear that legitimate
+state or weaken existing N14B/preparation validation to make new entry green.
+Also _ObservedEnrollmentFile must import from defining windows_service, notN14A;
+positive object.__new__(ProtectedGrantStore) is not ordinary-constructor evidence,
+bound-opener test patches a nonexistent direct native-class alias. Preserve these
+bytes and diagnose once, not loopblindly or pretend allrefusal functioncomplete.
+
+RootGrant14b only independent bounded memorycompile and strict3 with ordinary
+static checker, child55s/minimalnonsecret env/noSite/noBytecode; no target module
+execution/import/SDK/test/SQLite/network. Exact originals and sourcepins under
+registered RootTemp johnny30-protected-launch-review-20261021/n14c-strict-01-original.json
+and n14c-source-ready-01.json, cache n14c-mypy-cache; Rootowner/TTLthroughseal/holds,
+no overwrite/cleanup. Later fake runtime admission separate after any necessary
+fixture repairs and source correction. This is construction diagnostics, not
+formal review evidence of uncommitted source or Hostqualification.
+
 ## Native service entry preflight / child Grant15a — 2026-10-21
 
 Original30 closure56 fixed at6cd1b0f578628d9d1dee4392ea3b50ad02943cb0,
