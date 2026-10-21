@@ -1,5 +1,19 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Exact retained image lease construction admission
+
+Different-seat native helper actual DOC_PASS on f850ae6e Ticket30 blob
+9c82fb0d50b598724f423773c8733e3aae438520 / LF
+27766e766595b5a025052fab067ad598a198f7acceea41ae28cdf285a95f2ffe,
+two matching registry edges/checklist108. Existing native owners/read/drain/
+poisoning and stable-facts helpers suffice; default snapshot64MiB and32KiB reads
+remain unchanged. Root activates ONLY grant-ticket30-host-image-lease-20261021
+revision01 three-path SOURCE_EDIT_ONLY scope at sourcebaselinec4f1ce70. Released
+codec author retains own same worktree/branch; ordinary typed construction is
+allowed before that new private type exists. Source edit is not real image read,
+Host launch, expected-data authority, OS consent or CVQ qualification. No new
+Agent/PRD/Ticket/framework. ACTION_COMPLETED -> exact admitted implementation.
+
 ## Codec exact committed and integrated source readback
 
 Author committed c4f1ce701cc5913b984710b41f892ec0432d8f2d, parent6a4dd605,
