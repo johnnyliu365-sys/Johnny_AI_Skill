@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 corrective Grant08 ACTIVE_SOURCE_ONLY — 2026-10-21
+
+Distinct helper actual FINAL DOC_PASS at3cba85de verifies closure52 leaf
+56632da4dae68f0ea29d45432c2cb31e895054c2 LF84f563836540ff23973852815dfc8204bc32d25cf41efb398bf6112f540a5235,
+both registry digests, exact three documents and unchanged inactive admission.
+Grant08 now active for retained author /root/ticket30n4_peer_impl, same allocated
+worktree/branch and original lineage, additive correction from clean ce49780d.
+MODIFY only windows_protected_store.py, test_grant_authority_windows_installed_snapshot.py,
+and test_grant_authority_windows_snapshot_reader.py narrow named cell/clock fixture;
+installed_snapshot.py blob37624e66 stays immutable. No new files/delete/dependency.
+Scope exactly previous section/closure52. Source-edit-only, no tests/checkers/imports/
+SDK/SQLite/commit/cleanup/agents until separate permission. Actual FINAL required
+before Root reads live source. Root may diagnose strict4/memorycompile/reviewed
+guard with fresh identity then immutable candidate review later; ordinary technical
+fixes within these boundaries continue without new per-byte Owner approval.
+Historical failures/UNKNOWN/resources/Recovery/Host and30B43 statuses unchanged.
+
 ## N13 immutable review CHANGES_REQUESTED / closure52 / Grant08 candidate — 2026-10-21
 
 Root actual formal seven suites448PASS/1FAIL at ce49780d; old N10 deadline cell
