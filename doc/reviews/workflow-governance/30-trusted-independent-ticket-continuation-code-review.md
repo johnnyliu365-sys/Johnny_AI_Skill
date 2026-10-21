@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Existing protection-tool provisioning source admission
+
+Retained native helper independently DOC_PASSed56aebbea then exact binding delta
+a84bbb2bee8079c6a5200dd097c37f1571b8f5a2. Root derives and activates
+grant-ticket30-provision-command-20261021 revision01 from existing uncapped batch,
+bound to that final ticket/LF6514a1b3a09469b50b304b6d5cd4c55ed1974b8317dd8e49c3fc8962f38321ce.
+Same author /root/native_service_impl, repository-contained native-service WT/
+branch clean469d59f3; Git confirms ancestor of baselineb9df00c8, bothCREATE absent,
+no reparse/foreign edit. Completed469 allocation released. Exact FF to baseline
+is admitted, then source construction only: twoCREATE/threeMODIFY, noDELETE.
+Root alone reviews/orchestrates; different retained peer audits changed source.
+All actual Registry/create/native/installation/Host/build/test/SDK/commit actions
+remain unavailable until their separate admissions. Source exception permits
+ordinary new typed constructs before executable preflight, not forged success.
+Later OS operation manifest must explicitly approve disabled-service/enrollment
+pre-stage, exact executable and payload, before any provision invocation. Neither
+this source Grant nor protected Registry metadata is Human Owner setup approval.
+This is the missing existing N6/N7 CLI prerequisite for BOTH30B/43, no new ticket/
+framework or qualification. ACTION_COMPLETED -> AUTO_CONTINUE exact source edit.
+
 ## Same-ticket channel revision02 admission
 
 Retained native helper independently DOC_PASSed exact409f824d5a9c5822ed7c20249cdf8a8d445e3b8c:
