@@ -17,6 +17,76 @@
 
 #### Current acceptance-linked checkpoint — no new requirement or framework
 
+Codec construction is ENGINEERING_CLOSED at c4f1ce701cc5913b984710b41f892ec0432d8f2d,
+exact three reviewed blobs and final raw evidence in original30 review11f5dbd0.
+Strict2/compile2, legal and negative C1-C4, six intended product reverse REDs and
+fresh restored17PASS are offline evidence ONLY. Ordinary different-seat source
+audit passed; no Host connection, trusted Grant positive or30B/43 qualification.
+The codec proposal below is retained history, not a new implementation request.
+
+The NEXT minimal source responsibility is the missing RETAINED HOST IMAGE LEASE.
+It directly prepares BOTH30B/43's peer-to-retained-Host proof. Existing snapshot
+source64MiB and member32KiB are not suitable for the separately observed341312816
+byte Host image; do not widen those contracts, package Codex in issuer payload,
+rewrite N14B, or duplicate the native handle/read/cancel/recovery implementation.
+
+Conditional batch-derived grant-ticket30-host-image-lease-20261021 revision01:
+baselinec4f1ce701cc5913b984710b41f892ec0432d8f2d, same retained Luna/xhigh author
+/root/ticket30n4_peer_impl, same protected-launch worktree/branch after releasing
+codec allocation; native helper different-seat source audit, Root sole reviewer.
+CREATE library/local_orchestration/grant_authority/windows_host_image.py and
+tests/test_grant_authority_windows_host_image.py. MODIFY ONLY existing
+library/local_orchestration/grant_authority/windows_snapshot_native.py for the
+narrow closed-purpose native file-size bound/session plumbing. DELETE none.
+No snapshot contracts/reader, installed enrollment, subject-launch/ABI, runtime
+lock/export or protected setup changes. No new public authority source or Router.
+
+Reuse existing _NativeSnapshotSession, original prefix/file/event owners,
+FILE_SHARE_READ-only opens, chunked overlapped reads<=32768, stable-facts helpers,
+cancellation/deadline/drain and recovery poison keys. A named closed native read
+purpose may distinguish the unchanged DEFAULT SNAPSHOT64MiB from HOST_IMAGE
+max512MiB; no caller-supplied numeric ceiling, global cap mutation or fallback.
+Unknown/subclassed purpose rejects. Snapshot consumers keep the exact old API,
+64MiB/32KiB behavior and default purpose; they cannot consume a Host-image binding.
+No new file API, hash framework, duplicated native reader or dependency.
+
+Private immutable _HostImageBinding holds exact path/SHA256/size1..512MiB/owner/
+descriptor digest/volume/file-ID, using existing named validators. Constructor
+is PURE EXPECTED DATA, NOT authority, enrollment or proof of a Host version.
+No model/provider/path/SHA literal belongs in this generic source. Exact binary
+digest binds its content/version; the operational Manifest supplies its approved
+pin later. _HostImageLease(binding,cancellation,deadline) constructs without I/O;
+verify()->None opens once, streams the complete exact file/digest and exact EOF,
+checks all expected/stable prefix+file facts, and RETAINS the original session
+owners after success. No image bytes are returned/accumulated or snapshot range
+created. revalidate()->None checks the same verified original owners/facts;
+close()->None closes only its own owners once. Closing/uncertain ownership poisons
+reuse and retains existing recovery evidence, never deletes/repairs/retries.
+Finite payload-free errors, exact model revalidation, same-thread/single-use and
+bounded cancellation/deadline checks apply before/after read/observation. Native
+uncertainty must not return success. Source-only ordinary construction is allowed
+before the type exists, not a circular preflight requirement.
+
+H1: fake-native legal large-file metadata (>64MiB) is accepted ONLY for explicit
+Host purpose; existing snapshot rejects it and remains bounded; normal small
+snapshot still succeeds. H2: real lease logic over one reused fake native session
+verifies whole digest/exact EOF and keeps the original owners until close; wrong
+digest/owner/path/volume/file-ID/descriptor/stable facts and short/extra reads fail.
+H3: cancellation/timeout/wrong-thread/replay/substitution/close uncertainty do not
+yield success; uncertain sessions retain recovery. H4: no import/constructor I/O,
+no new dependency or Host effect, no returned image payload. Fixtures must generate
+bounded chunks, not allocate a341MB image or clone a repository. Reuse existing
+snapshot-native fake patterns; no parallel harness. Source target<=300/test<=350
+effective lines, >500 per-file structure signal, never minify/arbitrary split.
+Strict/compile, focused tests plus affected EXISTING snapshot regressions; Root
+different-door source mutations must discriminate purpose, hash/EOF and retained
+ownership then restore GREEN. All old accounting/uncapped policy and per-command
+deadlines remain. Initial SOURCE_EDIT_ONLY, no import/checker/test/commit/native/
+real-file observation/launch/connection/Host/OS effect until separate admission.
+This produces NO launch or qualification; the next consumer is the existing
+qualification harness's retained launch/peer join, not a second product stack.
+Independent docs review and Root activation are required before this source edit.
+
 Next bounded construction is the missing WEBSOCKET CODEC IN THE EXISTING TEST
 HARNESS, not another production service. Actual pinned CLI offline schema452files/
 4458190bytes confirms existing initialize/thread-start/turn-start/snapshot-result
