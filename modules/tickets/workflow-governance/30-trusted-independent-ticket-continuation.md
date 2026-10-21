@@ -29,9 +29,15 @@ The retained Host image lease is ENGINEERING_CLOSED at
 original review e394846d. Strict3/compile3, default100PASS, seven intended product
 mutation REDs, restored100PASS and actual integrated-hold100PASS/SDK[] are offline
 source evidence only. The original image grant below is completed history, not
-another dispatch. NEXT is ONLY the conditional existing Host launch consumer
-below, now with exact source baseline25c490745f45d8c7d67d25ba4983dc5b0ecaf53f.
-The same author worktree is clean at that commit; main/30B/43 remain untouched.
+another dispatch. That Host launch consumer is now ENGINEERING_CLOSED at
+8814531b26ccb99e2c83e6c3218062f961bc15e5, treec14806373ebbf12b95446194fe4d29a4dd54984c:
+strict7/compile7, four intended product reverse REDs, restored338PASS and actual
+integrated-hold338PASS/SDK[]. Original31-record seal e3e1d68a received different-
+seat BYTE_QA_PASS; source audit closed all findings. No actual Host was launched.
+Root verified all seven committed blobs and clean exact FF from25c49074; raw
+checkout differences were proven CRLF-only against those Git blobs before import.
+NEXT is ONLY the two-CREATE retained-peer adapter below, baseline8814531b.
+The same author worktree is clean there; main/30B/43 remain untouched.
 This directly prepares BOTH30B/43's peer-to-retained-Host proof. Existing snapshot
 source64MiB and member32KiB are not suitable for the separately observed341312816
 byte Host image; do not widen those contracts, package Codex in issuer payload,
@@ -191,10 +197,11 @@ Host/process-to-peer join, not final qualification or activation.
 #### Conditional retained-Host peer join — same Ticket30, not another framework
 
 Root batch-derived grant-ticket30-retained-host-peer-20261021 revision01 is
-CONDITIONAL, NOT DISPATCHED: only after the preceding seven-path Host launch
-correction passes strict/behavior/reverse checks, different-seat source audit
-and Root acceptance into the existing engineering hold. Pin that exact clean
-commit as baseline before activating this continuation. Same author/worktree,
+ACTIVE_SOURCE_EDIT_ONLY. Actual different-seat DOC_PASS_NOT_ACTIVATION at
+control5d384468 plus the preceding completed source/behavior/independent audit and
+actual integrated readback satisfy its condition. Exact clean source baseline is
+8814531b26ccb99e2c83e6c3218062f961bc15e5; seven reviewed blobs above must remain
+unchanged. Root alone activates this batch-local continuation. Same author/worktree,
 same helper and Root final reviewer; no new Agent, branch, PRD, stage or authority.
 
 CREATE ONLY library/local_orchestration/grant_authority/windows_retained_host_channel.py
@@ -214,7 +221,8 @@ retained handles before and after OS peer-PID read; both observations must agree
 and peer PID must equal that original process. Same numeric PID alone is not enough.
 
 Its bounded send_bytes/receive_bytes delegate ONLY to the existing channel, with
-the original binding revalidated before/after use. Reject invalid/expired/closed/
+the FULL pinned process/owners/token/job/socket/image binding revalidated before/
+after use. Reject invalid/expired/closed/
 substituted leases, token identity/job drift, PID/session/creation-time/image drift,
 wrong thread, cancellation, reentry and unknown native outcomes. Unknown/partial
 failure cannot return successful usable bytes; retain exact original references

@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `109`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `110`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,21 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision109）
+## 當前工程接續與精確證據（revision110）
+
+原30 Host launch已收斂並精確FF既有工程hold8814531b：原始image租期跨到既有
+create/job/token/identity/resume路徑，不另造launcher。實測抓到且修掉cold import循環、
+native直接繞過、lock等待及binding後租期失效；合法路徑仍綠。strict7/compile7、
+四具名真產品邊界突變紅→還原338PASS、實際hold338PASS/SDK[]及不同席source審查。
+31份完整原始紀錄封存e3e1d68a，逐byte獨立QA通過；初次三個ABI突變被既有fixture
+reload覆蓋，明確不算有效RED，修正驗證時點後才計入。整合前先對可信Git blob證明
+checkout僅CRLF差異；第一次wrapper指錯cwd在child前被source pin拒絕，修正後才驗。
+下一段僅補已查證缺少的Host socket到原retained identity綁定，沿原30兩CREATE，
+不增加Agent／框架／平行票。只有04[x]；Host／Grant／30B／43及外部權限仍未完成。
+外部盤點亦確認目前Host image在使用者AppData，尚未證明新審查SID可讀／執行，
+不能假定新帳戶可用；SDK條款及帳戶/service/Registry/ACL/真Host測試仍未執行。
+
+下段revision109為歷史，不重做已通過成果。
 
 原30 image lease已完成限定工程驗收並整合既有hold25c49074：完整多chunk雜湊／
 EOF、同一原生owner／session／poison identity、cancel／deadline／Recovery與合法
