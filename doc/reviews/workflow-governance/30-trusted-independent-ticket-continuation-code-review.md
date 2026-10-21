@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Worker16 exact guarded fake execution admission
+
+Root read actual FINAL two source files, current worker13f0519c3305f5202b8e903a6590a7857e08cbd5
+and test5b655c7e525a9bd1817ba05bcdf32927de69578e. Strict04 passed both files;
+prior 91/8/4 errors remain original evidence, not a green result. Root reviewed
+the real N14C positive, late-reentry cancellation, exact owner retention, one-shot
+claim and immediate-exit interception. Reuse N14C's already read SDK-deny guard,
+add worker/test source and collection identity pins and block os._exit before
+import. Only approved inert fake handles/OVERLAPPED/buffer composition may run;
+all real SDK, Registry, process, service, network, SQLite and shell effects remain
+denied. Exact actual loaded module paths must be recorded, not baseline claims.
+Root may run focused fake tests and bounded memory-source reverse mutations,
+child55s/outer60s/fresh registered Temp/raw output. No actual module main/Host
+campaign, installation, protected-store access or qualification is authorized.
+
 ## Native reviewer evidence extension / no product contract change
 
 Root may additionally reverse the exact failed-token hold and successful-open
