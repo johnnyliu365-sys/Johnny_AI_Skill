@@ -2,6 +2,19 @@
 
 ## Exact codec construction admission — 2026-10-21
 
+Root source preflight returned two same-scope corrections: use documented public
+protocol state instead of parser_exc; read pinned package resource bytes through
+the real zip/directory importer rather than filesystem-only module.__file__.
+Original author returned corrected SOURCE_READY at6a4dd605, exact three blobs
+540f39cc2d3178df247ecc5002fe8c8aff13dd24 /
+e8e8bd76dcfe553839e76de0028284e66b353c23 /
+ceea409134c35f017e8f3a7734fc145a6386e4ba. Added exact65536 incoming positive
+and opaque-error/tainted-reuse assertions in the existing focused file. Root admits
+strict/compile and one SDK-deny/Thread-start-deny in-memory protocol test child,
+55s deadline/60s outer, pinned pure wheel plus pytest9.1.1; source hashes and raw
+stdout/stderr must be retained. No socket, Host/model/service or real authority
+effect admitted; helper source audit is ordinary evidence only, not qualification.
+
 Root separately admits ONE dev-test artifact fetch, not installation: exact official
 websockets15.0.1 pure-Python wheel169743bytes, SHA256
 f7a866fbc1e97b5c617ee4116daaa09b722101d4a3c170c787450ba409f9736f,
