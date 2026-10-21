@@ -41,6 +41,113 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
+## Native service entry — closure56 parallel local construction
+
+Same original30 lineage/Context04/runbook03/uncapped batch/first-CVQ source-build
+exception, baseline650f1c37, NOT qualification. This directly provides executable
+SCM/worker supervisor missing from shortest step2. No new Ticket/PRD/framework.
+PREFLIGHT_REQUIRED until independentDOC_PASS + exact childGrant. Two disjoint
+source lanes: closure55 Python3paths retainedauthor; closure56 C#7paths separate
+Luna/xhigh owner, Root sole reviewer plus different retained source helper. These
+lanes have separate observable closures and zero file overlap; same original
+budget/history, no reset. Native entry can be built/fake-tested before worker
+source exists, but installation/functional worker acceptance cannot be claimed.
+
+Exact scope, zeroDELETE/dependency/otherproject edits:
+MODIFY library/local_orchestration/native_windows/Program.cs
+MODIFY library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
+MODIFY library/local_orchestration/native_windows/SelfTests.cs
+CREATE library/local_orchestration/native_windows/WindowsAuthorityBootstrap.cs
+CREATE library/local_orchestration/native_windows/WindowsAuthorityService.cs
+CREATE library/local_orchestration/native_windows/WindowsAuthorityWorkerLifecycle.cs
+CREATE library/local_orchestration/native_windows/WindowsAuthorityServiceSelfTests.cs
+Reuse NativeEnrollment.ParseBounded/NativeEnrollmentVerifier/WindowsEnrollmentReadback/
+ProtectionPlan/closed manifest and existing types. No NativeJobGuard reuse for
+supervisor: it owns fixture self-tests, not service execution. Four new files have
+separate bootstrap-trust/SCM/lifecycle/test responsibilities; >500effective signal
+requires structure review, not minify/artificial fragmentation. Forecast each
+product200..450/test350..500 lines, no copied general native test harness.
+
+Program.Main adds ONLY exact one-argument service verb; old verbs unchanged.
+Contract-only self-tests join existing SelfTests, no native factory during tests.
+Internal service result/native port only SCM/status/control, fixed Registry read,
+enrollment/file readback and exact process/job/wait/exit/close, no genericRunner.
+Version/AssemblyVersion/FileVersion1.0.0/1.0.0.0/1.0.0.0; no new package references.
+Actual installable payload must be win-x64 NativeAOT or separately proven protected
+runtime closure; managed debug/test build is NOT install qualification. PythonService
+nullPEversion not accepted, VersionValue unchanged. Existing offline SDK10.0.302,
+VS18Community C++ component and ILCompiler caches observed, no install/download.
+
+Trust input: fixed 64bit HKLM SYSTEM/Select.Current -> ControlSetNNN/Services/
+JohnnyGrantAuthority/Parameters REG_BINARY NativeEnrollmentV1, using no-link/
+ancestor+leaf exact protection/stable before-after key observations like existing
+Python registry reader; no caller pathname/Registry command/env/self-approval.
+Preserve existing ApprovalV1/SubjectEnrollmentV1. Before ANY Python process:
+parse exact canonical bounded NativeEnrollment, require fixed service name,
+manifest current retained/final serviceimage path/version/hash, exact existing
+enrollment readback+verifier MATCH/full CodeRoot inventory. Then read enrolled
+configuration without reparse/identity/hash/protection drift, never userpath bytes.
+Roots actual ProgramFiles/JohnnyGrantAuthority and CommonAppData/JohnnyGrantAuthority;
+DB latter/state/grants.sqlite3. Historical Johnny/GrantAuthority path is invalid.
+
+Closed worker config ONLY schema_revision1/python_relative_path runtime\\python\\python.exe/
+worker_module library.local_orchestration.grant_authority.windows_authority_worker/
+python_version3.11.9; no caller override, duplicates/unknown fields/missing/wrong
+types rejected. Derived relative path stays exact CodeRoot, all interpreter/app/
+deps/._pth enrolled and verified. Fixed python.exe -I -B -m module, cwd protected
+CodeRoot; no shell, PATH search, PYTHONPATH/PYTHONHOME/userSite/PATH inheritance.
+Environment closed SystemRoot/WINDIR and package-derived necessary runtime paths.
+Packaging still separate required local output; no dummy worker PASS/qualification.
+Caps unchanged128files/64MiB payload and aggregate/4096inventoryobjects.
+
+SCM entry uses existingproject raw Win32 APIs, no new hosting package/framework.
+Service name fixed JohnnyGrantAuthority, own-process service; StartServiceCtrlDispatcher,
+register handler/status and START_PENDING->RUNNING only after admitted worker launch.
+STOP/SHUTDOWN handler signals owned control event without blocking callback.
+Worker CreateProcessW suspended/noinherit/Unicodeenv/noshell/nowindow; service-owned
+job KILL_ON_JOB_CLOSE only, not active-process-limit (Python creates subject).
+Assign and read actual membership BEFORE resume. Retain original worker process/
+thread/job owners, no PID reopen. Monitor finite normal worker deadline60s and
+controlevent; normal exit requires original process signaled/GetExitCode!=STILL_ACTIVE/
+jobactive0 before thread/process/job close. STOP/timeout terminatejob once then
+finite5000ms wait + same exit/active0 proof. Uncertain return/owner/wait/membership/
+exit/close ->RECOVERY_REQUIRED, stronghold all original owners, no relaunch,
+retry/finalizer-close or SERVICE_STOPPED claim. Worker nonzeroexit not COMPLETE.
+No external token/job/service/account/Registry writes in this source cut.
+
+Closure56 T1 exact service route/oldCLI preservation/normal constructors;
+T2 resolvedfixedkey/no-link/protection/currentselector/keylastwrite drift rejected;
+T3 servicepath/version/hash/fullinventory/configschema/tamper beforeCreateProcess;
+T4 exactcommand/env/relativepaths, no caller injection/userwritable dependency;
+T5 assign+membership before resume; T6 normal/STOP/timeout exactexit+jobactive0
+beforeclose, no fakeSTOPPED/COMPLETE; T7 every meaningful nativefailure retains
+exact owners/no retry; T8 existing contract/enrollment/self-tests unaffected.
+Reverse mutations: remove Registry secondread, inventory verification, -I,
+assign-before-resume, exit-before-close ->namedRED/exact restoredGREEN; Root
+different door. All tests native-port fakes only, full raw, not OS qualification.
+No ceremonial newfunction stub-first-red. Strict C# nullable/warnings-as-errors,
+deterministic build; no reflection/dynamic/object-domain/unchecked bypass.
+
+Author SOURCE_EDIT_ONLY until Root inspect exact source/port/fakes and separately
+admit offline build/run/commit. New private types need not preexist sourcebootstrap.
+Newowner assigned repositorycontained .worktrees/skill-improvement-30-native-service,
+branchcodex/same; reviewer matching-review. Fresh containment/Git readback required.
+Temps LOCALAPPDATA/Temp/johnny30-native-service-owner-20261021 and -review-20261021,
+exact execution files registered later, ownersauthor/Root, TTLthroughseal/holds.
+Singlecommand55/outer60s initial, uncapped cumulative/count; diagnose not blindretry.
+No install/start/account/ACL/Registry mutation/network/model/newfees/push/release/
+deploy/formalmainintegration or activation. No classified snapshot/realHost test.
+Return SOURCE_READY exact7paths/pins/constructors/testseams/deviations/holds; noAgent
+control or self-approval. XSS/UI N/A, no productmigration. Root may continue other
+disjoint work while finitewaiting; no authorWT/activitypoll while active.
+
+Acceptance distinction: closure55 READ_REVIEW_SNAPSHOT and service wiring prepare
+first trusted snapshotGrant and qualified-review entry, NOT30B R1. Immutable30B
+0f6d467a public read_mainline_candidate still refuses GRANT_SOURCE_UNAVAILABLE;
+READ_MAINLINE trusted source/CVQcapability binding, admit_dispatch preeffect wiring
+and fresh remote main/Context04 publication remain explicit downstream work.
+No unqualified enum/owner-intent marker may be promoted to formal qualification.
+
 ## 30N14C — one protected read session / closure55 local construction
 
 Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03; unchanged
