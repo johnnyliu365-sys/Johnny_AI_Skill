@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A memory validation Grant09 ACTIVE — 2026-10-21
+
+Candidate7606a21d independent frozen-source helper actual FINAL no closure53
+product defect; scoped structure reuse accepted, AT5 still pending. Root final
+own review530PASS2.31s child5.062s, strict3PASS1.484s; full original11736/
+c5fb7dae7fc886ea4d9e85348502de3abb594a821ef41e5c892d7f9e026be960 read.
+Distinct AO actual FINAL PLAN_PASS for registered mutation-plan-r01 JSON
+SHA256a13e70b3d24bd9c2e62737c246d04346339d1b43eba77a33157e139d7b9e035a:
+PowerShell/outer/child syntax, exact anchors/selectors/threeblobs, unchanged deny
+prefix, sameclass enum-preserving rebind and twelve distinct evidence paths checked.
+
+Grant09 Root now may execute the exact six RED/restoredGREEN specs under Grant08,
+same frozen reviewWT/candidate; full JSON captured before summary, read unfiltered
+output before judging each pair. Any wrong phase/zeroRED/guardattempt invalidates
+proof; diagnose, do not repeat unchanged. No on-disk source edits or actualSDK.
+This is source-engineering discrimination only; mandatory isolated audit remains
+unavailable, not Host qualification or permission to merge main/close30B43.
+
 ## N14A frozen source review Grant08 — 2026-10-21
 
 Author actual FINAL candidate7606a21df3cbda10d401b3458c3e0ee9e07594a3,
