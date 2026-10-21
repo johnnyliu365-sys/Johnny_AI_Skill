@@ -1,5 +1,56 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Capsule readback and immediate external prerequisite — 2026-10-21
+
+Retained /root/authority_topology_architecture independently decompressed0064a5f0
+in memory and compared all53 originals byte-for-byte:53/53, zero missing/hash/
+UTF8/length/schema mismatch. Integrated05 exact hold paths and56PASS/SDKattempts[]
+confirmed. /root/ticket30_native_tools_review independently corroborated native
+01c and02..09 named-cell RED,37/37 restored source pins and all final fake verbs
+GREEN. Native09 includes diagnostic Program instrumentation, not one-file evidence.
+Root accepts the durable engineering capsule; no qualification or checkbox follows.
+
+Concrete external toolchain prerequisite (NOT executed/authorized): local VS18
+Community18.8.12009.203/MSVC14.51.36231 and dotnet10.0.302/ILCompiler10.0.7 exist;
+scoped Kits/include/lib inventory and vcvars readback found WindowsSdkDir unset
+and no Windows SDK kernel32/ucrt import libraries. NETFXSDK alone is not that SDK.
+This is a checked prerequisite gap, not an actual failed AOT publish or proof the
+machine cannot support AOT. Do not run publish merely to repeat this known gap.
+Retained inventory helper read the installed VS catalog: exact available component
+Microsoft.VisualStudio.Component.Windows11SDK.26100, title Windows11SDK
+(10.0.26100.8249), package18.8.11901.359/dependency Win11SDK_10.0.26100
+10.0.26100.16; component not in installed instance95de7aab state.
+
+Precise prospective change on DESKTOP-28ERPQ1: elevated Windows UI consent from
+the Owner, no credentials given to an Agent; modify ONLY the existing VS instance
+C:\Program Files\Microsoft Visual Studio\18\Community, channel
+VisualStudio.18.Release, add that single SDK component. Installer executable
+C:\Program Files (x86)\Microsoft Visual Studio\Installer\setup.exe version
+4.8.60.55523 SHA256
+ffcec84bda5c630d7cc29d233ebc6ea669c2b5a437130dee8973feed51d184b9.
+Exact proposed command (not run):
+`& 'C:\Program Files (x86)\Microsoft Visual Studio\Installer\setup.exe' modify --installPath 'C:\Program Files\Microsoft Visual Studio\18\Community' --channelId 'VisualStudio.18.Release' --add 'Microsoft.VisualStudio.Component.Windows11SDK.26100'`.
+Impact: installed developer files/registration, download and possible reboot;
+download endpoint/size/reboot need must be read from the installer before consent,
+not invented. Stop if installer proposes updating itself, changing VS channel or
+adding anything outside that component. No account/service/ACL/Host test approval.
+Readback uses existing vswhere -products Microsoft.VisualStudio.Product.Community
+-requires Microsoft.VisualStudio.Component.Windows11SDK.26100 -property installationPath,
+then actual SDK header/import-lib presence and VsDevCmd WindowsSdkDir/WindowsSDKVersion.
+Rollback only if component was previously absent and is the sole change: same
+installer modify/instance/channel with --remove and that exact component. No
+recursive delete, global permission restore or user-source changes; rollback is
+proposed, not tested. Afterwards local AOT publish/hash/import proof still needed.
+
+Service/runtime/exact protected payload, dedicated review SID and actual session,
+HKLM64 protected enrollment/approval, independent observer/loopback fixture and
+finite first CVQ campaign remain SEPARATE unexecuted security effects. Their
+binary/config hashes are NOT_BUILT, not approval placeholders. Finish available
+local source before requesting that exact operational manifest; SDK consent does
+not silently consent to installing or starting JohnnyGrantAuthority. Source-only
+worker/native acceptance directly prepares30B legal Grant and43 observation entry;
+neither is yet real Host/Grant acceptance. Old denied cleanup/Recovery untouched.
+
 ## Closure56/57 original evidence capsule — 2026-10-21
 
 Existing review-only evidence, not a new workflow or executable test asset.
