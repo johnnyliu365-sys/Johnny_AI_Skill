@@ -41,6 +41,143 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
+## 30N13 — installed approval single-claim snapshot composition / closure50
+
+Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03 section2,
+batch-checklist-local-20261019-uncapped and first-CVQ source construction order.
+Baseline a081906f6b3f7e34f8cad9ce96d510f86a446d07 now in Root source-stage,
+N12 originals23/23 and stage QA PASS at27d49dd1/7df4e9e2. Only source-engineering
+hold, not qualified Host/Grant or final-main source. Prior failures/UNKNOWN/Recovery
+are retained; checklist04 not redone. No PRD, SPEC change, new authority engine,
+public Grant DTO, export, generic callback or caller authority/path/plan override.
+
+Exact scope, no DELETE/dependency:
+MODIFY library/local_orchestration/grant_authority/windows_protected_store.py
+CREATE library/local_orchestration/grant_authority/windows_installed_snapshot.py
+CREATE tests/test_grant_authority_windows_installed_snapshot.py
+
+Reuse before create: existing GrantPlan/Record/LedgerResult, private installed
+approval, SQLiteGrantLedger issue/claim/settle, N12 pins/controller/busy/retention
+and C13 issuer check, N10 exact-member one-use reader. One new application leaf
+owns ordered member reading/evidence framing; existing store owns ledger lifecycle.
+One parameterized test module reuses applicable prior test builders/fakes, no copied
+native/ACL/JSON parser, fixture framework or standalone test runner. Existing ledger,
+native readers, installed approval and old tests remain byte-identical.
+New private result DTO unnecessary: ordered tuple[bytes,...], position maps exactly
+to retained immutable approval.members. Scope remains SOURCE_ONLY_UNQUALIFIED.
+No existing behavior moved or test retired: TEST->A->B N/A, source composition only.
+
+Private APIs:
+- store._read_installed_snapshot(self)->tuple[bytes,...]
+- application._read_ordered_members(approval:_InstalledApprovalRecord,
+  cancellation:threading.Event,deadline:float)->tuple[bytes,...]
+- application._derive_snapshot_evidence(approval:_InstalledApprovalRecord,
+  payloads:tuple[bytes,...])->EvidenceDigest
+No raw ledger/approval getter or arbitrary operation forwarding. Existing private
+finite error may add GRANT_NOT_YET_VALID/GRANT_EXPIRED/GRANT_ALREADY_CLAIMED/
+GRANT_ALREADY_TERMINAL, no parallel error/state engine. Public existing constructor
+preflight is unchanged and reused from exact N11/N12 evidence; new private methods
+are candidate output and ordinary constructors/negative forms checked before review,
+not a circular operational qualification prerequisite.
+
+N13T1 legal real store method at actual application/reader seam, fake SDK/ledger:
+existing busy lock, controller/thread/cancel/deadline/closed/poison checks; live pins
+and native.verify_after; exact retained approval.peer C13 recheck. Internal
+time.time_ns exact nonnegative int once -> integer epoch seconds, require
+not_before <= observed_at < expires_at BEFORE any ledger.issue. Check controller
+before/after every bounded operation and before final return. Reject caller time/
+plan/approval/ref/path injection, no env/config/remote fallback.
+
+Issue exact fixed approval.grant_ref/plan. Accept only exact ISSUED+UNCONSUMED or
+EXISTING+UNCONSUMED record, matching full original plan/ref and no correlation/
+evidence. Existing CLAIMED -> finite ALREADY_CLAIMED; terminal -> ALREADY_TERMINAL,
+no reader. Claim exact grant/plan/approval.operation_ref/observed_at, only exact
+CLAIMED_NEW+CLAIMED record/full binding/correlation/no evidence permits construction
+of any _SnapshotBlobReader. Existing claim (even same operation) is NOT a crash/
+lease/resume authorization. Ledger remains unchanged, no lease subsystem.
+
+N13T2 exactly each immutable approval.members entry once in original tuple order
+through actual N10 _SnapshotBlobReader(member,cancel,deadline).read(). Hold all bytes
+until completion, no generator/callback/partial tuple escape. Existing caps remain
+1..256 members, <=32768bytes/member, <=64MiB source; validate actual bytes count/
+hash against approved member at composition boundary even when fake is used.
+Actual reader remains sole native handle owner, coordinator cannot adopt/close it.
+
+Evidence: fixed domain bytes johnny-installed-snapshot-evidence-v1 followed by NUL;
+8-byte big-endian byte-length + UTF8 approval.model_dump_json(); 4-byte big-endian
+member count; for every exact payload 8-byte big-endian length + exact bytes in order.
+sha256_ + SHA256 hex, ordinary strict EvidenceDigest validator. Tests independently
+derive Expected framing, do not call product helper to form Expected.
+Settle exact COMPLETE/correlation/evidence. Require exact SETTLED+COMPLETE record
+matching full plan/ref/correlation/evidence; EXISTING is not success for a fresh
+attempt. Then controller/native.verify_after/controller, only then return allbytes.
+Existing checked close remains separate same-thread caller responsibility.
+
+N13T3 before issue known validity/C13/controller denial -> zero ledger/reader effect.
+Unknown ledger outcome, mismatched returned record, reader failure, settle refusal/
+exception, postcheck drift or interruption -> retain exact ledger/approval and
+native backing, poison terminal RECOVERY_REQUIRED, no bytes/retry/cleanup/fabricated
+rollback. Do not re-settle an unknown outcome or rewrite terminal COMPLETE as if
+rollback occurred. Known existing CLAIMED/terminal never rereads. Controller or
+pins loss at intermediate/final boundary cannot yield success. Busy/close reentry,
+wrong-thread/closed/reuse and interrupted outcome finite; successful close once.
+Protected store constructor/close defaults preserved for all existing consumers.
+Finite errors never include raw bytes/paths/approval/native details.
+
+N13T4 discrimination: legal not_before and expires_at-1 (and zero-length member),
+max256 members and32768length, exact ordered multi-member+complete evidence. Reject
+not-yet/expiry before issue; same-operation CLAIMED/terminal, claimEXISTING, wrong
+grant/plan/correlation/lifecycle/evidence, missing/extra/reordered/wronglength/hash
+payload, second-member failure no partialbytes, settleEXISTING/refusal/unknown,
+pre/post pin drift, cancellation/timeouts/interruption and no postpoison retry.
+Required named memory reverse mutations: move validity check after issue; accept
+claimEXISTING; omit/reorder member; return before settle; accept settleEXISTING;
+remove recovery retention; skip pre/post pin verification. Each RED/exactGREEN,
+no bare assertion of names. Root independent different legal boundary mutation.
+
+Execution ownership: retained /root/ticket30n4_peer_impl Luna/xhigh is source author
+only, no Agent orchestration. Root AO/sole reviewer/orchestrator; distinct retained
+ticket30_native_tools_review helper source evidence NOT qualified audit.
+Initial author SOURCE_EDIT_ONLY after exact DOC/readback/Grant, no pytest/checker/
+import/SDK/SQLite/commit until separately permitted. Root executes strict3 (modified
+store/application/newtest), memory compile/import and focused fake test + N12six
+suites under reviewed pre-import SDK/KnownFolder/SQLite/file/token/SCM/network/
+process/ctypes/HANDLE/owner-init-before-property guard. Shared prior test-module
+identity and owner guards remain; inspect any new fake class BEFORE allowlisting.
+Do not interpret Python guard as OS isolation or qualified no-code review.
+New behavior needs no ceremonial stub-first-red; all named mutation evidence required.
+Root WIP checks diagnostic only; formal review/merge source must be committed.
+Do not read active author worktree or statuspoll; await actual FINAL.
+
+Forecast product180new+180modified/test450effective lines, docs only this ticket/
+registry/review/checklist; no screenshots/dependencies. Growth>500effective triggers
+responsibility/reuse structural review, not minify/arbitrary split or silent
+permission to create files. No extra framework or unregistered output.
+Initial command55child/60outer finite, uncapped cumulative/count but all historic
+time/failures retained and identical unexplained failures not retried unchanged.
+
+Fresh author allocation .worktrees/skill-improvement-30g-installed-snapshot,
+branch codex/skill-improvement-30g-installed-snapshot; matching -review ownedRoot.
+Context ctx-ticket30n13-installed-snapshot-20261021, bridgeNOT_REQUIRED same-lifetime.
+Register both worktrees now before create, author/Root owners; Temp exact
+LOCALAPPDATA/Temp/johnny30-installed-snapshot-owner-20261021 and
+LOCALAPPDATA/Temp/johnny30-installed-snapshot-review-20261021; owner+purpose=N13,
+TTL through final review/seal, teardown only after exact safe clearance, references/
+Recovery override expiry and no denied-cleanup retry. Prior N12 allocation released
+as immutable referenced hold, no deletion. Precise childGrant candidate
+grant-ticket30n13-installed-snapshot-20261021 revision01 NOT_ACTIVE until committed
+leaf/index DOC_PASS+Root exact baseline/roles/worktree/preflight readback.
+Parent original localbatch, never an installed operational issuer Grant.
+
+No actual Host/native campaign/SDK/SQLite file/SCM/account/ACL/service/config/
+Registry/network/model/newfees/target/remote/push/release/deploy/formal activation/
+receipt/admit_dispatch/native spawn effect. Only ordinary controlled local test/
+compiler processes approved after guard review. First-CVQ order exception not
+widened; Host qualification/30B43/TAL/R0/DAP/Recovery/checklist completion unchanged.
+Return actual FINAL typed status/candidate/files/full check originals/deviations;
+Root routes source review, same-ticket repair, exact local stage and next item.
+
+
 ## 30N12 — closure49 bounded source correction supplement
 
 Same original30/PRD009/CHG009/Context04/uncapped batch and first-CVQ source-only

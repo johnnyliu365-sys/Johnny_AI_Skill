@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 complete engineering hold / N13 closure50 preparation — 2026-10-21
+
+Actual FINAL helper stageQA confirms7df4e9e2 original15517bytes/hash+fourblobs,
+108previous paths unchanged and stage401/strict4; revision98 docs8f61201d separately
+DOC_QA_PASS, only04checked. No originalfailed/UNKNOWN/Recovery record cleared.
+N12 allocation released to immutable referenced hold without deletion.
+Architecture helper actual FINAL N13_PREPARED on exacta081 existing signatures:
+no SPEC conflict/new DTO/engine; exact 1MODIFY+2CREATE, existing store owns lifecycle,
+application leaf owns ordered members/evidence. Root accepted no EXISTING resume,
+independent Expected framing/full output binding/actual byte verification. Closure50
+is same original30 and batch, not separate PRD or new operational authority.
+Leaf/index final LF recomputed after all edits; machine admission remains null,
+old machine ticket_revision not silently activated. DOC consistency review then
+Root precise SOURCE_EDIT_ONLY Grant/preflight; no candidate execution delegated.
+
 ## N12 engineering source-stage readback — 2026-10-21
 
 Grant23 exact FF a6071d5f -> a081906f, clean. Four-path delta only; prior109
