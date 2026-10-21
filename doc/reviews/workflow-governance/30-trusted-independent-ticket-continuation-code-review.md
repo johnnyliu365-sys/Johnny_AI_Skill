@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 construction GREEN / exact author commit-only Grant06 — 2026-10-21
+
+Actual author FINAL d9101b7f test /37624e66 app /59c31d33 store read back;
+Root strict3 PASS2.5s and reviewed unchanged SDK-deny guard seven suites449PASS,
+one pre-import pytest assertion-rewrite warning, effects[]. Actual loaded paths
+and canonical collected modules match author worktree, exact three blobs asserted
+before execution. Full original stdout/stderr and commands preserved in registered
+n13-construction-followup-originals.json; prior failures and E01 UNKNOWN unchanged.
+Diagnostic green is not formal candidate/Host review or authority-source approval.
+
+Grant06 author /root/ticket30n4_peer_impl may now fresh-read identity and commit
+ONLY closure51's three paths at baseline a081906f6b3f7e34f8cad9ce96d510f86a446d07
+in its allocated installed-snapshot worktree; no source edits, test execution,
+new files, amend/reset or cleanup. Exact LF blobs59c31d3324f8de046d60a5955499cf5e60a14ca0,
+37624e6648ec720ed32fa611bd12e0e2b850a916,d9101b7f8e5cf711dbcd53ed6920b983bf38aa89.
+If drift then STOP without commit. Parent batch uncapped/evidence-progress remains,
+no permission/cost/native effects expanded. Return actual FINAL candidate/parent/
+status/exact files; separate committed-candidate review/mutation admission follows.
+Only04 checked; 30B43/Host/Recovery still blocked, main untouched.
+
 ## N13 continued construction / Root diagnostic Grant05 — 2026-10-21
 
 Author actualFINAL now test63e00434/app37624e66/store59c31d33. Root reconstructs prior
