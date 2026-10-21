@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14C behavior findings / same-scope correction14f — 2026-10-21
+
+Root read all2099 unfiltered stdout lines and empty stderr from originalbehavior01:
+120305bytes SHAb5043d5309977034767693c9a860c1eee3c6a62c8b106508a6a949a52520a238,
+exit1/12.672s,47failed373passed. Canonical source/collection identities matched.
+Do not describe47 independent product defects. Twenty-two transport failures hit
+Root's OVERLAPPED constructor deny (no OS call); diagnostic harness lacked existing
+N10 inert memory fake on that old suite. Root will reuse _FakeOverlapped and
+_fake_allocate_read_buffer, not permit SDK calls or change old assertions. Failed
+guard attempts retained, not SDK isolation PASS. Other25 new-session failures
+include genuine positive peer construction, controller/handle ordering and
+downstream stage assertions masked by early failure; no all-refusal acceptance.
+
+Concrete existing-contract mismatch: _ObservedEnrollmentFile.sha256 is raw lower
+hex64, whereas _ProtectedPeerEnrollment/Observation digests are EvidenceDigest
+sha256_<hex64>. Adapt exact validated bytes at this boundary for both enrollment
+and observation; do not weaken old schemas, change source-file hashes or derive
+Expected from Actual. Correct corresponding independent expected representations.
+Cancellation is presently checked after _require_event_owner reads its handle;
+the existing test requires cancelled controller refusal before owner inspection.
+Check it first without weakening thread/deadline/native-owner checks. Preserve
+genuine postlaunch positive and all intended peer/request/recovery assertions.
+
+Root CHANGES_REQUESTED; same14c/14c2 three paths, owner/worktree/baseline/history.
+Author SOURCE_EDIT + exact bounded static checks only; no behavioral/SDK/SQLite/
+Host tests/commit/Agent/cleanup. Read fulloriginal, fix same existing contract,
+return exact FINAL SOURCE_READY. Root alone reruns changed affected behavior with
+corrected approved fakes, then immutable candidate review/mutations. No new AC,
+files, framework, rights or resource reset.
+
 ## N14C guarded behavior admission / Root Grant14e — 2026-10-21
 
 Actual FINAL corrected test b995cdd2c69d7780f63b13b01e7da4c7a1cca7f4;
