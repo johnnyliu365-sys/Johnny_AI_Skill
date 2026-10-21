@@ -1,5 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 selfcheck serialization correction / Root Grant04 — 2026-10-21
+
+Grant03 selfcheck child exited1 in0.047s with SyntaxError before child body/import:
+extracted outer-template literal backslash-n separators were serialized one layer
+too literally. No candidate or subject SDK function executed; not a guardPASS.
+Original r03 script/raw retained in RootTemp n12-root-guard-selfcheck-r03-failure.json.
+Diagnosed correction only: decode generated separator layer and compile child
+in memory before launch. No guard-policy/input/allowlist/subject scope change.
+
+Root grant-ticket30n12-guard-selfcheck-20261021 revision04 permits corrected finite
+selfcheck at same acceptedstage a6071d5f using registered immutable
+n12-root-guard-selfcheck-r04.py SHA1573a4a83d30496554ad16ebb188cd5357401a4767db0e745d64d0063ea0af36.
+All Grant03 limits retained, child55, original failures not reset, no unchangedretry.
+This is source/debug serialization, not newHost permission. OwnerGrant02 remains
+edit-only, candidate tests stillheld, E01UNKNOWN/rawmissing remains independent.
+
 ## N12 Root guard selfcheck Grant03 — 2026-10-21
 
 Distinct helper actual FINAL GUARD_PLAN_PASS_LOCAL_SELFCHECK_ONLY on r03
