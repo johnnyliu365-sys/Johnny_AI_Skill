@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14C one discriminating construction-red / Root Grant14b2 — 2026-10-21
+
+Strict3 original160807bytes SHAe94a57d14745a06601641d2681ab251bc716499034e4699a6856fedcdf7edb58:
+104errors/2files/26.953s. Full output read; errors are concrete4product annotation/
+exceptionbinding defects plus test indirectimports/fakehandle/invalidinput/fakestore
+typing, not grounds to weaken strict or reexport private modules. Original3files
+also retained in n14c-source-ready-01.json before changes.
+
+Root has now read full888app/1255test and direct fake contracts. Grant14b2 permits
+ONLY one fake-only original positive test_launch_join_uses_original_enrollment_and_retained_process_facts
+to expose prelaunch-vs-postlaunch mismatch. Reuse exact N14B SDK-deny prefix/three
+fakeowner allowlist, add exact newapp/test pins and canonical collectionidentity;
+no actualSDK/native/SQLite or other test. child55s/outer60, original stdout/stderr
+saved BEFORE verdict under RootTemp n14c-postlaunch-diagnostic-01-original.json,
+fresh basetemp root-n14c-postlaunch-01, no overwrite. Diagnostic red must be intended
+SubjectJob RECOVERY_REQUIRED from legitimate launch-attempted state, not SDK guard
+or wrongtestversion; otherwise finding, not proof. Fake invocation is not Host test
+or formalreview of uncommitted source. Root then originalauthor same3paths correction,
+no clearing launch state, testweakening, newfiles or unrelatedframework.
+
 ## N14C source-ready construction diagnostics / Root Grant14b — 2026-10-21
 
 AuthoractualFINAL SOURCE_READY, baseline650f1c37 unchanged/threeauthorizedpaths:
