@@ -1,5 +1,47 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 construction findings batch / corrective source Grant04 — 2026-10-21
+
+Root Grant03 strict3 actual exit1,34errors in2files,30.828s; full unfiltered raw
+and frozen readbacks in registered n13-construction-diagnostics.json. Three blobs
+independently read back59c31d33/0a8d3e9a/0c6c76f7; store physicalSHAca13b284 vs
+LF SHA9c16a6e3 is CRLF normalization, not source drift. No pytest/SDK/native ran.
+Distinct helper actual FINAL SOURCE_CONSTRUCTION_DIAGNOSTIC independently maps
+following gaps to closure51; neither WIP nor helper is formal review authority.
+
+D01/P0: implicit EvidenceDigest import, test copied SDK/module/time/issuer reexports,
+and incompatible nominal fake ctor args. Use actual defining imports/normal typed
+fakes; no Any/cast/typeignore/constructor bypass/checker weakening. Success member
+model_copy(update) must become normal validated constructor. Existing type policy.
+D02/N13T1–T2: add full real store method -> actual application -> real N10 reader
+over reviewed fake native boundary legal trace, exact issuer peer and fixed args.
+Do not stub entire application as sole composition proof; keep focused failure fakes.
+D03/N13T1/T3/T4: independently fixed mismatched issue/claim/settle grant/plan/
+correlation/lifecycle/evidence results and complete equality assertions, not fake
+records solely echoing received args. Fresh expiry proves claim gets second time,
+no reader/settle and issued record logicallyUNCONSUMED (fake source evidence only,
+never claim actual durable SQLite verification from fake). Preserve expiry mutation.
+D04/N13T3: relevant intermediate cancel/deadline/pin/interruption after claim,
+between members/before finalreturn, no partialbytes; failure latches/no repeated
+ledger/read effects, checked close/busy reentry. No redundant new lifecycle engine.
+Reuse actual native retention where appropriate; do not treat generic fake held
+variables as proof real backing survives. Unknown outcome cannot retry/cleanup.
+D05/reuse+structure: import/alias existing reader install_fake_native fixture,
+remove duplicate SDK-wiring block; consolidate repeated typed fixture signatures/
+parameterized cases for clarity. One cohesive source-only capability may keep its
+approved testpath; no arbitrary sizepass/minify/newfile/split or reduced assertions.
+No new product requirement/AC/schema/public contract, only original missing evidence.
+
+Grant04 rebinds same childGrant02/closure51/parentbatch, same owner/worktree/baseline/
+Context and exact3 sourcepaths. SOURCE_EDIT_ONLY corrective continuation, noexecute/
+checker/import/SDK/SQLite/commit/Agent/extra files/cleanup. Author may change only
+this frozen construction scope and return actualFINAL_SOURCE_READY; Root does not
+inspect while active. Existing original diagnostics retained before edits, oldtime/
+failure counters notreset. After freshactualFINAL: statichash/fakeABI inspection,
+exact guardedplan+review, Root strict+tests, and only then separate commit permission.
+No formal source approval, Host qualification, operationalGrant or 30B43 relief.
+ACTION_COMPLETED -> AUTO_CONTINUE same-ticket correction, no Owner question.
+
 ## N13 source-ready readback / Root construction Grant03 — 2026-10-21
 
 Author actual FINAL SOURCE_READY, uncommitted frozen at a081 baseline, exact3paths:
