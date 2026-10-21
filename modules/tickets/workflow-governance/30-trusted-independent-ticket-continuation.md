@@ -26,6 +26,66 @@ SDK attempts[]. ONLY initializer coupling closed. Complete runtime/import proof,
 native executable, real Host channel/observer and final CVQ remain OPEN.
 Historical plan follows.
 
+#### Existing readonly Host channel: bounded source admission, no authority claim
+
+Retained Architecture Owner confirms this is ordinary same-ticket construction
+under approved runbook section3/first-entry source exception and upper AC-17R14,
+not permission to weaken peer/role/one-shot/snapshot invariants. Closure55 stays
+byte-identical; its terminal subject never authorizes later Host traffic.
+Actual Codex app-server help at pinned F6DBF48C binary advertises unix://PATH;
+Microsoft afunix.h defines SIO_AF_UNIX_GETPEERPID (_WSAIOR IOC_VENDOR,256).
+This only establishes a source target, NOT Windows availability or writer proof.
+Cross-session handles remain noninheritable. Do not invent effective sender SID/
+LUID or feed socket PID into a last-message impersonation observation.
+
+Root derives grant-ticket30-retained-host-channel-20261021 revision01 from existing
+uncapped batch. Baseline b9df00c889acd2cc2164bb885aed40d28e002dde, author retained
+/root/ticket30n4_peer_impl in its SAME protected-launch WT/branch; Root sole reviewer,
+different retained AO source helper. CREATE ONLY
+library/local_orchestration/grant_authority/windows_host_socket.py and
+tests/test_grant_authority_windows_host_socket.py. MODIFY/DELETE none.
+No new public export, dependency, Grant issuer, Router, Gate, Agent or framework.
+Initial SOURCE_EDIT_ONLY after independent exact docs review and Root activation;
+no candidate import/checker/test/SDK/socket/native/Host/commit before Root admission.
+
+Implement one private thread-bound borrowed connected AF_UNIX stream channel.
+Reuse existing scalar/strict finite error conventions and bounded byte wire;
+pure input validation rejects wrong socket type/family/type/alias/thread, malformed
+finite deadlines/cancel, frame>65536, empty/NUL/embedded-newline outbound frames.
+Existing socket object is retained strongly, never closed/duplicated/created/
+connected/reopened by this adapter. Keep exact original fileno through each call.
+Read one LF-terminated frame <=65536, preserve extra bounded bytes for next frame;
+EOF/overflow/timeout/uncertain socket state fail closed, never fabricate response.
+Write exact bytes with finite deadline/cancel and checked progress; zero/oversized
+or invalid counts reject. No background thread, subprocess, server or retries.
+
+Observe peer PID only via exact WinSock WSAIoctl ABI on the SAME retained socket:
+SOCKET pointer-sized unsigned, code0x58000100, no input, ULONG output4bytes,
+returned-byte count exactly4, synchronous NULL overlapped/completion. Require
+exact native success0 and positive uint32 PID; missing/unsupported/native errors
+are UNAVAILABLE, never supplied PID/peername/path fallback. Unknown pending state
+retains original socket/native buffers/reader as recovery evidence, never close.
+No Any/cast/type-ignore/model_construct/unchecked callable-signature claim;
+native dynamic values validate at boundary. SDK binding lazy, import effect-free.
+PID observation and raw frames confer ZERO Grant/identity/qualification authority.
+The later trusted composition still must join original live process creation/
+token SID/session/LUID/job/image/config/enrollment plus independently qualified
+writer/handle-transfer/observer evidence BEFORE any store read or snapshot return.
+Missing proof remains UNVERIFIED; fake positives prove only adapter behavior.
+
+Reuse existing socket/ctypes native-fake techniques, no duplicated mock server/
+browser/PNG/Runner. Tests cover exact legal ABI/frame bytes/progress, unknown and
+foreign/wrong primitive values, short/overflow/EOF/partial send/cancel/deadline,
+thread/fd drift, native failure/pending retention; ensure zero store/Grant/launch/
+socket creation/close effects. Root strict2/compile and guarded focused fake-only
+tests, named source reverses for PID-bytecount and frame/progress bounds plus
+different-seat source review before commit. Product target<=300/test<=350 net
+lines; >500 signals structure review, not minification/splitting pressure.
+Owned existing RootTemp TTL/evidence hold/resource bounds unchanged. No actual
+socket/Host/OS/Registry/service/model/network/cleanup/push/release/deploy/activation.
+This closes missing native channel source needed by BOTH30B and43, not final
+authenticated Host binding or either ticket's acceptance.
+
 Root guarded cold-worker import at214c6d39 observed111 local modules/1732167bytes,
 SDKattempts[], langgraph not loaded. Original worker16-import-07-original.json
 SHA25671b2efff5b5c74e005c9ee3a8a343c16da949423d3849067c4a4cb25c1b1852f;
