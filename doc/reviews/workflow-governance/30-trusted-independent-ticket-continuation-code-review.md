@@ -1,5 +1,41 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 source-ready readback / Root construction Grant03 — 2026-10-21
+
+Author actual FINAL SOURCE_READY, uncommitted frozen at a081 baseline, exact3paths:
+store blob59c31d33 SHAca13b284, app0a8d3e9a SHA6d5be325, test0c6c76f7 SHA8704be66.
+Root independently read complete product delta/application and all1055physical
+testlines, exactscope/status/branch/HEAD/diffcheck. WIP is diagnostic only, never
+formal review/merge evidence. Author idle, no Root cross-owner writes.
+
+Root Grant03 permits strict3 only on exact WIP: store/app/newtest, strict noAny
+unimported/explicitpackage, cache in registered RootTemp n13-mypy-cache, finite
+child55/outer60 minimalnonsecret env; memory compile/static metadata permitted.
+Register RootTemp n13-construction-diagnostics.json for exact command/fullraw
+source/static/check results, ownerRoot TTLthroughseal/holds overrideexpiry.
+No pytest/candidateimport/SDK/Native/SQLite/Host/cleanup until exact guarded plan
+review and diagnostic rebind. Preserve failures, no budgetreset or false green.
+
+Static construction issues to address before source approval: positive N10 member
+uses model_copy(update) instead of ordinary validated constructor (preflight rule);
+newtest repeats existing install_fake_native fixture wiring instead of reusing it.
+>500effective testlines trigger responsibility review, not forced split/minification;
+same cohesive file allowed after reuse/clarity review. Missing frozen result-binding/
+intermediate interruption/full store-to-real-app-reader coverage needs evidence,
+not more scope/new framework. Do not claim current tests cover those absent cells.
+Author disclosed prior blob-ascommit lookup failure and broad historical archive
+retrieval; not authority/executed. Preserve deviation, use anchored exact spans.
+
+Residual AO correction: earlier large-authority-response concern was only a
+preparation hypothesis, not fact/Ownerdecision. Actual existing16KiB GrantRecord
+control response is separate from existing64KiB snapshot native tool-result frame.
+Private protected same-process tuple/member/tool binder can reuse both; subject
+must NOT receive filesystem ACL to protected snapshot/config. No new publicwire
+proposal/permission needed now. Passive metadata check in installed Python311:
+pyinstaller/nuitka/cx-Freeze NOT_INSTALLED_IN_THIS_PYTHON only, not universal absence;
+no installer/network/sourceeffect executed. Later protected service packaging/
+Host qualification still separately gated. AUTO_CONTINUE construction diagnostics.
+
 ## N13 CT1 exact rebind / source Grant02 active — 2026-10-21
 
 Actual FINAL distinct helper DOC_PASS_NOT_OWNER_APPROVAL at ec197dcb3964752c7cac38403c16ea85268ce1c1:
