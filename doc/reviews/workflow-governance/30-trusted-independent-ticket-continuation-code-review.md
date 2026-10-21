@@ -1,5 +1,29 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B exact diagnostic Grant13c — 2026-10-21
+
+Author actual FINAL twice; corrected five blobs: lease301de57f,
+app7f38cd34,newtest86cbd7c5,oldprep1b35e928,oldlaunch63f31f02. Root full source/fake/
+ABI audit completed after author FINAL, oldtestdifferences exact2keywords, no
+unapproved paths. Corrected strict5 first1.828s exit1 three defining-module
+FakePyHandle errors; same author corrected newtest only, then strict5 PASS1.718s.
+Historical12+3errors kept, no reset. Finalapp has finalcontroller after borrow;
+limits-anchor validation reaches original lease hold before record-value refusal;
+source fixture now nonempty; zero requested range still requires whole-file proof.
+
+Under same batch Root Grant13c may run ONE exact construction diagnostic at owner
+WT baseline7606a21d with these five pins. Root owns testing, not the source author.
+Register inert RootTemp n14b-root-guard-r02.json (actual hashes/strict5) and fresh
+root-n14b-construction-01 plus full n14b-guard-construction-01-original.json;
+same Rootowner/TTLthroughreviewseal/holds. Prior planr01 independent PLAN_PASS deny
+prefix/three fakeowner types unchanged; replace only sourcepins plus two migrated
+oldtestpins. Memorycompile, bounded pytest7affected suites, all raw stdout/stderr
+sealed before reading/judging. Child55s/outer60s, minimal nonsecret environment,
+no userSite/pytest autoload/cache/pycache. Any unpatched SDK/SQL/SCM/KnownFolder/
+ctypes/native-owner/network/process reach is a diagnostic failure, not permission.
+No actual Host/campaign/SQLite/authority issue or operational qualification.
+Separate independent engineering source check in progress; no source commit yet.
+
 ## N14B correction Grant13b / same closure54 — 2026-10-21
 
 AO actual FINAL DOC_PASS_NOT_OWNER_APPROVAL for e7b8278b exact leaf2bad6492,
