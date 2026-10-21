@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Next direct prerequisite: bounded offline runtime import proof
+
+Root admits one owned diagnostic payload under existing Root protected-launch
+Temp/package17-runtime09, no Git repository or installed destination. OwnerRoot;
+TTL through review/seal, exact asset manifest/retention hold; no cleanup attempt.
+Only copy read-back b9df00c8 application files and existing Python311 runtime/
+matching six dependency versions; fixed ._pth content, bounded zip pure sources,
+no app library in zip, dev packages excluded. Max128 files/64MiB existing limits.
+No new product path/packager/framework/requirement or operational Grant.
+One finite private Python -I -B diagnostic cold import, minimal nonsecret env,
+registered cwd, child55/outer60; deny SDK/process/network/storage before app imports.
+Passive own-module loader/version/path readback only; no worker main/service/Host/
+model/Registry/account/ACL/realGrant/qualification. Installed versions are not
+locked-wheel provenance. Failed closure is evidence, not permission to widen caps.
+This solely prepares30B valid issuer and43 protected observer runtime prerequisite.
+
+
 ## Package boundary accepted in existing engineering hold
 
 ACTION_COMPLETED: author b9df00c889acd2cc2164bb885aed40d28e002dde,
