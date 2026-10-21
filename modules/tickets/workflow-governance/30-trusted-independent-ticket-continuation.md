@@ -41,7 +41,67 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
-## 30N12 — fixed protected-store admission / closure48 proposal
+## 30N12 — closure49 bounded source correction supplement
+
+Same original30/PRD009/CHG009/Context04/uncapped batch and first-CVQ source-only
+construction exception. Closure48 behavior/safety remains; this supplement only
+corrects reuse applicability and adds missing discriminating cells, not a new
+requirement, PRD, Host permission or budget. Source baseline is immutable candidate
+ae9d195522069c94c8214f6e3cfb87609790e915; old a607 and failed evidence retained.
+Root engineering review CHANGES_REQUESTED F1/F2/F3 independently reproduced all
+three baseline probes RED (no Python denial), originals in registered RootTemp
+n12-immutable-review-originals.json. E01 UNKNOWN/rawmissing remains independent.
+
+Supersede closure48 CREATE-only correction scope for this additive repair:
+MODIFY exactly:
+- library/local_orchestration/grant_authority/windows_protected_store_native.py
+- library/local_orchestration/grant_authority/windows_snapshot_native.py
+- tests/test_grant_authority_windows_protected_store.py
+CREATE/DELETE/export/dependency0. Composition file and all other old consumers/
+tests unchanged. Same retained author/worktree/Context; reviewer Root, distinct
+retained helper source evidence only. No author execution or commit until separately
+bound after Root checks; independent ticket consistency review precedes Grant11.
+
+F1: descriptor structural checks must not globally reject AUTO_INHERITED on a safe
+unmanaged ancestor. Allow it only for ANCESTOR after existing owner/effective ACE
+checks; managed root/state/DB remain protected exact two-ACE policy and explicitly
+reject AUTO_INHERITED. Other defaulted/pending control restrictions unchanged.
+
+F2: reuse the existing facts parser, not copy it. Add exact-bool keyword-only
+allow_oversized_directory_metadata=False to _Win32SnapshotApi.query_facts.
+Default preserves N10 behavior. Opt-in skips size cap ONLY for observed directory
+metadata, never files. N12 opts in only for expected directory entries; its local
+size check is DB-only. Expected-kind mismatch still refuses, so a directory flag
+cannot disguise DB. All DB/read-size/controller/identity limits remain.
+
+F3: distinguish explicit local malformed-return checks from unknown SDK execution.
+One private local sentinel may map proven malformed structure/control/SID/ACE to
+finite known protection refusal before constructor, reverse-close known owners,
+no poison. SDK getter/conversion/copy exceptions (including ValueError and
+interruptions) remain unknown/recovery; do not catch all ValueError as known.
+Post-constructor any malformed/unknown outcome remains retained terminal recovery.
+The existing bounded descriptor-copy helper's exceptions have no proven local
+provenance and therefore stay recovery, including non-buffer descriptor objects.
+
+Extend shared parameterized fakes/tests, no new script/framework: legal inherited
+ancestor through actual composition; same flag managed/DB rejects; old shared
+default rejects oversized directory; explicit directory opt-in accepts metadata;
+opt-in cannot uncap files; N12 directory metadata above DB cap passes while exact
+DB cap passes/cap+1 refuses; local malformed validity/control/null DACL/ACE refuses
+without poison; SDK ValueError/interruption and postcheck-malformed retain/poison.
+Keep Root baseline probes and replay after repair. Preserve original four mutation
+groups plus Root different legal boundary; old ae9d mutation plan is NOT_EXECUTED
+and must be rebound. No all-reject or weakened assertion as a substitute.
+
+Root strict4 includes both protected-store sources, shared snapshot native and new
+test; memory compile/import and original four fake suites remain. Add necessary
+N10 reader/contracts consumer regression with exact fake-owner guard review before
+execution; no real Native/SQLite stores or ledger suite. Preserve source identity,
+module collection identity and full RED/exactGREEN output. Shared API default
+compatibility must be shown, not inferred from unchanged consumers. Original P0,
+resource/lifecycle/effect/cleanup/Host prohibitions and evidence holds all remain.
+
+## 30N12 — fixed protected-store admission / closure48 historical baseline
 
 Original30/PRD009/CHG009/Context04/runbook03 section2 and same uncapped
 batch/first-CVQ source-construction order. Source baseline

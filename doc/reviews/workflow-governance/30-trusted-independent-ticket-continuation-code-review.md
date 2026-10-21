@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 closure49 bounded correction / source boundary review — 2026-10-21
+
+Root baseline probes reproduce F1/F2/F3 on exactae9d1955:3selected/3RED,
+27deselected, child2.172s, Python denial list empty. Complete immutable candidate
+green/strict plus new baseline originals preserved in RootTemp
+n12-immutable-review-originals.json; no claim236green implies closure complete.
+AO independently recommends one minimum shared-facts directory-only opt-in with
+default unchanged, entry-scoped inherited control policy and explicit local
+malformed sentinel; no copied parser or parallel authorization source.
+
+Root same-batch prepares closure49 supplement: zeroCREATE/DELETE, exactly three
+MODIFY paths (protected native/shared snapshot native/existing new test), baseline
+ae9d1955, composition/other old consumers unchanged. This is bounded correction
+of existing T1/T2/T3, not requirement expansion or new Host effect. Independent
+exact ticket/registry consistency review precedes active source-edit Grant11;
+no shared-file edit is yet authorized. Old candidate/mutationplan/incident held.
+Expected continuation: reviewed scope -> exact edit-only Grant -> actual FINAL ->
+Root guarded checks -> commit/candidate review/mutations, not Owner reapproval.
+
 ## N12 source findings / bounded Root baseline-probe Grant10 — 2026-10-21
 
 Sourcehelper actual FINAL finds F1 legal AUTO_INHERITED ancestor globally rejected,
