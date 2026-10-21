@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Host launch revision02 — actual boundary defects and limited correction
+
+Revision01 five-path SOURCE_READY never reached behavioral acceptance: Root
+host22-behavior01 cold import failed process->image->native->retained->ABI with
+partial _FILETIME import; strict01 reported5 errors, compile5 otherwise passed.
+Both originals remain in Root's host22-dev01 active evidence hold, not retried.
+Different-seat source audit confirms L2: old native ABI widened to Host expected
+data without a live image lease, bypassing upper validation. It also finds copied
+test denial helpers already available in the reused preparation fixture.
+
+Root's SAME-ticket revision02 at a11eb3c8e59b6f18a1ae7e80f997e95eeef56a21,
+leafc46ec09e65a069413083e91c6ea8576935dd9ade / LF
+c91daf1b89b8094b91b48eb38ac4d277629c39a5fe7af5518dc5b805547a8158,
+two matching registry edges, received actual different-seat DOC_PASS. Root now
+activates ONLY that seven-path SOURCE_EDIT_ONLY correction at25c49074, preserving
+the same author/worktree and original findings. The two extra existing files only
+extract pure model/bound and share exact verified-image validation; no new module,
+framework, authority or relaxed cap. Legacy-only ABI plus checked Host entry must
+reach one shared native algorithm, and cold imports/direct bypass must be tested.
+No new Owner question, Host invocation/qualification, main/30B/43 integration or
+checklist completion. Return SOURCE_READY before any verification/commit/effect.
+
 ## Image lease committed source, integrated readback and direct continuation
 
 Different-seat BYTE_QA verifies all14 sealed originals exactly, including failures,
