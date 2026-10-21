@@ -1,5 +1,26 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B correction Grant13b / same closure54 — 2026-10-21
+
+AO actual FINAL DOC_PASS_NOT_OWNER_APPROVAL for e7b8278b exact leaf2bad6492,
+LFdaebb75a.../both edges, necessary two derived-call migrations only. Root derives
+Grant13b from batch-checklist-local-20261019-uncapped, same owner/reviewer/worktree/
+branch/base7606a21d/context/holds as Grant13; scope now exact lease/app/newtest plus
+two oldtest constructor keyword updates stated in that leaf. No other MODIFY/
+CREATE/DELETE/dependency or effect. Source author owns corrections, Root is not
+production/test author. Source-only correction remains no imports/tests/checker/
+SDK/SQL/commit/Agent/cleanup until separate exact-source admission.
+
+Known complete current correction set: strict3 original12errors; independent
+helper source diagnostic F1 last final-borrow may cancel/expire before launch
+(T4), F2 tampered wrongtype/differentvalue original_limits prematurely safe-refused
+without recovery hold(T1/T3). Root adds fixture-constructor mismatch: observed-file
+size ge1 but new source fixture uses size0; correct to nonempty shared fake bytes,
+retain zero requested range/digest. Add focused regressions for F1/F2, no new
+acceptance or framework. Keep full original errors/bytes/failure evidence. Author
+returns actual FINAL/five exact blobs before Root reads; retained source helper's
+engineering findings are not committed-source approval or qualified Host review.
+
 ## N14B source-ready diagnostic / bounded caller correction — 2026-10-21
 
 Author actual FINAL SOURCE_READY: baseline7606a21d, no commit/tests/imports run;
