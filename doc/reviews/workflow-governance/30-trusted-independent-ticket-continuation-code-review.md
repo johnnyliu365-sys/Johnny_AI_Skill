@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B exact source allocation Grant13 — 2026-10-21
+
+Retained helper actual FINAL DOC_PASS_NOT_OWNER_APPROVAL at e1440172 corrected
+closure54, leaf8a21e19c21d0ae928820093f32f09102dace6fc5,
+LFb6b431ce72b8ae5dd36b9b356859bfe452e78ef66ea1769c572d0e444e4f1f50;
+exact signatures/two registry edges/finite recovery semantics verified. Root accepts
+document preflight under existing batch, not new Owner/operational/Host approval.
+N14A stage two-original QA actual FINAL PASS330ee960, immutable hold clean7606a21d.
+
+Grant13 Root register/create repository-contained owner/review allocations:
+.worktrees/skill-improvement-30g-protected-launch and matching -review,
+branchcodex/same, exact baseline7606a21df3cbda10d401b3458c3e0ee9e07594a3.
+Reject existing paths/branches/reparse ancestry, no fallback. Owner retained
+/root/ticket30n4_peer_impl Luna/xhigh; reviewerRoot. Register empty Temp roots
+LOCALAPPDATA/Temp/johnny30-protected-launch-owner-20261021 and matching-review-20261021,
+owner author/Root, TTLthroughreviewseal/holds overrideexpiry; teardown only exact safe
+authorization, no denied-cleanup retry. Register RootTemp n14b-construction-originals.json
+for later raw diagnostics, same lifecycle. No source writes before fresh containment/
+linked Git metadata/branch/clean baseline/leaf+twoedge readback and Root activation.
+
+Upon those readbacks Root may activate SOURCE_EDIT_ONLY for closure54 exact1MODIFY
+lease/2CREATE protected_subject_launch app and test per ticket; sideContext
+ctx-ticket30n14b-protected-launch-20261021, N14A view closed as immutable evidence.
+Author cannot import/test/checker/SDK/SQL/commit/Agent/cleanup. Existing construction
+exception permits normal newtypes before type preflight, not effect/Host approval.
+Actual FINAL/hash before Root reads active source; Root planned guarded diagnostics
+need separate exact-source admission. No new rule/PRD/runtime or external authority.
+
 ## N14B document error-contract correction / same proposal54 — 2026-10-21
 
 Independent helper actual FINAL CHANGES_REQUIRED one grouped ambiguity, no source
