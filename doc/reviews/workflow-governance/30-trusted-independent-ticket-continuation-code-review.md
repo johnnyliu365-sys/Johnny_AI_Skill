@@ -1,5 +1,31 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 E01 unauthorized native-boundary incident / execution hold — 2026-10-21
+
+Retained implementer MESSAGE reports initial fake-test _program_data_path()
+reached real SHGetKnownFolderPath because its harness omitted that boundary.
+Root immediately interrupted running owner and issued evidence-only continuation:
+no further source repair/tests/compile/SDK import/native calls/reproduction,
+cleanup/rollback or unchecked source commit. Preserve exact original command,
+script, raw stdout/stderr/exit/timing/arguments and source hashes/metadata in
+registered ownerTemp; actual FINAL BLOCKED required before Root inspection.
+
+Author statement "only resolved ProgramData; no other actualAPI/file/SQLite"
+is NOT independently established; absence/provenance limits remain UNVERIFIED
+until original trace/source reviewed. No retroactive permission, qualification,
+positive acceptance or stage integration. No actual Host campaign authorized.
+Same threepaths/lineage and all historical evidence retained; incident holds
+override asset expiry, no deletion or policy bypass. No active authorWT read.
+
+Root had independently prepared (not executed) N12 guard draft that blocks shell
+KnownFolder/SQLite and existing registry/file/token/SCM/process/network seams.
+After actual FINAL, inspect frozen originals and precise effect boundary first.
+Any further local guard/source correction must be admitted on evidence, with
+unpatched SDK calls blocked BEFORE candidate import/execution; no blind re-run.
+This is scoped execution hold, not abandonment/reset of original12 or new PRD.
+Other lawful independent preparation continues; actual safety/config/permission
+changes still require exact external authority. No Owner risk acceptance inferred.
+
 ## N12 exact source-construction Grant01 — 2026-10-21
 
 AUTO_CONTINUE -> IMPLEMENT / bridgeNOT_REQUIRED same-lifetime direct lane.
