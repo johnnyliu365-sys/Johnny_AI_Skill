@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 closure49 immutable candidate / Root review Grant16 — 2026-10-21
+
+Author actual FINAL commit-only b3e3117b55d30be8762808440e7da4c7d1e4a450,
+parentae9d1955, exact3MODIFY bd884b2a/6e3f64bb/d15e26b3, clean. Root verifies
+identity/parent/diff before reviewer-owned WT fast-forward fromae9d1955.
+Grant16 permits that exact FF, final strict4/six-suite guarded regressions at
+fresh RootTemp root-n12-final49-01, and same three Root baseline probes at
+root-n12-final49-probes-01, original RED and new exactcandidateGREEN separate.
+No product source writes/rewrite, author effects or source-stage integration yet.
+
+Root may rebind original four mutation groups to this candidate only after exact
+old-text count/digest checks, registered temporary plan before execution, same
+reviewed r06 fake-only guard/finite bounds and fresh RED/exactGREEN processes.
+Root independent door is legitimate exact60-second input-window acceptance
+versus >60 refusal through actual composition, not same author failure doors.
+Temporary test probe only, no permanent script/framework/source changes. Every
+unfiltered RED/GREEN result retained, zeroRED is finding. Distinct sourcehelper
+reviews exact3delta and structure as engineering evidence only; Root concludes.
+E01 UNKNOWN/rawmissing/retrievaldeviation, Host/30B43/Recovery/checklist unchanged.
+No Native/SQLite/Host campaign/install/security/network/model/push/release/cleanup.
+ACTION_COMPLETED -> AUTO_CONTINUE immutable engineering review, not Owner wait.
+
 ## N12 closure49 construction green / commit-only Grant15 — 2026-10-21
 
 Root Grant14 strict4PASS1.579s, six-suite399/399PASS1.65s, child3.562s,
