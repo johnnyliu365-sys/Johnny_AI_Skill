@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Existing package-boundary child Grant activation — 2026-10-21
+
+ACTION_COMPLETED / DOC_PASS854447e5: retained independent
+/root/authority_topology_architecture read original30 exact subsection, both D8
+edges37d302344dc03d7abf13e9c1882d32ee1beb6672098721f458bcb85ae64b04e1,
+proof07 original and baseline214c6d39 initializer/lazy pattern. No finding.
+Root fresh own-author WT readback: clean1091833e on
+codex/skill-improvement-30g-protected-launch, registered repo common Git dir,
+root/.worktrees/leaf all non-reparse. Completed worker allocation released.
+Root activates grant-ticket30-package-import-boundary-20261021 revision01,
+parent batch-checklist-local-20261019-uncapped, exact original30 leaf at854447e5.
+Only author-owned exact FF109->214c6d39772fc8f504528c1d9c1dcb75a7697257 then
+SOURCE_EDIT_ONLY two paths as written. No new WT/branch/PRD/role/cap/resource reset.
+Root sole final reviewer; existing helper independently checks source later.
+Typed source preflight uses only already existing str/object/ModuleType/static
+symbols, no proposed unavailable schema constructor. Unknown export must fail
+before import. No permission is implied by a module attribute or self-description.
+No import/test/checker/commit/native/Host/security/network/cleanup effect admitted
+yet. Root will read actual FINAL files then select exact guarded offline execution.
+30B/43 REVIEW_BLOCKED/main/Recovery unchanged. AUTO_CONTINUE -> existing owner
+source correction, not another architecture/Wayfinder loop or Owner question.
+
 ## Capsule readback and immediate external prerequisite — 2026-10-21
 
 Retained /root/authority_topology_architecture independently decompressed0064a5f0
