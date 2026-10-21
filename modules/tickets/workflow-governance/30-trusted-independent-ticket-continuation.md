@@ -26,6 +26,78 @@ SDK attempts[]. ONLY initializer coupling closed. Complete runtime/import proof,
 native executable, real Host channel/observer and final CVQ remain OPEN.
 Historical plan follows.
 
+#### Existing native protection tool: bounded provisioning command source
+
+This directly closes the unreachable N6/N7 production command prerequisite of
+30B trusted-Grant positive and43 protected observations. It does not install,
+qualify or unlock either ticket. Existing N7 source-only exclusion remains
+historical for that slice; this explicit batch-derived source scope adds the
+missing operational entry, without authorizing its actual invocation.
+
+Grant candidate grant-ticket30-provision-command-20261021 revision01 under
+batch-checklist-local-20261019-uncapped. Baselineb9df00c889acd2cc2164bb885aed40d28e002dde;
+retained native implementation owner in SAME native-service WT/branch after
+its completed469d59f3 allocation is released and exact FF to baseline. Root sole
+reviewer/orchestrator; different retained peer source review after implementation.
+CREATE ONLY library/local_orchestration/native_windows/NativeProvisioningCommand.cs
+and library/local_orchestration/native_windows/NativeProvisioningCommandSelfTests.cs.
+MODIFY ONLY library/local_orchestration/native_windows/Program.cs,
+library/local_orchestration/native_windows/SelfTests.cs and
+library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj.
+DELETE none. No dependency/public domain/schema/Registry writer/service/account/
+ACL repair/uninstall/framework. Product/test responsibility targets<=350 each;
+>500 triggers structure review, not compression or arbitrary splitting.
+
+Add one explicit provision command; leave EnrollmentCommand read-only. Reuse
+WindowsAuthorityGrantRegistry.Read with its fixed HKLM64 protected-owner/DACL/
+link/stability readback; require OBSERVED and ordinary NativeEnrollment parsing.
+Caller cannot supply enrollment JSON, Registry path, authority ref or an approval
+flag. Protected metadata/hashes alone are NOT Human Owner consent. This command
+may be invoked only by the later separately approved exact OS operation manifest,
+which must cover its exact enrollment, files/hashes and operation. Its prerequisite
+is explicit pre-stage of the disabled service/protected Parameters enrollment;
+current runbook payload-before-service order is not silently changed or executed.
+Source construction is permitted now; actual pre-stage/invocation remains blocked.
+
+The input is only payload bytes concatenated in the protected enrollment's
+PayloadEntries order, exact enrolled lengths, configuration once in that list.
+Bound this command to<=128 entries and<=64MiB aggregate before allocation or any
+CREATE; this is a command limit, not a changed global NativeEnrollment schema.
+Validate every length/hash plus exact EOF/no trailing bytes before ANY creation.
+No archive extraction, input paths, downloaded bytes or reopening source files.
+Use existing NativeOwnedPayloadBytes/creators and WindowsReadback/verifier;
+no duplicate low-level Win32/fake/JSON/ACL implementation.
+
+Preflight every derived destination as absent, then re-read the same protected
+enrollment before the first and EVERY CREATE and final verification; compare
+exact bytes/identity, not only caller ID. Missing, changed or failed readback
+refuses before the next effect. Keep creators' CREATE_NEW/no-adoption behavior
+at each actual effect; no preflight-then-overwrite. Target-exists, malformed or
+incomplete input before effects yields zero creator calls. Later failure stops
+immediately with finite partial/recovery outcome, confirmed created paths and
+failure stage; no cleanup/overwrite/retry or subsequent CREATE. Final success
+requires existing complete enrollment readback/verifier MATCH; output remains
+SOURCE_ONLY_UNQUALIFIED, never Host/Grant/Owner-approval proof. Do not emit raw
+payload, secrets, prompts or caller exception detail in diagnostic output.
+
+Offline TDD P1 legal exact two-tree/payload batch reaches existing creators and
+final verifier (not all-reject); P2 missing/untrusted/drifting Registry, malformed/
+truncated/extra/wrong-order/overaggregate input each zero CREATE; P3 pre-existing
+destination, unknown observation or out-of-enrollment target cannot be adopted;
+P4 fail after a successful CREATE retains confirmed partial state, no next effect
+or cleanup; P5 final verification/Registry drift never returns success; P6 actual
+Program dispatch and existing selftest/verify/service behavior remain preserved.
+Fake-only ordinary constructors/ports; no real Registry/directory/file/service
+or privilege calls. Root checks exact changed paths, offline build0warning/error,
+focused named cells, different-door reverse mutations of authority readback and
+all-before-any bytes validation, exact restored GREEN; different-seat source audit.
+Reuse existing build/contract selftest entry, no new test Runner. SOURCE_EDIT_ONLY
+only after document review, exact baseline/worktree/Grant readback; no checker/
+build/test/import/SDK/Host/commit before Root's separate guarded admission.
+Owned existing Temp TTL/evidence/Recovery holds, uncapped historical accounting,
+single-command deadlines and stagnation diagnosis remain. No push/release/deploy/
+Host qualification/main integration or denied cleanup retry.
+
 #### Existing readonly Host channel: bounded source admission, no authority claim
 
 Retained Architecture Owner confirms this is ordinary same-ticket construction
