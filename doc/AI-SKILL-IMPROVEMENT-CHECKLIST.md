@@ -37,7 +37,7 @@ N13 final86be3e34經原作者同票修正、Root獨立來源／行為複驗與�
 複驗448綠／1紅揭露舊5ms測試時鐘不穩定；另一席指出最終pin讀取後controller
 空窗，Root獨立getter反例證明取消時仍回傳bytes。原票closure52修正後451綠／
 strict4綠，原反例轉綠、取消與deadline正式回歸保留；產品逾時沒有放寬。
-11組具名記憶體突變均具RED→精確GREEN，另有Root不同門evidence-domain突變及
+11組具名記憶體突變均具RED→精確GREEN，其中包含Root不同門evidence-domain；另有
 合法not_before／expiry-1／空member／32768bytes／256members真組合路徑綠。
 兩次無效probe不算驗收：整模組重載Enum身分失真、prepin原selector未裝假SDK
 而被guard攔下kernel32嘗試；後續改為保留Enum的method-only與既有全路徑fake，
