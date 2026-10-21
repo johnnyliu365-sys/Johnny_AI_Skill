@@ -13,6 +13,92 @@
 
 ## Effective local batch resource / convergence amendment — 2026-10-19
 
+### Current shortest-path source checkpoint and fixed worker / closure57
+
+N14B650f1c37 is closed as engineering source only. N14C b016aed2ee9c20145be5069fa98cdc501702df35
+adds the exact protected one-read session: strict3/420 affected tests, eight named
+memory-only source reverse REDs, exact restored32GREEN, independent different-seat
+source review. Root protected-source hold exactFF b016aed2, main unchanged.
+Native candidate0014778d is NOT accepted: independent review found failed-token
+ownership mapped to refusal, failed-Registry-open owner adoption/close, and config
+bytes from a different unchecked middle handle. Same-scope corrections retain
+these findings; managed build/self-tests do not discharge native source defects.
+
+Next local step must supply fixed worker composition missing from both entries,
+not new capability/framework/PRD. It directly joins protected source/Grant consume
+to N14B/N14C for the first READ_REVIEW_SNAPSHOT acceptance needed by30B/43. It does
+not complete READ_MAINLINE, admit_dispatch preeffect wiring, final CVQ, fresh
+remote source or either ticket. Native same-handle reader correction and packaged
+runtime/observer are subsequent direct dependencies, not new governance projects.
+
+Precise closure57 / derived Grant16 candidate under existing uncapped parent:
+baseline b016aed2ee9c20145be5069fa98cdc501702df35; author retained
+/root/ticket30n4_peer_impl, existing Luna/xhigh capability and repo-contained own
+.worktrees/skill-improvement-30g-protected-launch, branch codex/same; Root sole
+reviewer/orchestrator with different-seat source helper. Existing private constructor
+bootstrap/source-only ordering remains; no true Host qualification prerequisite
+for writing its source. Commit this allocation and independently review before
+Root activates its exact leaf/commit-bound child Grant. No new operational Grant.
+
+CREATE library/local_orchestration/grant_authority/windows_authority_worker.py
+CREATE tests/test_grant_authority_windows_authority_worker.py
+MODIFY/DELETE/dependency/public exports: none. No CLI/SCM/Registry/ACL/other source
+edits by this author. Reuse approval/enrollment/token/subject_lease/protected_launch/
+protected_read_session/error types and their shared test composition; no copied
+native harness or secondary scheduler/Runner. Forecast product<=300/test<=450
+effective lines; >500 signal requires responsibility review, not minify/split.
+
+One private finite _AuthorityWorkerExit COMPLETE=0/REFUSED=2/RECOVERY_REQUIRED=3;
+_run_fixed_authority_worker()->_AuthorityWorkerExit, main()->int; guarded module
+entry only, import effect-free. main admits only Python3.11.9 with actual isolated/
+ignore-environment/no-user-site/no-bytecode flags and argv length1. No arguments,
+path/ref/SID/Grant/environment overrides or ambient source. Wrong runtime refuses
+before source/native effect. Native protected package and ._pth qualification are
+separate; unit monkeypatch cannot establish their truth.
+
+Create owned threading.Event; finite overall<=60s. Read installed approval, then
+installed subject enrollment; only protected record supplies subject SID/session/
+operation/job limits. Acquire original token then original subject job; launch
+via N14B with original typed enrollment/owners; create one private manual-reset,
+unset, non-inheritable Win32 cancellation event (retain typed PyHANDLE, not bare
+integer). Fresh session deadline=min(overall_deadline,monotonic()+10s). Serve once
+through N14C. No worker-side alternative Grant issuance/ledger/pipe/identity proof.
+Do not reconstruct grants from fixtures or promote source-only flags.
+
+N14C success already closes subject process/job/token; worker never double-closes.
+Before launch, only proven no-owner/known pre-process refusal may close original
+job then token, each once; first close uncertainty stops subsequent cleanup.
+Any retained/unknown process-creation outcome, native poison/wrong-thread/drift,
+fatal Revert/pending IO or unexpected exception retains exact original objects
+and returns recovery, not ordinary refusal. N14C known validated-launch refusal
+may return2 only when its original-owner disposition is proven; invalid input,
+cancel/deadline before teardown or unknown state is not evidence of cleanup.
+On complete/proven refusal close only worker-owned event once; close uncertainty
+retains objects. Keep recovery strongholds; no recovery reset, guessed cleanup,
+PID reopen, unsafe finally/finalizer or retry. main hands recovery code3 to its
+native supervisor using immediate process exit, not normal Python unwinding that
+could release uncertain owners; tests must intercept this exact effect. Native
+supervisor must preserve recovery after proved whole-job exit, never translate3
+to normal refusal/STOPPED. That minimal native adaptation stays in closure56,
+not this two-create author allocation. No false completion without it.
+
+W1 legal exact ordered one-read/record-derived values and no double-close;
+W2 bad runtime/args/ambient input zero source/native effects; W3 overall/session
+deadline finite/fresh and exact original cancellation owner; W4 known no-owner
+and pre-process refusal cleanup order/once; W5 uncertain acquisition/creation/
+pendingIO/fatalRevert/close retain exact originals, no later cleanup; W6 N14C
+complete/known refusal/recovery mapped correctly and immediate recovery exit is
+intercepted, not executed. Existing shared helpers first; Expected independent
+from Actual. Strict Python3.11, compile/import, focused fake-only tests and named
+reverse mutations (ordering, ownership, recovery handoff), different Root door.
+Initial SOURCE_EDIT_ONLY: no import/checker/test/SDK/process/commit until Root
+reads exact source/fakes and admits guarded execution. No author Agent control.
+Use existing registered owner/Root protected-launch Temp (owner+TTLthroughseal,
+evidence/Recovery hold overridesexpiry), fresh per-run paths, child55s/outer60s,
+old accounting preserved. XSS/UI/SQL/deployment N/A. Independent review and local
+engineering-hold integration only; no Host test/install/permission/Registry/
+account/network/model calls/push/release/main integration/formal gate activation.
+
 Authority `batch-checklist-local-20261019-uncapped`: Owner explicitly removes all
 per-ticket/per-role cumulative command-second ceilings and fixed initial-plus-one
 correction attempt ceilings for the original12 local items, including30B/30G/B3F01.
