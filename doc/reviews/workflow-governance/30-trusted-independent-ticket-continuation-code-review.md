@@ -1,5 +1,26 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 F4/F5 static return / test trigger correction — 2026-10-21
+
+Distinct helper independently confirms F4/F5 against frozenT3 and original2RED,
+not new requirements; earlier pass coverage cannot close these findings.
+Author actual FINAL changed only protected native9fc63abab21820b8bf4b95378004a43a60795432
+and testbcc5a4dc095e362cbbbc93668a18da9d82dfc4da atb3e3117. Shared6e3f64bb/
+compositiona6f0ef67 independently unchanged. Retention now publishes one persistent
+list and joins later refs by identity; close_known checks retained terminal state.
+No execution yet. Root full2diff static review finds new test's drift trigger
+targets unprotected ProgramData ancestor, so removing PROTECTED changes nothing;
+target an existing managed directory to exercise actual protection drift.
+Same Grant18 permits only that test correction, no new execution or product edit.
+
+Root original backing probe checked flattened tuple representation. Future probe
+must inspect the actual newly held list as well, by identity, without demanding a
+specific flat representation or counting external fixture refs. Replay this
+equivalent semantic assertion against oldb3e3117 RED and correctedcandidateGREEN;
+retain original direct-representation probe unchanged in history. No all-refuse,
+weakened ledger-retention assertion or retrospective false green. E01 and all
+qualification/30B43/Recovery holds remain unchanged.
+
 ## N12 original T3 F4/F5 confirmed / bounded Grant18 correction — 2026-10-21
 
 Root Grant17 two immutableb3e3117 probes bothRED, child2.094s, denials[]:
