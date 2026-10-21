@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 original QA / engineering hold composition Grant12 — 2026-10-21
+
+Distinct helper actual FINAL archiveQA PASS seven of seven byte-exact UTF8 original
+packets at a2ccc40a, raw912504/bb7edea7974d90df6fd36303b3eb988b0aa5724e1e71d20a154049881b1f1af1,
+gzip106719/63c2301d447291227265bb3f752ef328dfe9539e5cd35cea0ed334713275b490.
+22 accepted RED/GREEN originals all effects[],2 invalid attempts retained/not counted.
+Root source-engineering acceptance closes N13F1/code timing evidence, source checks
+and same-ticket correction. Mandatory qualified audit remains BLOCKED; this is NOT
+formal authority integration, Host qualification, ticket closure or risk acceptance.
+
+Grant12 Root may fresh-check and FF only its existing engineering hold source-stage
+a081906f6b3f7e34f8cad9ce96d510f86a446d07->86be3e340d4b95dd37f054a4024ae7ada5affbd7.
+Readback audit: old112paths,110unchanged; only store and oldreader test differ;
+two new app/test paths yield114total vs original18bf1e9f. Preserve all other source
+blobs and no main move. Exact final candidate4blobs already frozen above. Re-run
+strict4/guard451 at actual staged paths with fresh root-n13-stage-01 basetemp,
+collectsourceidentity and no new SDK allowlist. Register n13-stage-originals.json
+in same RootTemp/Rootowner/TTLthroughseal/holds before write. Independent stage
+rawQA follows. Existing author/review worktrees become immutable referenced holds,
+not deleted; release N13 author allocation only after staged checks pass. Router
+then may bind reviewed N14A exact new baseline and source-only Grant under batch.
+30B43/Host/R0/DAP/TAL/E01/Recovery/checklist completion still unchanged, only04[x].
+
 
 ## N13 final source original archive / DATA ONLY — 2026-10-21
 
