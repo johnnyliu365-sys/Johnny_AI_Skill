@@ -17,6 +17,15 @@
 
 #### Same-ticket payload prerequisite: narrow existing package import boundary
 
+ENGINEERING_CLOSED: author b9df00c889acd2cc2164bb885aed40d28e002dde, parent214c6d39.
+Exact two paths/blobs d0e1c9a6/f4691010; strict2,12 focused and56 affected cases,
+two named source-memory reverse REDs/restored GREEN, independent source review
+and13/13 raw byte-QA pass. Existing engineering hold exactFF to b9df00c8;
+post-integration12PASS. Cold worker79 local files/1318554bytes (was111/1732167),
+SDK attempts[]. ONLY initializer coupling closed. Complete runtime/import proof,
+native executable, real Host channel/observer and final CVQ remain OPEN.
+Historical plan follows.
+
 Root guarded cold-worker import at214c6d39 observed111 local modules/1732167bytes,
 SDKattempts[], langgraph not loaded. Original worker16-import-07-original.json
 SHA25671b2efff5b5c74e005c9ee3a8a343c16da949423d3849067c4a4cb25c1b1852f;
