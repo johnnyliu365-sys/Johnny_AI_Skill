@@ -1,5 +1,17 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B proposal invariant check recovery — 2026-10-21
+
+Proposal f6094050 contains five authorized docs only. Initial Python document-row
+verification used subprocess text defaultcp950 for UTF8 Git show and failed decode;
+PowerShell continued to docs commit despite that child failure. Do not treat outer
+exit0 as validation success; retain this control diagnostic. No code dispatched.
+Corrected verifier reads original Git bytes then strict UTF8 and fails shell on
+nonzero child; actual PASS: finalleaf LF digest ea981644... in both registry edges,
+all12rows exact-identical to330ee960 and only04checked, clean controlf6094050.
+No content change or rule relaxation; future composed checks stop on childfailure.
+Independent proposed ticket/checklist review remains required before Grant.
+
 ## N14B closure54 proposal / checklist100 — 2026-10-21
 
 Grant12 docs only at330ee960: same30leaf new bounded N14B span, registry two digest
