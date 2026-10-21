@@ -1,5 +1,34 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 Grant04 static followup / no unchanged checker retry — 2026-10-21
+
+Author actual FINAL corrected WIP3blobs59c31d33/37624e66/571ab85f; Root read full
+new128line app and1186line test after return, no activeauthorreads. Handoff claimed
+1025physical lines but actual1186; blob matches, so metadata count error not drift.
+Root registers n13-grant04-static-readback.json in existing RootTemp, exact static
+originals/hash and immutable N10 IO source evidence, ownerRoot/TTLthroughseal/holds.
+
+D01 remains OPEN by exact unchanged constructor call and still non-subclass
+_FakeLedger/_FakeNativeSession, the two original nominal mypy errors have not been
+addressed. Do not rerun unchanged checker failure or waive typing. Ordinary typed
+nominal fakes with non-IO init/compatible signatures or an equivalent genuine
+constructor-based seam must satisfy both strict and runtime checks; never cast,
+Any, object.__new__, model_construct/update bypass or change production ctor for tests.
+
+D02 corrected full route is now present but its Expected mistakes N10 semantics:
+actual unchanged N10 reader verifies WHOLEsource for EACH member then probesEOF
+and postfacts; it does not issue a range-only native read at member.offset. Native
+read_chunk775ff always submits bounded ReadFile includingEOF, fake read_file290ff
+records each. Thus derive exact expected offsets/counts from frozen wholefile+EOF
+contract, not observed Actual and not weakening to >=. New positive wholefile trace
+and existing application positive need that correction; postfacts identity-drift
+expectation must include completed wholefile+EOF before failure. Keep expected
+member tuple extraction independent and preserve real product loop. No product
+behavior change/newpolicy; D01/D02 same Grant04, original3paths/source-only scope.
+Other D03–D05 fixes retained for later executed validation, not declared pass.
+All prior raw/unknown/Host/30B43/recovery restrictions remain; author may correct
+then actualFINAL_SOURCE_READY, Root waits and does not inspect during edits.
+
 ## N13 construction findings batch / corrective source Grant04 — 2026-10-21
 
 Root Grant03 strict3 actual exit1,34errors in2files,30.828s; full unfiltered raw
