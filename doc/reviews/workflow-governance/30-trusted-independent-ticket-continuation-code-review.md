@@ -1,5 +1,34 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B source-ready diagnostic / bounded caller correction — 2026-10-21
+
+Author actual FINAL SOURCE_READY: baseline7606a21d, no commit/tests/imports run;
+three saved blobs301de57f/4d55f003/1f015316 match Root source read. Root strict3
+finished20.625s exit1,12 errors in4 files, not a green or Host claim. Full command
+and original output retained in n14b_strict_initial_raw/completion_raw; registered
+RootTemp n14b-construction-originals.json will seal these with later originals.
+Diagnostic errors: defining-module imports for TokenType and job_limits;
+retained_native_owner object vs PyHANDLE; undefined reexport SnapshotBlobMember;
+six fake close_calls accesses on production-owner types; and TWO existing derived
+job constructors missing the new limits keyword. No runtime suite executed.
+
+Root prior exact-name-only caller inventory was incomplete. Fresh baseline rg
+'_DerivedSubjectJobLease\(|_SubjectJobLease\(' library tests --glob '*.py'
+finds the one factory plus tests/subject_preparation:548 and subject_launch:320
+derived constructors (and their class declaration). Under the existing batch,
+amend SAME closure54 exact MODIFY list with ONLY these two constructor keyword
+updates, preserving all tests/assertions. No optional/default limits workaround,
+no Checker exemption. New strict5 includes both actual consumers. Independent
+document check required before Grant13 scope extension; author currently idle.
+
+Root records shortest direct30B/43 acceptance chain and concrete passive OS/VM
+permission failure in original ticket only, no new planning document. Historical
+runbook03 virtual-account/unbuilt-EXE templates cannot authorize current service
+setup or substitute for actual protected runtime composition. Existing source
+contracts/pipe/observer/issuer are reused; no framework branch. No Host/Grant
+positive proof, checklist completion, integration or external security effect.
+Registry machine waiting/admissionnull and only04 checked remain unchanged.
+
 ## N14B diagnostic DATA scope correction — 2026-10-21
 
 AO actual FINAL PLAN_BUG for planr01 SHAe64d4a1a79e4fa9cf6d1849a86032f6f9715776432700955192098f46f298ba2:

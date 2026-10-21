@@ -55,11 +55,17 @@ token/job/process/thread provenance for future peer matching. No actual launch.
 
 Exact no-DELETE/no-dependency scope:
 MODIFY library/local_orchestration/grant_authority/windows_subject_lease.py
+MODIFY tests/test_grant_authority_windows_subject_preparation.py
+MODIFY tests/test_grant_authority_windows_subject_launch.py
 CREATE library/local_orchestration/grant_authority/windows_protected_subject_launch.py
 CREATE tests/test_grant_authority_windows_protected_subject_launch.py
-No export/service/SCM/Registry/ledger/N14A/launch-ABI/old test edits. Root source audit
-finds only same lease factory constructs _SubjectJobLease in existing source/tests.
-Unmigratable caller/contract conflict ->BLOCKED, not scope expansion.
+No export/service/SCM/Registry/ledger/N14A/launch-ABI edits. The two existing tests
+may ONLY pass limits=the original job._limits to their existing derived-job
+constructor; preserve all negative assertions. Initial exact-name inventory missed
+these subclass constructors. Root strict diagnostic found both missing arguments;
+the corrected base-and-derived inventory is retained with the original failure.
+This necessary bounded caller migration uses the existing batch, not new authority.
+Other unmigratable caller/contract conflict ->BLOCKED, not silent scope expansion.
 
 Reuse existing _SubjectJobLimits/_PrimarySubjectTokenLease/_PrimarySubjectIdentity,
 _SubjectJobLease, _SubjectLaunchPlan, _launch_verified_subject, _SuspendedProcessCreation,
@@ -130,7 +136,7 @@ _ProcessCreationError(RECOVERY_REQUIRED,original creation). No raw native/path/S
 OS details or invented success. No issue/claim/read/settle/pipe/Host.
 
 Preflight source construction: new output need not exist before SOURCE_EDIT_ONLY.
-Normal constructors/type imports first, Root strict3/memorycompile then separately
+Normal constructors/type imports first, Root strict5/memorycompile then separately
 reviewed SDK-deny import/fake admission before any test execution. No Any/cast/
 model_construct/model_copy(update)/reexport bypass. Defining module imports only.
 
@@ -159,7 +165,8 @@ existing subject-launch resume seam and snapshot-reader fake/assertions. One new
 focused matrix only, no copied native harness. Constructor/limits tests included
 before launch composition, not deferred followup test ticket. Run new suite plus
 affected subject lease/preparation/launch and snapshot reader/contracts, N14A source
-bindings as necessary; strict3 lease/new app/newtest, memorycompile/import/diffcheck.
+bindings as necessary; strict5 lease/new app/newtest/two migrated old tests,
+memorycompile/import/diffcheck. No weakened checker or skipped old assertion.
 Root must inspect actual fakes/ABI/guard and exact source before test admission.
 No old test retired; local commands not proof of external test CI.
 
@@ -177,12 +184,67 @@ lease25..45 lines, app220..300, test350..470; >500effective structural review si
 not forced split/minify. Reuse limits/ownership code, no monolithic catch-all script.
 XSS/UI N/A, no product responsibility move; bounded source application composition.
 
-Return exact baseline/candidate/threeblobs/files/checks/findings/deviations/holds.
+Return exact baseline/candidate/fiveblobs/files/checks/findings/deviations/holds.
 Author initially SOURCE_EDIT_ONLY, no import/test/checker/SDK/SQLite/commit/Agent/
 cleanup until separately admitted. Normal local construction sub-Grants derived
 from original batch, not operational trusted Grants. No live Host campaign,
 account/SID/config/security/ACL/SCM/service install/launch, network/models/newfees,
 push/release/deploy/formalactivation. 30B43/TAL/R0/DAP/E01/Recovery remain unchanged.
+
+### Shortest acceptance continuation / external boundary — 2026-10-21
+
+No new planning branch/framework or unrelated governance slice. This sequence is
+recorded in original30 and does not grant installation or a native campaign:
+
+1. Finish N14B exact source, strict checks, affected fake-only behavior, named
+   red/restored-green mutations and independent engineering review. Result must
+   prove protected enrollment reaches the existing launch once with original
+   owners retained; this builds the missing subject-provenance prerequisite of
+   the common entry blocking both30B and43. It is NOT Host qualification.
+2. Reuse the existing protected-store/pipe/message-identity/retained-process/
+   approved-issue/claim/snapshot/settle modules in the smallest executable service
+   composition. Actual windows_service currently decodes observations; it is not
+   an SCM ServiceFramework composition root. No caller observation may substitute
+   for OS-derived peer facts. Acceptance: bounded legitimate read plus forged/
+   mismatched/replayed inputs rejected by that real wiring in offline tests;
+   freeze executable/dependency/config payload and operation manifest. This
+   prepares30B trusted-Grant positive and43 protected observation, not either PASS.
+3. Obtain ONE exact operational confirmation for independently protected service/
+   subject/observer setup and the bounded first-entry native campaign. Read back
+   actual OS protections before any subject request. Initial provisional evidence
+   is not CVQ qualification; finish the original CVQ with genuine prerequisites,
+   then use its exact capability for each held candidate's independent audit.
+   This removes the shared qualified-entry dependency of30B/43 only after PASS.
+4.30B additionally requires trusted issuer positive AND same fresh observed remote
+   main SHA index/leaves. Local origin/main or source tests cannot supply this;
+   unpushed Context04/mainline source remains a separate publication dependency.
+   43 still needs its own qualified candidate review/evidence, not N14B test counts.
+
+Fresh passive inventory: DESKTOP-28ERPQ1, DESKTOP-28ERPQ1\\GameBoy,
+SID S-1-5-21-3542654388-73774624-397494543-1001; admin-enabled=false,
+Windows10.0.19045.0, PowerShell7.6.5. Get-VM -Name
+'Johnny-MSIX-Lab-20260905' -ErrorAction Stop was denied with
+Unspecified,Microsoft.HyperV.PowerShell.Commands.GetVM and message
+「您沒有完成此工作的必要權限。請連絡電腦 'DESKTOP-28ERPQ1' 的授權原則系統管理員。」
+No VM identity/state was established; no retry/elevation/policy bypass. Exact raw
+is retained in first_host_exact_permission_inventory_raw pending evidence seal.
+
+External changes NOT authorized: create dedicated standard review account and
+read back its actual SID/session; install demand-start JohnnyGrantAuthority with
+reviewed service identity and protected executable/dependency closure; exact
+whole-DACL/owner/Registry/store/pipe protection; independent observation; finite
+zero-external-model offline Host campaign. Earlier runbook03 virtual-account and
+unbuilt EXE examples are historical proposal, NOT runnable permission: later
+source requires LocalSystem plus exact service SID, and NativeTools CLI is not
+an SCM service. Do not approve guessed hashes or treat service-account RX as a
+restriction of LocalSystem. Final manifest must resolve these exact runtime facts.
+Network: local named pipes and only explicitly bounded loopback stimulus; no
+provider credentials/model fees/remote source effect or global firewall change.
+Rollback proposal: identity-checked stop then demand-service disable, disable only
+the newly created review SID, retain protected ledger/evidence and recovery holds;
+no delete/reset/clean/GC/global ACL rollback. Failed stop keeps RECOVERY_REQUIRED.
+Complete local wiring/build before asking Owner to approve the concrete manifest;
+Owner supplies OS consent, not a missing executable. No checklist box changes.
 
 
 ## 30N14A — protected subject enrollment source / proposed closure53
