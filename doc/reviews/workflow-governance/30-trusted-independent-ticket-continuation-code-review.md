@@ -1,5 +1,19 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 local diagnostic module-identity correction preparation — 2026-10-21
+
+Distinct helper actual FINAL rejected r05 before execution: declared fresh
+basetemp -02 was not substituted in command, which still used -01. Original
+packet retained, no unchanged retry. Corrected r06 registered in RootTemp
+n12-root-guard-r06.json, NOT_EXECUTED: both basetemp paths -02; pytest importlib
+mode plus collection hook checks actual collected module is the exact guarded
+module before tests. Same one audited Python fake-owner class; all native/SDK/
+construction/close denials unchanged. This diagnoses suspected duplicate-module
+identity, not permission to accept an unknown owner or proof product passes.
+Distinct helper reviews exact delta; author remains source-edit-only, no active
+worktree reads. Later execution requires its actual FINAL and exact new bytes.
+E01 original-raw-missing/unknown-effects hold and all completion limits persist.
+
 ## N12 Grant05 findings / retained author correction — 2026-10-21
 
 Exact stopped3bytes checked: strict3 exit1/20.047s, 17errors in native/test;
