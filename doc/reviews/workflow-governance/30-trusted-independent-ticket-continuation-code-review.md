@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 CT1 exact rebind / source Grant02 active — 2026-10-21
+
+Actual FINAL distinct helper DOC_PASS_NOT_OWNER_APPROVAL at ec197dcb3964752c7cac38403c16ea85268ce1c1:
+closure51 leaf dcf8b4721b8b0381b341cc7b5d55383a9e487ffd LF
+03a43f965de34e7c6b3686382e711a3435ca60e9dedd971fce7f4ca3889742bd,
+bothregistrydigests match/no admissionactivation, diffcheckclean, exact secondclock
+and expired-no-read cell. Helper disclosed one wrong runbook-path read; independent
+AO actualsource read and Root direct runbook03/G2 readback are the contract basis,
+not that missing lookup. No capability/Host/sourceexecution evidence substituted.
+
+Root rebinds grant-ticket30n13-installed-snapshot-20261021 revision02
+ACTIVE_SOURCE_EDIT_ONLY to these exact ticketrefs. Supersede only rev01 singleclock
+contract; same author/Context/3paths/worktree/clean a081 baseline/allocation and
+same uncappedbatch/history/noexecution/noSDK/noSQLite/noAgent/nocommit/noexternal
+restrictions of Grant01 control29c02709. Existing retained public constructor proof
+unchanged; no newpublicDTO/effect or Owner approval needed for this localticketfix.
+Author may resume timestamp source/tests per exactclosure51; no activeauthorWT read
+or progresspoll by Root, actualFINAL required before diagnostic source inspection.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT. All independent holds remain.
+
 ## N13 CT1 ticket repair / closure51 source-only amendment — 2026-10-21
 
 Root source verification confirms AO helper actual FINAL mismatch: closure50 one
