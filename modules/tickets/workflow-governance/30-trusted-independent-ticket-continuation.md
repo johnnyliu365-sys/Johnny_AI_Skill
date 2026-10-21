@@ -194,6 +194,80 @@ SOURCE_EDIT_ONLY, then separate Root guarded-test admission; no commit before
 Root source/behavior review. This directly prepares BOTH30B/43's actual retained
 Host/process-to-peer join, not final qualification or activation.
 
+#### Protected Host source binding — existing enrollment adapter, no new framework
+
+The retained peer adapter is ENGINEERING_CLOSED at
+31517eb3f540ff08051d1ba15d40859d665a4feb, parent8814531b, tree6bc6530a,
+exact two blobs6df9f516/d2304886. Root strict2/compile2, legal/negative79PASS,
+peer/owner actual-source REDs, restored79PASS and actual engineering-hold79PASS
+are source evidence only. Different-seat source audit and original9-record byte
+QA PASS; main/30B/43 and actual Host/Grant qualification remain untouched.
+
+The next necessary missing source is now explicit: the legacy protected
+SubjectEnrollmentV1 reader only accepts the <=64MiB enrolled subject plan, whereas
+the reviewed Host plan/image lease is expected data and has NO protected Host
+enrollment reader. Passing caller-created HostPlan into the peer join is NOT
+permission to launch that Host or return protected source to it. Close this
+source binding before any future Host effect. This prepares BOTH30B/43's exact
+approved Host/config prerequisite, not a new Gate or permission source.
+
+Root derives grant-ticket30-protected-host-enrollment-20261021 revision01 under
+batch-checklist-local-20261019-uncapped. Baseline31517eb3f540ff08051d1ba15d40859d665a4feb,
+same retained Luna/xhigh author/root/ticket30n4_peer_impl, same own protected-launch
+worktree/branch; native helper different-seat source evidence, Root sole reviewer.
+MODIFY ONLY library/local_orchestration/grant_authority/windows_installed_subject_enrollment.py
+and tests/test_grant_authority_windows_installed_subject_enrollment.py.
+Their baseline blobs are38047ab11b54f57df30b24c6626502d1f4ac4d43 /
+fe3242f7769e4fc36aebcdf477ea7062ea6ba15a. CREATE/DELETE0. No changes to Registry
+keys/values/reader, native setup schema, issuer/ledger/Grant wire, worker/runtime
+lock, launch/socket/codec, exports, policies or any Host/OS operation. Initial
+SOURCE_EDIT_ONLY after independent docs PASS and Root activation, not before.
+
+Within that existing module reuse the exact fixed protected bundle reader,
+approval decoder, JSON depth/duplicate/nonfinite guards, source-binding checks,
+controller/cancel/deadline/poison conventions and private sealed-pair pattern.
+Extract minimal common record/decoder/readback logic internally if needed, rather
+than duplicating validators or creating a resolver/framework. Existing schema1
+record, JSON, sealed wrapper and legacy read entry MUST retain exact acceptance
+and return types, and reject the Host variant.
+
+Add a private schema_revision2 / purpose READ_ONLY_HOST record with the SAME
+approval/grant/operation/native-id+revision/manifest/plan-digest/role/subject SID+
+session/job-limit fields; its launch_plan is the reviewed exact HostSubjectLaunchPlan.
+Revision2 is a disjoint closed variant, not a relaxed legacy parser. Host role
+must be existing ModelRole.REVIEWER and match the freshly decoded approval's role;
+all existing approval/operation/ref/digest crosslinks still match exactly.
+Reuse the HostImageBinding bound, never enlarge legacy payload/snapshot caps.
+Ordinary construction represents EXPECTED DATA ONLY.
+
+A distinct private protected-Host wrapper/read entry decodes ONLY that exact Host
+variant from the SAME protected SubjectEnrollmentV1 bundle and exact reread
+approval, preserving one-handle source/protection/stability checks. It must not
+accept caller payload/path/ref as authority, fall back to schema1, set Registry,
+or call launch/image/socket/Grant effects. Missing/wrong variant/source/role/
+binding/protection/cancellation/deadline/drift fails closed, no partial wrapper.
+The wrapper pins the actual decoded approval/Host record after final controller
+check. Legacy wrapper cannot be substituted for it, nor vice versa.
+
+E1 ordinary/JSON exact Host construction and legitimate fake protected bundle
+readback succeeds; the old legacy positive still succeeds. E2 wrong version/
+purpose/type/subclass/role/ref/digest, missing/extra/duplicate/deep/invalid JSON and
+legacy/Host cross-admission each refuse. E3 inherit existing source owner/DACL/
+link/stability/controller/Recovery negative cells, no new native fake or test
+harness; explicit sentinels prove zero launch/Grant/Host effects. E4 strict2,
+compile/import, focused enrollment/affected legacy regressions; Root different-
+door role/binding and variant mutations cause intended call RED then restored
+GREEN. Keep prior accounting, child55/outer60 and holds. Expected net source~120/
+tests~150 lines is a structure signal; reuse matrices, no minification/arbitrary
+splits or narrative/prompts in code. SOURCE_READY returns exact pins/checks-not-run.
+
+This is local source construction, NOT Registry migration, enrollment consent,
+permission to launch a Host, complete protocol driver, installation, CVQ, or30B/43
+completion. Actual protected configuration and native identities must still be
+pinned in the separately authorized OS operation package. The metadata-only Grant
+pipe is unchanged; no covert byte-bearing or caller-certified transport is added.
+
+
 #### Conditional retained-Host peer join — same Ticket30, not another framework
 
 Root batch-derived grant-ticket30-retained-host-peer-20261021 revision01 is
