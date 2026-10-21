@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 committed-candidate engineering review Grant07 — 2026-10-21
+
+Author actual FINAL candidate ce49780dfab4ee7a0742345cd15b5ea53b6dd24c,
+parent a081906f6b3f7e34f8cad9ce96d510f86a446d07, exact closure51 three blobs,
+clean. Root may independently read commit/parent/allowlist then fast-forward only
+its registered installed-snapshot-review worktree from that exact clean parent
+to candidate. No main/source-stage integration authorized by this step.
+
+Root review repeats strict3/compile and reviewed seven-suite guard with fresh
+root-n13-review-01 basetemp; registered temporary memory-mutant probes may derive
+the same guard and freshly bound candidate, no on-disk source edits or guard
+relaxation. Required closure51 named RED/exact-GREEN plus distinct Root boundary
+mutation; inspect complete raw output and pin every source/case identity.
+OwnerRoot probe directory is existing registered RootTemp; new exact probe files
+n13-memory-mutations.py and n13-memory-mutations-originals.json, TTLthroughseal,
+holds overrideexpiry, teardown only on authorized safe clearance. No cleanup now.
+Retained author may propose pure textual mutant pairs as DATA after reading only
+committed candidate; no execute/edit/commit. Distinct retained native-tools helper
+may perform bounded immutable no-code source/structure/AC evidence review, no
+execution or mutation. READ_ONLY_INTENT_ONLY evidence is not qualified isolation.
+Engineering conclusion remains Root's; no Host/30B43/Recovery/final closure upgrade.
+Register n13-final-review-originals.json in same RootTemp to hold exact originals.
+
 ## N13 construction GREEN / exact author commit-only Grant06 — 2026-10-21
 
 Actual author FINAL d9101b7f test /37624e66 app /59c31d33 store read back;
