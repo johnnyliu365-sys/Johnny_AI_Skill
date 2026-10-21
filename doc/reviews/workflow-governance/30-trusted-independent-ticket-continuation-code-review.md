@@ -2,6 +2,18 @@
 
 ## Exact codec construction admission — 2026-10-21
 
+Root separately admits ONE dev-test artifact fetch, not installation: exact official
+websockets15.0.1 pure-Python wheel169743bytes, SHA256
+f7a866fbc1e97b5c617ee4116daaa09b722101d4a3c170c787450ba409f9736f,
+under existing Root-owned johnny30-protected-launch-review-20261021/codec20-dev01.
+Owner Root/Ticket30,24hTTL plus active evidence hold; no new Git workspace, global
+site-package change, executable/native extension or runtime payload modification.
+Fetch<=20s/200000bytes; exact hash/size/ZIP path and pure-wheel member checks precede
+any test import. Later guarded child uses that exact wheel prefix and pins imported
+source origins; no package manager/build hook. One failed fetch is diagnosed, not
+blindly retried. This is offline-test preparation, not SDK license acceptance or a
+Host call. Necessary dependency metadata remains BSD-3-Clause/zero transitive deps.
+
 Actual different-seat /root/native_service_impl FINAL returns DOC_PASS for
 control1b2e36b54805e5cfb5d3d026d059c99d5a646db7, ticket blob
 e9174f7fd0cebcc3c83ef67175124dc7aba119ad / LF
