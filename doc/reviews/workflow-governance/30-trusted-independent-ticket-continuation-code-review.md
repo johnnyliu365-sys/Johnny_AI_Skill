@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 exact fake dependency target finding — 2026-10-21
+
+Grant13 strict4PASS1.578s; all three Root original F1/F2/F3 baseline probes now
+GREEN0.14s, child2.0s, denials[]. Six-suite399:397pass/2fail, child4.203s;
+SID-conversion error tests patch original imported SDK module, but composition
+installed returned issuer harness module into protected native. Thus simulated
+exceptions never reach actual dependency and DID_NOT_RAISE; no unpatched calls.
+Root identifies this wiring defect, not a product repair or relaxed assertion.
+Original complete outputs in RootTemp n12-closure49-grant13-originals.json.
+
+Same Grant11 edit-only continuation restricts repair to new test's conversion
+target: returned _issuer._win32security object, explicit existing fake dependency.
+Keep exact failure/retention assertions, two source blobs unchanged; no SDK calls,
+newpaths, execution or commit. ActualFINAL then Root source readback/gates.
+No unchanged rerun or loss of failed evidence; E01 and all qualification holds
+persist, no formal review or candidate integration from WIP diagnostics.
+
 ## N12 test correction / Root diagnostic Grant13 — 2026-10-21
 
 Author actual FINAL changed only test imports and invalid-initial-window Expected;
