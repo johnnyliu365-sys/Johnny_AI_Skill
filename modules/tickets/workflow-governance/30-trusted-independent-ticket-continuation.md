@@ -157,6 +157,16 @@ Forecast native400/composition180/tests450 effective lines: >500 is structural
 review signal, not forced split/minify or permission for duplicate scripts.
 TEST->A->B N/A: no old behavior moved/retired, old tests unchanged.
 
+Execution allocation after E01: original Grant01 execution is suspended. Proposed
+corrective Grant binds retained owner SOURCE_STATIC_ONLY (source edits, strict
+checker and memory compile only; no pytest/candidate import/SDK execution).
+Root owns pinned pre-import/fake-owner guarded child test execution, after owner
+actualFINAL and exact source/ABI/fake-class inspection. Owner proposes four named
+mutation groups; Root executes their RED/exactGREEN plus independent different
+door on committed final candidate. Temporary WIP diagnostics never become review
+authority or merge source. Original raw/effect UNKNOWN hold remains independent;
+no retroactive permission, risk acceptance or qualification from this allocation.
+
 Root AO/sole reviewer/orchestrator; retained /root/ticket30n4_peer_impl Luna/xhigh,
 Root independent source review plus distinct retained sourcehelper evidence only.
 Fresh owner .worktrees/skill-improvement-30g-protected-store / codex/same;
