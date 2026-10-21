@@ -1,5 +1,42 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Native service static build continuation / Grant15b — 2026-10-21
+
+Parent batch-checklist-local-20261019-uncapped, same closure56/seven paths/owner
+/root/native_service_impl/allocated WT/baseline650f1c37. Actual FINAL SOURCE_READY
+received; Root read all four new sources and three tracked diffs. Initial blobs:
+bootstrap ef3727ca7bd181c0d6ae820304018d7ab3ec9473,
+service a6ef3e86e6c30879739ba6f06810b3b0d3b1b754,
+lifecycle 5ade9e5a85228fa65067e49f111116f6fbf07eb3,
+test a18deb0d70385af1fa4d11f8e454a561423e3a34;
+Program c047b829dc5deae233736f817bd24164692375ac,
+SelfTests 4a36ed28f17fb3c155f5de94b79393c9d61e6759,
+project acbafa454c9474b4877a483c16ebcd8bc73dfabc. Source only, not review PASS.
+
+Root admits author offline managed compile ONLY: exact existing SDK10.0.302,
+explicit existing project/global.json/NuGet.Config (cleared sources), no added
+packages or build hooks. Inspect ancestor imports before execution; stop on any
+unexpected import/target. Redirect intermediate/output/build logs to registered
+authorTemp native15b/{obj,bin}; restore may only use existing framework packs and
+cleared local sources, never network/install. Minimal non-secret environment,
+no persistent build server/shared compiler, bounded child55s initially/outer60s.
+Capture full command/source pins/exit/elapsed/stdout/stderr BEFORE interpretation
+in new native15b-<n>-original.json; never overwrite. Diagnose a timeout before
+changing its bound; no identical unexplained retries. Compiler fixes within same
+seven paths allowed, no dynamic/Any/reflection/checker or warning suppression.
+NO self-test/program/service execution, SCM/Registry read or write, process other
+than compiler/build tools, account/ACL/Host qualification/commit/Agent/cleanup.
+
+Root source findings to correct within existing closure, not new requirements:
+fixed worker is a module windows_authority_worker.py, not invented package
+windows_authority_worker/__main__.py. Unknown CreateProcess with no reported
+owners is still UNKNOWN: do not close job as if proved non-creation. Preserve
+exact source originals before changing either. Structure signal: bootstrap1415,
+lifecycle~850/test~780 physical lines require explicit responsibility/reuse
+assessment; no new framework or forced fragmentation/minification. Return FINAL
+SOURCE_READY with all raw evidence, changed pins and remaining deficits. Root
+independent runtime admission and final review remain required.
+
 ## N14C static-check continuation / Grant14c2 — 2026-10-21
 
 Same14c source scope/baseline/owner, ordinary local compiler capability now proved
