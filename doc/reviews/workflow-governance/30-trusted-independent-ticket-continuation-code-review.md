@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B green source snapshot Grant13e — 2026-10-21
+
+Guard04 full original13906bytes SHA86d1abf380fc1ac97bfae48992a7f67294427ee34ef2cde4325d5d60388f3ddc:
+449PASS/5known preimport rewrite warnings2.84s pytest/4.937schild, SDKattempts[].
+Root read complete unreduced stdout/stderr, actual canonical loaded+collected
+candidate paths, no omitted suite; legal real composition with shared native
+fakes reaches existing launch once and retains original owners. Strict5PASS1.640s;
+memorycompile/diffcheck green. All failed originals remain, no quota reset or
+Host implication. Source helper's corrected app/limits review has no remaining
+mapped finding; later test-only fixes have Root source/behavior proof, not yet
+immutable independent review or reverse-mutation completion.
+
+Grant13e same batch author may ONLY stage+commit the exact five paths/blobs:
+lease301de57f/app7f38cd34/newtest198fe58e/oldprep1b35e928/oldlaunch63f31f02,
+baseline7606a21d, registered original owner WT/branch, no amend/reset/extra source
+edit/tests/import/SDK/cleanup/push. First read exact HEAD/index/workcopy fivepins
+and full status; refuse unexpected existing index/path drift. Commit creates an
+immutable review snapshot, not approval/integration. Return fullSHA/parent/tree/
+fiveblobs/cleanstatus. Root then exact FF own registered review WT and performs
+bounded declared memory red/restored-green probes; sole source conclusion and
+engineering hold composition remain Root-owned, qualified review still separate.
+
 ## N14B final test-contract correction / same Grant13d — 2026-10-21
 
 Guard03 full70738bytes SHAe33f4ba0fcf7dd23f7079d9a4b78e9e8a8fd8df92075c84b98a63792e2613cc6:
