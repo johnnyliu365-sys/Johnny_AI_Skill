@@ -1,5 +1,37 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 engineering validation / original sealing Grant11 — 2026-10-21
+
+Immutable86be3e34 Root451PASS/strict4/compile, distinct helper actualFINAL narrow
+source PASS_NOT_QUALIFICATION. F1 own same getter probe RED->correctedGREEN,
+no bytes/Eventtrue/COMPLETEbacking retained1. Four realstore->actualapp->N10 fake
+legal probes pass: not_before/expiry-1,empty,32768bytes,256members, exact closeonce.
+Eleven named memory pairs completed RED/exact-GREEN with full raw and source SHA:
+latevalidity,freshclaimclock,claimEXISTING,omit,reorder,earlyreturn,settleEXISTING,
+recoveryretention,prepins,postpins,Root distinct evidence-domain framing. Accepted
+cases have call-phase expected failures and no guarded effect attempts; all source
+stays byte-identical on disk. Prepin accepted selector is fullrealreader positive,
+whose verification count2 discriminates omitted precheck; original preissue cell
+continues green but is not falsely described as the accepted prepin mutant case.
+
+Two probe faults retained/not counted: initial wholemodule exec recreated Enum
+identity, so initial latevalidity red was not semantic proof. Corrected AST-only
+method rebinding preserves Enum identity and red at ledger.calls!=[]. Initial
+prepin selector lacked installed fake SDK when mutated into deeper reader; guard
+denied ctypes kernel32 load before native call. No actual SDK effect observed, but
+attempt[] nonempty invalidates that run; changed to already audited fullreader
+fixture selector, not whitelist relaxation or unchanged retry. E01 UNKNOWN separate.
+
+Grant11 Root may serialize/seal existing registered N13 originals plus exact commands
+and immutable review inputs, in RootTemp n13-final-source-evidence.json.gz, no source
+execution or new tool framework. Include diagnostics/failures, not only green.
+Archive is DATA, never execute/print its base64; independent helper verifies exact
+path/length/SHA/raw UTF8 roundtrip before source-stage authorization. Temporary
+executable probe plans only required for declared reproducibility, no product tests
+removed or duplicated. OwnerRoot/TTLthroughseal, all evidence/recovery holds retained.
+Engineering result is bounded source acceptance only; mandatory qualified isolation
+and live source/Host effects unavailable, so30B43/TAL/checklist overall remain open.
+
 ## N13 corrective candidate review Grant10 — 2026-10-21
 
 Actual author FINAL86be3e340d4b95dd37f054a4024ae7ada5affbd7 parentce49780d,
