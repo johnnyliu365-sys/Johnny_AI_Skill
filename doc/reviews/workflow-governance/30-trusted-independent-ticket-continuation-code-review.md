@@ -1,5 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 fake target corrected / Root Grant14 — 2026-10-21
+
+Author actual FINAL testd15e26b34156f2ea08e04e6b1ef7c3cd6d99b9fd targets
+returned _issuer._win32security, exact fake installed by composition. Root reads
+target and all3blobs; protectedbd884b2a/shared6e3f64bb unchanged, sameae9d baseline
+and3modified paths. No author execution or commit. Root Grant14 rebinds strict4
+and identical six-suite guarded diagnostics to these bytes only, fresh RootTemp
+root-n12-shared-regression-03, all Grant13 effect/guard/deadline limits retained.
+Prior397/2 applies only previous testblob; no retroactive green or reset.
+Root may then bind exact commit-only continuation if source checks are green;
+committed candidate review/mutations/threeprobe replay still required. E01 UNKNOWN,
+retrieval-scope deviation and qualification/30B43/checklist holds unchanged.
+
 ## N12 exact fake dependency target finding — 2026-10-21
 
 Grant13 strict4PASS1.578s; all three Root original F1/F2/F3 baseline probes now
