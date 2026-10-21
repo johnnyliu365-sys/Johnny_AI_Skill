@@ -41,6 +41,109 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
+## 30N14A — protected subject enrollment source / proposed closure53
+
+Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03 sections3/6,
+same local batch/first-CVQ construction exception. This source prerequisite fills
+protected expected subject provenance; caller launch plan/SID/session is not
+authorization. Status PROPOSED_NOT_DISPATCHABLE until exact DOC_PASS, final N13
+source-stage baseline and child Grant binding. No new PRD/SPEC/authority engine.
+Architecture actual FINAL CUT_A_CONTRACT_READY; Root independently reads existing
+contracts at a081906f6b3f7e34f8cad9ce96d510f86a446d07. Only N13 reviewed deltas may
+advance baseline without redoing design; other contract drift requires rebind.
+
+Exact no-DELETE/no-dependency scope:
+MODIFY library/local_orchestration/grant_authority/windows_approval_registry.py
+CREATE library/local_orchestration/grant_authority/windows_installed_subject_enrollment.py
+CREATE tests/test_grant_authority_windows_installed_subject_enrollment.py
+
+Reuse N11 Registry traversal/owners/ACL/Current/lastwrite/query/lock/poison/recovery
+and existing strict models/JSON rejection. No second native reader, general
+selector/callback, duplicate SDK fake/JSON parser/Runner/public DTO/export.
+Old read_installed_approval_payload(event,deadline)->bytes remains ApprovalV1-only,
+even if SubjectEnrollmentV1 absent. New fixed read_installed_subject_bundle_payloads
+(event:threading.Event,deadline:float)->tuple[bytes,bytes] returns ApprovalV1 then
+SubjectEnrollmentV1. One retained key/ancestor traversal and private fixed branch,
+no caller path/key/value selector. Approval cap262144, subject cap131072 bytes.
+Read both, recheck Current/all descriptors/lastwrite, reread both, exact compare,
+known owners checked-close once, terminal controller check then return. Never
+partial payload success. Unknown native output/close/alias retains owners/buffers,
+poisons RECOVERY_REQUIRED; known refusal with certain close finite refusal. Old
+reader behavior/regression byte semantics unchanged; no SDK/Registry run authorized.
+
+One private _InstalledSubjectEnrollmentRecord(_StrictModel):
+schema_revision exact Literal[1]; scope Literal["SOURCE_ONLY_UNQUALIFIED"];
+enrollment_ref/session_ref/grant_ref/operation_ref existing OpaqueMetadataId;
+native_enrollment_id bounded1..128 canonical lowercase ASCII letters/digits with
+single internal hyphens, starts letter (existing C# NativeEnrollment grammar);
+native_enrollment_revision exact Literal[1];
+native_setup_manifest_sha256 existing _ObservedSha256;
+approval_ref existing CVQ OpaqueMetadataId; plan_digest EvidenceDigest with existing
+exact sha256_ plus64lowerhex grammar; actor_role existing ModelRole;
+expected_subject_sid existing _CanonicalSid; expected_windows_session_id existing
+_PositiveUint32; launch_plan existing _SubjectLaunchPlan; job_limits existing
+_SubjectJobLimits. No cloned args/environment/files/peer/token schema.
+Reject exact-type/coercion/subclass/bool/null/extra/duplicate/depth/nonfinite/invalid
+UTF8/bounds failures, not normalize; nested ordinary strict constructors/validators.
+C# link fields are source-only producer/consumer links, NOT independent readback
+proof of installed NativeEnrollment. Future installer must generate and read back
+same canonical values. LUID only future actual WTS token, never fixture enrollment.
+
+Private _decode_installed_subject_enrollment(payload:bytes)->record|None and
+_read_installed_subject_enrollment(expected_approval:_InstalledApprovalRecord,
+cancellation:threading.Event,deadline:float)->_ProtectedInstalledSubjectEnrollment.
+Before native: exact inputs/finite admitted <=60s deadline/issuing thread. After
+one fixed bundle read: controller/poison, decode Approval using existing decoder,
+require exact equality with expected_approval, strict decode subject, require exact
+approval_ref/grant_ref/operation_ref/plan_digest/actor_role == approval corresponding
+values, terminal controller/poison, ordinary sealed-wrapper constructor. Strong
+refs to exact approval/record; exact typed singleton seal, no serialization/raw
+getter or caller trust flag. Seal is local-source provenance, NOT OS isolation or
+authority against arbitrary same-process code. No operation issue/claim/read/settle.
+Finite failures INVALID_INPUT/INVALID_RECORD/APPROVAL_MISMATCH/WRONG_THREAD/CANCELLED/
+DEADLINE_EXCEEDED/SOURCE_UNAVAILABLE/RECOVERY_REQUIRED. Existing Registry failures
+map identically where same; native/data/protection/value unavailable ->SOURCE_UNAVAILABLE.
+Malformed/mismatched bundle approval ->APPROVAL_MISMATCH; subject ->INVALID_RECORD.
+Sanitized enum-only errors, no payload/path/SID/ACL/OS text.
+
+Preflight build order: constructor/decoder tests for new private types first,
+Root strict3+memorycompile under reviewed SDK-deny guard, then fake-native regression.
+New private output need not already exist before source-only construction dispatch;
+operational qualification remains separate. Reuse existing approval_tests._FakeRegistryApi,
+_FakeAdvapiDll/_install_fake/descriptors/literal approval; thin bundle subclass only.
+No copied native harness, nominal fakes must satisfy real declared types/signatures;
+no Any/cast/model_construct/model_copy(update)/implicit reexport bypass.
+
+N14AT1 ordinary constructor/roundtrip minimal/max/Unicode launch; exact grammar
+1/128, SID/session1/max,0/overflow/bool/extra/null/coercion/depth/size rejection.
+N14AT2 stable one-traversal bundle reads both twice; old ApprovalV1-only still green;
+missing/type/size/either-value drift/Current/ACL/owner/ancestor/link/lastwrite reject.
+N14AT3 interruption/cancel/deadline/close uncertainty retain/no partialbytes/no retry.
+N14AT4 bundled approval and each subject link exact mismatch refused; sealed wrapper
+exact owners/record refs, wrong-type/unsealed/direct record refused.
+N14AT5 named reverse mutations skip approval equality, skip subject reread, oldentry
+require newvalue, seal identity relaxed, grammar/coercion/extra relaxed: named RED,
+exact restoredGREEN. Root at leastone different door, all raw unfiltered output.
+Test actual candidate modules/source binding; fake-native evidence not Host proof.
+Existing N11 suite plus affected downstream N12/N13 consumers, strict3 including
+newtest/registry/application, memorycompile/import and diffcheck. No old test retired.
+XSS/UI N/A; no responsibility move TEST->A->B, only bounded existing adapter reuse.
+
+Forecast registry70..110new/120affected; app260..340; tests360..470 via shared fakes.
+>500effective triggers reuse/responsibility review, not forced split/minify/newfile.
+Root AO/sole reviewer/orchestrator; retained Luna/xhigh author after N13 allocation
+release, distinct retained native-tools helper source-only evidence, not qualified.
+Prospective repo-contained worktrees skill-improvement-30g-subject-enrollment and
+matching -review, branches codex/same; Temp johnny30-subject-enrollment-owner-20261021
+and matching-review-20261021 under LOCALAPPDATA/Temp. Register before creation after
+baseline/grant activation, owner author/Root, TTLthroughreviewseal, holds override
+expiry, teardown exact safe authorization only, no denied-cleanup retry.
+Initial55child/60outer, uncapped cumulative/count/evidence-progress, old failures
+retained. Source-edit-only initial author; Root guard review before any test/native
+stub import. SubjectEnrollmentV1 actual install/write/approval, account/SID/session
+selection, SCM/ACL/service/network/SDK/SQLite/models/newfees/Host tests/push/release/
+deploy/formal activation not authorized. 30B43/TAL/R0/DAP/Recovery unchanged.
+
 ## 30N13 — installed approval single-claim snapshot composition / closure52
 
 Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03 section2,
