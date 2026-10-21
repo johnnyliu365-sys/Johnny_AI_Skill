@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 Root diagnostic Grant07 / scoped repair readback — 2026-10-21
+
+Distinct helper actual FINAL diagnostic QA_PASS: original Grant05 packet
+SHAae1dbe3cfab55589b59da621b25c5fd5c8add3f4ec4b99d1e6356fbbd47e1b03
+and Grant06 SHA5461d02aa59c89d679628684f844d3c60cb3cd472c097c4aa10fa744348b15d8
+retain complete failed outputs/commands, unchanged denial boundaries and no
+final candidate/Host/E01 discharge claims. No rerun by helper.
+
+Author actual FINAL source-only fixes all three localized gaps; new blobs
+94855082ecb226389efa93601e6e018dd5241d78 /
+a6f0ef6774b70df3c97b2d92badaf09ff58672db /
+ef1d6033af19c7d2b861a89b98823e84a249ccfb. Same3uncommitted paths/baseline.
+Root independently checks typed wrapper, selective descriptor-only fake wiring,
+and precise INVALID_VALUE->known protection refusal while unknown call/owner
+outcomes retain recovery. Tests' exact cap/close assertions unchanged.
+
+Root Grant07 rebinds only these exact3bytes for strict3 and reviewed r06 guarded
+diagnostics with fresh registered RootTemp root-n12-candidate-03 (both paths).
+All Grant06 bounds/denials/owner restriction/effect prohibitions retained.
+No unmodified retry, final candidate/Host admission or E01 resolution; author
+execution/commit remains forbidden. Source controls unchanged, same ticket and
+uncapped batch history. ACTION_COMPLETED -> AUTO_CONTINUE finite diagnostics.
+
 ## N12 Grant06 discriminating results / same-source correction — 2026-10-21
 
 Strict3 now one error (test628 forwarding object variadic args to typed fake);
