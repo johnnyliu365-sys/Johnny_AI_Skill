@@ -1,5 +1,60 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Closure56/57 immutable engineering acceptance — 2026-10-21
+
+Root is sole reviewer/orchestrator; authors remain separate. This is ordinary
+engineering source/evidence acceptance under the existing first-entry ordering
+exception, NOT qualified independent Host audit, APPROVED_SOURCE, CVQ admission,
+30B/43 acceptance, main integration or an operational Grant.
+
+Native candidate469d59f38ef7ded45f0f19a27bdb3d05dcbb680f (parent0014778d)
+closes the four source findings: failed token owner retention, failed/aliased
+Registry owner disposition, configuration content bound to the same retained
+handle, and enrolled protected current-image observations. Retained independent
+helper /root/ticket30_native_tools_review read the final source and original
+15g03 build/three fake-verb outputs: ENGINEERING_EVIDENCE_PASS_NOT_QUALIFICATION.
+Root performed nine bounded reverse cases; each compiled and the intended named
+assertion failed. Restored03 exact source and all three fake verbs passed again.
+Build original SHA256 bfbcbbcfa4e09506feb2c8a13252bbe7d5caab9f1b4162dadf8c84dc3511c267;
+self-test5d0337236aac32332fac275dea219e47b06370c29cb85b2dd1d6379a2c4e3336;
+enrollmentcb94505a5d6d46143bf6235bf6d3edc92835c94577a859a0094ec06929250a76;
+job b34b0fa4f57a256afb8738c78a117409f0b57a2f55da60b7e74fcee0a829cac8.
+No AOT publish, service installation or native qualification occurred.
+
+Worker candidate1091833e376f913d8127bfc478695945314a4e8e parent
+b016aed2ee9c20145be5069fa98cdc501702df35 changes only the two approved CREATEs.
+Worker blob13f0519c3305f5202b8e903a6590a7857e08cbd5/test
+b85af847d472b5a67abe1a437b0b2b841e050afa match the independently read source.
+Retained /root/authority_topology_architecture source review passed without
+qualification claims. Strict05 both files pass (original SHA256
+b36338a86ec6cfc26e0deecf32ab358b49cd4645e9c69041b1fa03db4a5ea2ac).
+Root's nine memory-only product mutations each produced intended named RED;
+unfiltered output read, no collection/compile failure counted. Restored04 original
+fc925d33168e4987b1a9e36691479b3f6423ae52e1eb8d4c71ba81dab61c77cc
+proves worker plus N14C56PASS, SDK attempts[]. It includes the actual N14C fake
+positive, repeat COMPLETE zero-exit caching, reentry cancellation, uncertainty
+retention and event-close recovery. Earlier strict failures and test enum/reload
+binding failures remain evidence, not erased or counted as independent defects.
+
+Both >500-line source/test signals received responsibility review: the fixed
+composition and its shared fake lifecycle remain one bounded concern; no forced
+minification, gratuitous file split or copied framework. Original Temp evidence
+roots johnny30-native-service-review-20261021 and
+johnny30-protected-launch-review-20261021 remain Root-owned referenced holds;
+expiry does not authorize deleting Review/Recovery evidence. Tooling path-remap,
+Python syntax and misplaced temporary mutation failures are preserved, not RED
+qualification. Pending archive seal does not claim durable remote evidence.
+
+ACTION_COMPLETED: Root source acceptance permits only exact worker FF and native
+two-commit merge into own existing protected-source engineering hold, after fresh
+HEAD/index/worktree readback and exact path checks. Main remains a1cb6c13.
+Next required local deliverable is a closed packaged runtime/import proof and
+the real fixed readonly dispatch/independent observer connection; no new framework.
+Actual Windows SDK installation, account/service/security setup and finite Host
+campaign require concrete operation consent. READ_REVIEW_SNAPSHOT is not30B's
+READ_MAINLINE; fresh remote index/leaves and admit_dispatch preeffect wiring
+remain separate acceptance dependencies. No checklist item newly checked.
+
 ## Worker16 exact guarded fake execution admission
 
 Root read actual FINAL two source files, current worker13f0519c3305f5202b8e903a6590a7857e08cbd5
