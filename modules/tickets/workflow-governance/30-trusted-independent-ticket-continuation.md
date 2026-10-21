@@ -97,13 +97,15 @@ Independent docs review and Root activation are required before this source edit
 Conditional continuation of this SAME Ticket30, not a new framework: after the
 image lease passes source/behavior review and is committed/integrated into the
 existing engineering hold, its exact reviewed commit becomes the sole next
-baseline for grant-ticket30-retained-host-launch-20261021 revision01. Root must
+baseline for grant-ticket30-retained-host-launch-20261021 revision02. Root must
 record/read back that SHA and the unchanged reviewed image blobs before dispatch.
 Author remains /root/ticket30n4_peer_impl in the same protected-launch worktree;
 different native helper supplies ordinary source evidence, Root alone reviews.
 Independent docs review is required; no dispatch while image findings remain.
 DOC_PASS at control1c46323f and Root source acceptance/integrated readback now
-satisfy that condition. Root activates ONLY this five-path SOURCE_EDIT_ONLY grant
+satisfy the revision01 condition. Its five-path SOURCE_READY returned defects;
+revision02 seven-path SOURCE_EDIT_ONLY requires affected independent docs review
+and Root activation before source edits resume. The exact source baseline stays
 on25c490745f45d8c7d67d25ba4983dc5b0ecaf53f; exact image blobs above are unchanged.
 No Host/Grant/CVQ authority or OS effect is activated. Ordinary pure construction
 of the new private Host plan is permitted before the type exists, not a circular
@@ -111,7 +113,10 @@ preflight condition. No new Owner approval is requested for this batch-local act
 
 MODIFY ONLY the existing grant_authority/windows_subject_process.py,
 windows_subject_process_abi.py, windows_subject_preparation.py and
-windows_subject_launch.py below library/local_orchestration/. CREATE ONLY
+windows_subject_launch.py below library/local_orchestration/, plus the already
+reviewed windows_host_image.py and windows_snapshot_native.py in that directory
+ONLY for the pure binding/bound extraction and shared verified-image check below.
+CREATE ONLY
 tests/test_grant_authority_windows_host_launch.py; DELETE none. No installed
 subject/enrollment schema, registry/service, snapshot contracts, Host socket,
 codec, public export, dependency or runtime-lock changes. No new Router or API
@@ -137,6 +142,33 @@ image lease means zero create/resume. Retain ALL existing process/job/token
 identity, noninheritance, suspended creation, job assignment, one-resume and
 uncertainty/recovery semantics. No callback supplied by caller can certify image
 validity. No generic pluggable authorizer, new launcher or duplicated Win32 ABI.
+
+Revision02 is a necessary local boundary correction, not a new requirement:
+actual SOURCE_READY01 cold import failed process->image->native->retained->ABI
+cycle, and the widened old native ABI accepted Host expected data without a live
+lease. Preserve those originals, do not preload modules to hide the cycle.
+Move the SAME private HostImageBinding and its512MiB bound into the existing
+PURE windows_subject_process.py launch-input layer; it must not import native
+lease/readers or create I/O. windows_host_image.py re-exports that same binding
+name for compatibility and retains its existing lifecycle. Native snapshot code
+imports the single pure bound, preserving its private constant alias/default
+64MiB behavior; no duplicate limit or new module. Share an exact verified-live-
+image/binding check in the existing image lease layer rather than copy a second
+validation implementation into the ABI. Avoid outer-preparation imports from
+the ABI; lazy import at the actual effect boundary may break an implementation
+dependency but must NOT replace the pure model separation or lease validation.
+The legacy native ABI entry continues accepting ONLY the legacy plan. A distinct
+private Host native entry requires its exact verified lease before reaching the
+ONE shared native creation algorithm. Direct expected-data-only Host calls must
+be rejected before ANY native binding/create. Add the exact direct-bypass test,
+and actual cold-import checks for legacy/model/ABI/image/Host entry orders.
+Reuse existing preparation-test denial helpers as well as composition fakes;
+do not recreate their counter/socket/process helper classes in the new test.
+Strict correction uses explicit named union annotations, never ignores/casts to
+hide product errors. A deliberately wrong-type negative test may enter through
+an object-typed callable test seam, not force an invalid statically typed call.
+Prior image proof is reused where unaffected; rerun its affected100-test set,
+the shared launch consumers, cold imports and the image-check reverse cases.
 
 L1 bounded fake-native legal Host path reaches the actual existing create/job/
 identity/protection/resume seams exactly once with the approved executable path;
