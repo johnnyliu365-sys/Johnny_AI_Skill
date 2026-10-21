@@ -87,6 +87,62 @@ This produces NO launch or qualification; the next consumer is the existing
 qualification harness's retained launch/peer join, not a second product stack.
 Independent docs review and Root activation are required before this source edit.
 
+Conditional continuation of this SAME Ticket30, not a new framework: after the
+image lease passes source/behavior review and is committed/integrated into the
+existing engineering hold, its exact reviewed commit becomes the sole next
+baseline for grant-ticket30-retained-host-launch-20261021 revision01. Root must
+record/read back that SHA and the unchanged reviewed image blobs before dispatch.
+Author remains /root/ticket30n4_peer_impl in the same protected-launch worktree;
+different native helper supplies ordinary source evidence, Root alone reviews.
+Independent docs review is required; no dispatch while image findings remain.
+
+MODIFY ONLY the existing grant_authority/windows_subject_process.py,
+windows_subject_process_abi.py, windows_subject_preparation.py and
+windows_subject_launch.py below library/local_orchestration/. CREATE ONLY
+tests/test_grant_authority_windows_host_launch.py; DELETE none. No installed
+subject/enrollment schema, registry/service, snapshot contracts, Host socket,
+codec, public export, dependency or runtime-lock changes. No new Router or API
+authority. Preserve the EXACT existing SubjectLaunchPlan and legacy entry/API;
+legacy entries must continue rejecting Host plans. Do not represent a large Host
+as an enrolled64MiB payload or widen any existing payload/snapshot validator.
+
+Private exact HostLaunchPlan contains the reviewed HostImageBinding and the
+existing bounded argument/environment/working-directory values. Reuse the
+existing pure text/UTF16 validation rather than copy a second launch grammar.
+New private Host launch entry takes that plan, its exact verified live image
+lease, existing primary-token/job leases and owner ref; returns the existing
+SuspendedProcessCreation after the SAME owned preparation/readback/resume path.
+The caller retains the image lease until process/peer use and owned teardown
+finish. Expected plan/lease data are NOT a CVQ Grant, manifest or authority.
+
+Extract/reuse the existing native creation/preparation/resume algorithm internally
+instead of copying it. Existing legacy wrappers retain their exact type checks
+and observable seams. Host branch must revalidate exact model content, binding,
+same original live image owners, token/job/owner/thread before any native create
+or resume and around process observations; unavailable/closed/substituted/expired
+image lease means zero create/resume. Retain ALL existing process/job/token
+identity, noninheritance, suspended creation, job assignment, one-resume and
+uncertainty/recovery semantics. No callback supplied by caller can certify image
+validity. No generic pluggable authorizer, new launcher or duplicated Win32 ABI.
+
+L1 bounded fake-native legal Host path reaches the actual existing create/job/
+identity/protection/resume seams exactly once with the approved executable path;
+legacy legal path still passes. L2 wrong/missing/unverified/closed/substituted
+image lease, changed plan and wrong owner/thread fail BEFORE create/resume;
+legacy entry rejects Host plan and native Host entry has no direct bypass.
+L3 failures before/after create, observation drift and uncertain teardown keep
+existing exact original owners/recovery and never return successful launch.
+L4 strict types/compile/import and affected existing process/preparation/launch
+regressions pass; Root different-door image-before-create and image-before-resume
+mutations cause intended named REDs, then fresh restored GREEN. Reuse existing
+fake fixtures/parameterization; no real process/socket/Host/model/OS effect.
+Expected net source<=220/test<=300 lines is a structure signal, not permission
+to minify, arbitrary split or silently expand files. Single child55/outer60,
+old uncapped accounting and all active evidence/recovery holds remain. Initial
+SOURCE_EDIT_ONLY, then separate Root guarded-test admission; no commit before
+Root source/behavior review. This directly prepares BOTH30B/43's actual retained
+Host/process-to-peer join, not final qualification or activation.
+
 Next bounded construction is the missing WEBSOCKET CODEC IN THE EXISTING TEST
 HARNESS, not another production service. Actual pinned CLI offline schema452files/
 4458190bytes confirms existing initialize/thread-start/turn-start/snapshot-result
