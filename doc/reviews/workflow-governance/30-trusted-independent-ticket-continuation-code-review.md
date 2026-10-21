@@ -1,5 +1,19 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A Grant03 changed-source diagnostic — 2026-10-21
+
+Actual author FINAL SOURCE_READY received, no execution/commit. Exact registry/app
+unchanged; test7a7654c5cb86217665dd2ce0bb5eb277ee8ad42b,
+LF6d96bc06c48e9a65d33aa78444cfc0c56dc018abaa3aaf7253eb1791afacf2d7.
+Root full931line test/readback/memorycompile3/diffcheck; new cells use thin inherited
+fake, literal3 ABI, same-class seal/Unicode/both-reread/final-close deadline/thread.
+Strict3 changed-source run1.485s exit1: only newtest832 registry.time implicit
+reexport remains. Same Grant03 source-only author corrects to defining time module;
+no unchanged retry or new scope. Prior8errors resolved, no pytest yet.
+Register n14a-construction-followup-originals.json in existing RootTemp, Rootowner,
+TTLthroughreviewseal/holds, raw commands/results/source returns preserved before
+later original sealing. No additional cleanup or native/Host authority.
+
 ## N14A resumed construction correction Grant03 — 2026-10-21
 
 Parent batch-checklist-local-20261019-uncapped unchanged; primary clean a1cb6c13,
