@@ -116,12 +116,18 @@ Order before ANY N10/process effect:
 No new enrollment Recovery hold: no authenticated output/legitimate resume exists
 on failure; enrollment is immutable evidence, not new native ownership.
 
-Finite existing failures: invalid arguments/binding/known refusal before child ->
-_ProcessCreationError(INVALID_INPUT); preserve existing lease recovery holds/poison
-for uncertain owner/limits state (do not erase/relabel Recovery as safe). N10 failure
-propagates existing _SnapshotReadError, child count0. Existing launch error propagates;
-post-launch uncertainty ->existing RECOVERY_REQUIRED with original creation. No raw
-native/path/SID/OS details or invented success. No issue/claim/read/settle/pipe/Host.
+Finite existing failures: plain invalid arguments/binding/known refusal before child
+-> _ProcessCreationError(INVALID_INPUT). Pre-child lease uncertainty propagates the
+original _SubjectJobError with retained owner/recovery_hold or _SubjectTokenError
+with its existing poison/retention; never remap uncertainty to INVALID_INPUT, never
+construct _ProcessCreationError(RECOVERY_REQUIRED,None). Limits-anchor failure uses
+existing _retain_recovery_resource(RECOVERY_REQUIRED,original owner,job_ref,alias),
+sets lease recovery flag and raises existing _SubjectJobError with that hold.
+N10 failure propagates existing _SnapshotReadError, child count0. Original launch
+errors propagate unchanged; its own InvalidInput mapping does not certify safe
+cleanup or clear preexisting holds. Post-launch uncertainty ->existing
+_ProcessCreationError(RECOVERY_REQUIRED,original creation). No raw native/path/SID/
+OS details or invented success. No issue/claim/read/settle/pipe/Host.
 
 Preflight source construction: new output need not exist before SOURCE_EDIT_ONLY.
 Normal constructors/type imports first, Root strict3/memorycompile then separately

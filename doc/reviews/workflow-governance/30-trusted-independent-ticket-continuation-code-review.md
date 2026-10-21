@@ -1,5 +1,19 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B document error-contract correction / same proposal54 — 2026-10-21
+
+Independent helper actual FINAL CHANGES_REQUIRED one grouped ambiguity, no source
+dispatch. Root clarifies pre-child uncertain token/job errors propagate original
+typed error/retention/poison; known-safe value refusal only uses InvalidInput.
+Limits-anchor drift reuses SubjectJobError RECOVERY_REQUIRED with original native
+owner/recoveryhold, not impossible ProcessCreationRecovery(None). Original launch
+errors remain unchanged; label alone never proves cleanup-safe. Postlaunch retains
+exact creation/owners through existing sixarg helper. No new enum/path/policy or
+Owner decision; proposedclosure54 not yet frozen, othercontracts/checklist unchanged.
+D8 finalleaf blob8a21e19c21d0ae928820093f32f09102dace6fc5,
+LFb6b431ce72b8ae5dd36b9b356859bfe452e78ef66ea1769c572d0e444e4f1f50; both index edges updated after finalleaf.
+Exact independent correction preflight next; source remains undispatched.
+
 ## N14B proposal invariant check recovery — 2026-10-21
 
 Proposal f6094050 contains five authorized docs only. Initial Python document-row
