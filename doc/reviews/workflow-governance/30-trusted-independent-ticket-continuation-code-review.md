@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Codec exact committed and integrated source readback
+
+Author committed c4f1ce701cc5913b984710b41f892ec0432d8f2d, parent6a4dd605,
+tree5fec839fa6ca863728a2405303186c92be479109; clean own worktree, exactly the
+three reviewed blobs3440009d/0a242aba/ceea4091. Native helper BYTE_QA_PASS verifies
+all24 capsule originals byte-for-byte. Its6a4 author-HEAD observation preceded
+the actual author commit; Root separately read back the committed identities.
+Root clean engineering hold exactFF to c4f1ce70, main cleana1cb6c13 untouched.
+Post-integration14 actual hold source17PASS/SDK[], original SHA256
+1e4d443b2361be87eaa6b2a2a7bf006e2e98ef178577c75fd1e307c7db0601e9.
+Integrated13 stopped BEFORE candidate import because checkout CRLF raw hashes
+differed from author's LF. Root directly read trusted Git blobs, proved only
+CRLF/LF differed, then separately pinned exact checkout bytes for14. Diagnostic
+record SHA2567fd8e6a9411d1f8b5525068f7eba8d513f5c2e16914299cbd128ee95827ddee8;
+not a product failure or silently accepted source mismatch. Both originals stay
+in existing codec20-dev01 with active evidence hold. No Host/Grant qualification,
+30B/43 integration or checklist completion. Continue original30 image-lease
+source preflight at f850ae6e; no new planning document or requirement.
+
 ## Codec source engineering review — not Host qualification
 
 Root APPROVED_SOURCE_ONLY for final blobs3440009d3bfc6481f2432238c1b413c88543b5b4 /
