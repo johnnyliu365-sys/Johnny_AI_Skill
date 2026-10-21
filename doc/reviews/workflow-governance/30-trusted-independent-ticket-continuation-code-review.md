@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A exact construction verification Grant04 — 2026-10-21
+
+Actual FINAL followup test7a27ee6e20a5fe24dd9befa3b913dd9e52016e43,
+LF5e4ef3366b97833583b854382276d6ff72b634226313c7d78338180ec401205e;
+only defining time-module monkeypatch corrected. Root independent readback and
+memorycompile/diffcheck PASS; strict3 1.485s PASS, no product changes.
+Exact product blobs remain registrya1aebe57212e055eb34ce409f17ffde5e44bcbb6
+and application38047ab11b54f57df30b24c6626502d1f4ac4d43. Author idle/no commit.
+
+Grant04 Root may run reviewed construction guard r01 in admitted author WT with
+these three extra exact-source asserts, same baseline86be3e34, old N13 source pins,
+unchanged SDK/KnownFolder/SQL/network/process/token/SCM/Registry/HANDLE denies,
+same three old fake-owner types, canonical collected module identity and eight
+affected suites. Fresh registered root-n14a-construction-01 Temp only,55s child,
+minimal environment; all stdout/stderr retained unfiltered. Native ctypes buffer
+operations confined to inspected inherited fake API, no new native allowance.
+This is WIP construction diagnostics only, not final review/authority or Host
+qualification. Any forbidden-effect attempt invalidates run even with green tests;
+no bypass/retry unchanged. Root may preserve raw command/result in registered
+n14a-construction-followup-originals.json, then route actual failures/correction.
+No actual installed Registry/SDK/SQLite/Host session or other external effect.
+
 ## N14A Grant03 changed-source diagnostic — 2026-10-21
 
 Actual author FINAL SOURCE_READY received, no execution/commit. Exact registry/app
