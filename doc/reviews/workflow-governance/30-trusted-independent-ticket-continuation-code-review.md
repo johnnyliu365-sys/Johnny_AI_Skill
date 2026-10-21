@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Image lease committed source, integrated readback and direct continuation
+
+Different-seat BYTE_QA verifies all14 sealed originals exactly, including failures,
+commands and seven intended REDs; no source/Host verdict is inferred from byte QA.
+Author commit25c490745f45d8c7d67d25ba4983dc5b0ecaf53f has parentc4f1ce70,
+tree7a17595510943dce45fbdd3fbe3ec0265b3cc76c and the three reviewed blobs.
+Root read back clean author/hold, then exactFF integrated only the engineering hold.
+New checkout differs only by CRLF for the two created files; Root directly compared
+canonical checkout bytes with each trusted Git blob BEFORE importing actual hold.
+Integrated06 actual hold100PASS/SDK[], original SHA256
+1f17cc3325eed5335c667a208f1064b3fab51709198cfc9fa40301f27a7c75a4.
+That post-integration original is additional to, not secretly in, the14-record seal.
+Main remains cleana1cb6c13. Root activated the already DOC_PASS conditional
+five-path Host launch source grant in6a3d96b3, leaf3d1054b26fc0dac6b04f8d6a68916da1473ac5e1,
+LF6902c5b67240f068e09212965cafe4ba1b427793e6e3a9b3d4d222027b79d09a/two matching
+registry edges, and directly dispatched the SAME retained owner at25c49074.
+No new ticket/framework, Host/Grant qualification, OS effect or checklist completion.
+
 ## Image lease source engineering review and original evidence
 
 Root APPROVED_SOURCE_ONLY for blobs52ec0e737558bd1582fdbbeb4fc00d38f9ce22cd /
