@@ -1,5 +1,46 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Narrow correction checkpoint / remaining acceptance boundaries — 2026-10-21
+
+N14B is not repeated. N14C b016aed2 accepted as engineering source only and own
+hold32-test loaded-source readback passed; immutable33-original seal37fa406d
+round-trip length/digests/each-entry JSON byte QA passed. No original checklist
+checkbox or formal Host/Grant/30B43 acceptance is newly complete.
+
+Native independent source review0014778d/Bootstrapcf038250 found F1 failed token
+out-owner returned UNAVAILABLE, F2 failed Registry-open out-owner unsafe adoption/
+close, F3 separately reopened configuration content. Reviewer initially mislabeled
+the candidate b016aed2, then explicitly corrected it to0014778d; findings refer
+to the native blob, not Python candidate. Root directly read all three paths.
+Current owned F1/F2 d06aa1e3/test4348c80d introduce production-used strongholding
+token admission with exact hold-count tests and failed Registry alias/no-close
+cases. They have NOT been compiled or passed review; no premature closure.
+New15f preserves them while reusing the single existing native payload pipeline.
+Worker16 independent two-create source work continues concurrently, unchanged.
+
+Root's independent native build15d01 output capture lost stdout/stderr decoding
+at cp950, despite process exit0. Its JSON has null output and is UNVERIFIED, not
+PASS. Corrected15d02/03/04 capture raw bytes/base64 before decoded text. Build15d04
+fddb7c61fe093c08d7ecb4c5926c13c2dde225af8fbce02d6ba849b8de7eda8d passed0W/E;
+fake self/enrollment/job contract originals deee1f34/b8846f3b/33bfad50 passed.
+SDK workload-verification warning remains recorded; no workload update/install.
+These passing tests do not erase three later source findings. Source-only caller
+version/path evidence and actual loaded image are not equated by filename alone.
+First15d directory creation failed before subprocess because registered review
+Temp parent was not yet materialized; exact-parent creation fixed that preparation.
+
+Remaining direct path: finish reader/worker source and packaging/import/version
+evidence; compose existing finite Host wire codec/stimulus with protected observer;
+then ONE exact OS/service/account/SID/protection/first-campaign operation package.
+Actual SourceGrant positive/final CVQ/candidate-qualified audits are still required.
+30B additionally requires READ_MAINLINE adapter/admit_dispatch preeffect wiring and
+fresh formal remote main publication; no source fixture/local origin is substituted.
+Installer/operational manifest cannot use guessed hashes or absent producer; no
+service install/start, account/ACL/Registry mutation, live campaign, model fee,
+push/release/deploy/activation or denied cleanup retry has been performed.
+Two unchanged collab thread-limit failures were not interpreted as permissions
+or source failures; actual owner FINAL freed a slot before the next dispatch.
+
 ## Existing native reader correction Grant15f activation — 2026-10-21
 
 Independent retained helper DOC_PASS exact60cfec0a2949543af72fa2736492f8d64a4198dc,
