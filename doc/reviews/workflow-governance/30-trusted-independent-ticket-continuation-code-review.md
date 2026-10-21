@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14C static-check continuation / Grant14c2 — 2026-10-21
+
+Same14c source scope/baseline/owner, ordinary local compiler capability now proved
+bounded by Root strict3 run. Author may additionally run memorycompile and ONLY
+Python311 -B -m mypy --strict --disallow-any-unimported --explicit-package-bases
+on the same3paths, static only; no product/test imports or behavioral/native tests.
+Unchanged checker/config/dependencies, no SDK/SQLite/processotherthanexactchecker/
+network/model/commit/Agent/cleanup. Minimal environment SystemRoot/WINDIR/explicit
+Python+System32PATH/TEMP/TMP/PYTHONDONTWRITEBYTECODE/PYTHONNOUSERSITE/MYPYPATHdot,
+child55s/outer60. Ordinary resource protection/history retained, no blind samebytes
+rerun, no artificial cumulative/count limit. Register authorTemp n14c-static-<n>-
+original.json and n14c-mypy-cache, full command/envnames/sourcepins/exit/elapsed/
+stdout/stderr captured before interpretation, refuse overwrite. Exact authorTemp
+directory already registered in closure55, ownerauthor/TTLthroughseal/holds.
+Author static pass not independent evidence; Root reruns final once. This removes
+unnecessary compiler feedback handoff without widening any runtime/Host boundary.
+
 ## N14C same-scope corrective Grant14c — 2026-10-21
 
 Guarded construction diagnostic original20033bytes SHA541a0585eeb0af928b895739f522be95e31286e497e68ea6a60ce53a5d213d87:
