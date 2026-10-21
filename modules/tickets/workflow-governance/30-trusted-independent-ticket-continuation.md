@@ -36,9 +36,16 @@ missing operational entry, without authorizing its actual invocation.
 
 Grant candidate grant-ticket30-provision-command-20261021 revision01 under
 batch-checklist-local-20261019-uncapped. Baselineb9df00c889acd2cc2164bb885aed40d28e002dde;
-retained native implementation owner in SAME native-service WT/branch after
-its completed469d59f3 allocation is released and exact FF to baseline. Root sole
-reviewer/orchestrator; different retained peer source review after implementation.
+retained implementation owner /root/native_service_impl in SAME repository-contained
+.worktrees/skill-improvement-30-native-service, branch
+codex/skill-improvement-30-native-service, after completed469d59f3 allocation is
+released and exact FF to baseline. Root sole reviewer/orchestrator; different
+retained /root/ticket30n4_peer_impl source helper after its channel allocation.
+HIGH_ASSURANCE, C# net10.0-windows; existing warnings-as-errors offline build,
+ordinary typed constructor/validator coverage in named fake cells. No new public
+schema/type construction prerequisite before source-only creation. XSS N/A:
+no browser/HTML/JavaScript surface. SOURCE_READY return pins exact paths/blobs,
+checks not run, structure/deviation/resource holds; no implementation/review PASS.
 CREATE ONLY library/local_orchestration/native_windows/NativeProvisioningCommand.cs
 and library/local_orchestration/native_windows/NativeProvisioningCommandSelfTests.cs.
 MODIFY ONLY library/local_orchestration/native_windows/Program.cs,
