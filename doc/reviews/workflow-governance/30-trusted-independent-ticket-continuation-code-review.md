@@ -1,5 +1,26 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 construction green / exact commit-only Grant08 — 2026-10-21
+
+Root Grant07 strict3 PASS1.547s; guarded236/236 PASS0.92s, child2.797s,
+actual source and collected-module identity confirmed, denial list empty.
+Complete original commands/output at registered RootTemp
+n12-root-grant07-construction-pass.json. New3 exact blobs94855082/a6f0ef67/ef1d6033.
+This is stopped-source construction evidence only, not formal review/merge proof.
+
+Grant08 same N12 author/Context/baseline/three CREATE paths permits ONLY exact
+readback, git diff --check, git add of those three explicit paths, and one ordinary
+additive source commit of the already-checked bytes; no edits, tests, compiler,
+imports, Native/SDK/SQLite, new paths, cleanup/reset/amend, push or other effects.
+Bind worktree skill-improvement-30g-protected-store baselinea607; require exact
+three blobs94855082ecb226389efa93601e6e018dd5241d78 /
+a6f0ef6774b70df3c97b2d92badaf09ff58672db /
+ef1d6033af19c7d2b861a89b98823e84a249ccfb and no other dirty/index changes.
+Return immutable candidate plus exact changed paths, source status and no false
+verification claim. Later final-candidate tests/mutations/independent review remain
+required; E01 UNKNOWN/rawmissing held, Host/30B43/checklist statuses unchanged.
+ACTION_COMPLETED -> AUTO_CONTINUE exact source commit, then Root formal admission.
+
 ## N12 Root diagnostic Grant07 / scoped repair readback — 2026-10-21
 
 Distinct helper actual FINAL diagnostic QA_PASS: original Grant05 packet
