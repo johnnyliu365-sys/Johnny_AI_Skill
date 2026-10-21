@@ -1,5 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Same-ticket channel revision02 admission
+
+Retained native helper independently DOC_PASSed exact409f824d5a9c5822ed7c20249cdf8a8d445e3b8c:
+same2CREATE, no upper-policy/authority/closure55 change; native connectedness and
+raw transport replace unavailable Python address/LF assumptions. Root retains
+all original candidate/failure evidence and exact baselineb9df00c8/authorWT.
+Existing pending source draft is the author's own2CREATE, no foreign changes.
+Grant-ticket30-retained-host-channel-20261021 revision02 is activated under the
+same uncapped batch solely for SOURCE_EDIT_ONLY. Author same retained Luna;
+Root sole reviewer/orchestrator, different native helper source audit later.
+Ticket LF digest0a586213cfb08a8631cbcb24b1bfced638d95e1b9f2450c45b5376aae12d5acd
+read back independently with both registry edges. No execution/checker/import/
+SDK/socket/Host/commit effect yet; Root will separately admit the changed source
+for guarded offline checks. No new Agent, branch, framework, Host permission or
+checklist completion. ACTION_COMPLETED -> AUTO_CONTINUE exact source correction.
+
 ## Host channel initial candidate rejected by real local checks
 
 Exact two CREATE source candidate23471321/298a489b is preserved in original
