@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 corrective candidate review Grant10 — 2026-10-21
+
+Actual author FINAL86be3e340d4b95dd37f054a4024ae7ada5affbd7 parentce49780d,
+exact three correction MODIFYs, clean; app37624e66 unchanged. Root may verify
+and FF only own registered review WT ce49780d->86be3e34 then run strict4,
+seven-suite unchanged guard fresh root-n13-final-01 and own baseline finalpin
+probe restoredGREEN. Previous Grant07 source-only review bounds remain; no main.
+
+Author actualFINAL provided memory-mutation DATA (not executions): freshclock,
+claimEXISTING,omit/reorder,earlyreturn,settleEXISTING,recoveryretention,pre/postpins.
+Root derives exact unique spans from committed candidate and runs named RED/exact
+GREEN fresh guarded processes, plus preissue-latevalidity and distinct Root domain
+framing mutation. Canonical collection/source/hash checks remain. Mutated source
+exec only in memory under same SDK denyguard; no file mutation or guard relaxation.
+Require call-phase named failures, not syntax/import/setup failures, then exact
+sourceGREEN; preserve full outputs, commands and per-run hashes in registered
+originals. Probe plans are temporary data, not a new project Runner/framework.
+Unknown/zero-red is finding, not pass. Old formaldeadline failure and E01 stay.
+
 ## N13 correction construction GREEN / exact commit-only Grant09 — 2026-10-21
 
 Actual author FINAL corrected store0d3adc62/newtest04778597/oldreader test2b8d6028,
