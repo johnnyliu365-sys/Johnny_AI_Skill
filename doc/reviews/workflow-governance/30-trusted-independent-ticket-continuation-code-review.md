@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 continued construction / Root diagnostic Grant05 — 2026-10-21
+
+Author actualFINAL now test63e00434/app37624e66/store59c31d33. Root reconstructs prior
+test571ab85f from preserved complete raw sections in memory and verifies exact Git
+blob before computing newdelta; no archived code executed. Nominal fakes and exact
+wholefile+EOF expectations are corrected, no new owner-handle class. Static D01
+still needs new native-reader test's missing monkeypatch fixture parameter; ensure
+nominal overrides preserve base settle terminal parameter/signatures too. These
+are same P0 fixes, not new scope; author may continue under Grant04, no execution.
+
+Initial helper-plan followup failed exactly `agent thread limit reached`; cause
+not inferred, no fallback/newagent/closure. After actual authorFINAL changed the
+active-work condition, one bounded existing-helper request was accepted; actual
+PLAN return still required before any new target test execution. No unchanged
+failure retry or claimed qualification from tool availability.
+
+Grant05 reuses same frozen closure51/three paths/author/RootTemp/allocation. Root
+may run pure strict3/memorycompile and the exact approved guard after actualFINAL,
+fresh source identity/allowlist/fakeABI inspection and full original command/hash
+binding per run. Scoped normal source corrections do not need a new per-type Grant;
+any guard/security/API/scope change still requires its applicable prior review.
+No unreviewed new fake-handle allowlist, SDK or SQLite effect. Preserve every raw
+failure/elapsed value and do not execute unchanged known failure without new evidence.
+Register n13-construction-followup-originals.json in same RootTemp (ownerRoot,
+TTLthroughseal/holds overrideexpiry) for static/readback/strict/guard originals;
+freshguard basetemp root-n13-construction-01 remains unexecuted until guards pass.
+Author still may not execute or commit; formal source review requires separate
+committed candidate, WIP diagnostic results never become merge authority.
+No Host qualification/30B43/E01/Recovery or original checklist status change.
+
 ## N13 guarded diagnostic plan preparation / NOT_EXECUTED — 2026-10-21
 
 Register RootTemp n13-root-guard-r01.json as ephemeral source-only test-plan data,
