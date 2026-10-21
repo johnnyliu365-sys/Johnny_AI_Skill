@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A construction green / exact commit Grant07 — 2026-10-21
+
+Actual FINAL Grant06 test1476012b22d408309fd0f7e680e9b62a203341ec,
+LFd479f658e17fe16c588d4943d19035c7142ecc21aba7bdea1c5d8224a36e0e03.
+Root read corrected source/diff/memorycompile3, strict3PASS1.484s. Bound guard03
+full raw11693bytes SHA256940439225f6fb6d80bc33e10bb7486603309ac596b8fcc416f3e28669a9a3430,
+registered RootTemp original JSON, full stdout/stderr read:530PASS2.35s/one existing
+preimport assertion-rewrite warning, child4.328s/effects[]. No source/Host elevation.
+
+Grant07 retained author may fresh HEAD/index/worktree/allowlist/diffcheck and commit
+EXACT three returned files only in its own allocation, baseline86be3e34; registry
+a1aebe57212e055eb34ce409f17ffde5e44bcbb6/app38047ab11b54f57df30b24c6626502d1f4ac4d43/
+test1476012b22d408309fd0f7e680e9b62a203341ec. Reject unexpected staged/untracked/source
+drift; no amend/reset/delete/retest/SDK/SQL/agents. Return actual candidate SHA,
+parent/threeblob/status. Product source unchanged through fixture corrections.
+Commit is not review approval, integration or completion; Root next reviews frozen
+candidate and performs bounded mutation/source checks in own review allocation.
+
 ## N14A full diagnostic / same-test correction Grant06 — 2026-10-21
 
 Finite IDs testfb99b658073c7451ec657aecfebeee73d2260ff6, strict3PASS1.437s.
