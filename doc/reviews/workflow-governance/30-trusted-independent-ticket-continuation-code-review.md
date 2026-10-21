@@ -1,5 +1,31 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Channel effect-before-read repair and exact local dev-runner correction
+
+Root independent native-observation timing probe05 reproduced a real violation:
+fd changes after the last native observation, recv still called once before
+RECOVERY_REQUIRED. Same-ticket correction98ba5fd3 extracts one local-state check
+and reuses it before/after native observation, no copied validation body. Tests
+45c56b10 add fd/cancel pre-read regressions. Strict2 and37 affected cases pass;
+the EXACT Root probe07 now passes with recv_calls=0. Four independent product-
+memory reverses (actual ABI socket width, PID byte count, send progress, post-
+native recheck) each produce the intended named RED; exact disk source remains
+unchanged and full37 restored08 is GREEN. These are engineering-only fake checks.
+
+Runner identity is explicit: those actual runs used pytest9.0.3, while existing
+requirements-dev.txt pins9.1.1; mypy actual2.3.0 matches its pin. Do not label the
+old runner as the pinned one. Root admits one bounded, unauthenticated public
+PyPI/files.pythonhosted download of that ALREADY declared dev wheel ONLY into
+the existing owned review Temp, no global install/environment or runtime lock
+change. PyPI exact pytest9.1.1 wheel386536bytes/SHA256
+37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c.
+Verify archive member paths/types/aggregate before mechanical extraction; no
+setup scripts, dependency changes, model/service/SDK/Host call. OwnerRoot,24hTTL
+after creation with active Ticket30/evidence hold overriding expiry. Pin actual
+loaded pytest path/version on the changed-source checks, then only this slice's
+green/reverse/restoration gates; do not redo N14B/C/04. Existing runtime payload
+MUST NOT include pytest. No Host qualification, main integration or checkmark.
+
 ## Channel revision02 engineering checks and uncovered test entry
 
 Root changed-source checks: product0deb331f/test0b48ae8a strict2 PASS, then actual
