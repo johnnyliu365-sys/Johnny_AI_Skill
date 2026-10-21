@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A index whitespace correction Grant07b — 2026-10-21
+
+Author actual FINAL COMMIT_BLOCKED: only exactthree paths staged, cached diffcheck
+detects new blank EOF in newtest935; commit not created. Earlier Root worktree
+git diffcheck did not include untracked files, so it was not full newfile hygiene
+proof. Preserve diagnostic; no behavior or allowance change.
+Grant07b same author may remove ONLY redundant final blank line from staged new
+test, preserve exactly one final newline; compare full bytes excluding trailing
+newline count and compile in memory (no import), stage same three paths, run cached
+diffcheck/scope readback, then exact commit. Record new test blob/old parent and
+clean own worktree; product blobs unchanged. No other source edit/test/SDK/Agent/
+cleanup allowed. Final candidate rebind after actual FINAL; existing530construction
+evidence pins priorbytes, whitespace-only AST equivalence must be verified before
+reuse, final Root candidate tests still required. No Owner technical decision.
+
 ## N14A construction green / exact commit Grant07 — 2026-10-21
 
 Actual FINAL Grant06 test1476012b22d408309fd0f7e680e9b62a203341ec,
