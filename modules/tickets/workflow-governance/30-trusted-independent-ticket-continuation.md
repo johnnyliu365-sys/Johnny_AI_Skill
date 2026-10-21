@@ -15,6 +15,47 @@
 
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
+#### Current acceptance-linked checkpoint — no new requirement or framework
+
+N14B/C and04 stay CLOSED; no replay. Existing source engineering hold is now
+6a4dd605a9781ca6c4970e0844dd9b8796846de1: channel21f5b760 and provisioning
+4f30b704+500e10f1 retain exact reviewed blobs. Strict channel37PASS under pinned
+pytest9.1.1, four product reverse REDs/restored GREEN; provisioning39CS0W/E,
+three fake selftest modes, five named product reverse REDs/restored GREEN and
+different-seat source/byte QA. Post-integration channel37PASS and corrected
+integrated02 native build0W/E+self-testPASS load the actual source hold. First
+integrated01 command mistakenly named author project despite hold cwd: retained
+as SOURCE_SELECTION_MISMATCH, not integrated-candidate acceptance. Raw originals
+and exact dispositions remain in original30 review. Main and30B/43 untouched.
+
+Next actual barriers, each tied to BOTH30B trusted-Grant and43 observer review:
+1. Build fixed native executable, then freeze exact payload/config bytes. Missing
+   Windows SDK import libraries remain, not missing source code. Official NuGet
+   SDK.CPP and SDK.CPP.x64 version10.0.26100.8249 total213384734bytes offer a
+   no-OS-install build input alternative; their metadata explicitly requires SDK
+   license acceptance. Owner decision pending; no download/use/VS setup yet.
+2. Finish real readonly Host join/protocol against actual installed CLI surface,
+   not raw socket/fake PID. The pinned Codex image341312816bytes is NOT the
+   27421508byte service payload. N14B's64MiB child/snapshot limit is intentional,
+   not Host-image qualification; do not widen it or package Codex. Actual Host
+   image/peer/observations and WebSocket/connection ownership remain UNVERIFIED.
+3. Exact separately approved OS service/account/SID/whole-DACL/Registry setup,
+   then bounded first-entry/final CVQ, then each held candidate's own audit.
+  30B additionally needs fresh remote-main index/leaves publication/readback;
+   protected Grant success alone cannot satisfy that independent dependency.
+
+Root batch-derived grant-ticket30-host-api-metadata-20261021 is READ_METADATA_ONLY:
+fixed installed CLI F6DBF48CB70F62649C645F26C87DC9BF84CC36986202DFAD8E12FB5B8CA70312,
+version0.163.0-alpha.10.2; only app-server generate-json-schema --help and, after
+exact argv readback, its offline schema generation under existing owned RootTemp
+host-api-metadata01. No app-server/Host session, model/provider call, socket,
+credential/profile inheritance, source/test/Registry/service/ACL modification or
+qualification. Root/controller owns this metadata artifact,24hTTL+active evidence
+hold; child deadline55s, outputs<=2048files/64MiB monitored, no blind retry. This
+metadata is construction input only, never authority or proof of a denied effect.
+It removes installed-version wire ambiguity before native driver source is frozen;
+Root need not ask Owner to design the missing interface. No new PRD/Ticket/WT.
+
 #### Same-ticket payload prerequisite: narrow existing package import boundary
 
 ENGINEERING_CLOSED: author b9df00c889acd2cc2164bb885aed40d28e002dde, parent214c6d39.
