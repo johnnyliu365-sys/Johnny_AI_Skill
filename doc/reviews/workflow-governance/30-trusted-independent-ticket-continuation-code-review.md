@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 Root local guard selfcheck result — 2026-10-21
+
+Root Grant04 executed registered script1573a4a8 on acceptedstagea6071d5f:
+child exit0/1.625s, 12 expected Python denial witnesses (KnownFolder, SQLite,
+file/security, DLL ctor/cacheloader, HANDLEfactory/type, process/socket, ownerinit/
+close). BadFake property/Close never reached, GoodFake closes exactly once and
+idempotent second close stays safe. No N12 candidate/test imported or executed.
+Full original command/stdout/stderr/timing/exit retained in Root registered Temp
+n12-root-guard-selfcheck-r04-result.json; priorr03SyntaxError never relabelledPASS.
+
+This proves only the pinned local guard/selfcheck behavior, NOT OS isolation,
+agenttoolrestriction, Native/Host qualification, incident discharge, final product
+acceptance or candidate test permission. E01 UNKNOWN/rawmissing remains independent.
+Next: distinct sourcehelper verifies raw mapping, then Root may decide exact fake
+candidate diagnostics after actual ownerFINAL+source/API/fakeowner audit. Owner
+Grant02 still SOURCE_EDIT_ONLY, no Python/checker/test/import/commit/Native effects.
+
 ## N12 selfcheck serialization correction / Root Grant04 — 2026-10-21
 
 Grant03 selfcheck child exited1 in0.047s with SyntaxError before child body/import:
