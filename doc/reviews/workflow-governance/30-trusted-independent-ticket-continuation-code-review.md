@@ -1,5 +1,39 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14C direct-session admission / child Grant14a — 2026-10-21
+
+Same original30 closure55 ticket3e7a8a95ecd8e0864cc2a2270e58ba1b072aa88d /
+bloba9892171c27fb308fedf184dc8e625e8b7615053. Independent retained source helper
+actual FINAL DOC_PASS: exact3path cut sufficient, actual signatures and settled
+record support one consume, no mapped ambiguity; ordinary engineering only.
+Root AO/sole reviewer confirms this directly implements shortest step2, no new
+requirement, privileged effect, framework or Owner decision. CompletionEvidence
+N14B650f1c37/5279bdc1/e9e25528 returns ACTION_COMPLETED; continuation AUTO_CONTINUE
+IMPLEMENT_N14C_SOURCE_EDIT_ONLY under existing uncapped batch.
+
+Root childGrant14a parent batch-checklist-local-20261019-uncapped/project
+johnnyliu365-sys/Johnny_AI_Skill/ticket30/closure55/actionSOURCE_EDIT_ONLY. Exact
+baseline650f1c37ebef9741ec1691e0e5f22fe7f60e8c85; author retained
+/root/ticket30n4_peer_impl current admitted Luna/xhigh; reviewerRoot plus retained
+independent source helper, never author self-approval. N14B allocation RELEASED,
+immutable evidence held. New side_context wg30-n14c-source-20261021, same-lifetime
+direct lane/bridgeNOT_REQUIRED; no forged operational Grant/receipt/Host readback.
+Root direct fresh allocation readback: own assigned existing author worktree
+.worktrees/skill-improvement-30g-protected-launch, branchcodex/same, exact HEAD650f1c37,
+empty index/workcopy, linkedgit registration and all ancestors nonreparse confirmed.
+Only closure55 oneMODIFY/twoCREATE, zeroDELETE/dependencies/exports/sourceoutside.
+
+Author may read exactticket/directsource and use apply_patch for exact3paths;
+normal local source construction/type annotations and test creation only. DO NOT
+import/run/check/test/SDK/SQLite/SCM/process/network/model/cleanup/commit until Root
+inspects exact saved source+fakes and separately admits offline checks. No source
+write in Root/control/sibling tree. Return SOURCE_READY with exact diff/pins,
+constructors/test seams/holds, not success or reviewapproval. No selfdelegation.
+Root finitewait actualFINAL, no activitypoll or author-WT reads during active work.
+Initial child55/outer60 after later executionadmission; cumulative/count uncapped,
+old ledger retained, unchanged failure not blindly retried. No formal mainmerge/
+Hostqualification/30B43 unblock/Owner security approval inferred.
+
 ## N14B seal QA and engineering-hold readback — 2026-10-21
 
 Independent retained helper actual FINAL: pinned5279bdc1,25/25 embedded originals
