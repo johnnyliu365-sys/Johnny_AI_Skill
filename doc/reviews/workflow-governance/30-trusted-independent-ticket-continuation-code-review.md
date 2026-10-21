@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A named discrimination complete / original seal Grant10 — 2026-10-21
+
+Root read every unfiltered RED/GREEN stdout and empty stderr from six exact pairs:
+approval equality DID_NOT_RAISE; skipped subject reread DID_NOT_RAISE; legacy entry
+subject_reads!=0; fresh same-class singleton DID_NOT_RAISE; extra-field admission
+DID_NOT_RAISE; distinct grant-crosslink onefailed/fourpassed then restoredfivePASS.
+All failures named call-phase, exact restoredGREEN, guard attempts[]/enum identity
+preserved; sameclass extra config deliberately ignore vs forbid (source SHA same,
+runtime mutation explicitly printed). No synthetic firstred newbehavior claim.
+V8 TextEncoder unavailable while composing first command BEFORE any child; switched
+ASCII-only spec encoding, not product failure/Host restriction/retry evidence.
+
+Grant10 register RootTemp n14a-final-source-readbacks.json and deterministic
+n14a-source-evidence.json.gz, Rootowner/TTLthroughreviewseal/holds. Root may serialize
+exact existing registered originals only: construction-originals/followup, guardplan,
+capture02/capture03/finalreview, mutationplan, all12 mutation JSONs, and new source
+readback packet. Preserve original bytes/path/length/SHA; gzip only data, no source
+execution/deletion. Append one sealed DATA block to existing review, no new workflow.
+Independent byte/digest/full UTF8 roundtrip QA must precede sourcehold composition.
+Only source engineering checks complete; mandatory qualified review BLOCKED,
+30B43/Host/authority integration/checklist completion still unproven. Only04[x].
+
 ## N14A memory validation Grant09 ACTIVE — 2026-10-21
 
 Candidate7606a21d independent frozen-source helper actual FINAL no closure53
