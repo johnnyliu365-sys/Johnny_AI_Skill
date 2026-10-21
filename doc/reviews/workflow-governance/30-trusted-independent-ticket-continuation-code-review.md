@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Fixed worker source Grant16 activation — 2026-10-21
+
+Independent retained /root/ticket30_native_tools_review DOC_PASS exact5bc50acfc570d30232e5d1762bd18f5feee37e4f,
+leaf a427529d987cce8fec2067b2561bb2a769d63189 LF24a7d1911feeed64ef4778a1c7a91f2bad254681aeac78fc3de4b28d0d1bea4f,
+two registry edges/checklist103/source signatures/owner dispositions. No Host
+qualification. Root activates derived grant-ticket30-fixed-worker-source16,
+parent batch-checklist-local-20261019-uncapped; original30 closure57 unchanged.
+Exact source baseline b016aed2ee9c20145be5069fa98cdc501702df35, author retained
+/root/ticket30n4_peer_impl own .worktrees/skill-improvement-30g-protected-launch,
+branch codex/same, HEAD/index/worktree freshly clean and two CREATE paths absent.
+Root sole reviewer and different retained independent helper, no author control.
+Only the two exact worker/test CREATE paths in reviewed leaf; zero existing-file
+modification/deletion/exports/dependencies. SOURCE_EDIT_ONLY, no tests/imports/
+checkers/process/native/Host/commit until Root separately admits exact fakes.
+No operational issuer Grant, account, ACL, Registry, service or model authority.
+Return exact bytes/blobs/constructor and test seams; completion routes back to
+Root guarded check, reverse mutation and independent engineering review.
+Native15e first Registry mutant was patched/restored without compiler execution
+when independent source findings arrived; do not count it as a mutation result.
+N14C own-hold post-FF loaded-source check32PASS/SDK[] raw ffde6f9127ef3f56437ee81cf60ddc16690e1cb8dd12c8cd0bbbce7fccb445a8,
+and seal37fa406d byte QA33/2669389/545114 passed; main and qualifications unchanged.
+
 ## N14C immutable original evidence seal — 2026-10-21
 
 `N14C_SOURCE_ORIGINALS_V1_GZIP_BASE64`; 33 original JSON packets, candidate
