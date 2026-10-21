@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14C guarded behavior admission / Root Grant14e — 2026-10-21
+
+Actual FINAL corrected test b995cdd2c69d7780f63b13b01e7da4c7a1cca7f4;
+storecfd44570/app79048fd2 unchanged. Root strict3/compile exactbytes PASS2.156s,
+full original146715bytes SHA9f8878fe501a2a219c280909bac64767f6e09fd8235b6e0183947e782c3063b1.
+27 prior diagnostics and initial104 remain historical evidence, not reset.
+Root read full991app/current1282test (unchanged spans from preserved03source,
+changed defining-module/fake narrowing spans reread), same3path closure.
+
+Admit ONLY new read-session suite plus directly affected existing protected-store,
+installed-snapshot, snapshot-reader, installed-subject-enrollment, protected-launch
+and transport suites. Reuse existing N14B SDK-deny prefix and exact three fakeowner
+types; existing snapshot/preparation/transport fake seams, no native/file/Registry/
+SCM/SQLite/network/process call or operational Host campaign. Preserve canonical
+loaded-source and collection identities, no conftest/plugin autoload/cache/pycache.
+Use child55s/minimal environment, fresh root-n14c-behavior01 basetemp in registered
+RootTemp, save complete command/stdout/stderr/elapsed/exit BEFORE verdict under
+n14c-behavior-01-original.json, never overwrite. Any unpatched-effect attempt is
+a finding even if pytest exits0. The genuine postlaunch former-red and real
+single-consume settled-record path must both be green, not all-refusal acceptance.
+Source immutable during run; no commit/qualification/integration yet.
+
 ## Native build bootstrap deviation and repaired invocation / Grant15b2
 
 First author build raw native15b-01-original.json preserved, exit1/1.041s,
