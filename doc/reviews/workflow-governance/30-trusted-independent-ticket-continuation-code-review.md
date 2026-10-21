@@ -1,5 +1,46 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 Root bounded construction-diagnostic Grant05 — 2026-10-21
+
+Resume existing uncapped batch, closure48 and ticket5accec04/leaf689e097f;
+no authority or budget reset. Retained author actual FINAL is
+STATIC_SOURCE_READY_ROOT_VERIFICATION_PENDING, no execution or source commit.
+Grant02 remains SOURCE_EDIT_ONLY. Root independently read exact new3 source
+and delta; metadata labels its nonblank counts as physical lines incorrectly,
+so hashes, not those counts, identify the stopped WIP.
+
+Grant grant-ticket30n12-root-construction-diagnostics-20261021 revision05:
+Root only, author worktree skill-improvement-30g-protected-store at
+a6071d5f2734091934a8645884c7db2068f62569, exact uncommitted CREATE blobs
+fb293bc8284f6c40bf3e00c2f06ceaf71f9c68c3 /
+a6f0ef6774b70df3c97b2d92badaf09ff58672db /
+66cf2b6c644c4dab34e66d07174d34d48c69f8b9.
+Permit static strict checking and one pinned guarded fake-only construction
+diagnostic using reviewed r03 guard and r04 selfcheck (12denials/PASS).
+Audit source API routes and exact Python _FakeHandle before launch; verify
+source identities first. Root may memory-compile those bytes, then run only
+new protected-store, N11 installed-approval, C13 issuer-identity and protocol
+tests. No real SQLite ledger suite. Pre-import SDK/KnownFolder/SQLite/file/
+Registry/token/SCM/process/network/DLL/handle denials; _OwnedHandle init and
+close admit only the exact audited fake, empty allowlist during imports.
+
+Existing registered RootTemp owns fresh root-n12-candidate-01 and mypy-cache;
+TTL through review seal, incident/recovery holds override expiry. Raw command,
+stdout/stderr/exit/timing retained before interpretation. Child55/outer60,
+minimal nonsecret environment, no user site/plugin autoload/bytecode/cache.
+No candidate source edits by Root, no actual Native/Host campaign, installation,
+security/config/account/service change, cleanup, network/model/new fees,
+push/release/deploy/activation. Diagnostic is not OS isolation, formal review,
+merge authority or Host qualification. Any unpatched effect stops diagnostics.
+
+Uncommitted WIP is construction material only, not formal candidate evidence.
+P0/diagnostic failures route exact findings back to retained author; commit-only
+continuation requires later exact Grant. Committed-candidate review, original
+T4 mutation coverage and independent counter-door remain required. E01
+UNKNOWN effects/original-raw-unavailable/Recovery holds remain independent;
+30B/43 and checklist completion do not change. ACTION_COMPLETED ->
+AUTO_CONTINUE bounded Root diagnostics, not new Owner approval.
+
 ## N12 local guard evidence / independent raw QA seal — 2026-10-21
 
 Distinct retained sourcehelper actual FINAL RAW_QA_PASS_LOCAL_GUARD_ONLY:
