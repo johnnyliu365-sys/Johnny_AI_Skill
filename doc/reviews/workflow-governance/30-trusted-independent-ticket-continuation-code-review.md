@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A construction failure / diagnostic capture correction — 2026-10-21
+
+Grant04 actual child6.407s exit1, pytest reports530collected/47failed/482passed/
+2errors/1warning4.29s; SDK guard attempts[]. These are reported counts, not PASS.
+Tool returned truncated158881-token output dominated by auto-generated131073byte
+parameter IDs; original complete stdout not preserved. Failure causes therefore
+UNVERIFIED, no inference from counts or permission widening. Truncated original
+retained under n14a_guard_construction_raw; cannot support full review.
+
+Grant03 author source-only correction additionally may give existing four-case
+oversize parameterization finite explicit IDs without changing cases/assertions.
+Root Grant05 may prepare improved diagnostic capture of same guard: serialize full
+child stdout/stderr/command/exit before displaying, fresh root-n14a-construction-02
+and registered n14a-guard-construction-02-original.json in RootTemp. This is one
+evidence-recovery diagnostic after capture defect, not unchanged blind retry or
+failure reset. New exact test hash/strict/source binding required before run.
+Full unfiltered resulting output must be read in bounded pages before judgement.
+No actual SDK/SQL/network/native or new fake-owner allowance; all holds remain.
+
 ## N14A exact construction verification Grant04 — 2026-10-21
 
 Actual FINAL followup test7a27ee6e20a5fe24dd9befa3b913dd9e52016e43,
