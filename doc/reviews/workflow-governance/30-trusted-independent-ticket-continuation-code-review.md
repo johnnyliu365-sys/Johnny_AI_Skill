@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 closure49 construction green / commit-only Grant15 — 2026-10-21
+
+Root Grant14 strict4PASS1.579s, six-suite399/399PASS1.65s, child3.562s,
+source/collection identity confirmed, Python denials[]. Original raw/command
+RootTemp n12-closure49-grant14-pass.json. Original F1/F2/F3 Root baselineRED
+has separately restoredGREEN under Grant13; never relabel failed prior blobs.
+
+Grant15 permits retained author ONLY exact readback, diff-check, explicit git add
+and one normal additive correction commit at baselineae9d1955 for exact3MODIFY:
+protected nativebd884b2a81500aa550244031171143f5a8b11d5d,
+shared native6e3f64bbb77cd906bdf4bc2f2628759e2b2e837e,
+testd15e26b34156f2ea08e04e6b1ef7c3cd6d99b9fd. No edits/execution/checker/
+imports/Native/SQLite/cleanup/reset/amend/newpaths/push or other effects. Keep
+original candidate commit; return additive candidate/parent/blobs/status. These
+construction checks are not final candidate proof. Root review/mutations and
+engineering-only integration still pending; E01 UNKNOWN/rawmissing, retrieval
+deviation, Host/30B43 and checklist only04 unchanged. AUTO_CONTINUE commit step.
+
 ## N12 fake target corrected / Root Grant14 — 2026-10-21
 
 Author actual FINAL testd15e26b34156f2ea08e04e6b1ef7c3cd6d99b9fd targets
