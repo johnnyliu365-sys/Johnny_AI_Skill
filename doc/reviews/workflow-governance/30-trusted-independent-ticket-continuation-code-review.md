@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Protected Host source variant — bounded activation under existing batch
+
+Different-seat DOC finding at4144971e caught a nonexistent ModelRole.REVIEWER.
+Root corrected only that line to the existing SUPERVISOR_REVIEWER in aac72273,
+leafblob0de3d13eac369790ecca0a13dfd214b13c31a8f5,
+LF619594fb7b0dfddd70f958199bda00f598fa7d5bea140f1cbbecabae4811eb72;
+both registry edges were recalculated and independently matched. Actual same-seat
+DOC_PASS_NOT_ACTIVATION confirms the corrected narrow proposal, no new role,
+authority source, permission change or Host/Registry action. Root now activates
+ONLY grant-ticket30-protected-host-enrollment-20261021 revision01 SOURCE_EDIT_ONLY,
+same author/WT and exact source baseline31517eb3, two existing MODIFY paths.
+Legacy schema1/entrypoints stay exact; new Host expected data must be bound via
+the existing protected bundle before later use. No native/Host/Grant execution,
+installation, OS configuration, CVQ or30B/43 completion is authorized.
+
+Different-seat BYTE_QA_PASS also confirms both integrated05 originals in4144971e:
+gzip2812/raw7322, all exact lengths/digests/parsed records match existing originals,
+actual engineering-hold79PASS/SDK[] and source unchanged. The earlier9 original
+records already have their independent QA; do not rerun unchanged source/history.
+
 ## Retained Host peer accepted/integrated; next source binding only
 
 Actual different-seat SOURCE_AUDIT_PASS closes the final thread-owner/alias
