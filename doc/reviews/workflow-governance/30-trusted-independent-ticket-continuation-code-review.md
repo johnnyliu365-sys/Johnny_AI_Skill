@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 corrected source / Root diagnostic Grant06 — 2026-10-21
+
+Retained author actual FINAL source-only correction: native04c14669c919eb6225d694d3b0bff779922fadd0,
+compositiona6f0ef6774b70df3c97b2d92badaf09ff58672db,
+test6a40d39f8b1a86e36120c610ba326aa00a693664, all uncommitted at baselinea607.
+Recorded API change CreateFileW->CreateFile keeps explicit Unicode str and None
+security-attributes/noninheritance with exact SDK nullable signature; same file
+open denial is already guarded. Test fake renamed accordingly, no actual API.
+Explicit imports and typed fake boundary repairs, no new scope/dependency.
+
+Distinct helper actual FINAL GUARD_PLAN_PASS_LOCAL_SELFCHECK_ONLY for r06
+SHA88550cfbccfdd42499adce4e128dcf2d6ff73d5887702f7f892b33fd90d040c3:
+both fresh basetemp -02 references agree; actual collection identity must match
+guard-pinned module, importlib mode; no SDK/owner denial weakened. Not executed.
+
+Root Grant06 same parent/authority/limits as Grant05 permits strict3 and exact
+r06 guarded construction diagnostics of these new3bytes only after SHA readback.
+Same RootTemp owner/TTL/holds, fresh -02, child55/outer60. No owner execution
+permission, sourcecommit or formal candidate evidence; E01 unknown/rawmissing
+and all Host/30B43/checklist holds persist. No unchanged retry: changed source
+addresses 17errors, changed diagnostic addresses separate class-identity finding.
+ACTION_COMPLETED -> AUTO_CONTINUE Root diagnostics; author remains stopped.
+
 ## N12 local diagnostic module-identity correction preparation — 2026-10-21
 
 Distinct helper actual FINAL rejected r05 before execution: declared fresh
