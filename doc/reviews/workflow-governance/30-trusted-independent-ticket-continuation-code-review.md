@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A original QA / source hold composition Grant11 — 2026-10-21
+
+Distinct helper actual FINAL archive QA PASS20/20 full UTF8 bytes/path/length/SHA,
+embedded gzip equals registered file. Five source-byte mutation pairs and one
+sameclass runtime-extra-config pair distinguished; all six inner pytest1->0,
+outer0 only evidence-capture success, no false green. Earliest full output still
+missing, not repaired by later success. Root source engineering acceptance of
+closure53 construction checks, finite matrix, reuse and discrimination complete;
+mandatory qualified review remains BLOCKED, not formal main integration/30B43.
+
+Grant11 Root may fresh-check own source-stage hold clean86be3e34/Git containment
+then FF ONLY to exact candidate7606a21df3cbda10d401b3458c3e0ee9e07594a3.
+Audit114priorpaths:113 unchanged, only Registry changed; two new app/test =>116total
+versus18bf1e9f62ccbde7d4556187dfb7967471ce93a1, preserve all other source blobs.
+Exact new3blobs registrya1aebe57/app38047ab1/testfe3242f7. Run same530/strict3 and
+canonical-source checks at staged path, fresh root-n14a-stage-01; register
+n14a-stage-originals.json and n14a-stage-readbacks.json in sameRootTemp/owner/TTL
+throughseal/holds. Stage raw QA after full stdout/stderr read; no new denies/fakes.
+No main/source-author mutation, no cleanup/Host/SDK/SQL. Release allocation only
+after stageproof, preserve author/review as immutable evidence holds. Router then
+may prepare same30lineage N14B exact contract, no operational qualification claim.
+
 ## N14A source original archive / DATA ONLY — 2026-10-21
 
 Candidate7606a21df3cbda10d401b3458c3e0ee9e07594a3,20 exact original UTF8 packets.
