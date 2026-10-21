@@ -41,7 +41,7 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
-## 30N13 — installed approval single-claim snapshot composition / closure51
+## 30N13 — installed approval single-claim snapshot composition / closure52
 
 Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03 section2,
 batch-checklist-local-20261019-uncapped and first-CVQ source construction order.
@@ -55,6 +55,28 @@ Exact scope, no DELETE/dependency:
 MODIFY library/local_orchestration/grant_authority/windows_protected_store.py
 CREATE library/local_orchestration/grant_authority/windows_installed_snapshot.py
 CREATE tests/test_grant_authority_windows_installed_snapshot.py
+
+Closure52 same-ticket corrective delta, no requirement/SPEC expansion:
+MODIFY tests/test_grant_authority_windows_snapshot_reader.py only the existing
+test_controller_is_checked_between_prefix_metadata_steps and directly necessary
+typed deterministic clock fixture. Existing product reader/native and old fake
+SDK/handle grammar remain unchanged; no new test framework or timing threshold.
+Candidate ce49780dfab4ee7a0742345cd15b5ea53b6dd24c is correction baseline.
+Root actual guarded formal run448PASS/1FAIL: old deadline cell used5ms wall time,
+possibly expiring before constructor; exact actual failure enum was not emitted,
+so constructor-race cause remains source-backed diagnosis, not observed enum.
+Replace scheduler/sleep dependence with clock advancement keyed to first fake
+metadata query; retain exact root-only open/no read/no event/knownclose assertions.
+No unchanged whole-suite retry just to seek green. Preserve full failure original.
+
+N13F1/T1/T3 Root boundary probe actual RED: final pins_open getter sets cancellation
+after final native verification; existing store returns verified bytes with Event
+set, ledger COMPLETE and retained0. Add controller check after terminal pins/poison
+read and immediately before return, so controller loss retains exact backing and
+returns no bytes. Add permanent deterministic cancel/deadline boundary regression,
+preexisting primary legal route remains green. Root's distinct getter-side door
+is not substituted by rerunning author mutations. Preserve baseline raw/probe.
+Original final51 remains readable;52 supersedes only these narrow correction cells.
 
 Reuse before create: existing GrantPlan/Record/LedgerResult, private installed
 approval, SQLiteGrantLedger issue/claim/settle, N12 pins/controller/busy/retention

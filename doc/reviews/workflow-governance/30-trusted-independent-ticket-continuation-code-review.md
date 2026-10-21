@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 immutable review CHANGES_REQUESTED / closure52 / Grant08 candidate — 2026-10-21
+
+Root actual formal seven suites448PASS/1FAIL at ce49780d; old N10 deadline cell
+5ms scheduler-sensitive, exact failure enum missing so no fabricated actual enum.
+No unchanged rerun. Distinct helper actual FINAL flags last pin/controller window;
+Root own deterministic getter-side probe confirms cancel Event true yet verified
+tuple returned, COMPLETE ledger and retained0, effects[]. Full unfiltered RED and
+formal run in registered final-review-originals; no qualified Host evidence.
+
+Closure52 adds one precise old test MODIFY for deterministic first-metadata clock,
+retaining all semantic assertions. N13F1 final-controller regression/fix stays same
+product responsibility/AC, no new policy. Grant08 candidate NOT_ACTIVE until exact
+leaf/index DOC_PASS: retained author in existing WT, baseline ce49780d, modify only
+store,newtest and narrow oldreader test; app37624e66 immutable. Source-edit-only,
+no execute/commit/SDK/SQLite/agents/cleanup. Root diagnostic strict4/guard allowed
+only actual FINAL/freshhash/fake-inspection, unchanged reviewed guard. Old failure
+evidence/historic budgets preserved; no main, source-stage, Host or status upgrade.
+One followup requesting author mutation DATA failed exactly agent thread limit
+reached; no cause inferred/fallback/retry until actual completed work changes state.
+Architecture helper returned actual Cut A design; ordinary local-source preparation
+may follow later without new Owner technical decision, not operational authority.
+
 ## N13 committed-candidate engineering review Grant07 — 2026-10-21
 
 Author actual FINAL candidate ce49780dfab4ee7a0742345cd15b5ea53b6dd24c,
