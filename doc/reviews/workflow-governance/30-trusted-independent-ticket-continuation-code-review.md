@@ -1,5 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B Grant13 ACTIVE after exact allocation — 2026-10-21
+
+Root Grant13a644700d setup/readback succeeded: both exact new normal/non-reparse
+repository worktrees/branches clean7606a21d, linked .git pointers/common metadata
+match primary registered Git area, two registered empty Temp roots normal. Final
+leaf8a21e19c21d0ae928820093f32f09102dace6fc5/LFb6b431ce... both registry edges match,
+independent exact DOC_PASS e1440172 applies; no new source contract change.
+Activate retained author's SOURCE_EDIT_ONLY closure54 and ctx-ticket30n14b view,
+same exact oneMODIFY/twoCREATE, source baseline7606a21d. N14A evidence allocation
+released/preserved, not deleted. No tests/import/checker/SDK/SQL/commit/Agents until
+separate admission; actual FINAL before Root source read, no progress/status polling.
+No operational Host/source authority/30B43/checklist completion; only04 remains[x].
+
 ## N14B exact source allocation Grant13 — 2026-10-21
 
 Retained helper actual FINAL DOC_PASS_NOT_OWNER_APPROVAL at e1440172 corrected
