@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Same-scope closed-lock consumer correction — revision02 admission
+
+Author returned CHANGE_DETECTED before mutation; own worktree remained clean at
+fb814279. Root verified the omitted typed closed allowlist, independent bootstrap
+digest and exact-identity tests, then revised original30 only at
+cc8eaddf20093414a49c4cde0936cc696f21c65b,
+leaf blob73c7dd15125be8d98d2249c0adb3fa2f26618bcb /
+LF60de18fe6b4670ee1fee56b70a61fc410b73c33db6fe15b60642339772c005f0;
+both registry edges match. Different-seat native helper DOC_PASS_NOT_ACTIVATION
+confirms four added consumers are necessary for the SAME pinned pure codec
+dependency, not permissive package admission or a new workflow. Root activates
+revision02 SOURCE_EDIT_ONLY exact TEN paths (3CREATE/6MODIFY/1DELETE), same author/
+WT/engineering baseline. Both typed and pre-pip bootstrap closed-lock rejection
+must remain; prior six-wheel proof stays historical. No source/test or native
+execution, dependency install/download, Host test, formal activation or30B/43
+release from REVIEW_BLOCKED is authorized by this action.
+
 ## Source-to-retained-Host reply admission — bounded source only
 
 Different-seat /root/native_service_impl DOC_PASS_NOT_ACTIVATION for original30
