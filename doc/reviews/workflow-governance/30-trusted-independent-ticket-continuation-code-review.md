@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Channel revision02 engineering checks and uncovered test entry
+
+Root changed-source checks: product0deb331f/test0b48ae8a strict2 PASS, then actual
+fake collection exposed malformed foreign-family fixture and oversized pytest ID.
+Full behavior02 raw is retained; UI was truncated by the65537-byte parameter ID,
+so no pass or counter-mutation claim is derived from that reduced display.
+Corrected test78977a53 and actual native-binding inert spy pass strict2 again
+(channel18-strict-05-original.json SHA256
+50aecb3de4b248c055312b61eede4b6f267efb369cd8f90e464e7a7912ad4b97).
+Behavior03 full35-cell output is34PASS/1FAIL, not acceptance. The standalone
+Python-address regression omitted the common select fake and reached the real
+select.select entry with fake handle41. Product collapses its exception to
+RECOVERY_REQUIRED; underlying native outcome is UNKNOWN, not reconstructed.
+Existing logged SDK guards report no attempts, but did not cover select and
+must NOT be represented as complete effect denial. The child exited; no real
+Host/service/account/Registry/installation or file-write behavior was requested.
+All source/raw failures retained; no identical rerun. Root adds select denial
+before further imports; author must reuse existing _make_channel fixture rather
+than duplicate setup. No production behavior relaxation or qualification claim.
+
 ## Existing protection-tool provisioning source admission
 
 Retained native helper independently DOC_PASSed56aebbea then exact binding delta
