@@ -1,5 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 test correction / Root diagnostic Grant13 — 2026-10-21
+
+Author actual FINAL changed only test imports and invalid-initial-window Expected;
+runtime deadline assertion remains. Root rechecks3modified paths/blobs:
+protected nativebd884b2a81500aa550244031171143f5a8b11d5d,
+shared native6e3f64bbb77cd906bdf4bc2f2628759e2b2e837e,
+test80a047c69597cdf73887a1a2f04ae47bcde0a40c, baselineae9d unchanged.
+Root Grant13 same bounded scope/denials as Grant12 admits strict4 and six-suite
+guarded construction checks with fresh RootTemp root-n12-shared-regression-02,
+plus unchanged Root three baseline probes on corrected bytes under fresh
+root-n12-findings-correction-01. Three baseline REDs remain original evidence;
+new GREEN cannot retrospectively rewrite old failures. Full outputs retained,
+no source/Host/qualification/cleanup effect or author execution permission.
+WIP diagnostics not merge source; E01 UNKNOWN/rawmissing/30B43 unchanged.
+ACTION_COMPLETED -> Root diagnostics then exact commit-only admission if P0green.
+
 ## N12 closure49 diagnostic findings / test-only same-scope repair — 2026-10-21
 
 Root Grant12: strict4 exit1/1.688s, two implicit re-export accesses in test990/
