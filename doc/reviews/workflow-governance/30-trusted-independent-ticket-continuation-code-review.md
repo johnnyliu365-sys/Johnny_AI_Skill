@@ -1,5 +1,42 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Runtime seal QA and exact current SDK change boundary
+
+Retained native source helper independently byte-QA-read ec1b83f5 runtime capsule:
+five/five exact records, raw473275/gzip61581 and both pinned hashes match.
+It separately recomputed all six locked wheel hashes and125 payload member
+comparisons:111 zip,14 physical, zero mismatch. Root29 EOL-only file differences
+reconcile6222 bytes across same79 Git sources. No runtime/Host rerun by helper.
+This closes this concrete offline import/provenance prerequisite, not native
+AOT/service/Host/CVQ or whole30B43. No checkmark or formal activation.
+
+Immediate external prerequisite is exact SDK installation only, still NOT_AUTHORIZED.
+Machine DESKTOP-28ERPQ1; controller DESKTOP-28ERPQ1/GameBoy SID
+S-1-5-21-3542654388-73774624-397494543-1001, current process non-elevated.
+Retained install-inventory helper's read-only catalog dependency closure:
+component Microsoft.VisualStudio.Component.Windows11SDK.26100 requires only
+Exe package Win11SDK_10.0.26100 version10.0.26100.16, both absent from installed
+state.229 catalog payloads sum536420908bytes, hostdownload.visualstudio.microsoft.com;
+actual download/reboot UNKNOWN. Catalog estimated install1718181284bytes, not
+actual installer consent screen. No workload/recommended component is requested.
+Catalog C:/ProgramData/Microsoft/VisualStudio/Packages/_Instances/95de7aab/catalog.json
+SHA256B20492A4ACB679CABDD4C7F7168A82D56B8C1079C9D8F5A3EF3550FEA08BA4E8;
+state.packages.json SHA2569F94059EBAFBD81EEEEEBBD6B44AE5EA8308A869EDE9E570DD0B358DDA15036F.
+winsdksetup.exe expected1451896bytes/SHA256
+9B447E73C9ADA8D912F1633662334927B3F4A0E6DFAAB787ABFB150A69A0225A;
+WinSdkInstaller.exe41904bytes/SHA256
+25C1E69EE65DD53311DD24F08F1DD6006E1078D749AD7022D0EFD0D5B6C1E757.
+These payloads were not found at the two expected cache paths; none downloaded.
+Exact setup.exe/add/remove command and instance/channel/readback/rollback remain
+the prior Capsule section in this review, not reapproved or executed by inventory.
+Interactive modification can propose installer self-update: stop, do not consent.
+--noUpdateInstaller documented with --quiet can fail closed on required self-update,
+but that noninteractive mode is NOT silently substituted for Owner confirmation.
+SDK consent grants no new Johnny service/account/ACL/network rule/Host campaign.
+Microsoft command reference:
+https://learn.microsoft.com/en-us/visualstudio/install/use-command-line-parameters-to-install-visual-studio?view=visualstudio
+
+
 ## Same-ticket retained Host channel SOURCE_EDIT_ONLY activation
 
 Retained independent AO DOC_PASS5c29bf32c313f2b9c9c63b11c560f2e4c416535a;
