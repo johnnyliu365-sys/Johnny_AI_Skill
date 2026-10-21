@@ -1,5 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 guarded diagnostic plan preparation / NOT_EXECUTED — 2026-10-21
+
+Register RootTemp n13-root-guard-r01.json as ephemeral source-only test-plan data,
+Root owner/TTLthroughreviewseal/holds overrideexpiry. Root may derive N12 reviewed
+r06/six-suite denyguard template, adding only N13 source prints/newtest canonical
+module/collection identity/seventh suite and fresh RootTemp root-n13-construction-01.
+All SDK/KnownFolder/SQLite/native/file/Registry/token/SCM/network/process/ctypes/
+realHANDLE and owner-init-beforeproperty/close restrictions unchanged. Only existing
+three audited N12/N10 fake handle classes allowed; no new class autoallowlisting.
+Explicit existing old-reader fixture plugin is test source, not Host qualification.
+Bounded distinct static plan QA may inspect JSON command as DATA, never execute it
+or read activeauthorWT. This is plan preparation only, NOT a test Grant; actual
+author FINAL, exact new source hashes/fake inspection, P0 strict green and Root
+diagnostic admission must precede any run. Author Grant04 correction unchanged.
+No Host/Native campaign/installedsource/SDK/SQLite effect or qualification claimed.
+
 ## N13 Grant04 static followup / no unchanged checker retry — 2026-10-21
 
 Author actual FINAL corrected WIP3blobs59c31d33/37624e66/571ab85f; Root read full
