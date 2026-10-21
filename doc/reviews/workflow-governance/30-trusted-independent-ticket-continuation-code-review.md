@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A source Grant01 ACTIVE after allocation readback — 2026-10-21
+
+Root Grant050ecb37 setup completed exact registered two worktrees/branches at86be3e34,
+both clean with normal non-reparse directories and exact linked .git metadata;
+registered two empty Temp roots created. No native/config/installed-source effect.
+Final ticket leaf f2f3e1fd356b8950bfad4470b2e2858ababc76e2,
+LFe9dd7a86c113cd9df9b475381414a73622bfee1c133bcfed442ee4acd2e222cf at050ecb37,
+both registry placements match; prior exact DOC_PASS applies with finalbaseline-only
+metadata rebind. Root now activates author's source-only threepath Grant01 under
+existing parentbatch/closure53. Every code/test write restricted to own new WT,
+not old N13/source-stage/main. No tests/import/checker/SDK/SQLite/commit until
+separate admission. Actual FINAL before Root inspects; no activity/status polling.
+N14A temp n14a-construction-originals.json registered Root reviewer directory for
+later static/preflight raw readbacks, TTLthroughseal/holds. Only04 remains checked.
+
 ## N13 stage QA / N14A exact source allocation Grant01 — 2026-10-21
 
 Distinct helper actual FINAL stage originals QA PASS5/5 raw entries19181/
