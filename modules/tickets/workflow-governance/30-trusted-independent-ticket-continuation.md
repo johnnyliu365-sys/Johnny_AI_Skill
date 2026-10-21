@@ -41,7 +41,7 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
-## 30N13 — installed approval single-claim snapshot composition / closure50
+## 30N13 — installed approval single-claim snapshot composition / closure51
 
 Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03 section2,
 batch-checklist-local-20261019-uncapped and first-CVQ source construction order.
@@ -83,7 +83,7 @@ not a circular operational qualification prerequisite.
 N13T1 legal real store method at actual application/reader seam, fake SDK/ledger:
 existing busy lock, controller/thread/cancel/deadline/closed/poison checks; live pins
 and native.verify_after; exact retained approval.peer C13 recheck. Internal
-time.time_ns exact nonnegative int once -> integer epoch seconds, require
+time.time_ns exact nonnegative int -> integer epoch seconds, require
 not_before <= observed_at < expires_at BEFORE any ledger.issue. Check controller
 before/after every bounded operation and before final return. Reject caller time/
 plan/approval/ref/path injection, no env/config/remote fallback.
@@ -91,7 +91,14 @@ plan/approval/ref/path injection, no env/config/remote fallback.
 Issue exact fixed approval.grant_ref/plan. Accept only exact ISSUED+UNCONSUMED or
 EXISTING+UNCONSUMED record, matching full original plan/ref and no correlation/
 evidence. Existing CLAIMED -> finite ALREADY_CLAIMED; terminal -> ALREADY_TERMINAL,
-no reader. Claim exact grant/plan/approval.operation_ref/observed_at, only exact
+no reader. After issue/result/controller checks, sample internal time.time_ns a
+SECOND time immediately before claim; exact nonnegative int -> epoch seconds.
+Pass this fresh value, NOT the pre-issue sample, to existing ledger.claim, whose
+same transaction matches expiry and conditionally consumes UNCONSUMED.
+EXPIRED -> GRANT_EXPIRED, no reader/settle; issued record remains UNCONSUMED.
+No continuous post-claim wall-clock expiry policy is added: admission occurs
+at durable claim-before-operation. Claim exact grant/plan/approval.operation_ref/
+fresh observed_at, only exact
 CLAIMED_NEW+CLAIMED record/full binding/correlation/no evidence permits construction
 of any _SnapshotBlobReader. Existing claim (even same operation) is NOT a crash/
 lease/resume authorization. Ledger remains unchanged, no lease subsystem.
@@ -124,7 +131,10 @@ wrong-thread/closed/reuse and interrupted outcome finite; successful close once.
 Protected store constructor/close defaults preserved for all existing consumers.
 Finite errors never include raw bytes/paths/approval/native details.
 
-N13T4 discrimination: legal not_before and expires_at-1 (and zero-length member),
+N13T4 discrimination: first clock expires_at-1 then second expires_at: issue may
+happen, claim receives fresh expired value and refuses; reader/settle0. Mutating
+second sample to first must turn this named cell RED then exact-restored GREEN.
+Also legal not_before and expires_at-1 (and zero-length member),
 max256 members and32768length, exact ordered multi-member+complete evidence. Reject
 not-yet/expiry before issue; same-operation CLAIMED/terminal, claimEXISTING, wrong
 grant/plan/correlation/lifecycle/evidence, missing/extra/reordered/wronglength/hash
@@ -165,7 +175,7 @@ LOCALAPPDATA/Temp/johnny30-installed-snapshot-review-20261021; owner+purpose=N13
 TTL through final review/seal, teardown only after exact safe clearance, references/
 Recovery override expiry and no denied-cleanup retry. Prior N12 allocation released
 as immutable referenced hold, no deletion. Precise childGrant candidate
-grant-ticket30n13-installed-snapshot-20261021 revision01 NOT_ACTIVE until committed
+grant-ticket30n13-installed-snapshot-20261021 revision02 NOT_ACTIVE until committed
 leaf/index DOC_PASS+Root exact baseline/roles/worktree/preflight readback.
 Parent original localbatch, never an installed operational issuer Grant.
 

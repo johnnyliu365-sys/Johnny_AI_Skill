@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 CT1 ticket repair / closure51 source-only amendment — 2026-10-21
+
+Root source verification confirms AO helper actual FINAL mismatch: closure50 one
+epoch sample beforeissue could become stale beforeclaim. Original runbook03 section2
+and original30G G2 require expiry matched inside conditional claim transaction.
+SQLite timeout0 is not a semantic freshness guarantee. This is TICKET_DEFECT CT1,
+not an implementer failure or new product/owner decision. Source construction only.
+
+Closure51 preserves exact same3paths/API/owner/baseline/rights; first internal
+sample retains zero-issue invalidity denial, second immediately beforeclaim is
+passed to existing transactional expiry check. Add expires-1 -> expires cell with
+issue allowed but reader/settle0; replacing fresh sample by first must namedRED.
+Do not add ongoing wallclock expiry after validdurableclaim or new clock engine.
+Author notified pause timestamp choice only, no execute/commit; other edits continue.
+Grant01 historical proof remains, revision02 candidate rebinds amended exactleaf
+after narrow independent DOC deltaQA; no author/sourceexecution until Root admission.
+
+Root attempted exact apply_patch containing wrong context once: verification failed
+beforeanyedit; corrected anchored text then recomputed LF after finalleafbyte before
+both registryedges, no false successfulwrite/effect claim. All earlier timings,
+failures/E01/30B43/Recovery and first-CVQ limitations remain. AUTO_CONTINUE DOCdeltaQA.
+
 ## N13 precise source edit Grant01 / same-lifetime admission — 2026-10-21
 
 Parent batch-checklist-local-20261019-uncapped, original30/PRD009/CHG009/Context04,
