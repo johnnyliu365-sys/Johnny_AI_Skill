@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Native direct compiler admission / Grant15c — 2026-10-21
+
+Native15b02/03 failed before source compilation at identical NuGet defaults
+initializer null path1; adding temp profile strings did not resolve it. Root read
+full03 stdout/stderr, no new certificate banner. Do not continue environment guesses
+or call this product/build failure. Existing installed reference packs10.0.7 and
+10.0.10 and SDK10.0.302/Roslyn/bincore/csc.dll directly observed; no installation.
+
+Same seven-path owner may use installed dotnet.exe exec that exact csc.dll with
+the exact explicit project Compile list and existing reference-pack10.0.7/ref/net10.0
+assemblies. This is an offline source compiler, no CLI restore/NuGet/network/user
+configuration/first-run/target program. Set nullable enable, warnings-as-errors,
+deterministic, no unsafe/dynamic/new reference package. Output ONLY registered
+native15b/bin and compiler logs, pin compiler/reference/source input versions and
+full argv/raw output before judgment. Existing child55s/safe child environment.
+No generated product source or new repo path; this diagnostic need not add version
+attributes. It cannot satisfy final project build/NativeAOT/version acceptance.
+Compiler diagnostics may be fixed in original seven paths and rerun on changed
+bytes; preserve all failed invocations. No source commit or executable execution.
+
 ## N14C behavior findings / same-scope correction14f — 2026-10-21
 
 Root read all2099 unfiltered stdout lines and empty stderr from originalbehavior01:
