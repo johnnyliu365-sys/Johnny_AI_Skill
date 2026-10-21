@@ -235,7 +235,7 @@ Add a private schema_revision2 / purpose READ_ONLY_HOST record with the SAME
 approval/grant/operation/native-id+revision/manifest/plan-digest/role/subject SID+
 session/job-limit fields; its launch_plan is the reviewed exact HostSubjectLaunchPlan.
 Revision2 is a disjoint closed variant, not a relaxed legacy parser. Host role
-must be existing ModelRole.REVIEWER and match the freshly decoded approval's role;
+must be existing ModelRole.SUPERVISOR_REVIEWER and match the freshly decoded approval's role;
 all existing approval/operation/ref/digest crosslinks still match exactly.
 Reuse the HostImageBinding bound, never enlarge legacy payload/snapshot caps.
 Ordinary construction represents EXPECTED DATA ONLY.
