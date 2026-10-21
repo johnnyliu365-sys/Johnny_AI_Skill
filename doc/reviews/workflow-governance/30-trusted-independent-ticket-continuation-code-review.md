@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 Grant05 findings / retained author correction — 2026-10-21
+
+Exact stopped3bytes checked: strict3 exit1/20.047s, 17errors in native/test;
+Root guarded diagnostics exit1/3.375s, 236collected,230pass/6fail.
+Eleven UNAPPROVED_OWNER_INIT Python denial witnesses; no native effect
+proved by these witnesses. Guard import/pytest module identity needs diagnosis,
+so these six are not yet classified as product defects. Do not weaken fake-owner
+gate or change product behavior to obtain green. Full original commands and
+outputs retained in registered RootTemp n12-root-grant05-original-diagnostics.json.
+Neither run is final candidate review, Host evidence or E01 discharge.
+
+Same author/Grant02 edit-only continuation: repair the 17 strict errors within
+same3paths; no execution/import/compiler/commit restored. Native CreateFileW
+None security-attributes stub mismatch needs exact SDK contract treatment, not
+real SDK construction; no Any/unchecked cast/public export workaround. Tests
+must use explicit imported modules/typed boundary data and remove invalid
+ignore, not lower checker. Return actualFINAL exact3hashes/changes only.
+Root will diagnose guard serialization/module identity separately and seek
+distinct helper evidence for exact harness delta before new diagnostics.
+History, source baseline, closure, actual incidence uncertainty, holds and
+30B/43 remain unchanged. ACTION_COMPLETED -> same scoped correction.
+
 ## N12 Root bounded construction-diagnostic Grant05 — 2026-10-21
 
 Resume existing uncapped batch, closure48 and ticket5accec04/leaf689e097f;
