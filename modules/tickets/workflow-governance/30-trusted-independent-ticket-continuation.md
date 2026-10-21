@@ -55,6 +55,8 @@ finite deadlines/cancel, frame>65536, empty/NUL/embedded-newline outbound frames
 Existing socket object is retained strongly, never closed/duplicated/created/
 connected/reopened by this adapter. Keep exact original fileno through each call.
 Require it already nonblocking (gettimeout exact0.0); never setblocking/settimeout.
+Recheck exact socket type/family/type/nonblocking mode/original fileno before
+each native observation, readiness wait and frame I/O, not constructor only.
 WSAIoctl can otherwise block indefinitely per Microsoft documentation. Read/write
 use bounded readiness waits under same deadline/cancel, not a busy-spin loop.
 Read one LF-terminated frame <=65536, preserve extra bounded bytes for next frame;
@@ -83,6 +85,8 @@ browser/PNG/Runner. Tests cover exact legal ABI/frame bytes/progress, unknown an
 foreign/wrong primitive values, short/overflow/EOF/partial send/cancel/deadline,
 thread/fd drift, native failure/pending retention; ensure zero store/Grant/launch/
 socket creation/close effects. Root strict2/compile and guarded focused fake-only
+tests include named blocking-socket preeffect refusal, mode never mutated,
+bounded readiness timeout/cancel, would-block zero retry and pending stronghold.
 tests, named source reverses for PID-bytecount and frame/progress bounds plus
 different-seat source review before commit. Product target<=300/test<=350 net
 lines; >500 signals structure review, not minification/splitting pressure.
