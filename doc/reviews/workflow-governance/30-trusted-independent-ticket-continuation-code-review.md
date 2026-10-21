@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 F4/F5 construction green / commit-only Grant20 — 2026-10-21
+
+Root Grant19 strict4PASS1.641s; six-suite401PASS1.67s, child3.547s, denials[].
+Representation-independent exact ledger identity/no-close-retry probes reproduce
+oldb3e3117 2RED then newbytes2GREEN, both unfiltered, no SDKdenials. Original
+commands and outputs at RootTemp n12-grant19-originals.json; all old failures kept.
+
+Grant20 permits retained author exact readback/diff-check/explicit2path git add
+and one normal additive correction commit at baselineb3e3117: protected native
+9fc63abab21820b8bf4b95378004a43a60795432 and test
+2e43f210fad6f9fd5026415e7bbad20de04b4dfc. Shared6e3f64bb/compositiona6f0ef67
+and all other paths unchanged. No edits/execution/checker/import/SDK/Native/
+SQLite/source rewrite/newpaths/cleanup/reset/amend/push or other effects.
+ActualFINAL immutable candidate then final engineering review/mutations (including
+retention join and terminal guard discrimination); construction is not formal
+candidate acceptance. E01 UNKNOWN/rawmissing, retrievaldeviation, Host/30B43 and
+checklist only04 unchanged. ACTION_COMPLETED -> exact additive commit.
+
 ## N12 F4/F5 Root diagnostic Grant19 — 2026-10-21
 
 Author actual FINAL managed-drift trigger correction; Root reads exact2dirtyblobs
