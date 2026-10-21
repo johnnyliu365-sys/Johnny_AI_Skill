@@ -210,7 +210,7 @@ bytes. NEVER call two consuming methods, add bytes to that metadata pipe, move
 the authority store into the controller, or pretend caller data is protected
 source. Reuse the same issuer-owned store and existing retained Host channel.
 
-Root derives grant-ticket30-host-snapshot-reply-20261021 revision01 under existing
+Root derives grant-ticket30-host-snapshot-reply-20261021 revision02 under existing
 batch-checklist-local-20261019-uncapped. Baselinefb8142793eb98bbd54f90154ac1e63c7fd5741d3,
 same retained author/task/worktree/branch and different-seat helper; Root sole final
 reviewer. CREATE library/local_orchestration/readonly_host_websocket.py only by
@@ -221,7 +221,27 @@ necessary pin/origin assertions, plus requirements-runtime.lock to admit EXACT
 already-reviewed websockets15.0.1 pure wheel
 websockets-15.0.1-py3-none-any.whl / SHA256
 f7a866fbc1e97b5c617ee4116daaa09b722101d4a3c170c787450ba409f9736f,
-using the existing lock digest method. Keep requirements-dev unchanged and do
+using the existing lock digest method. Also MODIFY ONLY
+library/local_orchestration/runtime_dependency_lock.py (the same CLOSED exact
+tuple plus this ONE pinned pure wheel; retain all six original identities),
+library/local_orchestration/bootstrap_install.py (the matching independently
+pinned canonical digest only), tests/test_plugin_distribution_dependency_lock.py
+and tests/test_runtime_dependency_lock.py (exact seven identity/digest/closure
+assertions and tamper/unknown/duplicate/old-six rejection, never lower coverage).
+These FOUR necessary consumers were initially omitted: author returned
+CHANGE_DETECTED with clean fb814279, no edits. Root verified the concrete
+APPROVED_RUNTIME_DEPENDENCIES equality, bootstrap digest and two pinned tests;
+same-batch AO source-construction revision closes that omission, not a new PRD
+or permission source. Exact scope is TEN paths (three CREATE, six MODIFY, one
+DELETE). The old PD-02 six-wheel shipped closure remains historical and is NOT
+rewritten, revoked or called seven-wheel PASS; main/installations remain untouched.
+This changes only the local engineering successor's exact locked dependency
+target, not permissive dependency admission or formal runtime activation. The
+reviewed codec already uses this exact pure wheel, with no native extension,
+transitive dependency, new publisher, download, paid service or OS effect.
+Verify typed lock and independent bootstrap BOTH accept the new exact digest
+and BOTH reject tampered/old/unknown locks BEFORE any pip/subprocess sentinel.
+Keep requirements-dev unchanged and do
 not download/install anything. CREATE library/local_orchestration/grant_authority/windows_host_snapshot.py
 and tests/test_grant_authority_windows_host_snapshot.py. No other create/modify/
 delete; zero source exports, worker/bootstrap, Registry schema, native service/
