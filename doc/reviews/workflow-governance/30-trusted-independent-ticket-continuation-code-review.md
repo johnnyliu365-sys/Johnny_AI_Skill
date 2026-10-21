@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 correction construction GREEN / exact commit-only Grant09 — 2026-10-21
+
+Actual author FINAL corrected store0d3adc62/newtest04778597/oldreader test2b8d6028,
+app37624e66 immutable. Root reads full exact delta, no active-author read. Strict4
+PASS2.61s; reviewed unchanged SDK guard seven suites451PASS2.99s, one same known
+assertion-rewrite warning, effects[], actual loaded/collected sources match.
+Fakeclock advances only at first metadata query, no wall sleep/producttime increase.
+Final cancel/deadline regression retains settled backing without retry/bytes.
+Immutable Root review still pending; previous formal RED/raw/E01 never erased.
+
+Grant09 retained author may commit ONLY these three corrective MODIFY paths in
+same WT from clean HEAD ce49780dfab4ee7a0742345cd15b5ea53b6dd24c after fresh exact
+blobs0d3adc62caac65439db715c9558199833fd1255b/04778597943718ab1dea8def624657454168f37b/
+2b8d6028cb2c6e1105c6e625b908b3cb468e2641, app unchanged. No further source edits,
+tests/checkers/native/otherpaths/cleanup/amend/reset. Return actual FINAL candidate.
+Root then same closure52 immutable review/mutations, no main/stage/Host promotion.
+N14A keyword correction independently actual DOC_PASS at3e58897e, still proposed.
+
 ## N13 corrective Grant08 ACTIVE_SOURCE_ONLY — 2026-10-21
 
 Distinct helper actual FINAL DOC_PASS at3cba85de verifies closure52 leaf
