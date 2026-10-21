@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 Grant06 discriminating results / same-source correction — 2026-10-21
+
+Strict3 now one error (test628 forwarding object variadic args to typed fake);
+exit1/1.547s. r06 confirms exact collected test-module identity; 236collected,
+234pass/2fail in1.07s, child2.906s, Python denial list empty. Prior six failures
+are not reclassified as valid product reds. Original complete output/commands:
+registered RootTemp n12-root-grant06-original-diagnostics.json.
+
+Source diagnosis for remaining failures: composition fixture copies all fields
+from a second security harness over issuer token API closures, so token close
+is recorded on the wrong harness. Restrict fake composition wiring to needed
+descriptor APIs/constants, not weakening owner-close assertion. Existing shared
+query_facts rejects cap+1 as INVALID_VALUE before local size predicate, currently
+mapped as uncertain recovery. Author must distinguish exact known-invalid
+observation from uncertain call/ownership failures under frozen cap/refusal
+contract; retain conservative recovery for genuinely unknown outcomes. Do not
+change shared accepted source or simply permit any failure in the test.
+
+Same Grant02 source-edit-only continuation, same3paths and baseline; no test,
+checker/import/SDK/Native/SQLite/commit/cleanup permission. Return actualFINAL
+exact3bytes then Root scoped diagnostic readmission. No new Owner decision,
+history/incident/qualification/completion state unchanged.
+
 ## N12 corrected source / Root diagnostic Grant06 — 2026-10-21
 
 Retained author actual FINAL source-only correction: native04c14669c919eb6225d694d3b0bff779922fadd0,
