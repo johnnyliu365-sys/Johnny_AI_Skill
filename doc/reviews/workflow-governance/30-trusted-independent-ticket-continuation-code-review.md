@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B diagnostic failure retained / corrective Grant13d — 2026-10-21
+
+First guarded execution:449collected/107FAILED342PASS5warnings,7.24s pytest/
+9.422s child; unpatched-effect attempts[]. Full original460433bytes,
+SHA256f828495351a30a91fded92b88b053d42845d10b9869e8a79c1f414344ccf6822,
+stdout436772bytes/stderr0 at RootTemp n14b-guard-construction-01-original.json.
+This is FAIL, not acceptance; original is complete, not replaced by a reduced log.
+Root read original representative traces and retains full independent raw triage.
+Known causes: shared job fake creates thread741 while token/wrapper use actual
+thread; new test expected generic _limits instead of defining factory _job_limits;
+old snapshot-contract import test reloads class globals, so placing N14A after
+that reload invalidates existing imported exact source types. No production
+thread/type/limits check is weakened and no old assertion is removed.
+
+Same author actual FINAL corrects only newtest to32f048ca: module-local autouse
+sets fake API thread identity before existing lease factory, exact _job_limits
+import; other fourblobs unchanged. Root staticchecks this does not change old
+suite fixtures; strict5PASS1.640s. Retained source helper actual FINAL closes prior
+F1/F2/positive-size source findings at previous5blobs; runtime PASS still absent.
+
+Grant13d Root may run corrected exact-source diagnostic once with test32f048ca,
+same otherfourpins/native-deny prefix/three fakeowner types/55s/7suites/environment.
+Restore established N14A-before-contracts-reload order (all7 retained, no skip).
+Fresh registered RootTemp root-n14b-construction-02 and full
+n14b-guard-construction-02-original.json, same owner/TTL/holds. New evidence
+must show actual legal launch, not all-denial. Any further failure is diagnosed,
+not unchanged retry. No source commit/Host/Grant/30B43 completion or cleanup.
+
 ## N14B exact diagnostic Grant13c — 2026-10-21
 
 Author actual FINAL twice; corrected five blobs: lease301de57f,
