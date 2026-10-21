@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 final evidence preparation / Root artifact Grant22 — 2026-10-21
+
+Finala081906f: strict4/401six-suite/Rootoriginal3+semantic2 green; fourteen
+memory-mutant commands all seven namedRED/exactGREEN, no Python effect denial.
+Distinct helper source-delta passes F1–F5; final raw QA pending. Mutationplan r01
+metadata findings retained NOT_EXECUTED, r02 exact RootGrant21/seven-pair scope
+PLAN_PASS SHA697e6b21; command bytes unchanged. No qualification or E01 discharge.
+
+Root Grant22 permits evidence serialization only: registered RootTemp binary
+n12-final-source-evidence.json.gz (exclusive create, no overwrite), ownerRoot,
+TTL through reviewseal, incident/recoveryholds overrideexpiry. Fixed23original
+UTF8 files (21 Root packets/plans/readbacks, two owner static metadata) preserved
+byte-for-byte with path/length/SHA, bounded gzip serialization and metadata readback.
+No archived command/code executes; no source/Host/Native/SQLite effect, cleanup or
+refused-operation retry. Original incident5 and localguard5 remain separately
+sealed6b61dfb3/752818fd, not substituted or duplicated as new raw captures.
+Binary archive generation is an evidence artifact, not production source editing.
+Root may store encoded archive in existing review leaf via apply_patch after
+independent raw QA, then obtain independent original-entry parity QA. No source
+integration until evidence/identity gates pass. Existing forbidden external
+effects, E01 UNKNOWN/retrieval history, 30B43 and checklist limits unchanged.
+
 ## N12 final lifecycle candidate / Root review Grant21 — 2026-10-21
 
 Author actual FINAL additive candidatea081906f6b3f7e34f8cad9ce96d510f86a446d07,
