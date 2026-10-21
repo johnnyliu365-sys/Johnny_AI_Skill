@@ -1,5 +1,37 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14C same-scope corrective Grant14c — 2026-10-21
+
+Guarded construction diagnostic original20033bytes SHA541a0585eeb0af928b895739f522be95e31286e497e68ea6a60ce53a5d213d87:
+exact actual loaded/collected newapp+test, one legitimate retained-launch test
+failed at _validate_launch->_require_original_inputs->SubjectJobError RECOVERY_REQUIRED
+because actual job launch-attempted=True. SDKattempts[], stdout/stderr full read.
+This proves genuine positive is broken, not an SDK/test-source failure. Not a
+qualified Host run. Strict104errors and original3sourcebytes remain preserved.
+
+Root CHANGES_REQUESTED under same closure55/3paths/owner/WT/baseline, child14c
+inherits original uncapped batch and scope; no new approval or budget reset.
+Author SOURCE_EDIT_ONLY may fix all104 strict diagnostics (defining-module imports,
+exact normal type narrowing, proper fake contracts; no Any/cast/reexports/broad
+ignore/checker weakening) and the proven postlaunch validation. Validate genuine
+postlaunch state without reusing a prelaunch False predicate, clearing launchflag,
+weakening oldN14B/preparation or fake-resetting legitimate owners. Keep original
+positive test plus named regression. Replace positiveobject.__new__ store wrapper
+check with existing shared normal store/ledger/native fake construction and prove
+new record method actually walks issue/CLAIMED_NEW/read/SETTLED once; sourcepins
+and actual settled fields, no self-fulfilling Expected or synthetic response.
+Patch true defining-module native-class seam, not nonexistent module alias.
+
+Structure review signal remains: one session transaction not permission for one
+500line mixed effect/error routine. Consolidate repeated owner/recovery plumbing
+and isolate peer-proof/consume/terminal-cleanup responsibilities within same app
+file/typed private helpers, no new generic manager/framework/files or forced
+minification. Tests reuse existing preparation/transport/store fakes and shared
+setup/assertions/parameterized cases; no repeated native harness. No optional
+best-practice requirement/new acceptance, preserve full T1..T7 negative and legal
+behavior. Return actualFINAL SOURCE_READY with new3pins/diff; no import/test/
+SDK/SQLite/compiler/commit/Agent/cleanup until renewed Root executionadmission.
+
 ## N14C one discriminating construction-red / Root Grant14b2 — 2026-10-21
 
 Strict3 original160807bytes SHAe94a57d14745a06601641d2681ab251bc716499034e4699a6856fedcdf7edb58:
