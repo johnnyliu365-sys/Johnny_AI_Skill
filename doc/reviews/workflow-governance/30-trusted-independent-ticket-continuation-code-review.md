@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Host launch revision02 — actual verification and same-scope correction
+
+Frozen seven-path SOURCE_READY02 at baseline25c49074 has actual guarded
+behavior02=331PASS/1deselected/SDK[], plus five separate fresh cold-import orders
+PASS/SDK[]. The deselected embedded cold-child test is NOT accepted evidence:
+it restores Popen and starts its own subprocess contrary to this test boundary.
+Root's separate controlled commands do not preload candidate modules or erase
+Recovery state. Strict02 reports two private binding-alias re-export errors;
+memory compile7 passes. No source bytes changed during any command.
+
+Different-seat source audit independently identified a live-image gap between
+the pre-lock check and actual native creation. Root's actual in-memory fake-native
+probe closes the image lease in the binder; native_create_calls=1 and returned_
+creation=True, a named failing assertion with SDK[]. This is a real demonstrated
+local boundary defect, not a request to extend scope or rerun an unchanged command.
+Original host22-native-lease-probe02-original.json and all strict/behavior/cold
+records remain in the registered Root evidence hold host22-dev01.
+
+Root released one bounded correction to the same author/seven paths: shared live
+image check after lock and immediately before native create; preserve no-child
+failure semantics, add binder close/cancel/expiry regression; explicit compatibility
+alias; concrete legacy annotation with object-typed negative seam; remove the
+embedded child and duplicate guard. No cast/ignore, new helper file or Host effect.
+The helper's source audit is ordinary engineering evidence, not CVQ qualification.
+
+The next conditional two-CREATE retained-peer adapter above was selected from
+actual fixed-hold consumers, not checklist order: named-pipe peer proof already
+exists but no consumer joins Host socket PID to original retained identity. Its
+docs review/activation are still pending; current author allocation is unchanged.
+
 ## Host launch revision02 — actual boundary defects and limited correction
 
 Revision01 five-path SOURCE_READY never reached behavioral acceptance: Root

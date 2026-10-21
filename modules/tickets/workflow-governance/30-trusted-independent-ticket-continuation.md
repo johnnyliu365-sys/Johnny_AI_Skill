@@ -188,6 +188,55 @@ SOURCE_EDIT_ONLY, then separate Root guarded-test admission; no commit before
 Root source/behavior review. This directly prepares BOTH30B/43's actual retained
 Host/process-to-peer join, not final qualification or activation.
 
+#### Conditional retained-Host peer join — same Ticket30, not another framework
+
+Root batch-derived grant-ticket30-retained-host-peer-20261021 revision01 is
+CONDITIONAL, NOT DISPATCHED: only after the preceding seven-path Host launch
+correction passes strict/behavior/reverse checks, different-seat source audit
+and Root acceptance into the existing engineering hold. Pin that exact clean
+commit as baseline before activating this continuation. Same author/worktree,
+same helper and Root final reviewer; no new Agent, branch, PRD, stage or authority.
+
+CREATE ONLY library/local_orchestration/grant_authority/windows_retained_host_channel.py
+and tests/test_grant_authority_windows_retained_host_channel.py; MODIFY/DELETE0.
+One private borrowed-channel adapter is justified by the actual absent consumer:
+windows_host_socket returns an UNTRUSTED peer PID, whereas protected read session's
+existing peer proof is specific to the enrolled worker's named pipe. Do not copy
+that pipe lifecycle, native reader, socket ABI, token/job verifier or wire codec.
+
+The adapter binds an exact existing WindowsHostSocketChannel, original registered
+SuspendedProcessCreation, primary-token/job leases, Host plan/live image lease
+and owner ref. Reuse retained-process reader, exact token identity, launch-state
+checks and image validator. Pin the ORIGINAL owners/aliases/thread, token identity,
+job ref, process PID+creation time/session/image and immutable expected image facts;
+never reopen by PID or accept caller observations/callbacks as proof. Observe the
+retained handles before and after OS peer-PID read; both observations must agree
+and peer PID must equal that original process. Same numeric PID alone is not enough.
+
+Its bounded send_bytes/receive_bytes delegate ONLY to the existing channel, with
+the original binding revalidated before/after use. Reject invalid/expired/closed/
+substituted leases, token identity/job drift, PID/session/creation-time/image drift,
+wrong thread, cancellation, reentry and unknown native outcomes. Unknown/partial
+failure cannot return successful usable bytes; retain exact original references
+under the existing recovery convention. Borrowed ownership never authorizes
+closing/deleting caller assets, clearing Recovery or retrying an uncertain effect.
+No socket creation/connect, Host/process spawn, Grant issue/consume, native ABI,
+registry/service/enrollment change, model/network call, codec or public export.
+
+P1 legal fake-native original-process/peer join sends/receives through the actual
+existing channel seam. P2 same-PID wrong creation time, other peer, original owner/
+token/job/image drift refuse before send/receive. P3 drift during observation or
+channel use retains evidence and never reports success. P4 strict2/memory compile,
+SDK-denied focused/regression tests, Root peer-match and original-owner reverse
+REDs then restored GREEN; reuse existing image/launch/socket fakes, no new runner.
+Source/test line growth is a structural signal, not a demand for arbitrary splits
+or minification. Single child55/outer60; historical accounting/holds preserved.
+Initial SOURCE_EDIT_ONLY; no candidate import/test/checker/commit until separate
+Root admission. Independent docs review plus exact baseline readback precede
+activation. This closes ONLY the missing retained-Host/socket identity join needed
+by BOTH30B/43; protocol driver, actual OS setup/Host campaign, protected Grant
+positive, final CVQ and each held candidate's own acceptance remain OPEN.
+
 Next bounded construction is the missing WEBSOCKET CODEC IN THE EXISTING TEST
 HARNESS, not another production service. Actual pinned CLI offline schema452files/
 4458190bytes confirms existing initialize/thread-start/turn-start/snapshot-result
