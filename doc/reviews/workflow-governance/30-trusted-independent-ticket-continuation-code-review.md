@@ -1,5 +1,32 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Native build bootstrap deviation and repaired invocation / Grant15b2
+
+First author build raw native15b-01-original.json preserved, exit1/1.041s,
+MSB1008 before compilation: PowerShell split property/value strings into separate
+argv entries. It also printed .NET first-run development-certificate installation
+banner; this was not authorized. No cleanup/trust/install retry was performed.
+Root exact readonly CurrentUser/My metadata check found only ASP.NET localhost
+certificate49DF3C4EAD7F97F331DBFB4C921A48438E39C928, NotBefore2026-04-29;
+no new matching certificate appeared in that scoped observation. No before-store
+snapshot exists: do not assert complete absence of side effects or certify cleanup.
+Preserve this deviation separately from product/build acceptance.
+
+Same15b scope may continue using explicit ProcessStartInfo.ArgumentList entries
+(one complete property string per Add), no shell-built/split property arguments.
+Child-only environment MUST set DOTNET_GENERATE_ASPNET_CERTIFICATE=false,
+DOTNET_ADD_GLOBAL_TOOLS_TO_PATH=false, DOTNET_CLI_TELEMETRY_OPTOUT=1,
+DOTNET_NOLOGO=1, DOTNET_CLI_WORKLOAD_UPDATE_NOTIFY_DISABLE=true,
+DOTNET_CLI_HOME to the registered authorTemp/native15b/cli-home,
+MSBUILDDISABLENODEREUSE=1, DOTNET_CLI_USE_MSBUILD_SERVER=0. Explicit cleared
+NuGet.Config/local installed framework only; no network feed/workload install.
+DOTNET_SKIP_FIRST_TIME_EXPERIENCE alone is insufficient on current SDK; Microsoft
+official dotnet-environment-variables documents certificate generation's separate
+false switch. No persistent user environment/security changes. No certificate
+creation/deletion/trust, workload update, program/service execution or cleanup.
+Full original command/argv/environment names and values limited to these inert
+switches/raw output must precede verdict. Same compiler resource/hold boundaries.
+
 ## N14C corrected construction check / Root Grant14d — 2026-10-21
 
 Actual FINAL SOURCE_READY received under14c/14c2, no candidate commit. Readback:
