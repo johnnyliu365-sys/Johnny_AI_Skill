@@ -1,5 +1,43 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Actual setup prerequisites — read-only inventory, not permission
+
+Root passive readback on DESKTOP-28ERPQ1: Windows10.0.19045.0, PS7.6.5,
+controller SID S-1-5-21-3542654388-73774624-397494543-1001, not elevated.
+JohnnyReadonlyReview is OBSERVED_ABSENT (UserNotFound); JohnnyGrantAuthority,
+its Program Files/ProgramData roots and Windows Kits/10/Lib are absent.
+Original setup-inventory21-original.json stays in Root's existing codec20-dev01
+evidence hold. These observations are not a Host test or authorization.
+Actual `sc.exe showsid JohnnyGrantAuthority` exit0 separately gives
+S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551, Inactive.
+Pinned Codex executable remains341312816bytes/SHA256
+f6dbf48cb70f62649c645f26c87dc9bf84cc36986202dfad8e12fb5b8ca70312;
+PE FileVersion is empty, not a newly proven CLI-version claim.
+
+Different-seat read-only source check at c4f1ce70 confirms the concrete external
+sequence for BOTH30B/43: disabled LocalSystem service plus protected64bit
+NativeEnrollmentV1 source; exact payload provisioning; independent installed
+file readback; protected ApprovalV1/SubjectEnrollmentV1 binding; separately
+approved service start and logged-on standard subject's WTS session. The actual
+Program accepts one mode argument; `--config` examples are not executable syntax.
+`provision-enrollment` is wired but is NOT an SCM installer or registry writer.
+Current source has no privilege enablement; passing a SYSTEM-owner descriptor
+to CREATE_NEW does not establish that an elevated Administrator can assign it.
+The eventual operation must establish a suitable SYSTEM/privileged bootstrap
+token, not silently assume elevation suffices. Existing registry readers accept
+SYSTEM or Administrators owner plus protected restricted DACL; a stricter
+SYSTEM-owned operation manifest needs its own exact readback.
+
+No service/account/task/ACL/registry/firewall change, executable provisioning,
+Host session or model call was performed. SDK package license acceptance remains
+pending. Native build and final payload hashes must precede a runnable exact OS
+operation package; no placeholder hash or speculative SID is approval-ready.
+
+First image-lease source audit stopped on actual pin drift a6afbf6c->36eef97d
+while Root's same-scope author correction was active. This is NOT_ADMITTED source
+audit evidence, not product/Host failure or pass. Root will freeze the author's
+next SOURCE_READY pins before read-only testing and independent source audit.
+
 ## Exact retained image lease construction admission
 
 Different-seat native helper actual DOC_PASS on f850ae6e Ticket30 blob
