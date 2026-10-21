@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 final lifecycle candidate / Root review Grant21 — 2026-10-21
+
+Author actual FINAL additive candidatea081906f6b3f7e34f8cad9ce96d510f86a446d07,
+parentb3e3117, exact2MODIFY native9fc63aba/test2e43f210; shared6e3f64bb/
+compositiona6f0ef67 unchanged, clean. Root verifies identity/diff before own
+reviewWT FF only to exacta081906f. Grant21 admits final strict4/six-suite guarded
+checks at RootTemp root-n12-final-lifecycle-01, original three Root case replay
+at root-n12-final-lifecycle-original3-01 and semantic two lifetime cases at
+root-n12-final-lifecycle-retention2-01. Same r06/reviewed N10fake guard/bounds.
+
+Rebind original4mutation groups + Root exact60 door to finala081 bytes, add two
+frozenT3 reverse mutants restoring dropped-later-backing and missing retained-close
+guard; register exact temporary plan before execution, verify each oldtext unique
+and distinct helper planQA, full RED/exactGREEN each. No sourcefile modification,
+only child memory mutation/fake tests. Distinct sourcehelper reviews exact2delta,
+independent source engineering evidence only. Root retains final conclusion.
+No source-stage composition yet or actual Native/SQLite/Host/installation/security/
+network/model/push/release/cleanup. E01 UNKNOWN/rawmissing/retrieval history and
+30B43/Recovery/checklist only04 unchanged. AUTO_CONTINUE immutable review.
+
 ## N12 F4/F5 construction green / commit-only Grant20 — 2026-10-21
 
 Root Grant19 strict4PASS1.641s; six-suite401PASS1.67s, child3.547s, denials[].
