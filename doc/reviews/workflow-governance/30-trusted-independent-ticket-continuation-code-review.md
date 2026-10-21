@@ -1,5 +1,47 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14C engineering acceptance / native reverse admission15e — 2026-10-21
+
+N14C immutable b016aed2ee9c20145be5069fa98cdc501702df35, parent650f1c37;
+exact three blobs cfd44570/ff204208/9cb53cea. Root strict10 passed3, guarded
+behavior05 passed420, unpatched SDK attempts empty. Independent retained helper
+/root/ticket30_native_tools_review read exact committed source/full raw and found
+no additional closure55 source-engineering finding. Large session991/test1361
+physical lines triggered structure review: one ordered-session/owner lifecycle,
+shared fixtures/parameterized cases, no second Runner/SDK harness. This is not
+an exemption for future unrelated responsibility growth or OS qualification.
+
+Root eight in-memory source reverse mutations hit named cells: fresh bound
+approval, second observed process birth, executable proof, configuration proof,
+request identity, fresh enrollment equality, terminal record binding, and
+original exit-before-close. Each mut02 original contains exactly one intended
+test failure, not collection failure, with SDK attempts empty. Initial three
+mutation-harness SyntaxErrors are preserved and excluded from kill evidence.
+Byte-exact fresh-process restoration passed32; original source worktree clean.
+Root engineering verdict APPROVED_ENGINEERING_SOURCE_NOT_HOST_QUALIFICATION.
+May FF own protected-source hold650f1c37 to exact b016aed2; no main/30B/43 integration.
+Strict10 raw SHA7bff02f3d9bbff96c2910980e37ef22a7392a0d1e737b08dd78366a1a50b6679;
+behavior05 SHAed47c460659582b964401294f66e5a502d585434367574481cb202974e3819e7;
+restored01 SHA1c93a5ab8d832a8fef3d73deaccd397259994fe3865b1f91edd1c55a59ed3058.
+
+Native immutable0014778d897ef358e1030c3915d7e53fabf35884 is engineering candidate
+only. Root build15d04 zero warnings/errors and three fake-only contract verbs
+pass. Original failed self-test15d02/03 is preserved; named RUNNING status failure
+formerly fell through REFUSED to STOPPED, now service holds events and reports
+no STOPPED. FAILED/UNKNOWN status plus uncertain worker termination have negative
+coverage, known worker teardown proof is preserved. No actual service/OS campaign.
+
+Root15e may checkout that candidate in own clean native-service-review worktree,
+temporarily mutate existing bootstrap/lifecycle/service paths for closure56's
+five named targets (Registry second read, inventory, -I, assignment-before-resume,
+exit-before-close) plus independent RUNNING-status recovery regression. Use
+apply_patch and exact-byte restoration only; no reset/clean/source deletion.
+Compile only explicit existing source list with15d closed offline environment;
+fresh registered review Temp output per mutant, child55s, bounded same fake-only
+self-test verb. Preserve full source/command/stdout/stderr before judgment and
+restore on any failure; no service/Host/native-job test, installation, new files,
+dependencies, permissions, accounts, Registry writes or qualification claim.
+
 ## Native offline self-test admission15d / N14C recovery assertion — 2026-10-21
 
 Original30/closure56/uncapped local parent only. Root read current seven source
