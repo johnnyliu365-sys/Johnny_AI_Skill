@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B fixture dependency diagnosis / bounded correction — 2026-10-21
+
+Guard02 exact fulloriginal481054bytes SHAaf8b30f1005dae92494349ab387d82940b061762c42ced955f4edbc3717ecae7;
+405PASS/44setupERROR/5warnings5.46s,7.672schild, attempts[]. N14A now allpasses;
+newtest local autouse requested fake job before fake_native, whose existing fixture
+intentionally restores CreateJobObject to its deny stub. All44 therefore stop at
+job creation before product behavior, not a demonstrated production defect.
+Root reads complete first traceback and original shared fixture definitions;
+source helper previously read all guard01 raw and independently confirmed exact
+36new/71old grouping, no Host inference. Both full failures remain immutable.
+
+Same13b author actual FINAL only newtestf327de37: request existing defining-module
+fake_native before fake job in local fixture, then align its thread before actual
+existing factory. No copied API implementation or production/oldtest change.
+Root exact static read/strict5 required again; same13d permits this evidence-based
+test correction/diagnostic with fresh root-n14b-construction-03 and full
+n14b-guard-construction-03-original.json, Rootowner/TTL/holds unchanged. SDK-deny
+prefix/sourceotherfourpins/order/suites/bounds unchanged; testpin only updated.
+No unchanged retry, code commit, operational Grant or Host/30B43 completion.
+
 ## N14B diagnostic failure retained / corrective Grant13d — 2026-10-21
 
 First guarded execution:449collected/107FAILED342PASS5warnings,7.24s pytest/
