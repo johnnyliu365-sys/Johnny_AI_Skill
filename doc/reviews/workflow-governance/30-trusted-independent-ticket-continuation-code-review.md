@@ -1,5 +1,37 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A resumed construction correction Grant03 — 2026-10-21
+
+Parent batch-checklist-local-20261019-uncapped unchanged; primary clean a1cb6c13,
+control24b73e5f, source hold86be3e34. No completed04/N13 rerun. Retained helper
+actual FINAL SOURCE_DIAGNOSTIC_ONLY received; no product execution/qualification.
+Initial strict3 exit1, eight errors in new test, 30.156s; raw originals preserved
+in registered n14a-construction-originals.json. No pytest/product import has run.
+
+Grant03 retained /root/ticket30n4_peer_impl may correct SOURCE_EDIT_ONLY in its
+existing subject-enrollment allocation at86be3e34, same closure53/three paths:
+MODIFY library/local_orchestration/grant_authority/windows_approval_registry.py;
+CREATE library/local_orchestration/grant_authority/windows_installed_subject_enrollment.py;
+CREATE tests/test_grant_authority_windows_installed_subject_enrollment.py.
+Use defining modules for _InstalledApprovalRecord/_read_installed_approval,
+_FILETIME and _MAX_SUBJECT_ENROLLMENT_BYTES; no implicit reexports/Any/cast bypass.
+Add discriminating closure cells: fresh same-class wrong seal plus legal exact
+owner/record identity; Unicode launch roundtrip; Approval reread drift; new bundle
+final-close deadline and session reuse/wrong-thread. Pin literal Registry ABI
+independently where fake output and expected currently share production constants.
+Audit finite error mapping against existing closure, reuse thin N11 fake only.
+Wrapper need not store seal as third field: closure requires singleton construction
+check and strong approval/record references, not that new requirement. >500 line
+signal assessed: coherent adapter/matrix reuses existing fakes; no forced splitting.
+
+No author test/import/checker/SDK/SQL/commit/Agent/cleanup effect. Actual FINAL with
+exact three hashes before Root reads again. Root reruns strict only after changed
+source; guard execution needs separate exact-source binding. No new Owner ask,
+no authority/Host qualification or main integration, no checklist completion claim.
+Resume readback mistakenly included earlier encoded archive lines and output was
+truncated; not used as full evidence or executed. Bounded N14A ticket/full references
+and first90 review lines were subsequently read independently, no source changes.
+
 ## N14A actual source return / static diagnostic Grant02 — 2026-10-21
 
 Author actual FINAL at clean baseline86be3e34 (WIP, not committed candidate):
