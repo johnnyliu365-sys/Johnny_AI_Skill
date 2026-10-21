@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A full diagnostic / same-test correction Grant06 — 2026-10-21
+
+Finite IDs testfb99b658073c7451ec657aecfebeee73d2260ff6, strict3PASS1.437s.
+Full raw capture02 saved BEFORE display:109582bytes,
+SHA256db8507a9cd0365da5dbdcd539f9036d6cfb6339ba60e821f2d1ec79e7c101c96,
+RootTemp n14a-guard-construction-02-original.json. Root read stdout2018lines and
+empty stderr in bounded unfiltered pages; final summary reread after display cap.
+Actual47failed/483passed/1warning3.84s, child5.797s, effects[]. First truncated
+run remains historical only. Finite IDs removed pytest setup errors, not failures.
+
+Source-backed diagnostic: new successful-session test supplies below-ABI fake
+directly, while its open_key expects unsigned ctypes-converted HKLM; negative root
+looks up absent path and raises, session retains/poisons. Test omitted recovery
+fixture, allowing synthetic poison to persist into old store composition tests
+(APPROVAL_UNAVAILABLE); no evidence old product behavior should be relaxed.
+New final-close fake passes cancellation to base whose Current query sets it early,
+so it never reaches final close. Last-write comparison occurs after BOTH rereads,
+so expected count1 is wrong, must pin2. These are test seam/fixture defects.
+
+Grant06 retained author same allocation/threepath source-only may fix new test:
+use normal _CtypesRegistryApi through already installed below-ABI fake for successful
+session; scope synthetic Registry recovery isolation to all relevant new tests;
+separate final-close event from base early-cancellation event; exact lastwrite
+reread counts2. Preserve refusal/assertions, production code and old tests unchanged.
+No execution/commit/delegation/cleanup, actual FINAL then exact strict+guard binding.
+Future diagnostic root-n14a-construction-03 and n14a-guard-construction-03-original.json
+registered same RootTemp/owner/TTL/holds, unchanged denies/no new native allowance.
+
 ## N14A construction failure / diagnostic capture correction — 2026-10-21
 
 Grant04 actual child6.407s exit1, pytest reports530collected/47failed/482passed/
