@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Package import source corrections and guarded execution admission
+
+Root read full two-file FINAL and same-scope revisions. Product final
+d0e1c9a601247dd09267d9374b719922258f15c5, test
+693344a3525dc4483075a89565f27c1f53989ed3; baseline214c6d39.
+Source findings repaired before execution: first-match replaced with ambiguity
+rejection before import; cold subprocess no longer inherits full environment;
+unproved Callable-signature TypeGuard removed in favor of typed direct function;
+blocked cold-import attempts recorded and asserted empty. Original source-ready
+534c8e4f/7f46bbeb and later25bcd4d6 remain historical, not passed results.
+Original259 public exports/list/order/alias contract independently AST-read at
+baseline: compact ordered binding SHA256
+d4a4efb64dca2385a4226133b3ee3a8de5e1297e03b4aa3aa4928a90b59a6e6a.
+
+Under exact same child Grant Root now admits compile/strict and guarded focused
+behavior, affected public consumers and existing worker/N14C fakes only. Reuse
+previous SDK-deny prefix and new test's actual finite cold script. One admitted
+fresh interpreter is permitted ONLY with exact executable/-B/-s/-c/script bytes,
+author cwd, minimal explicit nonsecret env and registered pytest Temp, <=55s,
+same controller thread, at most once; all other process/network/SDK/Registry/
+SQLite/OS effects stay denied. This permitted diagnostic child is not a Host
+session or native qualification. Strict/test raw originals use fresh filenames
+in existing Root protected-launch Temp. Root reads unfiltered output and applies
+own source mutations before commit/engineering integration. No actual installation,
+formal effect or new budget/count gate. Structure remains one export boundary,
+not new resolver/loader policy. Source-only retrieval/deviation recorded: author
+reported one overbroad read and inadvertent diff--check, neither semantic proof.
+
 ## Existing package-boundary child Grant activation — 2026-10-21
 
 ACTION_COMPLETED / DOC_PASS854447e5: retained independent
