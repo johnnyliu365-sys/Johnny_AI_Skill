@@ -41,12 +41,12 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
-## 30N14B — retained protected launch provenance / proposed closure54
+## 30N14B — retained protected launch provenance / closure54 engineering accepted
 
 Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03 sections3/6;
 parent batch-checklist-local-20261019-uncapped/first-CVQ construction exception.
-State PROPOSED_NOT_DISPATCHABLE until exact DOC_PASS, N14A stage original QA and
-child Grant/allocation. Baseline7606a21df3cbda10d401b3458c3e0ee9e07594a3 is an
+State ENGINEERING_SOURCE_ACCEPTED_NOT_HOST_QUALIFIED; exact DOC_PASS, N14A stage QA,
+child Grants13a..13f and independent source review completed. Baseline7606a21df3cbda10d401b3458c3e0ee9e07594a3 is an
 engineering source hold, NOT remote authority or qualified Host. No new PRD/SPEC.
 AO actual FINAL CutB plus limits-anchor refinement; Root independently reads
 existing lease/token/launch/preparation/N10 signatures at that exact source.
@@ -192,6 +192,17 @@ account/SID/config/security/ACL/SCM/service install/launch, network/models/newfe
 push/release/deploy/formalactivation. 30B43/TAL/R0/DAP/E01/Recovery remain unchanged.
 
 ### Shortest acceptance continuation / external boundary — 2026-10-21
+
+N14B result: immutable650f1c37ebef9741ec1691e0e5f22fe7f60e8c85, exact five paths;
+strict5 and449 affected tests pass, eight named memory RED/exact restoredGREEN
+pairs include Root independent final-controller door. Full failures/successes and
+passive Host inventory preserved in original review N14B_SOURCE_ORIGINALS_V1 seal.
+Independent source helper actual FINAL ENGINEERING_SOURCE_PASS_NOT_QUALIFICATION;
+Root engineering acceptance only. Own engineering hold exactFF to650f1c37, main
+unchangeda1cb6c13. No real subject launched, Host/Grant positive not yet accepted;
+30B/43 REVIEW_BLOCKED. No checklist item newly checked. Next is step2 below, not
+another provenance abstraction or new framework. Normal local child allocation
+comes from existing uncapped batch; no operational trusted Grant is implied.
 
 No new planning branch/framework or unrelated governance slice. This sequence is
 recorded in original30 and does not grant installation or a native campaign:
