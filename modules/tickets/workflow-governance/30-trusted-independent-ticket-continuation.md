@@ -129,6 +129,84 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 ## Native service entry — closure56 parallel local construction
 
+### Same-owner correction / existing-reader reuse amendment
+
+Independent review of native0014778d897ef358e1030c3915d7e53fabf35884 found F1
+failed process-token return ownership/status, F2 failed Registry-open ownership,
+F3 unchecked middle configuration handle; loaded-image/version correlation is
+also required by original T3. Do not lower these requirements or call pure-fake
+builds Host-qualified. Existing author retains its two owned F1/F2 work-in-progress
+files; those uncommitted bytes are not a new authority/baseline. No main change.
+
+Extend SAME closure56 author allocation by exactly three existing MODIFY paths:
+library/local_orchestration/native_windows/Win32ReadbackPort.cs
+library/local_orchestration/native_windows/WindowsPayloadReadback.cs
+library/local_orchestration/native_windows/NativePayloadReadbackSelfTests.cs
+Original seven paths remain allowed, zero other CREATE/MODIFY/DELETE/dependencies.
+Source baseline0014778d, parent650f1c37 preserved; same own native-service WT,
+original Luna/xhigh author/Root reviewer/different helper, original batch lineage.
+This exact amendment needs ordinary independent DOC_PASS and Root child15f
+activation; no additional Owner decision or operational Grant. Initial edits only,
+no import/build/run/commit or external effect until Root exact admission.
+
+Reuse Win32ReadbackPort.ReadPayloadAsync for ONE retained handle/hash loop and
+existing snapshot/EOF/deadline/protection helpers; no second FileStream/native
+reader/framework. Preserve old INativePayloadReadbackPort.ReadFile and old fake
+consumers/signatures. Add only narrow optional internal capabilities for bounded
+content and current-process-image observations, discovered at that existing
+boundary; absent capability returns UNAVAILABLE, no pathname fallback.
+One validated content-result carries exact requested path, existing failure,
+nullable before/after observations and ImmutableArray<byte> content. Failure has
+no partial observations/bytes. Success requires complete matching path/fileID/
+volume/finalpath/descriptor/size/digest observations and content length/hash equal
+to both. Allocate content only after first snapshot proves1..maximum, bounded
+maximum65536 for config/._pth; copy from the SAME retained handle feeding hash,
+EOF and second snapshot before release. Reuse existing observation projection.
+Bootstrap configuration becomes a single bounded content-port call; remove its
+middle pathname FileStream and before/after reopened-content inference.
+
+Current service-image correlation uses actual current-process image query before
+and after the same no-reparse/read-no-delete-share retained file observation.
+Require fixed servicepath/finalpath identity/stable hash/protection/size; loaded
+module version must be observed without reflection or pathname FileVersionInfo:
+main-module RT_VERSION, bounded resource length/pointer, complete VS_FIXEDFILEINFO
+signature0xFEEF04BD and canonical fourpart dwFileVersionMS/LS. No dynamic loading,
+System.Reflection, fixed literal as observation, alternate path or silent fallback.
+Missing/unknown/malformed version/query/handle proof returns UNAVAILABLE. Loaded
+version and protected-file hash are distinct facts, not a cryptographic proof of
+mapped-image identity across a pre-open rename/ABA. Final OS qualification must
+establish fixed SCM ImagePath/protected CodeRoot+ACL/section and substitution/
+rename denial under the exact installed state; unsupported correlation remains
+unqualified/UNAVAILABLE. Source/fake tests cannot establish that OS guarantee.
+
+F1 production-used admission must itself retain exact failed-return owner, with
+normal pure tests proving hold+1/exact token; no native read or close after
+uncertainty. F2 failed valid/parent/prior/recovery-held Registry aliases never
+enter normally closable ownership; retain raw uncertainty and prior owners,
+no CloseAll/retry/STOPPED. Keep known zero-owner refusal and legal positive.
+
+Closure57 code3 native handoff uses existing RECOVERY_REQUIRED result only AFTER
+original worker signaledexit/GetExitCode3, jobactive0 and all ordered native owner
+closes succeed; expose no false READY/REFUSED/STOPPED. Any failed proof/close keeps
+existing stronger recovery holds. No new channel/state/journal/authority engine.
+Validate the protected packaged python311._pth content (not merely a hash): fixed
+ASCII lines python311.zip, dot, parent-parent CodeRoot, Lib/site-packages,
+Lib/site-packages/win32, Lib/site-packages/win32/lib, no importsite/ambient/CWD/
+extra/reordered path. Exact separators/newline are pinned by bounded constructor
+and package builder; no automatic broadening. Actual offline packaged-import
+probe is a later required result, not established by fakeflags/configuration.
+
+Add cases to existing self-tests: content capability once/legacycalls0, same
+production result bytes, each snapshot drift and short/trailing/oversize/digest
+mismatch/absentport/throw; loadedversion and query/path/finalidentity failures;
+failed-owner positives/refusals/recovery exact retention; code3 proof/close order;
+._pth legal/unknown/importsite/absentCodeRoot/wrongorder negatives. Preserve old
+contracts and five original reverse targets; reviewer additionally removes the
+RUNNING-status recovery fix/owner hold/content binding. All execution remains
+guarded offline injected ports until separately admitted; current-source findings
+must close before engineering integration. No actual install/service/account/
+ACL/Registry/Host campaign/network/model/push/release/deploy/formal activation.
+
 Same original30 lineage/Context04/runbook03/uncapped batch/first-CVQ source-build
 exception, baseline650f1c37, NOT qualification. This directly provides executable
 SCM/worker supervisor missing from shortest step2. No new Ticket/PRD/framework.
