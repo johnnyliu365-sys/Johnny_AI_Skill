@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Same-ticket retained Host channel SOURCE_EDIT_ONLY activation
+
+Retained independent AO DOC_PASS5c29bf32c313f2b9c9c63b11c560f2e4c416535a;
+leaf f33561063aac8d7c80f1c90fa7c66c6dc677678d, LF
+80403c59fd2da99567b20c3719e8e6c7d0adfd5f5074fec24e4802be5d10fff8, both edges read.
+Blocking-WSAIoctl defect corrected before dispatch: exact nonblocking and repeated
+mode/fd checks, bounded readiness, would-block no retry and pending stronghold.
+Upper authority permits this bounded source responsibility; no new Owner decision.
+Root activates grant-ticket30-retained-host-channel-20261021 revision01, parent
+batch-checklist-local-20261019-uncapped. Author prior package allocation released;
+fresh own WT clean b9df00c889acd2cc2164bb885aed40d28e002dde, same branch/common
+repository, no reparse, both CREATE paths absent. Same retained author/source-only
+rules and two paths as exact ticket; Root sole orchestrator/reviewer, different
+retained source reviewer. No genuine Host, socket creation, candidate execution,
+native settings, installation, Grant or qualification admitted. AUTO_CONTINUE.
+Raw PID/socket frames are not effective-writer proof or authorization; later live
+binding and independent observations remain necessary before snapshot effects.
+
+
 ## Private runtime actual import proof / remaining actual Host join
 
 Under6b773a21 Root assembled only existing source/toolchain into owned Temp
