@@ -1,5 +1,16 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B diagnostic DATA scope correction — 2026-10-21
+
+AO actual FINAL PLAN_BUG for planr01 SHAe64d4a1a79e4fa9cf6d1849a86032f6f9715776432700955192098f46f298ba2:
+outer evidence packet inherited N14A_CONSTRUCTION_DIAGNOSTIC_NOT_HOST_QUALIFICATION.
+No child/product import/test/native execution occurred. Root corrects ONLY that
+literal to N14B_CONSTRUCTION_DIAGNOSTIC_NOT_HOST_QUALIFICATION, same registered
+plan path, all denies/source placeholders/suites/strict unchanged. Other syntax/
+scope checks passed; exact bounded DATA recheck required before PLAN_PASS. Historical
+mistag preserved here with original SHA; never count old plan as execution evidence.
+Source author active, no Root activeWT reads or product mutation.
+
 ## N14B reused diagnostic plan registration / DATA ONLY — 2026-10-21
 
 Author source lane active; Root does not inspect it. Register Root reviewTemp
