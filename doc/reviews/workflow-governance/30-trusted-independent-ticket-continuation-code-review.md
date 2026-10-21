@@ -1,5 +1,43 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Native service entry preflight / child Grant15a — 2026-10-21
+
+Original30 closure56 fixed at6cd1b0f578628d9d1dee4392ea3b50ad02943cb0,
+leafblobca885c38d370345a197248602b3ac6d073c7ab12/LFa99575253c46a8ef53573678627e2e9a64d615b2f6b5d7c754b48b84902a49f2.
+Independent retained source helper actual FINAL DOC_PASS: prior onlyTICKET_DEFECT
+current service token/thread readback beforePythonlaunch resolved, both edges exact,
+no additional policy/Ownerdecision. Root AO/sole reviewer accepts sourcepreflight,
+not qualified Host review. Same uncapped batch/first-CVQ constructionexception.
+
+ChildGrant15a projectJohnny_AI_Skill/original30/closure56/SOURCE_EDIT_ONLY,
+parentbatch-checklist-local-20261019-uncapped; baseline650f1c37 immutableengineeringhold.
+Owner/root/native_service_impl, selectedgpt-6-luna/xhigh per current capability,
+ReviewerRoot with different retained source helper. HIGH_ASSURANCE sourcebuild,
+sidecontextwg30-native-service-20261021/same-lifetime direct/bridgeNOT_REQUIRED.
+Parallel lane justified only by disjoint7C#paths vs activeN14C3Pythonpaths and
+independent bootstrap/lifecycle closure; no sharedwrite or newauthority/profile.
+Root exact worktree allocation already read back: newly created repositorycontained
+.worktrees/skill-improvement-30-native-service, branchcodex/same, HEAD650f1c37,
+emptyindex/workcopy/nonreparseancestors/linkedGitregistration; Root matching-review
+also650f1c37. No foreignWT editing, extra docs/PRD/tests/framework, selfdelegation.
+
+Only exact7paths from closure56 via apply_patch. SOURCE_EDIT_ONLY means no import/
+compile/build/run/SDK/SCM/Registry/SQLite/network/model/account/ACL/cleanup/commit
+before Root independently inspects saved source/ports/fakes and admits execution.
+Newprivate constructors may be written in source bootstrap; no prematurequalification.
+Finite55s child/60outer after futureexecutionadmission; no cumulative/count cap,
+old costs/evidence retained. Tempexact directories perclosure, owner/Root,
+TTLthroughseal/Recoveryhold, no deletion. Return actualFINAL SOURCE_READY with
+exact7pins/diff/constructors/fakes/deviations/holds; Root waits without activitypoll
+or activeauthorWT reads. Main/30B43/R0/DAP/TAL/Recovery/status unchanged.
+
+Offline toolchain passive facts (not publish proof): SDK10.0.302; VSwhere current
+VS18Community installationC:/Program Files/Microsoft Visual Studio/18/Community,
+C++MSVC14.51.36231; scoped NuGet ILCompiler/runtime.win-x64.ilcompiler/core runtime
+10.0.7 caches present. PATHcl.exe absence was not machineabsence; no install/
+download/nativeAOT compilation executed. Raw inventory retained for finaloperation
+package. Missingpackage/runtime limits may still block packaging, never fakegreen.
+
 ## Exact operational paths correction — 2026-10-21
 
 No security/Registry/service operation performed. Frozen650f1c37 actual store
