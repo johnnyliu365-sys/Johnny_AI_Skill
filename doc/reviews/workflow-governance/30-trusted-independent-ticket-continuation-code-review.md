@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Native reviewer evidence extension / no product contract change
+
+Root may additionally reverse the exact failed-token hold and successful-open
+recovery-alias rejection, plus same-handle content observation equality, using
+the same pinned 469d59f3 review checkout and offline fake self-test verb. For the
+content assertion only, temporarily expose the existing fake self-test exception
+message in Program's self-test catch; no assertion, fixture, production failure
+policy or public command is changed. This diagnostic is never a release candidate
+and may not execute a native service/Host path. Record both mutations, exact
+source pins and unfiltered output; restore every byte/Git blob before acceptance.
+Earlier review-tool failures (double path substitution, then syntax; wrong empty
+patch restoration location) are retained as tooling failures, not mutant kills.
+The restoration mistake was detected by source-pin validation before compilation;
+restored02 exact source build and all three fake verbs passed. No reset/clean used.
+
 ## Current native offline execution admission15g — 2026-10-21
 
 Actual FINAL_SOURCE_READY received; author idle. Root read the six changed paths
