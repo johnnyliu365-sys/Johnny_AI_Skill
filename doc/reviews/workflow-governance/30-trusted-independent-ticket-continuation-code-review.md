@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source-to-retained-Host reply admission — bounded source only
+
+Different-seat /root/native_service_impl DOC_PASS_NOT_ACTIVATION for original30
+9822e19a7750ec7495caf68e147f7292c6367e8f, exact leaf LF
+53d43e3e24475f2e2136c0716858385c623f4370dfce370df33ef3ceb8c5dfe0.
+Its reply accidentally called the enumerated scope seven paths; mechanical
+enumeration is SIX: three CREATE, two MODIFY, one DELETE. Exact paths, not this
+count, are authority. No seventh path is authorized. Existing store's paired
+consume and retained-channel/codec are reused; runtime lock must include the
+same exact previously reviewed pure wheel, and old six-wheel evidence cannot
+certify that later seven-wheel payload. No metadata-pipe, ledger, worker or
+source-authority rewrite. Root activates ONLY SOURCE_EDIT_ONLY for the exact
+six paths at engineering baselinefb814279, same author/WT; no product imports,
+tests, native/API/model/network effects or commit before separate Root admission.
+Ordinary new type construction/preflight has the same approved construction
+ordering, not a claim of Host or trusted Grant qualification.
+
+Separate prior byte QA: same helper verified all12 Host24 originals and4 CLI
+metadata originals in c783b23e byte-for-byte against source records. All failures
+remain failures; strict-config unsupported/features05 bit mismatch is notPASS.
+No Host/CVQ/30B/43 state changes or permission expansion.
+
 ## Protected Host enrollment — final source and affected-consumer review
 
 Engineering candidate fb8142793eb98bbd54f90154ac1e63c7fd5741d3,
