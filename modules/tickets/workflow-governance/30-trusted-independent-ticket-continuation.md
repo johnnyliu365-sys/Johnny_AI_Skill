@@ -24,8 +24,15 @@ fresh restored17PASS are offline evidence ONLY. Ordinary different-seat source
 audit passed; no Host connection, trusted Grant positive or30B/43 qualification.
 The codec proposal below is retained history, not a new implementation request.
 
-The NEXT minimal source responsibility is the missing RETAINED HOST IMAGE LEASE.
-It directly prepares BOTH30B/43's peer-to-retained-Host proof. Existing snapshot
+The retained Host image lease is ENGINEERING_CLOSED at
+25c490745f45d8c7d67d25ba4983dc5b0ecaf53f, exact blobs52ec0e73/a7d32ccb/e74cf4af,
+original review e394846d. Strict3/compile3, default100PASS, seven intended product
+mutation REDs, restored100PASS and actual integrated-hold100PASS/SDK[] are offline
+source evidence only. The original image grant below is completed history, not
+another dispatch. NEXT is ONLY the conditional existing Host launch consumer
+below, now with exact source baseline25c490745f45d8c7d67d25ba4983dc5b0ecaf53f.
+The same author worktree is clean at that commit; main/30B/43 remain untouched.
+This directly prepares BOTH30B/43's peer-to-retained-Host proof. Existing snapshot
 source64MiB and member32KiB are not suitable for the separately observed341312816
 byte Host image; do not widen those contracts, package Codex in issuer payload,
 rewrite N14B, or duplicate the native handle/read/cancel/recovery implementation.
@@ -95,6 +102,12 @@ record/read back that SHA and the unchanged reviewed image blobs before dispatch
 Author remains /root/ticket30n4_peer_impl in the same protected-launch worktree;
 different native helper supplies ordinary source evidence, Root alone reviews.
 Independent docs review is required; no dispatch while image findings remain.
+DOC_PASS at control1c46323f and Root source acceptance/integrated readback now
+satisfy that condition. Root activates ONLY this five-path SOURCE_EDIT_ONLY grant
+on25c490745f45d8c7d67d25ba4983dc5b0ecaf53f; exact image blobs above are unchanged.
+No Host/Grant/CVQ authority or OS effect is activated. Ordinary pure construction
+of the new private Host plan is permitted before the type exists, not a circular
+preflight condition. No new Owner approval is requested for this batch-local act.
 
 MODIFY ONLY the existing grant_authority/windows_subject_process.py,
 windows_subject_process_abi.py, windows_subject_preparation.py and
