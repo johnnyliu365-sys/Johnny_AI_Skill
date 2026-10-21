@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Conditional existing Host launch consumer — exact source contract review
+
+Different-seat native helper DOC_PASS at control1c46323f0ae7c6462b3a4d92c841db3652eed534,
+Ticket30 blobc87ce288fca1318a577dad35b9fb6c8b87bc8d20 / LF
+f0436bd72c6ac857e65a67806d55d024dbdb8b3d1536cc0e9d9f80cadda357a3;
+both registry edges match. Root accepts this bounded contract only. Existing
+legacy enrolled SubjectLaunchPlan is not a Host-image envelope. A distinct private
+Host plan can reuse the existing native algorithm without fabricating enrollment,
+copying ABI/launcher logic, or changing installed schemas. L1-L4 retain legal
+legacy/Host paths and all rejection/recovery/ownership requirements.
+Image findings remain OPEN, so the conditional source grant is NOT ACTIVE yet.
+After image review/commit/readback, Root can activate it on that exact baseline
+under the same batch authority, without another Owner question or exploration.
+No Host/Grant/CVQ pass, OS effect or checklist completion follows from DOC_PASS.
+
 ## Actual setup prerequisites — read-only inventory, not permission
 
 Root passive readback on DESKTOP-28ERPQ1: Windows10.0.19045.0, PS7.6.5,
