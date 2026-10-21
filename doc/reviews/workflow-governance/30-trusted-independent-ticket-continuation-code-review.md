@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B final test-contract correction / same Grant13d — 2026-10-21
+
+Guard03 full70738bytes SHAe33f4ba0fcf7dd23f7079d9a4b78e9e8a8fd8df92075c84b98a63792e2613cc6:
+8FAIL441PASS/5warnings3.23s,5.375schild, attempts[]. Root reads unfiltered trace
+chunks (one initial broad display truncated; immutable original did not). Legal
+fake launch completes; failure groups are three wrong native-read counts (N10
+full nonempty read+EOF probe per file =>four total), three import-time cached ABI
+exception/enum identities invalidated by existing fixture reload, and two shared
+assertion preconditions after deliberate malformed-owner injection. No source
+behavior/guard weakened. Author actual FINAL only test198fe58e corrects expected
+read count from source algorithm, resolves current exact exception after fixture,
+restores only injected owner input before shared unchanged effect/close checks;
+no counter/Recovery reset. Limits-value negative now reuses complete joint fake,
+so its planned gate-removal mutation can reach actual fake launch safely.
+Root static read and strict5PASS1.640s; otherfourblobs unchanged. Same13d next
+bounded diagnostic uses exact198fe58e and fresh root-n14b-construction-04 plus
+n14b-guard-construction-04-original.json, same Rootowner/TTL/holds/guards/bounds.
+No operational/Host/30B43 claim or premature checklist tick.
+
 ## N14B fixture dependency diagnosis / bounded correction — 2026-10-21
 
 Guard02 exact fulloriginal481054bytes SHAaf8b30f1005dae92494349ab387d82940b061762c42ced955f4edbc3717ecae7;
