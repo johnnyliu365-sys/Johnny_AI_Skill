@@ -70,7 +70,8 @@ product200..450/test350..500 lines, no copied general native test harness.
 
 Program.Main adds ONLY exact one-argument service verb; old verbs unchanged.
 Contract-only self-tests join existing SelfTests, no native factory during tests.
-Internal service result/native port only SCM/status/control, fixed Registry read,
+Internal service result/native port only SCM/status/control, current token/thread
+identity readback, fixed Registry read,
 enrollment/file readback and exact process/job/wait/exit/close, no genericRunner.
 Version/AssemblyVersion/FileVersion1.0.0/1.0.0.0/1.0.0.0; no new package references.
 Actual installable payload must be win-x64 NativeAOT or separately proven protected
@@ -83,6 +84,12 @@ JohnnyGrantAuthority/Parameters REG_BINARY NativeEnrollmentV1, using no-link/
 ancestor+leaf exact protection/stable before-after key observations like existing
 Python registry reader; no caller pathname/Registry command/env/self-approval.
 Preserve existing ApprovalV1/SubjectEnrollmentV1. Before ANY Python process:
+native-read current service PROCESS token: exact TokenUser LocalSystem S-1-5-18,
+TokenType PRIMARY, expected fixed service SID present enabled and non-deny-only;
+current thread must have no impersonation token. Read failure/unknown/mismatch
+refuses before CreateProcessW; native-owner cleanup uncertainty retains/poisons,
+never substitutes manifest fields/SCM name/caller assertion. This matches existing
+Python issuer invariant before privilege-bearing bootstrap effect, not new policy.
 parse exact canonical bounded NativeEnrollment, require fixed service name,
 manifest current retained/final serviceimage path/version/hash, exact existing
 enrollment readback+verifier MATCH/full CodeRoot inventory. Then read enrolled
@@ -117,7 +124,9 @@ No external token/job/service/account/Registry writes in this source cut.
 
 Closure56 T1 exact service route/oldCLI preservation/normal constructors;
 T2 resolvedfixedkey/no-link/protection/currentselector/keylastwrite drift rejected;
-T3 servicepath/version/hash/fullinventory/configschema/tamper beforeCreateProcess;
+T3 actualSYSTEM/primary/enablednon-denyonlyServiceSID/cleanthread positive and
+everywrong/missing/unknown/readfailure negative beforeCreateProcess, plus
+servicepath/version/hash/fullinventory/configschema/tamper beforeCreateProcess;
 T4 exactcommand/env/relativepaths, no caller injection/userwritable dependency;
 T5 assign+membership before resume; T6 normal/STOP/timeout exactexit+jobactive0
 beforeclose, no fakeSTOPPED/COMPLETE; T7 every meaningful nativefailure retains
