@@ -54,6 +54,9 @@ pure input validation rejects wrong socket type/family/type/alias/thread, malfor
 finite deadlines/cancel, frame>65536, empty/NUL/embedded-newline outbound frames.
 Existing socket object is retained strongly, never closed/duplicated/created/
 connected/reopened by this adapter. Keep exact original fileno through each call.
+Require it already nonblocking (gettimeout exact0.0); never setblocking/settimeout.
+WSAIoctl can otherwise block indefinitely per Microsoft documentation. Read/write
+use bounded readiness waits under same deadline/cancel, not a busy-spin loop.
 Read one LF-terminated frame <=65536, preserve extra bounded bytes for next frame;
 EOF/overflow/timeout/uncertain socket state fail closed, never fabricate response.
 Write exact bytes with finite deadline/cancel and checked progress; zero/oversized
@@ -63,8 +66,10 @@ Observe peer PID only via exact WinSock WSAIoctl ABI on the SAME retained socket
 SOCKET pointer-sized unsigned, code0x58000100, no input, ULONG output4bytes,
 returned-byte count exactly4, synchronous NULL overlapped/completion. Require
 exact native success0 and positive uint32 PID; missing/unsupported/native errors
-are UNAVAILABLE, never supplied PID/peername/path fallback. Unknown pending state
-retains original socket/native buffers/reader as recovery evidence, never close.
+are UNAVAILABLE, never supplied PID/peername/path fallback.
+WSAEWOULDBLOCK is immediate UNAVAILABLE, never retry in blocking mode.
+Unknown pending state retains original socket/native buffers/reader as recovery
+evidence, never close.
 No Any/cast/type-ignore/model_construct/unchecked callable-signature claim;
 native dynamic values validate at boundary. SDK binding lazy, import effect-free.
 PID observation and raw frames confer ZERO Grant/identity/qualification authority.
