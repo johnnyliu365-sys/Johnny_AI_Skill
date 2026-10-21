@@ -1,5 +1,26 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Current native offline execution admission15g — 2026-10-21
+
+Actual FINAL_SOURCE_READY received; author idle. Root read the six changed paths
+against 0014778d, including same-handle content pipeline, source owner recovery,
+loaded-image correlation, exact path configuration and code3 teardown. Different
+seat helper rechecks its existing findings, not a new review scope. Exact pins:
+Bootstrap a1006ef14295e7249042ff855fad14a1d71c6b39;
+WorkerLifecycle 312908ea4713aee434ccfca56ad74db720273de0;
+ServiceSelfTests 864970be0eb1beda7bd2e23e3696bc1902f432a8;
+Win32ReadbackPort 6efc90bb7e1c0adcca532cbb4e9ff5b6e64db507;
+WindowsPayloadReadback f3644409bf2e5f18a2ef3fb2687f90bacc2cbf7c;
+NativePayloadReadbackSelfTests 95c3c4e2d2caa1d2f026aec479e356345c2432e5.
+Other four approved source pins remain 0014778d. Root may use existing offline
+SDK build with all Compile inputs read back, cleared NuGet sources, closed
+environment, fresh registered review Temp, child55s/outer60s and raw-byte output.
+Only self-test/enrollment-contract-self-test/job-contract-self-test fake verbs
+may run after a successful exact build. No service/job-self-test/live file drift
+environment, Host campaign, install, accounts, Registry, ACL or network effects.
+This is source-engineering execution admission, never CVQ qualification or
+permission to integrate 30B/43. Failures retain originals and return to same author.
+
 ## Exact active branch binding correction — 2026-10-21
 
 Grant16's earlier codex/same shorthand was not an exact branch name. Fresh
