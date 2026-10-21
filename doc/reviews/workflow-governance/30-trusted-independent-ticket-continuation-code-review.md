@@ -1,5 +1,36 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 original T3 F4/F5 confirmed / bounded Grant18 correction — 2026-10-21
+
+Root Grant17 two immutableb3e3117 probes bothRED, child2.094s, denials[]:
+PRODUCED_LEDGER_NOT_RETAINED and RECOVERY_ATTEMPTED_ADDITIONAL_CLOSE.
+F4: native.verify_after first retains owners and sets _retained; composition then
+tries retaining produced ledger/approval, but early return silently discards them.
+F5: clearing cancellation after close failure permits another owner-close attempt
+because close_known does not honor retained terminal state. Both violate frozen
+N12T3, not new requirements. Previous399green/four mutation groups/counterdoor
+remain valid only for their coverage. Complete originals including ten mutation
+commands/results: RootTemp n12-final49-original-review.json. No false APPROVED.
+
+Grant18 under same original batch/closure49, source baselineb3e3117, same retained
+author/worktree/Context, narrows MODIFY to protected native and existing newtest
+only. Shared native6e3f64bb and compositiona6f0ef67 must remain unchanged.
+Permit static edits/metadata only, no execution/checker/import/compiler/SDK/Native/
+SQLite/sourcecommit/cleanup/reset/newpaths/exports/dependencies. Repair retention
+so later produced ledger/approval and necessary native backing join the original
+held ownership without dropping prior refs; repeat same identities must not grow
+unbounded holds or invoke equality/close/GC. Retained native session must reject
+all further close attempts even if cancellation is cleared, thread restored or
+deadline still valid. Preserve known refusal cleanup before any uncertainty.
+Do not close held objects as rollback or add recovery engine/public authority.
+
+Add bounded shared tests for exact produced backing identity and no close retry,
+including meaningful repeated-call/known-success behavior. Reuse original Root
+probes and add discriminating reverse mutation for repaired lifetime properties;
+old candidate never relabelled. ActualFINAL stopped source then Root re-admission,
+exact additive commit and final gates. E01 UNKNOWN/rawmissing/retrievaldeviation
+and30B43/Host/Recovery/checklist unchanged. No ordinaryOwnerquestion.
+
 ## N12 lifecycle backing/terminal state probes / Root Grant17 — 2026-10-21
 
 Immutableb3e3117 final strict4/399/three original Root cases green; four author
