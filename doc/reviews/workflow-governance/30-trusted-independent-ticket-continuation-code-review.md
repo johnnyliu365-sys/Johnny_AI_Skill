@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A actual source return / static diagnostic Grant02 — 2026-10-21
+
+Author actual FINAL at clean baseline86be3e34 (WIP, not committed candidate):
+registrya1aebe57212e055eb34ce409f17ffde5e44bcbb6,
+subject38047ab11b54f57df30b24c6626502d1f4ac4d43,
+testf858869f56972ef36079b0efd61eebf6470f0207; exactly oneMODIFY/twoCREATE.
+Root reads full product delta/application/newtest after return, new fake is thin
+N11 Registry subclass, no new native-owner whitelist. Normal source typing notes
+resolved defining _PositiveUint32 import/compatible regex, no rule change.
+Test809physical/699nonblank exceeds structural signal; assess responsibility/reuse,
+do not force split/minify. New failure names private, finite eight values unchanged.
+
+Grant02 Root may exact-hash/memorycompile3 and run prepared strict3 in admitted
+author WT under unchanged finite minimal environment; no product import/pytest yet
+until P0green and audited fake/ABI/bound diagnostic guard. Existing helper actual
+FINAL PLAN_PASS_DATA_ONLY atbbc69c5c verifies unchanged SDK/effect-deny prefix4286chars,
+old3fakeowners, newmodule identity/eighthsuite only. Plan != testGrant/Host proof.
+Preserve all raw original results in registered n14a-construction-originals.json.
+Retained source helper may now read exact WIP3files/ticketclosure53 as construction
+diagnostics/structure/AC mapping ONLY, no execute/edit/approval/Host qualification.
+Author source lane idle, no execute/commit permission; no Root activeworktree reads.
+
 ## N14A proposed reused diagnostic guard / not executed — 2026-10-21
 
 Revision99 checklist exact d4a8b02e independently actual DOC_PASS: all12rows unchanged,
