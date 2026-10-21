@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 F4/F5 Root diagnostic Grant19 — 2026-10-21
+
+Author actual FINAL managed-drift trigger correction; Root reads exact2dirtyblobs
+native9fc63abab21820b8bf4b95378004a43a60795432,
+test2e43f210fad6f9fd5026415e7bbad20de04b4dfc, shared6e3f64bb/compa6f0ef67
+unchanged atb3e3117. Source/API/fake-owner routes unchanged; new assertions compare
+identity, no equality/close fallback. Root Grant19 permits strict4 and reviewed
+six-suite fake diagnostics on these stopped bytes, fresh RootTemp
+root-n12-lifetime-correction-01. Also permits registered semantic retention probes
+n12-root-semantic-retention-probes.json against immutable Rootreviewb3e3117 at
+root-n12-retention-semantic-baseline-01 and stopped source at
+root-n12-retention-semantic-correction-01. Same ledger identity requirement through
+actual flat/list hold representation, not external fixture refs; oldRED/newGREEN
+must both be read, original probe never overwritten. All original guard/limits/
+forbidden effects retained, no author execution/commit/Host or E01 discharge.
+ACTION_COMPLETED -> finite diagnostics, no new Owner decision or source authority.
+
 ## N12 F4/F5 static return / test trigger correction — 2026-10-21
 
 Distinct helper independently confirms F4/F5 against frozenT3 and original2RED,
