@@ -38,7 +38,7 @@ This only establishes a source target, NOT Windows availability or writer proof.
 Cross-session handles remain noninheritable. Do not invent effective sender SID/
 LUID or feed socket PID into a last-message impersonation observation.
 
-Root derives grant-ticket30-retained-host-channel-20261021 revision01 from existing
+Root derives grant-ticket30-retained-host-channel-20261021 revision02 from existing
 uncapped batch. Baseline b9df00c889acd2cc2164bb885aed40d28e002dde, author retained
 /root/ticket30n4_peer_impl in its SAME protected-launch WT/branch; Root sole reviewer,
 different retained AO source helper. CREATE ONLY
@@ -48,30 +48,50 @@ No new public export, dependency, Grant issuer, Router, Gate, Agent or framework
 Initial SOURCE_EDIT_ONLY after independent exact docs review and Root activation;
 no candidate import/checker/test/SDK/socket/native/Host/commit before Root admission.
 
-Implement one private thread-bound borrowed connected AF_UNIX stream channel.
+Revision02 corrects the local source contract, not a safety invariant: current
+WindowsPython3.11.9 has no socket.AF_UNIX/address conversion, and the intended
+app-server unix transport uses WebSocket, not raw LF JSON. Original revision01
+source/checker/import failures remain preserved. Do not build a new framing
+protocol or call this raw transport a complete Host connection.
+Implement one private thread-bound borrowed connected WinSock AF_UNIX stream.
 Reuse existing scalar/strict finite error conventions and bounded byte wire;
-pure input validation rejects wrong socket type/family/type/alias/thread, malformed
-finite deadlines/cancel, frame>65536, empty/NUL/embedded-newline outbound frames.
+reject wrong socket type/family/type/alias/thread, malformed finite deadline/
+cancel, empty outbound bytes, receive bound outside1..65536 or send>65536.
 Existing socket object is retained strongly, never closed/duplicated/created/
 connected/reopened by this adapter. Keep exact original fileno through each call.
+Windows ws2def.h defines AF_UNIX=1 and SOCK_STREAM=1. Use that actual native
+constant without adding a fake socket.AF_UNIX attribute. Accept only exact int
+or actual standard AddressFamily/SocketKind values as appropriate, never bool
+or arbitrary integer subclasses; revalidate underlying values and exact owner.
+Do not invoke Python getpeername/address conversion. Before native PID/read/write,
+use lazy fixed WinSock getpeername on that same retained SOCKET: unsigned
+pointer-sized SOCKET, pointer to SOCKADDR_UN (USHORT family +108 path bytes),
+pointer to signed int length initially110. Require exact success0, length2..110
+and family1; a missing/foreign/malformed observation refuses before data effect.
+Only connectedness is claimed, no path authority or identity derived from it.
 Require it already nonblocking (gettimeout exact0.0); never setblocking/settimeout.
 Recheck exact socket type/family/type/nonblocking mode/original fileno before
 each native observation, readiness wait and frame I/O, not constructor only.
 WSAIoctl can otherwise block indefinitely per Microsoft documentation. Read/write
 use bounded readiness waits under same deadline/cancel, not a busy-spin loop.
-Read one LF-terminated frame <=65536, preserve extra bounded bytes for next frame;
-EOF/overflow/timeout/uncertain socket state fail closed, never fabricate response.
-Write exact bytes with finite deadline/cancel and checked progress; zero/oversized
+Receive returns actual bounded nonempty raw bytes, without delimiter parsing or
+invented framing; EOF/overflow/timeout/uncertain state fail closed. Send exact raw
+bytes with finite deadline/cancel and checked partial progress; zero/oversized
 or invalid counts reject. No background thread, subprocess, server or retries.
+HTTP/WebSocket protocol and actual connection establishment are not implemented
+by this low-level adapter. Later composition must reuse a reviewed protocol
+implementation rather than duplicate an ad-hoc WebSocket stack.
 
 Observe peer PID only via exact WinSock WSAIoctl ABI on the SAME retained socket:
 SOCKET pointer-sized unsigned, code0x58000100, no input, ULONG output4bytes,
 returned-byte count exactly4, synchronous NULL overlapped/completion. Require
 exact native success0 and positive uint32 PID; missing/unsupported/native errors
 are UNAVAILABLE, never supplied PID/peername/path fallback.
-WSAEWOULDBLOCK is immediate UNAVAILABLE, never retry in blocking mode.
-Unknown pending state retains original socket/native buffers/reader as recovery
-evidence, never close.
+Immediately after SOCKET_ERROR call fixed WSAGetLastError on the same thread,
+before other WinSock/Python callbacks. Validate finite native status/error at
+boundary. WSAEWOULDBLOCK is immediate UNAVAILABLE, never switch/retry; pending997,
+missing/malformed error or unknown outstanding state retains original socket,
+native buffers/API/channel as recovery evidence, never close or silently release.
 No Any/cast/type-ignore/model_construct/unchecked callable-signature claim;
 native dynamic values validate at boundary. SDK binding lazy, import effect-free.
 PID observation and raw frames confer ZERO Grant/identity/qualification authority.
@@ -81,13 +101,14 @@ writer/handle-transfer/observer evidence BEFORE any store read or snapshot retur
 Missing proof remains UNVERIFIED; fake positives prove only adapter behavior.
 
 Reuse existing socket/ctypes native-fake techniques, no duplicated mock server/
-browser/PNG/Runner. Tests cover exact legal ABI/frame bytes/progress, unknown and
+browser/PNG/Runner. Tests cover exact legal getpeername/PID ABI/raw bytes/progress,
+unknown and
 foreign/wrong primitive values, short/overflow/EOF/partial send/cancel/deadline,
 thread/fd drift, native failure/pending retention; ensure zero store/Grant/launch/
 socket creation/close effects. Root strict2/compile and guarded focused fake-only
 tests include named blocking-socket preeffect refusal, mode never mutated,
 bounded readiness timeout/cancel, would-block zero retry and pending stronghold.
-tests, named source reverses for PID-bytecount and frame/progress bounds plus
+tests, named source reverses for PID-bytecount and raw length/progress bounds plus
 different-seat source review before commit. Product target<=300/test<=350 net
 lines; >500 signals structure review, not minification/splitting pressure.
 Owned existing RootTemp TTL/evidence hold/resource bounds unchanged. No actual
