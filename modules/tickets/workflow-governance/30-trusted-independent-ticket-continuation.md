@@ -36,8 +36,9 @@ integrated-hold338PASS/SDK[]. Original31-record seal e3e1d68a received different
 seat BYTE_QA_PASS; source audit closed all findings. No actual Host was launched.
 Root verified all seven committed blobs and clean exact FF from25c49074; raw
 checkout differences were proven CRLF-only against those Git blobs before import.
-NEXT is ONLY the two-CREATE retained-peer adapter below, baseline8814531b.
-The same author worktree is clean there; main/30B/43 remain untouched.
+The prior two-CREATE retained-peer allocation at baseline8814531b is CLOSED;
+current source-to-retained-Host reply allocation below supersedes this old next
+step. Main/30B/43 remain untouched.
 This directly prepares BOTH30B/43's peer-to-retained-Host proof. Existing snapshot
 source64MiB and member32KiB are not suitable for the separately observed341312816
 byte Host image; do not widen those contracts, package Codex in issuer payload,
@@ -193,6 +194,103 @@ old uncapped accounting and all active evidence/recovery holds remain. Initial
 SOURCE_EDIT_ONLY, then separate Root guarded-test admission; no commit before
 Root source/behavior review. This directly prepares BOTH30B/43's actual retained
 Host/process-to-peer join, not final qualification or activation.
+
+#### Source-to-retained-Host reply — same consume, same protected process
+
+Host enrollment construction is ENGINEERING_CLOSED at
+fb8142793eb98bbd54f90154ac1e63c7fd5741d3, parent31517eb3, treec9e0b88f,
+exact2MODIFY blobs3eb06f11/4a02632c. Original12-record seal c783b23e and different-
+seat BYTE_QA_PASS12 preserve failures and corrected strict2/compile2, final/
+restored/actual integrated284PASS/SDK[]. This is NOT real Host/CVQ qualification.
+
+Next directly closes BOTH30B/43's protected source-to-Host reply construction gap:
+the existing store can already atomically consume and return (ordered bytes,
+settled GrantRecord) together; its legacy record-only pipe intentionally discards
+bytes. NEVER call two consuming methods, add bytes to that metadata pipe, move
+the authority store into the controller, or pretend caller data is protected
+source. Reuse the same issuer-owned store and existing retained Host channel.
+
+Root derives grant-ticket30-host-snapshot-reply-20261021 revision01 under existing
+batch-checklist-local-20261019-uncapped. Baselinefb8142793eb98bbd54f90154ac1e63c7fd5741d3,
+same retained author/task/worktree/branch and different-seat helper; Root sole final
+reviewer. CREATE library/local_orchestration/readonly_host_websocket.py only by
+moving the reviewed pure codec implementation out of tests/staging; DELETE ONLY
+tests/staging/readonly_host_websocket.py after proving all consumers migrated.
+MODIFY ONLY tests/test_readonly_host_websocket.py for its new import and the
+necessary pin/origin assertions, plus requirements-runtime.lock to admit EXACT
+already-reviewed websockets15.0.1 pure wheel
+websockets-15.0.1-py3-none-any.whl / SHA256
+f7a866fbc1e97b5c617ee4116daaa09b722101d4a3c170c787450ba409f9736f,
+using the existing lock digest method. Keep requirements-dev unchanged and do
+not download/install anything. CREATE library/local_orchestration/grant_authority/windows_host_snapshot.py
+and tests/test_grant_authority_windows_host_snapshot.py. No other create/modify/
+delete; zero source exports, worker/bootstrap, Registry schema, native service/
+security setup, Grant wire/ledger, Router or policy changes. Existing six-wheel
+package proof becomes historical, not proof of this later seven-wheel closure.
+SOURCE_EDIT_ONLY after independent docs PASS and Root activation, no import/
+tests/checker/commit until Root separately admits them. Ordinary constructor
+preflight may build these new private types before behavioral implementation.
+
+One private issuer-side reply owner binds exact existing ProtectedGrantStore,
+ProtectedHostSubjectEnrollment, RetainedHostChannel and reviewed pure WebSocket
+codec; exact validated thread/turn IDs are protocol correlation, NOT authority.
+No arbitrary callback/duck-typed source/codec/channel/provider, public constructor
+authority, controller transport or source bytes in public returns/logs. Reuse
+the existing finite strict models, snapshot validators/evidence derivation,
+readonly_review_host request decoder/result encoder and GrantRecord contract.
+Do not copy reader/ledger/Win32/hash/framing implementations.
+
+Before any consume or send, freshly reread the SAME protected Host enrollment
+against the store's exact approval, compare all existing links, role, exact Host
+plan, original token identity SID/session, owner ref and job limits to the retained
+channel. Run channel.observe_peer, same-thread/cancellation/deadline/source/native
+pins checks. Missing/mismatched/expired/malformed/replayed approval or unknown
+tool/file/thread/turn rejects WITHOUT consume/send. The typed original channel/
+store objects stay pinned, never caller path/PID alone. Existing private
+snapshot consume is called EXACTLY ONCE per reply owner, keeping BOTH returned
+bytes and record; validate ordered members, settled record, complete digest and
+Grant/operation/source bindings before ANY payload leaves. The old methods/
+metadata pipe remain unchanged. Each approved blob_ref may be replied once,
+at most the existing member count; duplicate or unknown ID refuses, no replay,
+retry, poll or new grant. Do not mutate the settled source record to imply Host
+delivery or review approval.
+
+The request is a complete validated Host tool-call JSON frame received by the
+future owned protocol driver; this bounded component does not certify its caller
+or start/receive a Host session. Its active codec must be the exact reviewed type;
+reuse codec.encode_text and send its bounded outbound chunks ONLY via the exact
+retained channel. No raw bytes return. Prove legal actual WebSocket server decode
+and exact returned snapshot bytes, not just a send mock count. Check fresh source/
+binding/controller/peer immediately before/after sends. Once consume/send may
+have happened, any unknown failure, reentry or drift yields RECOVERY_REQUIRED,
+retains exact backing objects, source bytes and evidence, and never reports
+delivery success. Do not clear old Recovery or close/delete borrowed assets.
+No synthetic observed source, Native identity or qualification seal.
+
+Closure S1 legal real protected-store algorithm with existing below-ABI fakes +
+fresh enrollment fake source + actual retained-channel algorithm and Sans-I/O
+server receives exact requested approved blob; second distinct approved blob
+reuses the SAME settled consume, no second ledger claim/read/settle. Legacy
+codec tests and metadata/store consumers still pass.
+S2 malformed/forged/cross-role/ref/digest/source/order/selector/thread/turn/file,
+duplicate request, wrong peer/original owner, pre/post source or cancellation/
+deadline drift, partial send/reentry all finite refuse/recovery with expected
+zero later effects. Keep genuine positive and negative assertions independent.
+S3 strict/compile/import, affected consumer/lock/codec regressions; Root actual
+source mutations must defeat Grant/source binding and alternate file membership
+and produce named REDs before exact restored green. Different-seat source audit
+and Root final approval, commit pins, own-hold integration and actual checkout
+replay remain required. Reuse existing fixture/plugin/native server components;
+no duplicated browser/server/Win32/SQLite test harness.
+
+This bounded component still does NOT provide original process/socket creation,
+Host initialize/thread/turn driver, independent OS observer, real protected
+configuration, final CVQ admission, actual remote-main 30B source, dispatch hard
+interception or43closure. These stay OPEN and must be wired/qualified before full
+acceptance. Next local work must ONLY connect this owned reply path to the fixed
+worker/protocol entry with existing lifecycle/teardown, not invent another
+framework or mark the whole checklist complete. Final native AOT and explicit OS/
+Host operation authorization still precede real effect; no push/release/deploy.
 
 #### Protected Host source binding — existing enrollment adapter, no new framework
 
