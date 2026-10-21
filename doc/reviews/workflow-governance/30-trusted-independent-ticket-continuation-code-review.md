@@ -1,5 +1,31 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 original-entry QA / Root source-stage Grant23 — 2026-10-21
+
+Actual FINAL ticket30_native_tools_review ENTRY_PARITY_QA_PASS: control27d49dd1
+exact marker, gzip350623/raw1849293 hashes match, 23unique entries confined to
+registered two Temp roots; UTF8/path/length/SHA and original bytes23/23, zero
+mismatches. No archived code executed. Root engineering-only approval stands;
+qualified review, E01 UNKNOWN/rawmissing and 30B43 remain blocked/held.
+
+Grant23 under batch-checklist-local-20261019-uncapped admits Root-owned existing
+source-stage .worktrees/skill-improvement-30g-protected-source (codex/same) exact
+clean a6071d5f2734091934a8645884c7db2068f62569 -> a081906f6b3f7e34f8cad9ce96d510f86a446d07
+FF ONLY, after fresh parent/containment/reparse/Git identity and four-path proof.
+Three CREATE protectedstore/native/test and sole prior shared snapshotnative MODIFY;
+all other108 old changed paths must byte-match, final total112 vs18bf1e9f.
+No cherry-pick, rewrite, cross-owner edits or main/control source integration.
+
+Then strict4 and exact reviewed six-suite guard at registered RootTemp fresh
+root-n12-stage-01 (ownerRoot, TTLthroughseal, holds overrideexpiry), actual loaded
+source+four exact blobs+compile, child55/outer60, minimal nonsecret env; keep full
+original results and no archived command execution. Reuse final mutation evidence
+only if candidate/source bytes unchanged. No additional mutation/Native/SQLite file
+or SDK calls, Host/install/permission/network/model/cleanup/push/release/activation.
+Register n12-stage-originals.json in same RootTemp, exact artifact readback/seal and
+independent identity/result QA afterward. N12 owner/review allocations then immutable
+referenced holds (no cleanup), not new active lanes. AUTO_CONTINUE N13 preparation.
+
 ## N12 final original seal and Root engineering review — 2026-10-21
 
 Candidate a081906f6b3f7e34f8cad9ce96d510f86a446d07; closure49 leaf
