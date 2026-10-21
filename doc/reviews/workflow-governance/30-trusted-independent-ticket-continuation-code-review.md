@@ -1,5 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 immutable candidate / Root engineering review Grant09 — 2026-10-21
+
+Retained author actual FINAL commit-only COMPLETED candidate
+ae9d195522069c94c8214f6e3cfb87609790e915, parenta6071d5f, exact3CREATE
+94855082/a6f0ef67/ef1d6033, clean. This is not author test execution or Host
+qualification. Root independently verifies parent/path/blobs/status before use.
+
+Grant09 permits Root-owned skill-improvement-30g-protected-store-review clean
+baselinea607 to fast-forward only to this exact candidate, then strict3,
+reviewed guard r06 exact4testset with fresh RootTemp root-n12-final-01, memory
+compile/import and candidate loaded-source identity. No source-stage integration
+yet. Same effect prohibitions, finite bounds and pre-import denials retained.
+Root may register bounded temporary mutation assets in existing RootTemp before
+creation and execute the four author-proposed groups plus a different legitimate
+boundary through this guarded candidate only, with full RED/exactGREEN output.
+No shared/author worktree writes or candidate rewrite, no new product files,
+dependencies, native/SQLite/Host campaign, external changes or cleanup effects.
+
+Distinct retained sourcehelper may inspect exact committed3files/closure48 to
+disprove source correctness, responsibility separation and boundary test coverage;
+read-only engineering evidence only, not qualified isolation evidence or final
+review authority. Root alone concludes; E01 UNKNOWN/rawmissing remains independent
+and no ordinary helper lifts30B/43 or checklist completion. ACTION_COMPLETED ->
+AUTO_CONTINUE engineering review, same N12 lineage/uncapped historical accounting.
+
 ## N12 construction green / exact commit-only Grant08 — 2026-10-21
 
 Root Grant07 strict3 PASS1.547s; guarded236/236 PASS0.92s, child2.797s,
