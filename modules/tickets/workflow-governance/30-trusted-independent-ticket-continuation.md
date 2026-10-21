@@ -17,6 +17,72 @@
 
 #### Current acceptance-linked checkpoint — no new requirement or framework
 
+Next bounded construction is the missing WEBSOCKET CODEC IN THE EXISTING TEST
+HARNESS, not another production service. Actual pinned CLI offline schema452files/
+4458190bytes confirms existing initialize/thread-start/turn-start/snapshot-result
+encoders; guarded validation passes, SDK_ATTEMPTS[]. It proves wire compatibility
+only, not dispatch/Host authority. The raw socket alone cannot speak this protocol.
+
+Derived grant-ticket30-host-websocket-codec-20261021 revision01 is conditional on
+independent docs review/Root activation. Baseline6a4dd605a9781ca6c4970e0844dd9b8796846de1;
+same retained Luna/xhigh author /root/ticket30n4_peer_impl, own protected-launch WT/
+branch after clean exact FF from21f and released channel allocation; different
+/root/native_service_impl evidence helper, Root sole reviewer/orchestrator.
+HIGH_ASSURANCE source-only staging, original first-entry exception boundaries.
+CREATE ONLY tests/staging/readonly_host_websocket.py and
+tests/test_readonly_host_websocket.py; MODIFY ONLY requirements-dev.txt to declare
+already-installed websockets==15.0.1. DELETE none, zero product/runtime-lock/export/
+OS/Host changes. This helper is used by the existing qualification fixture harness,
+not the shipped issuer worker. Do not alter the exact approved six-wheel runtime
+lock or redo the closed private worker payload proof.
+
+Reuse official public websockets15.0.1 ClientProtocol/ServerProtocol Sans-I/O,
+HTTP handshake/frame/fragment/ping parsing and typed events; no ad-hoc RFC stack,
+async/thread client/server/browser/mock framework or extra dependency. Reuse
+existing readonly_review_host JSON envelopes and existing staging fixture patterns.
+Pure wheel provenance metadata: websockets-15.0.1-py3-none-any.whl169743bytes,
+SHA256f7a866fbc1e97b5c617ee4116daaa09b722101d4a3c170c787450ba409f9736f;
+BSD-3-Clause, zero transitive dependencies; no installation/download admitted here.
+Actual source tests must pin the imported15.0.1 implementation, not only version.
+
+Private _ReadonlyHostWebSocketCodec with ordinary constructor and frozen typed
+_WebSocketOutput(outbound:tuple[bytes,...], messages:tuple[bytes,...]). start()->
+_WebSocketOutput constructs one fixed ws://localhost/ HTTP upgrade header only
+(logical Host header over a later owned Unix channel, not DNS/TCP/fallback).
+feed(data:object)->_WebSocketOutput accepts exact nonempty bytes<=65536 and uses
+the library's public typed events/state; encode_text(data:object)->_WebSocketOutput
+accepts exact valid UTF8 bytes1..65536 only after successful HTTP101 handshake.
+No arbitrary URI/auth/cookie/extension/subprotocol input; no compression enabled.
+No I/O/socket/connection/Grant/session/cleanup/thread or global logger mutation.
+Dedicated inert nonpropagating logger prevents protocol payload/error leakage.
+Use the library's existing state, not a second workflow state machine. Invalid,
+EOF/closed/binary/unknown event, invalidUTF8 or protocol failure taints the codec
+and raises finite payload-free error; no subsequent successful reuse.
+
+Messages are complete UTF8 byte sequences; reassemble valid split code points,
+preserve order/coalescing; do not invent LF framing or deserialize application
+JSON here. Message cap65536, one raw input chunk<=65536, uncompleted-handshake
+aggregate<=131072, <=64events per feed and <=128frames without completing a data
+message. Bound accumulated fragments and automatic ping responses; split outgoing
+wire chunks to<=65536 for the already reviewed borrowed channel (including masked
+frame overhead). No response/effect emitted after a failure; returned bytes are
+data, not a send or authority. HTTP101 with no negotiated extension/subprotocol
+is the positive path; closed/refused handshake is not success.
+
+Acceptance C1 real Sans-I/O server roundtrip HTTP101/text/partial/coalesced/Unicode
+is legal; C2 pre-upgrade/duplicate/closed/binary/malformed/UTF8/refusal reject;
+C3 incoming/outgoing/message/fragment/event budgets are bounded, no all-reject;
+C4 no I/O/thread/global logging and opaque failure payload, dev dependency only.
+Use ONE reused in-memory server fixture plus parameterized cases, no standalone
+servers. Strict2/compile, guarded focused tests and relevant existing native-wire
+fixture checks; Root different-door actual wrapper mutations (binary acceptance,
+UTF8/completion/budget) must produce named RED then restored GREEN. Source target
+<=250/test<=350 net lines; >500 triggers structure review, never minification or
+arbitrary file splitting. All original uncapped accounting/single child55/outer60,
+owner+TTL/evidence holds remain. SOURCE_EDIT_ONLY initially, no tests/imports/
+checker/native/commit/control tools until separate Root admission. This directly
+prepares BOTH30B/43's real Host tool wire, not their final qualified review.
+
 N14B/C and04 stay CLOSED; no replay. Existing source engineering hold is now
 6a4dd605a9781ca6c4970e0844dd9b8796846de1: channel21f5b760 and provisioning
 4f30b704+500e10f1 retain exact reviewed blobs. Strict channel37PASS under pinned

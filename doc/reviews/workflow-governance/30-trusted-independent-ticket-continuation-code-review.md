@@ -1,5 +1,45 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Engineering-hold readback and installed-version wire evidence
+
+Different-seat /root/ticket30n4_peer_impl actual FINAL verifies hold clean6a4dd605,
+main cleana1cb6c13, exact7reviewed blobs. Channel integrated11 actual source/test
+paths are hold, pytest9.1.1/37PASS/SDK[]; raw12153bytes SHA256
+0c995fa92c164e1fc27212ba1c5d23f21c8600f085effe995ec76d8ce91672d6.
+Native integrated02 command project and all39 compile inputs are hold and match
+6a4dd605; build0W/E raw20034bytes SHA256
+39a42c82831695a578061e68fd882737cf71853c32e027d724f884ada26f5660;
+self-testPASS raw1658bytes SHA256
+cbee53f4402ded1443036425731b2c0c925ddbdec46d240dc59d39874da483ae.
+Its restore NuGet.Config remains author path but independently byte-identical131
+bytes/SHA256652624e1ac15698be31dc7bc90a74b1fcc4314c387551013c61fb3a113843d28;
+sources disabled. Integrated01 wrong project remains SOURCE_SELECTION_MISMATCH,
+not acceptance. Existing RootTemp originals retained under active evidence hold.
+
+Exact CLI metadata-only grant produced452JSON schemas/4458190bytes, exit0,
+no app-server session/model operation requested. Original generation record
+host-api-metadata01/cli-schema-generate-original.json SHA256
+caa7839a00dad1e0b4edc2c2d7428c751907a767e295b23b6b748bb74ba5ed5a;
+help SHA256ecc010b65a0dbb3e91ace58a353778db6d76e4d9a7872d6afabb32b5c2017b47.
+CLI refused optional PATH helper aliases under Temp; warning preserved, no move,
+alias creation/permission change/exception or policy workaround. Successful schema
+output does not prove a Host sandbox or network isolation. Root guarded source
+validation of actual hold readonly_review_host requests initialize/thread/start/
+turn/start and snapshot result against this exact installed-version schema passes,
+SDK_ATTEMPTS[]; rawwire-schema-validation01 SHA256
+ac5c2d34537d6e402a810a480c45fe5e5d0e1a513dcf80186e766c6fd997290d.
+No encoder rewrite/new tests/files needed for those already conforming methods.
+
+The only admitted next source proposal is original30's test-harness Sans-I/O
+codec: two precise CREATEs +one dev-dependency declaration, not a runtime/issuer
+dependency or new RFC stack. Existing installed websockets15.0.1 public typed
+ClientProtocol/ServerProtocol supplies HTTP/WebSocket machinery. Existing strict
+six-wheel shipped runtime and its closed import proof stay byte-identical.
+Official API: https://websockets.readthedocs.io/en/15.0/reference/sansio/client.html .
+Source staging still needs exact independent document review and Root activation;
+no proposed construction becomes Host authority. SDK license decision remains
+pending; no SDK package use, OS install or actual Host campaign authorized.
+
 ## Exact metadata-only continuation admission
 
 Different-seat /root/native_service_impl DOC_PASS on d185e9be, ticket blob
