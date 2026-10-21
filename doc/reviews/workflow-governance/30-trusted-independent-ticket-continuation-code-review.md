@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14B closure54 proposal / checklist100 — 2026-10-21
+
+Grant12 docs only at330ee960: same30leaf new bounded N14B span, registry two digest
+edges, checklist100 and doc index, no code edits/dispatch. Root source-read confirms
+lease onlyfactory constructor, exact snapshot-reader3args, launch4args, retention6args;
+initial query of unrelated absent filename/wrong control WT source returned missing,
+not used as authority. Correct frozen source readback at7606a21d used for design.
+AO actual FINAL limits-anchor: two same-object private refs/no getter, existing
+recovery path, six-arg failed preparation, no extra enrollment recovery framework.
+Root freezes same private limits/protectedlaunch/N10 proof composition and finite
+T1..T5 with source-only construction admission, no Host effect. No Owner technical
+decision or new policy needed. Prospective1MODIFY2CREATE, existing31 profile role;
+ordinary author cannot orchestrate/import/execute before separate exact admission.
+
+N14A stage helper actual FINAL PASS two originals/fullbytes+digests and sourcehold
+counts/readbacks, no qualification. Release its author allocation as immutable
+hold; preserve worktrees/Temp/Recovery, no cleanup. Checklist12 originalrows unchanged,
+only04[x]; current proof index advances, not false completion or requirement change.
+D8 leaf finalblob26012099792c30b19ef55e6bf4fc19b908848f24,
+LFea98164452320aed0de78b7d1714abae827535296d31ad16971b50ffbaac030a;
+both registry placements updated, machine waiting/admissionnull retained. Independent
+exact proposed ticket/checklist doc review next, before source allocation/Grant.
+
 ## N14A stage original archive / DATA ONLY — 2026-10-21
 
 Two exact UTF8 packets; raw36477 SHA25680ec34133055d8f28cb8f9573ab93cceef90569e517f2f45eefc4ba208b4227f;

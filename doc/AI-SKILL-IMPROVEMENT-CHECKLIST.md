@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `99`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `100`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,25 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision99）
+## 當前工程接續與精確證據（revision100）
+
+N14A protected subject enrollment 已由原作者沿 closure53 實作、同票修正與提交
+7606a21d；Root 在獨立工作區530測試／strict3通過，六組具名反向驗證RED→精確
+GREEN（五組原始碼記憶體突變，一組同class extra設定突變），另席source審查與
+20份原始檔逐byte QA完成，fb44fbd6封存。舊失敗／輸出缺失均保留：首次47紅／
+2error的完整輸出被巨長param ID截斷，後續固定ID並先存原始stdout；完整第二次
+47紅可分三個新fake接線／階段預期錯誤與44個相符的共享poison連帶失敗，不改成
+47個獨立產品缺陷。修正僅測試，產品規則未放寬。最初8個strict錯誤及後續1個
+import錯誤歷史不抹除，未提交新檔的EOF檢查缺口也已修正並記錄。
+Root將 exact候選組合至工程source hold，非正式main；114舊路徑113不變、共116，
+三blob／實際載入／collection一致，組合後530／strict3綠，stage原始證據330ee960
+封存、獨立stage兩份原檔逐byte QA通過。Python guard非OS隔離；30B／43、合法可信Grant正向、
+Host資格與所有正式效應仍未完成，只有04維持勾選。author／review與Temp保留為
+immutable evidence hold，不宣稱清理。下一段N14B只補受保護來源接既有啟動並
+保留原生owner provenance；原票 proposed closure54 一MODIFY兩CREATE，未派工，
+stage QA已完成，接續獨立票面審閱。未新增PRD、平行授權引擎或Host資格聲明。
+
+以下revision99為N13／N14A施工前checkpoint，當前以本節為準。
 
 N13 final86be3e34經原作者同票修正、Root獨立來源／行為複驗與不同席有界source
 證據審查，已組合進隔離工程stage，非正式main。最初449綠未冒充獨審通過：

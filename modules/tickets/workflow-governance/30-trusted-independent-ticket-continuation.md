@@ -41,6 +41,144 @@ to that reviewed revision. Current N1 immutable source/evidence hold is unchange
 
 
 
+## 30N14B — retained protected launch provenance / proposed closure54
+
+Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03 sections3/6;
+parent batch-checklist-local-20261019-uncapped/first-CVQ construction exception.
+State PROPOSED_NOT_DISPATCHABLE until exact DOC_PASS, N14A stage original QA and
+child Grant/allocation. Baseline7606a21df3cbda10d401b3458c3e0ee9e07594a3 is an
+engineering source hold, NOT remote authority or qualified Host. No new PRD/SPEC.
+AO actual FINAL CutB plus limits-anchor refinement; Root independently reads
+existing lease/token/launch/preparation/N10 signatures at that exact source.
+One result: protected enrollment determines existing launch, retaining ORIGINAL
+token/job/process/thread provenance for future peer matching. No actual launch.
+
+Exact no-DELETE/no-dependency scope:
+MODIFY library/local_orchestration/grant_authority/windows_subject_lease.py
+CREATE library/local_orchestration/grant_authority/windows_protected_subject_launch.py
+CREATE tests/test_grant_authority_windows_protected_subject_launch.py
+No export/service/SCM/Registry/ledger/N14A/launch-ABI/old test edits. Root source audit
+finds only same lease factory constructs _SubjectJobLease in existing source/tests.
+Unmigratable caller/contract conflict ->BLOCKED, not scope expansion.
+
+Reuse existing _SubjectJobLimits/_PrimarySubjectTokenLease/_PrimarySubjectIdentity,
+_SubjectJobLease, _SubjectLaunchPlan, _launch_verified_subject, _SuspendedProcessCreation,
+_ObservedEnrollmentMatch, _SnapshotSourceFile/_SnapshotBlobMember/_SnapshotBlobReader
+and original recovery/poison/lock/teardown mechanisms. No new error enum/DTO tree/
+reader/handle protocol/Runner/permission source. Private module __all__=().
+
+Job lease constructor adds exact limits:_SubjectJobLimits parameter, same factory
+passes keyword limits=validated_limits (validated before native create/readback).
+Exact type check before assignments; retain _limits and _original_limits as the
+same original normal-model object. require_live and _borrow_native_owner require
+both exact types and identity _limits is _original_limits before returning/borrowing.
+Mismatch uses existing owner/alias drift recovery/poison path, no auto-close/retry/
+fallback/getter. Same-class equal-value replacement must fail. Existing behavior
+and factory return type unchanged; no unrelated lifecycle refactor.
+
+New private entry:
+_launch_protected_subject(enrollment:_ProtectedInstalledSubjectEnrollment,
+token:_PrimarySubjectTokenLease,job:_SubjectJobLease,
+cancellation:threading.Event,deadline:float)->_RetainedProtectedSubjectLaunch.
+No caller plan/SID/session/owner_ref/PID/path/config/args/env/limits/trust flag.
+Output strongly retains exact enrollment/token/job/creation/actual identity and
+record-derived owner_ref/original job_ref in private slots _enrollment/_token/_job/
+_creation/_identity/_owner_ref/_job_ref. Ordinary assignment-only construction,
+no serialization/raw handle getter/PID reopen/adopt/auto-GC/native teardown.
+Private source trust only, not resistance to arbitrary same-process private writes.
+
+Order before ANY N10/process effect:
+1 exact enrollment/token/job/controller types, finite float now<deadline<=now+60s,
+   issuing thread and controller, exact retained approval/record and all five N14A
+   approval links. Binding comes from record, never caller assertions.
+2 owner_ref=record.operation_ref; capture original token owner/alias/identity/thread
+   and job owner/alias/ref/limits/thread. Require exact PRIMARY identity SID/session
+   match record, owner refs match, original aliases/threads intact, leases live,
+   not close/borrow/poison/recovery/launch-attempted. job.require_live(owner_ref),
+   original limits identity and job._original_limits==record.job_limits.
+3 build two existing normal _SnapshotBlobMember values in executable/configuration
+   order from record.launch_plan.files: copy path/sha256/size_bytes/owner/
+   descriptor_sha256/volume_serial/file_id exactly into _SnapshotSourceFile;
+   blob_ref=record.approval_ref, offset=length=0, sha256=_EMPTY_SHA256.
+4 each _SnapshotBlobReader(member,cancellation,deadline).read() must return exact
+   empty bytes. Existing N10 still reads/hashes full files and checks protected
+   path/owner/descriptor/volume/file-id/stability; zero range is not skip-validation.
+5 after both proofs recheck controller and ALL original lease/owner/alias/thread/
+   identity/limits/lifecycle/binding facts; no substitution between proof and launch.
+6 call existing _launch_verified_subject(record.launch_plan,token,job,owner_ref)
+   exactly once. Reuse existing borrowed-owner/ref/thread/lock checks; do not
+   substitute/reopen a handle or accept a composed caller plan.
+7 successful launch then assignment-only retained wrapper; NO further model,
+   clock/cancel/peer/file/native rejection check after effect. If construction
+   unexpectedly raises, exact existing _retain_failed_preparation(token,token_owner,
+   job,job_owner,job_alias,creation) retains/poisons original owners; raise existing
+   _ProcessCreationError(RECOVERY_REQUIRED,creation), no close/retry/resume.
+No new enrollment Recovery hold: no authenticated output/legitimate resume exists
+on failure; enrollment is immutable evidence, not new native ownership.
+
+Finite existing failures: invalid arguments/binding/known refusal before child ->
+_ProcessCreationError(INVALID_INPUT); preserve existing lease recovery holds/poison
+for uncertain owner/limits state (do not erase/relabel Recovery as safe). N10 failure
+propagates existing _SnapshotReadError, child count0. Existing launch error propagates;
+post-launch uncertainty ->existing RECOVERY_REQUIRED with original creation. No raw
+native/path/SID/OS details or invented success. No issue/claim/read/settle/pipe/Host.
+
+Preflight source construction: new output need not exist before SOURCE_EDIT_ONLY.
+Normal constructors/type imports first, Root strict3/memorycompile then separately
+reviewed SDK-deny import/fake admission before any test execution. No Any/cast/
+model_construct/model_copy(update)/reexport bypass. Defining module imports only.
+
+N14BT1 constructor/factory preserves exact original limits; bool/derived/wrong
+limits and equal-value substitution refuse via original lifecycle/retention path;
+ordinary valid job success remains. Existing constructor caller inventory exact.
+N14BT2 executable/configuration member full-field mapping/order/zero bounds and
+empty digest, controller passed unchanged; both before single real launch seam.
+Tracking typed N10 fake reused for composition, existing whole-file zero-range N10
+suite retained; no duplicate browser/SDK/native/file harness.
+N14BT3 intact enrollment/approval five-links/token PRIMARY SID/session/owner/job
+limits and original refs ->success, exact original owners/creation strongly held.
+Wrong types/subclasses/unsealed/direct record, each link/SID/session/owner/alias/
+thread/limits drift/closed/borrowed/poisoned/launch-attempted ->zero child creation.
+N14BT4 cancellation/deadline/N10 mismatch, second-proof owner/limits substitution ->
+zero child. Successful launch construction exception ->exact six-argument retention,
+original owners held, no close/reopen/retry; repeat launch refuses before new effect.
+N14BT5 named memory reverse mutations: remove limits identity; remove limits-value
+binding; skip configuration proof; move proof after launch; omit retained owner;
+drop postlaunch retention; accept derived enrollment. RED call at intended cell,
+exact restoredGREEN. Root independently different door; all unfiltered raw retained.
+No ceremonial first-red for new behavior; no all-refusal substitute for legal pass.
+
+Reuse tests/test_grant_authority_windows_subject_preparation.py _CompositionFakes,
+existing subject-launch resume seam and snapshot-reader fake/assertions. One new
+focused matrix only, no copied native harness. Constructor/limits tests included
+before launch composition, not deferred followup test ticket. Run new suite plus
+affected subject lease/preparation/launch and snapshot reader/contracts, N14A source
+bindings as necessary; strict3 lease/new app/newtest, memorycompile/import/diffcheck.
+Root must inspect actual fakes/ABI/guard and exact source before test admission.
+No old test retired; local commands not proof of external test CI.
+
+Profile HIGH_ASSURANCE/source-only first-entry build, Python3.11 strict. Root AO/
+sole reviewer/orchestrator; retained /root/ticket30n4_peer_impl current Luna/xhigh
+capability, separate retained source-audit helper not qualified Host reviewer.
+Prospective owner/review worktrees .worktrees/skill-improvement-30g-protected-launch
+and matching -review, branches codex/same, exact baseline7606a21d; registration/
+containment/Git identity required before allocation. Temp under LOCALAPPDATA/Temp/
+johnny30-protected-launch-owner-20261021 and matching-review-20261021; ownerauthor/
+Root, TTLthroughreviewseal, evidence/Recovery holds overrideexpiry; teardown only
+after exact safe authorization. Uncapped cumulative/count, preserve history;
+initial child55/outer60s, diagnose repeated unchanged failures. Growth forecast
+lease25..45 lines, app220..300, test350..470; >500effective structural review signal,
+not forced split/minify. Reuse limits/ownership code, no monolithic catch-all script.
+XSS/UI N/A, no product responsibility move; bounded source application composition.
+
+Return exact baseline/candidate/threeblobs/files/checks/findings/deviations/holds.
+Author initially SOURCE_EDIT_ONLY, no import/test/checker/SDK/SQLite/commit/Agent/
+cleanup until separately admitted. Normal local construction sub-Grants derived
+from original batch, not operational trusted Grants. No live Host campaign,
+account/SID/config/security/ACL/SCM/service install/launch, network/models/newfees,
+push/release/deploy/formalactivation. 30B43/TAL/R0/DAP/E01/Recovery remain unchanged.
+
+
 ## 30N14A — protected subject enrollment source / proposed closure53
 
 Original30/PRD-20260805-009/CHG-20260805-009/Context04/runbook03 sections3/6,
