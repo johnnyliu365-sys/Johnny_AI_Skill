@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 closure49 diagnostic findings / test-only same-scope repair — 2026-10-21
+
+Root Grant12: strict4 exit1/1.688s, two implicit re-export accesses in test990/
+1022. Six-suite guarded399collected/398pass/1fail, child3.813s, Python denials[];
+old N10 reader/contracts pass with original default. Single failure is new test
+Expected: already-expired input window is INVALID_INPUT at unchanged composition
+entry, unlike deadline expiry during an admitted operation. Frozen finite/input
+contract does not require changing composition to DEADLINE_EXCEEDED here.
+Original commands/unfiltered outputs held in registered RootTemp
+n12-closure49-grant12-originals.json; no final review/qualification claim.
+
+Same Grant11 source-edit-only correction now needs only existing new test file:
+use explicit imported SDK/ABI modules, fix initial-invalid Expected without
+weakening post-admission deadline assertions. No product/other path edit needed,
+no execution/commit permission. Author returns actualFINAL new testblob plus
+unchanged two sourceblobs. Root then exact readmission, replay three baseline
+probes and final gates. E01 UNKNOWN/rawmissing/retrieval-deviation history and
+30B43/Recovery/checklist remain unchanged; no reset or new Owner question.
+
 ## N12 closure49 Root construction-diagnostic Grant12 — 2026-10-21
 
 Author actual FINAL source-only correction, baselineae9d1955, exact3MODIFY:
