@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 closure49 exact corrective Grant11 — 2026-10-21
+
+Distinct helper actual FINAL DOC_PASS control644fc786/leaf2c50c376/
+LFb6398212a1bc7f75fe07bafa0e639711dab45255a91bdb2d51ac95c303e4284f;
+both registry placements match, waiting/admissionnull remains. Root accepts
+bounded T1/T2/T3 repair scope; no change to Host or operational Grant authority.
+
+Derive grant-ticket30n12-protected-store-20261021 revision11
+ACTIVE_SOURCE_EDIT_ONLY under original uncapped batch/closure49. Same retained
+author /root/ticket30n4_peer_impl, original Context/worktree/branch, baseline
+ae9d195522069c94c8214f6e3cfb87609790e915 clean before edit. Exactly three MODIFY
+paths frozen by closure49: protected-store native/shared snapshot native/existing
+protected-store test. Zero CREATE/DELETE/exports/dependencies; composition and
+other consumers/tests unchanged. Retain old candidates and failed evidence.
+
+Permit ordinary source reads and static edits only, registered ownerTemp metadata
+with existing owner/TTL/holds. NO Python/checker/compile/import/tests/SDK/Native/
+SQLite execution, source commit, cleanup/reset/amend, host/config/service/security
+change, network/models/newfees or push/release/deploy/activation. Root alone will
+admit guarded execution after actual FINAL source identity/API/fake audit.
+Repair all F1/F2/F3 with specified positive/negative/default-compatibility cells,
+no source-policy widening to make assertions green. SDK/copy ValueError unknown
+stays recovery; explicit local malformed-return sentinel only. Return actual FINAL
+STATIC_SOURCE_READY_ROOT_VERIFICATION_PENDING exact3modified blob/SHA/diff/remaining
+gaps, no commit or verification claim. E01 UNKNOWN/rawmissing remains independent,
+30B43 blocked/checklist only04 unchanged. ACTION_COMPLETED -> same-ticket source
+correction, then Root diagnostics, not a new Owner decision.
+
 ## N12 closure49 bounded correction / source boundary review — 2026-10-21
 
 Root baseline probes reproduce F1/F2/F3 on exactae9d1955:3selected/3RED,
