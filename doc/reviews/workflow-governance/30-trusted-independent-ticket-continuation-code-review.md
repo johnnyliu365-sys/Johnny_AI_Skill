@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 closure49 Root construction-diagnostic Grant12 — 2026-10-21
+
+Author actual FINAL source-only correction, baselineae9d1955, exact3MODIFY:
+protected nativebd884b2a81500aa550244031171143f5a8b11d5d,
+shared native6e3f64bbb77cd906bdf4bc2f2628759e2b2e837e,
+testfb6df38f163ebb4e76a91ddbc4478d3e24860f34. Root reads full612/-34 diff,
+all three hashes/status, no extra source paths. Private malformed sentinel,
+entry-scoped inherited policy and exact-bool directory-only opt-in match scope;
+no new SDK route. Fake Close/callbacks remain bounded Python only. Test growth
+576lines is structure-review signal, not completed judgment or forced splitting.
+Owner discloses unanchored old-review retrieval; no extra authority is adopted,
+no further history reads or execution permission from that output.
+
+Retained helper actual FINAL shared-regression guard PLAN_PASS:
+n12-shared-regression-guard.json SHA1fbdd3e6cef0101edadf1e154f1bec92e3d2e222ba3c22dd3736d9c14ae3cab1;
+only exact audited N10 fake classes added, both collection identities checked,
+all SDK/native/HANDLE/init/close denials unchanged. Existing positives reachable.
+Checklist97/396213eb separately DOC_QA_PASS, only04 checked; not source review.
+
+Root Grant12 permits strict4, memorycompile/import and reviewed six-suite fake
+regression on these stopped bytes at authorWT, fresh registered RootTemp
+root-n12-shared-regression-01, child55/outer60/minimalenv/noUserSite/autoload/cache.
+Strict4 covers protected native/composition/shared native/newtest. Pure Python
+wrong-thread fixture has bounded5s join inside child and no SDK or host process
+effect; retain full output/elapsed, diagnose any failure before retry. No actual
+Native/SQLite/Host campaign, installation/security/service/rights/network/model
+effects, cleanup or source edits/commit by Root. Author remains stopped/edit-only.
+No WIP diagnostic becomes formal candidate proof or merge source. E01 UNKNOWN/
+rawmissing and30B43/Recovery unchanged. ACTION_COMPLETED -> bounded diagnostics.
+
 ## N12 closure49 exact corrective Grant11 — 2026-10-21
 
 Distinct helper actual FINAL DOC_PASS control644fc786/leaf2c50c376/
