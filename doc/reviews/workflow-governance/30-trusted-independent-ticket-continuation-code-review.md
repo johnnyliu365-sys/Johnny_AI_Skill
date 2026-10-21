@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 stage QA / N14A exact source allocation Grant01 — 2026-10-21
+
+Distinct helper actual FINAL stage originals QA PASS5/5 raw entries19181/
+1f6c9c78f552ea07aa8deec6efe3832f828cfe30c2b57b9481ed18abb6e64fcf; stage clean86be3e34,
+114total/110priorunchanged, source4blobs match,451/strict4. N13 allocation released
+as immutable referenced hold, no cleanup. No qualified approval or main integration.
+
+N14A closure53 reviewed actual DOC_PASS3e58897e, only finalbaseline metadata rebind
+to86be3e340d4b95dd37f054a4024ae7ada5affbd7; direct Registry/launch/value contracts
+unchanged from design source. Parent original batch uncapped; source bootstrap
+preflight per exact ticket, no operational issuer/Host qualification prerequisite.
+
+Grant01 Root first register/create exact allocated worktrees under repository:
+.worktrees/skill-improvement-30g-subject-enrollment (owner retained author
+/root/ticket30n4_peer_impl,Luna/xhigh), matching -review (ownerRoot), branchcodex/same,
+baseline86be3e34. Reject existing paths/branches or any reparse ancestor; no fallback.
+Register Temp LOCALAPPDATA/Temp/johnny30-subject-enrollment-owner-20261021 and matching
+-review-20261021, ownerauthor/Root; TTLthroughreviewseal/holds overrideexpiry, teardown
+only after exact safe authorization, no denied-cleanup retry. No files yet authorized
+outside ticket's oneMODIFY/twoCREATE; Root setup only Git worktree/empty Temp.
+
+After fresh containment/Git metadata/clean baseline/readback and exact leaf/index,
+Root may activate retained author's SOURCE_EDIT_ONLY closure53 in that new allocation,
+ctx-ticket30n14a-subject-enrollment-20261021, old N13 view closed. Only fixed Registry
+extension/app/test, no own tests/import/checker/SDK/SQL/commit/native/agents/cleanup.
+Root verification later requires actualFINAL/newhash/fakeABI+guard inspection,
+strict3 then reviewed fake tests; no SDK call or installed Registry effect admitted.
+All actual setup/install/security/account/session/Host/network/models/newfees/push/
+release/deploy/formalactivation remain outside Grant. Only04[x], otherholds unchanged.
+
 
 ## N13 source-stage original seal / DATA ONLY — 2026-10-21
 

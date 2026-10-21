@@ -48,9 +48,13 @@ same local batch/first-CVQ construction exception. This source prerequisite fill
 protected expected subject provenance; caller launch plan/SID/session is not
 authorization. Status PROPOSED_NOT_DISPATCHABLE until exact DOC_PASS, final N13
 source-stage baseline and child Grant binding. No new PRD/SPEC/authority engine.
-Architecture actual FINAL CUT_A_CONTRACT_READY; Root independently reads existing
-contracts at a081906f6b3f7e34f8cad9ce96d510f86a446d07. Only N13 reviewed deltas may
-advance baseline without redoing design; other contract drift requires rebind.
+Architecture actual FINAL CUT_A_CONTRACT_READY and DOC_PASS3e58897e; Root reads
+existing contracts at a081906f6b3f7e34f8cad9ce96d510f86a446d07. Final source baseline
+is86be3e340d4b95dd37f054a4024ae7ada5affbd7 after reviewed N13-only deltas; Registry
+and all direct N14A contracts unchanged. N13 source/stage originals QA passed at
+a2ccc40a/8ad53fac;110prior paths unchanged,114total. Not Host/authority integration.
+Root child Grant/allocation binding below is the remaining dispatch prerequisite;
+other contract drift requires rebind. No new Owner technical approval required.
 
 Exact no-DELETE/no-dependency scope:
 MODIFY library/local_orchestration/grant_authority/windows_approval_registry.py
