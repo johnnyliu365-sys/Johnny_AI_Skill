@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `97`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `98`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,22 +30,29 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision97）
+## 當前工程接續與精確證據（revision98）
 
-N12 candidateae9d1955為工程候選、未組合：Root strict3／236guarded通過，
-但獨審發現合法繼承ancestor誤拒、DB容量限制錯套目錄、已知malformed與
-未知SDK失敗混淆；Root三個具名基準probe全紅、denial空，不能用236綠結案。
-closure49／644fc786票leaf2c50c376（LFb6398212…）已DOC_PASS；Root Grant11
-878d1298在原票限縮三MODIFY，重用shared facts，保留N10預設／所有file cap，
-無新檔／PRD／框架／Host權限。原實作者SOURCE_EDIT_ONLY修正，Root另行准入
-執行；未完成的mutations／final review／組合不冒充完成。
+N12 finala081906f已完成限定source工程審閱與組合；原ae9d／b3e失敗不改標。
+F1–F5由原作者沿closure49與原T3修正：ancestor繼承／目錄metadata cap／
+local malformed與SDK未知分離，以及先hold後加入ledger保留與terminal close。
+Root最終401guarded／strict4、原三反例及兩個實際retention格綠，七組具名
+反向突變RED→精確GREEN；合法60秒邊界為Root不同門。另席source delta及原始
+輸出QA通過；27d49dd1封存23份原始資料，另席23/23逐byte核對通過。
+Root Grant23 b6da2d44僅FF原source-stage a607→a081，三CREATE與原shared一MODIFY，
+既有109路徑其餘108不變、共112。組合後401guarded／strict4通過、四blob及
+實際載入stage/collection身分一致；7df4e9e2封存，另席stage與原檔映射QA通過。
+share-delete紅只證明ABI參數，poison紅只證明terminal狀態，不誇稱實際洩漏。
+這不是正式main整合／Host資格／可信Grant正向完成；只有04可勾選。
+N12 worktree與Temp為immutable referenced hold，不宣稱清理。接續N13最小來源
+組合準備：重用N11固定核准／C13／N12 protectedstore／既有ledger與N10reader；
+只有新atomic CLAIMED_NEW可開始讀取，EXISTING不能冒充重啟授權，不另建引擎。
 
 E01仍為獨立未知效應hold：初次fake測試漏攔SHGetKnownFolderPath，當時
 無source commit／strict；Root中止後的原完整輸出與debug script缺失，呼叫
 次數僅推測、其他OS呼叫UNKNOWN。6b61dfb3原現場封存保留，752818fd封存
 local guard自檢及失敗原件；新工程候選／新測試不回填原證據、不解除事件。
 不得重現Native呼叫／清理／推定風險已接受；local guard不是OS隔離／Host資格。
-N11組合a6071d5f與既有04不重做，只有04勾選，30B43／Recovery不變。
+N11證據與既有04不重做，只有04勾選，30B43／Recovery不變。
 
 N11 final1d72c996修正F01–F05：Root194guarded／strict3及原四反例、十個
 predefined HKEY、兩個Native interruption、三個真入口合法邊界通過；不同
