@@ -1,5 +1,41 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N13 precise source edit Grant01 / same-lifetime admission — 2026-10-21
+
+Parent batch-checklist-local-20261019-uncapped, original30/PRD009/CHG009/Context04,
+first-CVQ construction exception unchanged. Actual FINAL helper DOC_PASS on control
+890c5113d1bc1c5c81548fa6da8270c2a1794006 closure50 leaf
+a5dcc84b271fdd2b89bf92a7ba51bf40512438d2 LF
+590c6dfb7f4351d70ee71d9358c9c8af32eab5369d206230ee47148d6652cb57.
+Both registry digest placements match, machine admission remains null. This Grant
+is local build authority, not an installed operational/source/Host qualification.
+
+grant-ticket30n13-installed-snapshot-20261021 revision01 ACTIVE_SOURCE_EDIT_ONLY:
+author retained /root/ticket30n4_peer_impl Luna/xhigh, Root sole reviewer/orchestrator;
+precise owner WT .worktrees/skill-improvement-30g-installed-snapshot and branch
+codex/skill-improvement-30g-installed-snapshot, clean baseline
+a081906f6b3f7e34f8cad9ce96d510f86a446d07; ctx-ticket30n13-installed-snapshot-20261021.
+Root independently read contained/nonreparse paths, correct .git linkage and
+branch/HEAD/clean status for owner and Root matching -review allocation.
+Existing public contracts/signatures/constructor evidence reused from unchanged
+N11/N12 final401/strict4, no new public DTO. New private method/helper tests output
+must pass ordinary constructor/strict/counter-mutation gates before source approval.
+
+MODIFY protected_store.py; CREATE installed_snapshot.py and matching newtest,
+all exact closure50 paths only; no other modify/create/delete/export/dependency.
+Author only reads committed local contracts and edits own source/test scope, no
+pytest/checker/import/compiler/SDK/SQLite/process subject/Native/network/model/
+Agent/commit/cleanup at this grant. Return actual FINAL SOURCE_READY with static
+path/hash/node/mutation proposal. Root tests only after frozen fake/ABI review and
+separate diagnostic grant, WIP diagnostics never formal evidence. Commit permission
+will be separate after P0 green. Source correction stays original ticket/lineage.
+No role fallback implementation by Root or new owner. Prior N12 owner allocation
+released to immutable referenced hold, zero cleanup. Registered N13 Temp directories
+may now be created for exact owner/Root purposes with ticket TTL/holds/teardown.
+No Host test/security/install/push/release/activation/Recovery/30B43 state change.
+ACTION_COMPLETED -> AUTO_CONTINUE IMPLEMENT via direct same-lifetime lane;
+receipt/runner/descriptor/host-workspace-readback NOT_REQUIRED for this lane.
+
 ## N12 complete engineering hold / N13 closure50 preparation — 2026-10-21
 
 Actual FINAL helper stageQA confirms7df4e9e2 original15517bytes/hash+fourblobs,
