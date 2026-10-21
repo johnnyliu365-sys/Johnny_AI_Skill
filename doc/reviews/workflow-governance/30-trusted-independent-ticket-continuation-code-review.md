@@ -1,5 +1,58 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Host channel initial candidate rejected by real local checks
+
+Exact two CREATE source candidate23471321/298a489b is preserved in original
+channel18-source-ready-03.json. Root compile/strict run returned14 errors;
+channel18-strict-03-original.json51659bytes SHA256
+0a93e3946c0a897f3aa5548de9a1f0a3368f2c1a84e19e587005027b4e9db704,
+elapsed45.422seconds, process terminal exit1. Guarded fake behavior01 never
+collected: WindowsPython3.11.9 lacks socket.AF_UNIX, producing AttributeError at
+the test class default. Original6270bytes SHA256
+08d074aef9d821cbb5d3efa3a0b28fd20102f1ee8fd90471943843e5fa9bd512.
+The harness was SDK/socket/Registry/service/network/process-denied before import;
+this is not a native Host campaign or proof of isolation qualification.
+
+Passive current interpreter readback confirms AF_UNIX_PRESENT=False; ordinary
+socket constants are AddressFamily/SocketKind, not exact int. CPython3.11.9
+socketmodule.h76-80 removes AF_UNIX without sys/un.h; socketmodule.c2384-2386
+rejects unsupported address-family conversion. An invented Python constant is
+not a repair for unsupported getpeername. Source inspection also finds native
+SOCKET_ERROR discards WSA_IO_PENDING instead of retaining buffers; three fake
+progress/deadline expectations are inconsistent. Same-ticket SOURCE_ONLY
+correction requested, no unchanged rerun and no candidate commit/integration.
+
+Installed pinned Codex CLI passive --version returns0.163.0-alpha.10.2. Official
+app-server transport source MAIN uses HTTP Upgrade/WebSocket over unix sockets,
+not naked LF JSON. MAIN is not pinned to this installed alpha; only source
+design evidence. Raw LF adapter MUST NOT be claimed a complete Host connection.
+Any minimal transport correction stays original Ticket30 and batch authority;
+actual connected-owner, effective writer and protected observer remain required.
+Sources: https://raw.githubusercontent.com/python/cpython/v3.11.9/Modules/socketmodule.h
+https://raw.githubusercontent.com/python/cpython/v3.11.9/Modules/socketmodule.c
+https://raw.githubusercontent.com/openai/codex/main/codex-rs/app-server-transport/src/transport/unix_socket.rs
+
+## Shortest-path readback: provisioning is not yet reachable
+
+Read-only source inspection at engineering hold b9df00c889acd2cc2164bb885aed40d28e002dde:
+Program.cs dispatch exposes plan/inspect/verification/service and bounded selftests,
+not a provisioning command. EnrollmentCommand.Run/RunObserved verify/read only.
+NativeOwnedDirectoryCreator and NativeOwnedPayloadFileCreator exist but have no
+production CLI caller; selftests do not supply that missing operational entry.
+NativeEnrollment binds exact destination/role/size/hash, not actual payload bytes.
+Retained native helper independently confirmed these call sites; no executable,
+SDK, installation, account, Registry or permission operation was performed.
+Readback attempts against control WT for native source returned path-not-found;
+the source identity was corrected to the existing engineering hold, not invented.
+
+This is a concrete setup prerequisite shared by30B trusted-Grant positive and43
+protected observations. Reuse existing creators/verifier; determine the bounded
+payload-byte seam before any source admission. Do not label plan/selftest as
+install, add another installer framework, or execute OS effects under source
+authority. Host socket source construction continues independently at exact
+5c29bf32 ticket/grant; its raw peer PID will not confer Grant or writer authority.
+No qualification claim, new checkmark, candidate merge or denied cleanup retry.
+
 ## Runtime seal QA and exact current SDK change boundary
 
 Retained native source helper independently byte-QA-read ec1b83f5 runtime capsule:
