@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14C corrected construction check / Root Grant14d — 2026-10-21
+
+Actual FINAL SOURCE_READY received under14c/14c2, no candidate commit. Readback:
+store cfd4457084d4e906297032101f55cd5ed1e35944 (unchanged),
+app79048fd250557ca62cc483747ed607ea493e5802,
+test5dbf4d71e37c53ef936eb1f5aa9a7caa514c5b92. Author reported different store
+blob711061d6; actual Git-normalized readback above is diagnostic truth, not a
+silently accepted metadata assertion. Author memorycompile PASS raw retained;
+author mypy terminal record missing after shell yield, explicitly UNVERIFIED,
+no rerun or invented result. Read-only process enumeration deviation preserved.
+
+Root now admits exact same three-path static check on changed bytes using the
+already inspected14b strict command/minimal environment, memorycompile only,
+child55s, no imports/test/SDK/SQLite/network. Register fresh source-ready02 and
+strict02 originals in existing RootTemp; do not overwrite old failure evidence.
+Full raw/source pins captured before verdict. Runtime/fake admission separately
+requires final source/fakes inspection. No authority or Host qualification.
+
 ## Native service static build continuation / Grant15b — 2026-10-21
 
 Parent batch-checklist-local-20261019-uncapped, same closure56/seven paths/owner
