@@ -1,5 +1,31 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N14A frozen source review Grant08 — 2026-10-21
+
+Author actual FINAL candidate7606a21df3cbda10d401b3458c3e0ee9e07594a3,
+parent86be3e340d4b95dd37f054a4024ae7ada5affbd7; Root independently reads clean
+index/worktree, exact threepath diff/cached hygiene and blobs: registrya1aebe57,
+app38047ab1, testfe3242f7769e4fc36aebcdf477ea7062ea6ba15a. Prior test1476012b
+remains Git blob, EOF only twoLF->oneLF; Root must verify exact bytes/AST reuse.
+Distinct helper actual FINAL full failed02 raw QA confirms3newtests+44oldstore
+failures; poison linkage source-supported, not44independent defects. Current530
+green supports corrected full composition; no old product regression waiver.
+
+Grant08 Root may verify existing own review allocation clean86be3e34/non-reparse/
+registered Git metadata then FF ONLY to candidate7606a21d. No main/source-stage move.
+Run final strict3/compile and same-source bound guard with fresh root-n14a-review-01;
+register n14a-final-review-originals.json in existing RootTemp, ownerRoot/TTLthrough
+seal/holds. Prepare n14a-memory-mutation-plan-r01.json as DATA only,6specs using
+existing guard/AST function-only rebind to preserve enum identity. Five closure
+doors approval equality/subject reread/legacy entry/seal singleton/extra-fields,
+plus Root distinct grant-crosslink door; named call-phase RED/exact GREEN in fresh
+processes, all full raw/effect-attempts retained. No on-disk source mutation, new
+SDK allowance, cleanup or actualHost effect. Each12 root-n14a-mut-<id>-<RED|GREEN>
+basetemp and n14a-mut-<id>-<RED|GREEN>-original.json registered sameRootTemp/owner/TTL;
+mutation execution needs independent plan QA and exact candidate pins first.
+Retained helper may independently read frozen candidate/source/closure and return
+construction audit evidence, not mandatory qualified Host approval or30B43 proof.
+
 ## N14A index whitespace correction Grant07b — 2026-10-21
 
 Author actual FINAL COMMIT_BLOCKED: only exactthree paths staged, cached diffcheck
