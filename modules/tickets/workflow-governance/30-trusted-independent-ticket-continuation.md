@@ -60,9 +60,9 @@ CREATE tests/test_grant_authority_windows_installed_subject_enrollment.py
 Reuse N11 Registry traversal/owners/ACL/Current/lastwrite/query/lock/poison/recovery
 and existing strict models/JSON rejection. No second native reader, general
 selector/callback, duplicate SDK fake/JSON parser/Runner/public DTO/export.
-Old read_installed_approval_payload(event,deadline)->bytes remains ApprovalV1-only,
+Old read_installed_approval_payload(cancellation:threading.Event,deadline:float)->bytes remains ApprovalV1-only,
 even if SubjectEnrollmentV1 absent. New fixed read_installed_subject_bundle_payloads
-(event:threading.Event,deadline:float)->tuple[bytes,bytes] returns ApprovalV1 then
+(cancellation:threading.Event,deadline:float)->tuple[bytes,bytes] returns ApprovalV1 then
 SubjectEnrollmentV1. One retained key/ancestor traversal and private fixed branch,
 no caller path/key/value selector. Approval cap262144, subject cap131072 bytes.
 Read both, recheck Current/all descriptors/lastwrite, reread both, exact compare,
