@@ -1,5 +1,38 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## N12 guard correction plan / source-static lane proposal — 2026-10-21
+
+Distinct helper actual FINAL verifies E01 seal5/5 and WIP exact3blobs; original
+raw/debug missing, callcount inferred, other effects UNKNOWN. Direct WIP SDK
+routes mapped by static review, Root guard intercepts them before candidate import.
+Gap: _OwnedHandle.close_once directly calls owner.Close; win32api.CloseHandle
+alone is NOT protection. Fake oracles derive product constants and need independent
+ABI literals. Same3path source correction fits closure48; no execution yet.
+
+Reserve Root registered Temp n12-root-guard-r02.json, immutable reviewable draft
+under existing ownerRoot/TTL/incidenthold. It additionally rejects real SDK handle
+owners and admits direct close only for exact audited fake owner class; blocks
+ctypes loader aliases and os process launch routes. Proposed Python-only GoodFake/
+BadFake selfcheck requires exact denied witnesses and safe fake close, never SDK
+handle construction or real Native API. This is NOT OS sandbox/agent tool gating.
+
+Propose execution allocation amendment only: retained owner SOURCE/STATIC_ONLY
+(no pytest/import/SDK execution); Rootcontrolled guard child owns fake test/mutation
+execution after actualFINAL+exact source/API/fake-class inspection. Owner names/
+prepares four mutant groups in registered Temp; Root runs their RED/exactGREEN
+plus different legitimate door. No weakening of original acceptance, source
+separation or final committed-candidate review. New private constructors still
+checked before approval, no uncommitted WIP becomes review/merge authority.
+Actual tests/selfcheck remain held pending distinct draft review. No new Agent/
+Framework/Hostqualification or permanent script layer. Original E01 incident
+UNKNOWN/RAW_UNAVAILABLE persists independently; no risk acceptance or cleanup.
+
+Progress indexbe674374 now revision96/only04checked and N12_EXECUTION_HOLD;
+ticket leaf unchanged606da708/ad231b21. Helper's LF-split WIP linecounts
+664/283/512 differ from stale after-action602/259/441; byteSHA/blob identity
+is the evidence. Root prior text259composition is also stale, not measurement.
+No count metadata overrides exact frozen bytes or reconstructs missing old runs.
+
 ## N12 E01 immutable incident/WIP seal / no functional approval — 2026-10-21
 
 Actual owner FINAL BLOCKED, HEADa6071d5f, no source commit/typechecks.
