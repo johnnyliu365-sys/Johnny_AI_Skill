@@ -15,6 +15,67 @@
 
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
+#### Same-ticket payload prerequisite: narrow existing package import boundary
+
+Root guarded cold-worker import at214c6d39 observed111 local modules/1732167bytes,
+SDKattempts[], langgraph not loaded. Original worker16-import-07-original.json
+SHA25671b2efff5b5c74e005c9ee3a8a343c16da949423d3849067c4a4cb25c1b1852f;
+import06 was a reviewer recipe escaping SyntaxError, not product failure.
+The111 includes installer/fakes/compensation/dispatch solely from the package
+initializer. This consumes111/128 payload slots before Python/native dependencies.
+Fix this concrete coupling before broadening a payload cap or inventing a packager.
+This is necessary packaging work for30B trusted-Grant and43 protected observer;
+it is not another independent governance capability or new PRD/Ticket/branch.
+
+Exact derived local Grant candidate grant-ticket30-package-import-boundary-20261021
+revision01 under batch-checklist-local-20261019-uncapped. Baseline
+214c6d39772fc8f504528c1d9c1dcb75a7697257; same retained Luna/xhigh author
+/root/ticket30n4_peer_impl, same own protected-launch WT/branch after completed
+worker allocation and exact FF to that baseline; Root sole reviewer/orchestrator,
+different retained source helper. No competing author/file ownership. Initial
+SOURCE_EDIT_ONLY after independent DOC_PASS and exact Root activation.
+
+MODIFY ONLY library/local_orchestration/__init__.py
+CREATE ONLY tests/test_local_orchestration_lazy_exports.py
+No other source/test/path/delete/dependency/export-name changes. Reuse existing
+workflow_router.__getattr__(name:str)->object lazy-export pattern, standard
+TYPE_CHECKING/static imports and importlib ModuleType boundary, not new loader,
+Plugin/Profile/authority/dispatch machinery. No environment/argv/role switches.
+
+Keep the complete original __all__ sequence/type/order and exported names/aliases
+and their identity with original defining modules. TYPE_CHECKING preserves strict
+static exports. Runtime resolve only an exact finite declared export mapping;
+unknown names raise AttributeError before importing anything. Cache only exact
+resolved symbol in module globals. No Any/cast/model_construct, unchecked dynamic
+values entering product domain, auto-discovery, path rewriting, generated code,
+__path__ changes, or source package shadowing in zip/runtime. Public constructors,
+functions and all internal modules remain byte-identical. No grant is conferred
+by importing or resolving a symbol. Ordinary source import remains effect-free.
+
+Acceptance P1 importing package and actual fixed worker does not import unrelated
+fakes/installation/codex dispatch/compensation modules; this must be observed in a
+fresh interpreter, not a polluted sys.modules fixture. P2 every approved export,
+including aliases, resolves to its original exact object; original sequence stays
+identical and repeated resolve preserves identity, from-import remains valid.
+P3 unknown/near-match/dunder export attempts reject without calling importlib;
+no dynamic provider/module/path input. P4 strict mypy/compile, representative
+existing public consumers plus exact worker/N14C guarded behavior stay green.
+Reviewer independent counter-mutation must catch eager import regression and
+wrong public symbol binding, followed by exact restoration; Expected comes from
+original214c6d39 export contract, never from changed Actual. Recount real guarded
+worker imports afterwards; smaller count alone does not prove complete payload.
+
+No new type constructors/schema; existing Python str/object/ModuleType and static
+public bindings are the only interface. Forecast product net<=250/test<=350 lines;
+>500 responsibility signal reviewed, no minification or gratuitous split. Existing
+Root/author protected-launch Temp owner+TTLthroughreview/seal, referenced evidence/
+Recovery holds override expiry; no cleanup. Single child55/outer60 initial bounds,
+uncapped local historical accounting and stagnation diagnosis unchanged. Source
+edits only initially, no test/import/checker/commit until Root exact admission.
+No native API/Host execution/pipe/service/OS setting/network/model/push/release/
+deploy/main integration or qualification.30B43 remain REVIEW_BLOCKED. Exact real
+callback byte/peer binding remains a separate necessary join, not fixed by imports.
+
 N14B650f1c37 is closed as engineering source only. N14C b016aed2ee9c20145be5069fa98cdc501702df35
 adds the exact protected one-read session: strict3/420 affected tests, eight named
 memory-only source reverse REDs, exact restored32GREEN, independent different-seat
