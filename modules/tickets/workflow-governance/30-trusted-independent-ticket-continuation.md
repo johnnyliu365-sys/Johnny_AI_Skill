@@ -19,17 +19,38 @@ N14B650f1c37 is closed as engineering source only. N14C b016aed2ee9c20145be5069f
 adds the exact protected one-read session: strict3/420 affected tests, eight named
 memory-only source reverse REDs, exact restored32GREEN, independent different-seat
 source review. Root protected-source hold exactFF b016aed2, main unchanged.
-Native candidate0014778d is NOT accepted: independent review found failed-token
-ownership mapped to refusal, failed-Registry-open owner adoption/close, and config
-bytes from a different unchecked middle handle. Same-scope corrections retain
-these findings; managed build/self-tests do not discharge native source defects.
+Native0014778d's failed-token/Registry-owner/same-handle-content findings are
+CLOSED by immutable469d59f38ef7ded45f0f19a27bdb3d05dcbb680f and independent
+engineering source review, offline build/three fake verbs, nine Root reverse REDs
+and exact restored GREEN. No AOT executable or real SCM/Host proof is implied.
+Fixed worker1091833e376f913d8127bfc478695945314a4e8e closes closure57 source:
+strict2,24 worker tests, nine Root reverse REDs; combined N14C56PASS/SDKattempts[].
+Independent helper corroborated exact commit/two blobs and full original outputs.
+Root engineering hold214c6d39772fc8f504528c1d9c1dcb75a7697257 combines native and
+worker only; integrated05 again56PASS with exact loaded source. Main unchanged.
+Original53 records (including failures) are sealed in original30 review0064a5f0;
+archive byte-QA is separate from Host qualification. No 30B/43 integration.
 
-Next local step must supply fixed worker composition missing from both entries,
-not new capability/framework/PRD. It directly joins protected source/Grant consume
-to N14B/N14C for the first READ_REVIEW_SNAPSHOT acceptance needed by30B/43. It does
-not complete READ_MAINLINE, admit_dispatch preeffect wiring, final CVQ, fresh
-remote source or either ticket. Native same-handle reader correction and packaged
-runtime/observer are subsequent direct dependencies, not new governance projects.
+Only direct acceptance dependencies may continue, in this order:
+1. Closed Python payload/import proof plus NativeAOT executable: provides a real
+   installable fixed worker/service, prerequisite of30B trusted-Grant positive
+   and43 independently protected observations. Existing Python._pth,128files/
+   64MiB bounds and exact loaded-source identity remain. Installed MSVC alone is
+   insufficient: scoped local inventory finds no Windows SDK/native import libs;
+   actual SDK installation needs Owner consent, while local packaging source and
+   offline fake/import tests continue without it.
+2. Fixed readonly dispatch plus protected observation connection: reuse existing
+   readonly_review_host wire, finite readonly_host_protocol and CVQ ports/cases;
+   real allowed snapshot read and preeffect forbidden paths must be observed.
+   SDK-deny mocks/tool lists cannot qualify this prerequisite of BOTH30B/43.
+3. Exact OS setup/first-entry campaign consent, provisional protected evidence,
+   independent source audit, then FINAL original CVQ admission. Only final PASS
+   can unlock30B/43's respective candidate reviews. No ordinary helper substitutes.
+4.30B additionally needs READ_MAINLINE adapter, fresh same-remote-main index/leaves
+   and admit_dispatch preeffect wiring. GrantRecord readback alone is not snapshot
+   bytes, a dispatch credential or trusted remote authority.43 requires its own
+   qualified candidate audit; neither borrows another ticket's PASS.
+No new PRD/framework/parallel governance. No checkmarks based on construction.
 
 Precise closure57 / derived Grant16 candidate under existing uncapped parent:
 baseline b016aed2ee9c20145be5069fa98cdc501702df35; author retained
