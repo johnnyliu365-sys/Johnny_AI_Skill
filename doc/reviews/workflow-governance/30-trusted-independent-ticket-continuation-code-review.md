@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Fixed Host worker final-source Root verification admission
+
+SOURCE_READY author at original7be216e0; Root independently read back all12 final
+raw pins, exact4 CREATE/8 MODIFY and diff-check. The first Root inventory wrapper
+trimmed status's leading space and falsely failed its path-set check before any
+child; corrected parsing preserves columns and confirms scope, not a source change.
+Author guarded293PASS/SDK[] and strict12/compile12 PASS are feedback only. Final
+Root verification now uses the SAME admitted credential-free guard, pinned pytest,
+fresh cache/temp, child55s, complete output/pins and existing six-suite cohort.
+Different-seat ordinary source/responsibility audit runs against these frozen bytes;
+Root admits only scoped temporary actual-product reverse mutations of W1–W4's
+existing predicates, no new test framework or formal source edits. Each mutation
+must hit a named existing acceptance cell RED and restore original source GREEN.
+Native immutable source1b7a93c9 was separately integrated; it changes no Host12 path
+or current author's granted baseline. SDK/OS/Host CVQ/30B/43 remain unqualified.
+The completed native own-hold capsule has independent5/5 BYTE_QA_PASS; checkpoint
+ac1539b0 DOC_PASS confirms both LF registry edges and only04 checked.
+
 ## Native compatibility own-hold replay completed — not Host qualification
 
 Root own engineering hold clean1b7a93c936d2d725ce93fdfdbddfa74f7ef98409 after
