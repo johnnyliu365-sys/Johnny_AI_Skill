@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Native compatibility controlled own-hold integration admission
+
+ACTION_COMPLETED: immutable nine-path readback and seal byte QA PASS. Different-seat
+authority_install_inventory independently decoded commit5e0b9380's 22 records;
+all exact original bytes/lengths/digests match, including all20 parseable JSONs.
+Root independently rechecked candidate1b7a93c936d2d725ce93fdfdbddfa74f7ef98409,
+parent7be216e0f91209a340ece745055ab34b272488ce, clean author branch, all9 blobs,
+raw frozen pins and canonical committed bytes; exact9 MODIFY, diff-check PASS.
+Router AUTO_CONTINUE permits Root ONLY to fast-forward its own clean existing
+skill-improvement-30g-protected-source engineering hold from7be216e0 to1b7a93c9,
+then fresh pinned offline managed build/three pure modes/IlcCompile replay there.
+Use existing cached tools only, empty NuGet sources, no download/LinkNative/SDK/
+Host or OS settings; per-command child55s, CPU2/GC1GB, exact owned cancellation
+and original output capture. Each current input must agree with immutable Git
+content (checkout EOL differences recorded), not trust a stale raw hash.
+No main merge, formal qualification, checklist completion or30B/43 release.
+
 ## NativeAOT compatibility immutable evidence seal — engineering only
 
 Candidate `1b7a93c936d2d725ce93fdfdbddfa74f7ef98409`, parent
