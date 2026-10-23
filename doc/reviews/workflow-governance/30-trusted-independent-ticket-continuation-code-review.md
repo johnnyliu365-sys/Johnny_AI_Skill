@@ -2,6 +2,17 @@
 
 ## Fixed-worker initial engineering review — CHANGES_REQUESTED
 
+Root verification admission refinement after the frozen first readback: the SAME
+author may run static mypy/compile on the SAME twelve paths while correcting the
+recorded errors. Reuse the exact reviewed checker arguments/environment and an
+owner-bound temp cache/capture; <=55s child/60s outer, preserve before/after source
+pins/full output, no credentials/network/SDK/native/prod imports or behavior tests.
+Compile means compile(source, path, 'exec'), not exec/import or in-tree pyc writes.
+This is the already-authorized W4 static check, not a new policy/Grant scope or
+Host effect. Constructor/behavior admission, reverse mutation, final independent
+review and commit remain with Root after the next exact SOURCE_READY. It avoids
+repeated unverified typo handoffs without making the author its own reviewer.
+
 Frozen12-path checkpoint above baseline7be216e0, source pins in the three complete
 Root host26 originals under the existing ticket-owned temp evidence hold. Initial
 strict12:33 errors/10files, compile12PASS; guarded six-suite286 cases:70FAIL/216PASS,
