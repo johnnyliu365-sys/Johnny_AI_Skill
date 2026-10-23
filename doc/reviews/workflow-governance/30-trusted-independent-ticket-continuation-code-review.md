@@ -1,5 +1,26 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Provisioning correction02 activation — pure native seam, not setup
+
+ACTION_COMPLETED / DOC_PASS_NOT_EFFECT_AUTHORITY: independent helper
+/root/authority_install_inventory read committed8a432a32, verified exact leaf
+LF70c39c7e5b99ecb4a40d5d51fa29c559b45b0fae1290b829798a40f099604989
+and both registry edges, existing three C# baseline paths and original two creates.
+Root confirms the same authority/scope and activates
+grant-ticket30-provision-command-artifact-20261023 revision02 for author
+/root/native_service_impl in its OWN native-service worktree/branch only, baseline
+605a6fa40c2b83bf6dbcb54143fe7735113a53b7 after safe owned-file-preserving FF.
+Return SOURCE_READY, no commit until Root frozen-source admission. Reuse the
+existing parser/plan before effects; no new native authority or qualification.
+
+The uncommitted1140-line prior script is not rejected because of line count:
+Native semantic/canonical duplication creates a concrete Unicode canonical-size
+gap before effects. Retain its source-ready original908e6c7a and exact source
+bytes before author correction; do not overwrite/delete previous evidence.
+The source helper diagnosis is not a formal review of an uncommitted merge source.
+No Apply/native artifact execution, installation, task/account/SCM/Registry/ACL
+change, Host/model/network call or CVQ/30B43 completion is authorized by this entry.
+
 ## Router import/request-count engineering review and own-hold integration admission
 
 APPROVED_SOURCE_ENGINEERING_ONLY by Root, not CVQ. Immutable605a6fa40c2b83bf6dbcb54143fe7735113a53b7
