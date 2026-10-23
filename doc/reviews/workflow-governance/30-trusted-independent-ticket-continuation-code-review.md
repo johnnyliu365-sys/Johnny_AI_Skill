@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Native executable preparation — offline codegen-only admission
+
+Root and native helper inspected the cached10.0.7 NativeAOT targets: IlcCompile
+and LinkNative are distinct; SetupOSSpecificProps skips vcvars/SDK discovery with
+IlcUseEnvironmentalTools=true. The existing batch permits one bounded offline
+Restore,IlcCompile diagnostic on the unchanged39 reviewed C# sources/project,
+exact cached10.0.7 compiler/runtime packs, clear-source NuGet config and no pack
+download/audit. This uses the already installed .NET SDK, NOT the pending Windows
+SDK packages/license. It must not invoke LinkNative, install, run the resulting
+code or perform native/Host qualification. Missing offline inputs stop with their
+exact error. No source edits or new framework are admitted.
+
+Outputs/evidence only under the absent task-owned nativeOBJ01 directory in the
+existing native-service-review temp root, owner Root/Ticket30, TTL24h with active
+evidence/recovery hold. Source pins before/after, full command/output, child55s,
+one build process/disabled build servers/parallelism and no ambient credentials.
+On timeout stop only the positively owned build process tree; preserve incomplete
+outputs and report recovery if cancellation is uncertain, never retry blindly.
+This directly advances30B/43's native executable precondition, not their admission.
+
 ## Fixed-worker correction02 offline verification admission
 
 Correction03 remains CHANGES_REQUESTED: strict12/compile12PASS, guarded288PASS/
