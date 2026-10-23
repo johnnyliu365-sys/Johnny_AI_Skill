@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Approved interactive identity window launched — result still pending
+
+2026-10-24: exact approved2570-byte blockSHA
+2bd3603e3fdc2676a8d0969c6e56d6d16fbafd5673bd95cb4fd80654de5f1d13
+read back again from reviewed0178bf63 before effect. One Start-Process of fixed
+System32 Windows PowerShell5.1, -NoLogo/-NoProfile/-EncodedCommand, VerbRunAs,
+visible interactive window, PID4912. Outer call returned0 and process identity;
+this is WINDOW_STARTED only, not account creation or qualification. No
+ExecutionPolicy bypass, password value, transcript, output file or credential
+copy. Console-local SecureString prompt is solely Owner input; wrapper displays
+terminal result/error and waits for Owner to close. No automatic retry/rollback.
+Preserve partial state if stopped. Root then performs one bounded secret-free
+account/SID/group/expiry readback; no service/ACL/Registry/Host effect follows
+without separate precise authority. Other historical rejected cleanups unchanged.
+
 ## Owner approval and fresh identity-only admission — 2026-10-24
 
 APPROVAL_GRANTED: Owner's direct reply "核准" to the preceding exact identity-only
