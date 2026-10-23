@@ -1,5 +1,17 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Fixed-worker source phase — bounded execution checkpoint, 2026-10-23
+
+The retained source-only owner had not returned SOURCE_READY during repeated finite
+completion waits. Root did not read its changing source or infer test success. A
+single lifecycle interruption returned previous_status=running; the SAME owner was
+resumed with the SAME twelve-path allocation to preserve its own source and return
+an exact recoverable checkpoint before continuing. Cause remains UNKNOWN pending
+the owner's concrete evidence; this is not proof of a zombie or tool failure.
+No allowance, history, budget, requirement or qualification was reset. Imports,
+tests, native/Host effects and commit still require their existing admission.
+30B/43 remain REVIEW_BLOCKED; no checklist item is upgraded by this checkpoint.
+
 ## Fixed-worker session/driver — local source admission
 
 Different-seat native_service_impl DOC_PASS_NOT_ACTIVATION at control
