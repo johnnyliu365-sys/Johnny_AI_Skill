@@ -1,5 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Owner approval and fresh identity-only admission — 2026-10-24
+
+APPROVAL_GRANTED: Owner's direct reply "核准" to the preceding exact identity-only
+decision activates ONLY creation of standard JohnnyReadonlyReview on
+DESKTOP-28ERPQ1, Users-only membership/24h expiry, Owner-local SecureString entry,
+real SID readback and Owner profile creation; rollback only disabling that exact
+new SID. The signed-out profile is NOT a reusable active session/token/LUID.
+Source is the independently reviewed runbook10 at0178bf63c3dca434fd04bf0ced0241dd365f71e2,
+blob0e5c99d0ae7d88c0fc5d6574b027c657876d4375, exact LF command block SHA256
+2bd3603e3fdc2676a8d0969c6e56d6d16fbafd5673bd95cb4fd80654de5f1d13 (2570 bytes).
+
+Fresh readonly admission: actual machine DESKTOP-28ERPQ1, controller
+S-1-5-21-3542654388-73774624-397494543-1001, effectiveAdminFalse/64bit,
+exact subject name absent. Root may open ONE visible elevated Windows
+PowerShell5.1 to execute this exact block with Owner entering password only in
+that local console. UAC is Owner-controlled; no policy bypass, hidden credentials,
+new source script/service/task/ACL/Registry or Host/model call. Interactive console
+is owned Root/Ticket30, lifetime until Owner completes/cancels and closes it; no
+automatic account/profile deletion. No rerun/adoption after failure or partial state.
+After terminal completion read back exact SID/local groups/expiry without secrets.
+No account creation, effective elevation or CVQ PASS is claimed by this admission.
+AUTO_CONTINUE -> one approved interactive identity operation then result readback.
+
 ## Identity-only operation proposal — corrected independent documentation review
 
 Different-seat /root/authority_install_inventory reviewed f50c477a then the
