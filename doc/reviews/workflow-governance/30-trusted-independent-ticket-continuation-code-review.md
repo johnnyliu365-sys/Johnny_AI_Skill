@@ -2,6 +2,27 @@
 
 ## Fixed-worker correction02 offline verification admission
 
+Verification outcome: CHANGES_REQUESTED. Root strict12/compile12 PASS; six
+guarded suites285PASS/5FAIL, SDK_ATTEMPTS[], frozen source unchanged. Full
+host26-strict03-original.json and host26-behavior03-original.json remain in the
+same evidence hold. Failures include two positive Host fixtures rejected by
+launch-plan/session-bound consistency, a changed approval without its plan
+digest, a legacy worker read-order assertion, and a negative member test that
+fails record decoding before reaching its intended approval-link predicate.
+Preserve production checks and independently specified Expected; repair the
+actual fixture/setup or regression cause, not blanket-relax assertions.
+
+Different-seat source audit additionally reproduces a W2 protocol gap: approved
+read_snapshot_blob dynamicToolCall lifecycle/terminal items are rejected by the
+three-item type set. Correlate only the observed approved call/thread/turn/item
+identity, keep unknown/effectful items refused, and exercise the actual full
+worker/codec/reply path with the documented item notifications. Driver size was
+reviewed: one cohesive protocol state machine, existing channel/codec/reply
+responsibilities reused; no line-count-driven new abstraction is required.
+Same author/same twelve paths may correct these findings with the already
+admitted static feedback checks. Root behavior/mutation/commit remains gated on
+the next frozen readback. No Host qualification or30B/43 clearance is implied.
+
 Root read back the frozen correction02 above7be216e0: exactly the same four
 CREATE/eight MODIFY paths, no DELETE, diff-check clean. The twelve SHA256 pins
 are captured with each new original under the existing host25-dev01 evidence
