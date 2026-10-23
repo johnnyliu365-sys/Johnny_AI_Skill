@@ -1,5 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## External operation preparation — source-matched, still NOT_AUTHORIZED
+
+Runbook revision04 bc4a0901 corrects the historical service path/argv/virtual-
+account templates against stable engineering hold fb814279; they are explicitly
+NON_EXECUTABLE. Different-seat authority_install_inventory found only an
+overstatement that original30's SDK summary contained individual SHA512 values.
+Root narrowed that seven-line paragraph in14cf3d5e5017eb8ede94172ed8cdab180e6301fa,
+leafblob1f5cca9c7f8bbd75b6c176e0f2a2ea64af30a998; same-seat targeted recheck returned
+DOC_PASS_NOT_EFFECT_AUTHORITY. Existing successful portions were not re-audited.
+No account, service, security policy, SDK or Host operation was executed.
+
+Root separately read ONLY the two official NuGet catalog JSON metadata resources
+with Invoke-RestMethod -TimeoutSec15 on2026-10-23 after the web-reader reported
+those URLs inaccessible. No package bytes/license installation were requested.
+Catalog resources are api.nuget.org/v3/catalog0/data/2026.05.26.20.03.22/
+microsoft.windows.sdk.cpp.x64.10.0.26100.8249.json and2026.05.26.19.56.28/
+microsoft.windows.sdk.cpp.10.0.26100.8249.json. Both report SHA512 and
+requireLicenseAcceptance=true, licenseUrl=https://aka.ms/WinSDKLicenseURL.
+CPP.x64:52951912bytes, base64SHA512
+UOPLPnlH/Q+FX8l26uR87+wWPSoCQU9SwmoJe80FiAcZLp27kGl9H2D6gv2C7B3R1Wmos06MAzgqRKl134/NJg==.
+CPP:160432822bytes, base64SHA512
+wVnN5KBDtxrTC38ZcpDMUsGeIbkUBjhJ+2BB1AX0E6YwUludqOQUhv9OxiZElyBbLI/EcyRt20ZPj32DLcThrA==.
+These exact metadata values support preparation of the pending consent package,
+not package-byte verification, SDK acceptance/download/use or native binary proof.
+
 ## Protected reply initial verification — CHANGES_REQUESTED, not qualification
 
 2026-10-23 continuation retains original30/Host25 revision02, engineering
