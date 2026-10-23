@@ -1,5 +1,32 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Router import/request-count engineering review and own-hold integration admission
+
+APPROVED_SOURCE_ENGINEERING_ONLY by Root, not CVQ. Immutable605a6fa40c2b83bf6dbcb54143fe7735113a53b7
+parent17f1ca69/tree617c552f, exact four blobs match COMMIT_ONLY pins. Independent
+SOURCE_AUDIT_PASS_NOT_CVQ and26/26 original-byte/stream-reference QA PASS at9a6fed4c;
+Root strict4/compile4, committed241-name Expected, real positives and three distinct
+compiled product RED→original restored GREEN support R1–R5. The mixed-run failure
+and its isolated SDK PASS remain separately reported, not a falsely all-green run.
+Additional guarded cold actual worker at the clean immutable605 branch loads63
+application files/SDK[], down from87, giving115 total inputs with the fixed50
+runtime plus image/config2. Record router28-cold12-original.json; preceding11
+failed before child on Root's wrong cross-worktree raw EOL pins, not product RED.
+
+Router AUTO_CONTINUE admits ONLY Root's own clean engineering hold17f1ca69 to
+fast-forward to exact605a6fa4; verify four changed Git blobs and all unchanged
+native/Host blobs, then actual-hold pure replay and cold source closure readback.
+No merge into main or30B/43. After those readbacks, Root may mechanically stage
+the same reviewed source bytes into the registered private runtime27 artifact,
+not invent another packager or use uncommitted/old source. Verify every copied
+file/origin/hash and complete physical/ZIP closure, original bounds unchanged;
+credential-free guarded import ONLY, never worker main/Host/native execution.
+Any needed lazy pywin32 shell/WTS libraries must remain explicitly declared;
+guarded import-path fallback is not evidence of unmodified real Host isolation.
+Service/Registry/SYSTEM task/account/ACL/Host/model/qualification/push remain
+unauthorized; only04 stays checked and30B/43 stay REVIEW_BLOCKED.
+
+
 ## Router import/request-count source original seal — not CVQ
 
 Candidate605a6fa40c2b83bf6dbcb54143fe7735113a53b7, parent17f1ca69,
