@@ -15,6 +15,74 @@
 
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
+#### One-shot protected setup command artifact — conditional allocation01
+
+Direct prerequisite of BOTH30B/43: the reviewed native provision-enrollment verb
+creates protected files but does not create its SCM service or write the protected
+Registry enrollment. Read-only native inventory confirms built-in SCM/Registry64
+and an Owner-created triggerless SYSTEM task can supply those operations. Do not
+build another installer, broker, privilege service, policy engine or C# executable.
+The narrow missing source is ONE reusable operational script plus its focused
+offline validation test, not an additional product requirement or Ticket.
+
+Conditional grant-ticket30-provision-command-artifact-20261023 revision01 derives
+batch-checklist-local-20261019-uncapped / original Ticket30. Author
+/root/native_service_impl, ONLY own existing native-service worktree and
+codex/skill-improvement-30-native-aot-compat branch. Clean1b7a93c9 must be freshly
+verified ancestor of exact reviewed17f1ca69c89d3e40897a94e6fcac3967c7c05133;
+author may fast-forward its OWN branch to17f1ca69. No new branch/reset/force.
+Root sole final reviewer, /root/authority_install_inventory ordinary independent
+source helper. Activate only after exact docs/scope audit and Root readback.
+
+CREATE ONLY library/local_orchestration/native_windows/Invoke-AuthorityProvisioning.ps1
+and tests/test_grant_authority_windows_provisioning_script.py. MODIFY0/DELETE0.
+Reuse the existing native plan/provision-enrollment, exact payload/input manifests,
+PowerShell parser and pytest/tmp_path/subprocess fixtures. No new generic ports,
+test framework, installer package, schema authority, dependency or native rebuild.
+The native binary remains reusable if all40 source/project pins are unchanged.
+
+P1: default validation-only mode parses a closed bounded operation-input manifest,
+exact pinned native image/setup manifest/protection-plan/enrollment/payload bytes
+and precisely registered staging roots. Dynamic external JSON is rejected or
+converted into named typed internal values before use. Unknown fields, malformed
+or mismatched digests, duplicate/case-colliding/reparse/escape paths, missing or
+excess assets, existing destinations and oversized input fail closed. Pure input
+validation is NOT actual OS preflight or authority, and cannot claim SYSTEM/SCM/
+Registry/Host protection. No hardcoded project SHA, fixture product path or prompt.
+
+P2: effect branch is present but NOT authorized to execute this allocation. It
+requires an effective SYSTEM identity and separately Owner-pinned script/input
+action. Restrict to JohnnyGrantAuthority, LocalSystem/own-process/start disabled,
+quoted exact executable plus service, service SID unrestricted and exact existing
+native ProtectionPlan SDDL. Do not infer an Admin token can assign SYSTEM owner.
+Use Registry64, selected current ControlSet readback, only the exact new Parameters
+key and preapproved REG_BINARY NativeEnrollmentV1; ApprovalV1/SubjectEnrollmentV1
+are separately optional exact preapproved bytes, never fabricated from intent.
+No overwrite/adoption, service start, account creation/password, task registration,
+global settings, network, recursive ACL/file changes, removal or automatic retry.
+Call existing plan to compare the canonical protected plan at execution, then
+existing provision-enrollment with raw ordered payload bytes/EOF, NOT text pipe.
+Use finite process/output/resource limits, protected immutable staged inputs and
+fresh pre-effect checks. Partial/uncertain effect retains evidence and returns
+RECOVERY_REQUIRED; no destructive undo or clearing existing Recovery state.
+
+P3: offline tests run ONLY validation mode on registered fictional tmp fixtures,
+with positive canonical construction and malformed/mismatched/duplicate/escape/
+size negatives before effect. Parse the real script AST for fixed executable/argv,
+effective-SYSTEM gate, no service-start/delete/retry, and byte-preserving stdin.
+Guard test subprocesses so no Registry/SCM/native image/Host/model/network effect
+occurs. AST/schema PASS is explicitly not OS behavior or CVQ proof. Root must
+mutate a real input guard and observe its named negative fail, then restore GREEN;
+different-seat source audit and immutable source readback before own-hold merge.
+PowerShell strict mode/explicit types, pytest strict mypy for Python test, both
+compile/parser checks, original commands/output/source pins retained. Child55s,
+outer60s, owned outputs/TTL24h plus evidence hold, no denied cleanup. One operational
+responsibility; >500 effective lines triggers responsibility/reuse review, not
+minification. No separate document/framework/test helper. This does not permit
+running the effect branch, installing, changing privileges, starting tasks/services,
+executing built native artifact or Host, qualification, push/release/deployment.
+
+
 #### Required payload cap fix — conditional exact router import allocation01
 
 Host twelve-path source68d0c9ed is independently reviewed/sealed and merged ONLY
