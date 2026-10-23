@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision07
+# Core capability implementation decision — revision08
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
@@ -29,20 +29,32 @@ Final operational Grant must freshly pin the chosen available binary/config.
 --listen is a transport URL; bind unix://PATH to the SAME native AF_UNIX endpoint,
 not --listen=<raw-Windows-path>, another transport or a different path.
 
-SDK consent remains PENDING; no package download/use/license acceptance occurred.
-For a future exact portable operation, the proposed single task-owned destination
+Owner explicitly accepted the SDK terms and exact limited download/use/offline
+build on2026-10-23; control66d18b4d records that decision. This does not authorize
+execution of the built artifact or any Host/setup effect. The single task-owned destination
 is `C:\Users\GameBoy\AppData\Local\Temp\johnny30-protected-launch-review-20261021\sdk-portable-10.0.26100.8249`;
 archives only under downloads/, extracted required x64 import libraries/licenses
-under cpp/ and cpp-x64/. The existing exact two package versions/official digests
-below still apply. Assert root absence/containment and archive hashes before any
-extraction; reject paths outside those roots. Do not presume a system Windows Kits
-or global NuGet Lib target. Use only process-local LIB/PATH for offline AOT build;
+under cpp/ and cpp-x64/. Both exact packages below were downloaded once and independently
+hash/readback checked. Final18 selected members are16 UM x64 libraries (including
+the proven transitive Uuid.Lib), one normal UCRT library and cppwinrt third-party
+license; do not confuse that text with the SDK terms Owner accepted by URL.
+Root absence/containment and ZIP safety checks preceded extraction; all inputs
+are retained. No system Windows Kits or global NuGet Lib target was installed.
+Use only process-local LIB/PATH for offline AOT build;
 no global SDK install/environment/Registry/account/ACL change. Exact selected
 library members are read back from verified archives after explicit consent,
 before build; unexpected layout stops, never broadens extraction silently.
 Owner=root/Ticket30, TTL24h with active evidence/recovery hold; no automatic deletion
-of evidence or policy-denied cleanup. The actual AOT executable remains NOT_BUILT.
-Local source/tests continue independently; actual setup/Host/CVQ remain unauthorized.
+of evidence or policy-denied cleanup. Source-compatible candidate1b7a93c9 passed
+independent source review/mutations and own-hold replay; actual Release LinkNative
+then PASS22.766s after the retained missing-uuid failure. Exact linked /OUT:
+`C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\nativeLink-root10\bin\Release\net10.0-windows\win-x64\native\JohnnyAuthority.Tools.exe`,
+3958272bytes, SHA2568235b567d48ed7f27da791c20f2a1faf3ee81e876942f6e3a4c914dd625ba7db.
+Passive PE AMD64/PE32+/CLR-directory0; NOT the separate obj/apphost.exe. Independent
+byte QA confirms40 source/project,17 SDK/49 MSVC inputs and10 outputs. Evidence
+seal03884950 contains28 exact original records; full ZIP inspection separately held.
+The linked artifact has NOT been executed or installed; source/build PASS is not
+Host qualification. Local source/tests continue; actual setup/Host/CVQ unauthorized.
 
 Portable SDK exact input manifest, re-read from NuGet catalog metadata on2026-10-23
 (metadata only, NOT archive download or license acceptance):
@@ -56,13 +68,13 @@ Official catalog records: `https://api.nuget.org/v3/catalog0/data/2026.05.26.19.
 and `https://api.nuget.org/v3/catalog0/data/2026.05.26.20.03.22/microsoft.windows.sdk.cpp.x64.10.0.26100.8249.json`.
 Both declare requireLicenseAcceptance=true and `https://aka.ms/WinSDKLicenseURL`;
 the x64 package requires the exact same-version CPP package. Total213384734bytes.
-Future archives come only from NuGet flatcontainer exact lowercase package/version
-URLs, into the already named downloads directory; verify both lengths/SHA512
-before bounded extraction. The proposal is task-local library inputs/offline AOT
-only, no global installation, service, Registry/ACL, Host/model session or fee.
-Pending Owner consent is not inferred from batch source authority. This manifest
-directly removes the missing input identities for the30B/43 native build decision;
-actual native build, independent review and later exact OS setup remain separate.
+Archives came only from NuGet flatcontainer exact lowercase package/version URLs,
+into the named downloads directory; both lengths/SHA512 were checked before
+bounded extraction. This approved operation is task-local library inputs/offline
+AOT only, no global installation, service, Registry/ACL, Host/model session or fee.
+Do not infer any later OS permission from SDK consent or the local batch. The
+build prerequisite is now satisfied; actual installation/configuration, independent
+protected observation and real Host/Grant qualifications remain separate.
 
 ## Effective Owner amendment — batch-checklist-local-20261019-uncapped
 

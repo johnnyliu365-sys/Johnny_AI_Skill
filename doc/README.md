@@ -6,4 +6,4 @@
 
 | Artifact ID | Revision / status | Technical decision leaf |
 | --- | --- | --- |
-| CORE-CAPABILITY-IMPLEMENTATION | 07 / EXACT_PORTABLE_SDK_INPUT_MANIFEST / AUDIT_AND_SETUP_NOT_AUTHORIZED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
+| CORE-CAPABILITY-IMPLEMENTATION | 08 / EXACT_NATIVE_EXECUTABLE_BUILT_NOT_EXECUTED / HOST_AND_SETUP_NOT_AUTHORIZED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
