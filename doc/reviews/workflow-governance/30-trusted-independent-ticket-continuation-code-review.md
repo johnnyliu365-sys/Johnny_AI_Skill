@@ -1,5 +1,38 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Pure native validation half — COMMIT_ONLY, wrapper still rejected
+
+Root readback of grant-ticket30-provision-command-artifact-20261023 revision02
+permits author /root/native_service_impl to commit ONLY its three frozen MODIFY
+paths in its OWN native-service worktree/branch at baseline605a6fa4; preserve both
+owned untracked PS/test files without staging them. This splits native pure seam
+from OS wrapper implementation within the SAME original Ticket30/Grant, not a new
+ticket/framework/authority or final review. No amend/reset/new branch/push.
+
+Program.cs blob92a73542a6e9d55fb7995c085fa88e6ddb930f2c rawSHA256
+3a785f611d5198a3ce14d9776e6507ab1f12b576b3526bfc598b01a89b552336;
+EnrollmentCommand.cs blob78d779a2a3401d79f70ee93eb3d337b52fcbb8d9 rawSHA256
+9ad794f098f7ad448c4cee560c3deb8981cbd083aa459a379f4e28c9dcc92000;
+NativeEnrollmentCommandSelfTests.cs blobd1077881df7193ea6cbf953d6951242f596d05c7
+rawSHA25601e482d7f63f7cd5fd28e7406eeae22dd0af49d30aeb73d3d816736cc893f25f.
+
+Root managed01 compiler CS8604 is preserved; same-file typed correction compiled
+managed02 PASS8.516s, all40 inputs unchanged. Actual managed enrollment/job pure
+contract modes PASS, no OS observer/service/provision callbacks. Reviewer compiled
+actual report-writer mutation VALIDATED->INVALID gives named
+C9_VALID_ENROLLMENT_RETURNS_BOUNDED_CANONICAL_PLAN_WITHOUT_EFFECT_FACTORIES RED;
+original candidate pure mode remains GREEN.40 finite compiler inputs are copied
+only into registered owned mutation fixture, never a Git/authority repository.
+These engineering observations cannot become final review evidence until exact
+committed source readback by a different seat. NativeAOT remains unexecuted.
+
+Wrapper is NOT accepted: helper and Root identify repeated Native semantics,
+missing AST call-order coverage, post-hoc expandable output limits and flattened
+SC argv. Author fixes ONLY existing two CREATE paths; native three remain frozen.
+Root's AST mutation was accepted by old test (coverage gap, not effect exploit);
+System32 argument parsing confirms binPath would split, without executing sc.exe.
+No Apply/Host/model/setup effect, formal gate or30B/43 integration is admitted.
+
 ## Setup identity readback and documentation QA — no effect authority
 
 Different-seat /root/authority_install_inventory performed bounded readonly
