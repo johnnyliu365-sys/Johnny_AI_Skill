@@ -121,7 +121,10 @@ verify exclusion from built-in Administrators S-1-5-32-544 and return actual SID
 expiry and machine identity. Password is entered locally by Owner as SecureString;
 never sent to Agent, logged, supplied on argv or copied from another account.
 Owner performs a local interactive sign-in/sign-out only to establish the dedicated
-profile/session; do not open Codex/Claude, add credentials or run the native tool.
+profile; do not open Codex/Claude, add credentials or run the native tool.
+Sign-out ENDS that WTS session: it is not reusable token/session/LUID evidence.
+Any later launch must acquire and independently validate a fresh authorized active
+session/token/LUID at its own effect boundary. Profile creation is not that proof.
 No service/task, application file/ACL, Registry, firewall, socket, network rule,
 Host/model call, provider credential, formal Grant or paid expansion is included.
 Normal OS account/profile creation is the sole approved-if-confirmed persistent
@@ -146,7 +149,8 @@ if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administra
 $machine = (Get-CimInstance Win32_ComputerSystem -ErrorAction Stop).Name
 if ($machine -cne 'DESKTOP-28ERPQ1') { throw 'Wrong target computer' }
 Import-Module "$env:SystemRoot\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.LocalAccounts\1.0.0.0\Microsoft.PowerShell.LocalAccounts.psd1" -ErrorAction Stop
-if (Get-LocalUser -Name 'JohnnyReadonlyReview' -ErrorAction SilentlyContinue) {
+$existingSubjects = @(Get-LocalUser -ErrorAction Stop)
+if (@($existingSubjects | Where-Object { $_.Name -ieq 'JohnnyReadonlyReview' }).Count) {
     throw 'Account already exists; do not adopt or overwrite'
 }
 $subjectPassword = Read-Host 'Owner-only password for JohnnyReadonlyReview' -AsSecureString
@@ -161,11 +165,19 @@ $adminsSid = [Security.Principal.SecurityIdentifier]::new('S-1-5-32-544')
 if (-not @(Get-LocalGroupMember -SID $usersSid -ErrorAction Stop | Where-Object { $_.SID -eq $subjectSid }).Count) {
     Add-LocalGroupMember -SID $usersSid -Member $subjectReadback -ErrorAction Stop
 }
-if (@(Get-LocalGroupMember -SID $adminsSid -ErrorAction Stop | Where-Object { $_.SID -eq $subjectSid }).Count) {
-    throw 'RECOVERY_REQUIRED: unexpected administrator membership; stop'
+$actualSubjectGroups = @(
+    foreach ($localGroup in @(Get-LocalGroup -ErrorAction Stop)) {
+        $members = @(Get-LocalGroupMember -SID $localGroup.SID -ErrorAction Stop)
+        if (@($members | Where-Object { $_.SID -eq $subjectSid }).Count) {
+            $localGroup.SID.Value
+        }
+    }
+)
+if ($actualSubjectGroups.Count -ne 1 -or $actualSubjectGroups[0] -cne $usersSid.Value) {
+    throw 'RECOVERY_REQUIRED: membership is not exactly local Users; stop'
 }
 Get-LocalUser -SID $subjectSid | Select-Object Name,SID,Enabled,AccountExpires
-[pscustomobject]@{ Computer = $machine; StandardUsersGroup = 'S-1-5-32-545'; AdministratorMember = $false }
+[pscustomobject]@{ Computer = $machine; LocalGroupSids = $actualSubjectGroups; AdministratorMember = ($actualSubjectGroups -contains $adminsSid.Value) }
 ```
 
 If a command fails, stop with its original error; do not rerun account creation,
@@ -178,15 +190,16 @@ not deletion. Account owner Root/Ticket30, TTL24h and evidence/recovery hold.
 
 Proposed exact Owner reply: "Authorize identity-only operation on DESKTOP-28ERPQ1:
 create JohnnyReadonlyReview as a standard Users-only local account expiring24h,
-with password entered only by me; read back its real SID and establish a local
-interactive profile/session. No service/task/ACL/Registry/Host/model effects.
+with password entered only by me; read back its real SID and establish only a local
+profile. Any later active session/token/LUID requires fresh authorized readback.
+No service/task/ACL/Registry/Host/model effects.
 Allow disabling only this exact newly created SID as rollback; preserve evidence."
 
 After identity readback, the existing minimum path is:
 
 | Step | Existing blocker removed | Required actual result / authority |
 | --- | --- | --- |
-| Dedicated SID/session | BOTH30B/43 lack independent OS subject | exact actual SID, token/session, group exclusion; identity-only confirmation above |
+| Dedicated SID/profile | BOTH30B/43 lack independent OS subject | exact actual SID and full local group readback/profile only; identity-only confirmation above; later active token/session/LUID separately fresh |
 | Existing protected setup | BOTH lack protected issuer/observer/runtime | exact pinned SYSTEM task/input, SCM disabled, files/DACL and enrollment readback; separate final operation confirmation, NOT source PASS |
 | Existing first-entry CVQ | BOTH lack qualified independent review entry | five readonly prohibitions + unknown bypass reject, trusted observer and finite verified model/account cost; exact Host-test authorization still required |
 | Existing Grant source positive + candidate reviews |30B R1 and30B/43 qualified audit | real issuer readback/atomic single consume/legal success plus forged/replay rejection; qualified review separately pins each candidate |
