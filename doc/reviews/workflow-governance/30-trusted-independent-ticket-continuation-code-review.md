@@ -1,5 +1,18 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Fixed-worker correction02 offline verification admission
+
+Root read back the frozen correction02 above7be216e0: exactly the same four
+CREATE/eight MODIFY paths, no DELETE, diff-check clean. The twelve SHA256 pins
+are captured with each new original under the existing host25-dev01 evidence
+hold. Root admits only the already-authorized isolated static/constructor and
+guarded offline behavior verification, then actual reverse mutations if green.
+Use a fresh pycache prefix, minimal credential-free environment, bounded child
+timeout and full before/after pins/output. The author remains paused; the
+different-seat helper performs a read-only source/responsibility audit.
+This is not Host execution, OS isolation qualification, CVQ admission, final
+review, commit permission or clearance of30B/43. Initial failures remain evidence.
+
 ## Current-input documentation consistency — closed, not qualification
 
 Different-seat native helper DOC_PASS_NOT_EFFECT_AUTHORITY for runbook06/
