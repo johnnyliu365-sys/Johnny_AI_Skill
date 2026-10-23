@@ -15,6 +15,62 @@
 
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
+#### NativeAOT compatibility repair — conditional exact local allocation01
+
+Actual offline nativeOBJ02 reaches codegen but rejects Assembly.Location and
+seven reflection-based string serialization calls (IL3000/IL2026/IL3050). This
+is a real30B/43 native-executable prerequisite, not a new product requirement.
+Root AO selects closed ManagedAppHostAndAssembly/NativeAotExecutable identities:
+preserve the existing managed apphost AND loaded assembly path/digest checks;
+native AOT uses the actual exact executable path/hash, explicit compile-time
+variant and precreation re-read. Missing assembly must NOT infer native mode.
+No dummy assembly/hash, unknown variant, generic executable or warning suppression.
+Existing managed output stays compatible; native output explicitly identifies
+its mode and cannot fabricate assembly evidence. Inventory actual consumers.
+
+Conditional grant-ticket30-native-aot-compatibility-20261023 revision01 derives
+ONLY batch-checklist-local-20261019-uncapped / original Ticket30 lineage.
+Baseline7be216e0f91209a340ece745055ab34b272488ce; author/root/native_service_impl
+uses ONLY own .worktrees/skill-improvement-30-native-service on
+codex/skill-improvement-30-native-service, clean500e10f1 fast-forwarded to baseline
+after admission. Root is sole final reviewer; different-seat
+/root/authority_install_inventory provides ordinary source/byte QA, NOT CVQ.
+Effective only after exact docs/scope independent review and Root readback.
+
+CREATE0 / DELETE0. MODIFY ONLY these NINE existing paths under
+library/local_orchestration/native_windows/:
+- JohnnyAuthority.Tools.csproj
+- NativeJobContracts.cs
+- WindowsJobPort.cs
+- NativeJobSelfTests.cs
+- Program.cs
+- NativeEnrollmentSelfTests.cs
+- NativeProvisioningCommandSelfTests.cs
+- NativeEnrollmentCommandSelfTests.cs
+- SelfTests.cs
+
+Reuse existing job-port/guard/model/report and common self-test harness. One
+small Utf8JsonWriter.WriteStringValue literal helper in SelfTests replaces all
+seven reflection calls; no hand-written encoder, source generator, domain-test
+coupling, new file/framework or test deletion. Preserve exact malformed-input,
+Unicode/escaping, managed identity and quota/recovery predicates. New finite
+identity variant must reject invalid/mixed/missing members and mismatched image
+kind/path/hash before process creation; legitimate managed and native constructors
+must pass pure tests. Line counts trigger responsibility review, not minification.
+
+Admit own-tree source edits plus bounded diagnostic managed build/pure self-test
+feedback, and cached10.0.7 offline IlcCompile as already inspected by Root/native
+helper. Empty NuGet sources, explicit reviewed cached ILCompiler/ILLink targets,
+process-local output/profile/cache, child55s, CPU/memory limits and owned-tree
+cancellation; retain source pins/full output/history and no blind identical retry.
+Root repeats fixed-source build/pure tests/codegen, meaningful reverse mutation,
+independent source review and controlled own-hold integration before closure.
+No LinkNative/Windows SDK download or use, native job/Host test, protected setup,
+account/ACL/Registry/service/qualification/installation/push/release authority.
+Output assets owner Root/Ticket30 or named author's original owned temp root,
+TTL24h plus active evidence/recovery hold; no denied cleanup or destructive undo.
+This allocation does not change the current twelve-path Host author Grant.
+
 #### Current acceptance-linked checkpoint — no new requirement or framework
 
 Current engineering baseline7be216e0f91209a340ece745055ab34b272488ce completes
