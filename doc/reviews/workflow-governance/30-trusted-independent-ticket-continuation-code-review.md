@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## NativeAOT compatibility allocation01 — local activation only
+
+Different-seat authority_install_inventory DOC_PASS_NOT_EFFECT_AUTHORITY for
+46917862 confirms exact leaf blobdc61da262efb5aaa7a818bafe928c59d2756ba43,
+two registry digest edges, all nine existing consumers/paths and preserved
+managed/native identity boundaries. Root independently re-read the full leaf
+LF009f8754eb9e3821763fa3b09310076bc22d79e0e9d907f8ed4509b573621852 and both
+edges, clean author's native worktree/branch and baseline ancestry.
+Activate ONLY grant-ticket30-native-aot-compatibility-20261023 revision01 under
+the existing uncapped local batch: same original native author/own worktree,
+fast-forward clean500e10f1 to7be216e0 then exact NINE MODIFY paths. Source edits
+and the allocation's bounded offline feedback are now admitted, not commit or
+self-approval. Root final review/pins/mutations/independent source readback remain
+necessary. No SDK/link/setup/Host/effect/30B/43 admission changes.
+
 ## Native executable preparation — offline codegen-only admission
 
 nativeOBJ02 reaches actual native code generation and stops on real source
