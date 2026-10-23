@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `117`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `118`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,26 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision117）
+## 當前工程接續與精確證據（revision118）
+
+惰性公開匯出及one-turn配置零請求缺陷已在原票修正、不同席source audit與Root
+實際產品突變通過；四檔候選605a6fa4精確FF到既有工程hold，26原件封存9a6fed4c。
+公開241項名稱／順序／defining來源沿用已提交舊Expected。混合測試375PASS但一個
+SDK fixture衝突失敗，該格獨立新child重跑PASS；不能把混合執行說成全部綠。
+私有runtime114實體檔／63app候選已實際import-only PASS，六條sys.path均指向
+私有來源、SDK[]、前後所有hash不變；3原件及不同席byte QA封存eb8b2806。
+初次guard誤載無關win32process失敗保留，不算產品RED；COM registryredirect採
+官方fallback限制仍在，不是未打補丁Host資格。預留config後115項，未放寬128上限。
+
+目前唯一正在修復的setup源碼缺口是PowerShell重複Native enrollment驗證，Unicode
+canonical-size可能在SCM／Registry效果之後才拒絕。原票correction02已獨審並於
+3bc4a784准入原作者：重用既有C# pure validation/plan，在效果前拒絕、移除第二套
+語意／canonical parser。未通過source review前不接受、不執行；舊AOT／payload
+保持原樣，修正後須重新釘新binary。這直接解除30B／43的安全setup前提，非新框架。
+實際帳戶／SYSTEM task／service／ACL／Registry、Host及模型呼叫仍未授權；token/
+cost metadata不代表真實provider費用上限。30B／43仍blocked；只有04[x]。
+
+### revision117 原始狀態（歷史，後續依上述來源）
 
 SDK條款及限縮下載／使用已由Owner明確核准，66d18b4d記錄；兩包大小／SHA512
 精確核對。NativeAOT實際LinkNative通過，3958272-byte exe SHA256

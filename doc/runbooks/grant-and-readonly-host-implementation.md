@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision08
+# Core capability implementation decision — revision09
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
@@ -6,6 +6,22 @@ SPEC lineages. This plan selects implementation responsibilities, not a new PRD,
 Router, policy engine, qualification verdict or production activation.
 
 ## Current operation-input readback — 2026-10-23, NOT effect authority
+
+Current local construction:605a6fa4 engineering hold removes unrelated eager
+workflow_router imports and rejects zero-request one-turn configuration. Private
+114-file runtime actually imports63 committed application modules via six private
+paths, unchanged hashes/SDK[]; original sealeb8b2806 and independent byte QA.
+This guarded import explicitly disables COM registry extension redirection and is
+NOT unpatched Host/OS qualification. No configuration/installation/model call.
+
+The unaccepted operational script duplicates Native enrollment validation and can
+reject canonical-size overflow only after SCM/Registry effects. Original Ticket30
+correction02 (8a432a32 / activation3bc4a784) reuses the existing C# pure validator
+BEFORE any setup mutation; source/tests/review are ongoing. Do not execute its
+Apply branch or treat old linked image8235b567 as the corrected operation binary.
+Native rebuilt identity, input pins and protected setup readback must be frozen
+before the separate Owner effect decision. Only this current paragraph/top section
+and current Ticket30 define present readiness; obsolete proposals below are history.
 
 Target remains DESKTOP-28ERPQ1 / Windows10.0.19045; controller SID
 S-1-5-21-3542654388-73774624-397494543-1001, token not elevated. Exact
@@ -595,14 +611,12 @@ The controller's historical filtered token and account Administrators membership
 are compatible UAC observations, not an identity conflict. Fresh effective-token,
 new standard subject SID/session and actual service SID readback are required at
 the effect boundary; no SID/session is fabricated from a name or candidate SID.
-The previously proposed VS SDK install is not the current toolchain proposal:
-original30 records portable Microsoft.Windows.SDK.CPP/CPP.x64
-10.0.26100.8249 inputs and213384734 aggregate bytes, pending explicit SDK
-license/download consent. The final download manifest must additionally bind the
-individual package sizes, official hash-bearing artifacts and verified SHA512;
-the original30 summary alone is not that complete hash manifest.
-No SDK download/install, global PATH change or new fee has been authorized.
-Final native binary/payload/config hashes are NOT_BUILT/UNFROZEN. Source and
+The VS SDK global install proposal is retired. Owner explicitly accepted the
+portable SDK exact limited download/use/offline build; verified package/input
+hashes and actual linked image are recorded in this file's current top section.
+That consent does not permit global PATH changes or new fees. The linked image
+exists but is not the pending corrected setup image; final operation config and
+corrected binary remain UNFROZEN. Source and
 offline tests alone cannot fill those fields or qualify 30B/43. Safe suspension
 after separately approved setup is stop/disable only the verified new service
 and disable only the verified new user; preserve data/ACLs for recovery rather
@@ -686,7 +700,7 @@ claim it works. Freeze actual allowed endpoint/process tree and OS/network obser
 in the later finite operational Manifest; if enforceable limits are unavailable,
 launch zero requests / UNAVAILABLE. No native probe is authorized in this packet.
 
-### Operation sequence and concrete command templates (PROPOSAL ONLY)
+### Historical operation sequence (NOT_EXECUTABLE; use current source-matched plan)
 
 1. Pin full reviewed native source commit, service executable/complete payload hashes,
    config digest/schema, exact subject SID acquisition recipe, all descriptors,
@@ -703,30 +717,16 @@ launch zero requests / UNAVAILABLE. No native probe is authorized in this packet
 4. Only after setup readback and its separate authority may a demand-start be requested.
    Starting a service is not Host qualification. Qualification is another exact grant.
 
-Representative exact targets/argv, NOT commands executed this round; `<pinned...>`
-below MUST resolve to reviewed manifest artifacts, not Agent-filled approval markers:
-```powershell
-# PROPOSAL ONLY. NOT a runnable installer or an approval/effect gate.
-# Pre-state: all three target identities absent; payload/settings fully pinned.
-$reviewCredential = Read-Host 'Owner supplies new review-user password securely' -AsSecureString
-$newReviewUser = New-LocalUser -Name 'JohnnyReadonlyReview' -Password $reviewCredential
-# Join $newReviewUser.SID with direct Get-LocalUser before using it for any ACE.
-sc.exe create JohnnyGrantAuthority type= own start= demand obj= 'NT SERVICE\JohnnyGrantAuthority' binPath= '"C:\Program Files\Johnny\GrantAuthority\bin\JohnnyGrantAuthority.exe" --config "C:\ProgramData\Johnny\GrantAuthority\policy.json"'
-# These directories must contain only the NEW manifest-owned payload, no reparse entries.
-icacls.exe 'C:\Program Files\Johnny\GrantAuthority' /inheritance:r
-icacls.exe 'C:\Program Files\Johnny\GrantAuthority' /grant:r '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-544:(OI)(CI)F' '*S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551:(OI)(CI)RX'
-icacls.exe 'C:\Program Files\Johnny\GrantAuthority' /setowner '*S-1-5-18' /T
-icacls.exe 'C:\ProgramData\Johnny\GrantAuthority' /inheritance:r
-icacls.exe 'C:\ProgramData\Johnny\GrantAuthority' /grant:r '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-544:(OI)(CI)F' '*S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551:(OI)(CI)M'
-icacls.exe 'C:\ProgramData\Johnny\GrantAuthority' /setowner '*S-1-5-18' /T
-sc.exe sdset JohnnyGrantAuthority 'D:P(A;;GA;;;SY)(A;;GA;;;BA)(A;;CCLCRC;;;S-1-5-21-3542654388-73774624-397494543-1001)'
-```
-These examples do NOT yet remove unexpected explicit ACEs or authenticate protected
-loaded code/pipe policy. Final setup must construct the exact whole DACL, protect
-every listed child/ancestor and verify no extra grants; `/grant:r` is not an ACL
-allowlist. File creation/copy order, service argv and all verification/rollback
-operations must be reviewed with the actual native payload before approval. No
-command above is an exception to policy-denied cleanup or a guarantee of isolation.
+The former virtual-account/--config/demand-start and recursive icacls examples are
+RETIRED_INCOMPATIBLE_WITH_CURRENT_NATIVE_SOURCE, not executable setup instructions.
+Their exact history remains in bf057b0e6e4c9db8505cbe267e89de7cd5327e82 at this
+same path; do not reproduce or execute them. The current native source requires
+LocalSystem, exact quoted executable + service, disabled initial start, exact
+ProtectionPlan whole descriptors and protected Registry enrollment. No recursive
+grant/reset or preexisting target adoption is permitted. The pending corrected
+wrapper/manifest must be independently reviewed/pinned and separately authorized
+before any setup effect. This retirement does not erase prior failure evidence or
+relax the original qualification/Recovery/Owner decision requirements.
 
 ### Verification and rollback to include in the final approval
 
