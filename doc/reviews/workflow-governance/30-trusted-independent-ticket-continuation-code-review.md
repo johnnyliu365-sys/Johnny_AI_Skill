@@ -1,5 +1,68 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Fixed-worker initial engineering review — CHANGES_REQUESTED
+
+Frozen12-path checkpoint above baseline7be216e0, source pins in the three complete
+Root host26 originals under the existing ticket-owned temp evidence hold. Initial
+strict12:33 errors/10files, compile12PASS; guarded six-suite286 cases:70FAIL/216PASS,
+SDK_ATTEMPTS[]. These are failures, not qualification. Different-seat native helper
+SOURCE_AUDIT_FINDINGS independently confirms the four blocking source families.
+Root alone owns this conclusion. No candidate commit/integration is admitted yet.
+
+- W1/W2/W4, type/fixture repair: missing imports/names, split fixture helper with
+  no return, unset image_binding, invalid plan digest and wrong typed expectations
+  prevent legitimate legacy and Host paths. Resolve all33 checker errors without
+  casts/Any/bypass constructors or changing Expected to Actual. Preserve failing
+  cells and restore ordinary constructor and existing regression positives.
+- W2, launch/teardown: protected Host wrapper marks launch_attempted before the
+  shared launcher which requires false; let the original launcher own this single
+  transition. Worker checks nonexistent CreationState.CLOSED; check the actual
+  confirmed owner-closure contract, not a new invented enum or weakened teardown.
+- W3, protocol admission: Root executed actual static driver parsers under the
+  offline guard. Unknown commandExecution item, terminal fileChange item and
+  contradictory turn/started identity were ALL accepted=true. Reject unknown/
+  forbidden item tags, contradictory identities and malformed terminal payloads;
+  terminal items must not bypass the same finite item policy. Preserve legitimate
+  turn/item traffic and paired same-consume replies.
+- W3, request chronology: helper independently finds _await_response caches future
+  response IDs. A response before its request cannot later authorize success;
+  reject mismatched responses before the next send, queue only explicitly allowed
+  phase-bound notifications, and test no-later-effect plus legal notifications.
+- W2, listen encoding: the current setting binds a raw Windows path as --listen.
+  Official app-server/CLI docs define a transport URL (unix://PATH for this owned
+  AF_UNIX path), not a raw path. Keep one canonical native endpoint and exact URL
+  binding; reject another transport/path without adding a Host abstraction. This
+  is source engineering; actual pinned-binary behavior remains UNVERIFIED.
+
+Helper's proposed missing-networkAccess finding is NOT a new blocker: the exact
+cached ThreadStartResponse schema107fe36c declares readOnly.networkAccess default
+false, required only type. Preserve that legitimate shape; test omitted=false and
+explicit true/malformed rejected. Neither this schema nor an API assertion proves
+actual network isolation. >500-line session/driver need cohesion/reuse review, not
+arbitrary splitting; helper finds those responsibilities cohesive. Remove actual
+duplication where found without expanding paths, minifying or making new modules.
+
+Same author/WT/12-path Grant may now make source-only additive corrections from
+this review after its commit is bound; no source changes by Root/helper. Continue
+with new SOURCE_READY pins before Root verification. No new PRD/Owner question,
+no real Host/model/OS/SDK effect, no commit or formal approval yet. Historical
+33 errors/70 failures and all original outputs remain retained, not overwritten.
+
+Direct passive metadata preparation also discovered a real external version gap:
+the previously pinned0.163.0-alpha.10.2 executable path is absent (FileNotFoundError
+at read/hash, BEFORE CreateProcess or metadata-file write). One read-only inventory
+finds current bin/codex.exe0.130.0-alpha.5,245812016bytes,
+SHA256dd4adf302b112fdc30fce509a5e261a0a6f1118dc58ac2da636eb84e0a6b3e3e.
+No replacement binary was run/installed; old metadata/qualification cannot be
+transferred. Account tool reports ordinaryUsageAllowed=true/usedPercent3, not a
+platform-quota diagnosis. These do not block the admitted offline source repair.
+Actual target-binary/config/qualification remains a separate precise operation.
+
+Expected interface references read (not qualification):
+[official app-server](https://learn.chatgpt.com/docs/app-server) and
+[CLI reference](https://learn.chatgpt.com/docs/cli/reference), 2026-10-23;
+cached pinned schema still identifies its original binary, not the current one.
+
 ## Fixed-worker source phase — bounded execution checkpoint, 2026-10-23
 
 Checkpoint received: author baseline7be216e0, exact twelve authorized paths only,
