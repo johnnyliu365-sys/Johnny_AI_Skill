@@ -1,5 +1,53 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Protected reply — engineering approval for own hold, not CVQ admission
+
+Root reviewed immutable7be216e0f91209a340ece745055ab34b272488ce,
+parentfb8142793eb98bbd54f90154ac1e63c7fd5741d3,
+treec4f9389782b1dd6c9510bca36834c1e164aabe6e. Exact ten-path scope remains
+3CREATE/6MODIFY/1DELETE (Git presents the codec move as98% rename). Committed
+reply39712483/codec8bd810f4/bootstrap065b655d/typed-lockdbe410c6/lockf80fa763,
+tests892be9c3/ebf3aae3/8201990b/30db193a match independently read source pins.
+Staged preflight caught an extra EOF blank line in new test; author removed ONLY
+that line, then committed. Root compared oldf7714bf2/current892be9c3 Git bytes:
+exact terminal-newline change and identical AST. No behavior reapproval invented.
+Two raw-SHA typos in SOURCE_READY02 were caught before child execution; matching
+Git blobs and independent raw readback resolved them, not silent source substitution.
+
+S1/S2/S3 source findings closed by the SAME author/WT; Root strict8/compile8 PASS.
+Actual final seven-suite checkout261PASS/4subtests/SDK[]; before test-generator
+dedup262PASS/8subtests is historical, not a larger acceptance claim. Removal of
+duplicate clone/hash/negative variants retains the existing four-shape typed+
+bootstrap-before-subprocess matrix. Both legitimate WebSocket replies now assert
+the actual bound method returns None and exact server-decoded bytes; one real
+protected-store algorithm consume uses fake native/Registry/socket interfaces.
+No actual protected issuer or Host success is claimed.
+
+Root independently changed actual source in memory: initial enrollment_ref match,
+member admission, cached expiry each produce a named1RED; unchanged product bytes
+restore262PASS. Member tracing additionally proves removing membership invokes
+consume once BEFORE later result encoding refuses (no payload sent); this pins
+early admission, not the claim that membership is the only defence. New actual
+reply-frame bytes-return mutation yields1RED at the None assertion, restored
+final-test positive1PASS. First mutation wrapper SyntaxError is NOT a valid RED.
+All outputs, failing probes and exact child programs remain held in host25-dev01.
+Native/network/process guards stayed untriggered in Root final runs, and ambient
+credentials were excluded. Seven fixture pre-import warnings are recorded, not
+misrepresented as cold-import or Host proof.
+
+Different-seat native_service_impl SOURCE_AUDIT_PASS_NOT_QUALIFICATION plus
+targeted three-test followup PASS; Root alone owns this engineering conclusion.
+The >500-line reply/test files were examined for responsibility/reuse: one private
+same-store reply lifetime, existing parser/encoder/ledger/native/socket/codec,
+parameterized failures and shared below-ABI fixtures, no second transport/authority
+framework. Duplicate dependency generator was removed, not split into more files.
+Root permits FF ONLY into its existing protected-source engineering hold, followed
+by exact checkout replay and byte evidence QA. Not main, not formal activation or
+qualification;30B/43 remain REVIEW_BLOCKED and only checklist04 remains checked.
+Owned process/socket producer, finite Host driver, protected setup/independent OS
+observation, final CVQ, remote-main source and effect interceptors remain OPEN.
+No SDK/package download, OS/security/service/Host/model effect, push or release.
+
 ## External operation preparation — source-matched, still NOT_AUTHORIZED
 
 Runbook revision04 bc4a0901 corrects the historical service path/argv/virtual-
