@@ -2,6 +2,28 @@
 
 ## Fixed-worker correction02 offline verification admission
 
+Correction03 remains CHANGES_REQUESTED: strict12/compile12PASS, guarded288PASS/
+5FAIL/SDK[], source unchanged (strict04/behavior04 originals). Three new negative
+tests stop at an uninitialized driver enrollment, not their target predicate;
+session positive uses a job fixture thread identity inconsistent with the actual
+launcher; full-worker diagnostic05 stops in the snapshot native fake loader before
+the Host turn. These are bounded root-cause findings, not a retry of unchanged
+tests or permission to weaken production checks. Full originals retain failures.
+
+Within the SAME Grant/scope Root now admits author diagnostic behavior feedback
+only using the existing captured Root guarded child/minimal environment and own
+evidence directory, fresh pycache, source pins and full output, child55/outer60.
+Only the six authorized suites/targeted cells; no unguarded production/native/Host
+operation, new helper/framework or commit. Author feedback cannot approve itself
+or replace Root's subsequent fixed-source independent tests/mutation/review.
+This removes the static-only feedback loop without changing final independence.
+
+Correction03 Root readback matches the author's twelve abbreviated pins, exact
+four CREATE/eight MODIFY scope and clean diff-check above7be216e0. Same bounded
+offline strict/compile/guarded behavior admission applies to this frozen source;
+new captures bind all twelve full SHA256 values. No author behavior/commit or real
+Host effect is admitted. The following correction02 failures remain historical.
+
 Verification outcome: CHANGES_REQUESTED. Root strict12/compile12 PASS; six
 guarded suites285PASS/5FAIL, SDK_ATTEMPTS[], frozen source unchanged. Full
 host26-strict03-original.json and host26-behavior03-original.json remain in the
