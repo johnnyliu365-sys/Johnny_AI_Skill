@@ -1,5 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Same import lane revision02 — request-count defect activation
+
+Independent DOC_PASS_NOT_EFFECT_AUTHORITY confirms904ec2d92677ccbdc6cbb10dff622cfae70f524e,
+leafe682e8a1dfb1c0e10ef1fcea3dacd2be32fc12b3,
+LFf0bd2f2b8dc50719f77211f311ef78d159281ebdbc54e41cd467a7e6b0aff025.
+Root freshly verified leaf and both registry edges. Same original import author,
+own protected-launch branch/baseline17f, CREATE0/DELETE0. Revision02 is ACTIVE:
+the two existing enrollment paths join the original two MODIFY paths, solely
+for R5 exact-one-request validation/regression. No native/Host driver rewrite.
+Actual fixed-source Root count0 and count1 both accepted, source unchanged/SDK[],
+named baseline RED in host28-request-bound17-original.json; failed diagnostic16
+and before-tool missing-base64-helper error retained, not counted as product RED.
+This source repair does not enforce token/provider spending and does not grant
+Host/model/OS effects. Ordinary source audit is never a qualification verdict.
+
+
 ## One-shot provisioning command construction allocation01 — activation, not setup
 
 Different-seat authority_install_inventory DOC_PASS_NOT_EFFECT_AUTHORITY confirms
