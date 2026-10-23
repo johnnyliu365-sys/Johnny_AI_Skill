@@ -1,9 +1,48 @@
-# Core capability implementation decision — revision04
+# Core capability implementation decision — revision05
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
 SPEC lineages. This plan selects implementation responsibilities, not a new PRD,
 Router, policy engine, qualification verdict or production activation.
+
+## Current operation-input readback — 2026-10-23, NOT effect authority
+
+Target remains DESKTOP-28ERPQ1 / Windows10.0.19045; controller SID
+S-1-5-21-3542654388-73774624-397494543-1001, token not elevated. Exact
+JohnnyReadonlyReview account/SID, JohnnyGrantAuthority service, ProgramFiles and
+ProgramData JohnnyGrantAuthority roots remain NOT_CREATED. Do not substitute an
+orphan SID, virtual service account or another machine's Windows11 session.
+
+The old0.163.0-alpha.10.2 path/bin hash is no longer available in the bounded
+metadata-directed lookup. The top-level bin/codex.exe0.130.0-alpha.5 is a different
+fallback, NOT the process/command-resolved Host candidate. Current Get-Command and
+Codex process metadata instead resolve:
+`C:\Users\GameBoy\AppData\Local\OpenAI\Codex\bin\37f54d68e5533a51\codex.exe`.
+Passive --version returns0.163.0-alpha.11.2;336134960bytes,
+SHA256c81ed464e5e7cafd09a5fa26af390c480bed8e9fab2a87a54b285fbd56e7122a.
+Passive --help and offline schema generation were bounded to an isolated,
+credential-free temp environment; no app-server/daemon/model session was started.
+Eight relevant initialize/thread/turn/dynamic-tool schema files match old pinned
+bytes exactly. This removes the need to reinstall solely to recover those Expected
+shapes; it does NOT transfer binary identity, settings, isolation or qualification.
+Final operational Grant must freshly pin the chosen available binary/config.
+--listen is a transport URL; bind unix://PATH to the SAME native AF_UNIX endpoint,
+not --listen=<raw-Windows-path>, another transport or a different path.
+
+SDK consent remains PENDING; no package download/use/license acceptance occurred.
+For a future exact portable operation, the proposed single task-owned destination
+is `C:\Users\GameBoy\AppData\Local\Temp\johnny30-protected-launch-review-20261021\sdk-portable-10.0.26100.8249`;
+archives only under downloads/, extracted required x64 import libraries/licenses
+under cpp/ and cpp-x64/. The existing exact two package versions/official digests
+below still apply. Assert root absence/containment and archive hashes before any
+extraction; reject paths outside those roots. Do not presume a system Windows Kits
+or global NuGet Lib target. Use only process-local LIB/PATH for offline AOT build;
+no global SDK install/environment/Registry/account/ACL change. Exact selected
+library members are read back from verified archives after explicit consent,
+before build; unexpected layout stops, never broadens extraction silently.
+Owner=root/Ticket30, TTL24h with active evidence/recovery hold; no automatic deletion
+of evidence or policy-denied cleanup. The actual AOT executable remains NOT_BUILT.
+Local source/tests continue independently; actual setup/Host/CVQ remain unauthorized.
 
 ## Effective Owner amendment — batch-checklist-local-20261019-uncapped
 
