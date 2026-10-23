@@ -1,5 +1,29 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Fixed Host worker SOURCE_ENGINEERING_PASS — commit only
+
+Different-seat final SOURCE_AUDIT_PASS_NOT_CVQ withdraws the two prior concerns:
+socket refusal after launch does not prove process exit, so existing post-effect
+Recovery policy supports retained ownership/immediate worker exit3. No normal
+cleanup promise or safety counterexample was established. Protocol file >500
+underwent the required responsibility/reuse review: ONE bounded wire grammar and
+initialize/thread/turn sequencer; generic JSON/client/codec, owned I/O/session,
+identity, Grant and reply remain delegated, not duplicated. No line-count-only
+split, new framework, API or safety weakening. Test-only tracing was removed.
+
+Root final293PASS/SDK[]9.5s; changed test strict1PASS with prior unchanged11 strict
+evidence and compile12PASS. Actual five product predicates/wiring (approved member,
+real turn, root owner, forbidden effect item, shared Recovery hold) each compiled
+then failed named existing assertions, never native calls; final changed-test
+real-turn mutation repeated and restored legal/Recovery cells GREEN. Recovery
+mutation proves the shared retained-owner boundary, not real Host isolation.
+Final test raw0780ab5c6b3ea1d886e6e21ac7c8d84f8e7e1f093879977ce43513e0e8ca9982;
+other11 pins unchanged from SOURCE_READY. Root permits ONLY original author commit
+of the exact12 CREATE/MODIFY paths in own original branch/worktree at7be216e0,
+no new tests/build/extra files/merge/push/amend. Immutable readback, original seal
+byte QA and actual own-hold replay remain required before engineering integration.
+This does not integrate30B/43, qualify Host or enable any formal gate.
+
 ## Existing private runtime closure preparation — offline assets only
 
 Native link10 artifact/input independent BYTE_QA_PASS:40 source/project,17 SDK,
