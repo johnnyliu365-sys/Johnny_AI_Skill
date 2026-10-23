@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Fixed-worker session/driver — local source admission
+
+Different-seat native_service_impl DOC_PASS_NOT_ACTIVATION at control
+3fa7054b251618539d3ef26e65fe165e4cc5104e, leafblob2575cd2c52b4b7fabdddc95e5a2124022b076472,
+LFad9b3c6b65c8b3c8e468d5947fe8dd2c9764a637abe1df7ffcee81dace7352b0;
+both registry edges match. Root activates the original30 conditional
+grant-ticket30-retained-host-session-wiring-20261023 revision01 under the existing
+uncapped local batch, baseline7be216e0. Exact12 paths4CREATE/8MODIFY/DELETE0,
+same retained author/own WT/branch after releasing the completed reply allocation.
+Root remains sole reviewer; same different-seat helper only returns evidence.
+SOURCE_EDIT_ONLY permits the new ordinary typed-constructor preflight before
+behavior, not a qualified Host before it can be built. Verification of these new
+bytes requires separate Root admission and guarded offline runs; commit still
+requires final Root source/test review. No native/SDK/model/OS/Host test or formal
+qualification/activation authority is created. Any true omitted consumer or contract
+conflict returns CHANGE_DETECTED with exact source evidence, not silent scope growth.
+
 ## Host reply engineering checkpoint — exact final readback
 
 Different-seat native_service_impl verified carrier3bede947: BYTE_QA_PASS35,
