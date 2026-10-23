@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## One-shot provisioning command construction allocation01 — activation, not setup
+
+Different-seat authority_install_inventory DOC_PASS_NOT_EFFECT_AUTHORITY confirms
+790020fc1d207158bac6867a8b974b6c703b783e, leaf8b587de0c2dc82bb6ace3a974d756968473f56b5,
+LF2fde2aade8a9b89899626283cec7a945a5caf29eafaa92c4dd2724b547dd9385;
+Root freshly verified both index edges and clean own native author1b7a93c9, exact
+branch/worktree and ancestry to17f1ca69. The two-CREATE allocation is ACTIVE for
+the named native author only, own fast-forward and offline P1–P3 feedback. The
+already-active router two-MODIFY allocation remains unchanged at its pinned source;
+the separate command construction does not widen it or invalidate its baseline.
+No SYSTEM task, SCM/Registry/ACL/account operation, native executable invocation,
+Host/model test or qualification is authorized. Existing native40 source/project
+pins are unchanged by the Python-only import allocation; reuse the actual linked
+artifact after hash readback, not another native rebuild. Both sources address
+the concrete protected worker prerequisites of30B/43, not checklist completion.
+
+Independent byte QA also confirms all five originals in8edde695 byte-for-byte.
+Root separately decompressed/hash-checked all674 runtime ZIP members and all50
+physical files, no extras or application staging; capture package27-runtime01-
+byteqa02-original.json SHA256283d2cdcb0e33f459341407e21158cf6ec0b25ba6de1013a1223934c279bc380.
+
+
 ## Actual hold and private runtime-base original evidence — not qualification
 
 Exact engineering hold17f1ca69 replays: six Host suites293PASS/SDK[], strict12/
