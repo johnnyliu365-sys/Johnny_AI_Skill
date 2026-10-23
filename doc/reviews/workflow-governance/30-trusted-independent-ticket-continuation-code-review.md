@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Identity-only operation proposal — corrected independent documentation review
+
+Different-seat /root/authority_install_inventory reviewed f50c477a then the
+single-runbook correction0178bf63c3dca434fd04bf0ced0241dd365f71e2.
+Initial three findings were retained and fixed, not waived: sign-out establishes
+profile only, not a reusable WTS session; account lookup errors must stop before
+password entry; literal Users-only membership requires exact new-SID membership
+readback across local groups, not only absence from Administrators.
+Focused recheck DOC_PASS_NOT_EFFECT_AUTHORITY; Root accepts only that proposal.
+Actual local cmdlet metadata supports SecureString, DateTime and SID parameter
+types; proposed block AST parses. The block was NEVER executed.
+
+The same review independently verifies hold09 raw/gzip hashes and actual source
+bindings, checklist119 with only04[x], Ticket LF
+dac55ab4a8fdbf267c89f050eb70b2f1239205abea587ab3469b544b772a194c
+and both registry edges. Main remains a1cb6c13; own engineering hold37807df0.
+No actual new SID, active session, account/service/task/ACL/Registry effect or
+qualification is claimed. Identity creation is the next explicit Owner decision;
+later protected setup, model-cost limits and real Host tests remain separate
+exact authorities.30B/43 are still REVIEW_BLOCKED; all original Recovery holds
+and denied cleanup remain unchanged. No new source branch/framework/PRD.
+
 ## Own-hold actual candidate verification and capsule QA
 
 Independent /root/authority_install_inventory DOC_PASS_NOT_CVQ for4d1930c7:
