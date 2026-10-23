@@ -6,4 +6,4 @@
 
 | Artifact ID | Revision / status | Technical decision leaf |
 | --- | --- | --- |
-| CORE-CAPABILITY-IMPLEMENTATION | 03 / LOCAL_BATCH_RESOURCE_AMENDED / AUDIT_AND_SETUP_NOT_AUTHORIZED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
+| CORE-CAPABILITY-IMPLEMENTATION | 04 / SOURCE_MATCHED_OPERATION_ERRATA / AUDIT_AND_SETUP_NOT_AUTHORIZED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |

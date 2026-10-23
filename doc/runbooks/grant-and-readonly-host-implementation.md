@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision03
+# Core capability implementation decision — revision04
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
@@ -486,6 +486,50 @@ local work continues; the exact external effects wait. R0/DAP/TAL/Recovery and
 30B/43 holds remain. Existing CVQ approval is not asked again.
 
 ## 6. Precise installation/settings preparation — NOT_AUTHORIZED / NOT_READY_TO_EXECUTE
+
+### Source-matched operation errata — 2026-10-23, not permission to execute
+
+The older templates below are HISTORICAL_NON_EXECUTABLE where they conflict with
+this paragraph. Root and a different-seat readonly inventory checked engineering
+hold fb8142793eb98bbd54f90154ac1e63c7fd5741d3, not an installed binary.
+native_windows/Program.cs:32–42 accepts exactly one verb; service argv is
+`JohnnyAuthority.Tools.exe service`, never `--config`. Bootstrap's fixed manifest
+requires `%ProgramFiles%\JohnnyGrantAuthority\JohnnyAuthority.Tools.exe`,
+`%ProgramData%\JohnnyGrantAuthority`, version1.0.0.0. Its service identity check
+requires a LocalSystem primary token with the enabled expected service SID;
+the historical virtual-account proposal is NOT compatible with that source.
+
+The future SCM preparation therefore uses the exact quoted EXE plus `service`,
+`obj= LocalSystem`, `type= own`, initially `start= disabled`, followed by explicit
+service-SID configuration/readback. Exact SCM SDDL must come from the reviewed
+ProtectionPlan, not the old shorthand ACE example or recursive icacls commands.
+These are manifest requirements, NOT an instruction to run sc.exe now. Service
+creation, SYSTEM enrollment, ACL/Registry writes, user/session creation, later
+start and Host qualification all remain separately NOT_AUTHORIZED.
+
+Provision-enrollment reads pre-existing protected NativeEnrollmentV1 and raw
+stdin payload bytes in exact manifest order; it does NOT register the service,
+write that Registry enrollment, accept prefixed JSON or provide automatic undo.
+REFUSED must not overwrite an existing object. PARTIAL/RECOVERY_REQUIRED preserves
+exact objects and evidence; do not delete, retry refused cleanup or change policy.
+CodeRoot permits service RX and DataRoot service Modify; neither proves the
+future Host subject may create its AF_UNIX endpoint there. A separately bounded
+socket run-root identity/ACL and independent OS observation remain necessary.
+
+The controller's historical filtered token and account Administrators membership
+are compatible UAC observations, not an identity conflict. Fresh effective-token,
+new standard subject SID/session and actual service SID readback are required at
+the effect boundary; no SID/session is fabricated from a name or candidate SID.
+The previously proposed VS SDK install is not the current toolchain proposal:
+original30 records the exact portable Microsoft.Windows.SDK.CPP/CPP.x64
+10.0.26100.8249 inputs and SHA512, pending explicit SDK license/download consent.
+No SDK download/install, global PATH change or new fee has been authorized.
+Final native binary/payload/config hashes are NOT_BUILT/UNFROZEN. Source and
+offline tests alone cannot fill those fields or qualify 30B/43. Safe suspension
+after separately approved setup is stop/disable only the verified new service
+and disable only the verified new user; preserve data/ACLs for recovery rather
+than claiming a destructive rollback. Freeze and independently review the final
+operation manifest before presenting one executable Owner decision package.
 
 This is the requested concrete preparation, not an installer, native qualification,
 or instruction to run elevated commands. Root owns this packet under the same batch.
