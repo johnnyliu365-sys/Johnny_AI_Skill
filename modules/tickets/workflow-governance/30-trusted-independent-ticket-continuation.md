@@ -17,6 +17,18 @@
 
 #### NativeAOT compatibility repair — conditional exact local allocation02
 
+Engineering result: exact reviewed nine-path candidate1b7a93c936d2d725ce93fdfdbddfa74f7ef98409
+is now in Root's own engineering hold, not main. Immutable source readback,
+different-seat audit and22-original byte QA PASS; source seal5e0b9380. Actual hold
+managed build6.766s, three existing pure modes and offline IlcCompile13.219s PASS,
+all40 source pins unchanged; five original replay records sealed5417c88d.
+Root's two compiled product mutants were named RED, restored modes GREEN.
+This closes source AOT compatibility only. Native link still awaits exact SDK
+consent; Host/setup/qualification, trusted Grant positive and30B/43 remain blocked.
+The separate active Host twelve-path author remains on its granted7be216e0 baseline;
+no silent scope/baseline promotion. Earlier conditional allocation below is history
+of the same exact execution, not a new Grant or permission to rerun work.
+
 Actual offline nativeOBJ02 reaches codegen but rejects Assembly.Location and
 seven reflection-based string serialization calls (IL3000/IL2026/IL3050). This
 is a real30B/43 native-executable prerequisite, not a new product requirement.
