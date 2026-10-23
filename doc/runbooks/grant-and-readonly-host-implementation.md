@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision06
+# Core capability implementation decision — revision07
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
@@ -43,6 +43,26 @@ before build; unexpected layout stops, never broadens extraction silently.
 Owner=root/Ticket30, TTL24h with active evidence/recovery hold; no automatic deletion
 of evidence or policy-denied cleanup. The actual AOT executable remains NOT_BUILT.
 Local source/tests continue independently; actual setup/Host/CVQ remain unauthorized.
+
+Portable SDK exact input manifest, re-read from NuGet catalog metadata on2026-10-23
+(metadata only, NOT archive download or license acceptance):
+
+| Package/version | Bytes | SHA512 (base64) |
+| --- | --- | --- |
+| Microsoft.Windows.SDK.CPP/10.0.26100.8249 |160432822|`wVnN5KBDtxrTC38ZcpDMUsGeIbkUBjhJ+2BB1AX0E6YwUludqOQUhv9OxiZElyBbLI/EcyRt20ZPj32DLcThrA==`|
+| Microsoft.Windows.SDK.CPP.x64/10.0.26100.8249 |52951912|`UOPLPnlH/Q+FX8l26uR87+wWPSoCQU9SwmoJe80FiAcZLp27kGl9H2D6gv2C7B3R1Wmos06MAzgqRKl134/NJg==`|
+
+Official catalog records: `https://api.nuget.org/v3/catalog0/data/2026.05.26.19.56.28/microsoft.windows.sdk.cpp.10.0.26100.8249.json`
+and `https://api.nuget.org/v3/catalog0/data/2026.05.26.20.03.22/microsoft.windows.sdk.cpp.x64.10.0.26100.8249.json`.
+Both declare requireLicenseAcceptance=true and `https://aka.ms/WinSDKLicenseURL`;
+the x64 package requires the exact same-version CPP package. Total213384734bytes.
+Future archives come only from NuGet flatcontainer exact lowercase package/version
+URLs, into the already named downloads directory; verify both lengths/SHA512
+before bounded extraction. The proposal is task-local library inputs/offline AOT
+only, no global installation, service, Registry/ACL, Host/model session or fee.
+Pending Owner consent is not inferred from batch source authority. This manifest
+directly removes the missing input identities for the30B/43 native build decision;
+actual native build, independent review and later exact OS setup remain separate.
 
 ## Effective Owner amendment — batch-checklist-local-20261019-uncapped
 
