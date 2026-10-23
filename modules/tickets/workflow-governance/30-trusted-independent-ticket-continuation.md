@@ -15,7 +15,68 @@
 
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
-#### One-shot protected setup command artifact — conditional allocation01
+#### One-shot protected setup command artifact — conditional correction02
+
+The allocation01 uncommitted script is NOT accepted: its NativeSetupValues /
+NativeEnrollmentValues / hand-written canonical serializer repeat the existing
+C# NativeSetupManifest / NativeEnrollment contract. Independent bounded source
+diagnosis identifies a real discrepancy: raw Unicode enrollment can fit128KiB
+while its C# canonical escaped form exceeds that limit. Rejection only inside
+provision-enrollment would occur AFTER SCM/Registry creation. Preserve the original
+source-ready capture908e6c7a and both uncommitted originals as failure evidence;
+do not treat script AST/fixture PASS as effect safety or delete the originals.
+
+Conditional grant-ticket30-provision-command-artifact-20261023 revision02 replaces
+ONLY the construction scope/ordering of revision01, under the same batch/original
+Ticket30 and roles. Author /root/native_service_impl remains sole implementation
+owner; Root final reviewer and /root/authority_install_inventory independent
+ordinary source helper. After exact docs review/readback, author may fast-forward
+its OWN17f1ca69 branch to reviewed605a6fa40c2b83bf6dbcb54143fe7735113a53b7,
+retaining its two owned untracked files unchanged across that fast-forward. Check
+HEAD/index/worktree and no path overlap before it; no reset/new branch/force.
+
+CREATE remains EXACTLY Invoke-AuthorityProvisioning.ps1 and
+tests/test_grant_authority_windows_provisioning_script.py at the paths below.
+MODIFY adds EXACTLY library/local_orchestration/native_windows/Program.cs,
+library/local_orchestration/native_windows/EnrollmentCommand.cs and
+library/local_orchestration/native_windows/NativeEnrollmentCommandSelfTests.cs.
+DELETE0; no new helper/parser/framework/schema authority or dependency. Baseline
+605a6fa4; existing native contracts/ports/observers/provisioner remain unchanged.
+
+P4 correction: add one finite PURE enrollment-plan/validation CLI verb through
+existing Program/EnrollmentCommand; reuse NativeEnrollment.ParseBounded,
+NativeSetupManifest and ProtectionPlan.Build, and their canonical serializers.
+Read bounded UTF8 and emit a bounded typed/canonical plan only after complete
+validation; no OS observer, SCM, Registry, filesystem mutation, provisioning,
+worker, Host or network action. Preserve SOURCE_ONLY_UNQUALIFIED and all old verbs.
+The wrapper consumes that exact canonical report BEFORE its first SCM/Registry
+mutation; remove its second enrollment semantic validator/canonical serializer.
+Wrapper input/asset pin and typed report-shape validation are still required;
+they must not claim native semantic/OS validation. Default ValidateOnly must stay
+effect-free, explicitly report the native validation step as unexecuted if it was
+not run. No all-deny substitute: valid canonical enrollment and wrapper envelope
+must still pass their own applicable stages.
+
+Use existing pure enrollment-command self-test entry for positive construction,
+malformed/duplicate/mismatched/oversized raw AND canonical Unicode cases, output
+failure/bounds and traps proving observer/provision/service factories are not
+called. Focused existing Python fixture/AST tests must reject a wrapper that can
+reach SCM/Registry before successful native validation. Retain other P1-P3 safety
+conditions below. Root independently reverses the actual guard and checks GREEN
+restoration; different-seat ordinary source audit precedes commit/own-hold merge.
+The old two-file source-ready check is not a pass for these new contracts.
+
+Existing cached managed build/pure tests and offline NativeAOT rebuilding with
+the already approved portable SDK are allowed after source pins/review; no new
+download/global PATH change. New executable digest must replace the operation
+candidate identity explicitly, never overwrite old evidence or run the artifact.
+Existing114-file staged payload remains an earlier immutable engineering proof,
+not the corrected native executable or a ready installation. This local correction
+directly supplies BOTH30B/43's safe setup prerequisite; it is not qualification.
+No Apply/native artifact execution, service/account/task/security installation,
+Host/model effect, push/release/deployment or formal gate activation authorized.
+
+#### One-shot protected setup command artifact — historical allocation01
 
 Direct prerequisite of BOTH30B/43: the reviewed native provision-enrollment verb
 creates protected files but does not create its SCM service or write the protected
