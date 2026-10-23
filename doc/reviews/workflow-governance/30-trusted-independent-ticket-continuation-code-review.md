@@ -1,5 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Protected reply initial verification — CHANGES_REQUESTED, not qualification
+
+2026-10-23 continuation retains original30/Host25 revision02, engineering
+baseline fb814279 and exact ten-path scope. N14B/N14C and checklist04 stay closed;
+30B/43 stay REVIEW_BLOCKED. SOURCE_READY01 is NOT an integrated candidate.
+Root strict01: compile8 passed; strict11 errors. Behavior01:21 failed/40 passed/
+8 subtests. No native SDK calls occurred; ambient credentials were excluded.
+Original outputs and exact child programs remain in Root-owned, evidence-held
+host25-dev01 under johnny30-protected-launch-review-20261021, including probes
+02–06. All runs checked unchanged source hashes; none is Host qualification.
+
+The legal reply failed BEFORE consume. Probe06 located the cause: the reused
+Registry fixture's _install_fake replaces socket.socket with a function after
+the retained-channel fixture has installed its fake class; _validate_socket's
+isinstance therefore raises TypeError. Repair fixture composition, not production
+identity checks or legal Expected. Root also identified erroneous sha256_ prefix
+against the existing raw64 result wire, missing initial enrollment_ref crosslink,
+an accidentally 65-character HTTP11 pin, strict type failures and a substring
+effect guard falsely matching the newly admitted websockets wheel name. The
+different-seat helper found cached second replies omit Grant time revalidation.
+All findings map to S1/S2/S3 and were returned together to the same author/WT,
+same ten paths, SOURCE_EDIT_ONLY. No new Grant source, framework or owner decision.
+Permanent originals retain every failure; restored positive and negative behavior,
+Root counter-mutations, independent audit and committed readback remain required.
+
 ## Same-scope closed-lock consumer correction — revision02 admission
 
 Author returned CHANGE_DETECTED before mutation; own worktree remained clean at
