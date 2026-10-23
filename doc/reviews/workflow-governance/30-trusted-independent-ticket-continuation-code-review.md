@@ -1,5 +1,21 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Fixed Host worker immutable own-hold integration admission
+
+Author candidate68d0c9ed780eeb26ac721ea185d7333a20a0f391 parent7be216e0,
+tree0b11d544559b205f5fb75d444e6bc0553e59ac52, clean own branch. Root fresh
+readback confirms exact4 CREATE/8 MODIFY, all12 approved raw pins and Git blobs,
+diff-check clean. Independent source audit PASS;74/74 original-byte QA PASS at
+01c56fa2,52 JSON/22 text originals and11 capture stream references verified.
+No source qualification or Host effect is inferred from this engineering review.
+Router AUTO_CONTINUE permits Root ONLY to merge this exact reviewed source into
+its own clean existing engineering hold at1b7a93c9. Use an ordinary no-ff merge:
+native nine-file and Host twelve-file deltas are disjoint from shared7be216e0,
+preserving both reviewed ancestries without force/reset/new branch. Any conflict,
+extra path or blob mismatch HALTs, no automatic correction. Verify all12 Host blobs
+against68d0c9ed and9 native blobs against1b7a93c9, then guarded actual-hold strict/
+compile and six suites. No main/30B/43 integration, push/release/qualification.
+
 ## Fixed Host worker original evidence seal — not CVQ
 
 Seventy-four exact original records preserve Root initial failures, later pinned
