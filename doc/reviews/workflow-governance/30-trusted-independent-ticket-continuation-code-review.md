@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Owner exact portable SDK input/build consent — 2026-10-23
+
+Owner explicitly accepts Windows SDK license and the previously proposed exact
+two-package10.0.26100.8249 download/hash verification/limited extraction/offline
+NativeAOT link. This supersedes SDK-consent PENDING only, not Host/setup authority.
+Exact package URLs/lengths/SHA512 and single registered sdk-portable root remain
+runbook07's manifest; no substitute version/source/global installation. Raw archives
+stay downloads/, only licenses/required x64 import libraries under cpp/ and cpp-x64/.
+Reject redirects off official origin, wrong bytes/digest, traversal/duplicate/case
+collision/symlink/unexpected layout or resource overflow before extraction.
+Native retained author may perform mechanical exact input preparation and produce
+unfiltered captures, no source changes/execution/own final approval. Root reads
+back actual member manifest before offline LinkNative on immutable own-hold1b7a93c9,
+with process-only LIB/PATH and existing bounded tool/resource/cancellation checks.
+No account/SID/service/ACL/Registry/network-policy/Host/model operation or execution
+of linked artifact. Cancellation/failure preserves originals, no automatic cleanup.
+
 ## Fixed Host worker final-source Root verification admission
 
 SOURCE_READY author at original7be216e0; Root independently read back all12 final
