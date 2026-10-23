@@ -1,5 +1,44 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## NativeAOT compatibility frozen-source verification
+
+Root conclusion: SOURCE_ENGINEERING_PASS_NOT_CVQ / COMMIT_ONLY. The different-seat
+source audit found no scoped defect; Root inspected the complete nine-file diff.
+Both actual product mutants compiled successfully, then existing named job-contract
+cells turned RED (digest drift; unsupported assembly evidence output). Original
+three pure modes reran GREEN with all40 source pins unchanged. No test source was
+changed for mutation, no new harness or production files were created.
+The exact nine frozen paths may now be committed by their author on its own new
+branch; no amend/force, extra files or author merge. Root still requires immutable
+blob/pin readback, complete-original byte QA/seal and actual own-hold replay before
+controlled engineering integration. This is not final native executable/link or
+Host/Grant qualification and does not lift30B/43 or checklist holds.
+
+Root fixed-source nativeAot-root03 codegenPASS13.329s and nativeManaged-root04
+buildPASS6.594s, then all three existing pure contract modesPASS. Full40 input
+raw pins are retained. The initial Root preflight correctly refused historical
+raw hashes from a different checkout; twelve unchanged files differ only by EOL
+filter and were re-read against exact baseline Git content before fresh tests,
+not silently treated as byte-identical. Current nine modified raw pins match.
+No LinkNative/SDK use, workload update, native job or Host campaign occurred.
+
+Root admits ONLY two existing-test reverse cases in absent nativeMut-root06:
+skip executable digest comparison in Matches; corrupt the native identity output
+tag. Use scoped temporary copies of the relevant product file/project with all
+other inputs still pinned to the frozen source, no new test/harness/framework.
+Run existing job-contract-self-test, require successful compile then the named
+assertion RED, restore/read back original three modesGREEN and unchanged source.
+Assets Root/Ticket30, TTL24h plus active evidence/recovery hold; no cleanup retry.
+
+Root read back nine full raw pins from the SOURCE_READY author at exact7be216e0,
+new native-aot-compat branch, nine MODIFY only and diff-check clean. Scope matches
+the activated revision02. Author's build/pure tests/codegen are feedback, not final
+review. Root now admits/repeats those fixed-source offline commands and independent
+reverse mutations in its own registered temp outputs, with full39-source/project
+pins before/after. No LinkNative/SDK/Host/native job or OS effect is admitted.
+Different-seat source/compatibility audit is underway; final commit remains blocked
+pending Root results. Current Host twelve-path source is separately being corrected.
+
 ## NativeAOT compatibility allocation01 — local activation only
 
 Revision02 narrow transition DOC_PASS from authority_install_inventory and Root
