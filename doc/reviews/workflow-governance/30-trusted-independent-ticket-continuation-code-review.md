@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Committed pure native validation — own engineering-hold admission
+
+ACTION_COMPLETED / SOURCE_AUDIT_PASS_NOT_CVQ: independent helper
+/root/authority_install_inventory reviewed committed
+d4d53a297b640501dd13d93a56ff45d2292b4f07, parent
+605a6fa40c2b83bf6dbcb54143fe7735113a53b7, tree
+17a6a9abca4e58aa88d696b66b7f409573d34e99. Exactly the three preceding frozen
+C# MODIFY blobs, no wrapper CREATE staged. Root final engineering review accepts
+those exact source bindings after managed compile/pure modes and writer RED->GREEN;
+the earlier CS8604 failure remains a failure, not an all-green run.
+No observer/readback/service/provision callback on the new bounded canonical path.
+
+AUTO_CONTINUE: Root may fast-forward ONLY its OWN clean existing protected-source
+engineering hold605a6fa4 to d4d53a29, verify all three blob identities and rerun the
+actual hold's necessary cached managed/pure and approved-SDK offline native build.
+No main/30B/43 candidate integration, new branch/reset/amend/push or effect authority.
+The author retains its untracked wrapper/test corrections; they are not accepted
+or copied. Old linked image/runtime evidence stays immutable and is not this new
+candidate. New native image remains unexecuted; Host/setup/CVQ still unauthorized.
+
 ## Pure native validation half — COMMIT_ONLY, wrapper still rejected
 
 Root readback of grant-ticket30-provision-command-artifact-20261023 revision02
