@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Router import boundary allocation01 — exact local activation
+
+Independent /root/authority_install_inventory DOC_PASS_NOT_EFFECT_AUTHORITY
+confirms original Ticket30 scope at0a8f6e25d0dadc3511a09fadd270e15f2d0902b8.
+Root fresh readback: leaf6987802373778ac16dae4cae691a4cb8fea779da,
+LF83acb105380feb687f013338bc71d05a7fe9e956e7c29e605a75ae5ed68b6776,
+both registry edges exact; control and author worktrees clean. Own author branch
+68d0c9ed780eeb26ac721ea185d7333a20a0f391 is ancestor of exact reviewed engineering
+hold17f1ca69c89d3e40897a94e6fcac3967c7c05133. Grant revision01 is active solely
+for its two MODIFY paths, original named owner, same-lifetime lane and R1–R4.
+Author may fast-forward its OWN branch to17f1ca69; no new branch or source effect
+outside that allocation. First capture the committed export Expected and source-
+backed cold-import RED; then bounded pure diagnostic feedback. Root alone reviews
+and integrates after independent source audit and different-door mutations.
+Existing 128-entry protection is not changed. This is local source construction,
+not CVQ, installation, protected OS setup, Host/model testing or 30B/43 completion.
+
+
 ## Fixed Host worker immutable own-hold integration admission
 
 Author candidate68d0c9ed780eeb26ac721ea185d7333a20a0f391 parent7be216e0,
