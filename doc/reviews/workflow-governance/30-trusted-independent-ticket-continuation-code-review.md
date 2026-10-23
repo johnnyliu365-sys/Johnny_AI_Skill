@@ -2,6 +2,23 @@
 
 ## Native executable preparation — offline codegen-only admission
 
+nativeOBJ02 reaches actual native code generation and stops on real source
+compatibility errors: IL3000/Assembly.Location in WindowsJobPort, IL2026/IL3050
+reflection-based string serialization in three existing self-test files. Exit1,
+15.234s, reviewed source unchanged; original contains unfiltered errors. This is
+not merely SDK absence and not AOT PASS. Do not suppress warnings, drop self-tests
+or invent an assembly identity. Same Ticket30 native author is preparing the
+minimal exact existing-file repair under the local batch, with managed identity
+and native image guarantees preserved and independent review before activation.
+
+nativeOBJ01 restored offline but stopped MSB4057/PrepareForILLink absent (11.109s,
+unchanged source); no LinkNative or SDK use. Different-seat diagnosis traced the
+empty NuGet targets and absent ILLink import; cached10.0.7 ILLink target/task exist.
+Root admits the same bounded codegen-only command with those TWO explicit cached
+ILLinkTargetsPath/ILLinkTasksAssembly properties, isolated nativeOBJ02 outputs.
+Keep empty sources/download-disabled/version10.0.7/no-LinkNative unchanged;
+preserve01 failure, do not run workload update or fetch the SDK default10.0.10.
+
 Root and native helper inspected the cached10.0.7 NativeAOT targets: IlcCompile
 and LinkNative are distinct; SetupOSSpecificProps skips vcvars/SDK discovery with
 IlcUseEnvironmentalTools=true. The existing batch permits one bounded offline
