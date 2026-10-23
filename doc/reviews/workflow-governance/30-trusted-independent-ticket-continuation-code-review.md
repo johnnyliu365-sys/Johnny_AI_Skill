@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Corrected wrapper frozen source — COMMIT_ONLY, not installation
+
+Root readback under SAME original Ticket30 Grantrevision02 permits author
+/root/native_service_impl to commit ONLY its two admitted CREATE paths in its
+OWN native-service worktree/branch, parentd4d53a297b640501dd13d93a56ff45d2292b4f07.
+Invoke-AuthorityProvisioning.ps1 blob639c0f02b4611da0574e33cb68edd6ec8ccb6d50,
+rawSHA25637b8c5e059acaba55212cc5631880133220342a6591000db94f7c39ee12c90aa;
+test_grant_authority_windows_provisioning_script.py blob
+11f61c3fb8645aa5efd114d5b7567d404bfdbf04, rawSHA256
+b99946496ef60173c6d474e347b906f4ecb4a88f9b9feb73af1b0897f639dfbe.
+No other stage/commit/amend/reset/new branch. Author does not approve its result.
+
+Different-seat source feedback confirms removal of duplicated Native semantic/
+canonical policy, fixed-capacity output and correct Windows argv quoting. Root
+found and corrected the remaining AST test's false-branch/direct-call ambiguity
+in the SAME test only; compiled/native three paths and PS product stayed frozen.
+Root actual script mutants false-branch/late-validation/relaxed unknown-input guard
+each fail the named cell; restored strict mypy/compile and PS5.1 suite13PASS/1
+explicit symlink-capability SKIP, network[] and only bounded PowerShell AST/pure
+helper/ValidateOnly children. Actual source quote plus System32 argument parsing
+preserves all SC argument boundaries without executing sc.exe. AST is not CFG/OS
+isolation proof; native/OS validation remains explicitly UNEXECUTED in ValidateOnly.
+
+Final different-seat committed-blob review/readback and Root own-hold admission
+are still REQUIRED before integration. No Apply/native image execution, new user/
+task/SCM/Registry/ACL, Host/model/network effect, main/30B43 integration, formal
+activation, push/release/deployment or qualification is authorized here.
+
 ## Committed pure native validation — own engineering-hold admission
 
 ACTION_COMPLETED / SOURCE_AUDIT_PASS_NOT_CVQ: independent helper
