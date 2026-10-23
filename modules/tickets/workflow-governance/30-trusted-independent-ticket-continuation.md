@@ -17,6 +17,96 @@
 
 #### Current acceptance-linked checkpoint — no new requirement or framework
 
+Current engineering baseline7be216e0f91209a340ece745055ab34b272488ce completes
+protected source→single consume→retained Host reply. Final actual hold261PASS/
+4subtests, strict8/compile8, four discriminating Root mutations/restored GREEN;
+different-seat source audit/committed readback/35-original byte QA PASS, carrier
+3bede947. N14B/N14C/checklist04 stay closed. This is NOT real Host/Grant proof;
+30B/43 remain REVIEW_BLOCKED and other checklist items remain unchecked.
+
+Remaining shortest path: (1) fixed-worker Host caller below removes BOTH30B/43's
+missing production session/turn wiring, validated by the complete fake-only entry,
+not delegated-call stubs; (2) native build needs pending exact portable SDK consent
+before a binary/payload hash exists; (3) actual new subject SID/session, protected
+LocalSystem service/Registry/ACL/socket root and independent observer need the
+separate source-matched operation package (runbook04, still NOT_AUTHORIZED);
+(4) actual bounded Host campaign + independent observations + original final CVQ
+admission, then each fixed30B/43 candidate's own review; (5)30B's live source
+positive additionally needs approved index/leaves on remote main at ONE fresh SHA.
+No local tracking ref substitutes and no push is authorized. Dispatch/spawn/
+prewrite/loaded-source/evidence effects and remaining12 closure stay OPEN.
+
+#### Fixed worker / owned Host session — bounded original30 allocation
+
+Conditional grant-ticket30-retained-host-session-wiring-20261023 revision01 derives
+from batch-checklist-local-20261019-uncapped, baseline7be216e0f91209a340ece745055ab34b272488ce.
+Same retained author/root/ticket30n4_peer_impl, own protected-launch worktree/branch
+after releasing reply allocation; native helper different-seat evidence, Root
+sole reviewer. SOURCE_EDIT_ONLY only after docs PASS/Root activation. Ordinary
+new typed construction may precede implementation; no qualified-Host prerequisite
+to BUILD its first entry. Operational Host/SDK/model/OS effects remain forbidden.
+
+CREATE library/local_orchestration/grant_authority/windows_host_session.py,
+library/local_orchestration/grant_authority/windows_host_driver.py,
+tests/test_grant_authority_windows_host_session.py,
+tests/test_grant_authority_windows_host_driver.py. MODIFY ONLY
+library/local_orchestration/grant_authority/windows_installed_subject_enrollment.py,
+library/local_orchestration/grant_authority/windows_protected_subject_launch.py,
+library/local_orchestration/grant_authority/windows_authority_worker.py,
+library/local_orchestration/grant_authority/windows_snapshot_native.py,
+tests/test_grant_authority_windows_installed_subject_enrollment.py,
+tests/test_grant_authority_windows_protected_subject_launch.py,
+tests/test_grant_authority_windows_authority_worker.py,
+tests/test_grant_authority_windows_snapshot_reader.py. Twelve paths:4CREATE/8MODIFY,
+DELETE0. No exports/dependency/Registry value/native setup/Grant ledger/Router/CVQ
+policy changes. Reuse reviewed launch/image/token/job/channel/codec/Host25 reply,
+native facts/owners and shared below-ABI fixtures/ServerProtocol; no new framework.
+
+Keep schema1 legacy and old schema2 construction/readback; add private typed Host
+session configuration in the SAME protected Host record, default absent for old
+records. Absence refuses Host effect BEFORE token/process/socket. Configuration
+binds canonical bounded AF_UNIX endpoint, protected run-root owner/DACL digest/
+volume/file-ID, exact launch --listen argument, approved model/provider/stimulus/
+source refs and finite CVQ-compatible execution bounds. This is expected data,
+NOT permission or real settings; no hardcoded provider/model/owner-prompt/local
+SID/path/ticket/SHA in generic code. Actual rights/costs await operational Grant.
+Select actual closed schema tag from ONE fresh same-handle protected bundle,
+not caller variant, fallback or synthetic fields. Preserve all existing source/
+Grant/role/native/enrollment/session crosslinks. Host owner_ref=session_ref;
+legacy operation_ref behavior stays unchanged. Use existing verified Host launch
+and retained originals; do not duplicate native ABI/job/lifecycle.
+
+Session module owns endpoint admission, original directory/prefix handles, its
+created connected socket and sealed borrowed-channel/session lifetime; driver owns
+only bounded initialize→thread→turn→snapshot/result protocol. Call the SAME Host25
+reply owner, not another consume or byte pipe. Keep native fixed worker module;
+reuse existing confirmed teardown/recovery. No arbitrary callback/source/provider/
+channel factories confer authority. Reuse native open/facts/close; if immutable
+snapshot sharing blocks endpoint creation, allow only a CLOSED Host-directory
+open purpose, reject use on files, and preserve all default snapshot/image
+sharing, sizes and path/owner guarantees. No changes to OS permissions now.
+Check exact fresh source/retained peer/process/token/job/image/root/ACL and bounds
+around I/O. Unknown/cross-session/duplicate/oversized/malformed messages, unapproved
+tool/file/model/stimulus and retries refuse. Unknown post-effect/partial/reentry
+retains owners/RECOVERY_REQUIRED; no deletion or uncertain borrowed-owner close.
+Known success closes owned resources then confirms existing process/job/token
+teardown. Never manufacture a review PASS, source observation or qualification.
+
+W1 legacy positive; missing settings/wrong tag/crosslinks refuse before effects.
+W2 real worker/driver/codec/reply algorithms + existing BELOW-ABI fakes/actual
+Sans-I/O server complete one approved turn/two member reads/same consume/exact
+bytes/terminal metadata and teardown. W3 source/root/ACL/endpoint/listen/peer/
+owner/session/model/bounds drift, replay, unknown tool, cancel/timeout/truncation/
+partial/reentry/failed teardown assert exact no-later-effects or recovery holds;
+directory sharing variant has legal/default/wrong-file regressions. W4 strict/
+compile, affected legacy/Host/store/socket regressions, Root different-door actual
+source/wiring/recovery mutations RED→restored GREEN, independent source audit,
+committed readback and actual own-hold replay. These are source tests, not CVQ.
+Target session/driver<=350 and tests<=450 incremental effective lines each; >500
+requires responsibility/reuse review, not minification/arbitrary splitting.
+Root-held temp outputs have owner/TTL/recovery hold. Keep old accounting, bounded
+commands/resource checks and failure diagnosis; no reset or fixed retry ceiling.
+
 Codec construction is ENGINEERING_CLOSED at c4f1ce701cc5913b984710b41f892ec0432d8f2d,
 exact three reviewed blobs and final raw evidence in original30 review11f5dbd0.
 Strict2/compile2, legal and negative C1-C4, six intended product reverse REDs and
