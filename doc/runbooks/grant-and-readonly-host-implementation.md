@@ -521,8 +521,11 @@ are compatible UAC observations, not an identity conflict. Fresh effective-token
 new standard subject SID/session and actual service SID readback are required at
 the effect boundary; no SID/session is fabricated from a name or candidate SID.
 The previously proposed VS SDK install is not the current toolchain proposal:
-original30 records the exact portable Microsoft.Windows.SDK.CPP/CPP.x64
-10.0.26100.8249 inputs and SHA512, pending explicit SDK license/download consent.
+original30 records portable Microsoft.Windows.SDK.CPP/CPP.x64
+10.0.26100.8249 inputs and213384734 aggregate bytes, pending explicit SDK
+license/download consent. The final download manifest must additionally bind the
+individual package sizes, official hash-bearing artifacts and verified SHA512;
+the original30 summary alone is not that complete hash manifest.
 No SDK download/install, global PATH change or new fee has been authorized.
 Final native binary/payload/config hashes are NOT_BUILT/UNFROZEN. Source and
 offline tests alone cannot fill those fields or qualify 30B/43. Safe suspension
