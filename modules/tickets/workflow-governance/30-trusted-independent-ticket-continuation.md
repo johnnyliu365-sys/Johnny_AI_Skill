@@ -15,6 +15,66 @@
 
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
+#### Required payload cap fix — conditional exact router import allocation01
+
+Host twelve-path source68d0c9ed is independently reviewed/sealed and merged ONLY
+into Root's engineering hold17f1ca69c89d3e40897a94e6fcac3967c7c05133; actual
+hold293PASS/SDK[], strict12/compile12PASS, all12 Host and9 native blobs exact.
+Root cold actual worker import at that same commit records87 application modules,
+SDK[] (host26-cold15-original.json). The already locked runtime base needs50
+physical inputs; with executable/configuration this is139 payload entries, above
+the existing128 bound. Do NOT raise the bound, hide undeclared files, shadow app
+packages in a zip, or silently remove required runtime dependencies.
+The concrete cause is eager public imports in workflow_router/__init__.py:
+importing its contracts also loads the unrelated router/review/integration/profile
+consumers. This is directly blocking BOTH30B/43's executable worker payload, not
+a new reduction audit, product requirement, PRD, framework or independent Ticket.
+
+Conditional grant-ticket30-router-import-boundary-20261023 revision01 derives
+batch-checklist-local-20261019-uncapped / original Ticket30. Baseline exact17f1ca69;
+author /root/ticket30n4_peer_impl, ONLY own existing protected-launch worktree and
+codex/skill-improvement-30g-protected-launch branch. Fresh clean68d0c9ed must be an
+ancestor of17f1ca69, then author may fast-forward its OWN branch to that exact
+reviewed baseline. No new branch/reset/force/merge of unrelated candidates. Root
+sole final reviewer; /root/authority_install_inventory independent ordinary helper.
+Effective only after independent exact docs/scope review and Root readback.
+
+MODIFY ONLY library/workflow_router/__init__.py and
+tests/test_local_orchestration_lazy_exports.py. CREATE0/DELETE0. Reuse the existing
+local_orchestration lazy export table/ModuleType-boundary pattern and its existing
+test fixture/credential-free cold interpreter; no generic new loader, harness,
+test helper file, env/role/argv switch or dependency. Keep original __all__ exact
+type/sequence/names/aliases and original defining-object identity. Preserve graph's
+existing lazy behavior; no loading optional graph/provider machinery during cold
+worker import. TYPE_CHECKING keeps public strict static bindings. Unknown/dunder/
+near-match or ambiguous names fail before import; exact declared symbols alone
+resolve and cache. No Any/cast/type-ignore/path rewriting/package shadowing or
+effect. Do not rewrite public contracts or the already-reviewed Host implementation.
+
+R1 cold worker must avoid unrelated workflow router/integration/review/profile
+modules, source-backed baseline RED then GREEN, and enough real import/payload
+reduction to fit the unchanged128 bound with exact declared runtime/native/config
+files. Count is evidence of closure, not permission to omit a needed lazy import.
+R2 snapshot the old committed public export contract as independent Expected
+BEFORE edits; verify every public symbol/alias/source and repeat/from-import/cache
+behavior, no Expected copied from changed Actual. No hardcoded project SHA in
+generic source/tests. Existing public behavior unchanged, including graph route.
+R3 unknown and ambiguous resolution makes zero module-import calls. R4 focused
+existing lazy-export tests, representative actual Router/public consumers and
+affected Host worker cohorts, strict2/compile2; Root different-door eager-import
+and wrong-symbol mutations RED then exact restoration, independent source audit,
+immutable readback and controlled own-hold replay. Current Host/Native results
+remain valid for their unchanged scope, no reset or unrelated full reruns.
+
+Source edits and bounded diagnostic pure guarded feedback only after activation;
+single child55s/outer60s, fresh cache/output, pin checks/full original capture,
+no Host/native API/model/network calls; current no cumulative/attempt ceiling and
+stagnation diagnosis preserved. Product/test deltas target<=250/200 effective
+lines, >500 responsibility/reuse review not minification. Existing owned Temp
+TTL/evidence/Recovery Hold, no denied cleanup. No install/SCM/Registry/ACL/account/
+qualification/dispatch/push/release/deployment/formal gate activation authority.
+This does not close any checklist item or remove30B/43 REVIEW_BLOCKED.
+
 #### NativeAOT compatibility repair — conditional exact local allocation02
 
 Engineering result: exact reviewed nine-path candidate1b7a93c936d2d725ce93fdfdbddfa74f7ef98409
