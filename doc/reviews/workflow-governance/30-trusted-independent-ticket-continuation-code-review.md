@@ -1,5 +1,16 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Current-input documentation consistency — closed, not qualification
+
+Different-seat native helper DOC_PASS_NOT_EFFECT_AUTHORITY for runbook06/
+index at8e9e3eb7 closes its stale inventory-row finding; no new metadata execution.
+The six named metadata originals were independently read back with exact lengths
+and hashes. It compared eight parameter/response schema files; Root separately
+verified TurnCompletedNotification too. No claim that all452 schemas match, no
+transfer of old binary identity, no SDK consent or setup/Host qualification.
+The0.130 metadata is explicitly separate/nonselected, not the current resolved
+0.163.0-alpha.11.2. These version facts do not alter the12-path source correction.
+
 ## Fixed-worker initial engineering review — CHANGES_REQUESTED
 
 Root verification admission refinement after the frozen first readback: the SAME
