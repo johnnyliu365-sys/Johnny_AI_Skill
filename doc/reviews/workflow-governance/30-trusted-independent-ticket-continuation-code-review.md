@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Router import/request-count frozen four-path source — commit only
+
+Root readback confirms exactly four MODIFY paths, CREATE0/DELETE0, parent17f1ca69
+in original protected-launch owner branch. Root strict4/compile4 PASS30.171s.
+Independent committed baseline3f966ad8f4f06b529f19e362ff6b9cc73e10bce7 supplies
+Expected: all241 public tuple names/order and defining-module/alias mappings match
+both the new table and test Expected; no copying from changed Actual is accepted.
+Root guarded mixed replay reports375PASS/234subtests and one SDK-adapter import
+failure from Host-plugin subprocess guard type interference. That exact existing
+SDK-adapter cell passes alone in a fresh guarded child, no SDK effects; no failed
+run is relabeled GREEN. An optional IPv6 availability probe was explicitly denied
+without opening a socket and is recorded separately from SDK effects. Click console
+bindings load before the authority-effect guards; this is not total OS isolation.
+
+Allow named original author COMMIT_ONLY these exact raw SHA256 bytes:
+router init6504eb2bb03c9ed4ef5bf3c23f4e4decff5f00f2799d983d3ec208c73c4349b4;
+lazy testc1aaea783a571d94ce48eab658a72239c07db4cc7d0c7075126c1ab05f53ca8d;
+enrollmentb97ea3f6ab3ebda005fc0c1707d1569914f1f555a741e0b860744d5e291f6a61;
+enrollment test9c91799f258af08c4a16073777f27cebb36a2b9fe95eda581b6d669aa24b5f36.
+No further source edits unless Root identifies a finding. Final independent source
+audit, reviewer mutations, immutable readback and own-hold integration remain;
+COMMIT_ONLY is not approval/qualification/30B43 release or permission to push.
+Test net growth244 exceeds the planning target200, not a hard cap; almost all new
+data pins the original241-name public contract, not a new test framework/helper.
+No requirement was added merely to justify that size. Source API responsibility
+and unchanged finite resolver must still be checked independently.
+
+
 ## Same import lane revision02 — request-count defect activation
 
 Independent DOC_PASS_NOT_EFFECT_AUTHORITY confirms904ec2d92677ccbdc6cbb10dff622cfae70f524e,
