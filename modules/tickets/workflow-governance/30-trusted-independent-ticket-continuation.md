@@ -15,6 +15,39 @@
 
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
+#### correction02 accepted engineering checkpoint — real effects still blocked
+
+Exact native d4d53a297b640501dd13d93a56ff45d2292b4f07 and wrapper/test
+37807df0e2c1659b06c1049ba4c26fc87a04a30b passed separate-seat ordinary
+SOURCE_AUDIT_PASS_NOT_CVQ (/root/authority_install_inventory) and Root review;
+same5-path Grantrevision02, no scope expansion. Root own protected-source hold
+fast-forwarded d4 to378; two CREATE blobs639c0f02/11f61c3f read back. Actual hold
+strict/compile and13 PS PASS/one symlink-capability SKIP/network[]; recorded
+LF Git / CRLF checkout identity, no raw-byte equality claim. Initial pre-test
+author-raw-pin assertion failed, diagnosed core.autocrlf=true; canonical Git
+comparison passed without source edits. Evidence is not reset or relabelled.
+
+Source reuse fixes the pre-effect canonical-size discrepancy; fixed buffers,
+Windows quote roundtrip and AST order regressions now discriminate the named
+mutants, restored GREEN. New offline linked image3969024bytes SHA256
+babb1394114cffb5dd4c8809df18bf180e290204c55d9ee2db4afabb68fd00ba
+remains UNEXECUTED, old payload/image/evidence remain unchanged.16 native/8 PS
+exact originals sealed4d1930c7; full latest actual-hold original
+ps31-hold09/ps31-hold09-original.json SHA256
+6e519b147e1914fc25a45197a69d69fd0b1b2687920b45389dd75da9f9c71cf8.
+No main/30B/43 integration, qualification or formal activation.
+
+The shortest next external dependency is actual dedicated standard-account
+SID/session on DESKTOP-28ERPQ1; current controller lacks effective elevation.
+Existing runbook revision10 supplies precise identity-only proposed commands,
+risks/readback/disable-only rollback and the separate later SYSTEM/setup/Host
+operations. That account does not exist, so final enrollment InputSha cannot
+yet be truthfully pinned. Local cmdlets exist; no installation is inferred.
+This step removes BOTH30B/43's independent-subject prerequisite, not their
+qualified audit requirement. Formal Grant-source legal success, same-fresh-SHA
+remote source, provider cost bounds and candidate-specific audits remain OPEN.
+Do not repeat source construction, add a framework or invent actual identities.
+
 #### One-shot protected setup command artifact — conditional correction02
 
 The allocation01 uncommitted script is NOT accepted: its NativeSetupValues /

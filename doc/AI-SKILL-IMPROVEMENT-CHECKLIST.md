@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `118`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `119`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,27 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision118）
+## 當前工程接續與精確證據（revision119）
+
+setup correction02五個精確路徑已完成，不再標為作者待修：C#三檔d4d53a29、
+PS／test兩檔37807df0，不同席SOURCE_AUDIT_PASS_NOT_CVQ及Root核對；既有工程
+hold精確FF378，實際hold strict／compile與13PASS／一個symlink資格SKIP、
+network[]／前後來源未變。LF Git與CRLF工作副本差異已查明，未改產品或假稱raw
+相同。16native＋8PS原件封存4d1930c7，不同席逐byte核對24件及aggregate皆PASS。
+保留初次compiler失敗、AST漏測和argv07紀錄限制；argv08新增完整System32純
+參數解析捕捉補足來源，沒有執行SCM。四門真產品／guard突變紅→還原綠。
+新AOT實際link PASS，3969024-byte exe SHA256
+babb1394114cffb5dd4c8809df18bf180e290204c55d9ee2db4afabb68fd00ba，
+未執行／安裝，不替換舊payload。這只解除30B／43安全setup源碼前提。
+
+runbook revision10已列明下一個最小外部操作：實體DESKTOP-28ERPQ1建立一個
+獨立標準JohnnyReadonlyReview帳戶（24h、Owner本機SecureString輸入），讀回
+Windows實際SID／session；目前帳戶不存在、控制端未提升權限，不能虛構SID或
+InputSha。此操作仍NOT_AUTHORIZED，並不包含SYSTEM task／服務／ACL／Registry、
+Host或模型呼叫。之後仍須精確保護設定核准、真CVQ、合法Grant正向及30B／43各自
+合格獨審、真來源及effect接線。只04[x]；必要外部驗收未過不能新增勾選。
+
+### revision118 原始狀態（歷史，依上述修正更新）
 
 惰性公開匯出及one-turn配置零請求缺陷已在原票修正、不同席source audit與Root
 實際產品突變通過；四檔候選605a6fa4精確FF到既有工程hold，26原件封存9a6fed4c。

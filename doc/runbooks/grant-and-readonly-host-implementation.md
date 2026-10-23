@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision09
+# Core capability implementation decision — revision10
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
@@ -7,21 +7,32 @@ Router, policy engine, qualification verdict or production activation.
 
 ## Current operation-input readback — 2026-10-23, NOT effect authority
 
-Current local construction:605a6fa4 engineering hold removes unrelated eager
+Current local construction:37807df0 engineering hold contains reviewed605a6fa4,
+native d4d53a29 and the exact two wrapper/test CREATE blobs639c0f02/11f61c3f.
+Actual hold strict/compile PASS and13 PS PASS/one explicit symlink SKIP, network[],
+unchanged source; source checkout CRLF differs from author LF but exact normalized
+Git bytes match (not claimed raw-byte identity). Original seal4d1930c7 preserves
+16 native and8 wrapper records, including failures and argv07/08 provenance.
+Cached-SDK LinkNative PASS; latest UNEXECUTED image3969024bytes SHA256
+babb1394114cffb5dd4c8809df18bf180e290204c55d9ee2db4afabb68fd00ba,
+FileVersion1.0.0.0/ProductVersion1.0.0+d4d53a297b640501dd13d93a56ff45d2292b4f07.
+The corrected wrapper reuses native canonical validation BEFORE SCM/Registry,
+fixed-capacity output, exact argv quoting; no Apply/installation is authorized.
+605a6fa4 removes unrelated eager
 workflow_router imports and rejects zero-request one-turn configuration. Private
 114-file runtime actually imports63 committed application modules via six private
 paths, unchanged hashes/SDK[]; original sealeb8b2806 and independent byte QA.
 This guarded import explicitly disables COM registry extension redirection and is
 NOT unpatched Host/OS qualification. No configuration/installation/model call.
 
-The unaccepted operational script duplicates Native enrollment validation and can
-reject canonical-size overflow only after SCM/Registry effects. Original Ticket30
-correction02 (8a432a32 / activation3bc4a784) reuses the existing C# pure validator
-BEFORE any setup mutation; source/tests/review are ongoing. Do not execute its
-Apply branch or treat old linked image8235b567 as the corrected operation binary.
-Native rebuilt identity, input pins and protected setup readback must be frozen
-before the separate Owner effect decision. Only this current paragraph/top section
-and current Ticket30 define present readiness; obsolete proposals below are history.
+The earlier duplicated Native validation and canonical-size ordering defect is
+corrected under original Ticket30 correction02 (8a432a32 / activation3bc4a784),
+not an open author implementation task. Separate-seat ordinary source review is
+SOURCE_AUDIT_PASS_NOT_CVQ; no qualified isolation or formal30B/43 integration is
+inferred. Old linked image8235b567 and114-file staging are immutable old evidence,
+NOT the new operation binary. Exact real-SID enrollment/input pins and protected
+setup readback still precede any separate Owner effect decision. Current top
+sections supersede obsolete proposals below; do not silently rewrite history.
 
 Target remains DESKTOP-28ERPQ1 / Windows10.0.19045; controller SID
 S-1-5-21-3542654388-73774624-397494543-1001, token not elevated. Exact
@@ -91,6 +102,107 @@ AOT only, no global installation, service, Registry/ACL, Host/model session or f
 Do not infer any later OS permission from SDK consent or the local batch. The
 build prerequisite is now satisfied; actual installation/configuration, independent
 protected observation and real Host/Grant qualifications remain separate.
+
+## Next external operation — identity only, PROPOSAL / NOT_AUTHORIZED
+
+This is the first unavoidable state-dependent OS input, not another engineering
+approval. Target is the actual DESKTOP-28ERPQ1 / Windows10Pro19045, NOT the VM.
+Current GameBoy controller SID ends1001 and effective token is Medium/not elevated.
+JohnnyReadonlyReview does not exist. A real dedicated standard subject is needed
+for BOTH30B/43's independent protected review: no controller/orphan/vendor SID reuse.
+The exact new SID is assigned by Windows at creation; it cannot be invented in a
+final SYSTEM enrollment or InputSha256. Therefore request identity creation only
+first; after its readback Root fills that concrete value into the existing setup
+manifest. Approval of this operation does NOT approve that later setup manifest.
+
+Exact proposed effect: create ONE local standard account JohnnyReadonlyReview with
+a24-hour expiration, add only built-in Users S-1-5-32-545 if not already present,
+verify exclusion from built-in Administrators S-1-5-32-544 and return actual SID,
+expiry and machine identity. Password is entered locally by Owner as SecureString;
+never sent to Agent, logged, supplied on argv or copied from another account.
+Owner performs a local interactive sign-in/sign-out only to establish the dedicated
+profile/session; do not open Codex/Claude, add credentials or run the native tool.
+No service/task, application file/ACL, Registry, firewall, socket, network rule,
+Host/model call, provider credential, formal Grant or paid expansion is included.
+Normal OS account/profile creation is the sole approved-if-confirmed persistent
+effect. Inactivity/expiry does not authorize deletion of profile/evidence.
+
+Available locally, read-only verified: Microsoft.PowerShell.LocalAccounts1.0.0.0
+under System32 WindowsPowerShell v1.0; New-LocalUser/Add-LocalGroupMember/
+Get-LocalUser/Get-LocalGroupMember/Disable-LocalUser exist. This availability does
+not grant the current unelevated Agent permission. Proposed command runs ONLY in
+Owner's64-bit elevated Windows PowerShell5.1, not this Agent's shell:
+
+```powershell
+$ErrorActionPreference = 'Stop'
+if (-not [Environment]::Is64BitProcess -or $PSVersionTable.PSVersion.Major -ne 5) {
+    throw 'Use 64-bit Windows PowerShell 5.1'
+}
+$identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+$principal = [Security.Principal.WindowsPrincipal]::new($identity)
+if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    throw 'Owner elevated terminal required'
+}
+$machine = (Get-CimInstance Win32_ComputerSystem -ErrorAction Stop).Name
+if ($machine -cne 'DESKTOP-28ERPQ1') { throw 'Wrong target computer' }
+Import-Module "$env:SystemRoot\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.LocalAccounts\1.0.0.0\Microsoft.PowerShell.LocalAccounts.psd1" -ErrorAction Stop
+if (Get-LocalUser -Name 'JohnnyReadonlyReview' -ErrorAction SilentlyContinue) {
+    throw 'Account already exists; do not adopt or overwrite'
+}
+$subjectPassword = Read-Host 'Owner-only password for JohnnyReadonlyReview' -AsSecureString
+$subjectExpiry = (Get-Date).AddHours(24)
+$createdSubject = New-LocalUser -Name 'JohnnyReadonlyReview' -Password $subjectPassword -AccountExpires $subjectExpiry -Description 'Johnny Ticket30 dedicated review subject; TTL24h; preserve evidence'
+$subjectPassword.Dispose()
+$subjectSid = $createdSubject.SID
+$subjectReadback = Get-LocalUser -SID $subjectSid -ErrorAction Stop
+if ($subjectReadback.Name -cne 'JohnnyReadonlyReview') { throw 'RECOVERY_REQUIRED: identity mismatch' }
+$usersSid = [Security.Principal.SecurityIdentifier]::new('S-1-5-32-545')
+$adminsSid = [Security.Principal.SecurityIdentifier]::new('S-1-5-32-544')
+if (-not @(Get-LocalGroupMember -SID $usersSid -ErrorAction Stop | Where-Object { $_.SID -eq $subjectSid }).Count) {
+    Add-LocalGroupMember -SID $usersSid -Member $subjectReadback -ErrorAction Stop
+}
+if (@(Get-LocalGroupMember -SID $adminsSid -ErrorAction Stop | Where-Object { $_.SID -eq $subjectSid }).Count) {
+    throw 'RECOVERY_REQUIRED: unexpected administrator membership; stop'
+}
+Get-LocalUser -SID $subjectSid | Select-Object Name,SID,Enabled,AccountExpires
+[pscustomobject]@{ Computer = $machine; StandardUsersGroup = 'S-1-5-32-545'; AdministratorMember = $false }
+```
+
+If a command fails, stop with its original error; do not rerun account creation,
+change host policy, delete account/profile or automatically modify other groups.
+Partial state is RECOVERY_REQUIRED, preserved for readback. Rollback is limited to
+Disable-LocalUser -SID <the exact returned new SID>, after Get-LocalUser confirms
+that SAME name/SID and after Owner authorizes this exact operation; no Remove-*,
+password reset, ACL reset or cleanup. Normal24h expiry prevents future sign-in,
+not deletion. Account owner Root/Ticket30, TTL24h and evidence/recovery hold.
+
+Proposed exact Owner reply: "Authorize identity-only operation on DESKTOP-28ERPQ1:
+create JohnnyReadonlyReview as a standard Users-only local account expiring24h,
+with password entered only by me; read back its real SID and establish a local
+interactive profile/session. No service/task/ACL/Registry/Host/model effects.
+Allow disabling only this exact newly created SID as rollback; preserve evidence."
+
+After identity readback, the existing minimum path is:
+
+| Step | Existing blocker removed | Required actual result / authority |
+| --- | --- | --- |
+| Dedicated SID/session | BOTH30B/43 lack independent OS subject | exact actual SID, token/session, group exclusion; identity-only confirmation above |
+| Existing protected setup | BOTH lack protected issuer/observer/runtime | exact pinned SYSTEM task/input, SCM disabled, files/DACL and enrollment readback; separate final operation confirmation, NOT source PASS |
+| Existing first-entry CVQ | BOTH lack qualified independent review entry | five readonly prohibitions + unknown bypass reject, trusted observer and finite verified model/account cost; exact Host-test authorization still required |
+| Existing Grant source positive + candidate reviews |30B R1 and30B/43 qualified audit | real issuer readback/atomic single consume/legal success plus forged/replay rejection; qualified review separately pins each candidate |
+| Existing dispatch/closure | checklist01/02/05/06/07/12 remain open | actual entry/effect/source/receipt evidence and necessary regression, never all-deny or fixture completion |
+
+No new stage, reviewer, framework or policy is introduced by this table. The full
+later setup cannot truthfully freeze real-SID input hashes now. It also must solve
+shared Host-image readability/socket-root ACLs without weakening existing fixed
+authority payload128/64MiB bounds. Current CLI is336MB and must NOT be smuggled
+into that payload. No service start before its worker/Host effect Grant.
+Token/cost fields remain metadata, not a provider-spend cap: before any model call
+Root must verify an existing account-level hard limit/no-new-fee arrangement or
+report UNAVAILABLE. Subscription use or one client turn alone is not that proof.
+Formal main source still needs fresh same-SHA remote index/leaves after separately
+authorized publication; no local origin/main substitution. These limits are visible
+now, not deferred until after more source tickets.
 
 ## Effective Owner amendment — batch-checklist-local-20261019-uncapped
 
