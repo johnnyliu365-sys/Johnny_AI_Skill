@@ -143,6 +143,29 @@ TTL/evidence/Recovery Hold, no denied cleanup. No install/SCM/Registry/ACL/accou
 qualification/dispatch/push/release/deployment/formal gate activation authority.
 This does not close any checklist item or remove30B/43 REVIEW_BLOCKED.
 
+Required same-lane correction revision02: guarded Root actual17f readback
+host28-request-bound17-original.json reproduces zero-request enrollment ACCEPTED
+while this fixed driver always sends one turn/start. One-request positive also
+ACCEPTED, SDK[], source unchanged. Earlier diagnostic16 stopped at a missing JSON
+import, not a product verdict; both originals retained. This is an existing bounded
+execution contract defect, not authority to execute a model call. Revision02 adds
+ONLY two further MODIFY paths to the SAME import allocation: grant_authority/
+windows_installed_subject_enrollment.py under library/local_orchestration/, and
+tests/test_grant_authority_windows_installed_subject_enrollment.py. Original
+CREATE0/DELETE0, owner/worktree/baseline and other R1–R4 remain unchanged. Conditional
+on separate exact scope review/Root activation, R5 must reject model_request_count
+other than exact1 for this one-turn configuration before Host/token/process effect;
+preserve legitimate1 and all existing bounded fixture positives. Reuse existing
+configuration validator and parameterized tests; no new mode/schema/provider API
+or another framework. Strict/compile cover all four changed paths, affected worker/
+driver/enrollment cohorts as necessary, Root predicate-removal mutation RED then
+restored GREEN. Do not turn this into a claim that provider token/cost ceilings are
+enforced: those typed fields are currently metadata, and usage-frame shape checking
+does not reserve or cap external spend. Actual Host/model qualification remains
+blocked until separately authorized and genuinely enforceable provider/network/
+cost inputs and observations exist. OS job CPU/memory/deadline bounds are not
+inference-token or billing enforcement. No new Host effect authority is granted.
+
 #### NativeAOT compatibility repair — conditional exact local allocation02
 
 Engineering result: exact reviewed nine-path candidate1b7a93c936d2d725ce93fdfdbddfa74f7ef98409
