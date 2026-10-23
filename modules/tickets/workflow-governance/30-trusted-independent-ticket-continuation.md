@@ -15,7 +15,7 @@
 
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
-#### NativeAOT compatibility repair — conditional exact local allocation01
+#### NativeAOT compatibility repair — conditional exact local allocation02
 
 Actual offline nativeOBJ02 reaches codegen but rejects Assembly.Location and
 seven reflection-based string serialization calls (IL3000/IL2026/IL3050). This
@@ -28,12 +28,17 @@ No dummy assembly/hash, unknown variant, generic executable or warning suppressi
 Existing managed output stays compatible; native output explicitly identifies
 its mode and cannot fabricate assembly evidence. Inventory actual consumers.
 
-Conditional grant-ticket30-native-aot-compatibility-20261023 revision01 derives
+Conditional grant-ticket30-native-aot-compatibility-20261023 revision02 derives
 ONLY batch-checklist-local-20261019-uncapped / original Ticket30 lineage.
 Baseline7be216e0f91209a340ece745055ab34b272488ce; author/root/native_service_impl
-uses ONLY own .worktrees/skill-improvement-30-native-service on
-codex/skill-improvement-30-native-service, clean500e10f1 fast-forwarded to baseline
-after admission. Root is sole final reviewer; different-seat
+uses ONLY own .worktrees/skill-improvement-30-native-service. Revision01's proposed
+500e10f1 fast-forward is INVALID: the approved native code was cherry-picked into
+the engineering hold, so histories diverge despite identical native-window files.
+Revision02 preserves codex/skill-improvement-30-native-service at500e10f1 and, only
+from a freshly verified clean own worktree, creates/switches to the absent branch
+codex/skill-improvement-30-native-aot-compat at exact7be216e0. No reset, force,
+deletion, merge of old candidates or budget reset. Root is sole final reviewer;
+different-seat
 /root/authority_install_inventory provides ordinary source/byte QA, NOT CVQ.
 Effective only after exact docs/scope independent review and Root readback.
 

@@ -2,6 +2,17 @@
 
 ## NativeAOT compatibility allocation01 — local activation only
 
+Revision01 transition correction: the author correctly stopped before any edit.
+500e10f1 and7be216e0 diverge atb9df00c8; Native service changes were cherry-picked
+into the hold. Root's earlier multi-command inventory did not propagate the
+ancestry subcommand exit, so its ancestry claim was invalid. Direct checked
+native-window diff is empty; this is history, not a changed native source contract.
+Original allocation02 now preserves the old branch and conditionally creates an
+absent exact native-aot-compat branch at7be216e0 in the SAME clean author worktree.
+Nine paths/roles/tests/no-effect limits unchanged. Await independent narrow
+transition review and Root readback before this corrected Grant becomes active.
+No reset/force/merge or Owner reapproval is needed for this batch-local mechanics.
+
 Different-seat authority_install_inventory DOC_PASS_NOT_EFFECT_AUTHORITY for
 46917862 confirms exact leaf blobdc61da262efb5aaa7a818bafe928c59d2756ba43,
 two registry digest edges, all nine existing consumers/paths and preserved
