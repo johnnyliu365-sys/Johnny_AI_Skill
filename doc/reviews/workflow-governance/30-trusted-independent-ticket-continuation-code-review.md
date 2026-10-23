@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Existing private runtime closure preparation — offline assets only
+
+Native link10 artifact/input independent BYTE_QA_PASS:40 source/project,17 SDK,
+49 MSVC inputs and10 outputs match; exact linked PE, not apphost; no execution.
+Root may mechanically prepare ONE fresh existing registered Temp sibling
+package27-runtime01 using only the manifest-pinned non-application runtime09 files
+and seven already cached locked wheels (lock SHA0c597329320969a570e76d29f1c997cbbe689153d27ea62a0c5c10b1f283b4b3).
+Do not carry old b9df00c8 application source forward. First prepare runtime-only:
+verify old122 file/627 zip-member pins, copy only non-library files, preserve
+isolated _pth/no site/ambient credentials; add47 approved websockets Python members
+and exact pywin32 lazy win32ts/shell/pythoncom support needed by the existing worker.
+Reject traversal/reparse/duplicate/path collision; bounded extraction, exact wheel
+and member hashes. Reuse old runtime layout and existing import-probe capture,
+not a new installer/harness/framework. Asset owner Root/Ticket30, TTL24h with active
+evidence/Recovery Hold; no automatic cleanup. Application staging waits for the
+reviewed immutable Host candidate, then records that actual source separately.
+No pip/download/global install/Registry/WTS/service/socket/Host/model/API call;
+later import-only verification guards external calls and checks all origins.
+This directly removes30B/43's known private runtime dependency omissions, not CVQ.
+
 ## Exact portable SDK / native link engineering result
 
 Owner-approved exact two archives were downloaded once, hashes/sizes verified,
