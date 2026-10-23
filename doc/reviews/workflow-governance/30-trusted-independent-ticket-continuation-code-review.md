@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Frozen Host source evidence and narrow diagnostic removal
+
+Root independent strict12/compile12 PASS26.781s; six suites293PASS/SDK[]8.406s.
+Four compiled actual-product mutations (approved member ref; bypass real turn;
+run-root owner; forbidden command item) hit their named existing cells RED with
+SDK[], original source unchanged; restored six suites293PASS/SDK[]8.235s.
+Different-seat audit raised conservative post-connect recovery and protocol-file
+responsibility concerns; Root is checking against the existing contract, not
+automatically adding requirements or approving them away. Integration remains held.
+Root independently found disposable controller/connect traceback instrumentation
+in the newly added full-worker positive test. Admit same author, same twelve-path
+Grant/baseline ONLY to remove that diagnostic scaffolding and unused imports,
+preserving all existing acceptance/owner/consume/teardown assertions and using
+existing fake components. No product behavior, parser rewrite, new files or tests.
+Original failures/captures remain evidence. Run guarded affected worker positive,
+six suites and strict/compile against new frozen pins; Root independently checks
+changed test and real-turn mutation. Unchanged product mutation evidence is not
+invalidated solely by deleting test-only tracing. No CVQ or Host effect admitted.
+
 ## Owner exact portable SDK input/build consent — 2026-10-23
 
 Owner explicitly accepts Windows SDK license and the previously proposed exact
