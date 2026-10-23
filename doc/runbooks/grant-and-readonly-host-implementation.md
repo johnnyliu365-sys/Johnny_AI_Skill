@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision05
+# Core capability implementation decision — revision06
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
@@ -224,15 +224,19 @@ credential isolation;11 trusted one-shot creation/activation;12 their combined r
 Where the observed remote main lacks new local documents, no push is authorized and
 no local origin/main substitutes for it. These external-dependent checks stay open.
 
-| Subject | Actually present / verified | What remains to be built or proved |
+Historical inventory from the earlier source assessment, not current installation
+or authority. Current version/input readback above supersedes these dated findings;
+later reviewed source checkpoints in original Ticket30 supersede implementation gaps.
+
+| Subject | Historically observed / verified | What then remained to be built or proved |
 | --- | --- | --- |
 | Grant | dispatch_authority.py documents owner-intent marker; no protected issuer implementation in scoped local_orchestration/workflow_router | Protected Owner approval, authoritative plan store, authenticated direct readback, one-shot consume and owned read transport |
 | Windows | NTFS; current process AdministratorEnabled=False (not proof of a separate standard account); CodexSandboxService.OpenAI.Codex running asLocalSystem | That vendor service is not a Johnny issuer; no modification/reuse as one. New trust separation must be enrolled and tested |
-| Codex CLI | Installed0.163.0-alpha.10.2; SHA256F6DBF48CB70F62649C645F26C87DC9BF84CC36986202DFAD8E12FB5B8CA70312; --sandbox read-only, --ignore-user-config and feature switches exposed | Actual closed roster, permitted snapshot read and before-effect denial still unqualified; this CLI never qualifies Desktop |
+| Codex CLI | Historical0.163.0-alpha.10.2; SHA256F6DBF48CB70F62649C645F26C87DC9BF84CC36986202DFAD8E12FB5B8CA70312; original path now absent, superseded by current-input readback above | Actual closed roster, permitted snapshot read and before-effect denial still unqualified; this CLI never qualifies Desktop |
 | Claude CLI | Installed2.1.231; --tools, --strict-mcp-config, --setting-sources, --no-session-persistence and --max-budget-usd exposed | All-tools-off cannot meet CVQ's permitted-read positive. A dollar flag alone does not prove token/request/retry limits; prior offline UNAVAILABLE is retained |
 | CVQ | Approved SPEC09 / wire05 at13fc7a760cb274d6927af0ab108b1cb09037127d, blobs089649eb7751c059815d0bc62bad9e2eb38df515 / cc04eb9dc97680b1e11285b677c4aba5b858a49e; current CVQ control55b9a91c7dc26367deb2fd4d0b9a2b75dae87ed3 retains those SPEC blobs | controlled_verification is absent from integrated checklist tree. B3 newer repair2e88940138cbb1e1f8a81465ca5337db105050e7 already returned; document10/section14 and review15/section19 (ticketblobfb7e19195697b03c7e040b2588a811dff602a744) supersede the stale27bb pointer. No reimplementation: remaining strict/final campaign/qualified audit evidence stays OPEN; engineering staging alone is not acceptance |
 
-Read commands: exact CLI --version/--help, app-server --help and
+Historical read commands: exact CLI --version/--help, app-server --help and
 generate-json-schema --help (did not generate files), features list; Claude
 --version/--help; Get-CimInstance Win32_Service, sc.exe sdshow for the named vendor
 service, current WindowsPrincipal.IsInRole and Get-Volume C; scoped Git/source
