@@ -2,6 +2,17 @@
 
 ## Fixed-worker source phase — bounded execution checkpoint, 2026-10-23
 
+Checkpoint received: author baseline7be216e0, exact twelve authorized paths only,
+4CREATE/8MODIFY/DELETE0; Root independently matched all twelve raw SHA256 values.
+No tests/imports/commit had run. Root now admits local constructor/strict/compile
+and affected behavior verification of these frozen bytes under the existing
+effect-denying offline guard, minimal no-credential environment, 55s child/60s outer.
+The old guard is reused, not claimed as OS isolation. Full output/source pins and
+failed attempts are retained. Different-seat native helper performs source-only
+engineering audit; ordinary audit cannot qualify Host or unblock30B/43. >500-line
+new session/driver require responsibility/reuse review, not automatic acceptance,
+minification or arbitrary extra modules. Author remains paused until correction.
+
 The retained source-only owner had not returned SOURCE_READY during repeated finite
 completion waits. Root did not read its changing source or infer test success. A
 single lifecycle interruption returned previous_status=running; the SAME owner was
