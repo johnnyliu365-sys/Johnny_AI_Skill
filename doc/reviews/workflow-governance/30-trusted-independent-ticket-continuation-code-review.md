@@ -2,6 +2,14 @@
 
 ## NativeAOT compatibility allocation01 — local activation only
 
+Revision02 narrow transition DOC_PASS from authority_install_inventory and Root
+fresh checks now activate the corrected grant: d9cdc0bc leaf
+a1b5835119432eedf347c39a6240b31dfbf81a98 / LF4a174c5357b4226b8906b72c28d3e9e328856c6252457a3794fa5baba45a3519,
+both registry edges, author clean500e10f1 on exact old branch and new ref absent.
+Author may switch/create ONLY codex/skill-improvement-30-native-aot-compat at
+7be216e0 in the same own worktree, preserve old branch, then execute unchanged
+nine-path allocation/tests. Prior false ancestry claim is superseded, not erased.
+
 Revision01 transition correction: the author correctly stopped before any edit.
 500e10f1 and7be216e0 diverge atb9df00c8; Native service changes were cherry-picked
 into the hold. Root's earlier multi-command inventory did not propagate the
