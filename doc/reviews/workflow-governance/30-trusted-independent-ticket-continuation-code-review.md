@@ -1,5 +1,61 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Approved one-child validation completed — permission consumed
+
+ACTION_COMPLETED / VALIDATION_ONLY,2026-10-27. The exact Owner-authorized
+RemoteSigned child returned0 in2.140s; all121 hashes unchanged, stderr empty.
+Output explicitly says NATIVE_VALIDATION_UNEXECUTED and OS_PREFLIGHT_UNEXECUTED.
+This does not replace the earlier managed pure native contract validation with
+a claim that this script executed the NativeAOT image. No Apply or Host occurred.
+ONE child permission is consumed; no further RemoteSigned launch is inferred.
+Fresh separate policy readback after exit: effectiveRestricted, all five scopes
+Undefined. No persistent CurrentUser/LocalMachine/GPO or parent policy change.
+No account/profile/service/task/ACL/Registry/network/model change was performed.
+
+Full raw child result, including unfiltered base64 bytes:
+
+```json
+{
+  "scope": "OWNER_APPROVED_SINGLE_CHILD_REMOTESIGNED_VALIDATE_ONLY_NOT_NATIVE_OS_VALIDATION",
+  "owner": "Root/Ticket30",
+  "argv": [
+    "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe",
+    "-NoLogo",
+    "-NoProfile",
+    "-NonInteractive",
+    "-ExecutionPolicy",
+    "RemoteSigned",
+    "-File",
+    "C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30-native-service-review-20261021\\setup32-sid1006-20261027\\Invoke-AuthorityProvisioning.ps1",
+    "-Mode",
+    "ValidateOnly",
+    "-InputPath",
+    "C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30-native-service-review-20261021\\setup32-sid1006-20261027\\operation.json",
+    "-StagingRoot",
+    "C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30-native-service-review-20261021\\setup32-sid1006-20261027",
+    "-ExpectedScriptSha256",
+    "37b8c5e059acaba55212cc5631880133220342a6591000db94f7c39ee12c90aa",
+    "-ExpectedInputSha256",
+    "bc6ba70d17cb189b0ba0d55fe92651218ea733d35ad374b6f12b734c16c184ff"
+  ],
+  "elapsed": 2.14000000001397,
+  "returncode": 0,
+  "stdout_base64": "VkFMSURBVElPTl9PTkxZIE5BVElWRV9WQUxJREFUSU9OX1VORVhFQ1VURUQgT1NfUFJFRkxJR0hUX1VORVhFQ1VURUQNCg==",
+  "stderr_base64": "",
+  "stdout": "VALIDATION_ONLY NATIVE_VALIDATION_UNEXECUTED OS_PREFLIGHT_UNEXECUTED\r\n",
+  "stderr": "",
+  "source_and_assets_unchanged": true,
+  "file_count": 121,
+  "native_validation_executed": false,
+  "os_preflight_executed": false,
+  "apply_or_host_executed": false
+}
+```
+
+AUTO_CONTINUE -> verify protected-staging handoff against existing native
+script/one-shot task design and prepare its exact scope. User-local Temp is
+not admitted as SYSTEM staging. No installation grant/source review is invented.
+
 ## Single validation child policy decision — Owner APPROVAL_GRANTED
 
 2026-10-27 Owner replied "核准" to the immediately preceding exact one-child

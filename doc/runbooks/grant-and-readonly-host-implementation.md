@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision12
+# Core capability implementation decision — revision13
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
@@ -114,7 +114,18 @@ protected observation and real Host/Grant qualifications remain separate.
 
 ## Identity-only operation — COMPLETED_ACCOUNT / PROFILE_PENDING
 
-### Static inputs ready; script execution-policy boundary NOT_AUTHORIZED
+### Static inputs and one-child validation completed; installation NOT_AUTHORIZED
+
+Owner explicitly approved the exact one-child policy difference on2026-10-27;
+activation3a224560 binds reviewed runbook12 blobd1032f60 and both full pins.
+The ONE RemoteSigned/ValidateOnly child returned0 in2.140s, stderr empty,
+all121 hashes unchanged. Output: VALIDATION_ONLY NATIVE_VALIDATION_UNEXECUTED
+OS_PREFLIGHT_UNEXECUTED. Permission is consumed, not reusable for installation.
+Fresh policy readback after exit remains effectiveRestricted/all five scopes
+Undefined. No account/profile/service/task/ACL/Registry/Host/model effect.
+The earlier refusal and proposal below are historical evidence, not another
+pending request for the same completed child. Next gap is safe protected SYSTEM
+staging and its exact installation authority, not more validation retries.
 
 Root prepared exact setup32-sid1006-20261027 under the existing review Temp,
 115 payload entries/32704952bytes, same128/64MiB bounds. Existing managed PURE
@@ -131,7 +142,7 @@ Bypass, policy change or certificate enrollment was attempted.
 This blocks actual script validation independently from the remaining profile,
 protected SYSTEM staging, service/ACL/Registry setup and real Host qualifications.
 
-Minimal recommended policy decision, still NOT_AUTHORIZED: permit ONE exact
+Historical policy proposal (later approved for the ONE completed child): permit ONE exact
 PowerShell5.1 validation child to use Process-only RemoteSigned, fixed pinned
 script/input/root and ModeValidateOnly. No CurrentUser/LocalMachine/GPO policy
 change, no Bypass, no Apply/service/Registry/ACL/Host/network/model effect.
@@ -144,7 +155,7 @@ Do not run the proposed child before Owner explicitly accepts this difference.
 After successful exact validation, final SYSTEM stage/installation commands and
 their separate effect authority still require review; this is NOT their approval.
 
-Exact PROPOSED command (NOT EXECUTED; explicit policy decision still required):
+Exact approved command (EXECUTED ONCE; retained for audit, DO NOT RERUN):
 
 ```powershell
 $setupRoot = 'C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup32-sid1006-20261027'
