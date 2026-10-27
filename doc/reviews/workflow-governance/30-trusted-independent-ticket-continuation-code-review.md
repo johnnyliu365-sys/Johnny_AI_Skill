@@ -1,5 +1,70 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## SETUP33 suspension actual result — CONFIRMED, setup still incomplete
+
+Final narrow script32494b9f was independently DOC_PASS after the one-line PS5.1
+version correction. Native PS5.1.19041.4894 parse-only check returned zero errors.
+One earlier offline parser-wrapper construction failed with exit1/no output due
+to nested here-string delimiters; no operational body was invoked. Marshaling
+the source as base64 data fixed that wrapper; this was not a suspension retry.
+
+Owner-authorized operation ran ONCE, PID40792, parent start
+2026-10-27T09:31:55.6975082Z, parent exit0 at09:31:56.9996970Z. Child report:
+SUSPENSION_CONFIRMED_SETUP_INCOMPLETE, Enabled true->false, State3->1, active
+instances0->0, last result267011 unchanged. Exact ACL unchanged; fresh XML changed
+only Enabled, full after XML UTF8 SHA256
+e684e5321f13982ac764c6e7d289d94812bf9a4ef857faa67ed4e01616c279a3.
+No task Run/Stop/register/delete, ACL/service/account/policy change, Host/model
+call, setup retry or cleanup occurred. Existing protected files and Recovery
+evidence remain held. Task suspension is now confirmed, not full recovery closure,
+setup success, a qualified Host or an accepted 30B/43 candidate.
+
+Ordinary diagnostic report SHA256
+8ca36f810a7309eb4dcbf859223c4b3f743a0a6a62d55b169af8b47e9b62bf42,
+retained under the existing preparation directory as
+setup33-disable-only-20261027-01.json. Unprotected diagnostic, NOT CVQ/admission
+evidence. Actual raw report snapshot follows.
+
+```json
+{
+    "operation":  "SETUP33-DISABLE-ONLY-01",
+    "scope":  "EXACT_TASK_SUSPENSION_NOT_HOST_QUALIFICATION",
+    "started_utc":  "2026-10-27T09:31:56.6814174Z",
+    "status":  "SUSPENSION_CONFIRMED_SETUP_INCOMPLETE",
+    "mutation_attempted":  true,
+    "before":  {
+                   "enabled":  true,
+                   "state":  3,
+                   "xml_sha256":  "6389939443b568e78a29346b6372a7f1c160ad5f5930ee36b0a3b1a530f299f7",
+                   "sddl":  "O:BAG:BAD:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FR;;;SY)",
+                   "active_instances":  0,
+                   "last_result":  267011
+               },
+    "after":  {
+                  "enabled":  false,
+                  "state":  1,
+                  "xml_sha256":  "e684e5321f13982ac764c6e7d289d94812bf9a4ef857faa67ed4e01616c279a3",
+                  "sddl":  "O:BAG:BAD:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FR;;;SY)",
+                  "active_instances":  0,
+                  "last_result":  267011,
+                  "xml":  "\u003c?xml version=\"1.0\" encoding=\"UTF-16\"?\u003e\r\n\u003cTask version=\"1.2\" xmlns=\"http://schemas.microsoft.com/windows/2004/02/mit/task\"\u003e\r\n  \u003cRegistrationInfo\u003e\r\n    \u003cSecurityDescriptor\u003eO:BAG:BAD:P(A;;GA;;;SY)(A;;GA;;;BA)\u003c/SecurityDescriptor\u003e\r\n    \u003cDescription\u003eOne manual protected setup; no service start\u003c/Description\u003e\r\n    \u003cURI\u003e\\JohnnyAuthoritySetup33-20261027\u003c/URI\u003e\r\n  \u003c/RegistrationInfo\u003e\r\n  \u003cPrincipals\u003e\r\n    \u003cPrincipal id=\"Author\"\u003e\r\n      \u003cUserId\u003eS-1-5-18\u003c/UserId\u003e\r\n      \u003cRunLevel\u003eHighestAvailable\u003c/RunLevel\u003e\r\n    \u003c/Principal\u003e\r\n  \u003c/Principals\u003e\r\n  \u003cSettings\u003e\r\n    \u003cDisallowStartIfOnBatteries\u003efalse\u003c/DisallowStartIfOnBatteries\u003e\r\n    \u003cStopIfGoingOnBatteries\u003efalse\u003c/StopIfGoingOnBatteries\u003e\r\n    \u003cEnabled\u003efalse\u003c/Enabled\u003e\r\n    \u003cExecutionTimeLimit\u003ePT3M\u003c/ExecutionTimeLimit\u003e\r\n    \u003cMultipleInstancesPolicy\u003eIgnoreNew\u003c/MultipleInstancesPolicy\u003e\r\n    \u003cIdleSettings\u003e\r\n      \u003cDuration\u003ePT10M\u003c/Duration\u003e\r\n      \u003cWaitTimeout\u003ePT1H\u003c/WaitTimeout\u003e\r\n      \u003cStopOnIdleEnd\u003etrue\u003c/StopOnIdleEnd\u003e\r\n      \u003cRestartOnIdle\u003efalse\u003c/RestartOnIdle\u003e\r\n    \u003c/IdleSettings\u003e\r\n  \u003c/Settings\u003e\r\n  \u003cTriggers /\u003e\r\n  \u003cActions Context=\"Author\"\u003e\r\n    \u003cExec\u003e\r\n      \u003cCommand\u003eC:\\Windows\\System32\\cmd.exe\u003c/Command\u003e\r\n      \u003cArguments\u003e/d /s /c \"\"C:\\Program Files\\JohnnySetup33-20261027.exe\" stage-inputs \u0026lt; \"C:\\Program Files\\JohnnySetup33-20261027.input.bin\" \u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.stage.stdout\" 2\u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.stage.stderr\" \u0026amp;\u0026amp; \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\Invoke-AuthorityProvisioning.ps1\" -Mode Apply -InputPath \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\operation.json\" -StagingRoot \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\" -ExpectedScriptSha256 37b8c5e059acaba55212cc5631880133220342a6591000db94f7c39ee12c90aa -ExpectedInputSha256 22cbc51d132db674b549d52e86a72bb4e6c5845741b121c05a9b95bf60942f36 \u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.apply.stdout\" 2\u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.apply.stderr\" \u0026amp;\u0026amp; \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\payload\\JohnnyAuthority.Tools.exe\" observe-enrollment \u0026lt; \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\metadata\\enrollment.json\" \u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.observe.stdout\" 2\u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.observe.stderr\"\"\u003c/Arguments\u003e\r\n      \u003cWorkingDirectory\u003eC:\\Windows\\System32\u003c/WorkingDirectory\u003e\r\n    \u003c/Exec\u003e\r\n  \u003c/Actions\u003e\r\n\u003c/Task\u003e"
+              },
+    "completed_utc":  "2026-10-27T09:31:56.8969568Z",
+    "excluded":  [
+                     "RUN",
+                     "STOP",
+                     "REGISTER",
+                     "DELETE",
+                     "ACL_CHANGE",
+                     "SERVICE_CHANGE",
+                     "HOST_CALL",
+                     "MODEL_CALL",
+                     "CLEANUP"
+                 ],
+    "integrity":  "UNPROTECTED_DIAGNOSTIC_NOT_CVQ_ADMISSION"
+}
+```
+
 ## SETUP33-DISABLE-ONLY-01 exact Owner activation — 2026-10-27
 
 Owner approved the previously proposed exact-task suspension after readback at

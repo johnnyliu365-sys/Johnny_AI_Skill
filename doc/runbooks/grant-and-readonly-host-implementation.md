@@ -11,8 +11,11 @@ read-only diagnostic later found task enabled/Ready, no triggers, never-run
 result0x41303. Actual task SDDL lacks the expected protected flag and has an extra
 SYSTEM-read ACE; both normal acceptance and recovery-disable reuse the rejecting
 assertion. Independent source/readback analysis confirmed this causal path.
-Task suspension is NOT confirmed. A separately authorized exact-match disable-only
-action is proposed; no retry, deletion, ACL update or alternative setup is authorized.
+Owner separately approved the exact-match disable-only operation. One execution
+at2026-10-27T09:31:56Z confirmed Enabled=false/State1/no active instances, same
+ACL and unchanged definition apart from Enabled. Suspension is CONFIRMED; setup
+and Recovery closure remain incomplete. No retry, deletion, ACL update or
+alternative setup is authorized; the original setup permission stays consumed.
 The following NOT AUTHORIZED labels describe the preserved pre-approval
 proposal, not a second approval request. The review records the activation;
 all operation boundaries below remain unchanged.
