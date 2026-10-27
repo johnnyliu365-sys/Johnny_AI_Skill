@@ -1,5 +1,90 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Actual SID setup inputs assembled; first file-policy refusal retained
+
+Different-seat /root/authority_install_inventory BYTE_QA independently confirms
+all121 files and115 ordered payload size/hash bindings, all metadata/script/input
+pins and actual SID roster. No Apply readiness, protected SYSTEM staging or
+qualification is inferred. The two launch failures (os206 vs policy refusal)
+remain separate. Optional Process-only RemoteSigned is a new precise Owner
+decision, NOT authorized/executed by this QA or existing identity scope.
+
+2026-10-27, exact admitted setup32 root under the existing Root-owned review temp.
+Managed d4 DLL1ed4c8f032191ba184d62f57e0dab2b39c225f57065da1e19c48cdf5637c6630
+and its deps/runtimeconfig match retained managed11 output/source pins.
+Existing PURE plan and validate-enrollment returned0 (0.406s/0.187s), complete
+input/output base64/environment/preparation command in the original record.
+Canonical plan, enrollment and exact4-field worker configuration are not fixtures.
+Real subject1006/controller1001/inactive serviceSID bind the manifest; optional
+Registry values remain empty, no fabricated Grant/approval/session.
+
+Assembly created exactly115 payload entries/32704952bytes within128/64MiB.
+All generated metadata and mechanical copies read back exact hashes; script is
+committed639c0f02/raw37b8c5e0. No original source/payload overwritten.
+Root's first overlong orchestration argv failed at PROCESS_CREATION os206;
+no assembly child started. Cause was embedded large data; existing exact allocated
+originals/assembly-original.json now carries those preparation inputs rather
+than argv. Record228987bytes SHA256
+1f33b582e5fe1e6d9d61dd0fa246161ef29b4a270f815fd4cc552a6c352287c7
+explicitly says PREPARATION_INPUTS_NOT_ASSEMBLY_COMPLETION; not retroactively
+claimed a completed child capture. Root's separate actual readback verifies
+121 total physical files/120 created content files plus that original record.
+
+Exact final static input hashes:
+setup9f02fa61d005aa6eb86d43e0764895e0995ebec666ee1157a1d4f4a2f6ca0bd9;
+plan457db76d02cc1210801a0f7d0c346d0f823454186dd98f9d4f5f32dbb2af3cb5;
+enrollmentfe8b6b3396170da25318ed93847dc776206cb7d96d9c60737e3b63d0973316c8;
+configurationb1b7c78e5262dcba77a7ae8ff49e9290c39a4c019790c283e0441722fbbe0e00;
+operationbc6ba70d17cb189b0ba0d55fe92651218ea733d35ad374b6f12b734c16c184ff.
+Native image remains unexecuted. Temp root is OFFLINE PREPARATION, not a trusted
+SYSTEM install staging root; no OS protection/readiness or30B/43 PASS claim.
+
+The first actual PowerShell -File ValidateOnly returned1 BEFORE script load:
+SecurityError/UnauthorizedAccess, execution policy refusal. All121 assets
+unchanged; no Native/OS preflight/Apply/Host execution. Restricted is effective,
+all five policy scopes Undefined; script Authenticode status NotSigned.
+Do NOT retry with Bypass, use -Command to reinterpret the refused file, change
+policy or sign/install certificates without new precise Owner authority.
+This is an external execution-policy block, not a failed enrollment contract
+and not solved by re-running source tests. Raw stderr is retained below in
+base64 (display decoding had replacement glyphs; not invented full Unicode).
+
+```json
+{
+  "scope": "ACTUAL_OPERATION_VALIDATE_ONLY_NOT_NATIVE_OS_VALIDATION",
+  "owner": "Root/Ticket30",
+  "argv": [
+    "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe",
+    "-NoLogo",
+    "-NoProfile",
+    "-NonInteractive",
+    "-File",
+    "C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30-native-service-review-20261021\\setup32-sid1006-20261027\\Invoke-AuthorityProvisioning.ps1",
+    "-Mode",
+    "ValidateOnly",
+    "-InputPath",
+    "C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30-native-service-review-20261021\\setup32-sid1006-20261027\\operation.json",
+    "-StagingRoot",
+    "C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30-native-service-review-20261021\\setup32-sid1006-20261027",
+    "-ExpectedScriptSha256",
+    "37b8c5e059acaba55212cc5631880133220342a6591000db94f7c39ee12c90aa",
+    "-ExpectedInputSha256",
+    "bc6ba70d17cb189b0ba0d55fe92651218ea733d35ad374b6f12b734c16c184ff"
+  ],
+  "elapsed": 0.5940000000409782,
+  "returncode": 1,
+  "stdout_base64": "",
+  "stderr_base64": "pl2ssLNvrdOodLLOpFekd7Cxpc6r/KVPvViw9abmoUGp0qVItUyqa7j8pEogQzpcVXNlcnNcR2FtZUJveVxBcHBEYXRhXExvY2FsXFRlbXBcam9obm55MzAtbmF0aXZlLXNlcnZpY2UtcmV2aWV3LTIwMjYxMDINCjFcc2V0dXAzMi1zaWQxMDA2LTIwMjYxMDI3XEludm9rZS1BdXRob3JpdHlQcm92aXNpb25pbmcucHMxIMDJrtehQ6Zwu9241LLTuOqwVKFBvdCw0b5cIGFib3V0X0V4ZWN1dGlvbl9Qb2xpY2llc6FBuvSnfaywIA0KaHR0cHM6L2dvLm1pY3Jvc29mdC5jb20vZndsaW5rLz9MaW5rSUQ9MTM1MTcwoUMNCiAgICArIENhdGVnb3J5SW5mbyAgICAgICAgICA6IFNlY3VyaXR5RXJyb3I6ICg6KSBbXSwgUGFyZW50Q29udGFpbnNFcnJvclJlY29yZEV4Y2VwdGlvbg0KICAgICsgRnVsbHlRdWFsaWZpZWRFcnJvcklkIDogVW5hdXRob3JpemVkQWNjZXNzDQo=",
+  "stdout": "",
+  "stderr": "�]���o�Өt�ΤW�w���Ϋ��O�X����A�ҥH�L�k���J C:\\Users\\GameBoy\\AppData\\Local\\Temp\\johnny30-native-service-review-2026102\r\n1\\setup32-sid1006-20261027\\Invoke-AuthorityProvisioning.ps1 �ɮסC�p�ݸԲӸ�T�A�аѾ\\ about_Execution_Policies�A���}�� \r\nhttps:/go.microsoft.com/fwlink/?LinkID=135170�C\r\n    + CategoryInfo          : SecurityError: (:) [], ParentContainsErrorRecordException\r\n    + FullyQualifiedErrorId : UnauthorizedAccess\r\n",
+  "source_and_assets_unchanged": true,
+  "file_count": 121,
+  "native_validation_executed": false,
+  "os_preflight_executed": false,
+  "apply_or_host_executed": false
+}
+```
+
 ## Actual identity readback and next artifact admission — 2026-10-27
 
 Different-seat /root/authority_install_inventory DOC_PASS_NO_EFFECT for47a060b8:

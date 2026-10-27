@@ -114,6 +114,55 @@ protected observation and real Host/Grant qualifications remain separate.
 
 ## Identity-only operation — COMPLETED_ACCOUNT / PROFILE_PENDING
 
+### Static inputs ready; script execution-policy boundary NOT_AUTHORIZED
+
+Root prepared exact setup32-sid1006-20261027 under the existing review Temp,
+115 payload entries/32704952bytes, same128/64MiB bounds. Existing managed PURE
+plan/enrollment validation passes; no NativeAOT or OS operation. Input operation
+SHA256bc6ba70d17cb189b0ba0d55fe92651218ea733d35ad374b6f12b734c16c184ff,
+scriptSHA25637b8c5e059acaba55212cc5631880133220342a6591000db94f7c39ee12c90aa.
+These are offline inputs, not SYSTEM-protected/installation-ready assets.
+
+First actual -File ValidateOnly fails BEFORE loading the script:
+SecurityError/UnauthorizedAccess. Read-only Get-ExecutionPolicy confirms
+effectiveRestricted and MachinePolicy/UserPolicy/Process/CurrentUser/LocalMachine
+allUndefined. Authenticode statusNotSigned. No retry, -Command reinterpretation,
+Bypass, policy change or certificate enrollment was attempted.
+This blocks actual script validation independently from the remaining profile,
+protected SYSTEM staging, service/ACL/Registry setup and real Host qualifications.
+
+Minimal recommended policy decision, still NOT_AUTHORIZED: permit ONE exact
+PowerShell5.1 validation child to use Process-only RemoteSigned, fixed pinned
+script/input/root and ModeValidateOnly. No CurrentUser/LocalMachine/GPO policy
+change, no Bypass, no Apply/service/Registry/ACL/Host/network/model effect.
+The policy setting expires with that child. It permits unsigned LOCAL scripts
+inside that child and therefore is a real scope-bound security-setting decision,
+not inferred from existing local-test/account authority. If declined, retain
+Restricted and the blocked result; approved signing would require a separate
+trusted certificate, never an invented self-signed/trust-store workaround.
+Do not run the proposed child before Owner explicitly accepts this difference.
+After successful exact validation, final SYSTEM stage/installation commands and
+their separate effect authority still require review; this is NOT their approval.
+
+Exact PROPOSED command (NOT EXECUTED; explicit policy decision still required):
+
+```powershell
+$setupRoot = 'C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup32-sid1006-20261027'
+& 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe' `
+    -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned `
+    -File (Join-Path $setupRoot 'Invoke-AuthorityProvisioning.ps1') `
+    -Mode ValidateOnly `
+    -InputPath (Join-Path $setupRoot 'operation.json') `
+    -StagingRoot $setupRoot `
+    -ExpectedScriptSha256 '37b8c5e059acaba55212cc5631880133220342a6591000db94f7c39ee12c90aa' `
+    -ExpectedInputSha256 'bc6ba70d17cb189b0ba0d55fe92651218ea733d35ad374b6f12b734c16c184ff'
+```
+
+Root also rechecks both file hashes before launching, uses the already recorded
+credential-free child environment and15s deadline, captures complete raw output,
+then checks all121 assets unchanged. No -Mode Apply, RunAs, new interactive prompt
+or permanent policy command is included.
+
 The current direct OS readback above supersedes all NOT_CREATED statements in the
 historical creation recipe below. The recipe is retained for audit, NOT a command
 to rerun now that this exact account exists. Next Root action is binding actual
