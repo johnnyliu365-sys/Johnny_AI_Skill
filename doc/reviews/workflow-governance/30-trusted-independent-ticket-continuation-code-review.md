@@ -12,7 +12,12 @@ than the Enabled element. No Run, Stop, task registration/deletion, ACL/service/
 account change, Host/model call or cleanup. No retry. Record an ordinary CreateNew
 diagnostic JSON in the existing preparation directory, not CVQ/admission evidence.
 Original setup permission stays consumed; this permits suspension only.
-Exact UTF8 script SHA256 b13a1b9d9eacbb5758e0613a9fe87c2c2448a8f8d84590a8b2c38b844c4cb05f.
+Separate-seat review found the version guard checked Major5 but not Minor1.
+Root narrowed it to explicit5.1; no effect or other script change. Initial
+unexecuted draft b13a1b9d remains preserved in12321d5a. Pure PS5.1 snapshot checks
+passed expected XML/SDDL pins, accepted Enabled-only XML delta and rejected a
+changed action; these are offline checks, not Host qualification.
+Exact final UTF8 script SHA256 32494b9f87f8f2255913585f40b4079f97d11c0c1039a8062c3b656f113325ff.
 Parent wait60seconds maximum; no forced process termination.
 
 ```powershell
@@ -34,7 +39,7 @@ function Without-Enabled([string]$Xml) {
     return $d.OuterXml
 }
 try {
-    if([Environment]::MachineName -cne 'DESKTOP-28ERPQ1' -or $PSVersionTable.PSVersion.Major -ne 5 -or -not [Environment]::Is64BitProcess) {throw 'exact_machine_PS51_x64_required'}
+    if([Environment]::MachineName -cne 'DESKTOP-28ERPQ1' -or $PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSVersion.Minor -ne 1 -or -not [Environment]::Is64BitProcess) {throw 'exact_machine_PS51_x64_required'}
     $id=[Security.Principal.WindowsIdentity]::GetCurrent()
     try {if($id.User.Value -cne 'S-1-5-21-3542654388-73774624-397494543-1001' -or -not ([Security.Principal.WindowsPrincipal]::new($id)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {throw 'exact_elevated_controller_required'}} finally {$id.Dispose()}
     $PSModuleAutoLoadingPreference='None'
