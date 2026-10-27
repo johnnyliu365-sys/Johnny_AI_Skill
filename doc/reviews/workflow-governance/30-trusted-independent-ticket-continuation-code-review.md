@@ -2,6 +2,12 @@
 
 ## Actual identity readback and next artifact admission — 2026-10-27
 
+Different-seat /root/authority_install_inventory DOC_PASS_NO_EFFECT for47a060b8:
+exact115-file roster and fixed4-field configuration fit128/64MiB, actualSID may
+bind without profile/live session and optional registry_values may stay empty.
+Only04[x], leaf/index digest match. Root activates only setup-input32 offline
+artifact preparation as declared, not NativeAOT execution/Apply/service/Host.
+
 Owner returned create result; Root independently queried exact SID via
 Get-LocalUser, each Get-LocalGroup/Get-LocalGroupMember, machine Win32_ComputerSystem,
 Win32_UserProfile by exact SID, and Win32_Service by exact service name.
