@@ -1,5 +1,22 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## SETUP33 exact Owner approval activation — 2026-10-27
+
+The Owner's latest explicit approval activates ONE execution of
+SETUP33-20261027-SID1006 on DESKTOP-28ERPQ1, exactly as sealed at control commit
+5436043b86cf16a8a0736093f46857979d8af9d5 and runbook revision14. The only
+launch input is owner-launch03.json, 55187 bytes, SHA256
+176fabe991d1ee44ffe17c1c38735ce25073b1067190109f7c811ccd705e7103;
+embedded bootstrap SHA256
+7f3c28fb90ded60d832524898912c11a4aed21a03628eb5f0e22225b0ed0b7f6.
+Root records this approval before launch; execution and observed result remain
+PENDING, not successful or Host-qualified. All exclusions, exact identity and
+lease checks, disabled-service requirement, evidence preservation and no-retry
+rules in the sealed operation remain binding. No Host/model call, service start,
+push, release, deployment or public installer acceptance is authorized here.
+The frozen draft input is not edited into an authority source. This record binds
+the human approval to that exact operation; it does not reissue setup32 authority.
+
 ## SETUP33 final operation-preparation seal — NOT OS AUTHORIZATION
 
 Final separate-seat DOC_PASS_EXACT_OWNER_PACKET + BYTE_QA_PASS confirms

@@ -1,5 +1,13 @@
 # Core capability implementation decision — revision14
 
+Owner activation, 2026-10-27: the latest explicit approval authorizes ONE exact
+SETUP33-20261027-SID1006 execution of owner-launch03.json SHA256
+176fabe991d1ee44ffe17c1c38735ce25073b1067190109f7c811ccd705e7103,
+as sealed at 5436043b86cf16a8a0736093f46857979d8af9d5. Execution/readback is
+PENDING. The following NOT AUTHORIZED labels describe the preserved pre-approval
+proposal, not a second approval request. The review records the activation;
+all operation boundaries below remain unchanged.
+
 ## SETUP33-20261027-SID1006 — exact Owner operation, NOT AUTHORIZED
 
 Source33/correction01 is accepted into Root's existing engineering hold at
