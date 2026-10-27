@@ -1,5 +1,71 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## SETUP33-READONLY-TASK-01 Owner approval and exact diagnostic
+
+The Owner approved one elevated read-only query of the exact setup task after
+incident d3e7c3c6. Root uses controller1001 on DESKTOP-28ERPQ1, a visible x64
+System32 PS5.1 EncodedCommand; no global or process ExecutionPolicy change.
+No task registration/run/disable/stop/delete, ACL/service/account/policy change,
+Host or model call. A CreateNew JSON report goes only to the existing preparation
+directory. That report is unprotected diagnostic data, NOT CVQ/admission evidence.
+Exact UTF8 command SHA256 feabc3209c0c19253ad277ccf16328e397d37da13f6755ece31457d9e2f99e65.
+Parent waits at most60seconds; no forced termination or automatic retry.
+
+```powershell
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+$reportPath = 'C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup33-sid1006-20261027\setup33-readonly-task-20261027-01.json'
+$report = [ordered]@{ operation='SETUP33-READONLY-TASK-01'; scope='DIAGNOSTIC_ONLY_NOT_CVQ'; started_utc=[DateTime]::UtcNow.ToString('o'); status='PENDING' }
+try {
+    if ([Environment]::MachineName -cne 'DESKTOP-28ERPQ1' -or $PSVersionTable.PSVersion.Major -ne 5 -or -not [Environment]::Is64BitProcess) { throw 'exact_machine_PS51_x64_required' }
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    try {
+        if ($identity.User.Value -cne 'S-1-5-21-3542654388-73774624-397494543-1001' -or -not ([Security.Principal.WindowsPrincipal]::new($identity)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { throw 'exact_elevated_controller_required' }
+        $report.controller_sid = $identity.User.Value
+    } finally { $identity.Dispose() }
+    $PSModuleAutoLoadingPreference = 'None'
+    Import-Module 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1' -ErrorAction Stop
+    $scheduler = New-Object -ComObject 'Schedule.Service'
+    $scheduler.Connect()
+    $task = $scheduler.GetFolder('\').GetTask('JohnnyAuthoritySetup33-20261027')
+    $definition = $task.Definition
+    $xml = $task.Xml
+    if ($xml.Length -gt 262144) { throw 'task_xml_exceeds_diagnostic_bound' }
+    $sddl = $task.GetSecurityDescriptor(7)
+    $security = [Security.AccessControl.RawSecurityDescriptor]::new($sddl)
+    $aces = @()
+    foreach ($ace in $security.DiscretionaryAcl) {
+        $aces += [ordered]@{ type=$ace.AceType.ToString(); flags=[int]$ace.AceFlags; mask=[int]$ace.AccessMask; mask_hex=('0x{0:X8}' -f $ace.AccessMask); trustee=$ace.SecurityIdentifier.Value }
+    }
+    $report.task = [ordered]@{
+        path=$task.Path; enabled=[bool]$task.Enabled; state=[int]$task.State
+        last_run_time=$task.LastRunTime.ToUniversalTime().ToString('o'); last_result=[long]$task.LastTaskResult
+        principal=[ordered]@{ user_id=$definition.Principal.UserId; logon_type=[int]$definition.Principal.LogonType; run_level=[int]$definition.Principal.RunLevel }
+        trigger_count=[int]$definition.Triggers.Count; action_count=[int]$definition.Actions.Count
+        execution_time_limit=$definition.Settings.ExecutionTimeLimit; multiple_instances=[int]$definition.Settings.MultipleInstances
+        allow_demand_start=[bool]$definition.Settings.AllowDemandStart; start_when_available=[bool]$definition.Settings.StartWhenAvailable
+        actions=@(for ($i=1; $i -le $definition.Actions.Count; $i++) { $a=$definition.Actions.Item($i); [ordered]@{ type=[int]$a.Type; path=$a.Path; working_directory=$a.WorkingDirectory; arguments=$a.Arguments } })
+        security_sddl=$sddl; owner=$security.Owner.Value; group=$security.Group.Value
+        security_flags=$security.ControlFlags.ToString(); aces=$aces; xml=$xml
+    }
+    $report.status='READBACK_COMPLETED_NOT_HOST_QUALIFIED'
+} catch {
+    $report.status='READBACK_FAILED'
+    $report.error=[ordered]@{ type=$_.Exception.GetType().FullName; hresult=$_.Exception.HResult; message=$_.Exception.Message; script_stack=$_.ScriptStackTrace }
+} finally {
+    $report.completed_utc=[DateTime]::UtcNow.ToString('o')
+    $report.operations_performed=@('EXACT_TASK_READ_ONLY')
+    $report.operations_excluded=@('RUN','DISABLE','STOP','REGISTER','DELETE','ACL_CHANGE','SERVICE_CHANGE','HOST_CALL','MODEL_CALL')
+    $report.integrity='UNPROTECTED_DIAGNOSTIC_NOT_ADMISSION_EVIDENCE'
+    Import-Module 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1' -ErrorAction Stop
+    $bytes=[Text.UTF8Encoding]::new($false).GetBytes(($report | ConvertTo-Json -Depth 12))
+    $stream=[IO.File]::Open($reportPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+    try { $stream.Write($bytes,0,$bytes.Length); $stream.Flush($true) } finally { $stream.Dispose() }
+}
+if ($report.status -cne 'READBACK_COMPLETED_NOT_HOST_QUALIFIED') { exit 1 }
+exit 0
+```
+
 ## SETUP33 actual execution — FAILED / RECOVERY_REQUIRED
 
 Separate-seat read-only incident analysis by authority_install_inventory agrees:
