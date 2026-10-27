@@ -2,6 +2,11 @@
 
 ## Identity description defect — bounded correction, 2026-10-27
 
+Focused different-seat /root/authority_install_inventory review of a48ae398:
+DOC_PASS_NOT_EFFECT_RESULT. Exact2532-byte block hash, actual ValidateLength0..48,
+29-character real AST literal and zero parse errors independently confirmed.
+No account cmdlet/WhatIf, retry, setup or Host action executed by either Agent.
+
 Owner's screenshot codex-clipboard-05f8a211-07a5-45a2-b949-d55b60294604.png
 shows New-LocalUser ParameterArgumentValidationError: Description67 exceeds48.
 Password is masked; no password value is obtained or retained. This is Root's
