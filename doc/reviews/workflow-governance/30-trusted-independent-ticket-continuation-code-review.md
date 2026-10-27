@@ -2,6 +2,24 @@
 
 ## Source33 S33-F1 / conditional correction01 — 2026-10-27
 
+Separate-seat /root/authority_install_inventory independently confirmed S33-F1
+on candidate148b21a3 and found no second substantive contract defect in the
+bounded source path. Its documentation review of eb2acae7 / ticket blob74960fc4 /
+LF864e8b42 returned DOC_PASS_CONSTRUCTION_ONLY for the minimal token-reader
+reuse correction. It did not attest author capture files because its lookup did
+not locate them; that evidence gap is retained, not called a test pass. Root
+directly listed the registered native33-source33-01 records; exact originals
+will be read/sealed with corrected candidate review, without replaying OS work.
+
+Root read back clean author baseline148b21a3418957b44e8e668b08bb9182bf831d24,
+the committed ticket and both digest edges. Conditional Grant revision02 is now
+ACTIVE for exactly the original seven paths plus WindowsProcessIdentityReadback.cs
+CREATE and WindowsAuthorityBootstrap.cs partial-marker-only MODIFY. Existing
+author, own worktree/branch, closure58, direct lane and batch remain unchanged.
+AUTO_CONTINUE -> original-author additive correction; source/evidence return,
+independent ordinary review and Root reverse mutation before own-hold acceptance.
+No native/OS/Host operation is authorized by this activation.
+
 Root conclusion on148b21a3418957b44e8e668b08bb9182bf831d24:
 CHANGES_REQUESTED, closure58/S2. NativeStagingCommand default line97 calls
 WindowsAuthorityIdentityReadbackPort.Read(SystemSid); WindowsAuthorityBootstrap
