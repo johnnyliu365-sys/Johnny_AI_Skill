@@ -2,6 +2,14 @@
 
 ## Source33 corrected ordinary engineering evidence seal
 
+Separate-seat BYTE_QA_PASS on69eaaae5 confirms all42 originals match retained
+files exactly, no missing/mismatched byte or SHA;19 chunks/gzip148578/expanded
+817400 and both aggregate digests match. Root authorizes exact fast-forward of
+its existing clean engineering hold37807df0 to2f61dbbb, then the already reviewed
+362eadd9 offline link/input preparation allocation (DOC_PASS_PREPARATION_ONLY).
+This is own-hold engineering acceptance only, not main/30B/43 integration,
+installation or Host qualification. Preserve all old resources/Recovery.
+
 Candidate2f61dbbb589ba5469e74c83e8d22160b135b2682 / parent148b21a3.
 Separate-seat /root/authority_install_inventory: SOURCE_AUDIT_PASS_NOT_CVQ;
 Root final engineering conclusion APPROVED_SOURCE_ONLY, S33-F1 closed by the
