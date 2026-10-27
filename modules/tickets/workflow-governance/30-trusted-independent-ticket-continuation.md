@@ -15,6 +15,98 @@
 
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
+#### Protected staging source allocation33 — conditional, no installation
+
+The consumed setup32 ValidateOnly permission is not renewed. Its successful
+result does not solve the next direct dependency of BOTH30B/43: Apply requires
+SYSTEM-owned, protected inputs, while setup32 is an untrusted user Temp package.
+The existing native directory/payload creation ports already provide atomic
+create-new, retained ancestor identity, exact owner/DACL/content readback and
+finite refusal/recovery outcomes. Reuse them; do not add another installer,
+P/Invoke layer, authorization engine or staging responsibility to the1123-line
+Apply wrapper. A hash followed by execution from mutable user Temp is NOT a
+safe bootstrap. The later elevated bootstrap and actual SYSTEM execution remain
+separately NOT_AUTHORIZED, with precise pinned commands required before effect.
+
+Conditional grant-ticket30-protected-staging-source33-20261027 derives ONLY from
+batch-checklist-local-20261019-uncapped and the existing setup prerequisite;
+same Ticket30/PRD/CHG/SPEC, new finite closure58 for this local construction.
+Author /root/native_service_impl, own existing native-service worktree/branch,
+clean source baseline37807df0e2c1659b06c1049ba4c26fc87a04a30b. Root remains
+Architecture Owner/final reviewer; /root/authority_install_inventory supplies
+independent ordinary source evidence, NOT qualified CVQ isolation. Same-lifetime
+direct lane, receipt/runner NOT_REQUIRED. Activate only after committed exact
+ticket/registry readback and separate-seat documentation review; no source
+mutation under this conditional draft.
+
+CREATE exactly library/local_orchestration/native_windows/NativeStaging.cs,
+library/local_orchestration/native_windows/NativeStagingCommand.cs and
+library/local_orchestration/native_windows/NativeStagingSelfTests.cs.
+MODIFY exactly library/local_orchestration/native_windows/Program.cs and
+library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj,
+library/local_orchestration/native_windows/NativeOwnedPayloadFileCreation.cs and
+library/local_orchestration/native_windows/Win32OwnedPayloadFileCreationPort.cs.
+DELETE0, no dependency, no changes to provisioning wrapper/directory native port,
+enrollment/service/Registry/Grant/Router/worker or prior tests. Existing originals,
+staged package and linked image stay immutable. No new branch or worktree.
+
+S1: internal typed staging manifest/asset values; a closed schema_revision1,
+staging_id using existing NativeEnrollmentId, and explicit ordered assets with
+relative_path/sha256/size_bytes. Destination is derived from the trusted Windows
+CommonApplicationData stop root plus JohnnyAuthorityStaging-<staging_id>, never
+an arbitrary caller root. Validate canonical Windows components, descendants,
+duplicate/case/prefix/file-directory conflicts and all bounds before creating
+effect ports. Manifest <=128KiB,1..128 assets, aggregate <=64MiB, each file uses
+existing bounded file-content size/hash validation; relative paths <=512 characters,
+derived directories <=256. Validate every payload and final EOF before first
+mutation. No second NativeEnrollment semantic parser or fabricated Grant.
+Do not fabricate enrollment payload roles for staging. The two file-primitive
+MODIFY paths may extract only a shared internal typed content binding and narrow
+overloads, preserving the exact legacy NativePayloadEntry facade, validation and
+native creation/readback behavior. Existing directory port remains unchanged;
+no new P/Invoke, legacy caller migration or changes to enrollment authority.
+
+S2: one closed stage-inputs verb; wire is a four-byte little-endian manifest
+byte length, that exact bounded UTF8 JSON, then ordered exact asset bytes/EOF.
+Reuse existing actual process-token readback; require observed primary SYSTEM
+and no thread impersonation before constructing effect ports. Use existing
+Win32OwnedDirectoryCreationPort/Win32OwnedPayloadFileCreationPort and strong
+path/SID/hash/observation types, atomically SYSTEM-owned protected SYSTEM/Admins
+FullControl only. No adoption, overwrite, DACL reset or cleanup. Require complete
+post-create owner/DACL/path/size/hash readback; any uncertain/partial mutation
+retains confirmed paths and RECOVERY_REQUIRED, never claims absence or success.
+Output <=1MiB, typed finite status/stage and SOURCE_ONLY_UNQUALIFIED; no Apply,
+process spawn, SCM, Registry, service start, Host/network/model operation.
+
+S3: the separate staging-contract-self-test verb reaches production command/core
+through existing injected fake ports only. Pure constructors/roundtrip, legal
+complete staging, wrong/missing/impersonated identity with ZERO effect-factory
+calls; malformed/unknown/duplicate/oversized/path/reparse metadata, case and
+file-parent collisions, short/extra/hash-mismatched payload including a bad LAST
+asset with ZERO creations; existing/raced target refusal, uncertain/partial
+create, wrong owner/DACL/identity/size/hash and output failure. Existing native
+contracts and all existing verbs preserve behavior. No native OS self-test or
+real staging used to satisfy an offline cell.
+
+S4: author strict managed build/pure smoke plus named actual-guard reverse
+mutations and restored GREEN; Root uses a different mutation door on the exact
+candidate. Reuse existing native fake/observation fixtures where accessible;
+no bespoke test runner/mock server. Expected source delta about300 core,200
+command,400 test lines and minimal Program/project wiring; these are structure
+review signals, not compression/splitting targets or a reset of this round's
+existing asset budget. >500 effective lines or duplicated helpers requires
+responsibility review. New code contains technical comments only, not prompts
+or ticket narrative. Preserve raw commands/stdin/stdout/stderr and all failures.
+
+Cached managed build/pure fixture execution only; finite per-command timeouts
+and lifecycle monitoring, historical accounting retained under uncapped batch.
+New native linking, if needed, follows source review with the already approved
+cached SDK; executable execution/installation/security changes remain prohibited.
+Engineering source acceptance permits only existing own-hold local integration;
+formal30B/43, actual Grant positive and Host qualification remain blocked.
+After acceptance, prepare the ONE exact protected bootstrap/staging/disabled-
+service setup packet, not more governance or an unrelated source branch.
+
 #### correction02 accepted engineering checkpoint — real effects still blocked
 
 Exact native d4d53a297b640501dd13d93a56ff45d2292b4f07 and wrapper/test

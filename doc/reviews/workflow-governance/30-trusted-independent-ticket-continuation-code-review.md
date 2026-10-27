@@ -1,5 +1,45 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Protected staging source33 preflight — conditional local construction
+
+ACTION_COMPLETED on5b2c6655 routes to TICKETS/source33, not another validation
+child or Apply. Scope is the exact seven-path closure58 in original Ticket30;
+source baseline37807df0. Existing constructor/creation/readback ports are the
+reuse seam, no second installer/Win32 layer/authorization source. New internal
+constructors are ordinary pure construction plus negative tests; production
+effect factories stay behind the actual SYSTEM identity check. Their offline
+proof does not qualify the Host or authorize real staging.
+
+Root read-only parent probe on2026-10-27: C:\Program Files is a non-reparse
+directory, TrustedInstaller owner S-1-5-80-956008885-3418522649-1831038044-
+1853292631-2271478464; BU/AC entries read/execute, no ordinary-user create.
+C:\ProgramData ownerSYSTEM, SDDL
+O:SYG:SYD:PAI(A;OICIIO;GA;;;CO)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;BU)(A;CI;DCLCRPCR;;;BU).
+Its BU create rights preclude treating an arbitrary existing child as trusted.
+Reading C:\Windows\System32\config\systemprofile\AppData\Local failed with
+System.UnauthorizedAccessException / ItemExistsUnauthorizedAccessError,
+Access to the path 'C:\Windows\System32\config\systemprofile\AppData\Local' is denied.
+Do not invent that private parent's observed ACL or change it. The first probe
+was a PowerShell parser failure ('An empty pipe element is not allowed.'); no
+OS probe ran until the foreach output was assigned before ConvertTo-Json.
+
+The .NET Framework DirectoryInfo.Create(DirectorySecurity) API documents
+ACL-at-create but no-op for an existing directory, not native CREATE_NEW:
+https://learn.microsoft.com/en-us/dotnet/api/system.io.directoryinfo.create?view=netframework-4.7.2
+Existing native Win32OwnedDirectoryCreationPort explicitly reports exists and
+retains/rechecks ancestors; payload port already uses CreateNew and exact bytes.
+Use those actual product seams, not a new PS/PInvoke duplicate. The eventual
+bootstrap must place its pinned image/script under a separately approved
+protected parent BEFORE execution, never hash-then-exec from user Temp.
+
+Pending separate-seat documentation assessment and exact activation. No source
+dispatch/effect grant is claimed by this proposal. Source-only normal review is
+not CVQ; first-entry order exception and final original CVQ admission unchanged.
+Author's separate readonly source assessment agrees: native atomic create ports
+are necessary, with no fabricated NativePayloadEntry role for staging. Root
+therefore narrows the two extra MODIFY paths to shared typed file-content binding
+and compatibility-preserving overloads only. No general port/authorization rewrite.
+
 ## Approved one-child validation completed — permission consumed
 
 ACTION_COMPLETED / VALIDATION_ONLY,2026-10-27. The exact Owner-authorized
