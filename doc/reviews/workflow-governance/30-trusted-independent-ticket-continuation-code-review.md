@@ -2,6 +2,10 @@
 
 ## Actual SID setup inputs assembled; first file-policy refusal retained
 
+Different-seat focused DOC_PASS_PROPOSAL_ONLY for1bd23534: the exact proposed
+RemoteSigned/ValidateOnly switch is child-process-only, no persistent/GPO/Apply/
+RunAs/certificate/Host effect, and remains NOT_AUTHORIZED. Root has not run it.
+
 Different-seat /root/authority_install_inventory BYTE_QA independently confirms
 all121 files and115 ordered payload size/hash bindings, all metadata/script/input
 pins and actual SID roster. No Apply readiness, protected SYSTEM staging or
