@@ -6,8 +6,13 @@ SETUP33-20261027-SID1006 execution of owner-launch03.json SHA256
 as sealed at 5436043b86cf16a8a0736093f46857979d8af9d5. The single execution exited1
 at2026-10-27T09:05:47.4452157Z; RECOVERY_REQUIRED, task suspension UNVERIFIED.
 Eight protected bootstrap files remain, six logs are empty, completion readback
-is absent and Win32_Service returned zero matching services. Medium task readback
-returned E_ACCESSDENIED; no retry, deletion or alternative setup is authorized.
+is absent and Win32_Service returned zero matching services. Approved elevated
+read-only diagnostic later found task enabled/Ready, no triggers, never-run
+result0x41303. Actual task SDDL lacks the expected protected flag and has an extra
+SYSTEM-read ACE; both normal acceptance and recovery-disable reuse the rejecting
+assertion. Independent source/readback analysis confirmed this causal path.
+Task suspension is NOT confirmed. A separately authorized exact-match disable-only
+action is proposed; no retry, deletion, ACL update or alternative setup is authorized.
 The following NOT AUTHORIZED labels describe the preserved pre-approval
 proposal, not a second approval request. The review records the activation;
 all operation boundaries below remain unchanged.

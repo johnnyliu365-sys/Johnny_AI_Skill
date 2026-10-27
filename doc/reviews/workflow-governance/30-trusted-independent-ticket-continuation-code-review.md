@@ -1,5 +1,137 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## SETUP33 approved diagnostic result — exact ACL assertion defect identified
+
+The approved read-only operation ran once: PID30904, parent start
+2026-10-27T09:18:22.1592077Z, parent exit0 at09:18:23.3026637Z. No task mutation.
+Original diagnostic report8230bytes, SHA256
+8a4c5880a831498c98f46103accba5d7d67c41a6578d4f51cd61f580be070250;
+the unprotected report is retained as diagnostic data, never CVQ/admission proof.
+Exact task XML UTF8 SHA256
+6389939443b568e78a29346b6372a7f1c160ad5f5930ee36b0a3b1a530f299f7.
+The raw report is reproduced below; the source original remains held in the
+existing preparation directory. This is an auditable snapshot, not a fresh
+authorization source or proof of current Host qualification.
+
+The task is enabled/Ready3, no triggers, expected SYSTEM principal5/highest1,
+exact action/PT3M. LastTaskResult267011=0x00041303 and sentinel LastRunTime
+corroborate never-run status. The actual SDDL is
+O:BAG:BAD:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FR;;;SY): two accepted FullControl masks2032127
+and an extra SYSTEM-read1179785; protection flag absent and ACE count3, not2.
+Frozen Assert-ExactTask therefore deterministically rejects at
+task_security_readback_mismatch before Run(), not at task_ace_mismatch. The
+catch's Disable-ExactTask repeats that same failing assertion, explaining why
+the task remains enabled. The original console exception is still MISSING;
+this conclusion is supported by source plus the directly observed snapshot,
+not a fabricated reconstruction of that original exception.
+
+authority_install_inventory independently confirmed the readback pin, causal
+path and guarded disable-only recovery boundary. No non-admin trustee or trigger
+was observed, but the task remains manually demand-startable by its trusted
+SYSTEM/Admin principals. Do not call this safe suspension or setup completion.
+
+Next proposed external action, NOT yet authorized: on DESKTOP-28ERPQ1, controller
+SID1001, one visible elevated x64 PS5.1 child; query only this exact task, compare
+the above full XML hash, exact SDDL/principal/action/no-trigger state, refuse any
+queued/running instance or mismatch, set only Enabled=false, then fresh exact-name
+readback must confirm disabled/no active instances. Preserve all files/task/logs;
+no Run, Stop, registration, ACL update, service change, deletion, retry or Host/model
+call. Disabled state1 is valid; do not require Ready3 after suspension. Record this
+bounded reduction of risk separately from any later corrected setup authorization.
+
+Offline follow-up remains in the original Ticket30: correct the task-specific
+readback/recovery predicate using measured Scheduler semantics, retaining closed
+trusted principals and rejecting foreign ACEs/actions. Do not merely remove the
+security checks or represent this diagnostic as CVQ qualification. No new
+framework, PRD or parallel workflow. 30B/43 remain REVIEW_BLOCKED.
+
+Primary API references: Microsoft RegisterTaskDefinition documents optional
+principal-ACE insertion and TASK_DONT_ADD_PRINCIPAL_ACE; it does not prove that
+this particular missing protection flag is harmless. Microsoft's status reference
+defines0x00041303 as not yet run. No new registration experiment is authorized.
+[Registration](https://learn.microsoft.com/en-us/windows/win32/taskschd/taskfolder-registertaskdefinition),
+[status constants](https://learn.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-error-and-success-constants).
+
+```json
+{
+    "operation":  "SETUP33-READONLY-TASK-01",
+    "scope":  "DIAGNOSTIC_ONLY_NOT_CVQ",
+    "started_utc":  "2026-10-27T09:18:22.9706546Z",
+    "status":  "READBACK_COMPLETED_NOT_HOST_QUALIFIED",
+    "controller_sid":  "S-1-5-21-3542654388-73774624-397494543-1001",
+    "task":  {
+                 "path":  "\\JohnnyAuthoritySetup33-20261027",
+                 "enabled":  true,
+                 "state":  3,
+                 "last_run_time":  "1999-11-29T16:00:00.0000000Z",
+                 "last_result":  267011,
+                 "principal":  {
+                                   "user_id":  "SYSTEM",
+                                   "logon_type":  5,
+                                   "run_level":  1
+                               },
+                 "trigger_count":  0,
+                 "action_count":  1,
+                 "execution_time_limit":  "PT3M",
+                 "multiple_instances":  2,
+                 "allow_demand_start":  true,
+                 "start_when_available":  false,
+                 "actions":  [
+                                 {
+                                     "type":  0,
+                                     "path":  "C:\\Windows\\System32\\cmd.exe",
+                                     "working_directory":  "C:\\Windows\\System32",
+                                     "arguments":  "/d /s /c \"\"C:\\Program Files\\JohnnySetup33-20261027.exe\" stage-inputs \u003c \"C:\\Program Files\\JohnnySetup33-20261027.input.bin\" \u003e \"C:\\Program Files\\JohnnySetup33-20261027.stage.stdout\" 2\u003e \"C:\\Program Files\\JohnnySetup33-20261027.stage.stderr\" \u0026\u0026 \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\Invoke-AuthorityProvisioning.ps1\" -Mode Apply -InputPath \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\operation.json\" -StagingRoot \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\" -ExpectedScriptSha256 37b8c5e059acaba55212cc5631880133220342a6591000db94f7c39ee12c90aa -ExpectedInputSha256 22cbc51d132db674b549d52e86a72bb4e6c5845741b121c05a9b95bf60942f36 \u003e \"C:\\Program Files\\JohnnySetup33-20261027.apply.stdout\" 2\u003e \"C:\\Program Files\\JohnnySetup33-20261027.apply.stderr\" \u0026\u0026 \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\payload\\JohnnyAuthority.Tools.exe\" observe-enrollment \u003c \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\metadata\\enrollment.json\" \u003e \"C:\\Program Files\\JohnnySetup33-20261027.observe.stdout\" 2\u003e \"C:\\Program Files\\JohnnySetup33-20261027.observe.stderr\"\""
+                                 }
+                             ],
+                 "security_sddl":  "O:BAG:BAD:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FR;;;SY)",
+                 "owner":  "S-1-5-32-544",
+                 "group":  "S-1-5-32-544",
+                 "security_flags":  "DiscretionaryAclPresent, SelfRelative",
+                 "aces":  [
+                              {
+                                  "type":  "AccessAllowed",
+                                  "flags":  0,
+                                  "mask":  2032127,
+                                  "mask_hex":  "0x001F01FF",
+                                  "trustee":  "S-1-5-18"
+                              },
+                              {
+                                  "type":  "AccessAllowed",
+                                  "flags":  0,
+                                  "mask":  2032127,
+                                  "mask_hex":  "0x001F01FF",
+                                  "trustee":  "S-1-5-32-544"
+                              },
+                              {
+                                  "type":  "AccessAllowed",
+                                  "flags":  0,
+                                  "mask":  1179785,
+                                  "mask_hex":  "0x00120089",
+                                  "trustee":  "S-1-5-18"
+                              }
+                          ],
+                 "xml":  "\u003c?xml version=\"1.0\" encoding=\"UTF-16\"?\u003e\r\n\u003cTask version=\"1.2\" xmlns=\"http://schemas.microsoft.com/windows/2004/02/mit/task\"\u003e\r\n  \u003cRegistrationInfo\u003e\r\n    \u003cSecurityDescriptor\u003eO:BAG:BAD:P(A;;GA;;;SY)(A;;GA;;;BA)\u003c/SecurityDescriptor\u003e\r\n    \u003cDescription\u003eOne manual protected setup; no service start\u003c/Description\u003e\r\n    \u003cURI\u003e\\JohnnyAuthoritySetup33-20261027\u003c/URI\u003e\r\n  \u003c/RegistrationInfo\u003e\r\n  \u003cPrincipals\u003e\r\n    \u003cPrincipal id=\"Author\"\u003e\r\n      \u003cUserId\u003eS-1-5-18\u003c/UserId\u003e\r\n      \u003cRunLevel\u003eHighestAvailable\u003c/RunLevel\u003e\r\n    \u003c/Principal\u003e\r\n  \u003c/Principals\u003e\r\n  \u003cSettings\u003e\r\n    \u003cDisallowStartIfOnBatteries\u003efalse\u003c/DisallowStartIfOnBatteries\u003e\r\n    \u003cStopIfGoingOnBatteries\u003efalse\u003c/StopIfGoingOnBatteries\u003e\r\n    \u003cExecutionTimeLimit\u003ePT3M\u003c/ExecutionTimeLimit\u003e\r\n    \u003cMultipleInstancesPolicy\u003eIgnoreNew\u003c/MultipleInstancesPolicy\u003e\r\n    \u003cIdleSettings\u003e\r\n      \u003cDuration\u003ePT10M\u003c/Duration\u003e\r\n      \u003cWaitTimeout\u003ePT1H\u003c/WaitTimeout\u003e\r\n      \u003cStopOnIdleEnd\u003etrue\u003c/StopOnIdleEnd\u003e\r\n      \u003cRestartOnIdle\u003efalse\u003c/RestartOnIdle\u003e\r\n    \u003c/IdleSettings\u003e\r\n  \u003c/Settings\u003e\r\n  \u003cTriggers /\u003e\r\n  \u003cActions Context=\"Author\"\u003e\r\n    \u003cExec\u003e\r\n      \u003cCommand\u003eC:\\Windows\\System32\\cmd.exe\u003c/Command\u003e\r\n      \u003cArguments\u003e/d /s /c \"\"C:\\Program Files\\JohnnySetup33-20261027.exe\" stage-inputs \u0026lt; \"C:\\Program Files\\JohnnySetup33-20261027.input.bin\" \u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.stage.stdout\" 2\u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.stage.stderr\" \u0026amp;\u0026amp; \"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\Invoke-AuthorityProvisioning.ps1\" -Mode Apply -InputPath \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\operation.json\" -StagingRoot \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\" -ExpectedScriptSha256 37b8c5e059acaba55212cc5631880133220342a6591000db94f7c39ee12c90aa -ExpectedInputSha256 22cbc51d132db674b549d52e86a72bb4e6c5845741b121c05a9b95bf60942f36 \u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.apply.stdout\" 2\u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.apply.stderr\" \u0026amp;\u0026amp; \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\payload\\JohnnyAuthority.Tools.exe\" observe-enrollment \u0026lt; \"C:\\ProgramData\\JohnnyAuthorityStaging-setup33-20261027-sid1006\\metadata\\enrollment.json\" \u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.observe.stdout\" 2\u0026gt; \"C:\\Program Files\\JohnnySetup33-20261027.observe.stderr\"\"\u003c/Arguments\u003e\r\n      \u003cWorkingDirectory\u003eC:\\Windows\\System32\u003c/WorkingDirectory\u003e\r\n    \u003c/Exec\u003e\r\n  \u003c/Actions\u003e\r\n\u003c/Task\u003e"
+             },
+    "completed_utc":  "2026-10-27T09:18:23.1979780Z",
+    "operations_performed":  [
+                                 "EXACT_TASK_READ_ONLY"
+                             ],
+    "operations_excluded":  [
+                                "RUN",
+                                "DISABLE",
+                                "STOP",
+                                "REGISTER",
+                                "DELETE",
+                                "ACL_CHANGE",
+                                "SERVICE_CHANGE",
+                                "HOST_CALL",
+                                "MODEL_CALL"
+                            ],
+    "integrity":  "UNPROTECTED_DIAGNOSTIC_NOT_ADMISSION_EVIDENCE"
+}
+```
+
 ## SETUP33-READONLY-TASK-01 Owner approval and exact diagnostic
 
 The Owner approved one elevated read-only query of the exact setup task after
