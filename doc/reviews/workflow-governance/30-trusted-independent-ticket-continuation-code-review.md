@@ -2,6 +2,15 @@
 
 ## Protected staging source33 activation — local code only
 
+Reviewer resource allocation: C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\native33-root-review01,
+owner Root/Ticket30 source33, TTL24h plus active evidence/Recovery hold, preserve
+teardown/no denied cleanup. Purpose: immutable committed source build export and
+Root pure review/mutants after candidate pin; before candidate, only a bounded
+fictional binary-stdin/CMD quote/exit-gating transport probe using the existing
+CPython -I -B, NOT the native artifact or Apply. Per-child deadline10s for the
+probe, credential-free environment, <=4KiB fixture and bounded outputs. No Temp
+Git repository/clone, network, SYSTEM, task, ACL or service operations.
+
 Registered resource: C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\native33-source33-01,
 owner /root/native_service_impl/Ticket30 source33, purpose cached managed build
 and pure constructor/fake-port tests, TTL24h plus active review/Recovery hold.
