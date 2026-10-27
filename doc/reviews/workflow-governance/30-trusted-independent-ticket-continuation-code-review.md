@@ -2,6 +2,14 @@
 
 ## SETUP33 final operation-preparation seal — NOT OS AUTHORIZATION
 
+Final separate-seat DOC_PASS_EXACT_OWNER_PACKET + BYTE_QA_PASS confirms
+6523d5f0 runbook14/checklist122/index/Ticket30 consistency, only04 checked,
+leaf LF d9ecf14f and both registry edges. All14 originals match retained bytes,
+gzip203824/cf6a1b2d and expanded680568/6d28ffd9 aggregates;120 frame assets and
+native image pins remain unchanged. Root returns ACTION_COMPLETED for local
+preparation, WAIT_FOR_HUMAN ONLY for the exact new OS operation in runbook14.
+No source task is re-opened, no setup32 permission reused, no effect executed.
+
 Source33/correction01, actual own-hold AOT link17.297s and source/SDK/MSVC pins
 are captured without native execution. New setup33 contains115 payloads and120
 stage assets; complete33MB binary frame was independently checked against every
