@@ -1,5 +1,77 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## SETUP33-DISABLE-ONLY-01 exact Owner activation — 2026-10-27
+
+Owner approved the previously proposed exact-task suspension after readback at
+e30e604917a44f4463344c804ed2da582a434930. One visible elevated System32 x64 PS5.1
+EncodedCommand on DESKTOP-28ERPQ1/controller1001; no ExecutionPolicy change.
+Before mutation require the observed full XML hash, exact actual SDDL, Ready3,
+never-run result267011 and no active instance. Set only Enabled=false; then fresh
+query must show disabled/no active instance, unchanged ACL and unchanged XML other
+than the Enabled element. No Run, Stop, task registration/deletion, ACL/service/
+account change, Host/model call or cleanup. No retry. Record an ordinary CreateNew
+diagnostic JSON in the existing preparation directory, not CVQ/admission evidence.
+Original setup permission stays consumed; this permits suspension only.
+Exact UTF8 script SHA256 b13a1b9d9eacbb5758e0613a9fe87c2c2448a8f8d84590a8b2c38b844c4cb05f.
+Parent wait60seconds maximum; no forced process termination.
+
+```powershell
+Set-StrictMode -Version Latest
+$ErrorActionPreference='Stop'
+$reportPath='C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup33-sid1006-20261027\setup33-disable-only-20261027-01.json'
+$report=[ordered]@{operation='SETUP33-DISABLE-ONLY-01';scope='EXACT_TASK_SUSPENSION_NOT_HOST_QUALIFICATION';started_utc=[DateTime]::UtcNow.ToString('o');status='PENDING';mutation_attempted=$false}
+function Hash-Text([string]$Text) {
+    $h=[Security.Cryptography.SHA256]::Create()
+    try { return ([BitConverter]::ToString($h.ComputeHash([Text.UTF8Encoding]::new($false).GetBytes($Text)))).Replace('-','').ToLowerInvariant() } finally {$h.Dispose()}
+}
+function Without-Enabled([string]$Xml) {
+    $d=[Xml.XmlDocument]::new()
+    $d.PreserveWhitespace=$false
+    $d.LoadXml($Xml)
+    $n=[Xml.XmlNamespaceManager]::new($d.NameTable)
+    $n.AddNamespace('t','http://schemas.microsoft.com/windows/2004/02/mit/task')
+    foreach($e in @($d.SelectNodes('/t:Task/t:Settings/t:Enabled',$n))) { [void]$e.ParentNode.RemoveChild($e) }
+    return $d.OuterXml
+}
+try {
+    if([Environment]::MachineName -cne 'DESKTOP-28ERPQ1' -or $PSVersionTable.PSVersion.Major -ne 5 -or -not [Environment]::Is64BitProcess) {throw 'exact_machine_PS51_x64_required'}
+    $id=[Security.Principal.WindowsIdentity]::GetCurrent()
+    try {if($id.User.Value -cne 'S-1-5-21-3542654388-73774624-397494543-1001' -or -not ([Security.Principal.WindowsPrincipal]::new($id)).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {throw 'exact_elevated_controller_required'}} finally {$id.Dispose()}
+    $PSModuleAutoLoadingPreference='None'
+    Import-Module 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1' -ErrorAction Stop
+    if([IO.File]::Exists($reportPath)) {throw 'existing_report_refused'}
+    $s=New-Object -ComObject 'Schedule.Service'
+    $s.Connect()
+    $f=$s.GetFolder('\')
+    $t=$f.GetTask('JohnnyAuthoritySetup33-20261027')
+    $xml=[string]$t.Xml
+    $sd=[string]$t.GetSecurityDescriptor(7)
+    if($t.Path -cne '\JohnnyAuthoritySetup33-20261027' -or (Hash-Text $xml) -cne '6389939443b568e78a29346b6372a7f1c160ad5f5930ee36b0a3b1a530f299f7' -or $sd -cne 'O:BAG:BAD:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FR;;;SY)') {throw 'exact_task_definition_or_acl_mismatch'}
+    if(-not $t.Enabled -or $t.State -ne 3 -or $t.LastTaskResult -ne 267011 -or $t.GetInstances(0).Count -ne 0) {throw 'task_state_changed_no_mutation'}
+    $report.before=[ordered]@{enabled=[bool]$t.Enabled;state=[int]$t.State;xml_sha256=(Hash-Text $xml);sddl=$sd;active_instances=[int]$t.GetInstances(0).Count;last_result=[long]$t.LastTaskResult}
+    $report.mutation_attempted=$true
+    $t.Enabled=$false
+    $after=$f.GetTask('JohnnyAuthoritySetup33-20261027')
+    $afterXml=[string]$after.Xml
+    if($after.Path -cne '\JohnnyAuthoritySetup33-20261027' -or $after.Enabled -or $after.State -in @(2,4) -or $after.GetInstances(0).Count -ne 0 -or $after.GetSecurityDescriptor(7) -cne $sd -or (Without-Enabled $afterXml) -cne (Without-Enabled $xml)) {throw 'suspension_or_unchanged_definition_not_confirmed'}
+    $report.after=[ordered]@{enabled=[bool]$after.Enabled;state=[int]$after.State;xml_sha256=(Hash-Text $afterXml);sddl=[string]$after.GetSecurityDescriptor(7);active_instances=[int]$after.GetInstances(0).Count;last_result=[long]$after.LastTaskResult;xml=$afterXml}
+    $report.status='SUSPENSION_CONFIRMED_SETUP_INCOMPLETE'
+} catch {
+    $report.status='RECOVERY_REQUIRED'
+    $report.error=[ordered]@{type=$_.Exception.GetType().FullName;hresult=$_.Exception.HResult;message=$_.Exception.Message;stack=$_.ScriptStackTrace}
+} finally {
+    $report.completed_utc=[DateTime]::UtcNow.ToString('o')
+    $report.excluded=@('RUN','STOP','REGISTER','DELETE','ACL_CHANGE','SERVICE_CHANGE','HOST_CALL','MODEL_CALL','CLEANUP')
+    $report.integrity='UNPROTECTED_DIAGNOSTIC_NOT_CVQ_ADMISSION'
+    Import-Module 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1' -ErrorAction Stop
+    $b=[Text.UTF8Encoding]::new($false).GetBytes(($report|ConvertTo-Json -Depth 10))
+    $o=[IO.File]::Open($reportPath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+    try {$o.Write($b,0,$b.Length);$o.Flush($true)} finally {$o.Dispose()}
+}
+if($report.status -cne 'SUSPENSION_CONFIRMED_SETUP_INCOMPLETE') {exit 1}
+exit 0
+```
+
 ## SETUP33 approved diagnostic result — exact ACL assertion defect identified
 
 The approved read-only operation ran once: PID30904, parent start
