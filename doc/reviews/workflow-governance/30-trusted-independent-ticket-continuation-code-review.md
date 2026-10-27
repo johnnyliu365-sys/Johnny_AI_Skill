@@ -2,6 +2,54 @@
 
 ## Protected staging source33 activation — local code only
 
+### Exact cached managed verification recipe (source33)
+
+Reuse the retained native30-managed11/native30-managed11-original.json under
+C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021,
+raw SHA256fd20a06058fe0311a2afb3525b6bbb6e35aac8c3bbb9317e2e04660aa9c704ea.
+This is a pinned argv/environment template, not implementation authority or a
+test result for source33. Its complete original is already retained/sealed.
+Author copies no old build outputs and does not rerun the old root creator.
+
+For this allocation replace ONLY the old native30-managed11 root with the
+registered native33-source33-01 root in argv/environment values, and replace
+the old protected-source project/config path with the author's exact own
+native-service worktree project/config path. Leave cached SDK/fallback paths
+unchanged. Actual project: library/local_orchestration/native_windows/
+JohnnyAuthority.Tools.csproj in that own worktree. Record the full resulting
+argv and credential-free environment, not just this replacement description.
+
+Retain absolute C:\Program Files\dotnet\dotnet.exe msbuild; targets Restore,Build;
+Configuration=Release,PublishAot=false,RuntimeIdentifier=win-x64,
+SelfContained=false,TargetLatestRuntimePatch=false, own NuGet.Config with
+packageSources clear, isolated RestorePackagesPath/obj/bin beneath registered
+root, RestoreFallbackFolders=C:/Users/GameBoy/.nuget/packages, NuGetAudit=false,
+EnableRuntimePackDownload=false,EnableAppHostPackDownload=false,
+EnableTargetingPackDownload=false,UseSharedCompilation=false,
+UseMSBuildServer=false,RestoreDisableParallel=true,BuildInParallel=false,
+nodeReuse:false,maxcpucount:1,verbosity:minimal. No network/global package config
+or PATH/environment setting; only the captured child environment changes.
+Create home/temp/packages/obj/bin below the fresh registered root as needed.
+
+Build child deadline60s, stdout/stderr each bounded to1MiB. On success execute
+ONLY absolute dotnet.exe plus the exact freshly built managed DLL beneath that
+root, one verb per child: staging-contract-self-test, self-test,
+enrollment-contract-self-test, job-contract-self-test. Each deadline15s,
+stdout/stderr <=1MiB. These known pure contracts use fakes; never run
+stage-inputs, job-self-test, inspect, observe/verify-enrollment, service,
+provision-enrollment or any NativeAOT image. Trap actual effect factories in
+staging cells. This is not native OS/Host execution or qualification.
+
+Capture source/project/NuGet input hashes before and after, baseline and full
+dirty diff, full argv/environment/timeout/duration/exit/stdin plus unfiltered
+stdout/stderr bytes (base64 permitted), exact DLL/deps/runtimeconfig hashes,
+and which loaded DLL each child executed. Filenames under own resource root:
+managed-build-original.json; pure-staging-original.json;
+pure-existing-original.json; mutation-<bounded-name>-original.json. Preserve
+each failure in an additional uniquely named record, never overwrite or reduce
+it to a count. Mutate only declared source paths, record each named red and
+byte-exact restored green; source remains uncommitted until COMMIT_ONLY.
+
 Reviewer resource allocation: C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\native33-root-review01,
 owner Root/Ticket30 source33, TTL24h plus active evidence/Recovery hold, preserve
 teardown/no denied cleanup. Purpose: immutable committed source build export and
