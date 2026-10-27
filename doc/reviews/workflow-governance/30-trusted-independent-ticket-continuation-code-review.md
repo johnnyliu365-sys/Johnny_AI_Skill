@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Single validation child policy decision — Owner APPROVAL_GRANTED
+
+2026-10-27 Owner replied "核准" to the immediately preceding exact one-child
+RemoteSigned/ValidateOnly decision. Reviewed source1bd23534/runbook12 blob
+d1032f60f50cd673ce057de6c7946f1b94bf0838 and proposal QA3fd4d237 bind
+setup32 root, scriptSHA37b8c5e0 and operationSHAbc6ba70d (full hashes below).
+Root may invoke ONE noninteractive System32 Windows PowerShell5.1 child with
+-ExecutionPolicy RemoteSigned, -Mode ValidateOnly, exact input/root/pins,
+credential-free environment and15s deadline. No Bypass, RunAs, signing/certificate,
+CurrentUser/LocalMachine/GPO policy change, Apply/service/ACL/Registry/Host effect.
+Fresh script/input hashes match; actual subject1006 remains enabled, profile absent.
+Recheck all121 asset hashes before/after and effective parent policy after exit.
+This is a new scoped authority, not an unapproved retry of the old refusal.
+AUTO_CONTINUE -> that exact child, complete raw capture, then evidence readback.
+
 ## Actual SID setup inputs assembled; first file-policy refusal retained
 
 Different-seat focused DOC_PASS_PROPOSAL_ONLY for1bd23534: the exact proposed
