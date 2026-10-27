@@ -2,6 +2,48 @@
 
 ## Source33 S33-F1 / conditional correction01 — 2026-10-27
 
+### Remaining local artifact preparation allocation — no execution permission
+
+After the corrected committed source passes ordinary independent/Root review,
+reuse the already approved cached SDK/link09 recipe to build ONE new unexecuted
+NativeAOT image under the new exact resource
+C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\native33-link01.
+Root owns generated build artifacts, TTL24h plus active Review/Recovery hold,
+preserve teardown, per-child60s and bounded outputs. Verify source/SDK/MSVC input
+pins before/after, packageSources clear and no credential/network inheritance.
+Do not execute the image or overwrite the old linked/payload artifacts.
+
+Then Root may generate the exact replacement operational inputs under
+C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup33-sid1006-20261027.
+Same ownership/TTL/hold/preserve policy, absent non-reparse target required.
+CREATE the same115 explicit payload paths as setup32 (113 immutable runtime/app
+dependencies, fixed configuration and newly reviewed/linked native image),
+metadata/setup.json, metadata/plan.json, metadata/enrollment.json,
+operation.json and the unchanged37807df0 Invoke-AuthorityProvisioning.ps1.
+Use the existing reviewed managed pure plan/validate-enrollment verbs only;
+no actual registry/SCM lookup to synthesize authority. Update ONLY the native
+size/hash and operation staging_root/pins for the new image and exact proposed
+C:\ProgramData\JohnnyAuthorityStaging-setup33-20261027-sid1006. Preserve actual
+controller1001/subject1006/service SID and fixed roots; extra registry values[]
+stay empty. Add staging-manifest.json and staging-input.bin, derived from those
+exact120 physical files through the reviewed closed frame contract; not another
+parser or installer. Additional originals/preparation-original.json records the
+full immutable source/input/output pins and bounded pure commands.
+
+Root may draft one literal owner-bootstrap.ps1 operational command artifact
+for separate-seat static/AST/byte review, never run/dot-source it locally. It
+must specify exact computer/account/SIDs, new protected files, one triggerless
+SYSTEM task, staging/disabled-service Apply command, limits, readback and
+non-destructive suspension/preservation. No user-variable placeholders,
+password, model session, service start, network or cleanup. The final actual
+ACL/task/SCM/Registry/Process RemoteSigned Apply needs a NEW precise Owner
+decision; the consumed setup32 ValidateOnly approval is not reused. No bootstrap
+code is inserted into production modules or a new parallel framework.
+
+These generated artifacts are construction/preparation, not a trusted Grant,
+live Host observation, formal qualification or checklist completion. Both30B/43
+still require actual protection and qualified independent evidence afterward.
+
 Separate-seat /root/authority_install_inventory independently confirmed S33-F1
 on candidate148b21a3 and found no second substantive contract defect in the
 bounded source path. Its documentation review of eb2acae7 / ticket blob74960fc4 /
