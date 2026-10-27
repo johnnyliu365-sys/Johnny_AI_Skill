@@ -2,6 +2,16 @@
 
 ## Protected staging source33 activation — local code only
 
+Registered resource: C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\native33-source33-01,
+owner /root/native_service_impl/Ticket30 source33, purpose cached managed build
+and pure constructor/fake-port tests, TTL24h plus active review/Recovery hold.
+Root checked absent exact target and all existing non-reparse ancestors before
+allocation. Author may create only that output root; preserve raw failures and
+final artifacts, no automatic/denied cleanup. No old build output is overwritten.
+Root pure metadata probe of absolute System32 PowerShell returned5.1.19041.4894,
+CLR4.0.30319.42000 and the seven-argument FileStream(FileSystemRights,...,
+FileSecurity) constructor. This verifies API availability only, no file/ACL use.
+
 Separate-seat /root/authority_install_inventory returned
 DOC_PASS_CONSTRUCTION_ONLY for411584a7 / ticket blob55bd18cd / LF419b34f0.
 Its initial ProgramData DELETE_CHILD concern is retained as a superseded finding:
