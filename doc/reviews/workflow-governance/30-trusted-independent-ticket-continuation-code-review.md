@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Actual identity readback and next artifact admission — 2026-10-27
+
+Owner returned create result; Root independently queried exact SID via
+Get-LocalUser, each Get-LocalGroup/Get-LocalGroupMember, machine Win32_ComputerSystem,
+Win32_UserProfile by exact SID, and Win32_Service by exact service name.
+Actual result: machine DESKTOP-28ERPQ1; JohnnyReadonlyReview
+S-1-5-21-3542654388-73774624-397494543-1006, EnabledTrue,
+AccountExpiresUtc2026-10-28T05:29:21.4681709Z, direct GroupSids[Users545] only,
+ProfilePresentFalse, ServicePresentFalse, fixed CodeRoot/DataRoot absent.
+This closes account creation only; no password value/profile/live token/Host proof.
+Owner may perform already-approved local sign-in to establish profile; no app login.
+Do not rerun creation, silently extend expiry or mutate membership. Normal
+expiry prevents new sign-in, not evidence/profile deletion.
+
+Readonly showsid returns service SID
+S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551 / Inactive.
+Controller actual current WindowsIdentity is1001, effectiveAdminFalse.
+New linked image still3969024bytes SHA256babb1394 (full digest in current ticket),
+regular file/non-reparse, unexecuted. Old runtime/staged15 exact carrier hash
+4f708f9e963b2ebea2e368fb3a72a6d0930a8cc99fae46be8d11d4ac07dceee8
+and base carrierad303fc6 remain. Scope does not import old native image or expand
+payload bounds. Existing native service config is four fixed fields; disabled
+installation can omit optional approval/subject Registry values without faking
+a Grant. Future start remains a separately authorized effect, not a passive check.
+
+Router AUTO_CONTINUE -> focused docs preflight of exact originalTicket30
+setup-input32 artifact allocation, then Root-owned assembly/pure validation;
+no product author edit, native image/Host execution or OS protection change.
+30B/43 remain REVIEW_BLOCKED and only checklist04 checked.
+
 ## Identity description defect — bounded correction, 2026-10-27
 
 Focused different-seat /root/authority_install_inventory review of a48ae398:

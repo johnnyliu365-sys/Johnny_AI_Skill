@@ -37,16 +37,51 @@ ps31-hold09/ps31-hold09-original.json SHA256
 6e519b147e1914fc25a45197a69d69fd0b1b2687920b45389dd75da9f9c71cf8.
 No main/30B/43 integration, qualification or formal activation.
 
-The shortest next external dependency is actual dedicated standard-account
-SID/session on DESKTOP-28ERPQ1; current controller lacks effective elevation.
-Existing runbook revision10 supplies precise identity-only proposed commands,
-risks/readback/disable-only rollback and the separate later SYSTEM/setup/Host
-operations. That account does not exist, so final enrollment InputSha cannot
-yet be truthfully pinned. Local cmdlets exist; no installation is inferred.
-This step removes BOTH30B/43's independent-subject prerequisite, not their
-qualified audit requirement. Formal Grant-source legal success, same-fresh-SHA
-remote source, provider cost bounds and candidate-specific audits remain OPEN.
+Owner completed identity-only creation on2026-10-27 after the same command's
+Description67->29 correction. Root direct OS readback confirms dedicated
+JohnnyReadonlyReview SID S-1-5-21-3542654388-73774624-397494543-1006,
+EnabledTrue, Users545 only; expiry2026-10-28T05:29:21.4681709Z.
+This closes BOTH30B/43's dedicated-account creation prerequisite only.
+Win32_UserProfile remains absent; no live token/session/LUID qualification.
+Runbook12 binds actual identity and the existing separate SYSTEM/setup/Host
+operation requirements. Do not recreate account, change membership/expiry or
+invent remaining runtime/Grant/configuration fields. Root prepares existing
+source-matched inputs; actual setup/Host remains NOT_AUTHORIZED. Formal
+Grant-source legal success, same-fresh-SHA remote source, provider cost bounds
+and candidate-specific qualified audits remain OPEN.
 Do not repeat source construction, add a framework or invent actual identities.
+
+#### Exact preparation allocation — setup32 actual SID, no OS effect
+
+Root derives grant-ticket30-setup-input32-20261027 under the existing local batch:
+metadata/assembly ONLY, no product/test source change or new lifecycle. After
+focused docs review, Root may CREATE one owned non-reparse staging root
+C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup32-sid1006-20261027.
+Exact metadata paths: metadata/setup.json, metadata/plan.json,
+metadata/enrollment.json, payload/configuration.json, operation.json,
+Invoke-AuthorityProvisioning.ps1 and originals/assembly-original.json.
+Mechanical payload copies are EXACTLY the50 base files from immutable retained
+base manifest SHAad303fc60f5af0fb235c97aa4946e56d288c30e553560c41aa10c487ff8dac53
+plus63 app entries in staged15 original SHA4f708f9e963b2ebea2e368fb3a72a6d0930a8cc99fae46be8d11d4ac07dceee8,
+each under payload/ at its exact listed path. Exclude the old native entry;
+add only payload/JohnnyAuthority.Tools.exe from newly linked babb1394 image,
+3969024bytes. Add exactly one configuration above:115 payload entries,
+unchanged128/64MiB bounds. Script is exact committed37807df0 blob639c0f02.
+All source pins/ZIP/app inventory are checked before copy; never copy unknown
+files or reuse a fixture as authority. Root owns assembly, TTL24h plus active
+evidence/recovery hold, preserve teardown/no automatic or denied cleanup retry.
+MODIFY/DELETE0; fail if destination already exists or any source is changed.
+
+Reuse existing reviewed managed d4d53a29 Program plan and validate-enrollment
+PURE verbs to derive exact native canonical plan/enrollment; pinned DLL/runtime
+inputs, credential-free environment, each child deadline15s, <=1MiB outputs.
+NativeAOT exe remains UNEXECUTED. Real controller1001/subject1006/service SID
+readback bind NativeSetupManifest; fixed worker configuration uses the existing
+four-field schema, no placeholder. Registry extra-values array is empty:
+do not invent ApprovalV1, SubjectEnrollmentV1, grant or live Host/session.
+Assembly/schema/hash verification and separate-seat artifact QA must pass before
+preparing exact Owner SYSTEM/SCM/ACL/Registry confirmation; NO Apply/installation,
+profile creation, service start, Host/model/network effect or qualification here.
 
 #### One-shot protected setup command artifact — conditional correction02
 

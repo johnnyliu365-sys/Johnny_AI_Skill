@@ -1,11 +1,11 @@
-# Core capability implementation decision — revision11
+# Core capability implementation decision — revision12
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
 SPEC lineages. This plan selects implementation responsibilities, not a new PRD,
 Router, policy engine, qualification verdict or production activation.
 
-## Current operation-input readback — 2026-10-23, NOT effect authority
+## Current operation-input readback — identity updated2026-10-27
 
 Current local construction:37807df0 engineering hold contains reviewed605a6fa4,
 native d4d53a29 and the exact two wrapper/test CREATE blobs639c0f02/11f61c3f.
@@ -36,9 +36,18 @@ sections supersede obsolete proposals below; do not silently rewrite history.
 
 Target remains DESKTOP-28ERPQ1 / Windows10.0.19045; controller SID
 S-1-5-21-3542654388-73774624-397494543-1001, token not elevated. Exact
-JohnnyReadonlyReview account/SID, JohnnyGrantAuthority service, ProgramFiles and
-ProgramData JohnnyGrantAuthority roots remain NOT_CREATED. Do not substitute an
-orphan SID, virtual service account or another machine's Windows11 session.
+JohnnyReadonlyReview was created by Owner in the approved local console, and
+Root independently read back SID S-1-5-21-3542654388-73774624-397494543-1006,
+EnabledTrue, exactly Users S-1-5-32-545, expiry2026-10-28T05:29:21.4681709Z
+(Taipei2026-10-28 13:29:21). Win32_UserProfile for this SID remains absent;
+no active-session/token/LUID evidence exists. Do not rerun New-LocalUser, reset
+the password, silently extend expiry or substitute another identity. Owner may
+perform the already approved local interactive sign-in to establish the profile,
+then return to their usual account; no Host login/model call is included.
+JohnnyGrantAuthority service and fixed ProgramFiles/ProgramData roots remain
+absent. Actual NativeAOT input still matches3969024bytes/babb1394, unexecuted;
+old private-runtime root is retained, no overwrite. Only identity creation is
+verified, NOT protected setup, a trusted issuer/Grant success or qualification.
 
 The old0.163.0-alpha.10.2 path/bin hash is no longer available in the bounded
 metadata-directed lookup. The top-level bin/codex.exe0.130.0-alpha.5 is a different
@@ -103,7 +112,17 @@ Do not infer any later OS permission from SDK consent or the local batch. The
 build prerequisite is now satisfied; actual installation/configuration, independent
 protected observation and real Host/Grant qualifications remain separate.
 
-## Next external operation — identity only, APPROVED / DESCRIPTION_CORRECTED
+## Identity-only operation — COMPLETED_ACCOUNT / PROFILE_PENDING
+
+The current direct OS readback above supersedes all NOT_CREATED statements in the
+historical creation recipe below. The recipe is retained for audit, NOT a command
+to rerun now that this exact account exists. Next Root action is binding actual
+identity into the existing protected-setup operation inputs, without executing
+unapproved service/task/ACL/Registry or Host effects. Source schema determines
+which remaining fields require fresh operational observations; never fill them
+with fixture IDs or an expired session. The24h account TTL is not extended here.
+
+### Historical approved creation recipe and Description correction
 
 Owner approved the identity-only scope on2026-10-24; exact activation is recorded
 in existing Ticket30 review391d5698. This is not broader native/setup/Host authority.
