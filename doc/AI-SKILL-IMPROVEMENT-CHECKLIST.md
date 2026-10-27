@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `121`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `122`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,19 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision121）
+## 當前工程接續與精確證據（revision122）
+
+首次安裝前誤依賴服務SID的S33-F1已同票修正，九精確路徑2f61dbbb經不同席
+source audit、Root fresh managed四pure modes與不同門SIZE突變紅→還原綠，42原件
+完整封存69eaaae5並逐byte核對。既有own engineering hold精確FF到2f61，非main／
+30B／43整合。新4161024-byte AOT離線link PASS17.297s，SHA351fa176…，UNEXECUTED。
+setup33已產115payload／120精確stage assets，33MB frame／native plan驗證與byte QA。
+runbook14列明已獨審的一次性可執行Owner包：API固定實體機、現有SID1006不改、
+不可變literal控制碼、SYSTEM單次task、受保護暫存與DISABLED service，無Host／模型。
+此真實OS操作仍NOT_AUTHORIZED；30B／43 REVIEW_BLOCKED、合法Grant正向R1 OPEN，
+只04勾選。未把普通review／候選／全部拒絕當成實機資格，不動Recovery或遭拒清理。
+
+### revision121 原始狀態（歷史，依上述更新）
 
 setup32實際115項payload／32.7MB輸入已完成靜態原生契約驗證及獨立byte QA。
 Owner另核准的一次RemoteSigned／ValidateOnly子程序已執行通過，121檔雜湊不變；

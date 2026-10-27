@@ -17,6 +17,37 @@
 
 #### Protected staging source allocation33 — conditional, no installation
 
+##### Current source33 engineering acceptance / exact OS decision pending
+
+Original seven-path148b21a3 was correctly CHANGES_REQUESTED for S33-F1. Same-ticket
+revision02 additive2f61dbbb589ba5469e74c83e8d22160b135b2682 fixes the pre-service
+identity dependency with the new partial process reader; bootstrap otherwise
+unchanged. Nine exact paths, no new interop/import/dependency. Separate-seat
+SOURCE_AUDIT_PASS_NOT_CVQ, Root fresh managed build/four pure modes, genuine
+baseline fake-seam RED and independent late SIZE RED/byte-restored GREEN passed.
+42 full original records seal69eaaae5, independently byte-QA matched; large
+self-test responsibility review found one cohesive suite, no duplicated runner.
+Root's existing engineering hold fast-forwarded37807df0 to2f61 after acceptance;
+main/30B/43 and all actual Host/Grant qualifications remain unchanged/blocked.
+
+Reviewed preparation362eadd9 produced a NEW unexecuted NativeAOT image4161024bytes,
+SHA351fa1766fbedf062260338237fddd91874d22ce176802c70a37374a4e204703;
+actual hold offline link17.297s, source/SDK/MSVC unchanged. New setup33 uses115
+payloads/120 staging assets, complete bounded frame and existing pure canonical
+plan/enrollment; no native/OS call. Runbook14 is the ONE exact remaining Owner
+operation package SETUP33-20261027-SID1006, not a new proposal/framework/ticket.
+Its immutable literal launch03 pins bootstrap7f3c28fb and command-record176fabe9;
+separate-seat DOC_PASS_EXACT_OPERATION_DRAFT_NOT_OS_VERIFIED closes the control
+code TOCTOU, task-success-before-disable and machine-audit fidelity findings.
+No caller/Temp code is elevated; no setup32 approval is reused. Actual SYSTEM
+task/ACL/SCM/Registry/Apply is NOT_AUTHORIZED until that exact operation is approved.
+No service start, Host/model call, fees, push/release or formal gate activation.
+Owner-readable protected evidence, uncertainty/Recovery preservation and the
+task-not-guaranteed-fail-stop limitation are explicit in the operation package.
+Only checklist04 is checked; R1 legal trusted Grant positive remains OPEN.
+
+The conditional allocation/correction below is retained construction history.
+
 ##### Same-ticket source33 correction01 / Grant revision02 — conditional
 
 The frozen seven-path candidate148b21a3418957b44e8e668b08bb9182bf831d24

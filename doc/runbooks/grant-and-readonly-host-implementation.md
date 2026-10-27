@@ -1,4 +1,121 @@
-# Core capability implementation decision — revision13
+# Core capability implementation decision — revision14
+
+## SETUP33-20261027-SID1006 — exact Owner operation, NOT AUTHORIZED
+
+Source33/correction01 is accepted into Root's existing engineering hold at
+2f61dbbb589ba5469e74c83e8d22160b135b2682. Separate-seat source audit, Root's
+different-door late SIZE mutant RED/restored GREEN and42 exact originals passed
+byte QA (seal69eaaae5). S33-F1's pre-service/service-SID dependency is fixed.
+The actual hold's cached offline NativeAOT link passed17.297s, source/SDK/MSVC
+pins unchanged. Image4161024bytes, AMD64/PE32+/CLR0, FileVersion1.0.0.0,
+ProductVersion1.0.0+2f61dbbb589ba5469e74c83e8d22160b135b2682. UNEXECUTED.
+Workload-verification notice retained; no update/download. This supersedes the
+old pending inputs below, NOT the consumed setup32 ValidateOnly permission.
+
+### Exact pending security effect
+
+| Surface | Exact operation |
+| --- | --- |
+| Machine | API-verified DESKTOP-28ERPQ1 / physical Windows10 host, NOT VM |
+| Controller | GameBoy SID S-1-5-21-3542654388-73774624-397494543-1001; ONE visible UAC elevated x64 PS5.1 child, Process-only RemoteSigned |
+| Existing subject | JohnnyReadonlyReview SID S-1-5-21-3542654388-73774624-397494543-1006; verify Users545-only/enabled/expiry2026-10-28T05:29:21.4681709Z; NO password/account/profile/TTL change |
+| Bootstrap files | NEW C:\Program Files\JohnnySetup33-20261027.exe and .input.bin; atomic CreateNew, BA owner/group, protected SYSTEM/Admins FullControl only |
+| Evidence files | Same prefix .stage.stdout/.stage.stderr/.apply.stdout/.apply.stderr/.observe.stdout/.observe.stderr/.readback.json; protected BA owner, SYSTEM/Admins FullControl plus controller1001 FILE_GENERIC_READ only;9 bootstrap files total |
+| Task | NEW \JohnnyAuthoritySetup33-20261027; CREATE_ONLY, no trigger, one manual Run, SYSTEM S-1-5-18/logon5/highest, PT3M, no auto retry; exact definition/security/settings readback; disable/readback BEFORE success |
+| Task DACL | O:BAG:BAD:P(A;;GA;;;SY)(A;;GA;;;BA) |
+| Staging | NEW C:\ProgramData\JohnnyAuthorityStaging-setup33-20261027-sid1006;120 exact files, SYSTEM owner, protected SYSTEM/Admins FullControl only; no adoption/overwrite |
+| Action chain | Absolute cmd /d /s /c: pinned native stage-inputs with binary stdin && exact staged PS5.1 Apply && existing native observe-enrollment; only exit0 continues. Apply uses ONE additional SYSTEM Process-only RemoteSigned PS child |
+| Service | NEW JohnnyGrantAuthority, LocalSystem own process, DISABLED/STOPPED; fixed SID S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551; binary "C:\Program Files\JohnnyGrantAuthority\JohnnyAuthority.Tools.exe" service; NO START |
+| Roots / Registry | NEW C:\Program Files\JohnnyGrantAuthority and C:\ProgramData\JohnnyGrantAuthority;115 pinned payloads, exact native plan owner/DACL; Registry64 HKLM\SYSTEM\CurrentControlSet\Services\JohnnyGrantAuthority\Parameters\NativeEnrollmentV1 REG_BINARY only |
+| Excluded | No ApprovalV1/SubjectEnrollmentV1/Grant, Host/model/API call, listener/socket/firewall/network rule, new fee, push/release/deploy, formal gate activation or global/GPO ExecutionPolicy change |
+
+Plan grants the fixed service SID reviewed code-read/data-access rights and
+controller SCM query only, never start/config/write. Inputs/logs are protected
+at creation, existing targets refuse. Full exact plan/SCM SDDL and Registry bytes
+are in sealed operation inputs, not inferred from a chat label.
+
+### Immutable versions and actual command
+
+Preparation data root:
+C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup33-sid1006-20261027.
+This remains untrusted data, NOT a SYSTEM staging root. Existing113 dependencies
+and configuration unchanged; new115-payload package only. Managed pure
+plan/validate-enrollment PASS; no native/OS operation.
+
+| Artifact | SHA256 |
+| --- | --- |
+| Native image,4161024bytes |351fa1766fbedf062260338237fddd91874d22ce176802c70a37374a4e204703|
+| owner-bootstrap.ps1,19016bytes; reviewed text, never -File executed |7f3c28fb90ded60d832524898912c11a4aed21a03628eb5f0e22225b0ed0b7f6|
+| owner-launch03.json,55187bytes; ONLY operation candidate |176fabe991d1ee44ffe17c1c38735ce25073b1067190109f7c811ccd705e7103|
+| staging-input.bin,33007751bytes |586d204ca74a8b8e6b1ca5118b11bcd537a25ec75d1d2e497bbabe76c597db18|
+| staging-manifest.json,21043bytes |3a11626edc2c058c8fae098e46624cbdfc16d3af65c421d6df8f4bebdc206e47|
+| operation.json |22cbc51d132db674b549d52e86a72bb4e6c5845741b121c05a9b95bf60942f36|
+| metadata/enrollment.json / NativeEnrollmentV1 |06966ecf535102f6042cc099a1e72486522236d48f8d835e726083b494eb0d69|
+| staged Apply script,37807df0 blob639c0f02 |37b8c5e059acaba55212cc5631880133220342a6591000db94f7c39ee12c90aa|
+
+Separate-seat DOC_PASS_EXACT_OPERATION_DRAFT_NOT_OS_VERIFIED: loader argv and
+22963-char command reconstruct exactly (<32767); bounded gzip19,016 bytes/hash
+matches bootstrap; PS5.1 parser zero errors. Bootstrap code is entirely embedded
+in an immutable literal EncodedCommand, decoded/hash-checked in memory, then
+ScriptBlock.Create uses those SAME bytes. No Temp script execution, no hash/reopen
+TOCTOU and no recursive bootstrap framework. Exact trusted System32 modules only.
+Old launch01/02 are superseded retained drafts, NEVER execute; initial01 template
+SHA256-type substitution failure was caught before execution. The two task/
+bootstrap safety findings and machine-report fidelity correction are closed.
+
+After NEW explicit Owner approval ONLY, Root opens the visible UAC child with
+the following fixed command. It does NOT run now; no unset encoded variable:
+
+```powershell
+$johnnyOperationPath = 'C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup33-sid1006-20261027\owner-launch03.json'
+$johnnyOperationBytes = [IO.File]::ReadAllBytes($johnnyOperationPath)
+$johnnyHasher = [Security.Cryptography.SHA256]::Create()
+try { $johnnyOperationHash = ([BitConverter]::ToString($johnnyHasher.ComputeHash($johnnyOperationBytes))).Replace('-','').ToLowerInvariant() } finally { $johnnyHasher.Dispose() }
+if ($johnnyOperationBytes.Length -ne 55187 -or $johnnyOperationHash -cne '176fabe991d1ee44ffe17c1c38735ce25073b1067190109f7c811ccd705e7103') { throw 'operation_record_pin_mismatch' }
+$johnnyOperation = [Text.UTF8Encoding]::new($false,$true).GetString($johnnyOperationBytes) | ConvertFrom-Json
+Start-Process -FilePath $johnnyOperation.argv[0] -Verb RunAs -WindowStyle Normal -ArgumentList @($johnnyOperation.argv | Select-Object -Skip 1) -PassThru
+```
+
+The child alone changes its process policy/environment; parent/global/GPO policy
+stays unchanged. The old one-child ValidateOnly grant is consumed, not reused.
+Fresh API identity, account lease, parent ACLs and all pins must still match.
+
+### Verification, risk and suspension
+
+Require stage STAGED with exact root/ID and120 hash/size/owner/DACL readbacks;
+Apply's exact success marker; separate native observation MATCH/NONE; exact
+Registry digest; LocalSystem/STOPPED/DISABLED service/path; verified task disabled
+BEFORE protected audit/success. Root reads protected outputs through its explicit
+read-only ACE. Exit0/input identity/source review alone is not Host qualification.
+
+This executes real elevated/SYSTEM code and creates machine-wide security state.
+If console/polling fails, an already-running task/child MAY CONTINUE until PT3M;
+disable prevents another start, not guaranteed fail-stop/descendant termination.
+Deadline stops only the exact task; unknown residue stays RECOVERY_REQUIRED.
+On registration uncertainty, query exact task and disable ONLY if full identity/
+definition/action/DACL match. No retry/delete/overwrite/reset, no service start.
+Rollback means safe non-destructive suspension: verify task disabled, preserve
+new disabled service/files/Registry/logs for recovery. No claim of automatically
+restoring the pre-install machine; later removal needs bounded authorization.
+Owner Root/Ticket30/setup33, TTL24h plus active Review/Recovery hold, preserve
+teardown. No automatic expiry cleanup of held evidence.
+
+### Actual shortest acceptance route
+
+1. This operation closes BOTH30B/43's protected-input/native setup prerequisite
+   ONLY; it does not unblock their whole isolated review or check any item.
+2. Actual setup readback -> existing CVQ first-entry qualification, fixed protected
+   Host image, subject profile/session/token, tool bounds/trusted observations.
+   Actual service-start/Host/model effects and verifiable cost bounds require
+   precise authorization. No cost-control proof means UNAVAILABLE, not fake PASS.
+3. Original final CVQ admission ->30G/30B/43 candidate-specific isolated audits;
+   real trusted legal Grant readback/atomic consume positive AND forged/replay/
+   mismatch rejection. R1 stays OPEN until real success; not all-deny completion.
+4. 30B also requires same-fresh-SHA remote main index/leaves; local origin/main or
+   unpublished Context04 is not proof. Push remains NOT_AUTHORIZED. Then original
+   admission/closure and guarded local integration. Original12-item scope stays;
+   only04 checked. No new VM/Broker/framework, no reopening closed N14B/04.
+
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
