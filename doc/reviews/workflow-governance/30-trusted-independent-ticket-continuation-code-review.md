@@ -1,5 +1,37 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## SETUP33 actual execution — FAILED / RECOVERY_REQUIRED
+
+Approval activation commit1abae41e preceded the single launch. The parent verified
+the exact55187-byte launch03 SHA256 before Start-Process, visible RunAs/Normal.
+Raw parent result:
+
+```json
+{"operation":"SETUP33-20261027-SID1006","started_utc":"2026-10-27T09:05:44.1046728Z","pid":38068,"status":"LAUNCHED_NOT_VERIFIED"}
+{"operation":"SETUP33-20261027-SID1006","completed_utc":"2026-10-27T09:05:47.4452157Z","pid":38068,"exit_code":1,"status":"PROCESS_EXIT_NOT_QUALIFICATION"}
+```
+
+Fresh non-elevated readback found the exact bootstrap exe4161024bytes and
+input33007751bytes; content/security readback of these two is denied, not verified.
+All six stage/apply/observe stdout/stderr files exist, each zero bytes with SHA256
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 and exact
+SDDL O:BAG:BAD:P(A;;FA;;;SY)(A;;FA;;;BA)(A;;FR;;;S-1-5-21-3542654388-73774624-397494543-1001).
+Protected .readback.json is absent. Win32_Service exact-name readback count is0.
+Schedule.Service GetTask for JohnnyAuthoritySetup33-20261027 returned
+System.UnauthorizedAccessException: 存取被拒。 (0x80070005 (E_ACCESSDENIED)).
+TaskScheduler/Operational query09:05:40Z..09:06:10Z found no matching events.
+
+The elevated console's original exception was not captured by the approved
+launcher; it closed at exit. Its exact failure message and whether registration,
+assertion or suspension failed are UNKNOWN. Empty logs do not prove no task run.
+Medium read denial is expected from the protected task ACL and is not proof that
+the task is disabled. Need bounded privileged readback of this exact task's
+definition/security/state/last result before any further effect. No change to ACL,
+account, task, service or policy is performed by this diagnosis. No retry, alternate
+deletion, overwrite, service start, Host/model call or claim of setup/CVQ success.
+All residues and original inputs remain on active Review/Recovery hold.
+30B/43 REVIEW_BLOCKED and the original checklist status remain unchanged.
+
 ## SETUP33 exact Owner approval activation — 2026-10-27
 
 The Owner's latest explicit approval activates ONE execution of
