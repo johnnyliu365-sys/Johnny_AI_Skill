@@ -6,4 +6,4 @@
 
 | Artifact ID | Revision / status | Technical decision leaf |
 | --- | --- | --- |
-| CORE-CAPABILITY-IMPLEMENTATION | 10 / CORRECTED_SETUP_ENGINEERING_PASS / OWN_HOLD_37807DF0 / IDENTITY_OPERATION_PROPOSED_NOT_AUTHORIZED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
+| CORE-CAPABILITY-IMPLEMENTATION | 11 / OWN_HOLD_37807DF0 / IDENTITY_ONLY_APPROVED / DESCRIPTION_FIXED / ACCOUNT_NOT_CREATED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |

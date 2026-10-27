@@ -1,5 +1,29 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Identity description defect — bounded correction, 2026-10-27
+
+Owner's screenshot codex-clipboard-05f8a211-07a5-45a2-b949-d55b60294604.png
+shows New-LocalUser ParameterArgumentValidationError: Description67 exceeds48.
+Password is masked; no password value is obtained or retained. This is Root's
+provided command defect, missed by prior syntax/parameter-type review, not a
+password defect or a new Owner decision. Old2570-byte command/failure remain.
+Fresh readonly machine DESKTOP-28ERPQ1/account-name enumeration yields count0.
+No successful create, partial account adoption, automatic retry or rollback.
+
+Under existing identity-only scope, change ONLY the Description literal67->29:
+Johnny review subject; TTL24h. Runbook11/its existing doc index are updated;
+no source/Grant role/permissions/lifetime or effect-scope expansion. All original
+machine/admin/absence checks, local SecureString entry,24h expiry, exact Users
+membership and fail-closed post-create checks remain. No new script/framework.
+Live cmdlet ValidateLength metadata is0..48; oldliteral67 rejects, fixed29 fits.
+Actual revised block AST:0 errors, exactly1 New-LocalUser and a literal Description
+extracted from that real AST, length29<=48. This is offline parameter validation,
+NOT execution of New-LocalUser or proof of account/Host success.
+Revised LF block2532bytes SHA256
+e92281e42a0cd166e26a295ad84cf853a534fef3a221504bba5959fd4808b8dd.
+Owner may run corrected full block in their existing elevated console after
+focused independent docs review. No encoded launcher/secret transfer/Host effect.
+
 ## Approved interactive identity window launched — result still pending
 
 2026-10-24: exact approved2570-byte blockSHA

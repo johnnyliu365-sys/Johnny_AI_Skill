@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision10
+# Core capability implementation decision — revision11
 
 Status: OWNER_APPROVED_ORDER_EXCEPTION_AND_30G_SOURCE / NATIVE_OS_EFFECTS_NOT_AUTHORIZED.
 Parent: Owner's existing12-item local batch; original Ticket30 and workflow/adaptive
@@ -103,7 +103,18 @@ Do not infer any later OS permission from SDK consent or the local batch. The
 build prerequisite is now satisfied; actual installation/configuration, independent
 protected observation and real Host/Grant qualifications remain separate.
 
-## Next external operation — identity only, PROPOSAL / NOT_AUTHORIZED
+## Next external operation — identity only, APPROVED / DESCRIPTION_CORRECTED
+
+Owner approved the identity-only scope on2026-10-24; exact activation is recorded
+in existing Ticket30 review391d5698. This is not broader native/setup/Host authority.
+Owner's2026-10-27 screenshot exposes a command defect missed by prior AST/metadata
+review: Description67 exceeds the actual New-LocalUser ValidateLength0..48 bound.
+Fresh readonly target readback finds account absent; no automatic create retry.
+Only Description is shortened to29 characters below; all machine/admin/absence,
+password-locality,24h expiry, Users-only verification and stop-on-error rules stay.
+Old pinned command/failure remains in Git and review. Return to Owner's existing
+elevated console for the corrected block, not a new encoded/UAC launch attempt.
+No successful account creation/profile/Host qualification is claimed.
 
 This is the first unavoidable state-dependent OS input, not another engineering
 approval. Target is the actual DESKTOP-28ERPQ1 / Windows10Pro19045, NOT the VM.
@@ -155,7 +166,7 @@ if (@($existingSubjects | Where-Object { $_.Name -ieq 'JohnnyReadonlyReview' }).
 }
 $subjectPassword = Read-Host 'Owner-only password for JohnnyReadonlyReview' -AsSecureString
 $subjectExpiry = (Get-Date).AddHours(24)
-$createdSubject = New-LocalUser -Name 'JohnnyReadonlyReview' -Password $subjectPassword -AccountExpires $subjectExpiry -Description 'Johnny Ticket30 dedicated review subject; TTL24h; preserve evidence'
+$createdSubject = New-LocalUser -Name 'JohnnyReadonlyReview' -Password $subjectPassword -AccountExpires $subjectExpiry -Description 'Johnny review subject; TTL24h'
 $subjectPassword.Dispose()
 $subjectSid = $createdSubject.SID
 $subjectReadback = Get-LocalUser -SID $subjectSid -ErrorAction Stop
