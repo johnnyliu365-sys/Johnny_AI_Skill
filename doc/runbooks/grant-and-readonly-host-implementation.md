@@ -1,4 +1,63 @@
-# Core capability implementation decision — revision14
+# Core capability implementation decision — revision15
+
+## SETUP33-RESUME-01 — exact continuation proposal, NOT AUTHORIZED
+
+The approved disable-only operation succeeded at2026-10-27T09:31:56Z:
+the original task is disabled/State1, zero active instances, ACL unchanged,
+definition unchanged except Enabled. Original setup and Recovery closure are
+still incomplete. This is the next bounded action for BOTH30B/43's shared
+protected native-input prerequisite, not a new capability/framework/PRD.
+
+Root prepared and separately reviewed the existing operation's minimal correction.
+The proposed operation REUSES the original task and eight protected bootstrap
+files; it creates no second task, account, bootstrap image or permission source.
+It is NOT covered by the consumed setup or disable-only approval.
+
+| Boundary | Exact proposed operation |
+| --- | --- |
+| Machine/controller | DESKTOP-28ERPQ1; GameBoy SID S-1-5-21-3542654388-73774624-397494543-1001; one visible elevated System32 x64 PS5.1 child, Process-only RemoteSigned |
+| Subject | Existing JohnnyReadonlyReview SID S-1-5-21-3542654388-73774624-397494543-1006, Users545-only, enabled, existing expiry2026-10-28T05:29:21.4681709Z; refuse stale/changed identity/lease; no account/password/profile/TTL changes |
+| Existing task | Only \\JohnnyAuthoritySetup33-20261027; require disabled/State1, zero instances, never-run267011, exact full XML SHA e684e5321f13982ac764c6e7d289d94812bf9a4ef857faa67ed4e01616c279a3 |
+| Definition during operation | SHA281fb37603ca0eb65b9067f3b6055e69b6cd7441cc6463ae1dd00ef27277fe17 after removing ONLY Settings/Enabled; no other XML change accepted |
+| Task security | Exact observed O:BAG:BAD:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FR;;;SY), closed SYSTEM/Admins principals; no ACL update. This explicitly differs from the old unproved protected-flag/count2 assumption; it does NOT claim that flag exists or authorize a general validator relaxation |
+| Reused files | Exact original4161024-byte native image SHA351fa1766fbedf062260338237fddd91874d22ce176802c70a37374a4e204703 and33007751-byte frame SHA586d204ca74a8b8e6b1ca5118b11bcd537a25ec75d1d2e497bbabe76c597db18, BA owner/protected SYSTEM/Admins-only inputs; all six owned logs must still be empty with their exact protected controller-read ACL |
+| Single run | Set only this task Enabled=true; run its unchanged original stage-inputs && PS5.1 Apply && observe-enrollment chain ONCE; PT3M/185s bounded controller wait, no retry. Deadline may Stop only this exact task; it is not proof of descendant termination |
+| Setup effects | Same NEW120-file SYSTEM/Admins-only staging root C:\ProgramData\JohnnyAuthorityStaging-setup33-20261027-sid1006; same115 payloads to C:\Program Files\JohnnyGrantAuthority and C:\ProgramData\JohnnyGrantAuthority; same LocalSystem service JohnnyGrantAuthority DISABLED/STOPPED and NativeEnrollmentV1 REG_BINARY. Fixed service SID S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551; original plan/SCM rights unchanged |
+| Evidence/suspension | Require original full120-asset hash/size/owner/DACL readback, Apply marker, native MATCH/NONE, Registry digest, stopped/disabled service. Disable and fresh-read exact task/no instances BEFORE success audit. Protected C:\Program Files\JohnnySetup33-20261027.readback.json CreateNew; any exception, including preflight, gets non-overwriting ordinary owner-resume01-failure.json diagnostic in existing preparation root where possible |
+| Network/cost/exclusions | No listener/socket/firewall/network rule or model/API call/fee. No service start, ApprovalV1/SubjectEnrollmentV1/Grant fabrication, formal gate activation, global/GPO policy change, cleanup, push/release/deployment |
+
+All original parent/root/native/file ACL invariants remain; accepting ONE observed
+closed task descriptor does not qualify the later readonly Host. Any identity,
+definition, ACL, existing file/log or source-pin drift refuses before the run.
+Unknown failure or mismatched-task suspension stays RECOVERY_REQUIRED with held
+files/logs/Registry; never retry, overwrite, delete or touch foreign work.
+
+Preparation root remains:
+C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup33-sid1006-20261027.
+owner-resume01.ps121464bytes SHA b3454f630f2f4a7038faf5e522e6ff93477eb0b3a54e88e14be95d01605e3505.
+ONLY launch candidate owner-resume01-launch.json26200bytes SHA
+ee0d86ebd040cf4940efdb9157e7336fd3ea8588feaf0c041a7d6c3e80c7d349.
+The reused inline-gzip loader checks bounds/hash/strict UTF8 then invokes the SAME
+captured bytes; no Temp -File/hash-reopen execution. Exact command25749chars,
+below32767. Both loader and payload parse in actual PS5.1; ordinary separate-seat
+DOC_PASS_PREPARATION_ONLY/BYTE_QA, fake positives and foreign/mismatched negatives
+are NOT real task execution or CVQ/Host qualification.
+
+After NEW explicit approval ONLY, the parent captures and hash-checks the26200-byte
+launch JSON, then uses its fixed argv with Start-Process -Verb RunAs -WindowStyle
+Normal -PassThru. No replay of launch03 or the disable-only command. The immutable
+draft marker remains historical data, never a self-issued authority source.
+Operation assets have Root/Ticket30 ownership, TTL24h plus active Review/Recovery
+hold and preserve teardown; no cleanup while held. Raw originals are sealed in
+the existing Ticket30 review, including both actual readback reports.
+
+Successful setup would close ONLY the shared installed/protected-input prerequisite.
+Next is the already-declared CVQ first-entry authorization/qualification, then
+30G/30B/43's original isolated audits and real legal Grant positive/negative checks.
+No premature checklist marks, candidate integration, Host/model tests or public MSIX
+acceptance. Only checklist04 is checked; unchanged R0/DAP/TAL/Recovery boundaries.
+
+## Preserved revision14 operation and failure history
 
 Owner activation, 2026-10-27: the latest explicit approval authorizes ONE exact
 SETUP33-20261027-SID1006 execution of owner-launch03.json SHA256

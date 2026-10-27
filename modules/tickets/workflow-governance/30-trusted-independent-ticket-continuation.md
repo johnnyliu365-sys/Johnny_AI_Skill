@@ -17,7 +17,29 @@
 
 #### Protected staging source allocation33 — conditional, no installation
 
-##### Current source33 engineering acceptance / exact OS decision pending
+##### Current source33 engineering acceptance / task suspended / exact resume pending
+
+Actual SETUP33 single launch failed before task Run: approved exact-task readback
+showed the observed SYSTEM/Admins-only task ACL differs from the protected/count2
+assumption; the same assertion also blocked the error-path disable. Original
+console exception remains missing, not fabricated; source+snapshot independently
+identify the deterministic rejecting branch. Owner then separately approved
+disable-only: PID40792 at2026-10-27T09:31:56Z confirmed Enabled=false/State1/no
+instances, same ACL and full XML changed only Enabled. Raw report8ca36f81 is
+retained/sealed in this ticket's existing review; no Run/ACL/service change/cleanup.
+This closes task suspension ONLY, not setup, Recovery or any Host qualification.
+
+Root prepared runbook15 SETUP33-RESUME-01 under the existing local batch. Reuse
+the SAME task/eight pinned protected files; no new account/task/framework/PRD.
+Exact observed task descriptor and full definition are now pinned; no generalized
+ACL relaxation, native/file invariants unchanged. Payload21464bytes b3454f63 and
+launch26200bytes ee0d86eb passed different-seat ordinary source/loader review,
+actual PS5.1 parse, byte QA and pure accepted/rejected fixtures. NOT_EXECUTED;
+re-enable/single original setup run needs NEW exact Owner effect approval. No
+Host/model/Grant effect, no existing candidate integration or budget reset.
+Original30B/43 blockers and R1 positive legal Grant acceptance remain OPEN.
+
+###### Preserved source33 preparation (before actual SETUP33 execution)
 
 Original seven-path148b21a3 was correctly CHANGES_REQUESTED for S33-F1. Same-ticket
 revision02 additive2f61dbbb589ba5469e74c83e8d22160b135b2682 fixes the pre-service
