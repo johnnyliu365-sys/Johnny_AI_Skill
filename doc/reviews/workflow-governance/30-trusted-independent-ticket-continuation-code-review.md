@@ -1,6 +1,28 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
-## Protected staging source33 preflight — conditional local construction
+## Protected staging source33 activation — local code only
+
+Separate-seat /root/authority_install_inventory returned
+DOC_PASS_CONSTRUCTION_ONLY for411584a7 / ticket blob55bd18cd / LF419b34f0.
+Its initial ProgramData DELETE_CHILD concern is retained as a superseded finding:
+direct FILE rights decoding gives BU0x1200A9=ReadAndExecute/Synchronize and
+BU0x116=CreateFiles/CreateDirectories/attributes, neither DeleteSubdirectoriesAndFiles
+0x40 nor Delete0x10000. Root independently obtained the same actual ACL masks;
+DS-style SDDL mnemonics must not be misread as directory access-mask names.
+This does not qualify a SYSTEM handoff; the final actual parent/ancestor
+identity/DACL readback must still match the separately authorized OS packet.
+
+Root binds approved original batch, same-lifetime author and unchanged clean
+37807df0 worktree/branch, exact seven paths and closure58 from411584a7;
+grant-ticket30-protected-staging-source33-20261027 is ACTIVE for local source,
+managed pure constructor/fake-port tests and review ONLY. The source author is
+not its reviewer. Existing helper and Root ordinary engineering review remain
+distinct from mandatory final CVQ qualification. No native execution/staging,
+task registration, account, ACL, Registry, service, Apply, Host, model, push,
+release or formal gate authority is granted. setup32 permission stays consumed.
+AUTO_CONTINUE -> IMPLEMENT exact source33; return to existing Router review.
+
+## Protected staging source33 preflight — historical conditional construction
 
 ACTION_COMPLETED on5b2c6655 routes to TICKETS/source33, not another validation
 child or Apply. Scope is the exact seven-path closure58 in original Ticket30;
