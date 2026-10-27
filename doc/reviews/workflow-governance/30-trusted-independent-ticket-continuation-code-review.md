@@ -1,5 +1,26 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source33 S33-F1 / conditional correction01 — 2026-10-27
+
+Root conclusion on148b21a3418957b44e8e668b08bb9182bf831d24:
+CHANGES_REQUESTED, closure58/S2. NativeStagingCommand default line97 calls
+WindowsAuthorityIdentityReadbackPort.Read(SystemSid); WindowsAuthorityBootstrap
+line781 resolves the fixed service account before process-token observation.
+This introduces an unavailable service prerequisite in the pre-service staging
+path. Read-only lookup NT SERVICE\\JohnnyGrantAuthority under the current
+controller failed with MethodInvocationException / Some or all identity
+references could not be translated. It does not prove actual SYSTEM execution.
+No native command was run. Existing fake legal identity invents service fields,
+so pure green tests cannot establish the cold-start property.
+
+Same-ticket conditional Grant revision02 adds one process-reader companion and
+one partial-class marker only; exact scope and preserved boundaries are in the
+ticket. No new closure, framework, source authority or Owner question is needed
+for this local repair under the existing batch. Existing helper performs the
+pinned candidate audit and then narrow documentation consistency review; Root
+alone decides activation/final source acceptance. Candidate and all failures
+remain retained. 30B/43 and actual Host/Grant success stay blocked.
+
 ## Protected staging source33 activation — local code only
 
 ### Exact cached managed verification recipe (source33)

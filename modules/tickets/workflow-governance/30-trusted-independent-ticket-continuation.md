@@ -17,6 +17,58 @@
 
 #### Protected staging source allocation33 — conditional, no installation
 
+##### Same-ticket source33 correction01 / Grant revision02 — conditional
+
+The frozen seven-path candidate148b21a3418957b44e8e668b08bb9182bf831d24
+is NOT accepted. Root found S33-F1 in closure58/S2: the staging default calls
+WindowsAuthorityIdentityReadbackPort.Read(SystemSid), whose implementation
+unconditionally resolves NT SERVICE\\JohnnyGrantAuthority before reading the
+process token. That service is deliberately absent before first setup. A direct
+read-only current-account NTAccount.Translate returned IdentityNotMapped through
+MethodInvocationException; this is not an actual SYSTEM staging failure claim.
+Fake service-group fields in the existing positive cell do not prove cold start.
+
+Under the unchanged local batch, grant-ticket30-protected-staging-source33-20261027
+revision02 adds ONLY the minimum existing token-reader reuse seam. Same Ticket,
+closure58/S1-S4, author, worktree, branch, final reviewer and uncapped historical
+accounting; source correction baseline is the committed148b21a3 above. Keep all
+original source/build/mutation failures and the seven-path candidate immutable.
+After separate-seat documentation review and exact committed ticket/registry
+readback, allow the original seven paths plus CREATE exactly
+library/local_orchestration/native_windows/WindowsProcessIdentityReadback.cs and
+MODIFY library/local_orchestration/native_windows/WindowsAuthorityBootstrap.cs
+ONLY to mark WindowsAuthorityIdentityReadbackPort partial. DELETE0, no new native
+imports/dependencies/authority, no other legacy service-reader behavior change.
+
+The new partial companion owns a minimal immutable process-identity observation
+(finite status, validated user SID, token type, thread-impersonation state) and
+the raw pre-service reader. Reuse the existing private token query, bounded
+buffer, SID conversion, handle-close and Recovery hold primitives; do not repeat
+P/Invoke declarations, resolve service accounts, query service groups, enable
+privileges or add staging logic to the large existing bootstrap file. Staging's
+default and injected seam must use this distinct process result, not fabricated
+service identity/group values. Require observed primary SYSTEM and explicitly
+absent thread impersonation before all effect factories as already specified.
+Unknown/malformed/failed token observation remains fail-closed; uncertain handle
+ownership remains RECOVERY_REQUIRED, with existing holds preserved.
+
+S33-F1 defect evidence: first run a pure regression at the defective committed
+seam, without token/OS calls, showing a genuine pre-service identity is not
+representable through the old service-bound observation; do not invent a red
+SYSTEM execution. If the new type is unavailable at baseline, use a bounded
+existing-seam fake regression that distinguishes this exact dependency, not a
+ceremonial missing-symbol compile. Record the limitation explicitly. Prove the
+corrected normal constructor and staging legal path with NO service SID/group
+fields; cover missing/wrong/unknown/impersonated identity with zero factory calls,
+Recovery propagation and service-reader wiring regression. Keep all legacy pure
+cells green. Actual default native token readback remains unexecuted until the
+separate precise OS authorization; source/fake evidence is not qualification.
+Author real-guard mutants plus Root's different-door mutation and separate-seat
+source review remain necessary. Use the registered source33 resources and cached
+managed recipe, per-build60s/test15s bounds, preserve failures. No source mutation
+under this conditional revision. No native execution, installation, security,
+SCM/Registry, Host/model/network or formal integration authority is added.
+
 The consumed setup32 ValidateOnly permission is not renewed. Its successful
 result does not solve the next direct dependency of BOTH30B/43: Apply requires
 SYSTEM-owned, protected inputs, while setup32 is an untrusted user Temp package.
