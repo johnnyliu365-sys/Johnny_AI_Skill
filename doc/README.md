@@ -2,8 +2,8 @@
 
 本目錄保存需求變更、進度、安全邊界、功能 Context、審閱與 ADR。它們是模組實作的追溯資料，不存放 secrets、PII、營運資料或來源專案的複製內容。
 
-本專案的 AI 工作流程改進追蹤見 [AI-SKILL-IMPROVEMENT-CHECKLIST.md（revision124）](AI-SKILL-IMPROVEMENT-CHECKLIST.md)。這是既有需求、票與審閱來源的狀態索引，不建立另一套派工或核准流程。
+本專案的 AI 工作流程改進追蹤見 [AI-SKILL-IMPROVEMENT-CHECKLIST.md（revision125）](AI-SKILL-IMPROVEMENT-CHECKLIST.md)。這是既有需求、票與審閱來源的狀態索引，不建立另一套派工或核准流程。
 
 | Artifact ID | Revision / status | Technical decision leaf |
 | --- | --- | --- |
-| CORE-CAPABILITY-IMPLEMENTATION | 17 / EXACT_UPDATED_TASK_RESUME_REVIEWED / NOT_HOST_QUALIFIED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
+| CORE-CAPABILITY-IMPLEMENTATION | 18 / SOURCE34_REVIEWED / SAME_SCOPE_INPUT_PREPARATION / NOT_HOST_QUALIFIED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |

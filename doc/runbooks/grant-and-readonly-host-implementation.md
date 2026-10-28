@@ -1,4 +1,24 @@
-# Core capability implementation decision — revision17
+# Core capability implementation decision — revision18
+
+Current actual status supersedes the preparation history below: LF01 launch03
+ran02:45:38Z..02:45:52Z and staged all120 assets; corrected plan818LF passed.
+Apply refused service_sid_mismatch before SCM create because of English-only
+label parsing, not wrong SID. Protected postrun8e16c6f8 confirms disabled task,
+no instances, result2, lastRun02:45:41Z, absent service/final roots and exact120
+asset hashes/security. Recovery and old inputs remain held.
+
+Original two-path Source34 candidate80dbc951 is independently accepted after
+same-ticket F1/F2 correction; reviewer different-door cardinality mutation raw
+5cee8946 was fully read by Root and restored to exact sourcebdaf26ce. Existing
+engineering hold advanced to80db only, not main/30B/43. No C# changed; reuse
+native351fa176, do not rebuild gratuitously. Fresh immutable S34 inputs are the
+next same-authorized-target SETUP33 correction, with independent byte/source
+review and exact registered-task XML/ACL readback before a single run. No new
+account/SID/lease, permission principal, service-start, Host/model, ApprovalV1,
+SubjectEnrollmentV1 or runtime Grant effect is inferred. Normal same-scope
+engineering choices proceed; only genuinely additional effects need decisions.
+
+## revision17 preparation history (superseded by actual outcome above)
 
 Current final same-task resume: LF01 update ran once then refused BEFORE Enable/
 Run because Definition.XmlText and Task.Xml differ in serialization. Protected

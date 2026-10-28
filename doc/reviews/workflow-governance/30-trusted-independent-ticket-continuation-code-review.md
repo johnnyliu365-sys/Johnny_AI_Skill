@@ -1,5 +1,40 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source34 correction accepted / engineering hold advanced — 2026-10-28
+
+Same author additive candidate80dbc9513015b50d0a151ec11eb9b3649fb7221d
+corrects5b74dc64 on the original two-path Grant/Closure01. Independent
+authority_install_inventory reports APPROVED_SOURCE_SLICE, NOT_CVQ. F1/F2 are
+CLOSED: normal English joins localized positives; lowercase and bare extra SID
+tokens are collected and rejected, preserving canonical exact expected identity.
+Focused14PASS/1symlink SKIP(1314), strict/parser results remain bounded evidence.
+Author correction raw9c2ba513 and reviewer correction152f71c5 preserve actual
+outputs; missing historical streams remain missing, not retrospectively invented.
+
+Root read the full reviewer-s34-cardinality-mutation-restoration.json, SHA256
+5cee89466f2364f2519328395ec6d5e00b28143ee906581bc227ef0622194bce:
+on exact80db source, removing ONLY candidates.Count guard made duplicate,
+valid-extra, lowercase-extra and bare-S- cases reach fake creation. Restoring
+committed bytes returned all14 expected outcomes, those four refusing before
+creation. This is a different door from author's scanner-reversion mutation;
+neither touched live SCM. Actual restored source SHA256
+bdaf26ce56e11049e6dc97ec7de0107b4525e2520c826d2ddf2ed33c7cb5fa56.
+Root also AST-loaded the real PS5.1 SC wrapper and new validator for read-only
+showsid: the actual localized output now passes exact SID binding. This is a
+parser smoke check, NOT installation/Host qualification or runtime Grant proof.
+
+Own engineering hold was clean and ancestor2f61 verified, then fast-forwarded
+ONLY to80db. Product/test Git blobs are b8410f20828ebc20bbe761746684c516070c8530
+and678cabdf33bb2d63d9e70e669ecde2da0fa09fff; no main/30B/43 integration.
+No C# change means existing native351fa176 need not be rebuilt. Original SETUP33
+same-target correction now prepares fresh immutable inputs from this reviewed
+source; old failed stages/logs remain held. Subsequent Host/service-start/new
+protected record effects retain their own authority. All whole-ticket blockers
+and Recovery remain; only checklist04 is checked.
+
+ACTION_COMPLETED -> AUTO_CONTINUE original SETUP33 immutable input preparation,
+different-seat byte review and original bounded installation continuation.
+
 ## Source34 review01 — CHANGES_REQUESTED, same closure/owner/worktree
 
 Candidate5b74dc64e199aaa790b723c31312c1a1e8523557, parent2f61dbbb,
