@@ -13,6 +13,52 @@
 
 ## Effective local batch resource / convergence amendment — 2026-10-19
 
+### Current local result / external execution boundary — 2026-10-28
+
+Source34 revision02 source619a53dd remains accepted. Its already-materialized
+S34R2 package pins that immutable Git script blob, not any advancing checkout:
+frame33058183/41f61c4b, manifest21049/e402a00f, native4207104/c8b063c8,
+script58451/58c20e9c, setupa1439ce1/enrollmentd5df7221/pland0ed4b5c/
+operationda1eb394. Different-seat fresh byte-QA7252bytes/SHA956858d813697ed97fd8317589adcb359010bef2f35a16aee7739e4823609450
+confirms120segments,114unchanged/six expected changes and exact EOF. Old
+producer failures/earlier EOL mismatch remain; no native image was executed.
+
+Source35 admission conditions in allocation16d6322a were met, not deferred:
+original-seat source/evidence review, different-seat allocation review and Root
+frozen619 before author edits. Candidate5d0f0738 was rejected for inherited-ACE
+projection and incomplete C4 evidence; same author corrected it under the same
+two paths, no new authority. Original reviewer SOURCE_ONLY_PASS_NOT_CVQ accepts
+c14c20382abf571360e754dd305cd716bfa520ae, parent5d0f0738/tree4f2f32cd,
+PSblob99e91615/testblobe970961c. Actual inherited-WD regression, named author
+reverse cases and different-door second-read omission RED/restored GREEN are
+held in source35-records-20261028, detailed in the original Review. Root's own
+engineering hold only FF619->c14; affected fake suite17PASS/1SKIP/tool-original
+83743f1e. This is not main/30B/43 integration or protected-record installation.
+
+Matching six-file S34R2 controller is independently
+SOURCE_AND_PREPARATION_REVIEW_PASS_NOT_EXECUTION_ADMITTED_NOT_CVQ:
+review-controller-s34r2-20261028.json5384bytes/SHAb3ae2ef8b2019a05af5d46f82b73e8c9d1a60a123716b487c3496f2d8e80bb79.
+23pure checks/embedded bytes/exact original service-only history/task DOM/SD/
+fresh output/finite timeout protections stand. Original SETUP33 same-target
+repair authority is not reopened. Its original subject expiry05:29:21.4681709Z
+has passed; the unchanged greater-than15-minute guard prevents execution.
+For this already-approved SETUP33 continuation, only the new finite lease
+proposal in runbook21 requires Owner decision;
+source/test/review/local preparation do not. No automatic renewal, service start,
+ApprovalV1/SubjectEnrollmentV1 write, Host/model call or qualification is inferred.
+
+30B's separate READ_MAINLINE positive remains open: source619 already has the
+generic GrantPlan/READ_MAINLINE/ledger issue-claim-settle, but installed approval,
+store/session/worker are snapshot-specific. Preserve that distinction; do not
+relax the snapshot operation check or pass a caller DTO to the private reader.
+The future same-service operation-specific binding/read/evidence settlement must
+reuse the ledger and held30B readback algorithm, with final qualified-source and
+published-mainline evidence still required. Actual remote Context03 is not04;
+no push is authorized. 43 needs its own qualified audit/closure evidence. No new
+PRD/framework or completion claim follows from local source counts. Historical
+DEFERRED/no-edits allocation observations below are superseded by this result,
+not deleted or represented as current state. All Recovery/denied-cleanup holds stay.
+
 ### Source34 revision02 — actual SCM readback / exact service-only recovery prerequisite
 
 Original Source34 localization C1..C4 remain CLOSED at80dbc951; no re-review of

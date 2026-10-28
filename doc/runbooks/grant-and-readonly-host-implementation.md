@@ -1,4 +1,15 @@
-# Core capability implementation decision — revision21
+# Core capability implementation decision — revision22
+
+Current local result supersedes the Source35-in-progress observation below:
+corrected sourcec14c2038 has original-seat SOURCE_ONLY_PASS, own engineering hold
+FF619->c14, affected17PASS/1SKIP with tool83743f1e. S34R2 already-materialized
+package stays at immutable619; fresh byte-QA956858d8 confirms120segments/exactEOF.
+Matching controller23purechecks and original-seat reviewb3ae2ef8 pass as
+PREPARATION_ONLY_NOT_EXECUTION_ADMITTED. Old subject expiry has passed; only
+the proposed finite lease is a new current setup decision, not the existing
+same-target repair or local source authority. No actual renewal/setup/Host.
+The independently reviewed lease proposal first recorded at revision21 below
+is unchanged in bytes/semantics and remains NOT_AUTHORIZED/NOT_EXECUTED.
 
 Source34 revision02 is SOURCE_ONLY_PASS at619a53dd after original R2 correction,
 author mutations and different-door reviewer close mutation. Fresh raw originals

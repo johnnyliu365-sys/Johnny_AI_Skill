@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `127`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `128`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,25 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision127）
+## 當前工程接續與精確證據（revision128）
+
+Source35 c14c2038經原不同席SOURCE_ONLY_PASS：真inherited Everyone ACE反例
+修復，ACL／名字／順序／first-write錯誤及不同門末次讀回突變有可追溯紅綠；
+舊placeholder argv與malformed/hung原件限制保留，新review replay另存完整輸入。
+Root僅FF自有engineering hold619->c14，blob99e91615/e970961c一致；受影響fake
+17PASS／1SKIP，Root tool原件83743f1e；不是main／30B43整合或真實寫入。
+
+S34R2不可變package120segments／114不變／6預定變更／EOF獨審956858d8通過，
+仍釘619原Git script而非漂動checkout。controller獨審b3ae2ef8與23purechecks
+通過，明標NOT_EXECUTION_ADMITTED；原帳戶期限已過。原SETUP33修正授權仍有效，
+只新增同SID有限延期才需Owner決定，不重問本地工作；未實際延期／安裝／Host。
+runbook21列精確新差異與命令，獨審只屬proposal，沒有假授權或資格。
+
+30B R1正向仍缺同service的READ_MAINLINE-specific binding/read/settle；現有
+通用ledger已存在，不能把snapshot grant放寬或caller自填ID當來源。實際mainline
+發布、qualified Host／43及其餘正式effect驗收仍開放，僅04勾選；未降標結案。
+
+### revision127 原始狀態（歷史）
 
 Source34 revision02候選619a53dd經原不同席SOURCE_ONLY_PASS：既有service的版本
 不符／讀取失敗均Recovery，fresh仍拒絕；描述符負例、作者owner及security-result
