@@ -1,5 +1,38 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Direct30B-R1 engineering preflight — no additional bootstrap admission
+
+Existing architecture seat's bounded cross-version read corrects its earlier
+incomplete lookup at held0f6d467a: later accepted619/c14 DOES contain the generic
+GrantOperation.READ_MAINLINE/GrantPlan/ledger issue-claim-settle. Missing are the
+operation-specific protected approval, authenticated service transaction and
+bounded response carrying both settled GrantRecord and MainlineReadbackCandidate.
+Snapshot approval/members/reader/digest semantics cannot simply be relaxed.
+The held30B private read algorithm is reusable, its injected grant_id DTO is not
+authority, and the public all-reject containment remains an incomplete positive.
+
+Architecture recommends distinct fixed protected mainline records rather than
+overwriting/deriving snapshot ApprovalV1 or reusing its Grant. Reuse the current
+registry protection, identity/retained-launch/message proof, thread/deadline/
+Recovery controls and ledger. Only CLAIMED_NEW permits the same-service bounded
+two-ref/same-SHA index+leaves read; COMPLETE settlement must precede any candidate
+response. Replay/terminal/cross-operation/ref-digest drift and claim-after-failure
+must refuse or retain Recovery, never caller-side GET or a second ledger/runner.
+Response must be bounded/versioned, not hidden in evidence_digest. New record
+writes/Host/service/remote effects remain unapproved; no such operation occurred.
+
+This is a direct existing30B blocker, not a new product/PRD or Owner policy issue.
+However it is NOT required to build the FIRST readonly CVQ/Grant entry. Root
+does not extend the limited B3F01/CVQ-01/fixed-candidate first-entry exception to
+this larger HIGH_ASSURANCE production change. Existing qualified-entry admission
+must precede its exact implementation Grant; the local batch does not remove
+that boundary. Also held0f6d and619/c14 are different source trees: final bounded
+allowlist/baseline must account for the unintegrated30B file absent in619/c14,
+not falsely label it an existing MODIFY there. No new source branch, framework,
+bootstrap window or speculative implementation was opened. Next admitted real
+common step remains reviewed SETUP33 recovery, currently stopped only by the
+new expired-lease difference; subsequent exact Host/records permissions remain.
+
 ## Current control-doc consistency and controller evidence clarifications
 
 Original different-seat reviewer returns DOC_PASS_NOT_AUTHORITY on7c3e491a:
