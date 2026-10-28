@@ -1,5 +1,58 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## SETUP33 resumed actual result and same-scope LF input correction allocation
+
+After the Owner no-duplicate-approval clarification, the frozen resume ran ONCE:
+PID36300, parent start2026-10-28T02:05:56.8225206Z, exit1 at02:06:08.8196088Z.
+Protected stage.stdout17455bytes reports SOURCE_ONLY_UNQUALIFIED/STAGED/NONE;
+stage.stderr is empty. Apply.stderr42bytes is exactly
+REFUSED:protection_plan_binding_mismatch followed by its recorded line ending;
+Apply.stdout and both observe logs are empty. No success audit exists. The outer
+failure journal now retains the actual failure rather than losing the console:
+owner-resume01-failure.json SHA6468365e9add516e06e8e748f369d1abb3dda3506c43b8074d065e8a65ac2b57.
+
+Necessary same-plan elevated READ-ONLY postfailure query PID36076 completed0 at
+2026-10-28T02:11:19Z. It confirms task disabled/State1/no instances/last result2,
+unchanged ACL and disabled XML e684e532. All120 staged files match pinned size,
+hash and SYSTEM owner/protected SYSTEM/Admins DACL; staged plan817bytes SHA
+d68b084b1a45d9c7a6b2149399d1c168d0c15c8ce58918d3fa24b1107e59ee68 ends byte125,
+NOT LF. Service count0, code/data roots absent. Readback ordinary diagnostic
+owner-resume01-postfailure-readback.json SHA
+2f291fdefbf8cdbf9a2c29a9fc5560d511baae0df23de4f4c0634067d66ab728;
+not CVQ/admission evidence. Original protected logs and all assets remain held.
+
+Existing native_service_impl independently reproduced the exact packaging defect
+with the existing managed pure validator. Canonical plan JSON817bytes equals
+the prepared file; Apply correctly requires that exact JSON plus ONE LF:
+818bytes SHA61f47a6ada0ccd25034de9d4b442f004d95cefd0144685caaa79a44b65bb01af.
+No product guard or schema change is warranted. Raw diagnosis original91344bytes
+SHA88bd38f588cdeae06b2bc13ccd4a8b9c925c65000e4546252a6c21f8a1b7a676
+is retained at native33-source33-01/setup33-plan-binding-diagnosis-01-original.json.
+This is new evidence, not an unchanged failure/retry. No Claim of setup/Host/Grant
+success;30B/43 and R1 remain blocked/open as before.
+
+Derived LOCAL PREPARATION allocation under the original Ticket30/batch and Owner
+clarification: author existing native_service_impl; ordinary independent reviewer
+authority_install_inventory; current product source2f61dbbb unchanged. NO product
+source/test/Git modification, OS/native execution, task/service/ACL/account action,
+cleanup, network or model call. Prepare ONLY an immutable corrected input set in
+existing review parent, new exact data directory setup33-lf01-sid1006-20261028.
+CREATE allowlist: metadata/setup.json, metadata/enrollment.json, metadata/plan.json,
+operation.json, staging-manifest.json, staging-input.bin, artifact-index.json,
+build-inputs.ps1, preparation-original.json. MODIFY/DELETE none. Reuse original
+115 payload source files/Native351fa176 without a duplicated payload tree; preserve
+old inputs/staging/logs. Plan changes only by appending ONE LF; operation must bind
+its new818-byte digest and corrected source identity. Reuse the existing native
+fresh-only staging format and source contract; no new writer/framework/helper.
+Proposed exact fresh staging ID setup33-lf01-20261028-sid1006 and root
+C:\ProgramData\JohnnyAuthorityStaging-setup33-lf01-20261028-sid1006 are preparation
+data only, no creation/run now. Same installation/service/Registry/principals,
+native/code/ACL plan and exclusions; no weakening byte equality or overwriting
+held assets. Local resource increment bounded to one33MB frame plus small metadata,
+owner Root/Ticket30 (author producer), TTL24h plus active Review/Recovery hold;
+preserve teardown while held. Return exact pins and pure preparation validation
+originals, no formal Host qualification or self-issued runtime Grant.
+
 ## Owner no-duplicate-approval clarification — same-scope SETUP33 continuation
 
 On2026-10-28 the Owner directed that already explicitly instructed work must not
