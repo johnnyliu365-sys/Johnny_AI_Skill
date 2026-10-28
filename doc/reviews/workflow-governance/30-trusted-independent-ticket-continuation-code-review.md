@@ -1,5 +1,43 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Actual corrected task run — localized SCM SID parsing defect
+
+Reviewed launch03 ran ONCE PID33088 at2026-10-28T02:45:38.3442458Z,
+exit1 at02:45:52.2863400Z. Actual SYSTEM stage.stdout18160bytes SHA
+d2edeaf03374f93d8fecf5d4af996bb99634fc3da5f5730eb598af5ef4f70f83 is
+SOURCE_ONLY_UNQUALIFIED/STAGED/NONE for the corrected LF root. Stage.stderr0,
+Apply.stdout0, both observe outputs0. Apply.stderr30bytes SHA
+6142874bbf4024fecd4884ef220c4c58efe07d14883ada45d57e98ab32bc824a:
+
+```text
+REFUSED:service_sid_mismatch
+```
+
+Protected failure03.json525bytes SHA5e5f4bd9435bdf48b95af0399375c0cf5b254d49292b8b48735d07486dce577b:
+resume_attempted=true, setup_task_not_successful_RECOVERY_REQUIRED at200.
+No success audit. Normal read-only CIM finds no service; no final install roots.
+Do not delete/retry setup/claim CVQ; preserve task/staging/Registry evidence.
+
+Root reproduced from the EXACT baseline2f61dbbb AST-extracted source functions
+(not a test copy): Stop-Provisioning, ConvertTo-WindowsProcessArgument,
+ConvertFrom-ScOutputBuffer, Invoke-ScCommand; PS5.1, same readonly showsid args.
+Returned System.String length115; current actual regex_pass=false. Raw JSON:
+
+```json
+{"type":"System.String","text":"\r\n�W��: JohnnyGrantAuthority\r\n�A�� SID: S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551\r\n���A: �D�ϥΤ�\r\n","length":115,"regex_pass":false,"matched":""}
+```
+
+The expected SID matches metadata/setup.json exactly; direct non-redirected sc
+showsid prints that same value. Actual wrapper's localized/decoded label cannot
+match English SERVICE SID. This is an implementation boundary defect, not new
+authority/permission and not a reason to loosen expected-identity comparison.
+Root issued original Ticket30 source34 exact two-path local Grant/Closure01 in
+the leaf and registry. Same named author/own worktree baseline2f61, different
+reviewer; no new Agent/PRD/framework/native build needed for this PS-only defect.
+ACTION_COMPLETED diagnosis -> AUTO_CONTINUE bounded source correction, no live
+Host/setup effect and no baseline/Review/Recovery reset. Raw native/SCM/Host
+qualification remains unverified; source review alone cannot close30B/43.
+
 ## Final exact updated-task reuse acceptance
 
 Separate-seat authority_install_inventory: focused DOC_PASS_PREPARATION_ONLY,

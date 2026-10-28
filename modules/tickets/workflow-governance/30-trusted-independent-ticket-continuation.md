@@ -13,6 +13,64 @@
 
 ## Effective local batch resource / convergence amendment — 2026-10-19
 
+### Source34 bounded localization defect correction — exact local child Grant
+
+| Field | Binding |
+| --- | --- |
+| State / authority | `ADMITTED_LOCAL_SOURCE_CORRECTION_ONLY`; original Ticket30/PRD/CHG/SPEC and Owner batch-checklist-local-20261019-uncapped, plus explicit no-duplicate-approval direction. No new requirement or external privilege |
+| Grant / closure | `grant-ticket30-sc-sid-localization-source34-20261028`, revision01; `S34-C1..C4`; reviewer-issued local development allocation, NOT a runtime Grant/ApprovalV1/Host qualification |
+| Baseline | `2f61dbbb589ba5469e74c83e8d22160b135b2682` reviewed source33; same own worktree `.worktrees/skill-improvement-30-native-service`, branch `codex/skill-improvement-30-native-aot-compat`; clean metadata/HEAD read back before allocation |
+| Roles / lane | Root control/reviewer orchestrator; author existing `/root/native_service_impl`; different-seat engineering review `/root/authority_install_inventory`; existing synchronous direct lane, no bridge/receipt or extra Agent |
+| Exact MODIFY | `library/local_orchestration/native_windows/Invoke-AuthorityProvisioning.ps1`; `tests/test_grant_authority_windows_provisioning_script.py` |
+| CREATE / DELETE | NONE in versioned source. No helper/framework, new test file, PRD, unrelated feature or broad refactor |
+| Profile / types | Preserve source33 HIGH_ASSURANCE boundaries; source audit is NOT qualified Host audit. Existing PowerShell typed provisioning boundary/Python3.11 strict harness; no new public DTO/contract, use existing constructors/validation. No Host/SCM/Registry mutation, installation, native exe execution or paid/model call |
+| Resources / assets | Historical use/failures retained; no cumulative seconds/fixed correction cap. Each command60s default, timeout diagnosed before adjustment. Existing pytest fixtures/subprocess/AST helpers reused; no pressure loops. Optional raw evidence only under existing review parent `source34-localization-20261028`, owner Root/Ticket30, author producer, TTL24h plus active Review/Recovery hold; no deletion of prior held assets |
+
+Observed defect: actual LF01 resume PID33088 ran02:45:38Z..02:45:52Z; SYSTEM
+staging passed and Apply refused `service_sid_mismatch` before service creation.
+The service SID itself is correct. Root reproduced using EXACT source functions
+Stop-Provisioning/ConvertTo-WindowsProcessArgument/ConvertFrom-ScOutputBuffer/
+Invoke-ScCommand extracted from baseline AST, PS5.1, read-only `sc.exe showsid`:
+returned localized/mis-decoded labels with an intact exact ASCII service SID,
+but current English-only SERVICE SID regex returns false. No guessed root cause.
+Raw observed text/reproduction is recorded in original review. Do not retry setup
+or weaken expected SID comparison. Account lease and all setup exclusions remain.
+
+Closure revision01:
+
+- S34-C1: English and localized/mis-decoded labels around the SAME exact ASCII SID
+  pass the actual production SID validation boundary used by Invoke-Apply. Preserve
+  the baseline localized failure as a named red before changing product code.
+- S34-C2: Missing, malformed/extra/Unicode-digit, ambiguous/duplicate SID records
+  and a SID different from the validated enrollment fail closed. Exact expected
+  identity remains mandatory; do not select first match, ignore contradictions,
+  accept arbitrary suffixes or make all inputs fail.
+- S34-C3: Validation still precedes the first SCM create/Registry/provision effect.
+  Tests execute the real source validation seam through existing AST/fake-command
+  facilities without actual SCM/native mutation; no test-only regex copy. Existing
+  parser/ValidateOnly/pins/fixed-buffer/process-argument regressions remain green.
+- S34-C4: Named author reverse mutation removes localization support or expected
+  binding and yields intended red/restored green; independent reviewer uses a
+  different door (e.g. ambiguity/late contradictory SID). Zero red is a finding.
+
+Run existing focused pytest file with `-p no:cacheprovider`, strict mypy on the
+modified Python test, compile/import and PS5.1 parser. Disable bytecode/caches;
+record full commands/unreduced outputs/actual source SHA. No unrelated full-suite
+reruns. If additional path/API/policy changes are truly needed, return
+CHANGE_DETECTED before changing them. Return COMPLETED/BLOCKED/CHANGE_DETECTED,
+candidate SHA, changed paths, named red/green/mutations, raw evidence, deviations
+and unverified Host/installation status. No self-approval/integration/delegation.
+
+Existing script/test exceed500lines: structural review is REQUIRED as a signal,
+not an order to compress/split gratuitously. This correction must stay cohesive
+SID-boundary logic plus parameterized cases in the existing harness; explain any
+growth, reuse established fixture/process helpers, no unrelated responsibility.
+Rollback is additive source correction only; no reset/clean/removal of live state.
+Accepted source may enter ONLY existing engineering hold after independent review;
+not main/30B43 integration or Host/Grant qualification. Later packaging/actual
+setup follows the same original bounded installation authority, not this source
+Grant by itself.
+
 ### Current shortest-path source checkpoint and fixed worker / closure57
 
 #### Protected staging source allocation33 — conditional, no installation
