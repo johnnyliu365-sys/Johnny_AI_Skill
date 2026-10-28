@@ -1,5 +1,50 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source35 corrected source accepted / own engineering hold only
+
+Original different-seat review returns SOURCE_ONLY_PASS_NOT_CVQ for
+c14c20382abf571360e754dd305cd716bfa520ae, parent5d0f0738/tree4f2f32cd.
+Root read the complete correction: includeInherited=true, actual inherited-WD
+regression replacing the inadequate flag-only fixture. Candidate blobs are
+99e9161519bb1de5c42b44239d8f418c32ca44a8 and
+e970961c16cd80e4fc547375cf7441fe88dbc34e; exact two MODIFY, clean. F1/E2 close
+for this source slice, not actual protected-record installation or qualification.
+
+Original C4 exact-name/first-write records retain their placeholder argv limit;
+NEW reviewer replay54f0d14e/d74cc679 records actual argv/raw streams/source-test
+pins and their wrong property rows. Ordering uses actual original-test assertion
+RED9f7078dd and restored GREEN0196debe. Earlier malformed/hung/wrapper failures
+are held, not passes. Reviewer different-door readback mutantb701fabe has three
+reads and incorrectly succeeds when the second final read should fail; restored
+6bd28116 has four reads and RECOVERY_REQUIRED. Root verified full record hashes
+and decoded semantic fields/contract rows; duplicate encoded streams were not
+printed as prose. CLIXML startup-progress stderr remains visible, not empty.
+Bounded callback probe0774c701 returns three visible rules and refuses the extra
+callback ACE; this tested projection hypothesis is excluded, not kernel proof.
+Existing focused17PASS/1SKIP, strict/compile/parser and unchanged scope stand.
+
+Root read clean own engineering hold619 and exact two-path delta, then performed
+only its authorized FF to c14c2038. Root's affected fake suite17PASS/1SKIP in
+12.56s, unified tool observation root-engineering-hold-pytest01-original.json
+SHA83743f1e575c7c7acf5dbefd9d97d2c1a47e3cede8e6be66f2ae8b4a3f51580a
+is held under source35-records-20261028. Combined tool output is not separately
+attributed stdout/stderr. Clean hold blobs equal the accepted candidate. No
+main/30B/43 integration, native artifact execution, OS/Host/model effect or
+checklist completion. S34R2 already-materialized package remains pinned to its
+immutable619 Git blob, not the now-advanced checkout or Source35 source.
+
+S34R2 package NEW byte-QA observation7252bytes/SHA256
+956858d813697ed97fd8317589adcb359010bef2f35a16aee7739e4823609450
+was fully read:120 exact segments/114 unchanged/six expected changes/exact EOF;
+frame33058183/SHA41f61c4b, manifest21049/SHAe402a00f, scriptLF58451/SHA58c20e9c,
+native4207104/SHAc8b063c8, setupa1439ce1/enrollmentd5df7221/pland0ed4b5c/
+operationda1eb394. Prior failures stay; data/byte QA is not installation.
+The same record independently DOC_PASSes runbook21's finite lease proposal,
+which is genuinely new and remains NOT_AUTHORIZED/NOT_EXECUTED. Original same-
+target SETUP33 repair approval is not reopened; expired original lease prevents
+execution admission. Matching six-file controller is produced, original-seat
+source/byte review pending. Root continues legal local work without Owner waits.
+
 ## Source35 original-seat findings — same-ticket correction in progress
 
 Different-seat authority_install_inventory rejects5d0f0738 for S35-F1:
