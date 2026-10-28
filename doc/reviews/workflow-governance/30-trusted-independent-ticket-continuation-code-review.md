@@ -1,5 +1,25 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Direct remote source / CI bounded readback — 2026-10-28
+
+Read-only `git ls-remote --heads https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git refs/heads/main`
+returned a1cb6c13adbeb52a4117991727dcc3d4af6d2a33 refs/heads/main.
+GitHub connector fetch_file CONTEXT.md at THAT exact commit returned blob
+9096c68199994b1414862828ffb0ce060f8482d7, SEALED/REVISION_03. This is fresh
+remote observation, not authority issuance; local Context04 is not substituted.
+
+CI probes at that commit: GitHub contents/.github/workflows?ref=a1cb6c13...
+returned404 NOT_FOUND for that exact directory/ref. actions/workflows?per_page=100
+was rejected by connector400 INVALID_ARGUMENT (URL not allowed): access/tool
+limit, NOT evidence of no workflows. get_commit_combined_status(a1cb6c13...)
+returned statuses=[]; this excludes neither Checks nor Actions nor external CI.
+Conclusion: this exact remote path has no visible workflow content in the queried
+surface; broader formal test CI remains UNKNOWN. Dependency Graph is not test CI,
+empty status/command sets cannot authorize test retirement. No fetch/write/push,
+provider setup or fee. Local versioned verification commands remain their existing
+limited scope. These facts directly constrain30B fresh-source and checklist08;
+no new CI subsystem or repeated all-repo inventory was introduced.
+
 ## Actual corrected task run — localized SCM SID parsing defect
 
 Reviewed launch03 ran ONCE PID33088 at2026-10-28T02:45:38.3442458Z,
