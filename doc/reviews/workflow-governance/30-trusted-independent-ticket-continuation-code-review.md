@@ -1,5 +1,23 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source35 exact local allocation independently admitted — 2026-10-28
+
+Different-seat authority_install_inventory read40dde213e5f38aba884003407fe519124e621c8f,
+original Ticket30 Source35 section and both registry edges; leaf LF digest
+a812179eba0b7f85495fbc0f3d9ffebdadc446f60fc44136ef22bfaf852d275d.
+DOC_PASS_LOCAL_ALLOCATION, no scope/admission finding, diff check PASS. Existing
+two-path ownership, exact80db baseline, source34 prep-before-edit dependency,
+same-revision operation, typed private fake seam, pre-factory authorization/pins,
+existing-leaf-only/no-overwrite, ordered writes/rechecks and uncertain-write
+Recovery remain mandatory. No OS/Host/runtime authority was granted by this review.
+
+Conditional local allocation becomes executable only after the retained author
+returns source34 immutable preparation and clean source readback; Root then
+dispatches the same bound author without asking Owner again. Existing ports/
+admission remain the only authority system. True installation, service activation
+and Host/model campaign are separately admitted effects, not implied here.
+No receipt bridge or additional framework/Agent/PRD is introduced.
+
 ## Source34 correction accepted / engineering hold advanced — 2026-10-28
 
 Same author additive candidate80dbc9513015b50d0a151ec11eb9b3649fb7221d
