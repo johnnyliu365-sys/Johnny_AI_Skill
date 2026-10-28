@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Bounded failed-command process check — history remains UNKNOWN
+
+Author's early source35-mutation-exact-name-01-original.json1624bytes/
+SHA778492c8e2bdbc811dbb089c0cd321243453951ded3248bd0a6dec73d8b26257
+was fully read:05:40:30.0207854Z..05:42:34.1789974Z,124158ms,exit-1,
+empty stdout/truncated assertion traceback, no PID/session/timeout/descendant
+completion fields. It is not a clean mutation RED or verified teardown. Later
+successful runs cannot repair this historical provenance. No invented PID,
+session, time, timeout or completion is added; resource lifecycle stays UNKNOWN.
+
+At06:14:49.7774711Z Root made one readonly Win32_Process metadata query scoped
+to Python/py/PowerShell/pwsh creation in that exact interval(+2s end tolerance):
+zero current window processes. Command lines were not printed, no process was
+terminated, no asset cleaned, no policy changed. This is only a current bounded
+surface observation, NOT proof of historical descendant reaping or a substitute
+for the pending real Host lifecycle qualification. Keep the old raw/candidate/
+Review/Recovery holds; this independent evidence limit does not turn local source
+PASS into twelve-item completion or justify retrying denied cleanup.
+
 ## Direct30B-R1 engineering preflight — no additional bootstrap admission
 
 Existing architecture seat's bounded cross-version read corrects its earlier
