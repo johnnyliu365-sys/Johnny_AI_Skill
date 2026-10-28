@@ -58,13 +58,14 @@ and NativeProvisioningCommand unchanged. Reuse native bounded input/output,
 failure conventions, existing self-test/process fixtures and handle patterns;
 no new runner/framework. This avoids piling service interop into file provisioning.
 
-Construction order: first only private internal typed descriptor result/status,
+Construction order under the existing local batch: first only private internal typed descriptor result/status,
 fixed-service read/native-call seams and ordinary constructor/fake validation
 tests; nullable/warnings-as-errors offline build. No live SCM/PInvoke/effects.
 Return exact typed constructor evidence for Root/different-seat review before
 the same author proceeds to production readback/Apply wiring. This is a bounded
-construction order under the existing first-entry exception, not a new Stage or
-waiver of final qualification. Private types cannot introduce new authority.
+local construction order, not a new Stage or waiver of final qualification. The
+CVQ first-entry exception is not enlarged or used as source/effect authority.
+Private types cannot introduce new authority.
 
 S34-R1: fixed verify-service-security verb reads bounded strict UTF8 expected
 SDDL from already-native-validated enrollment/plan binding. Production opens
