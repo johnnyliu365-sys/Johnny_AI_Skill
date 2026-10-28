@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Actual LF01 update refusal and bounded same-task resume correction
+
+LF01 launch02 ran once PID40536 at2026-10-28T02:39:28Z, exit1 at02:39:32Z.
+Protected failure575bytes SHAf67225e23598feda2cae915fbb1c3502b8637fcc2e5a52ee05e79a51961d093c
+records task_full_definition_changed / resume_attempted=false at post-update
+assertion189. New protected frame/six empty logs exist; task was NOT enabled/run.
+The parent invocation first rejected an incorrectly assumed argv prefix BEFORE
+Start-Process; corrected against captured argv (argv0 is binary,1..7 arguments).
+One auxiliary readback command also had a for-loop pipeline parse error before
+any effect. Both control errors are retained, not classified as product failures.
+
+Necessary protected-output readonly diagnostic PID33460 completed0 at02:40:44Z:
+Program Files JohnnySetup33LF01-20261028.task-update-diagnostic.json7953bytes SHA
+eac38bdf045228e8bb8f56d8a40ddb55ace1fdd09379accf753423bbf5ed6475.
+Task disabled/State1/instances0/result2/lastRun02:06:02Z, exact unchanged SD;
+service/install roots/new stage absent. Compared with old registered XML, ONLY
+Arguments changed as intended. Definition.XmlText adds defaults/orders elements
+differently from registered Task.Xml; hashing the former as the latter's expected
+representation was a control-code defect. Do not generalize/loosen canonicalizer.
+Exact actual registered fullXML9e399081c1328ff4a8fd9d16745f788449b7b7a92ed423f5ec24361bf882a54f;
+removing ONLY Enabled gives65be5fa6a583f8eabb69e974a13c904159780bd66de8d2903f2ccb2e511f35ba.
+
+Same local allocation correction: MODIFY existing owner-lf01.ps1/build/check only
+to REUSE that exact updated disabled task/protected frame/empty logs with their
+original byte/security checks, no second registration or new staging/frame.
+CREATE launch03.json/offline-original03.json; preserve previous launch/originals
+and failure. New failure output remains protected fixed .failure03.json.
+All prior scope/exclusions/finite deadlines and independent re-review apply.
+Original account expiry remains; no new Owner ceremony for this technical repair.
+
 ## LF01 final source/input acceptance and exact same-scope action
 
 Different-seat authority_install_inventory confirms source R1 closed and full
