@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision20
+# Core capability implementation decision — revision21
 
 Source34 revision02 is SOURCE_ONLY_PASS at619a53dd after original R2 correction,
 author mutations and different-door reviewer close mutation. Fresh raw originals
@@ -18,6 +18,67 @@ original retained-service evidence; unchanged account lease/15-minute guard and
 all no-start/no-Approval/no-Host exclusions remain. If the lease is insufficient,
 stop only that effect; complete local tools/preparation and consolidate genuinely
 new external actions, never silently renew or ask again for local technical work.
+
+## Pending external difference — same subject, finite lease renewal only
+
+NOT_AUTHORIZED / NOT_EXECUTED. The original approved expiry was
+2026-10-28T05:29:21.4681709Z (Taipei13:29:21); ordinary local-user readback at
+05:35:31Z confirms it is past. This is not another request for the already
+approved local code, independent review, SDK use or same-target SETUP33 repair.
+Recommended new effect is ONLY renewal of the same existing Users-only subject
+on DESKTOP-28ERPQ1 through2026-10-29T05:29:21.4681709Z, exactly24h beyond its
+original expiry. No new account, password reset, group/admin membership, service
+start, Registry records, Host/model/API call, cost, network or formal activation.
+
+Proposed operation, only after explicit approval of this new finite lease and
+only in GameBoy's elevated64-bit Windows PowerShell; do not run during preparation:
+
+```powershell
+$ErrorActionPreference = 'Stop'
+if ([Environment]::MachineName -cne 'DESKTOP-28ERPQ1' -or -not [Environment]::Is64BitProcess) {
+    throw 'wrong_machine_or_process'
+}
+$leaseIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
+try {
+    $leasePrincipal = [Security.Principal.WindowsPrincipal]::new($leaseIdentity)
+    if ($leaseIdentity.User.Value -cne 'S-1-5-21-3542654388-73774624-397494543-1001' -or
+        -not $leasePrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        throw 'exact_elevated_controller_required'
+    }
+    $leaseSubject = Get-LocalUser -Name JohnnyReadonlyReview
+    $leaseOldUtc = [DateTimeOffset]::Parse('2026-10-28T05:29:21.4681709Z').UtcDateTime
+    $leaseNewUtc = [DateTimeOffset]::Parse('2026-10-29T05:29:21.4681709Z').UtcDateTime
+    if ($leaseSubject.SID.Value -cne 'S-1-5-21-3542654388-73774624-397494543-1006' -or
+        -not $leaseSubject.Enabled -or $null -eq $leaseSubject.AccountExpires -or
+        $leaseSubject.AccountExpires.ToUniversalTime() -ne $leaseOldUtc -or
+        $leaseNewUtc -le [DateTime]::UtcNow.AddMinutes(15)) { throw 'subject_or_lease_changed' }
+    $leaseGroups = @(Get-LocalGroup | ForEach-Object {
+        $leaseGroup = $_
+        $leaseMatches = @(Get-LocalGroupMember -SID $leaseGroup.SID -ErrorAction Stop |
+            Where-Object { $_.SID.Value -ceq $leaseSubject.SID.Value })
+        if ($leaseMatches.Count -gt 0) { $leaseGroup.SID.Value }
+    })
+    if ($leaseGroups.Count -ne 1 -or $leaseGroups[0] -cne 'S-1-5-32-545') { throw 'subject_groups_changed' }
+    Set-LocalUser -SID $leaseSubject.SID -AccountExpires $leaseNewUtc.ToLocalTime()
+    $leaseFresh = Get-LocalUser -SID $leaseSubject.SID
+    if ($leaseFresh.SID.Value -cne $leaseSubject.SID.Value -or -not $leaseFresh.Enabled -or
+        $leaseFresh.AccountExpires.ToUniversalTime() -ne $leaseNewUtc) { throw 'lease_readback_failed_preserve_evidence' }
+    [pscustomobject]@{ Name=$leaseFresh.Name; SID=$leaseFresh.SID.Value;
+        AccountExpiresUtc=$leaseFresh.AccountExpires.ToUniversalTime().ToString('o') } | ConvertTo-Json
+} finally { $leaseIdentity.Dispose() }
+```
+
+Risk: the existing non-admin account can log in for one more finite day; no new
+rights are conferred. Readback failure preserves state/evidence, no automatic
+retry. Exact rollback, if separately directed, restores ONLY AccountExpires to
+the old UTC instant after verifying the same SID and current new expiry; never
+delete the account, profile, worktrees or Recovery evidence. Original profile
+creation/log-in request remains an already-authorized Owner-local password
+action, not another policy approval: log into this account once and switch back,
+keeping any session required by the later precise token/session binding. Root
+does not obtain the password or invent session/token/LUID evidence. Actual
+protected records/service-start/Host qualification still require their own
+exact new effect package; a renewed lease does not authorize them.
 
 ## revision19 actual recovery history
 

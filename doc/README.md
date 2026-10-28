@@ -6,4 +6,4 @@
 
 | Artifact ID | Revision / status | Technical decision leaf |
 | --- | --- | --- |
-| CORE-CAPABILITY-IMPLEMENTATION | 20 / ENGINEERING_HOLD_619A53DD / REVIEWED_OFFLINE_NATIVE_LINK / SOURCE35_IMPLEMENTING / NOT_HOST_QUALIFIED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
+| CORE-CAPABILITY-IMPLEMENTATION | 21 / ENGINEERING_HOLD_619A53DD / SOURCE35_CORRECTING / ORIGINAL_SUBJECT_LEASE_EXPIRED / NOT_HOST_QUALIFIED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
