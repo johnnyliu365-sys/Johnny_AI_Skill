@@ -1,5 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Current control-doc consistency and controller evidence clarifications
+
+Original different-seat reviewer returns DOC_PASS_NOT_AUTHORITY on7c3e491a:
+checklist128/runbook22/Ticket30/current index match the actual source/preparation
+results, only04 checked, c14 own hold only,30B/43/Host still open, no new effect
+authority or repeated request for existing source/SETUP33 repair approval.
+
+Keep controller reviewb3ae unchanged as an original observation. Its
+observations.package_pins.plan.sha25661f47a6a is mislabeled: that is the prior
+diagnostic/history plan asserted in Assert-HistorySnapshot, NOT the new package.
+New S34R2 plan818bytes/one LF/SHA d0ed4b5c was independently verified in956858d8.
+Root read actual source/history and offline-check pins; no controller defect
+follows from that label correction. Reviewer explicitly confirms the distinction.
+
+The controller checks SID/enabled/non-null expiry and remaining lease>15minutes;
+the old exact expiry is a comment/preparation anchor, NOT a hardcoded equality
+guard. Do not claim otherwise. The current expired account fails that window,
+but a future execution admission must directly read back and pin the precise
+new Owner-approved deadline; source comments or arbitrary current future expiry
+are not authority. Runbook21's unchanged proposal (now retained in22) checks
+the exact old instant before Set-LocalUser and exact proposed instant after.
+Renewal/actual setup/records/service/Host effects have NOT been executed here.
+Only the genuinely new finite lease needs a current setup decision; all existing
+local author/reviewer and original same-target repair authority remains effective.
+
 ## Source35 corrected source accepted / own engineering hold only
 
 Original different-seat review returns SOURCE_ONLY_PASS_NOT_CVQ for
