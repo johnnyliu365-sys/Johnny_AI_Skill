@@ -1,5 +1,24 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Same-scope SETUP33 LF operational preparation allocation
+
+Root control-plane owner may CREATE ONLY owner-lf01.ps1,
+owner-lf01-build.ps1, owner-lf01-launch.json, owner-lf01-offline-check.ps1,
+and owner-lf01-offline-original.json in the existing ordinary preparation
+directory setup33-lf01-sid1006-20261028. This extends the immediately preceding
+data-only allocation for the SAME original installation correction; no product
+source/test change, no new framework, task, service or permission principal.
+Independent reviewer remains authority_install_inventory. Reuse prior reviewed
+inline-gzip loader and native351fa176. Proposed live operation must preserve
+old staging/input/log evidence and task actual ACL, require exact disabled old
+definition/result2, update only that task's action paths to the new LF input,
+and refuse unknown drift. New protected frame/log names are scoped to
+C:\Program Files\JohnnySetup33LF01-20261028.*; fresh stage root is the data
+allocation's exact root. Same final service DISABLED/STOPPED/install/Registry
+plan, account expiry and all exclusions remain. Source/data review must finish
+before live effects; no automatic replay or cleanup. Files are Root/Ticket30
+owned, TTL24h with active Review/Recovery hold and preserve teardown.
+
 ## SETUP33 resumed actual result and same-scope LF input correction allocation
 
 After the Owner no-duplicate-approval clarification, the frozen resume ran ONCE:
