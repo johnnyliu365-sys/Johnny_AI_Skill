@@ -18,7 +18,12 @@ account/ACL/service/task changes, independent delegation or self-review.
 Read old reviewed S34 frame33008437bytes/68e38b861a3481ca955d4bef9cdde8c26dbe009b298502ca810488ced60b7810
 and all120 segments; preserve114 non-native payloads byte-for-byte. New native
 from reviewed AOT02 is4207104bytes/c8b063c89df03aead85f3517b6661574cf820ecc650cdf2bb7650aea35008f93;
-script only frozen engineeringhold619,59682bytes/58c20e9c4c21075f3a772735f6e9bb501baf56d0b623714c3f815bb122890755.
+script only committed LF blob54e7bf7363a2594b288417fb944aa82684100f38 at frozen
+engineeringhold619,58451bytes/58c20e9c4c21075f3a772735f6e9bb501baf56d0b623714c3f815bb122890755.
+Producer caught the prior impossible58451-LF-hash/59682-CRLF-size pairing before
+creating outputs. Root selects the reviewed/tested committed bytes, not checkout
+CRLF59682/SHA7d2611a9. Read Git stdout as exact bytes, no shell text rewriting;
+the ordinary EOL correction is within this same allocation, not an Owner gate.
 Never read moving Source35 author script. Change only those two payloads, dependent
 setup/enrollment/plan/operation bindings and fresh staging id/root; plan retains
 one LF and unchanged SDDLs but MUST update manifest_sha256 after setup changes.
