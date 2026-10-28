@@ -90,6 +90,9 @@ CREATE only build-inputs.ps1, metadata/setup.json, metadata/enrollment.json,
 metadata/plan.json, operation.json, staging-manifest.json, staging-input.bin,
 artifact-index.json, preparation-original.json, preparation-command-original.json
 and metadata-validation-original.json. No versioned source/other worktree edits,
+If a new diagnosed correction needs its own raw capture, additionally allow only
+preparation-command-original02.json, metadata-validation-original02.json and
+preparation-original02.json here; preserve all01 originals and actual failures.
 new Repo/worktree, model/network/native-artifact execution, SCM/Registry, install,
 account/ACL/service/task changes, independent delegation or self-review.
 
