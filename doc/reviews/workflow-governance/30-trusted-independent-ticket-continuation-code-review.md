@@ -115,8 +115,10 @@ metadata/plan.json, operation.json, staging-manifest.json, staging-input.bin,
 artifact-index.json, preparation-original.json, preparation-command-original.json
 and metadata-validation-original.json.
 If a new diagnosed correction needs its own raw capture, additionally allow only
-preparation-command-original02.json, metadata-validation-original02.json and
-preparation-original02.json here; preserve all01 originals and actual failures.
+preparation-command-original02.json, preparation-command-original03.json,
+metadata-validation-original02.json and preparation-original02.json here;
+preserve all01/02 originals and actual failures. The third command capture is
+for the diagnosed raw-JSON escaped-path occurrence mismatch, not an unchanged retry.
 No versioned source/other worktree edits, new Repo/worktree,
 model/network/native-artifact execution, SCM/Registry, install,
 account/ACL/service/task changes, independent delegation or self-review.
