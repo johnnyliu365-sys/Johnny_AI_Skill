@@ -1,4 +1,25 @@
-# Core capability implementation decision — revision19
+# Core capability implementation decision — revision20
+
+Source34 revision02 is SOURCE_ONLY_PASS at619a53dd after original R2 correction,
+author mutations and different-door reviewer close mutation. Fresh raw originals
+read back; historical missing durable captures remain transcript-only. Root's
+engineering hold is frozen619, not main or30B/43. Cached offline NativeAOT02
+recordea52b11a has exit0/17.139s/complete streams/47 unchanged source-config pins;
+unexecuted4207104-byte AMD64 artifactc8b063c8, byteQA8be00152. SDK workload
+diagnostic is retained; no workload update or zero-warning claim. Old incomplete-
+capture link01 and all earlier failures stay. No installation or Host success.
+
+Source35 revision02 allocation16d6322a received different-seat DOC_PASS; same
+author/two paths now builds its local typed/fake tool at619. Real Parameters
+existence is an execution precondition, not a circular source-build prerequisite.
+Root packages Source34 from frozen hold, independently of that moving author tree.
+Next real SETUP33 recovery must pin new binary/script/enrollment/frame and exact
+original retained-service evidence; unchanged account lease/15-minute guard and
+all no-start/no-Approval/no-Host exclusions remain. If the lease is insufficient,
+stop only that effect; complete local tools/preparation and consolidate genuinely
+new external actions, never silently renew or ask again for local technical work.
+
+## revision19 actual recovery history
 
 Current actual state supersedes revision18 preparation: the original S34 single
 run PID41884 at03:43:39Z..03:43:53Z staged120assets then returned Recovery after

@@ -1,5 +1,59 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source34 revision02 accepted source / complete-capture offline link / next admitted tool
+
+Original reviewer authority_install_inventory returns SOURCE_ONLY_PASS for
+619a53dd64560b8318b4c919a8f782e8762014b9, parent3ce87c83/tree7cf17677.
+R2 version mismatch/read failure now maps retained-service disposition to
+RECOVERY_REQUIRED; fresh failures remain ordinary refusal. The original R3
+descriptor variants are actual verifier cases, including a valid four-byte
+opaque callback fixture. Author strict mypy/import-compile and15PASS/1SKIP
+records were fully read; the symlink case stays unverified. Author owner-equality
+omission RED44074ff6 and security-result bypass REDa9c92b28 restore GREEN
+e589e7e7/25e660e8, with exact candidate script/test/readback bytes retained.
+
+Early independent executions remain TRANSCRIPT_ONLY, not retroactively captured.
+The separately admitted NEW observations are in registered Source34 evidence:
+review-fresh-20261028-matrix-04.json SHAa2b51e92 (17 actual fake cases);
+close-mutant-build02 SHA9115c9c7, close-mutant-red02 SHA4de8c649 (named owned-handle
+close assertion), close-restored-build SHA1aff9085 and close-restored-green
+SHA9aec8243. All five full originals/hashes were read by Root. The standalone
+review matrix forwards child stdout but does not persist child stderr separately;
+it is supplemental case observation, not standalone complete child-stream proof.
+Author's actual pytest separately asserts that child stderr is empty. Reviewer
+close-campaign records preserve their full process streams. Root compared all44
+explicit Compile sources plus project byte-for-byte against the restored review
+fixture: zero mismatches. Six source paths/pins and clean author619 were checked.
+Existing owned engineering hold fast-forwarded80db->619 only; main/30B/43 did not.
+Structural review accepts one cohesive bounded SCM readback responsibility and
+reuse of the existing fake/self-test runner;500lines is not a forced split rule.
+
+Root cached offline LinkNative01 succeeded but its wrapper did not retain WaitAll
+completion, so capture completeness remained UNVERIFIED. Preserve it unchanged.
+Four-line bounded capture correction in root-aot-build02.ps1 SHA122fa2de records
+and requires completion; new output directory, no changed product source. New
+aot-source34-reviewed02/native-link-original.json40755bytes SHA256
+ea52b11a9976c81e044a8f5b7ab6c212bdfff285edbb906027bf4443b9d595a8:
+exit0/17.139s/streams_complete=true/47unchanged source-config inputs. Raw Base64
+and text streams match. Exe4207104bytes SHAc8b063c89df03aead85f3517b6661574cf820ecc650cdf2bb7650aea35008f93,
+AMD64/PE32+/version1.0.0+619, UNEXECUTED. SDK workload-verification stderr remains
+verbatim, same as the old template; underlying cause UNKNOWN, not zero warnings.
+No workload update, download, artifact execution or machine change. Different-seat
+BYTE_QA_NOT_EXECUTION/CVQ is persisted in review-byteqa-20261028-native-link02.json
+SHA8be0015266a74ff84155c6d88697573e5aacac7cf66836957091d2a25e264446.
+Full correct paths in that record supersede a duplicated-directory typo in chat.
+
+Same reviewer DOC_PASS_LOCAL_ALLOCATION accepts control16d6322a, ticketblob
+3748530cdd16989df7b1bbdec247ac5c40332a1e/leafLF4bb73039, Source35 revision02.
+Root verified its dispatch conditions: author clean619; source accepted/read back;
+packaging source frozen in Root hold619, not moving author tree. AUTO_CONTINUE
+same author and two exact source paths, private typed/fake construction then
+existing core/wiring and independent review. No actual protected-leaf/Host
+capability is falsely required before constructing this source-only tool.
+Original-run-bound setup recovery still needs fresh immutable inputs/state and
+the unchanged lease guard. NativeEnrollment-only setup is not approved records
+write/service start/Host/model/Grant qualification. All Recovery holds remain.
+
 ## Source34 revision02 behavior candidate / retained recovery classification finding
 
 Candidate3ce87c836fe0dc811e8baaedff85783a57aa02ad, parent reviewed9d3c2e1,
