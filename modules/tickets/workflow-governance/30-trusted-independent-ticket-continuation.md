@@ -124,16 +124,21 @@ No main/30B/43 integration or Host/Grant qualification is implied.
 
 ### Source35 bounded existing-leaf record installer — local development allocation
 
-`grant-ticket30-protected-records-source35-20261028`, revision01, original
+`grant-ticket30-protected-records-source35-20261028`, revision02, original
 PRD/CHG/SPEC/Ticket30 and Owner batch-checklist-local-20261019-uncapped only.
 This is SOURCE_EDIT_ONLY, not runtime authority or approval to write Registry.
-DEFERRED_DEPENDENCY: actual SCM owner-readback/service-only setup recovery above
-must close first; no Source35 edits occurred. Conditional admission: this exact ticket section passes different-seat review,
-and source34 immutable input preparation returns before author edits either path.
+Source35 still has no edits. Conditional local admission: Source34 revision02
+fixed candidate619a53dd64560b8318b4c919a8f782e8762014b9 passes original-seat
+source review and evidence readback, this allocation receives different-seat
+review, and Root's engineering hold freezes that exact candidate before author
+edits either path. Installer preparation reads the frozen hold, not the moving
+author worktree. Real SCM setup/Parameters existence is an EFFECT precondition,
+not a circular precondition for building this source-only tool with typed fakes.
+No actual record write, service start or qualification is admitted here.
 No circular requirement for a qualified Host before building this first local
 capability. Final HIGH_ASSURANCE/Host/real-effect requirements remain unchanged.
 
-Baseline80dbc9513015b50d0a151ec11eb9b3649fb7221d; author existing
+Baseline619a53dd64560b8318b4c919a8f782e8762014b9; author existing
 native_service_impl in own .worktrees/skill-improvement-30-native-service,
 branch codex/skill-improvement-30-native-aot-compat; reviewer different existing
 authority_install_inventory. Root orchestrates same-lifetime direct lane;
@@ -163,7 +168,8 @@ constructed production Registry64 port -> core. CLI cannot inject the port.
 Production opens existing SYSTEM/<CurrentControlSet>/Services/JohnnyGrantAuthority/
 Parameters only; no CreateSubKey, deletion, rollback, retry or service control.
 Require exact enrolled LocalSystem/OwnProcess/Disabled/Stopped service, image,
-SID type/SCM SDDL, SYSTEM-owned protected exact SY/BA FullControl leaf, initial
+SID type and the reviewed Source34 native OWNER|DACL verifier (not sdshow text),
+SYSTEM-owned protected exact SY/BA FullControl leaf, initial
 value names EXACT NativeEnrollmentV1, Binary and byte-equal to pinned enrollment.
 Before EACH write recheck ControlSet/service/ACL/native and expected name set.
 Set effectStarted BEFORE first write invocation. SubjectEnrollment first,
@@ -216,6 +222,18 @@ all earlier accounting/findings. Return exact candidate, files, commands/raw
 outputs, constructor/negative/mutation results, structural findings, deviations
 and unverified real effects; no self-approval or integration. Accepted source may
 enter ONLY existing engineering hold, not main/30B/43 or formal gate activation.
+
+Shortest existing-blocker continuation: Source34 source/reverse tests/review ->
+cached offline AOT and immutable input QA -> original-run-bound SETUP33 recovery
+with actual NativeEnrollment-only protected readback -> reviewed Source35 tool
+and exact protected-record/Host effect decision -> first-entry/final CVQ evidence
+for the held candidates. These results remove the shared qualified-review
+prerequisite, not30B's separate READ_MAINLINE positive. That positive still needs
+the existing service-owned READ_MAINLINE claim/read/settle implementation and
+approved published mainline inputs; caller grants/snapshot grants cannot replace
+it. Push remains unauthorized and actual remote Context03 is not Context04.
+43 still requires its exact candidate's qualified audit/evidence before closure.
+No step is a new PRD, framework, qualification or permission source.
 
 ### Source34 bounded localization defect correction — exact local child Grant
 
