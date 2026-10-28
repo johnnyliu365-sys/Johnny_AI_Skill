@@ -6,4 +6,4 @@
 
 | Artifact ID | Revision / status | Technical decision leaf |
 | --- | --- | --- |
-| CORE-CAPABILITY-IMPLEMENTATION | 22 / ENGINEERING_HOLD_C14C2038 / SOURCE35_SOURCE_PASS / S34R2_PREPARATION_PASS / ORIGINAL_SUBJECT_LEASE_EXPIRED / NOT_HOST_QUALIFIED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
+| CORE-CAPABILITY-IMPLEMENTATION | 23 / ENGINEERING_HOLD_C14C2038 / SOURCE35_SOURCE_PASS / S34R2_PREPARATION_PASS / LEASE_RENEWAL_APPROVED_PENDING_EXECUTION / NOT_HOST_QUALIFIED | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |

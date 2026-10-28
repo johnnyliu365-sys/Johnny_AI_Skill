@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Owner approval activation — same subject expiry, 2026-10-28
+
+Human Owner explicitly approves the same JohnnyReadonlyReview account through
+2026-10-29 13:29 Asia/Taipei, password/groups/other permissions unchanged. Root
+binds this to DESKTOP-28ERPQ1/controller SID1001/subject SID1006/Users545 only,
+old exact expiry2026-10-28T05:29:21.4681709Z. The new exact instant is
+2026-10-29T05:29:00.0000000Z: the approved minute, not the proposal's additional
+21.4681709seconds. That single literal narrows the already independently reviewed
+runbook21 command at c01eee47bf259062261bc7dfa0ee7652475ff959; all guards and
+only Set-LocalUser AccountExpires remain unchanged. No new password, group,
+account/SID, admin membership, service/Registry records, Host/model/fee or other
+permission is authorized. No need to ask the same approval again.
+
+APPROVAL_GRANTED -> AUTO_CONTINUE one lease operation, Root operator; matching
+post-readback -> return Router for the already-approved same-target SETUP33
+continuation, not Host qualification. Correlation lease-renewal-sid1006-20261028-01.
+Exact UTF8/LF payload SHA256 fd6fab0917d25fa8d038d65eaa0f03bce8e45af4201106e506f604bce49f22e1.
+Entry WindowsPowerShell5.1 x64 -NoLogo -NoProfile -NonInteractive -EncodedCommand;
+elevated same-controller process via ordinary Windows UAC, no ExecutionPolicy
+change, no elevated Temp/log file write. Command/output are retained in the
+control evidence; ordinary fresh account readback verifies exact expiry and
+unchanged SID/enabled/groups/password metadata. UAC refusal/unknown outcome is
+not retried or bypassed. No other Host operation is folded into this helper.
+
+Pre-effect readonly observation07:40:19.7656467Z matches machine/controller,
+same enabled subject SID1006/old exact expiry/Users545 only; token not elevated.
+Reviewed command extraction is one expiry-literal replacement, parser0errors.
+This records valid Owner authority, NOT execution success; independent delta
+review precedes the elevation launch and actual result remains pending.
+
 ## Bounded failed-command process check — history remains UNKNOWN
 
 Author's early source35-mutation-exact-name-01-original.json1624bytes/

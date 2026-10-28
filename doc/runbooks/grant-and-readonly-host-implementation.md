@@ -1,4 +1,12 @@
-# Core capability implementation decision — revision22
+# Core capability implementation decision — revision23
+
+Owner has now approved renewal of the SAME subject account to2026-10-29 13:29
+Asia/Taipei, with password/groups/all other permissions unchanged. Exact target
+is05:29:00.0000000Z, narrowing the old proposal's21.4681709extra seconds. One
+expiry-literal delta only, payloadSHAfd6fab0917d25fa8d038d65eaa0f03bce8e45af4201106e506f604bce49f22e1;
+original command atc01eee47 retained below as historical proposal, not current
+pending approval. Fresh SID1006/old-expiry/Users-only checks pass; execution and
+post-readback are pending. This approves expiry ONLY, not other Host permissions.
 
 Current local result supersedes the Source35-in-progress observation below:
 corrected sourcec14c2038 has original-seat SOURCE_ONLY_PASS, own engineering hold
