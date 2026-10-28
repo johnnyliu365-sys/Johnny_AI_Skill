@@ -13,12 +13,121 @@
 
 ## Effective local batch resource / convergence amendment — 2026-10-19
 
+### Source34 revision02 — actual SCM readback / exact service-only recovery prerequisite
+
+Original Source34 localization C1..C4 remain CLOSED at80dbc951; no re-review of
+unaffected passes. Same-ticket child allocation revision02 under the existing
+batch, grant-ticket30-sc-sid-localization-source34-20261028, adds ONLY the actual
+setup blocker below, S34-R1..R4. Source35 records-install feature is DEFERRED
+until this prerequisite closes; its author made no edits, no new branch or PRD.
+
+Observed original effect: S34 PID41884 ran03:43:39Z..03:43:53Z. All120 stage
+assets passed; Apply returned RECOVERY_REQUIRED after creating the original
+disabled service. Protected readonly diagnostic PID9716 at03:51:05Z, raw65725
+SHA3a119b914ee85f6d3d955bb5d2673973fecfc49def49d1e4d159b94a60a54b06,
+confirms task disabled/State1/instances0/result3/lastRun03:43:44Z; exact service
+LocalSystem/OwnProcess/Disabled/Stopped/image path; Parameters/code/data absent;
+120assets/security all match. sc sdshow omits OWNER and in the elevated context
+also includes SACL. Comparing its D: line with plan O:SYD:P(...) is structurally
+wrong. Ordinary CIM returned Unknown/null and GetSecurityDescriptor0x80070522;
+neither is SYSTEM owner proof. No repeated Apply, deletion or privilege change.
+
+Root Architecture Owner selects a small fixed-service readonly native module,
+not a generic SCM engine or owner-check removal. Current Win32ReadbackPort is
+FileObject/SafeFileHandle-specific and cannot safely substitute. Exact baseline
+80dbc9513015b50d0a151ec11eb9b3649fb7221d, same author native_service_impl /
+.worktrees/skill-improvement-30-native-service / codex/skill-improvement-30-native-aot-compat;
+different reviewer authority_install_inventory. Clean author state was read back.
+Same-lifetime direct development lane; no receipt bridge/new Agent. Source-only
+grant, not permission to install/execute new native code or adopt arbitrary services.
+
+Exact MODIFY (five):
+- library/local_orchestration/native_windows/Invoke-AuthorityProvisioning.ps1
+- tests/test_grant_authority_windows_provisioning_script.py
+- library/local_orchestration/native_windows/Program.cs
+- library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
+- library/local_orchestration/native_windows/NativeProvisioningCommandSelfTests.cs
+
+Exact CREATE (one):
+- library/local_orchestration/native_windows/WindowsServiceSecurityReadback.cs
+
+DELETE none. New file has the independent fixed SCM security-read/verification
+responsibility, consumed by Program/installer and tested through existing native
+self-tests; csproj explicit Compile inclusion is necessary. Keep Program thin
+and NativeProvisioningCommand unchanged. Reuse native bounded input/output,
+failure conventions, existing self-test/process fixtures and handle patterns;
+no new runner/framework. This avoids piling service interop into file provisioning.
+
+Construction order: first only private internal typed descriptor result/status,
+fixed-service read/native-call seams and ordinary constructor/fake validation
+tests; nullable/warnings-as-errors offline build. No live SCM/PInvoke/effects.
+Return exact typed constructor evidence for Root/different-seat review before
+the same author proceeds to production readback/Apply wiring. This is a bounded
+construction order under the existing first-entry exception, not a new Stage or
+waiver of final qualification. Private types cannot introduce new authority.
+
+S34-R1: fixed verify-service-security verb reads bounded strict UTF8 expected
+SDDL from already-native-validated enrollment/plan binding. Production opens
+ONLY JohnnyGrantAuthority with SC_MANAGER_CONNECT/READ_CONTROL and queries
+OWNER_SECURITY_INFORMATION|DACL_SECURITY_INFORMATION, never SACL or privilege
+enablement. Bounded two-call buffer, size drift/invalid/partial descriptor and
+either native-handle close uncertainty fail closed. Typed fakes execute actual
+read/validation control flow, including first/second-call and close faults;
+do not fake the business validation itself. CurrentOwner must be SYSTEM and
+match expected; protected/present DACL and complete exact ACE content must match
+(SID, qualifier, mask, flags, callback/opaque content). Unknown ACE/shape rejects;
+do not ignore owner, extra ACEs, protection or meaningful ACE order. Success only
+fixed SOURCE_ONLY_UNQUALIFIED/VERIFIED marker, no descriptor leakage/authority claim.
+
+S34-R2: PS keeps exact service configuration/state/SID/UNRESTRICTED checks and
+replaces sdshow text comparison with the native owner+DACL verifier. Fresh Apply
+preserves absence/create semantics. Exact service-only recovery is eligible only
+under Root's separate same-ticket, original-run-bound recovery effect admission;
+current matching state is NOT historical creation proof or caller authority.
+After SYSTEM identity/pins/native enrollment/payload/version validation, classify
+fresh vs observed existing state. Any detected partial service/key sets recovery
+disposition BEFORE further checks. Require one exact Disabled/Stopped/LocalSystem/
+OwnProcess/enrolled path/SID/UNRESTRICTED/security service, Parameters ABSENT and
+ALL final directories/payload targets ABSENT. Unknown/denied/inconsistent/mixed
+partial state stays RECOVERY_REQUIRED, zero further effects. Only then skip the
+three SCM mutations and perform the existing not-yet-done Registry/files steps.
+Never delete/recreate/reconfigure service or accept existing Parameters/files.
+Do not auto-clear the independent Recovery Hold or infer authority from a match.
+
+S34-R3: baseline counterexample includes actual D-only(+SACL) output vs O+D plan;
+native exact SYSTEM owner/DACL passes, wrong/missing owner, extra/missing/deny/
+wrong-mask/flags/opaque/protection mismatch all refuse. Fake fresh flow still
+works; exact recovery calls zero create/sidtype/sdset and reaches only existing
+remaining steps. Parameters/target/config/state/SID/security mismatch and unknown
+readback do not proceed. Author mutations owner omission and recovery-preflight
+bypass must RED/restored GREEN; reviewer attacks a different exact security/state
+or close-uncertainty door. Existing source34 SID and provisioning regressions stay.
+
+S34-R4: focused PS5.1 actual fake execution/parser, native cached offline build/
+pure constructor/self-tests (no production native API), strict changed Python,
+compile/diff scope checks. Record full original streams before console truncation.
+Structural review >500lines is a signal, not compression/splitting pressure;
+new module remains cohesive, existing tests reuse fixtures. No actual SCM/Registry/
+installation/Host/model/network/fee effect by author or reviewer. Later reviewed
+AOT build uses only already approved cached SDK, no download by inference.
+
+All old accounting/failures remain; finite command60s default with diagnosis,
+no cumulative/fixed-correction cap. New artifacts only under registered existing
+review parent's source34-service-readback-20261028, owner Root/Ticket30, producer
+author/reviewer, TTL24h plus Review/Recovery hold. No removal of old residues or
+policy fallback/retry. Return candidate exact paths/tests/mutations/constructor
+evidence and limitations; no self-review, integration or runtime Grant. Accepted
+source enters existing engineering hold only; real same-target recovery operation
+must separately freeze new versions/inputs/current snapshot and independent review.
+No main/30B/43 integration or Host/Grant qualification is implied.
+
 ### Source35 bounded existing-leaf record installer — local development allocation
 
 `grant-ticket30-protected-records-source35-20261028`, revision01, original
 PRD/CHG/SPEC/Ticket30 and Owner batch-checklist-local-20261019-uncapped only.
 This is SOURCE_EDIT_ONLY, not runtime authority or approval to write Registry.
-Conditional admission: this exact ticket section passes different-seat review,
+DEFERRED_DEPENDENCY: actual SCM owner-readback/service-only setup recovery above
+must close first; no Source35 edits occurred. Conditional admission: this exact ticket section passes different-seat review,
 and source34 immutable input preparation returns before author edits either path.
 No circular requirement for a qualified Host before building this first local
 capability. Final HIGH_ASSURANCE/Host/real-effect requirements remain unchanged.
