@@ -1,5 +1,48 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source34 review01 — CHANGES_REQUESTED, same closure/owner/worktree
+
+Candidate5b74dc64e199aaa790b723c31312c1a1e8523557, parent2f61dbbb,
+two exact MODIFY paths; no other source changes. Author original command capture
+a2750a95 transparently marks missing raw history; it is NOT substituted as raw
+proof. Separate-seat fresh review captures the current candidate and exact Git
+baseline, not a forged reconstruction of those missing original runs.
+
+Blocking findings within existing S34-C1..C4, no requirement/authority expansion:
+
+- S34-F1 / IMPLEMENTATION_DEFECT / C2: uppercase-only S-\\S+ candidate scanning
+  ignores a late lowercase s-1-5-80-9-8-7-6-5 or bare S- after a valid expected
+  SID. Root and independent reviewer reproduce through real Invoke-Apply/fake
+  SCM: both produce RESULT|RECOVERY_REQUIRED|1 (create reached), must be
+  RESULT|service_sid_mismatch|0. Collect malformed extra records too; retain
+  exact ordinal canonical expected binding and genuine legal positives.
+- S34-F2 / EVIDENCE_DEFECT / C1: parameterized permanent regression omits a
+  normal English SERVICE SID: positive. Add that vector beside localized ones,
+  not a new script/framework. Root's fresh English control currently reaches
+  fake create as expected; preserve it as regression with fixed Expected.
+
+Fresh independent pytest14passed/1symlink skip1314, strict mypy/parser pass.
+Reviewer different-door cardinality-removal mutation causes duplicate/late
+conflict failures, byte-restored copy green. Fresh exact2f61 baseline harness
+reproduces localized refusal before create; it does not require a nonexistent
+baseline helper. Thus baseline discrimination is recovered as FRESH evidence;
+old original stream remains missing. No Host/SCM/native effect or qualification.
+
+Review originals actually reside in the nested ordinary evidence directory
+source34-localization-20261028/source34-review-localization-20261028 under the
+same review parent (not an external repository). Root registers that actual
+path: owner Root/Ticket30, reviewer producer, TTL24h plus active Review/Recovery
+hold; no move/copy/delete. Files: candidate-pytest-fresh01.json,
+candidate-mypy-strict-original.json, candidate-powershell-parser-original.json,
+candidate-diffcheck-original.json, baseline-localized-red-fresh01.json,
+source34-candidate-countermutation-originals.json. No authority claim from path.
+
+ACTION_COMPLETED review -> AUTO_CONTINUE original author additive correction of
+F1/F2 ONLY, source34 two-file Grant/closure01 and accounting unchanged. Require
+full fresh correction/mutation outputs; no amend/reset/new PRD/Owner ceremony.
+Original reviewer rechecks affected cells and retains other valid evidence.
+No local engineering integration or new live setup until acceptance.
+
 ## Direct remote source / CI bounded readback — 2026-10-28
 
 Read-only `git ls-remote --heads https://github.com/johnnyliu365-sys/Johnny_AI_Skill.git refs/heads/main`
