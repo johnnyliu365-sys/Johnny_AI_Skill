@@ -1,4 +1,23 @@
-# Core capability implementation decision — revision16
+# Core capability implementation decision — revision17
+
+Current final same-task resume: LF01 update ran once then refused BEFORE Enable/
+Run because Definition.XmlText and Task.Xml differ in serialization. Protected
+diagnostic eac38bdf confirms disabled/State1/instances0/result2/lastRun02:06:02Z;
+service/install/new stage absent, all six logs empty. Root's exact full-DOM check
+replaces ONLY old registered Arguments and obtains byte-equivalent normalized
+actual DOM; no other definition change. Same actual closed task SD remains.
+Do not weaken canonicalization or register again. Reuse the existing corrected
+frame/logs, validate exact protected bytes/ACLs before enable. Registered fullXML
+9e399081c1328ff4a8fd9d16745f788449b7b7a92ed423f5ec24361bf882a54f;
+normalized65be5fa6a583f8eabb69e974a13c904159780bd66de8d2903f2ccb2e511f35ba.
+Final source22047bytes SHA39c2e707a684ca3648f596aa16431c63ea97ca969de77724fbfb294fb26aacc7;
+ONLY launch03.json26522bytes SHA48a113deeecb80110387de4001f8a43d1d8a16d475163cbab51ccc837e47e33a.
+15pure cases/PS5.1 parse0/roundtrip and focused independent preparation review
+PASS; execution-time live frame readback remains mandatory. No frame/log creation,
+task registration or new ACL action. Fresh protected .failure03.json preserves
+the prior575-byte .failure.json; same absence/lease/identity/deadline/exclusions.
+This is the original authorized installation correction, not a new Owner wait.
+No actual success yet; previous preparation below is retained superseded history.
 
 ## Current SETUP33 LF correction — same authorized targets, review before run
 
