@@ -17,7 +17,25 @@
 
 #### Protected staging source allocation33 — conditional, no installation
 
-##### Current source33 engineering acceptance / task suspended / exact resume pending
+##### Current source33 acceptance / actual staging passed / LF input correction
+
+Owner's2026-10-28 no-duplicate-approval clarification continues the already
+authorized SETUP33 targets/effects, not a new permission source. Frozen resume
+b3454f63/ee0d86eb ran once PID36300 at02:05:56Z, exited1 at02:06:08Z.
+SYSTEM staging really completed; all120 staged asset byte/security identities
+were independently read back at02:11:19Z. Apply refused the817-byte plan without
+its required single LF; correct818-byte plan SHA61f47a6ada0ccd25034de9d4b442f004d95cefd0144685caaa79a44b65bb01af.
+Existing managed pure validator independently reproduces the packaging defect;
+no product guard/schema modification or blanket rejection. Postfailure task is
+disabled/State1/no instances/result2, service absent and CodeRoot/DataRoot absent.
+Raw failure6468365e and readback2f291fde are ordinary diagnostics, not CVQ evidence.
+New LF-only immutable input preparation is allocated in the existing review;
+old roots/logs and Recovery are held, no overwrite or cleanup. Same-scope
+correction proceeds with independent review, no duplicate Owner ceremony; actual
+Host/model calls, service start and other excluded effects remain unauthorized.
+30B/43 and R1 legal Grant positive remain OPEN; no checklist item changes.
+
+###### Preserved suspension and resume preparation history
 
 Actual SETUP33 single launch failed before task Run: approved exact-task readback
 showed the observed SYSTEM/Admins-only task ACL differs from the protected/count2

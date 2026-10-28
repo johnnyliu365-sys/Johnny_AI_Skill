@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `123`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `124`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,19 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision123）
+## 當前工程接續與精確證據（revision124）
+
+Owner明確要求不再重問已授權事項；同目標、權限與費用內的SETUP33修正直接沿原
+授權接續，版本／現場讀回及獨審不省略。02:05:56Z單次resume實際完成SYSTEM
+stage-inputs，120資產逐檔hash／size／SYSTEM owner／保護DACL全部符合。
+Apply則明確拒絕protection_plan_binding_mismatch：打包的817-byte plan缺必要單一LF；
+應為818bytes SHA61f47a6a。不同席純validator已重現；不改產品guard、不原樣重跑。
+02:11:19Z實際唯讀讀回確認task disabled／State1／instances0／result2；service不存在，
+code/data安裝根不存在。原件與殘留保留，不假稱安裝、Host或Grant通過。
+既有實作者正準備新的不可變LF修正輸入，獨審另席；只解除30B／43共同安裝前提，
+不另開框架，不提前勾選。原resume與停用歷史如下，以本段實測更新為準。
+
+### revision123 原始狀態（歷史）
 
 Owner核准的SETUP33曾單次執行失敗；唯讀讀回及不同席審閱已定位為task ACL
 格式假設錯誤，正常guard及停用catch重複同一失敗。之後Owner精確核准的
