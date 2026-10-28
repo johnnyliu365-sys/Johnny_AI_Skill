@@ -1,5 +1,55 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Same SETUP33 service-only continuation controller — local preparation allocation
+
+After the immutable S34R2 package producer returns, the same existing architecture
+seat may prepare the matching controller in that registered package directory.
+This derives only from the batch/local operational preparation authority. It is
+NOT permission to run the controller, renew an account, install records or start
+a service. No new Ticket/PRD/Agent/framework. Root sole orchestrator, different
+existing authority_install_inventory seat reviews before any later use.
+
+CREATE only owner-s34r2.ps1, owner-s34r2-build.ps1,
+owner-s34r2-offline-check.ps1, owner-s34r2-launch01.json,
+owner-s34r2-offline-original01.json and owner-s34r2-construction-original01.json
+inside setup33-s34r2-sid1006-20261028. Original eleven input artifacts and all
+old controllers/outputs remain immutable. Same owner/TTL/Review+Recovery hold.
+Reuse the actual old owner-s34.ps1/loader/offline checker, not another launcher.
+Read the complete old source and exact package first. Extract/test only pure
+functions or ASTs/bytes; never run its top-level operational statements.
+
+Bind original S34 run03:43:39Z..03:43:53Z and protected diagnostic65725bytes/
+SHA3a119b914ee85f6d3d955bb5d2673973fecfc49def49d1e4d159b94a60a54b06.
+Its registered Task.Xml (not Definition.XmlText), unchanged exact closed task
+SD, disabled/noinstances/result3/lastRun03:43:44Z are mandatory history anchors.
+Initial fresh state must match the one retained disabled/stopped/LocalSystem/
+OwnProcess/exact-image service, SID/UNRESTRICTED; Parameters and final code/data
+remain absent. Actual security is checked by the reviewed new native verifier
+inside Apply before any remaining installation writes, not ordinary CIM or a
+DACL-only sc string. Refuse mismatched/mixed/unknown state without mutation.
+Never create/delete/reconfigure the retained service or infer authority from state.
+
+Use existing protected351fa176 staging helper ONLY for stage-inputs; the package's
+c8b063c8 native is the separate validated/readback image. Bind every new script,
+frame, manifest, enrollment and operation hash/length. New protected input/six
+logs/audit/failure prefix is exactly C:\Program Files\JohnnySetup33S34R2-20261028;
+new stage is the package's fixed ProgramData path. CreateNew only, all original
+files/refusal evidence retained. Update only existing task Arguments via the
+captured registered XML DOM, UPDATE|DONT_ADD_PRINCIPAL_ACE, unchanged ACL,
+no CREATE/broader principals/triggers. Keep exact full-DOM readback, finite185s
+deadline, quiescent disable/readback and protected diagnostics on failure.
+
+The unchanged account SID/group/expiry and greater-than15-minute lease checks
+remain. The original expiry is already past: output must be explicitly
+PREPARATION_ONLY / NOT_EXECUTION_ADMITTED, not a launch recommendation or automatic
+lease extension. A later precise Owner lease decision must be bound/read back
+before this frozen controller could be admitted. No native artifact execution,
+SCM/Registry/task/ACL/account/service changes, model/Host/network effect or cleanup
+while preparing. Pure parser/loader/byte tests must cover valid task history,
+wrong original-run pin, stale/mixed state, changed definition/ACL, existing new
+output and expired/short lease; legal data must remain acceptable. Source/data
+review is not CVQ or installation success, and does not close30B/43.
+
 ## Source35 handoff / same-authority continuation / expired external lease
 
 Owner's latest clarification changes no scope: already authorized local work
