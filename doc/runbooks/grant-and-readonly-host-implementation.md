@@ -1,4 +1,26 @@
-# Core capability implementation decision — revision18
+# Core capability implementation decision — revision19
+
+Current actual state supersedes revision18 preparation: the original S34 single
+run PID41884 at03:43:39Z..03:43:53Z staged120assets then returned Recovery after
+SCM service creation, before Parameters/files. Supporting protected readonly
+PID9716 at03:51:05Z produced3a119b91: task disabled/State1/noinstances/result3;
+service LocalSystem/OwnProcess/Disabled/Stopped/exact path; Parameters/code/data
+absent;120assets all match. Do not rerun Apply or delete/recreate the service.
+
+SCM readback defect is demonstrated, not guessed: sc sdshow omits owner and may
+include SACL; the expected plan includes O:SY and DACL. Its text cannot prove
+owner and cannot equal the full expected descriptor. Keep the owner invariant;
+build fixed-service native OWNER|DACL verification, no SACL query/privilege enable.
+Original Source34 revision02 local grant8286ccb4 is independently admitted:
+fiveMOD/one cohesive new native readback module, typed/fake construction first,
+then real source wiring/negative tests/review. Source35 no edits, deferred to
+this direct common30B/43 prerequisite; not a new governance branch/framework.
+Later exact service-only recovery must bind original-run evidence, fresh state
+and reviewed new binary/input versions; no state-only authority or mixed-partial
+adoption. Normal same-scope source repairs do not require repeated Owner asks.
+Current service remains stopped/disabled; no Host/model/runtime Grant or success.
+
+## revision18 preparation history (superseded by actual outcome above)
 
 Current actual status supersedes the preparation history below: LF01 launch03
 ran02:45:38Z..02:45:52Z and staged all120 assets; corrected plan818LF passed.

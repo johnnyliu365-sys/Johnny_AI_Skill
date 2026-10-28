@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `125`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `126`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,24 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision125）
+## 當前工程接續與精確證據（revision126）
+
+S34固定輸入／控制碼經不同席SOURCE_PREPARATION_PASS_NOT_CVQ後，原同目標安裝
+於03:43:39Z..03:43:53Z單次執行。120資產stage成功；Apply在建立原指定停用服務後
+回RECOVERY_REQUIRED，未建立Parameters或正式code/data。03:51:05Z保護端唯讀
+原件3a119b91已確認service Disabled/Stopped/LocalSystem/OwnProcess/path正確；
+task disabled／State1／instances0／result3；120資產全部符合。完整原件封存fabdd288，
+不是安裝成功或Host資格。停止原樣重跑，不刪除／重建服務，也不清除Recovery。
+
+已證明必要缺陷：sc sdshow輸出DACL（elevated還有SACL）卻不含Owner，產品與
+O:SYD:P完整計畫逐字比較必錯。原Source34 revision02限縮為固定服務Owner+DACL
+原生唯讀驗證及精確service-only續裝，新增獨立責任模組，保留Owner／ACL／狀態／
+來源檢查；5MOD／1CREATE票面8286ccb4經原不同席DOC_PASS。原作者從clean80db
+接續typed constructor／fake preflight，沒有重問Owner或新增PRD／框架。Source35
+尚無編輯，先暫緩不直接解除本次安裝阻塞的功能；其需求未刪。後續真實續裝仍需
+精確原run證據、新受審版本／輸入及現場准入，不能只因state相符自授權。
+
+### revision125 原始狀態（歷史）
 
 LF01第二次實際Run在02:45:38Z..02:45:52Z完成120資產SYSTEM staging，
 plan818LF已正確；Apply於SCM create前拒絕service_sid_mismatch。實際SID正確，
