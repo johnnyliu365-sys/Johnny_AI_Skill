@@ -6,7 +6,10 @@ is05:29:00.0000000Z, narrowing the old proposal's21.4681709extra seconds. One
 expiry-literal delta only, payloadSHAfd6fab0917d25fa8d038d65eaa0f03bce8e45af4201106e506f604bce49f22e1;
 original command atc01eee47 retained below as historical proposal, not current
 pending approval. Fresh SID1006/old-expiry/Users-only checks pass; execution and
-post-readback are pending. This approves expiry ONLY, not other Host permissions.
+post-readback completed: PID8216/exit0 at07:46:15Z, fresh07:46:23Z OS readback
+confirms the exact new expiry and unchanged SID/enabled/Users-only/password
+metadata (Review actual-renewal section, tools3c3229/690ff9). This approves expiry
+ONLY, not other Host permissions. Continue existing same-target SETUP33 admission.
 
 Current local result supersedes the Source35-in-progress observation below:
 corrected sourcec14c2038 has original-seat SOURCE_ONLY_PASS, own engineering hold
@@ -15,9 +18,10 @@ package stays at immutable619; fresh byte-QA956858d8 confirms120segments/exactEO
 Matching controller23purechecks and original-seat reviewb3ae2ef8 pass as
 PREPARATION_ONLY_NOT_EXECUTION_ADMITTED. Old subject expiry has passed; only
 the proposed finite lease is a new current setup decision, not the existing
-same-target repair or local source authority. No actual renewal/setup/Host.
-The independently reviewed lease proposal first recorded at revision21 below
-is unchanged in bytes/semantics and remains NOT_AUTHORIZED/NOT_EXECUTED.
+same-target repair or local source authority. Actual renewal is verified above;
+setup/Host remain unexecuted at this observation. The independently reviewed old
+revision21 proposal below is retained as history, superseded only by the approved
+minute-narrowed expiry and actual execution, not a second pending approval.
 
 Source34 revision02 is SOURCE_ONLY_PASS at619a53dd after original R2 correction,
 author mutations and different-door reviewer close mutation. Fresh raw originals

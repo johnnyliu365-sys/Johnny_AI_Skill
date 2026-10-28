@@ -1,5 +1,27 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Actual same-subject renewal — 2026-10-28, not Host qualification
+
+Original independent reviewer approved the one-literal narrowed delta at
+67e288cb; no UAC-blocking finding. Root launched the exact fd6fab09 payload
+through ordinary same-user UAC at07:46:14.1823977Z, PID8216; the parent observed
+completion at07:46:15.7876536Z with exit0 (tool3c3229). No policy change or
+elevated Temp/result-file write occurred. This was one actual operation, no retry.
+
+Fresh ordinary OS readback at07:46:23.1818025Z (tool690ff9) confirms same
+DESKTOP-28ERPQ1/JohnnyReadonlyReview/SID1006, enabled, exact expiry
+2026-10-29T05:29:00.0000000Z (=Taipei2026-10-29 13:29). Compared with
+07:45:28.6936348Z pre-readback (toold92206), group remains onlyS-1-5-32-545;
+PasswordLastSetUtc remains2026-10-27T05:29:21.5411261Z; PasswordRequired=false,
+UserMayChangePassword=true and description unchanged. Password contents were
+neither obtained nor changed. The helper itself checks post SID/enabled/expiry;
+these additional metadata assertions come from Root's separate fresh readback,
+not a claim that those checks exist inside the helper.
+
+ACTION_COMPLETED / LEASE_RENEWAL_VERIFIED -> AUTO_CONTINUE the already-approved
+same-target SETUP33 recovery, subject to fresh exact expiry and frozen-controller
+admission. Renewal is not service/record/Host/model authority or CVQ evidence.
+
 ## Owner approval activation — same subject expiry, 2026-10-28
 
 Human Owner explicitly approves the same JohnnyReadonlyReview account through
