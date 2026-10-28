@@ -1,5 +1,34 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Same SETUP33 operational preparation allocation — fixed Source34 inputs only
+
+Root derives SETUP33-S34R2-PREP from the existing batch/original installation
+preparation authority, not runtime/effect authority. Existing architecture seat
+authority_topology_architecture produces only a fresh registered Temp artifact
+directory under the same review parent: setup33-s34r2-sid1006-20261028.
+Owner Root/Ticket30, producer named above, TTL24h plus active Review/Recovery
+hold; teardown after evidence seal/hold release, no old/denied cleanup.
+CREATE only build-inputs.ps1, metadata/setup.json, metadata/enrollment.json,
+metadata/plan.json, operation.json, staging-manifest.json, staging-input.bin,
+artifact-index.json, preparation-original.json, preparation-command-original.json
+and metadata-validation-original.json. No versioned source/other worktree edits,
+new Repo/worktree, model/network/native-artifact execution, SCM/Registry, install,
+account/ACL/service/task changes, independent delegation or self-review.
+
+Read old reviewed S34 frame33008437bytes/68e38b861a3481ca955d4bef9cdde8c26dbe009b298502ca810488ced60b7810
+and all120 segments; preserve114 non-native payloads byte-for-byte. New native
+from reviewed AOT02 is4207104bytes/c8b063c89df03aead85f3517b6661574cf820ecc650cdf2bb7650aea35008f93;
+script only frozen engineeringhold619,59682bytes/58c20e9c4c21075f3a772735f6e9bb501baf56d0b623714c3f815bb122890755.
+Never read moving Source35 author script. Change only those two payloads, dependent
+setup/enrollment/plan/operation bindings and fresh staging id/root; plan retains
+one LF and unchanged SDDLs but MUST update manifest_sha256 after setup changes.
+Generate canonical bytes/bindings, complete EOF frame, bounded manifest/index and
+full original preparation records; different-seat byte review before any use.
+Use same fresh stage id setup33-s34r2-20261028-sid1006 and ProgramData path pattern.
+Old input/output files are immutable. This is local data preparation, not Host/
+Grant/installation success. Existing15-minute subject-lease guard remains;
+insufficient lease stops only the real effect, not this tool/preparation work.
+
 ## Source34 revision02 accepted source / complete-capture offline link / next admitted tool
 
 Original reviewer authority_install_inventory returns SOURCE_ONLY_PASS for
