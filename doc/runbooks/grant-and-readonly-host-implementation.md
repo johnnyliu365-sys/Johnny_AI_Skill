@@ -29,10 +29,15 @@ C:\ProgramData\JohnnyAuthorityStaging-setup33-lf01-20261028-sid1006.
 Only new protected input/six log files and successful audit use prefix
 C:\Program Files\JohnnySetup33LF01-20261028; final installation targets unchanged.
 
-Root control payload22535bytes SHAc2c404b8b14b5045ac9773febb145f978dd52c8ff9593e120f3edcb005e3959b;
-inline captured-byte launch27182bytes SHAedf3ef242eb1d0a72b74e21366487ec46809ae56c3b44d2366b3773422361be4.
-PS5.1 parser/loader roundtrip and13pure positive/negative cases passed; separate
-seat source/input review remains mandatory before live execution. Finite PT3M/
+Root corrected payload22418bytes SHAd55754a5a78229eca4a403c939814990fb04a319b555446822a4d01835318566;
+ONLY inline captured-byte launch02.json27170bytes SHA3d7db2ef174bd0ea3f87769b2f4adf7f11fbf72fcbd507e4dde7ac08be4d2fa8.
+PS5.1 parser/loader roundtrip and14pure positive/negative cases passed; separate
+seat authority_install_inventory confirmed DOC_PASS_PREPARATION_ONLY / BYTE_QA:
+frame complete, all115payloads unchanged, task/loader bounded, source R1 closed.
+Failure evidence now uses protected Program Files .failure.json via exact parent
+validation and protected CreateNew ACL/readback; before those checks, console only.
+No elevated Temp write. Rejected prior draft and failed QA remain preserved.
+Finite PT3M/
 185s, original parent/file/native security checks and failure journals retained;
 fresh disable/no instances required before success. No whole-plan recovery claim.
 
