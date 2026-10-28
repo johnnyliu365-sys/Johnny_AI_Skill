@@ -1,4 +1,50 @@
-# Core capability implementation decision — revision15
+# Core capability implementation decision — revision16
+
+## Current SETUP33 LF correction — same authorized targets, review before run
+
+The previously frozen resume actually ran once on2026-10-28: SYSTEM staging
+completed, then Apply correctly refused the817-byte plan missing its required LF.
+Task is disabled/State1/no instances/result2; no service or final install roots
+exist. Original raw failure6468365e and readback2f291fde remain held. This is a
+packaging correction, not a product guard/schema change or an unchanged retry.
+
+Root's derived scope under the original SETUP33 effects and Owner's explicit
+no-duplicate-approval clarification: use the same machine/controller/subject,
+unchanged lease, principals, native351fa176, final115payloads, service DISABLED/
+STOPPED and NativeEnrollmentV1 only. No new entitlement or fee. Existing exact
+task must match disabled full XML e684e532, SD O:BAG:BAD:(A;;FA;;;SY)(A;;FA;;;BA)(A;;FR;;;SY),
+result2 and last run2026-10-28T02:06:02Z before mutation. Its action alone is
+updated to the corrected fresh input paths; UPDATE plus DONT_ADD_PRINCIPAL_ACE,
+never CREATE or broader principals. Exact updated definition and unchanged
+actual SD must read back before Enable/Run. Original native image is reused.
+
+Old inputs/staging/logs are never overwritten or deleted. New immutable frame
+33007762bytes SHA594b76efd51902edcd80532f6cbdd42cbfa363f8b003a085bca2b6778106ab00;
+plan818bytes SHA61f47a6ada0ccd25034de9d4b442f004d95cefd0144685caaa79a44b65bb01af
+is exactly original JSON plus ONE LF. Corrected operation8064bytes SHA
+0058426953f290587de97adb420af5c51f9873d54200004c67078c43dbeed9a1.
+Preparation directory setup33-lf01-sid1006-20261028 is under the existing Temp
+review parent. Fresh SYSTEM stage root is exactly
+C:\ProgramData\JohnnyAuthorityStaging-setup33-lf01-20261028-sid1006.
+Only new protected input/six log files and successful audit use prefix
+C:\Program Files\JohnnySetup33LF01-20261028; final installation targets unchanged.
+
+Root control payload22535bytes SHAc2c404b8b14b5045ac9773febb145f978dd52c8ff9593e120f3edcb005e3959b;
+inline captured-byte launch27182bytes SHAedf3ef242eb1d0a72b74e21366487ec46809ae56c3b44d2366b3773422361be4.
+PS5.1 parser/loader roundtrip and13pure positive/negative cases passed; separate
+seat source/input review remains mandatory before live execution. Finite PT3M/
+185s, original parent/file/native security checks and failure journals retained;
+fresh disable/no instances required before success. No whole-plan recovery claim.
+
+No service start, Host/model call, ApprovalV1/SubjectEnrollmentV1/Grant creation,
+network rule/listener, account extension, global policy, cleanup, push/release/
+deployment or formal gate activation is covered. These genuinely different
+effects retain their own precise authority; same-scope technical corrections
+are not sent back for ceremonial Owner approval. Ordinary review and fixture
+success are not Host qualification. Only checklist04 remains checked.
+
+Below revision15 is preserved preparation/failure history, superseded only by
+the actual observations and same-scope correction above.
 
 Owner clarification2026-10-28: do not re-request approval for already explicitly
 instructed work. Root applies that clarification ONLY to this same-scope repair

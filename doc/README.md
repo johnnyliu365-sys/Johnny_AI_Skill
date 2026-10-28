@@ -6,4 +6,4 @@
 
 | Artifact ID | Revision / status | Technical decision leaf |
 | --- | --- | --- |
-| CORE-CAPABILITY-IMPLEMENTATION | 15 / SYSTEM_STAGE_PASSED / APPLY_LF_REFUSED / CORRECTED_INPUT_REVIEW_PENDING | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
+| CORE-CAPABILITY-IMPLEMENTATION | 16 / SYSTEM_STAGE_PASSED / APPLY_LF_REFUSED / CORRECTED_INPUT_REVIEW_PENDING | [Grant與唯讀Host實現方案](runbooks/grant-and-readonly-host-implementation.md) |
