@@ -13,6 +13,100 @@
 
 ## Effective local batch resource / convergence amendment — 2026-10-19
 
+### Source35 bounded existing-leaf record installer — local development allocation
+
+`grant-ticket30-protected-records-source35-20261028`, revision01, original
+PRD/CHG/SPEC/Ticket30 and Owner batch-checklist-local-20261019-uncapped only.
+This is SOURCE_EDIT_ONLY, not runtime authority or approval to write Registry.
+Conditional admission: this exact ticket section passes different-seat review,
+and source34 immutable input preparation returns before author edits either path.
+No circular requirement for a qualified Host before building this first local
+capability. Final HIGH_ASSURANCE/Host/real-effect requirements remain unchanged.
+
+Baseline80dbc9513015b50d0a151ec11eb9b3649fb7221d; author existing
+native_service_impl in own .worktrees/skill-improvement-30-native-service,
+branch codex/skill-improvement-30-native-aot-compat; reviewer different existing
+authority_install_inventory. Root orchestrates same-lifetime direct lane;
+no bridge/receipt, new Agent, PRD, framework or policy source. Serial ownership
+of the two files is mandatory. MODIFY only the existing provisioning PS script
+and tests/test_grant_authority_windows_provisioning_script.py (full product path:
+library/local_orchestration/native_windows/Invoke-AuthorityProvisioning.ps1).
+CREATE/DELETE none. No C#/runtime/Registry/SCM/Host/installation/paid effect.
+
+Purpose: existing protected NativeEnrollment-only Parameters leaf cannot accept
+later ApprovalV1/SubjectEnrollmentV1 via current create-leaf-only installer.
+Build that missing local capability, enabling a prerequisite for first legal
+READ_REVIEW_SNAPSHOT/CVQ evidence. It does not itself close30B R1 or43; no
+READ_MAINLINE grant adapter, remote publication or qualified Host is implied.
+
+Public delta: exactly InstallProtectedRecords mode, same revision1
+ProvisioningOperation and existing pinned registry_values schema/caps. This mode
+requires exactly SubjectEnrollmentV1 plus ApprovalV1, unique exact names. No
+new CLI input, public DTO family, arbitrary registry path/name or authority role.
+Private typed service observation and narrow protected-record port may be added
+within this cohesive installer. Reuse actual pure ACL/service validators in
+production and fake core; no fake validator or copied business implementation.
+
+Required order: identity -> script/input/protected asset pins -> exact two values
+-> existing native enrollment/plan/payload/version validation -> internally
+constructed production Registry64 port -> core. CLI cannot inject the port.
+Production opens existing SYSTEM/<CurrentControlSet>/Services/JohnnyGrantAuthority/
+Parameters only; no CreateSubKey, deletion, rollback, retry or service control.
+Require exact enrolled LocalSystem/OwnProcess/Disabled/Stopped service, image,
+SID type/SCM SDDL, SYSTEM-owned protected exact SY/BA FullControl leaf, initial
+value names EXACT NativeEnrollmentV1, Binary and byte-equal to pinned enrollment.
+Before EACH write recheck ControlSet/service/ACL/native and expected name set.
+Set effectStarted BEFORE first write invocation. SubjectEnrollment first,
+exact readback, full recheck, Approval LAST, Flush, two complete stable readbacks
+of all three values/kinds/bytes and final identity/security. Close retained owners.
+Pre-write rejection zero writes; ANY uncertainty at/after attempted first write,
+including write/Flush/readback/Close, existing RECOVERY_REQUIRED/exit3. No automatic
+overwrite, delete, rollback, retry, cleanup, service start or fake runtime grant.
+
+Finite closure S35-C1..C5, no per-type owner ceremony:
+
+- C1: ordinary parser accepts exact two pinned records; missing/duplicate/extra/
+  case-colliding/oversize/unknown rejected. Actual public mode retains identity,
+  pins/native checks BEFORE production factory. Existing Apply/ValidateOnly and
+  source34 SID normal/negative behavior remain compatible.
+- C2: execute actual private core and validators under typed fake RegistrySecurity,
+  service observations, bounded value state/call log. Wrong owner/inheritance/
+  extra or deny ACE/rights/SID; Running/Enabled/account/path/SID-type/SDDL drift;
+  ControlSet drift, native kind/bytes mismatch and any preexisting target/extra
+  record all reject before first write. Unexpected real Registry/CIM/sc/native/
+  service/Host call in fake mode is RED. Structural wiring checks supplement,
+  never replace executable behavior evidence.
+- C3: legal case proves Subject first, Approval last, Flush and two stable full
+  readbacks; maximum allowed byte sizes remain bounded. Inject first/second write,
+  post-read, Flush and Close failures: recovery, no retry/overwrite/delete. Drift
+  between checks/readbacks refuses or enters Recovery according to effectStarted.
+- C4: actual PS5.1 parse and typed fake execution, focused pytest with no cache,
+  strict mypy/compile for changed Python, diff check; finite per-command60s default,
+  diagnosed extensions only, actual accounting retained with no cumulative cap.
+  Author reverse mutations cover exact names, ACL, ordering and first-write error
+  disposition; reviewer attacks a different check/readback door, named RED then
+  byte-restored GREEN. No repeated full suites outside affected behavior.
+- C5: independent structural review of growth (>500lines is a signal, not forced
+  split/compression). One fixed provisioning responsibility, reuse existing
+  subprocess/AST fixtures, no new test runner or framework. Check exact two-path
+  candidate/baseline and restore; source review is NOT qualified isolation audit.
+
+Concurrency non-claim: Registry SetValue has no admitted CAS. This builds one
+control-plane serialized protectedOwner effect; it never intentionally overwrites
+an observed existing value. It does NOT claim atomic two-value transaction,
+resistance to concurrent SYSTEM/Admin TCB writers, crash transactionality or
+future TCB immutability. If those are required, return CHANGE_DETECTED rather than
+silently weaken them. Real record installation must disclose this exact boundary
+and obtain its own precise effect admission; bytes/pins alone are not authority.
+
+Optional raw evidence only under existing review parent's source35-records-20261028,
+owner Root/Ticket30, producer author/reviewer, TTL24h plus active Review/Recovery
+hold. Do not delete held/unknown assets or retry policy-denied cleanup. Preserve
+all earlier accounting/findings. Return exact candidate, files, commands/raw
+outputs, constructor/negative/mutation results, structural findings, deviations
+and unverified real effects; no self-approval or integration. Accepted source may
+enter ONLY existing engineering hold, not main/30B/43 or formal gate activation.
+
 ### Source34 bounded localization defect correction — exact local child Grant
 
 | Field | Binding |
