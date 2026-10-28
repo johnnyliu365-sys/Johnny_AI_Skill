@@ -1,5 +1,41 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source34 revision02 behavior candidate / retained recovery classification finding
+
+Candidate3ce87c836fe0dc811e8baaedff85783a57aa02ad, parent reviewed9d3c2e1,
+treee208113ae99cad550843755a1c29358c6b2ab519, clean author worktree. Root
+directly read Git identity/scope and the complete fixed-service native module,
+PS/Program/test delta; exactly original fiveMOD/oneCREATE against80dbc951.
+An unquoted PowerShell HEAD^{tree} diagnostic produced apparent argument/file
+names, not disk assets; quoted readback and exact Test-Path confirmed absence.
+No deletion or cleanup retry occurred.
+
+Full author originals in the registered source34-service-readback-20261028 root
+were read, not inferred from summary: managed-build09-original.json SHA256
+0e8123b82e1d6069e0dd9cac79dcf50d4cf204b14998702acd6171de3b943ef5,
+5.154s/exit0/zero warnings/errors; managed-self-test05-original.json
+ff9da6eeb6cff8d5d78a57e0ab9d1ff9b85c3881081bd2e219203c30130dd561,
+0.654s/exit0/pure passed; ps-tests02-original.json
+7bfac743cfa14cf85e684fbf0f81420c4bb3bb345e3aa475fb5b18e54253aa14,
+10.291s/exit0/15PASS/1symlinkSKIP. Earlier matrix04's reader-thread UTF8
+warning is preserved; replacement decoding is not itself evidence of clean
+stderr or permission to hide unexpected errors. Final validation/mutation and
+strict-check evidence remain subject to independent readback, not presumed.
+
+Different-seat authority_install_inventory confirmed an actual S34-R2 gap:
+after preflight identifies retained service-only state, native FileVersionInfo
+read/version mismatch occurs before the recovery try. It can therefore return
+ordinary REFUSED/exit2 rather than RECOVERY_REQUIRED/exit3. Root independently
+observed the same ordering. Same author is directly correcting only this gap
+and corresponding version-read/mismatch negative cases under the existing Grant;
+fresh behavior and legitimate recovery positives must remain. No new Owner ask,
+budget reset, Source35 work or unrelated gate is introduced.
+
+ACTION_COMPLETED -> AUTO_CONTINUE same-ticket correction and original-seat
+independent review. No integration, AOT execution, live SCM/Registry/installation,
+Host qualification, runtime Grant or checklist completion is claimed. Original
+SETUP33 service stays stopped/disabled and its Recovery evidence remains held.
+
 ## Source34 revision02 typed construction passed; same-author behavior continues
 
 Different-seat authority_install_inventory reviewed9d3c2e1579b3bf08c3e6fa20e969702341bfabc9,
