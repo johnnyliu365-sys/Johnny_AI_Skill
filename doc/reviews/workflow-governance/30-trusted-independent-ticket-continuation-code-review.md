@@ -1,5 +1,34 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source34 revision02 typed construction passed; same-author behavior continues
+
+Different-seat authority_install_inventory reviewed9d3c2e1579b3bf08c3e6fa20e969702341bfabc9,
+parent80dbc951, TYPE_PREFLIGHT_PASS_SOURCE_ONLY. Three exact paths only:
+csproj5923db8654f4676a6c848c2e2ca62d740e8cc344,
+NativeProvisioningCommandSelfTests ca6ba99b2374e46e8c57274e37a434d8fe239bc1,
+WindowsServiceSecurityReadback3c5038eea681b13dcee35527648d3b93290556f5.
+Program remained baseline; no new self-test CLI. Finite statuses, bounded handles/
+buffers/descriptors, no partial descriptor on failure, immutable copies and
+ordinary constructor negative cases; no PInvoke or production Apply behavior.
+
+Root independently read complete6257-byte type module and actual final raw
+restore03/build04/selftest03 captures in registered source34-service-readback root:
+restore1.402s/exit0, build6.099s/exit0/zero warnings/errors, pure selftest0.839s/
+exit0. Earlier failed build/argument records stay; older isolated build02 run is
+not final evidence. Source constructor fake order is NOT actual Windows readback
+or verification behavior; no Host qualification or integration is asserted.
+
+ACTION_COMPLETED -> AUTO_CONTINUE same retained native_service_impl, same Grant
+revision02/closureR1..R4, reviewed9d3 construction as continuation base. Overall
+diff/allowlist remains relative80db (fiveMOD/oneCREATE); no budget/reset/new role.
+Production owner+DACL verifier and exact service-only recovery now built using
+pure typed fakes, then original independent reviewer. No actual SCM/Registry/
+native API/installation/Host effect is granted by this source continuation.
+
+Independent byte QA additionally confirms both previous control/postrun capsules
+in fabdd288: all10 embedded originals/JSON/gzip lengths and hashes match held
+files byte-for-byte. This is evidence integrity only, not repeated execution.
+
 ## S34 actual installation / protected diagnosis / narrow continuation
 
 Original admitted single setup PID41884 actually launched2026-10-28T03:43:39.8214993Z
