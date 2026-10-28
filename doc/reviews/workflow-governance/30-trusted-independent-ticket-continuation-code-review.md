@@ -1,5 +1,29 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source35 original-seat findings — same-ticket correction in progress
+
+Different-seat authority_install_inventory rejects5d0f0738 for S35-F1:
+GetAccessRules(true,false) hides inherited ACEs even in a protected DACL. Its
+actual in-memory O:SYD:P(A;;KA;;;SY)(A;;KA;;;BA)(A;ID;KA;;;WD) fixture has three
+ACEs but returns two explicit ones; actual candidate core incorrectly succeeds
+with two fake writes. Root fully read probe02 SHA76f9a654, current1372ccdb
+(exit45, SUCCESS/two writes), and isolated includeInherited=true counterfactual
+c84b5614 (refusal/zero writes). Existing inherited_acl case tests inheritance
+flags, not IsInherited; it is not adequate regression for this counterexample.
+Same author is correcting only this validator/shared regression under the same
+two-path allocation; the original candidate and all failure evidence remain.
+
+S35-E2: C4's exact-name/ordering/first-write-disposition author mutations were
+missing; existing owner-omission and initial-preflight reds are retained, not
+relabeled as the missing doors. Same author now supplements only these bounded
+evidence cases and restores exact source. No budget/window/Owner reset or PRD.
+Reviewer excludes Root's version hypothesis as a product finding: validated
+report already checks manifest version and pinned native image digest. Fake
+entry's stub does not itself prove that inner path, a stated evidence limit.
+Sequencing/role/scope and one cohesive protected-record capability remain sound;
+no added framework. Original reviewer will recheck the correction and a distinct
+readback mutation before source acceptance. This is not CVQ or OS protection.
+
 ## Same SETUP33 service-only continuation controller — local preparation allocation
 
 After the immutable S34R2 package producer returns, the same existing architecture
@@ -89,11 +113,12 @@ hold; teardown after evidence seal/hold release, no old/denied cleanup.
 CREATE only build-inputs.ps1, metadata/setup.json, metadata/enrollment.json,
 metadata/plan.json, operation.json, staging-manifest.json, staging-input.bin,
 artifact-index.json, preparation-original.json, preparation-command-original.json
-and metadata-validation-original.json. No versioned source/other worktree edits,
+and metadata-validation-original.json.
 If a new diagnosed correction needs its own raw capture, additionally allow only
 preparation-command-original02.json, metadata-validation-original02.json and
 preparation-original02.json here; preserve all01 originals and actual failures.
-new Repo/worktree, model/network/native-artifact execution, SCM/Registry, install,
+No versioned source/other worktree edits, new Repo/worktree,
+model/network/native-artifact execution, SCM/Registry, install,
 account/ACL/service/task changes, independent delegation or self-review.
 
 Read old reviewed S34 frame33008437bytes/68e38b861a3481ca955d4bef9cdde8c26dbe009b298502ca810488ced60b7810
