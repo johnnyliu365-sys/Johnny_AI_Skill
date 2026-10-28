@@ -1,5 +1,32 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## S34 immutable setup packet independently checked — execution admission
+
+Different-seat authority_install_inventory: SOURCE_PREPARATION_PASS_NOT_CVQ,
+no blocking byte mismatch.120 unique assets/115payloads/32987386 aggregate bytes,
+exact EOF/frame68e38b86, reviewed scriptblob b8410f20/rawbdaf26ce, native351fa176.
+Only declared plan append-one-LF and operation fresh-root/plan-pin transformations.
+Launcher gzip byte-roundtrip22776/source0ab977d4, argv26761chars PASS. Reviewer's
+parser was PS7.6.5, NOT PS5.1; Root's sealed actual PS5.1 pure15/parser evidence
+is separately identified and not relabelled as independent execution.
+
+Author reports builder PS5.1 File denial followed by PS7 execution, but exact
+historical commands/errors were not retained. Reviewer explicitly leaves builder
+provenance/policy-fallback history UNVERIFIED; no claim of policy compliance from
+source absence of Set-ExecutionPolicy. Current PS7 LocalMachine RemoteSigned is
+not proof of previous PS5.1 state. Do not repeat the denied File path, switch
+engines as fallback or infer authority from this history. Existing independent
+byte/source checks validate these untrusted inputs, not their origin as authority.
+Author native pure-validation run also lacks complete original stdout; declared
+36942bytes SHA c8da5a63/exit0/63.166ms remain diagnostics, not a complete raw seal.
+
+The committed frozen controller's separately and explicitly authorized single
+RemoteSigned process/captured-byte entry remains the original SETUP33 admission;
+its authority does not derive from either missing builder record or fixture.
+Same original targets/effects only, exact preflight still mandatory. Proceed
+one finite original installation correction, preserve all history/Recovery;
+no service start, new records, Host/model call or new system-wide policy.
+
 ## S34 exact same-target setup control seal — preparation, not execution
 
 Original SETUP33 effect authority and explicit no-repeat-approval direction only;
