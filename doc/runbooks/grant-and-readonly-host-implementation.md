@@ -1,5 +1,17 @@
 # Core capability implementation decision — revision15
 
+Owner clarification2026-10-28: do not re-request approval for already explicitly
+instructed work. Root applies that clarification ONLY to this same-scope repair
+and continuation of the previously approved SETUP33 installation plan. The
+extra ceremonial approval request below is superseded for the frozen resume
+payload b3454f63/launch ee0d86eb; no new machine, account, permission principal,
+target, external call or cost is added. This is NOT blanket approval for later
+Host/model qualification or other excluded effects. Source review and live
+identity/version/lease/effect checks remain mandatory. Existing failed attempts,
+the consumed original launch and successful suspension remain recorded; no
+replay of either old command. One bounded execution of the corrected resume
+candidate may now proceed under the original plan plus this explicit clarification.
+
 ## SETUP33-RESUME-01 — exact continuation proposal, NOT AUTHORIZED
 
 The approved disable-only operation succeeded at2026-10-27T09:31:56Z:

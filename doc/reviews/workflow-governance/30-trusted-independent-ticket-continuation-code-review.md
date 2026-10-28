@@ -1,5 +1,32 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Owner no-duplicate-approval clarification — same-scope SETUP33 continuation
+
+On2026-10-28 the Owner directed that already explicitly instructed work must not
+be sent back for repeated approval. Root binds that direction to the immediately
+pending same-task SETUP33-RESUME-01, whose original install targets/effects had
+already been explicitly approved, then source-reviewed and independently sealed
+at220c1ef42ba29974a223c504318acd8cdf9d062c. This is the normal correction of an
+incorrect task-descriptor representation assumption, not a new trust principal,
+target, entitlement or generalized validator relaxation. Root removes only its
+own duplicate approval ceremony. It does not invent a new Host/model/fee or
+service-start approval or reuse a consumed command.
+
+Exact new attempt: launch26200bytes SHA256
+ee0d86ebd040cf4940efdb9157e7336fd3ea8588feaf0c041a7d6c3e80c7d349,
+embedded payload21464bytes SHA256
+b3454f630f2f4a7038faf5e522e6ff93477eb0b3a54e88e14be95d01605e3505.
+Same DESKTOP-28ERPQ1/controller1001/subject1006, original protected files/task,
+staging/install/service/Registry scope and exclusions. No task ACL change,
+account extension, new permission source or new fee. Original120/115 asset and
+native/file security invariants remain, actual task descriptor is exactly pinned.
+Live readback at2026-10-28T02:04Z still finds subject enabled/SID1006 and lease
+2026-10-28T05:29:21.4681709Z; launch pin matches, control worktree is clean.
+The payload independently rechecks all applicable live conditions before effect.
+One corrected attempt only; existing histories/Recovery and no-cleanup restrictions
+remain. ACTION_COMPLETED for authority mapping; AUTO_CONTINUE only to that frozen
+bounded operation, not to any later Host qualification.
+
 ## SETUP33 final local preparation acceptance — exact next effect still pending
 
 Separate-seat authority_install_inventory confirmed4011e5a3's six-doc consistency:
