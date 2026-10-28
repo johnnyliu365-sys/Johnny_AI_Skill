@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source35 handoff / same-authority continuation / expired external lease
+
+Owner's latest clarification changes no scope: already authorized local work
+continues without ceremonial reapproval. Source35 candidate5d0f0738a154ec298ec0cab549a2c8d21a732617,
+parent619a53dd/treef3f2d2bb, is exactly the two allocated MODIFY paths and clean.
+Root read its entire delta and full originals: full02 SHA256
+c1b279338ad9e01232ce8f35987162e8885747863b1933c4da257867776a29fc
+(17passed/1skip, empty stderr); static04
+6c0d3fcdf6c94487f218624662a128ec7f23f887ca1cb8b98f7e07846eb93e5f
+(strict mypy and compile/import, unchanged source pins); parser02
+a0f97520275452a8cb4cd4166ab24a7fba6e75649a983df384d3a6a89f46b7e9
+(PS5.1 parse). Original different-seat reviewer is now checking C1..C5 and a
+different-door mutation; no source acceptance/integration is inferred yet.
+SETUP33-S34R2-PREP resumed after Root fixed the LF-size pairing in d8484176;
+the producer had created no outputs before that correction. No Owner gate.
+
+New ordinary readonly observation2026-10-28T05:35:31Z: Get-LocalUser reports
+the same subject SID1006/enabled, AccountExpires2026-10-28T05:29:21.4681709Z,
+now expired. The captured Get-LocalUser JSON serialized SID too deeply; its
+warning is retained, not represented as clean capture. Ordinary service CIM
+reports Stopped but Unknown/null for protected configuration, not configuration
+proof; Win32_UserProfile returned no matching SID. Do not renew the lease,
+execute SETUP33, or infer no profile beyond that queried surface. This stops
+only real effects under the unchanged lease guard; local source/review/input
+preparation continues. A genuinely new finite lease/subject-session decision
+belongs with the eventual exact external operation package, not a repeated
+request to approve existing source work. Recovery/30B/43 remain unchanged.
+
 ## Same SETUP33 operational preparation allocation — fixed Source34 inputs only
 
 Root derives SETUP33-S34R2-PREP from the existing batch/original installation
