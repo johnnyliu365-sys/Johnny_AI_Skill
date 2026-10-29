@@ -15,6 +15,45 @@
 
 ### Current readback correction — 2026-10-29
 
+### Runtime01 terminal failure / bounded local recovery-tool preparation
+
+Runtime01 consumed ONCE: parent tool4be38e/62e970, operatorPID33156,
+2026-10-29T08:34:39.4107070Z..08:35:08.3676172Z, operatorexit1/parentexit3.
+Subject expiry2026-10-30T05:29Z independently observed. Stage STAGED, Apply0/19
+bytes RECOVERY_REQUIRED, Observe0/0, no success readback. Protected failure675bytes
+SHA256 ef270db81328456cf725eb3d5a9e368935e55f402214eb5c6ec6a7e41e38943b;
+original different-seat OBSERVED_NOT_QUALIFIED confirms logs/ACLs and absent final
+roots. Parent raw tool-result1370bytes/SHA d4aa4032cd2af8e8cbc38c44f15fe1c1ae7c47b00fe1ff2aab5904ebef9b24ba
+is preserved in the registered S36 package, not a Host observation substitute.
+Service remains stopped; task state/definition UNKNOWN: normal-token query
+E_ACCESSDENIED0x80070005, not retried with another privilege. Bare Apply Recovery
+does not prove which preflight/native stage failed. Do not rerun installation.
+
+Architecture Owner reproduced a separate controller defect in the actual dynamic
+ScriptBlock shape: local state initialization versus script-qualified restore
+function reads makes its first guard fail under StrictMode; false flags cannot
+prove actual restoration. Same-scope offline correction uses one state scope and
+fake task, not a second real execution. Old action bytes can be reconstructed
+and hash3c7afd93 matches; stored old XML does NOT match5fad3d70 and cannot be
+used as replacement authority. Actual new task XML must be freshly read first.
+
+Root derives local preparation Grant `batch-checklist-local-20261019-uncapped/t30-s36-recovery02-build`,
+baseline ca6c4d52521af1e9aa3e6d34ed6031336e275f9a, same Ticket/PRD/SPEC/holds,
+no reset or added framework. CREATE ONLY operational candidates in existing
+registered Temp package: owner-s36-recovery02.ps1 and owner-s36-recovery02-launch01.json;
+MODIFY/DELETE none, no production/test edits. Author authority_topology_architecture,
+reviewer authority_install_inventory, Rootcontrol. Reuse existing pinned
+controller helpers/transport and fake task; expected script <=250 effective lines
+is a structure signal, not code-compression requirement. Generated raw evidence
+is under the same ownerRoot/TTL24h+Review/Recovery hold. This Grant permits source
+construction, pure fixture/parser/roundtrip/independent review only, ZERO UAC,
+COM/Registry/service/task/native/account/ACL real effects. Proposed future action
+is fresh bounded protected readback plus at most exact-task safe disable/restore,
+no Apply or task Run. Task restore may use only reconstructed original XML whose
+full bytes independently hash exactly5fad3d70; otherwise leave it unmodified
+except separately approved conditional disable. Real recovery/elevation requires
+a new exact Owner decision; no candidate marker or ordinary review grants it.
+
 ### S36 exact runtime admission — Owner approval received, one execution only
 
 Human Owner explicitly approved control commit92100566ecea6457268eb255241e94c6ac3f1bba,

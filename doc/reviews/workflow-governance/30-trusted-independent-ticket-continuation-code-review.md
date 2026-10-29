@@ -1,5 +1,31 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## S36 runtime01 consumed / actual failure, not acceptance
+
+Exact launch ca6c4d52/tool4be38e PID33156 terminal62e970: operatorexit1,
+08:34:39.4107070Z..08:35:08.3676172Z. Parent raw tool capture in registered S36
+package1370bytes/SHA d4aa4032cd2af8e8cbc38c44f15fe1c1ae7c47b00fe1ff2aab5904ebef9b24ba.
+Protected failure675/ef270db8; stage18865/2f41d16c STAGED; Apply0/19/dfe9bc32;
+Observe0/0; success readback absent. Same subject expiry now2026-10-30T05:29Z.
+Original reviewer independently read protected ACLs/logs and absent final roots,
+returns OBSERVED_NOT_QUALIFIED. Task reads at ordinary privilege refused
+E_ACCESSDENIED0x80070005; no elevated retry. Root c05ea1 diagnostic accidentally
+serialized the catch ErrorRecord as a path, producing truncated diagnostic JSON;
+that root-path summary is NOT used as raw state proof. Reviewer independent
+literal-path readback is the evidence for final-root absence. No failed output
+is silently discarded, repeated or upgraded to PASS.
+
+Architecture pure-memory reproduction proves Restore-OriginalTask scope split:
+dynamic body local initialization, script-qualified function guard/state. Current
+flags are not reliable proof of task restoration. Source author confirms several
+distinct Apply gates normalize to the same19-byte stderr; phase UNKNOWN, no
+unproved production-code fix. Normal-token service details vary by query surface;
+reviewer's readable disabled/stopped facts are not full protected qualification.
+Original task action3c7afd93 can be reconstructed offline, but old stored XML
+reconstructioncd54638a does not match5fad3d70; it is not an allowed restore source.
+Only bounded offline recovery-tool construction proceeds under same-ticket batch
+authority; real additional elevation/task recovery remains unadmitted.
+
 ## S36 runtime01 precise Owner approval / pre-execution admission
 
 Original authority_install_inventory independently returned
