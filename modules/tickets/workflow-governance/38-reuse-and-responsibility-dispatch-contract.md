@@ -212,6 +212,14 @@ doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md、doc/README.md。Root自有control worktr
 不能用規則文字或靜態測試聲稱Host實際攔截。採用map的票在編寫／修改程式與
 腳本前先查map、共用件及原契約；正式Host啟用仍留原外部資格流程。
 
+Root受控整合只限自有codex/skill-improvement-checklist，不寫main；沿原
+admit_document_mutation讀integration-side本票，FF精確獨審候選。必要journal
+root登記為該control worktree內tests/.johnny-runtime/ticket38b-integration，
+owner Root/Ticket38B、用途單次本地整合稽核、TTL本切片證據封存與review確認為止；
+受保留證據/Recovery參照時延後teardown，不擴大刪除範圍或重試遭拒清理。
+只有queue/document-mutation-journal.jsonl是預期產物；不污染Git追蹤，
+不使用正式runtime配置。不把journal寫入視為Host qualification或正式結票。
+
 初版 `f95face6` 被獨審指出目錄型 `create` 未逐檔綁定責任、暫存樣本會污染
 Git worktree。原實作者在同票 correction commits `d28f55ca`、`3557bc20` 修正兩項
 與樣本預算數量不一致；原 reviewer 用兩個不同的填票入口反向突變驗證轉紅→綠，
