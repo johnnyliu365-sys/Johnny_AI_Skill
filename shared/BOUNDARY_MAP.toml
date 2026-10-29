@@ -1,0 +1,68 @@
+schema_revision = 1
+scope = "LOCAL_SOURCE_BOUNDARY"
+baseline = "4ed5bc69e9001c43cc8490dcf48f1168c3edcac7"
+
+[[modules]]
+id = "source_boundary_map"
+roots = ["library/local_orchestration/boundary_map.py"]
+owner = "local-orchestration"
+responsibility = "Parse the versioned module map and evaluate selected source ownership and Python dependency edges."
+kind = "SHARED"
+allowed_dependencies = []
+shared_alias = "local-source-boundary"
+
+[[modules]]
+id = "document_mutation_gate"
+roots = ["library/local_orchestration/document_mutation_gate.py"]
+owner = "local-orchestration"
+responsibility = "Read integration-side ticket and Git facts, then admit or refuse one document mutation."
+kind = "LIBRARY"
+allowed_dependencies = ["source_boundary_map", "johnny_root_layout"]
+
+[[modules]]
+id = "johnny_root_layout"
+roots = ["library/local_orchestration/johnny_root_layout.py"]
+owner = "local-orchestration"
+responsibility = "Provide the per-user Johnny root and durable install bookkeeping paths."
+kind = "LIBRARY"
+allowed_dependencies = []
+
+[[modules]]
+id = "dispatch_authority"
+roots = ["library/local_orchestration/dispatch_authority.py"]
+owner = "local-orchestration"
+responsibility = "Admit dispatch issuance and revocation through the existing local boundary."
+kind = "LIBRARY"
+allowed_dependencies = []
+
+[[modules]]
+id = "issuance_scoped_boundary"
+roots = ["library/local_orchestration/issuance_scoped_boundary.py"]
+owner = "local-orchestration"
+responsibility = "Expose the issuance-only view of durable dispatch metadata."
+kind = "LIBRARY"
+allowed_dependencies = []
+
+[[modules]]
+id = "test_document_mutation_gate"
+roots = ["tests/test_document_mutation_gate.py"]
+owner = "local-orchestration-tests"
+responsibility = "Exercise document mutation declarations, path checks, and real Git integration behavior."
+kind = "TEST"
+allowed_dependencies = ["document_mutation_gate", "dispatch_authority", "issuance_scoped_boundary", "johnny_root_layout"]
+
+[[modules]]
+id = "test_ticket_template_contract"
+roots = ["tests/test_ticket_template_contract.py"]
+owner = "ticket-template-tests"
+responsibility = "Check active ticket template sections and filled-ticket examples."
+kind = "TEST"
+allowed_dependencies = []
+
+[[modules]]
+id = "test_boundary_map"
+roots = ["tests/test_boundary_map.py"]
+owner = "local-orchestration-tests"
+responsibility = "Check boundary-map parsing, ownership and dependency evaluation."
+kind = "TEST"
+allowed_dependencies = ["source_boundary_map", "document_mutation_gate"]

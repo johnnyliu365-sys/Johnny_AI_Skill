@@ -22,6 +22,7 @@ _OUTCOME_SECTION = "## 使用者拍板與可觀察結果"
 _IMPLEMENTATION_SECTION = "## 實作範圍、依賴與 ticket elements"
 _COMPLETION_SECTION = "## 完成回寫"
 _BOUNDARY_BLOCK = "johnny-boundary"
+_MODULE_BOUNDARY_BLOCK = "johnny-module-boundary"
 _WORKFLOW_PATH = _ROOT / "Workflow.md"
 _RETIRED_WORKPROGRESS_BULLET = "- WorkProgress：`PRG-YYYYMMDD-NNN`"
 _SOURCE_ROW = "<source-row>"
@@ -30,6 +31,7 @@ _NEW_FILE_LABEL = "新增檔案責任"
 _BUDGET_LABEL = "預期增量與原票預算"
 _ARTIFACT_LABEL = "驗證產物與源碼內容"
 _PRESERVE_LABEL = "保留已核准行為"
+_MODULE_MAP_LABEL = "BOUNDARY_MAP 與模組選擇"
 _COMPLETION_FIELDS = (
     ("功能", ("精確行為", "核准 AC", "可觀察結果")),
     ("新測試", ("精確測試位置", "反向突變紅→還原綠", "N/A")),
@@ -41,6 +43,9 @@ _COMPLETION_FIELDS = (
 )
 
 _FRONTEND_SLOT_VALUES = (
+    ("<integration baseline BOUNDARY_MAP.toml SHA-256>", "a" * 64),
+    ("<40- or 64-character source baseline SHA recorded by the map>", "b" * 40),
+    ("<module-id>", "source_boundary_map"),
     ("@ `<approved revision>`", "@ `revision r1`"),
     ("<completion-feature>", "AC-SEARCH-001: SearchInput(\"maple\") renders the approved SearchResult at SearchRoute"),
     ("<completion-tests>", "tests/test_search_route.py::test_search_history green; mutation red, restored green"),
@@ -279,6 +284,15 @@ def _boundary_body(markdown: str) -> str:
     return match.group(1)
 
 
+def _module_boundary_body(markdown: str) -> str:
+    match = re.search(
+        rf"(?ms)^```{re.escape(_MODULE_BOUNDARY_BLOCK)}\s*\n(.*?)^```\s*$",
+        _without_html_comments(markdown),
+    )
+    assert match is not None, "missing active johnny-module-boundary block"
+    return match.group(1)
+
+
 def _assert_template_contract(markdown: str) -> None:
     active = _without_fenced_code(_without_html_comments(markdown))
     source_rows = [
@@ -307,6 +321,7 @@ def _assert_template_contract(markdown: str) -> None:
     reviewer = _active_bullet(implementation, "reviewer")
     returned = _active_bullet(implementation, "`ImplementationReturn`")
     reuse = _active_bullet(implementation, _REUSE_LABEL)
+    module_map = _active_bullet(implementation, _MODULE_MAP_LABEL)
     new_file = _active_bullet(implementation, _NEW_FILE_LABEL)
     budget = _active_bullet(implementation, _BUDGET_LABEL)
     artifact = _active_bullet(implementation, _ARTIFACT_LABEL)
@@ -316,6 +331,7 @@ def _assert_template_contract(markdown: str) -> None:
     assert "independent AI／worktree" in reviewer
     assert "不得與 implementation owner 共用 worktree" in reviewer
     assert "測試 harness／fixture" in reuse and "依賴方向" in reuse
+    assert all(term in module_map for term in ("開工前讀取 map", "SHA-256", "source baseline", "selected module IDs", "允許依賴"))
     assert all(term in new_file for term in ("每個程式／腳本檔", "精確路徑", "單一責任", "直接消費者", "驗收 ID"))
     assert "即使 create 使用目錄或 pattern" in new_file
     assert all(term in budget for term in ("既有／新增產品碼", "測試／腳本", "文件", "證據產物"))
@@ -353,6 +369,14 @@ def _assert_template_contract(markdown: str) -> None:
         assert re.search(rf"(?m)^{action}\s*=", boundary), (
             f"missing {action} declaration in johnny-boundary"
         )
+    module_boundary = _module_boundary_body(markdown)
+    for field in ("schema_revision", "map_sha256", "baseline", "selected_modules"):
+        assert re.search(rf"(?m)^{field}\s*=", module_boundary), (
+            f"missing {field} pin in johnny-module-boundary"
+        )
+    assert markdown.count("```johnny-module-boundary") == 1
+    assert "候選分支不能用自己的 map 或 ticket 改寫本次判定" in markdown
+    assert "尚未綁定 map 的既有票維持" in markdown
 
 
 def _apply_bullet_mutation(markdown: str, mutation: _SlotMutation) -> str:
@@ -611,6 +635,27 @@ def test_completion_field_label_extension_breaks_and_restores_contract() -> None
         _assert_template_contract(mutated)
 
     restored = _TEMPLATE_PATH.read_text(encoding="utf-8")
+    assert restored == markdown
+    _assert_template_contract(restored)
+
+
+@pytest.mark.parametrize(
+    "template_path",
+    (_TEMPLATE_PATH, _SCAFFOLD_TEMPLATE_PATH),
+    ids=("ticket_template", "scaffold_template"),
+)
+def test_module_map_pin_block_removal_breaks_and_restores_contract(
+    template_path: Path,
+) -> None:
+    markdown = template_path.read_text(encoding="utf-8")
+    _assert_template_contract(markdown)
+    body = _module_boundary_body(markdown)
+    mutated = markdown.replace(body, body.replace("map_sha256 =", "map_hash =", 1), 1)
+
+    with pytest.raises(AssertionError, match="map_sha256"):
+        _assert_template_contract(mutated)
+
+    restored = template_path.read_text(encoding="utf-8")
     assert restored == markdown
     _assert_template_contract(restored)
 

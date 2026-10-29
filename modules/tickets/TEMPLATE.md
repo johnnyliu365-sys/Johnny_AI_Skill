@@ -38,6 +38,18 @@ delete = <可刪除的檔案，只接受精確路徑、不得用萬用字元；�
 forbid = <明確禁止的路徑；比上面三欄優先，且比對時不分大小寫>
 ```
 
+新票開始實作前，先讀 integration baseline 上的 `shared/BOUNDARY_MAP.toml`，在下方固定
+map 摘要與選用模組。這個 opt-in 摘要由 document mutation gate 從 integration branch
+讀取；候選分支不能用自己的 map 或 ticket 改寫本次判定。尚未綁定 map 的既有票維持
+原有路徑邊界行為。
+
+```johnny-module-boundary
+schema_revision = 1
+map_sha256 = "<integration baseline BOUNDARY_MAP.toml SHA-256>"
+baseline = "<40- or 64-character source baseline SHA recorded by the map>"
+selected_modules = ["<module-id>"]
+```
+
 三個門檻不同級，因為三件事的後果不同：
 
 | 動作 | 門檻 | 拒絕代碼 |
@@ -84,6 +96,7 @@ forbid = <明確禁止的路徑；比上面三欄優先，且比對時不分大�
 - 實際原始碼路徑：`<paths>`
 - 公開契約／資料模型：`<具名輸入 → 輸出／有限狀態與錯誤／nullability / types and ports>`
 - 直接依賴與狀態：`<dependency reference / readiness status / required evidence>`；不適用填理由
+- BOUNDARY_MAP 與模組選擇：`<開工前讀取 map 的 SHA-256、source baseline、selected module IDs；逐一核對責任、kind、roots、允許依賴與 shared alias；列出既有可重用模組及單向依賴>`
 - 共用件查重與依賴方向：`<已查找並重用的生產模組、測試 harness／fixture（精確路徑或 ID、revision 與依賴方向）；若無可重用項，填查找範圍與具體理由>`；不得因新票重做已有的 browser、mock、fixture、decoder、pixel comparator 等共用件
 - 新增檔案責任：`<對 johnny-boundary create 所授權的每個程式／腳本檔，逐一列出精確路徑、單一責任、直接消費者、對應驗收 ID、依賴方向；即使 create 使用目錄或 pattern，也不得只列目錄／pattern；沒有新增時填 N/A reason>`；不得以換票為由複製現有模組或測試工具
 - 預期增量與原票預算：`<分列既有／新增產品碼、測試／腳本、文件、證據產物的預期數量與估計行數；修正沿用同一票預算；行數或數量只觸發結構審查，不自動拆檔、壓縮、拒收或放行>`
