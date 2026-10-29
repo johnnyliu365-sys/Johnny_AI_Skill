@@ -83,7 +83,8 @@ is Recovery, never qualification. Existing Recovery Hold is not cleared by succe
 Approval text for this ONE operation:
 「核准 runbook revision27 的 S36 partial-state adoption 精確操作包（controller
 03719613、launch932ab97e），包含同SID1006延期至2026/10/30 13:29台北時間、上述
-單次程序RemoteSigned、fresh stage/檔案與ACL、既有task一次執行及精確還原；只採用
+operator 與 SYSTEM task child 兩個指定程序的 RemoteSigned、fresh stage/檔案與ACL、
+既有task一次執行及精確還原；只採用
 完整相符的既有NativeEnrollment，不准覆寫Registry。不含Host/模型測試、service啟動、
 推送、發布或部署。」
 

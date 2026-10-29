@@ -2,6 +2,14 @@
 
 ## Exact S36 operator proposal sealed for Owner decision, not execution
 
+Final independent seal at dc694682908e3e3ea986770803186af2ed2555d6:
+DOC_EVIDENCE_SEAL_PASS_NOT_EXECUTION_ADMISSION. Six-document diff, both Ticket30
+registry digest edges and checklist131 (only04 checked) independently verified.
+The approval snippet now explicitly names both operator and SYSTEM task child
+process-scoped RemoteSigned invocations, matching the already-reviewed operation
+table. This wording clarification grants no runtime admission or additional
+scope. No OS action, denied-checker retry or qualification was performed.
+
 Original reviewer closes the stale checker finding: final9331bytes/SHA
 18018de2647f9b068fe5f864809e791cb02c1f7cda7e7ca52eff1bea60ae5928,
 current controller03719613/zero placeholders; preserved PS7 PASS10 only, never
