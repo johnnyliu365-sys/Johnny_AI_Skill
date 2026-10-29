@@ -1,5 +1,20 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source36 allocation independently admitted
+
+Original different seat authority_install_inventory reviewed immutable
+c93ba975a6a4eb3074d299cfe8b80b68fd89e933, Ticket30 blob
+5bbaeceb68e5d5a14fa2d8eafd5ba2211bae9b13 / LF SHA256
+0d636cc1f71e27ff7d9029cc6ed32f94ff5d1ef5991d59ec43c87a596c6a53be:
+DOC_PASS_SOURCE36_ALLOCATION. It confirmed all6 docs retain the actual partial
+Registry/Recovery distinction and no installation/service-only/CVQ claim.
+Two-path SOURCE_EDIT_ONLY allocation, c14 baseline, existing constructors/port/
+validator/fakes, full read-only double-read validation and zero Registry writes,
+unchanged fresh/Source35, bounded byte-exact failure forwarding and different
+seat review are admitted. Actual partial recovery still needs exact Owner effect
+authority. Root activates only the recorded source36 child Grant for the named
+original implementation owner; no DIAG01/Apply rerun or main/30B43 integration.
+
 ## READONLY-DIAG01 actual observation; Source36 local construction
 
 Exact admission17e42e48 executed ONCE: tool d0718a, PID40152,
