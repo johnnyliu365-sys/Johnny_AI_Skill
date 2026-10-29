@@ -2,6 +2,14 @@
 
 ## recovery02 local correction / independent preparation PASS
 
+Final original different-seat doc seal of06272050965205131288ea20d81f00187cad5341:
+DOC_EVIDENCE_SEAL_PASS_NOT_EXECUTION_ADMISSION. Exact runbook28 effects/pins,
+scope/refusal/observation limitations, same-ticket LFf0debe39 and both registry
+edges, checklist132 only04checked, diff and clean worktree independently matched.
+Service full configuration is explicitly future readback, not a fresh fact.
+All construction/correction/review work complete; runtime02 remains NOT_ISSUED
+pending the exact new single-UAC/conditional-task operation decision.
+
 Original architecture author CREATE-only candidates in original S36 package:
 source24920/SHA8ea0478766cc2868839bc4e659d859198c4b0f0d7e2f79fa74bd9b170c75112c,
 launch12403/SHAebba451b567a7d40282ce00c6f88179cdb4b11bef7ee4f67aad7a8099f504bca.
