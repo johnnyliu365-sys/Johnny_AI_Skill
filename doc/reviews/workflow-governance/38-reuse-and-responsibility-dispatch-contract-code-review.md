@@ -1,5 +1,39 @@
 # Ticket 38 independent review — 2026-10-18
 
+## 38B final source review and controlled local integration — 2026-10-29
+
+Original different seat /root/authority_install_inventory APPROVED_SOURCE_SLICE
+at e45a3e5e1a1d5f6965334abf5754edcafcb30792, tree
+d09153de405845a1f9e893ee6653d1e3311e826f. Four focused files182PASS/8subtests
+in52.35s, strict8productmodules and fixture/fourtests separately, compile/diff pass.
+It inspected actual HARNESS ownership and the two consumers; no production→HARNESS
+dependency, duplicated fixture, oversized new support or framework. The final
+extraction leaves83method names unchanged across the two test files (Root AST
+inventory comparison). Existing path-gate regressions remain; map real-Git cases
+retain their names at the admission seam.
+
+Reviewer independently bypassed ancestry validation: the real-Git unreachable-
+baseline test turned RED; restoration exactly matched helper blob
+b538c2f199de6c9d7b2d7eb76d49c11856bb7579, then PASS, worktree clean. Earlier
+cba7 F2-focused independent9tests/5subtests pass is retained. This is bounded
+AST/import analysis, not comprehensive Python sandboxing or Host qualification.
+
+Root's first wrapper reversed the positional function arguments and failed before
+journal/merge; immutable HEAD2157 and absent journal confirmed. After checking the
+actual signature, the keyword-argument invocation returned INTEGRATED at exacte45
+(tool329d22), only on codex/skill-improvement-checklist; maina1cb6c13 unchanged.
+Post-merge182PASS/8subtests53.41s, strict9files, in-memorycompile10files, all13
+candidate Git blobs exact, and actual imported module paths in the integration
+worktree verified. Registered journal397bytes SHA256
+42825b897ac41c879f31f23aee0a5c0c192ad0af92538f85694230019b02f036 is retained
+under its ticket owner/TTL and audit hold; no destructive cleanup was retried.
+
+Canonical docs265d27a3 have original-seat DOC_PASS: unique ticketing method,
+AGENTS index, thin TDD link; adopted/legacy/bootstrap and integration/Host limits
+remain distinct. Skill quick_validate needed Python-Xutf8 after a cp950 decode
+failure, then passed metadata only. Anchor/link checks pass. No installed cache,
+Host activation, main merge, push/release or checklist03/11/12 completion follows.
+
 ## 38B correction review — same F2 remains, 2026-10-29
 
 Reviewer /root/authority_install_inventory inspected exact265c431495a0dc74e74241f0f335333141513a41

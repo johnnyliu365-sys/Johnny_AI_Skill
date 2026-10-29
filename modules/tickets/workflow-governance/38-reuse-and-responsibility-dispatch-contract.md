@@ -2,7 +2,7 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | 38A 歷史 `TEMPLATE_SLICE_LOCAL_INTEGRATED` at `3557bc20`；current38B `SOURCE_BUILD_ADMITTED / NOT_HOST_ENFORCED`，不得宣稱已具 Host dispatch admission 或語意耦合自動判斷 |
+| State | 38A 歷史 `TEMPLATE_SLICE_LOCAL_INTEGRATED` at `3557bc20`；current38B `LOCAL_SOURCE_INTEGRATED / NOT_HOST_ENFORCED` at `e45a3e5e`，不得宣稱已具 Host dispatch admission 或語意耦合自動判斷 |
 | Authority | 既有 `PRD-20260805-009`／原SPEC AC-10/11、Owner 2026-10-29 BOUNDARY_MAP/shared/程式與腳本責任要求及既有批次本地授權；38A沿用2026-10-18清單03／11歷史；不新增 PRD／SPEC |
 | Baseline | current38B為含本次文件修訂的精確docs-only commit，dispatch釘完整SHA與ticket blob；38A歷史基準不變 |
 | Roles | current38B：Root控制面、/root/native_service_impl實作、/root/authority_install_inventory獨審，限定下節既有38／38-review worktrees |
@@ -18,7 +18,7 @@ PRD-20260805-009、原 SPEC AC-10/11 及批次本地授權；不新增 PRD。
 Architecture Owner /root/authority_topology_architecture 判定為 STANDARD：
 多個本地元件與共享契約、可逆、無 privileged/外部 effect。既有38A結果保留。
 
-38B State：SOURCE_BUILD_ADMITTED / NOT_HOST_ENFORCED。先依現行規則建置及
+38B State：LOCAL_SOURCE_INTEGRATED / NOT_HOST_ENFORCED（下列建置授權歷史保留）。先依現行規則建置及
 驗證新能力，不能要求尚未存在的 map 才能建置 map 本身。新規則的全域
 強制啟用不在本次建置內；既有合法、未綁新 map 的票不因此全部凍結。
 30B/43、Host qualification 與安裝 Recovery 均不因38B而變更。
@@ -171,6 +171,40 @@ compile、baseline-red/還原green、reviewer不同門突變；保持每命令60
 工作量增長先診斷而不無限等待。候選未獨審通過前不整合、不勾整項清單。
 
 ## 實作與獨審
+
+### 38B local source acceptance — 2026-10-29
+
+原作者最終e45a3e5e1a1d5f6965334abf5754edcafcb30792，tree
+d09153de405845a1f9e893ee6653d1e3311e826f；source05ba8426，最後additive merge
+僅承接Root2157d4d8 journal文件。相對該control基準精確13個source路徑。
+原不同席位/root/authority_install_inventory回傳APPROVED_SOURCE_SLICE：
+182 tests/8subtests（52.35s）、8產品模組及fixture/四tests分別strict通過、
+compile/diff綠；不同門停用ancestry使真Gitunreachable-baseline格紅，精確
+還原helper blobb538c2f199de6c9d7b2d7eb76d49c11856bb7579後綠。
+先前F2修正cba7獨審9 tests/5subtests保留，沒有以移動測試抹除finding。
+
+Root實際比較兩test檔的AST method inventory：83個測試方法完全保留。
+原path-gate測試由265c時1220實體行降至843；admission494、共用fixture184。
+原有>500有效行gate/test經責任審查，不因行數自動拆檔或壓碼；新增fixture
+157有效行，admission tests416有效行，無巨型support或第二套framework。
+shared/BOUNDARY_MAP.toml Git blob36e8c6f16fcbe216ff8adbc22ff95628c9d27d73，
+LF SHA256 a6b49ef0fc522c1c06625f4ae8397438e3bb9fe9b9a2252e182cf34cccad0b7e。
+
+Root原入口第一次wrapper誤傳positional參數順序，REQUEST_INVALID分支在journal前
+AttributeError退出，HEAD仍2157、journal不存在；查證簽章後改keyword arguments，
+不是重試政策拒絕。原admit_document_mutation實際INTEGRATED精確e45a3e5e（tool329d22），
+只推進自有control branch，main仍a1cb6c13。post-integration四檔pytest182/8綠
+（53.41s）、strict9檔綠、in-memory compile10檔綠；實際__file__均指自有control
+候選程式，13個Git blobs逐一等於受審e45，不是只測舊baseline。
+登記journal397bytes SHA25642825b897ac41c879f31f23aee0a5c0c192ad0af92538f85694230019b02f036，
+依上方owner/TTL保留至稽核封存，不假報清理完成。
+
+Root canonical docs265d27a3獨審DOC_PASS：AGENTS僅索引、ticketing唯一方法正文、
+TDD僅連結，無特定模型/專案值或Host權限提升。quick_validate首次cp950解碼失敗，
+加-X utf8後Skill is valid；僅metadata證據。唯一anchor/兩入口連結靜態驗證PASS。
+局部map/靜態依賴與真Git整合前拒收已驗證；任意工具prewrite、native spawn、
+所有語言的完整動態行為、語意責任判斷及全域Host啟用均未由此證明。
+03/11/12整項不勾選，30B/43/Recovery不變，不安裝、不推送、不發布。
 
 ### 38B shared fixture correction allocation
 

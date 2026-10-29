@@ -13,7 +13,23 @@
 
 ## Effective local batch resource / convergence amendment — 2026-10-19
 
-### Current local result / external execution boundary — 2026-10-28
+### Current readback correction — 2026-10-29
+
+Root依原批次文件維護範圍，只同步已封存Review的實跑狀態，不新增外部操作。
+Owner核准同SID延期已完成：PID8216/exit0，2026-10-28T07:46:23Z普通OS讀回
+expiry2026-10-29T05:29:00Z、SID1006、enabled、Users545-only與密碼metadata未變。
+原same-target S34R2接續亦已實跑一次：PID30568，07:47:21Z→07:47:45Z，exit1。
+Stage stdout18301bytes/STAGED/NONE；Apply stdout空、stderr19bytes
+RECOVERY_REQUIRED（SHAdfe9bc32），Observe空，readback缺失。Protected failure
+563bytes/SHAbbfc1a74只證實effect_attempted/task_update_attempted及generic失敗。
+原reviewer唯讀核對確認Stage→Apply邊界；服務Stopped/Disabled/LocalSystem，
+task/Parameters/stage普通讀回AccessDenied。內因UNKNOWN，不推定新verifier缺陷。
+不可原樣重跑、換方式清理或改Host政策；保留全部Recovery與拒絕證據。
+精確原件見原Review開頭Actual S34R2/renewal；後續須精確受保護唯讀觀察，非Apply。
+30B合法READ_MAINLINE、43 qualified audit及完整01/02仍未通過，不因延期或
+38B local-source邊界整合而解除。以下準備狀態保留為歷史，不再視為尚未執行。
+
+### Historical local result / external preparation boundary — 2026-10-28
 
 Source34 revision02 source619a53dd remains accepted. Its already-materialized
 S34R2 package pins that immutable Git script blob, not any advancing checkout:

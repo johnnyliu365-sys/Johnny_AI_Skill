@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `128`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `129`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,33 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision128）
+## 當前工程接續與精確證據（revision129）
+
+38B依Owner責任圖/shared/程式與腳本邊界要求，在原Ticket38/PRD/SPEC完成
+local-source切片。原作者e45a3e5e、原不同席APPROVED_SOURCE_SLICE，Root原
+document_mutation_gate回傳INTEGRATED於自有control branch；maina1cb不變。
+唯一shared/BOUNDARY_MAP.toml、typed parser/AST/admission各守責任；原gate只接
+一次檢查。兩模板要求開工前讀map/釘digest/baseline/selected modules；AGENTS
+只索引、ticketing唯一正文、TDD薄連結，canonical docs265d獨審DOC_PASS。
+共用Git fixture在shared/git_fixture.py標HARNESS，由兩test消費，不複製工具。
+原path-gate test由中間候選1220降至843實體行；83方法完整保留，不靠刪測試。
+
+對應03/11/12的新增證據：[38 review](reviews/workflow-governance/38-reuse-and-responsibility-dispatch-contract-code-review.md)。
+獨審182tests/8subtests52.35s、strict、不同門ancestry突變紅→精確還原綠；
+Root整合後182/8（53.41s）、strict9檔、compile10檔、實際載入來源及13blob一致。
+未登記模組/違規相依/過期或自改map釘選/不支援parser有限拒收；合法候選可整合。
+這是採用map的本地整合保護，不是任意Host工具寫入前攔截或完整語意耦合分析；
+03/11/12仍未勾，既有真來源/Host/正式effect缺口不因局部綠燈消失。
+登記38B本地journal依owner/TTL待稽核封存，無清理完成宣稱。
+
+原30的已核准同帳戶延期已實際完成：PID8216/exit0，fresh讀回SID1006、
+expiry2026-10-29T05:29:00Z、Users-only及密碼metadata未變。接續S34R2同目標
+Apply實跑一次PID30568/exit1，Stage成功，Apply RECOVERY_REQUIRED，Observe無
+輸出、readback缺失；Review原件已記錄。不是尚未執行或仍等延期核准。
+已知只定位到Stage→Apply；普通token protected讀回AccessDenied，內因UNKNOWN，
+不重跑/換法清理或啟動service/Host。30B/43及Recovery均未解除，原帳/證據保留。
+
+### revision128 原始狀態（歷史，當前讀回以上段為準）
 
 Source35 c14c2038經原不同席SOURCE_ONLY_PASS：真inherited Everyone ACE反例
 修復，ACL／名字／順序／first-write錯誤及不同門末次讀回突變有可追溯紅綠；

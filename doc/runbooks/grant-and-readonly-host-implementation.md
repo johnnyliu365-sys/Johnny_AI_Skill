@@ -1,4 +1,17 @@
-# Core capability implementation decision — revision23
+# Core capability implementation decision — revision24
+
+Current actual result (original Review30 evidence, not a new execution grant):
+same-subject renewal completed/exit0 and independently read back at exact
+2026-10-29T05:29:00Z with unchanged SID1006/Users-only/password metadata.
+The already-approved same-target S34R2 continuation then ran ONCE, PID30568,
+2026-10-28T07:47:21Z→07:47:45Z/exit1: Stage STAGED/NONE, Apply stderr
+RECOVERY_REQUIRED, no Observe/readback. Failure563bytes/SHAbbfc1a74 and
+Apply19bytes/SHAdfe9bc32 are preserved. Ordinary protected reads denied;
+internal cause UNKNOWN. Do not repeat Apply, cleanup, change policy or start
+the service/Host. Precisely admitted protected read-only observation is the
+next diagnostic need, not another broad setup attempt.30B/43 remain blocked.
+
+## Historical revision23 renewal/preparation observation
 
 Owner has now approved renewal of the SAME subject account to2026-10-29 13:29
 Asia/Taipei, with password/groups/all other permissions unchanged. Exact target
