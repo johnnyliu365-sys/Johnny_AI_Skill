@@ -15,6 +15,26 @@
 
 ### Current readback correction — 2026-10-29
 
+Source36 local allocation已完成：作者5a9d6cabe0d1cd88a82c8ecd8b88362754fcd426，
+原不同席SOURCE_ONLY_PASS，Root只FF自有engineering hold c14→5a。兩blob精確，
+Root17PASS/1原symlink-SKIP、strict/compile/diff/clean通過；作者c14真分支紅→候選綠，
+second-read/stdout/stderr及reviewer exact-bytes不同門突變證據均封存於原Review。
+不是main/30B43整合、Host資格或01/02完成。原source-only child Grant完成並關閉，
+不能拿它執行安裝。一般工程訂正未另問Owner，未重置帳/規格/Findings。
+
+下一個真正外部決策已限縮成既有runbook revision27同一包：S36 partial-state
+adoption，controller03719613/launch932ab97e，source/120segment包經原不同席複驗。
+同SID1006期限已到；只提議延期至2026-10-30T05:29Z、不改密碼/群組；一個operator
+程序及固定SYSTEM task child使用RemoteSigned，fresh受保護stage/logs、absent final
+code/data及115payloads建立，一次task執行及精確disabled-definition還原；完整相符的
+NativeEnrollment僅adopt，0Registry寫入/flush/delete。runtime Grant仍是候選，未簽發。
+Windows5.1 -File checker實際SecurityError拒絕，未換旗標/方式重試；PS7純fake10格
+不是Windows5.1/Host資格。新的operator payload/權限/風險須Owner精確確認才可執行，
+不把來源文件或正常local-source核准冒充Host效應授權。新單參數quotedCommand僅
+重用原bounded inline-gzip loader避免命令列上限，未執行任何payload。
+Owner/TTL/hold、完整來源/命令/ACL/雜湊/還原邊界集中在原runbook27，無新規劃文件。
+既有RECOVERY_REQUIRED、30B R1/R2與43必要資格未解除，不啟用正式Gate。
+
 READONLY-DIAG01已實跑且原不同席READONLY_OBSERVATION_VERIFIED：PID40152，
 2026-10-29T04:51:53.9579003Z→04:51:58.9086691Z，exit0。唯一report7162bytes，
 SHA256 ed5fdd197c4b44b8d6819b6794138af1e3f61bd821e75c308c9686d2728f8d75；

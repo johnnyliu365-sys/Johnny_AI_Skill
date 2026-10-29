@@ -1,4 +1,97 @@
-# Core capability implementation decision — revision26
+# Core capability implementation decision — revision27
+
+## Exact Owner decision — S36 partial-state adoption, NOT YET ADMITTED
+
+Local work complete: Source36 commit5a9d6cabe0d1cd88a82c8ecd8b88362754fcd426
+received original different-seat SOURCE_ONLY_PASS and was fast-forwarded only to
+Root's engineering hold. Root17PASS/1existing-symlink-SKIP, strict/compile/blob
+readback pass. Original Review30 contains author/reviewer mutation and baseline
+evidence. This is not main/30B43 integration, Host qualification or checklist
+completion; no need to approve the SPEC/local batch/source implementation again.
+
+The previous actual S34R2 attempt consumed its admission and left a different
+partial state. The following is ONE new precise runtime decision, not a new
+framework or open-ended host authorization.
+
+| Bound item | Exact proposed operation |
+| --- | --- |
+| Machine | DESKTOP-28ERPQ1, Windows10 Pro10.0.19045/x64; not the Windows11 VM |
+| Operator | Existing GameBoy/controller SID S-1-5-21-3542654388-73774624-397494543-1001; one same-user UAC elevation, Windows PowerShell5.1.19041.4894/x64 |
+| Subject | Existing JohnnyReadonlyReview/SID S-1-5-21-3542654388-73774624-397494543-1006, Users S-1-5-32-545 only/non-admin. Change ONLY expiry2026-10-29T05:29Z→2026-10-30T05:29Z (Taipei10/30 13:29); keep password metadata/groups/other rights unchanged. Used by later restricted review, not logged in or tested now |
+| Process policy | Actual WinPS5.1 effectiveRestricted/all scopesUndefined. Proposed single operator process and the fixed SYSTEM task's PS child use RemoteSigned only. No Bypass/Set-ExecutionPolicy/GPO/CurrentUser/LocalMachine change. The separate denied5.1 checker is NOT retried or deemed passed |
+| Existing service | JohnnyGrantAuthority, exact SID S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551. Reverify stopped/disabled/LocalSystem/OwnProcess/zeroPID/exact image and security; do not create/reconfigure/start it or alter its SCM ACL |
+| Existing Registry | Registry64 ControlSet001 service Parameters: exact sole NativeEnrollmentV1 Binary26195bytes/SHA d5df72213e67ac19f0579ac0ac2a1d50d9a55b3b4486ef3cc98226483f34fbda; protected SYSTEM owner/exact SY+BA ACL. Revalidate complete names/kind/bytes/ACL twice and native before effect. ZERO Registry write/flush/delete; Approval/Subject records remain absent |
+| Existing task | Only \\JohnnyAuthoritySetup33-20261027, original XML SHA5fad3d706a30aa927b0952d2222dd040e089f4b96d84c6126cdee4122bdb1f43/argument SHA3c7afd9356d4786b05c65b311a3fc00578bd533267f15a4414c3ef7136f7222f. Change only fixed action arguments while disabled, verify full DOM/SDDL, enable/run once as SYSTEM. Disable and restore original full definition/action, verify disabled/quiescent. Last-run/result metadata remains actual evidence, never rewritten |
+| New protected stage | C:\ProgramData\JohnnyAuthorityStaging-setup33-s36-adopt-20261029-sid1006; exact120assets, SYSTEM-owned/protected SY+BA FullControl; no old stage overwrite |
+| New protected operation files | Prefix C:\Program Files\JohnnySetup33S36Adopt-20261029: .input.bin; six .stage/.apply/.observe.stdout/.stderr; success .readback.json or .failure.json. CreateNew only; owner/groupBA, protected SY+BA Full, controller1001 Read for logs; inputs SY+BA Full only |
+| Final code/data | Create absent C:\Program Files\JohnnyGrantAuthority and C:\ProgramData\JohnnyGrantAuthority plus115 pinned payload files. SYSTEM owner/protected ACL: SY/BA Full; existing service SID code ReadAndExecute and data Modify. No subject/admin group changes, existing files or source/history removal |
+| Binaries | Existing protected stage helper4161024bytes/SHA351fa1766fbedf062260338237fddd91874d22ce176802c70a37374a4e204703; unchanged NativeAOT4207104bytes/SHA c8b063c89df03aead85f3517b6661574cf820ecc650cdf2bb7650aea35008f93, FileVersion1.0.0.0/ProductVersion1.0.0+619a53dd64560b8318b4c919a8f782e8762014b9 |
+| Communication/cost | Local task/SCM/Registry only; no new listener/pipe/network rule, service start, Host/model session, account login, external model call, download or fee |
+
+Exact fresh setup/plan data: setup569bytes/SHAa1439ce10905c8d43ad6ffd3ea223aceaf9c1ff7b985a9a813c7f8ae6ae8d953;
+plan818bytes/SHAd0ed4b5c1479d852f5cd9aef9b991f97c54c9e44d82342b91cf0f4ad0ca192b1.
+Its applied folder ACLs are fixed (no existing service ACL change):
+
+```text
+Code: O:SYD:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;CCSWWPLORC;;;S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551)
+Data: O:SYD:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;CCDCLCSWRPWPLOCRSDRC;;;S-1-5-80-3020799075-4261108201-91889776-39638685-3705689551)
+```
+
+Package root (ownerRoot/Ticket30, TTL24h+Review/Recovery hold):
+C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup33-s36-adopt-sid1006-20261029.
+Original different seat: DOC_PASS_EXACT_OPERATOR_PROPOSAL_NOT_EXECUTION_ADMISSION.
+Controller owner-s36.ps1=32323bytes/SHA03719613c79c8bbf79c68e2923ad799acfaebbeb0bc92b20f49bbca49a8a3068;
+launch owner-s36-launch01.json=14596bytes/SHA932ab97e03b74aa4fbd8edc3a66ec442328c806c7003dedd323aa5283687327c.
+Frame33080159/fa1ed52fcd42a36b34843683b1eab7499a7a2e6fee185a583ab9186620a1d29c;
+manifest21053/adf0ec137514689d0e5382b4c47bb41cf7eb3e284acadd6306238bc56bdc27ff;
+operation8069/62eda6e14431e090a927b91e9e8143bb9b45b9ef4182636a39c6e0c2620453e5.
+118segments unchanged; only accepted PS80419/ddaa089c and operation staging_root
+changed. Full independent byte-QA and raw source/review results are in Review30.
+
+The sole proposed operator command is fixed powershell.exe with:
+`-NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command "<exact bounded inline-gzip loader>"`.
+Complete argument bytes are the launch JSON's argument_line, UTF8 SHA256
+7c607e54c67fcff364d8bc77a24580976d9fd4a2d0fd0551bf9623bfe9524272.
+Full CLI13222chars<32767; decoded loader13086ASCIIchars/no double-quotes/19LF,
+UTF8SHAef2ae018b437a0afd0f1db62e024f3a0863671a0d766e186e987eadbce88797b;
+gzip9045/49bb4f7fca1b6c03efa5687ee10623e378bd1bef50f0413429228b431c04ab75.
+Reviewer proved only payload/length/hash literals differ from the old bounded
+loader; decode cap/exact hash/strictUTF8/memory execution are unchanged. No new
+Temp controller reader; actual broad Temp writer ACLs are not called trusted.
+Raw -Command avoids UTF16-base64 CLI expansion, not the denied checker: actual
+new execution/policy still waits for Owner. No payload has been invoked.
+
+On execution AFTER approval, Root must read launch bytes into one size-bounded
+snapshot, verify its exact SHA BEFORE JSON parse, verify fixed executable/argument
+digest, then Start-Process -Verb RunAs -WindowStyle Hidden using the single exact
+argument_line. No Get-FileHash-then-reopen race, caller input, shell evaluation,
+alternate launcher or unchecked working-copy payload. No blank Owner flag in the
+JSON grants authority. Root records the exact external Owner decision/one-shot
+Grant before this launch; current candidate is NOT a valid runtime Grant.
+
+Native provisioning timeout55s, task bound185s/definitionPT3M; no unchanged retry.
+Output caps: Apply stdout4194304, stderr65555 (native65536+Recovery19), with stage/
+observe prior caps unchanged. Caps checked after run are not live disk quotas.
+Success requires exact original marker, MATCH/NONE observation, complete hashes/
+ACLs, unchanged sole Registry record, stopped/disabled service and restored task.
+Failure/unknown/timeout preserves all data and RECOVERY_REQUIRED; rollback is ONE
+safe exact-task disable/definition restore attempt only. NO Registry/file deletion,
+no old-state overwrite, no resetting history. Account expiry remains extended if
+a later step fails. Task timeout is not a proof of descendant fail-stop; uncertainty
+is Recovery, never qualification. Existing Recovery Hold is not cleared by success.
+
+Approval text for this ONE operation:
+「核准 runbook revision27 的 S36 partial-state adoption 精確操作包（controller
+03719613、launch932ab97e），包含同SID1006延期至2026/10/30 13:29台北時間、上述
+單次程序RemoteSigned、fresh stage/檔案與ACL、既有task一次執行及精確還原；只採用
+完整相符的既有NativeEnrollment，不准覆寫Registry。不含Host/模型測試、service啟動、
+推送、發布或部署。」
+
+After admission and actual successful readback, continue original Source35
+protected-record setup with its own exact prerequisites/authority, first-entry
+and final CVQ qualification, qualified30G/30B/43 review, then real READ_MAINLINE
+Grant/source/admit_dispatch/closure verification. No prerequisite success stands
+in for those results; necessary externally restricted acceptance stays unchecked.
 
 Current actual result (original Review30 evidence, not a new execution grant):
 same-subject renewal completed/exit0 and independently read back at exact

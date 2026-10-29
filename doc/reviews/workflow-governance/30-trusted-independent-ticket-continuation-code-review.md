@@ -1,5 +1,30 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Exact S36 operator proposal sealed for Owner decision, not execution
+
+Original reviewer closes the stale checker finding: final9331bytes/SHA
+18018de2647f9b068fe5f864809e791cb02c1f7cda7e7ca52eff1bea60ae5928,
+current controller03719613/zero placeholders; preserved PS7 PASS10 only, never
+Windows5.1 runtime or Host qualification. It returns
+DOC_PASS_EXACT_OPERATOR_PROPOSAL_NOT_EXECUTION_ADMISSION for final launch
+owner-s36-launch01.json14596bytes/SHA932ab97e03b74aa4fbd8edc3a66ec442328c806c7003dedd323aa5283687327c.
+Structural roundtrip verifies the same old bounded gzip loader: replace only
+payload literal/length/hash; loader13086ASCIIchars/no double-quotes/19LF,
+UTF8SHAef2ae018b437a0afd0f1db62e024f3a0863671a0d766e186e987eadbce88797b;
+gzip9045/49bb4f7fca1b6c03efa5687ee10623e378bd1bef50f0413429228b431c04ab75
+decodes byte-identical32323/controller03719613. Quoted -Command avoids UTF16
+encoded overhead; actual argument digest7c607e54/fullCLI13222chars. No new Temp
+controller reader, environment payload or model/Host/OS execution. Passive Temp
+ACLf90430 reveals inherited extra writers and is not claimed trusted or changed.
+Independent package120/118/2 byte-QA remains unchanged; no unnecessary rerun.
+
+Runbook revision27 contains the single exact Owner decision: machine/SIDs,
+finite expiry, process-only RemoteSigned, exact existing task/action/restore,
+read-only existing enrollment, fresh protected files/ACLs, hashes, command shape,
+failure/rollback limitations and next actual acceptance path. Source-only approval
+does not activate this runtime Grant. Existing denied WinPS5.1 -File evidence
+c424df remains UNVERIFIED and unretried. Current recovery/30B/43 stay blocked.
+
 ## Source36 accepted local source; exact partial-recovery operation remains unadmitted
 
 Original author5a9d6cabe0d1cd88a82c8ecd8b88362754fcd426, parentc14c2038,
