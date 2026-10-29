@@ -2,6 +2,30 @@
 
 ## READONLY-DIAG01 admission preparation — not executed
 
+Correction01 remains unexecuted: original different reviewer rejected the first
+candidate's output-protection assumption. A protected parent and CreateNew do not
+prove the new file owner/DACL; caller ownership could allow WRITE_DAC. Root fixes
+only the sole diagnostic artifact: actual PS5.1 reflection confirms the seven-
+argument FileStream security constructor (tool03b91f), and normal in-memory
+FileSecurity construction yields the original closed log descriptor
+O:BAG:BAD:P(A;;FA;;;SY)(A;;FA;;;BA)(A;;FR;;;controllerSID1001).
+Creation is CreateNew with this owner/group/protected ACL; exact readback occurs
+before writing any diagnostic data. No existing ACL is changed. Failed creation
+security confirmation preserves an empty artifact instead of overwrite/cleanup.
+
+Current codeblock13102LF/UTF8bytes SHA256
+9b1e007cf44f34d6e87758842f27b7f1e13fe2c0128449d987204b248b2a261f supersedes
+the old288bb2a2 payload below. Raw UTF16 encoding exceeds Windows command length;
+transport reuses the pinned existing S34R2 loader from launch0a9106f8: only its
+literal compressed bytes, decoded length and payload digest change. No Temp
+script or ExecutionPolicy argument. Current gzip4302bytes/SHA256
+99b13616b025bd2b285944f881ecc410429fc970362b82446da04bac2cd9c12b,
+loader6762characters/UTF8SHA41bf022124a99dc1e79a7cd58d3f84eb80feb602c59c35c0e734f061c87c0020,
+encoded18032characters/ASCIISHA5dee2c958b474dcf95b3f3456a9f02af58bc401e8cbcdd422fc43482506965e6.
+The old pure SafeGetValue refusal and old wrapper/diagnostic failures stay;
+this is not permission for an Apply retry or Host/model test. Re-review required
+before the one-shot read-only execution admission becomes effective.
+
 Root resumes original12-item mainline from own clean5aea7077;38B is not rerun.
 Architecture Owner original seat independently resolves the next step as one
 same-target protected read-only diagnostic under existing repair/readback

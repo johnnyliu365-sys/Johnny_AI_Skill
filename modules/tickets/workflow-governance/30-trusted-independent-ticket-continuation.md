@@ -33,8 +33,13 @@ Source619 pins不變。原sealed frame/manifest/setup/plan/op準備由普通toke
 C:\Program Files\JohnnySetup33S34R2-20261028.readonly-diagnostic01.json；owner Root/
 Ticket30，TTL至獨立讀回/Recovery disposition，持續被Recovery引用時保留。
 不輸出Registry原始bytes或secret。native55s、整體120s（含UAC）；單次失敗保留，
-不替換刪除法、不重跑Apply、不改task/服務/ACL/Registry/ExecutionPolicy、不新增Agent/
+不替換刪除法、不重跑Apply、不改task/服務/任何既有ACL/Registry/ExecutionPolicy、不新增Agent/
 Gate/工具或外部模型/網路費用。UAC拒絕或身分/釘選/狀態不符即停該effect。
+唯一新report於CreateNew原子指定原protected-log SDDL：owner/group BA、protected
+System/Admin FullControl及controller Read，寫資料前讀回完全相符；無後置Set-Acl。
+此為收緊原准許證據檔的安全屬性，不新增角色或改既有主機權限。若建立後安全讀回
+失敗，保留空檔與錯誤，不覆寫/刪除/原樣重跑。命令傳輸僅重用既有pinned inline
+gzip loader（長度/雜湊/strictUTF8），不建立Temp腳本、不更改ExecutionPolicy。
 本次結果只解除「Stage→Apply當前狀態UNKNOWN」這一共同前提；不是歷史原因證明、
 Grant正向成功、安裝完成、CVQ資格或30B/43解除。READ_MAINLINE-specific source
 仍須依現行HIGH_ASSURANCE及first-entry例外範圍准入，不偷借一般獨審通過。

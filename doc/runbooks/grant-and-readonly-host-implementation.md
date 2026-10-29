@@ -24,6 +24,11 @@ CreateNew C:\Program Files\JohnnySetup33S34R2-20261028.readonly-diagnostic01.jso
 the protected parent prevents elevated output into a user-writable Temp path.
 Owner Root/Ticket30, TTL until diagnostic independent readback and Recovery
 disposition; retained while referenced by Recovery, no automatic cleanup retry.
+The sole new report uses the existing protected-log descriptor at CreateNew:
+owner/group BA, protected DACL SYSTEM/Admins FullControl and controller Read;
+verify exact owner/group/DACL before writing. No existing ACL is changed and no
+new identity or general write permission is created. Empty output on a failed
+security readback is preserved, not overwritten or deleted.
 One process, native child55s, parent observation120s including UAC; failure is
 preserved, no alternate SYSTEM task or unchanged retry. No global activation.
 
@@ -181,10 +186,22 @@ try {
     $diagResult.completed_utc=[DateTime]::UtcNow.ToString('o')
 }
 if (-not $diagAdmitted) { [Console]::Error.WriteLine('diagnostic_not_admitted_no_output'); exit 2 }
-$diagBytes=[Text.UTF8Encoding]::new($false).GetBytes(($diagResult | ConvertTo-Json -Depth 8))
-if ($diagBytes.Length -gt 131072) { throw 'diagnostic_result_bound' }
-$diagFile=[IO.File]::Open($diagOutput,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read)
-try { $diagFile.Write($diagBytes,0,$diagBytes.Length); $diagFile.Flush($true) } finally { $diagFile.Dispose() }
+$diagSecurity=[Security.AccessControl.FileSecurity]::new()
+$diagSecurity.SetOwner([Security.Principal.SecurityIdentifier]::new('S-1-5-32-544'))
+$diagSecurity.SetGroup([Security.Principal.SecurityIdentifier]::new('S-1-5-32-544'))
+$diagSecurity.SetAccessRuleProtection($true,$false)
+foreach ($sid in @('S-1-5-18','S-1-5-32-544')) { $diagSecurity.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new($sid),[Security.AccessControl.FileSystemRights]::FullControl,[Security.AccessControl.AccessControlType]::Allow)) }
+$diagSecurity.AddAccessRule([Security.AccessControl.FileSystemAccessRule]::new([Security.Principal.SecurityIdentifier]::new($diagController),[Security.AccessControl.FileSystemRights]::Read,[Security.AccessControl.AccessControlType]::Allow))
+$diagSections=[Security.AccessControl.AccessControlSections]::Owner -bor [Security.AccessControl.AccessControlSections]::Group -bor [Security.AccessControl.AccessControlSections]::Access
+$diagExpectedSecurity=$diagSecurity.GetSecurityDescriptorSddlForm($diagSections)
+$diagFile=[IO.FileStream]::new($diagOutput,[IO.FileMode]::CreateNew,[Security.AccessControl.FileSystemRights]::Write,[IO.FileShare]::Read,4096,[IO.FileOptions]::WriteThrough,$diagSecurity)
+try {
+    if ((Get-Acl -LiteralPath $diagOutput).GetSecurityDescriptorSddlForm($diagSections) -cne $diagExpectedSecurity) { throw 'diagnostic_output_security_mismatch' }
+    $diagResult.output_security_sddl=$diagExpectedSecurity
+    $diagBytes=[Text.UTF8Encoding]::new($false).GetBytes(($diagResult | ConvertTo-Json -Depth 8))
+    if ($diagBytes.Length -gt 131072) { throw 'diagnostic_result_bound' }
+    $diagFile.Write($diagBytes,0,$diagBytes.Length); $diagFile.Flush($true)
+} finally { $diagFile.Dispose() }
 exit $diagExit
 ```
 
