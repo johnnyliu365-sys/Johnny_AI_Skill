@@ -1,5 +1,23 @@
 # Ticket 38 independent review — 2026-10-18
 
+## 38B correction review — same F2 remains, 2026-10-29
+
+Reviewer /root/authority_install_inventory inspected exact265c431495a0dc74e74241f0f335333141513a41
+in its own review worktree:180PASS/6subtests, strict/compile/diff. Original three
+F2 cases and mapped-symbol/relative positives pass, but NamedExpr loader alias
+still returned OBSERVED/VERIFIED instead of NOT_VERIFIED. CHANGES_REQUESTED;
+not integrated. The reviewer's different-door mutation disabled baseline ancestry;
+test_a_well_formed_but_unreachable_baseline_never_merges went RED, then PASS
+after exact helper-blob restoration (b538c2f1). Worktree clean.
+
+Author-only next correctioncba7c810abb12f409d216fb9a8ba8212895f35fb reports
+182PASS/8subtests and true-entry NamedExpr/getattr baseline/mutation RED→GREEN.
+Independent acceptance remains pending; neither report qualifies Host isolation.
+Root separately requests minimal reuse of the existing fictional-Git fixture in
+shared/git_fixture.py and separation of map-entry cases from path-gate regressions.
+This is an Architecture decision under the existing responsibility objective,
+not an additional reviewer finding or automatic line-count rejection.
+
 ## 38B first review — CHANGES_REQUESTED, 2026-10-29
 
 Exact candidatee66e2ef3464e5e1557b7cd1abf7ca1cdca81ce4e, parent4ed5bc69,
