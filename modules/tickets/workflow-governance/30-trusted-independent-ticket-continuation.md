@@ -15,6 +15,88 @@
 
 ### Current readback correction — 2026-10-29
 
+READONLY-DIAG01已實跑且原不同席READONLY_OBSERVATION_VERIFIED：PID40152，
+2026-10-29T04:51:53.9579003Z→04:51:58.9086691Z，exit0。唯一report7162bytes，
+SHA256 ed5fdd197c4b44b8d6819b6794138af1e3f61bd821e75c308c9686d2728f8d75；
+新檔owner/groupBA及protected Sys/Admin Full/controller Read實際讀回完全相符。
+source9b1e007c/transport5dee2c95的one-shot Grant已消耗，不重跑。服務/原task均
+stopped/disabled/quiescent，action digest相符；native c8b063c8+d5df enrollment
+verify-service-security真exit0/VERIFIED/empty stderr。Registry Parameters已存在，
+唯一已觀察NativeEnrollmentV1 binary26195/d5df相符，Approval/Subject均不存在；
+final code/data roots及exe不存在。這是已跨入Registry的partial state，不是
+service-only。原失敗/Recovery仍保留；未查過所有value name/leaf ACL的report
+不構成adoption通過，之後runtime仍須完整重讀。舊generic原因無法復原。
+
+### Source36 — exact-record recovery construction, no runtime authority
+
+沿Source34 recovery/Source35 typed-port及原PRD/CHG/SPEC/本票的局部建置權限。
+Root派生 `batch-checklist-local-20261019-uncapped/t30-exact-enrollment-recovery-source36`，
+SOURCE_EDIT_ONLY；先不同席核對本allocation及public/private constructor順序。
+source baseline c14c20382abf571360e754dd305cd716bfa520ae；source36不是READ_MAINLINE
+實作，不以尚未合格Host阻止這個first-entry必要建置；真實partial-recovery effect
+超出已消耗的service-only admission，必須另有精確Owner effect授權才可執行。
+
+角色：Root/control；原native_service_impl/implementation，重新接管自有乾淨
+.worktrees/skill-improvement-30-native-service、codex/skill-improvement-30-native-aot-compat；
+source review原authority_install_inventory，原native review worktree為
+.worktrees/skill-improvement-30-native-service-review；allocation以immutable Git
+source-only readonly方式先審，候選再於原review worktree複驗，不把一般席位
+宣稱qualified adversarial audit。
+38B allocation已關閉，原來源/記帳/findings不重置，不新增Agent/branch/PRD/Framework。
+只MODIFY：library/local_orchestration/native_windows/Invoke-AuthorityProvisioning.ps1
+及tests/test_grant_authority_windows_provisioning_script.py；CREATE/DELETE none。
+不得修改C#/原生image、其他source、SPEC、skills、map或任何Host/resource setting。
+
+先查重用：既有ProvisioningProtectedRecordsObservation/Port/Windows port、
+NATIVE_ONLY expected state、Assert-ProtectedRecordsObservation、FakeProtectedRecordsPort
+及call-log/ACL/service fixtures。既有大檔超500行是結構審查訊號；本次只延伸
+既有preflight/recovery責任與同一Registry port，不複製validator、harness、logger
+或新檔。預估產品+150有效行、測試+180有效行，超出先說明真實責任，不壓碼拆碎。
+既有PS依賴observer未qualified，Native施工沿既有source-only建置路徑；不宣稱
+BOUNDARY_MAP已可自動驗完整PowerShell或完成正式Host整合。
+
+S36-C1：普通constructor/roundtrip先建私有typed disposition
+ADOPT_VERIFIED_NATIVE_ENROLLMENT、access enum READ_ONLY/READ_WRITE；Source35
+factory固定READ_WRITE，adoption factory內建READ_ONLY，不讓CLI/caller注入port/access。
+production READ_ONLY用OpenSubKey(writable:false)，Write/Flush皆拒絕；fake成功建構
+及負例不呼真Registry/SCM/native API，不以真實副作用通過型別preflight。
+
+S36-C2：Assert-AdoptableNativeEnrollmentCore(operation,enrollment,expectedControlSet,port)
+要求operation.RegistryValues為空，連續兩次Read均用原NATIVE_ONLY validator檢查
+fixed ControlSet、exact service/SID/security、SYSTEM-owned protected exact SY/BA
+FullControl leaf、唯一NativeEnrollmentV1（Binary/bytes完全相符）；Close成功。
+任一extra/duplicate/case-collision/name/kind/bytes/size/owner/ACE/inheritance/rights/
+service/account/state/path/SID/ControlSet/first-or-second-read/Close不確定，保持Recovery、
+0 Write/Flush/原生provision。不得從本輪report三個name推定完整nameset/ACL已驗收。
+
+S36-C3：原fresh與SERVICE_KEY_ONLY成功路徑不變。只在service唯一、Parameters存在、
+targets全不存在且C2通過時選adoption；Invoke-Apply保留identity/pins/native
+validation/版本/service/SID/security/targets/controlset checks，adoption不呼
+Set-ProtectedEnrollmentValues或任何Write/Flush，native前設effectStarted=true。
+仍呼原provision-enrollment，由native重新讀同一protected enrollment及每次create前
+重驗；禁止cache/caller DTO替代。runtime不刪/覆寫/重建Parameters或既有record。
+
+S36-C4：只修已確證的native非零returned-result丟棄分支：將已受原caps限制的
+stdout/stderr byte arrays原樣flush至既有受保護Apply stdout/stderr，再維持原
+RECOVERY_REQUIRED/exit3。不新增log檔/schema，不把unknown/timeout偽造為stage。
+forwarding失敗可能partial log，保留Recovery；成功marker及Source35行為不得變。
+Native stderr65536加原Recovery19時最大65555，未來effect controller的失敗讀回cap
+須匹配此界（本輪不改controller或再執行）；正常成功stdout/stderr規格完全不變。
+
+驗收：C2 exact positive=2 reads/1close/0writes/0flush，adoption wiring native一次；
+READ_ONLY Write/Flush拒絕；上述negative均effect前停；fresh/service-only/Source35
+原positives不退化；native refused/partial/recovery/timeout不retry/cleanup/record寫入。
+native非零成功forward須byte-exact，失敗不得報完整。作者真c14 baseline-red須保留，
+reverse mutation至少skip-write/exact-bytes/second-read/native-effectStarted之一及
+forwarding行為；原reviewer走不同門（READ_ONLY wiring或sole-value等）具名紅→還原綠。
+沿原AST函式提取與可執行fake harness，不寫snapshot-only測試。聚焦pytest分組、
+actualPS5.1 parser/constructor/fake、strict受影響Python、compile/diff，命令60s，
+逾時先診斷；永久保留舊帳，無累計/固定修正次數重置。臨時產物沿原registered
+review parent/source36-exact-recovery-20261029，owner Root/Ticket30，TTL24h加
+Review/Recovery hold，無政策遭拒清理。輸出完整命令終態/stdout/stderr，不以摘要冒充原件。
+Return exact candidate/paths/checks/mutations/findings/NOT_VERIFIED，未獨審前不整合；
+通過只進自有engineering hold，不進main/30B43、不Push/發布/啟用正式Gate。
+
 Root依原Owner same-target repair及批次授權，採Architecture Owner原席的
 READONLY-DIAG01判定：不是新Host qualification/安裝/持續權限，而是一次精確
 保護端唯讀診斷。控制文件MODIFY只限本票、原Review、既有runbook、registry、

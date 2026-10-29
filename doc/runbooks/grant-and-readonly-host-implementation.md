@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision25
+# Core capability implementation decision — revision26
 
 Current actual result (original Review30 evidence, not a new execution grant):
 same-subject renewal completed/exit0 and independently read back at exact
@@ -6,12 +6,20 @@ same-subject renewal completed/exit0 and independently read back at exact
 The already-approved same-target S34R2 continuation then ran ONCE, PID30568,
 2026-10-28T07:47:21Z→07:47:45Z/exit1: Stage STAGED/NONE, Apply stderr
 RECOVERY_REQUIRED, no Observe/readback. Failure563bytes/SHAbbfc1a74 and
-Apply19bytes/SHAdfe9bc32 are preserved. Ordinary protected reads denied;
-internal cause UNKNOWN. Do not repeat Apply, cleanup, change policy or start
-the service/Host. Precisely admitted protected read-only observation is the
-next diagnostic need, not another broad setup attempt.30B/43 remain blocked.
+Apply19bytes/SHAdfe9bc32 are preserved. Old internal cause remains UNKNOWN.
+READONLY-DIAG01 has now completed once: PID40152/exit0, report7162bytes/SHA256
+ed5fdd197c4b44b8d6819b6794138af1e3f61bd821e75c308c9686d2728f8d75,
+independently READONLY_OBSERVATION_VERIFIED. Native service-security readback
+is VERIFIED; Parameters/NativeEnrollmentV1 already exist, Approval/Subject and
+final code/data roots do not. This is partial Registry state, not service-only.
+The report does not prove complete value-name/leaf-ACL admission. Source36 in
+original Ticket30 extends the existing typed port with exact read-only adoption
+and preserves bounded native failure output. Source/fake tests may proceed;
+actual partial-recovery adoption requires a new exact Owner effect decision.
+Do not repeat DIAG01/Apply, cleanup, change policy or start the service/Host.
+30B/43 remain blocked; first-entry construction is not qualification.
 
-## READONLY-DIAG01 — independently admitted, not another Apply
+## READONLY-DIAG01 — CONSUMED; historical exact admitted command, do not rerun
 
 Architecture Owner's same-Ticket30 determination: the existing same-target repair
 and protected failure-readback authority cover one narrowly admitted read-only

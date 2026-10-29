@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## READONLY-DIAG01 actual observation; Source36 local construction
+
+Exact admission17e42e48 executed ONCE: tool d0718a, PID40152,
+2026-10-29T04:51:53.9579003Z→04:51:58.9086691Z, exit0. The protected report
+C:\Program Files\JohnnySetup33S34R2-20261028.readonly-diagnostic01.json is7162bytes,
+SHA256 ed5fdd197c4b44b8d6819b6794138af1e3f61bd821e75c308c9686d2728f8d75.
+Root readback46f1db and original different seat authority_install_inventory's
+separate full read/GetAcl/hash agree: owner/groupBA, protected SY/BA Full and
+controllerSID1001 Read, exact pre-write descriptor. Derived DIAG01 Grant consumed.
+Service stopped/disabled/PID0, original task disabled/quiescent with pinned
+action; native c8b063c8 service-security verifier exit0/SOURCE_ONLY_UNQUALIFIED/
+VERIFIED and no stderr. Parameters plus NativeEnrollmentV1 Binary26195bytes,
+SHA d5df72213e67ac19f0579ac0ac2a1d50d9a55b3b4486ef3cc98226483f34fbda exist;
+ApprovalV1/SubjectEnrollmentV1 and final code/data roots/exe are absent.
+Old Apply/failure artifacts unchanged. Reviewer: READONLY_OBSERVATION_VERIFIED,
+not installed, service-only, CVQ or30B/43 completion; Recovery preserved.
+
+Architecture's closed source analysis finds no demonstrated frame mismatch:
+operation/enrollment115payloads, sizes/hashes agree,32943032bytes below64MiB.
+The historical native error was discarded by PS's nonzero-result branch; its
+exact cause is UNKNOWN. Current diagnosis does not enumerate the complete leaf
+nameset or ACL and is not an adoption authorization. Source36 in original Ticket30
+limits changes to the existing PS provisioning script and its test: reuse the
+Source35 Registry port/observation/NATIVE_ONLY validator/fake harness, exact
+read-only double-read adoption, zero record write/flush, unchanged native image,
+bounded raw failure output to existing streams. Allocation review pending;
+actual partial-state recovery effect remains separately Owner-admitted.
+
 ## READONLY-DIAG01 effective one-shot admission
 
 Original different seat /root/authority_install_inventory returns
