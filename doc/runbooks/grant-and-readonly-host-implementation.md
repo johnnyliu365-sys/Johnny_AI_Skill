@@ -1,4 +1,4 @@
-# Core capability implementation decision — revision24
+# Core capability implementation decision — revision25
 
 Current actual result (original Review30 evidence, not a new execution grant):
 same-subject renewal completed/exit0 and independently read back at exact
@@ -10,6 +10,183 @@ Apply19bytes/SHAdfe9bc32 are preserved. Ordinary protected reads denied;
 internal cause UNKNOWN. Do not repeat Apply, cleanup, change policy or start
 the service/Host. Precisely admitted protected read-only observation is the
 next diagnostic need, not another broad setup attempt.30B/43 remain blocked.
+
+## READONLY-DIAG01 — pending independent admission, not another Apply
+
+Architecture Owner's same-Ticket30 determination: the existing same-target repair
+and protected failure-readback authority cover one narrowly admitted read-only
+diagnosis under controller SID1001. Same-user UAC uses existing admin membership,
+not new persistent rights. No subject login/renewal, task mutation/run, service
+start, ACL/Registry write, privilege enable, policy change or Host/model test.
+Root derives `batch-checklist-local-20261019-uncapped/t30-readonly-diag01` after
+the original different seat reviews the exact code below. The sole artifact is
+CreateNew C:\Program Files\JohnnySetup33S34R2-20261028.readonly-diagnostic01.json;
+the protected parent prevents elevated output into a user-writable Temp path.
+Owner Root/Ticket30, TTL until diagnostic independent readback and Recovery
+disposition; retained while referenced by Recovery, no automatic cleanup retry.
+One process, native child55s, parent observation120s including UAC; failure is
+preserved, no alternate SYSTEM task or unchanged retry. No global activation.
+
+This only classifies the current Stage→Apply boundary shared by30B/43. Even an
+exact native VERIFIED plus absent Parameters/final roots is not the historical
+exception, completed installation, Grant-positive, qualified Host or43 admission.
+The old Apply collapses multiple reasons; do not manufacture its missing cause.
+Ordinary preparation independently pins sealed frame/manifest and all metadata;
+the elevated child reads only protected fixed paths and runs the existing native
+OWNER+DACL verifier with exact staged enrollment, never the Apply script.
+
+```powershell
+# READONLY-DIAG01
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
+$diagOutput = 'C:\Program Files\JohnnySetup33S34R2-20261028.readonly-diagnostic01.json'
+$diagStage = 'C:\ProgramData\JohnnyAuthorityStaging-setup33-s34r2-20261028-sid1006'
+$diagPrefix = 'C:\Program Files\JohnnySetup33S34R2-20261028'
+$diagController = 'S-1-5-21-3542654388-73774624-397494543-1001'
+$diagResult = [ordered]@{ scope='PROTECTED_READONLY_DIAGNOSTIC_NOT_CVQ'; correlation='SETUP33-S34R2-READONLY-DIAG01'; started_utc=[DateTime]::UtcNow.ToString('o'); status='INCOMPLETE' }
+$diagAdmitted = $false
+$diagHandles = [Collections.Generic.List[IO.FileStream]]::new()
+function Get-DiagHash([byte[]] $Bytes) {
+    $algorithm = [Security.Cryptography.SHA256]::Create()
+    try { return ([BitConverter]::ToString($algorithm.ComputeHash($Bytes))).Replace('-','').ToLowerInvariant() }
+    finally { $algorithm.Dispose() }
+}
+function Assert-DiagNoReparse([string] $Path) {
+    $current = [IO.Path]::GetFullPath($Path)
+    while ($current) {
+        if ((Get-Item -LiteralPath $current -Force -ErrorAction Stop).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'reparse_refused' }
+        $current = [IO.Path]::GetDirectoryName($current)
+    }
+}
+function Open-DiagPinned([string] $Path,[long] $Size,[string] $Digest) {
+    Assert-DiagNoReparse $Path
+    $acl = Get-Acl -LiteralPath $Path
+    $rules = @($acl.GetAccessRules($true,$false,[Security.Principal.SecurityIdentifier]))
+    if ($acl.GetOwner([Security.Principal.SecurityIdentifier]).Value -cne 'S-1-5-18' -or -not $acl.AreAccessRulesProtected -or $rules.Count -ne 2) { throw 'staged_acl_refused' }
+    $seen = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    foreach ($rule in $rules) {
+        $sid = $rule.IdentityReference.Value
+        if ($sid -cnotin @('S-1-5-18','S-1-5-32-544') -or -not $seen.Add($sid) -or $rule.AccessControlType -ne [Security.AccessControl.AccessControlType]::Allow -or $rule.FileSystemRights -ne [Security.AccessControl.FileSystemRights]::FullControl) { throw 'staged_acl_refused' }
+    }
+    $stream = [IO.File]::Open($Path,[IO.FileMode]::Open,[IO.FileAccess]::Read,[IO.FileShare]::Read)
+    $diagHandles.Add($stream)
+    if ($stream.Length -ne $Size) { throw 'pin_size_mismatch' }
+    $bytes = [byte[]]::new([int]$Size)
+    $offset = 0
+    while ($offset -lt $bytes.Length) {
+        $read = $stream.Read($bytes,$offset,$bytes.Length-$offset)
+        if ($read -le 0) { throw 'pin_short_read' }
+        $offset += $read
+    }
+    if ((Get-DiagHash $bytes) -cne $Digest) { throw 'pin_digest_mismatch' }
+    return ,$bytes
+}
+function Get-DiagPathFact([string] $Path,[long] $Maximum) {
+    try { $item = Get-Item -LiteralPath $Path -Force -ErrorAction Stop }
+    catch [Management.Automation.ItemNotFoundException] { return [ordered]@{path=$Path; exists=$false} }
+    Assert-DiagNoReparse $Path
+    $acl = Get-Acl -LiteralPath $Path
+    $fact = [ordered]@{path=$Path; exists=$true; directory=$item.PSIsContainer; owner=$acl.GetOwner([Security.Principal.SecurityIdentifier]).Value; sddl=$acl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]::Owner -bor [Security.AccessControl.AccessControlSections]::Access)}
+    if (-not $item.PSIsContainer) {
+        if ($item.Length -gt $Maximum) { throw 'diagnostic_file_bound' }
+        $fact.size = $item.Length
+        $fact.sha256 = (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
+    }
+    return $fact
+}
+$diagExit = 2
+try {
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    try {
+        if ([Environment]::MachineName -cne 'DESKTOP-28ERPQ1' -or $identity.User.Value -cne $diagController -or -not [Security.Principal.WindowsPrincipal]::new($identity).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator) -or -not [Environment]::Is64BitProcess -or $PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSVersion.Minor -ne 1) { throw 'controller_identity_refused' }
+    } finally { $identity.Dispose() }
+    $PSModuleAutoLoadingPreference='None'
+    $env:PSModulePath='C:\Windows\System32\WindowsPowerShell\v1.0\Modules'
+    $env:PATH='C:\Windows\System32'
+    foreach ($module in @('Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1','Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1','Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1','CimCmdlets\CimCmdlets.psd1')) { Import-Module ('C:\Windows\System32\WindowsPowerShell\v1.0\Modules\'+$module) -ErrorAction Stop }
+    Assert-DiagNoReparse 'C:\Program Files'
+    if ([IO.File]::Exists($diagOutput) -or [IO.Directory]::Exists($diagOutput)) { throw 'output_already_exists' }
+    $diagAdmitted = $true
+    $diagResult.machine = [Environment]::MachineName
+    $service = @(Get-CimInstance Win32_Service -Filter "Name='JohnnyGrantAuthority'")
+    if ($service.Count -ne 1) { throw 'fixed_service_count' }
+    $diagResult.service = $service[0] | Select-Object Name,StartMode,StartName,State,ServiceType,PathName,ProcessId
+    $scheduler = New-Object -ComObject 'Schedule.Service'
+    $scheduler.Connect()
+    $task = $scheduler.GetFolder('\').GetTask('JohnnyAuthoritySetup33-20261027')
+    $diagResult.task = [ordered]@{enabled=$task.Enabled; state=$task.State; instances=$task.GetInstances(0).Count; last_result=$task.LastTaskResult; last_run_utc=$task.LastRunTime.ToUniversalTime().ToString('o'); xml_sha256=(Get-DiagHash ([Text.UTF8Encoding]::new($false).GetBytes([string]$task.Xml))); sddl=$task.GetSecurityDescriptor(7)}
+    if ($task.Definition.Actions.Count -ne 1) { throw 'task_action_count' }
+    $action=$task.Definition.Actions.Item(1)
+    $argumentDigest=Get-DiagHash ([Text.UTF8Encoding]::new($false).GetBytes([string]$action.Arguments))
+    $diagResult['task']['arguments_sha256']=$argumentDigest
+    $taskActionMatches=($action.Path -ceq 'C:\Windows\System32\cmd.exe' -and $action.WorkingDirectory -ceq 'C:\Windows\System32' -and $argumentDigest -ceq '3c7afd9356d4786b05c65b311a3fc00578bd533267f15a4414c3ef7136f7222f')
+    $diagResult['task']['action_matches_s34r2']=$taskActionMatches
+    $registry = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,[Microsoft.Win32.RegistryView]::Registry64)
+    try {
+        $select = $registry.OpenSubKey('SYSTEM\Select',$false)
+        try { $controlSetNumber = $select.GetValue('Current',$null,[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames) } finally { $select.Dispose() }
+        if ($controlSetNumber -isnot [int] -or $controlSetNumber -lt 1 -or $controlSetNumber -gt 999) { throw 'control_set_invalid' }
+        $controlSet = 'ControlSet{0:D3}' -f $controlSetNumber
+        $parameters = $registry.OpenSubKey('SYSTEM\'+$controlSet+'\Services\JohnnyGrantAuthority\Parameters',$false)
+        $diagResult.registry = [ordered]@{control_set=$controlSet; parameters_present=($null -ne $parameters); values=@()}
+        if ($null -ne $parameters) {
+            try {
+                foreach ($name in @('NativeEnrollmentV1','ApprovalV1','SubjectEnrollmentV1')) {
+                    $value = $parameters.GetValue($name,$null,[Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+                    $record = [ordered]@{name=$name; present=($null -ne $value)}
+                    if ($null -ne $value) {
+                        $record.kind = [string]$parameters.GetValueKind($name)
+                        if ($value -isnot [byte[]] -or $value.Length -gt 131072) { throw 'registry_record_bound' }
+                        $record.size = $value.Length
+                        $record.sha256 = Get-DiagHash $value
+                    }
+                    $diagResult['registry']['values'] += $record
+                }
+            } finally { $parameters.Dispose() }
+        }
+    } finally { $registry.Dispose() }
+    $diagResult.files = @()
+    foreach ($suffix in @('.stage.stdout','.stage.stderr','.apply.stdout','.apply.stderr','.observe.stdout','.observe.stderr','.failure.json')) { $diagResult.files += Get-DiagPathFact ($diagPrefix+$suffix) 1048576 }
+    foreach ($path in @('C:\Program Files\JohnnyGrantAuthority','C:\ProgramData\JohnnyGrantAuthority','C:\Program Files\JohnnyGrantAuthority\JohnnyAuthority.Tools.exe')) { $diagResult.files += Get-DiagPathFact $path 8388608 }
+    if ($service[0].StartMode -cne 'Disabled' -or $service[0].State -cne 'Stopped' -or $service[0].StartName -cne 'LocalSystem' -or $service[0].ServiceType -cne 'Own Process' -or $service[0].ProcessId -ne 0 -or -not [string]::Equals([string]$service[0].PathName,'"C:\Program Files\JohnnyGrantAuthority\JohnnyAuthority.Tools.exe" service',[StringComparison]::OrdinalIgnoreCase)) { throw 'service_configuration_drift' }
+    if ($task.Enabled -or $task.State -ne 1 -or $task.GetInstances(0).Count -ne 0) { throw 'task_not_quiescent' }
+    if (-not $taskActionMatches) { throw 'task_action_drift' }
+    $nativePath = $diagStage+'\payload\JohnnyAuthority.Tools.exe'
+    $nativeBytes = Open-DiagPinned $nativePath 4207104 'c8b063c89df03aead85f3517b6661574cf820ecc650cdf2bb7650aea35008f93'
+    $enrollmentBytes = Open-DiagPinned ($diagStage+'\metadata\enrollment.json') 26195 'd5df72213e67ac19f0579ac0ac2a1d50d9a55b3b4486ef3cc98226483f34fbda'
+    if ([Diagnostics.FileVersionInfo]::GetVersionInfo($nativePath).FileVersion -cne '1.0.0.0') { throw 'native_version_mismatch' }
+    $start = [Diagnostics.ProcessStartInfo]::new()
+    $start.FileName=$nativePath; $start.Arguments='verify-service-security'; $start.WorkingDirectory=$diagStage
+    $start.UseShellExecute=$false; $start.CreateNoWindow=$true
+    $start.RedirectStandardInput=$true; $start.RedirectStandardOutput=$true; $start.RedirectStandardError=$true
+    $process = [Diagnostics.Process]::new(); $process.StartInfo=$start
+    try {
+        if (-not $process.Start()) { throw 'native_start_failed' }
+        $stdoutTask=$process.StandardOutput.ReadToEndAsync(); $stderrTask=$process.StandardError.ReadToEndAsync()
+        $process.StandardInput.BaseStream.Write($enrollmentBytes,0,$enrollmentBytes.Length); $process.StandardInput.Close()
+        if (-not $process.WaitForExit(55000)) { $process.Kill(); [void]$process.WaitForExit(5000); throw 'native_deadline' }
+        $stdout=$stdoutTask.GetAwaiter().GetResult(); $stderr=$stderrTask.GetAwaiter().GetResult()
+        if ($stdout.Length -gt 4096 -or $stderr.Length -gt 4096) { throw 'native_output_bound' }
+        $diagResult.native = [ordered]@{exit_code=$process.ExitCode; stdout=$stdout; stderr=$stderr; image_sha256=(Get-DiagHash $nativeBytes); enrollment_sha256=(Get-DiagHash $enrollmentBytes)}
+    } finally { $process.Dispose() }
+    $diagResult.status='OBSERVED_NOT_QUALIFIED'; $diagExit=0
+} catch {
+    $diagResult.status='DIAGNOSTIC_INCOMPLETE'
+    $diagResult.error_type=$_.Exception.GetType().FullName
+    $message=[string]$_.Exception.Message
+    $diagResult.reason=if ($message -cmatch '^[a-z0-9_]{1,80}$') { $message } else { 'readback_exception_preserved_as_unknown' }
+} finally {
+    foreach ($stream in $diagHandles) { $stream.Dispose() }
+    $diagResult.completed_utc=[DateTime]::UtcNow.ToString('o')
+}
+if (-not $diagAdmitted) { [Console]::Error.WriteLine('diagnostic_not_admitted_no_output'); exit 2 }
+$diagBytes=[Text.UTF8Encoding]::new($false).GetBytes(($diagResult | ConvertTo-Json -Depth 8))
+if ($diagBytes.Length -gt 131072) { throw 'diagnostic_result_bound' }
+$diagFile=[IO.File]::Open($diagOutput,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read)
+try { $diagFile.Write($diagBytes,0,$diagBytes.Length); $diagFile.Flush($true) } finally { $diagFile.Dispose() }
+exit $diagExit
+```
 
 ## Historical revision23 renewal/preparation observation
 

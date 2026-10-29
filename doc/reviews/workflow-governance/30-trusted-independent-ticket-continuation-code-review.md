@@ -1,5 +1,35 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## READONLY-DIAG01 admission preparation — not executed
+
+Root resumes original12-item mainline from own clean5aea7077;38B is not rerun.
+Architecture Owner original seat independently resolves the next step as one
+same-target protected read-only diagnostic under existing repair/readback
+authority, not new OS permissions or qualification. Root derives the exact
+t30-readonly-diag01 conditional Grant in the original Ticket30; original
+different seat must review the committed runbook25 code before any UAC/native run.
+
+Fresh ordinary readbackee79fa confirms original failure SHA bbfc1a74 unchanged,
+service Stopped/Disabled/LocalSystem/OwnProcess/UNRESTRICTED/exact image. It does
+not resolve the protected state. Image-only metadata92eef3 confirms4207104/c8b063c8,
+FileVersion1.0.0.0/ProductVersion1.0.0+619a53dd; no image execution. Sealed package
+six pins757a37 match frame/manifest/enrollment/setup/plan/operation exactly.
+Pinned controller364ce8b5's newArguments is reduced by a strict literal/string-
+concatenation AST evaluator, not invocation:1336characters/UTF8SHA256
+3c7afd9356d4786b05c65b311a3fc00578bd533267f15a4414c3ef7136f7222f.
+Initial SafeGetValue rejected this expression; no command ran, no result was
+assumed. The bounded literal evaluator explicitly rejects all other AST forms.
+
+Runbook25's READONLY-DIAG01 payload is11708 LF characters,31224 UTF16-base64
+characters, UTF8SHA256288bb2a22e33364efe21f55e63379498ad8276607d3cec253e3721f707676233.
+It parsed without execution in actual x64 Windows PowerShell5.1.19041.4894
+(tool0c1139) and parent PowerShell; this is syntax only, not Host qualification.
+No SYSTEM fallback, task/ACL/Registry mutation, account change, ExecutionPolicy
+change, service start, Apply retry, network/model call or denied cleanup is admitted.
+Only one CreateNew protected diagnostic output is allowed and retained under
+Recovery; raw Registry value bytes are not output. Current facts/native status
+cannot recreate the old swallowed exception.30B/43 remain blocked.
+
 ## Actual S34R2 result — preserve Recovery, no unchanged retry
 
 After verified renewal, Root freshly pinned exact approved05:29:00Z expiry,

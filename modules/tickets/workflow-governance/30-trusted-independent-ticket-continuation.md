@@ -15,6 +15,30 @@
 
 ### Current readback correction — 2026-10-29
 
+Root依原Owner same-target repair及批次授權，採Architecture Owner原席的
+READONLY-DIAG01判定：不是新Host qualification/安裝/持續權限，而是一次精確
+保護端唯讀診斷。控制文件MODIFY只限本票、原Review、既有runbook、registry、
+checklist與doc索引；無production source/test新增或改寫。原38B allocation已完成。
+派生Grant `batch-checklist-local-20261019-uncapped/t30-readonly-diag01` 由Root簽發，
+執行條件為原不同席對runbook25具名codeblock、SID/targets/pins/無效應限制獨審通過。
+來源baseline5aea707731a4b037dfb3ba3e1d00217e1550d33d，最終文件commit/blob及
+LF-normalized payload SHA在執行前精確讀回，不把候選命令當成已執行。
+
+目標DESKTOP-28ERPQ1，既有GameBoy SID1001有限UAC讀取；不使用subjectSID1006
+token、不延長帳戶、不提權至SYSTEM。唯讀固定JohnnyGrantAuthority、原task、
+Registry64三個具名value（只kind/size/digest）、原stage/logs/roots與既有固定
+verify-service-security；native4207104/c8b063c8、enrollment26195/d5df7221及
+Source619 pins不變。原sealed frame/manifest/setup/plan/op準備由普通token讀回。
+唯一寫入為CreateNew保護診斷檔
+C:\Program Files\JohnnySetup33S34R2-20261028.readonly-diagnostic01.json；owner Root/
+Ticket30，TTL至獨立讀回/Recovery disposition，持續被Recovery引用時保留。
+不輸出Registry原始bytes或secret。native55s、整體120s（含UAC）；單次失敗保留，
+不替換刪除法、不重跑Apply、不改task/服務/ACL/Registry/ExecutionPolicy、不新增Agent/
+Gate/工具或外部模型/網路費用。UAC拒絕或身分/釘選/狀態不符即停該effect。
+本次結果只解除「Stage→Apply當前狀態UNKNOWN」這一共同前提；不是歷史原因證明、
+Grant正向成功、安裝完成、CVQ資格或30B/43解除。READ_MAINLINE-specific source
+仍須依現行HIGH_ASSURANCE及first-entry例外範圍准入，不偷借一般獨審通過。
+
 Root依原批次文件維護範圍，只同步已封存Review的實跑狀態，不新增外部操作。
 Owner核准同SID延期已完成：PID8216/exit0，2026-10-28T07:46:23Z普通OS讀回
 expiry2026-10-29T05:29:00Z、SID1006、enabled、Users545-only與密碼metadata未變。
