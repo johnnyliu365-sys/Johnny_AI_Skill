@@ -1,5 +1,66 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Source36 accepted local source; exact partial-recovery operation remains unadmitted
+
+Original author5a9d6cabe0d1cd88a82c8ecd8b88362754fcd426, parentc14c2038,
+tree370d1aa4ea6430c3343e64c88e8d62620979a86a. MODIFY only the allocated PS/test;
+blobs02933f26016cd74c6f3011dfc405211242d0c68b and
+d8445eff4cce1f89adf99e8fed0251872a81ebfc. Committed PS80419bytes SHA256
+ddaa089cd364da6d4cc125a8f2892402cb72aa793afa93956d5e56f833ca47cc;
+test85736bytes/1f3ccbbdf53969448b33092d4aaefec07095f207d05a9b74b1d6866e5b3f0348.
+Original different seat authority_install_inventory: SOURCE_ONLY_PASS. The
+ADOPT disposition is a provisional branch marker; Invoke-Apply is its only
+production consumer, and full service/RO/double-read validation precedes all
+mutations/native provisioning. This bounded internal ordering refinement does
+not confer authority or weaken the closed allocation. No new framework or split
+is justified by line count; growth+119/-10PS,+167/-9test extends existing port,
+Apply matrix and fake rather than duplicating responsibilities.
+
+Evidence root: original registered source36-exact-recovery-20261029. Author
+17PASS/1existing-symlink-SKIP, strict; baseline03 uses exact c14 Git types/private
+preflight only, stubbed fictional service/registry/targets: real behavior
+RECOVERY_REQUIRED/exit1 versus candidate ADOPT/exit0, not a missing-type red.
+Raw records3beb4aef/9e35314f; earlier selector failures01/02 retained, not claimed
+as behavioral proof. Author second-read/stdout/stderr mutations each red→restored.
+Reviewer17PASS/1SKIP17.444s, strict6.391s, different-door exact-enrollment-byte
+mutation breaks adopt_native_mismatch then restores green. Full records:
+reviewer-pytest01-original.json SHA6c96a78e01a079ea33bafdc33120ed453a5280831c8a9d4b310281155d0b1753;
+reviewer-mypy01-original.json SHA9472b9a286ac805d6c7dd7341408f0a9a320ee71b55979bd39f601154f9d1fd5;
+reviewer-bytes-mutant01-original.json SHAa0ca6413e51472ac384c18798e2e4c8750f92bc08860ce3ffbe452bb7d03b451;
+reviewer-bytes-restored02-original.json SHAa667db69bb233f829afd6d8f2058886acae70ea959aea4951fbdc1de63c891f8.
+Review WT exact candidate/clean. Root controlled FF only own engineering hold
+c14→5a9d6cab (tool8d795e), not main/control production/30B43. Exact two blobs
+read back; integration17PASS/1SKIP16.93s, strict1, compile/diff/clean (tools
+039f03/5c7410). Root capture root-engineering-pytest-original01.json SHA
+816a12582d8ea4af4003df61798d42a11827ac3d7aa54e8839996fec629c1089.
+
+Bounded ordinary-Temp package preparation ran once34f297/exit0/4.28s after
+SOURCE_ONLY_PASS. Result1750bytes SHA4f659a433b72824f221c819da1e881846e320ac5e986d43c548bac8ae7c12c10;
+original tool capture76efaabb. Independent byte-QA:120segments/exactEOF,
+118unchanged including all115payloads/native/setup/enrollment/plan; only accepted
+PS and operation.staging_root differ. Frame33080159/fa1ed52f, manifest21053/adf0ec13,
+operation8069/62eda6e1. reviewer-package-byteqa-posthandoff01.json3597bytes SHA
+6557da7bc6126f5ed89697c06e7a461d12fb1e54fe4bf6e2309eb2b4dfc263c5 is explicitly
+transcript-backed, not retrospectively called an original raw capture; interrupted
+Get-History alias scan preserved/no writes. Controller32323bytes/03719613 has
+no blocking effect-design defect per original reviewer, NOT execution admission.
+Stale checker finding closed by its original author:9331bytes/18018de2 pins the
+current controller/zero placeholders; preserved PS7.6.5 pure10cases/stdout689
+SHA703f4d38/stderr0. status02 is explicit reconstruction from those immutable
+streams after status01 wrote null via an alias collision; no invented timestamps.
+
+Actual Windows PowerShell5.1.19041.4894/x64 parse-only5bf4ee passed; the separate
+-File checker attemptc424df was denied BEFORE load: SecurityError/UnauthorizedAccess,
+"running scripts is disabled on this system". No flag/encoding/shell retry was
+used to turn that denial into a Windows5.1 runtime PASS. Read-only policy query
+bb7170:effectiveRestricted, all five policy scopes Undefined. PS7 pure cases are
+not Windows5.1 runtime/Host proof. Any new actual controller process RemoteSigned,
+same-account renewal/partial-state adoption/task/files/ACL effects require precise
+Owner confirmation. Compression measurement745f01 gives Optimal9045/Smallest8990
+bytes versus old8299 already near the32767CLI limit; transport preparation must
+remain bounded and independently reviewed, never a reason to execute a workaround.
+Recovery/30B/43 and every real Host/Grant qualification gap remain OPEN.
+
 ## Source36 allocation independently admitted
 
 Original different seat authority_install_inventory reviewed immutable
