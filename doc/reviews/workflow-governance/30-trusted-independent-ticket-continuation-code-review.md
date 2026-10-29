@@ -1,5 +1,37 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## Actual S34R2 result — preserve Recovery, no unchanged retry
+
+After verified renewal, Root freshly pinned exact approved05:29:00Z expiry,
+controller364ce8b5 and launch record0a9106f8, then ordinary same-user UAC launched
+PID30568 at2026-10-28T07:47:21.5561428Z. It completed07:47:45.3515107Z with
+exit1 (session55538, tools48ab6a/d72cfe). Initial Root wrapper precheckacb797
+mistakenly expected9 argv instead of actual8; it failed BEFORE launch/effect.
+The corrected exact8-argument check then launched once; no failed Apply retry.
+
+Protected failure563bytes/SHA256bbfc1a7455a144b7fa5b86460f74eccb8eaafea1ce865bd8c761d57e38fa535e
+records effect_attempted=true/task_update_attempted=true, generic
+setup_task_not_successful_RECOVERY_REQUIRED, controller line412. Stage stdout
+18301bytes says STAGED/NONE; stage stderr empty. Apply stdout empty/stderr19bytes
+RECOVERY_REQUIRED CRLF/dfe9bc32; observe stdout/stderr empty; readback absent.
+The original reviewer independently confirms this stage-to-Apply boundary.
+
+Ordinary-token task COM and Registry64 Parameters/stage access are denied:
+UNKNOWN, not proof of absence. Named sc readbacks show service Stopped, Disabled,
+LocalSystem, original exact binary path, UNRESTRICTED service SID; CIM's other
+fields Unknown/null cannot prove configuration. Ordinary final-root checks do
+not prove elevated absence. The frozen Apply collapses multiple preflight,
+service-security and post-effect failures into the same marker; root cause is
+UNKNOWN, not presumed to be the new verifier. No rerun/overwrite/delete is safe.
+
+Reviewer reports its first diagnostic wrapper accidentally created six ordinary
+Temp zero-byte redirect files via GetTempFileName without retaining their paths.
+These are unregistered residue/UNKNOWN ownership identifiers, not evidence;
+no cleanup or broad Temp search is authorized as a remedy. Its subsequent named
+sc readbacks used memory only. Protected old/new evidence and Recovery stay held.
+Further diagnosis requires a precisely admitted read-only protected observation,
+not Apply or a service/Host start. 30B/43 and checklist status remain unchanged.
+
 ## Actual same-subject renewal — 2026-10-28, not Host qualification
 
 Original independent reviewer approved the one-literal narrowed delta at
