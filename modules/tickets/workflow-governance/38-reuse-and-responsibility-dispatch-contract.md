@@ -202,6 +202,16 @@ allowlist，再讀回最終control commit/ticket blob，作者乾淨候選以add
 聚焦pytest、strict、compile、實際map符合性與原獨審不同門突變均須通過。
 不得把來源結構或測試通過當成30B/43或Host資格證據。
 
+38B控制文件收尾精確MODIFY另限：AGENTS.md（入口索引）、
+skills/johnny-project-takeover/references/specification-ticketing.md（唯一方法正文）、
+skills/johnny-project-takeover/references/implementation-tdd.md（開工前連結）、
+本票、原review、modules/tickets/workflow-governance/README.md、
+doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md、doc/README.md。Root自有control worktree
+依本次Owner與批次授權處理，不轉授實作者skills/AGENTS修改權；不新增治理文件。
+原Reviewer獨審限定差異與唯一正文，skill metadata validation只證明metadata；
+不能用規則文字或靜態測試聲稱Host實際攔截。採用map的票在編寫／修改程式與
+腳本前先查map、共用件及原契約；正式Host啟用仍留原外部資格流程。
+
 初版 `f95face6` 被獨審指出目錄型 `create` 未逐檔綁定責任、暫存樣本會污染
 Git worktree。原實作者在同票 correction commits `d28f55ca`、`3557bc20` 修正兩項
 與樣本預算數量不一致；原 reviewer 用兩個不同的填票入口反向突變驗證轉紅→綠，

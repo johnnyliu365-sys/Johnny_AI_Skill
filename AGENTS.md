@@ -72,6 +72,7 @@ checker；ticket schema、preflight 與 TDD 由 Router 指向：
 | Browser/WebView/DOM/JavaScript 不可信資料 | [XSS gate](Workflow.md#xss-review) | [xss-review](skills/johnny-project-takeover/references/xss-review.md) |
 | Secret、正式 Log、Provider、Webhook、外部 effect | [Security](Workflow.md#security) | [security-boundary](skills/johnny-project-takeover/references/security-boundary.md) |
 | SPEC、ticket、DI、type preflight、dispatch | [Tickets](Workflow.md#tickets) | [specification-ticketing](skills/johnny-project-takeover/references/specification-ticketing.md) |
+| 程式／腳本開工前責任圖、共用件與模組依賴 | [Tickets](Workflow.md#tickets) | [責任圖與修改前約束](skills/johnny-project-takeover/references/specification-ticketing.md#module-boundary-map) |
 | 低階模型 ticket 拆分或 admission | [Tickets](Workflow.md#tickets) | [ticket-decomposition](skills/johnny-project-takeover/references/ticket-decomposition.md) |
 | 正式 UI、Figma／截圖／brief／既有 design system | [Tickets](Workflow.md#tickets) | [ui-design-handoff](skills/johnny-project-takeover/references/ui-design-handoff.md) |
 | Owner、Agent control、task/worktree、correction | [Role boundary](Workflow.md#role-boundary) | [implementation-authority](skills/johnny-project-takeover/references/implementation-authority.md) |
@@ -113,6 +114,7 @@ modules/tickets/<feature>/<ticket>.md
 modules/element/<language>/<feature>/<ticket-id>/
 library/MODULE_CATALOG.md
 library/catalog/<capability-domain>/README.md
+shared/BOUNDARY_MAP.toml
 ```
 
 必要來源尚未建立時，只能讀取現況、列出缺口並進入 Wayfinder／Grill；未經 owner

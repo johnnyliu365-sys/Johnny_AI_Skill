@@ -2,6 +2,11 @@
 
 Read this reference only after exact ticket, receipt, owner and workspace admission succeeds.
 
+Before the first code, test or script change, apply the existing ticket's
+[module responsibility and reuse contract](specification-ticketing.md#module-boundary-map).
+Read its committed map and selected modules for adopted scopes; do not infer ownership
+from a filename or repair another feature by changing an approved interface outside scope.
+
 ## One behavior at a time
 
 1. Write an executable test at the ticket's approved seam.

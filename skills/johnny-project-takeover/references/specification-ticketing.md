@@ -48,6 +48,43 @@ architecture owner before ticket admission.
 `modules/element/` is an index to target-owned source, types, contracts and tests. It never
 copies production source.
 
+<a id="module-boundary-map"></a>
+
+## Module responsibility before code or script changes
+
+Before dispatch or editing code, tests or scripts, identify the responsibility owner,
+existing reusable modules/fixtures, consumers and allowed dependency direction in the
+ticket. Preserve approved behavior outside its exact scope. New files are prohibited
+unless individually authorized with a responsibility, consumer and acceptance cell;
+do not create another framework or duplicate tool just because a new ticket exists.
+
+For a source-map-adopted scope, read the committed `shared/BOUNDARY_MAP.toml` and bind
+the exact map digest, source baseline and selected module IDs in the ticket's
+`johnny-module-boundary` block before starting. Read authority from the approved
+integration-side ticket, not a candidate's self-edited declaration. Each affected
+source path must belong to exactly one selected module with a named owner and
+single responsibility. The map records dependency allowlists and shared aliases;
+`shared/` is a reuse location, not an unowned miscellaneous `utils` collection.
+Retain existing library/harness locations instead of moving stable code for naming.
+Classify reusable test support as HARNESS, not production SHARED. Product modules
+must not depend on tests or HARNESS. Missing ownership or a needed map/scope change
+returns to existing ticket Change Control before expansion; an implementer cannot
+widen the authority that judges its own candidate.
+
+The existing document-mutation admission compares actual candidate Git changes with
+the trusted ticket and map before its integration effect: stale/missing bindings,
+candidate substitution, ambiguous ownership or forbidden dependencies are rejected.
+Unresolved dynamic loading or a language without a qualified observer is
+NOT_VERIFIED, not PASS. Reviewer independently checks semantic responsibility,
+duplicated abstractions and growth of both product and test scripts; line counts
+are structural-review signals, never instructions to compress or arbitrarily split.
+
+This is a local integration guarantee only when that admission path is actually
+used. It does not intercept arbitrary filesystem writes, native spawn or Host tools.
+Building the map/checker follows the existing authorized construction path; do not
+require the unbuilt checker to build itself or freeze unrelated valid legacy work.
+Formal Host activation still requires its existing qualification and authority.
+
 ## Frontend contract
 
 When a formal UI or design source is involved, also apply `ui-design-handoff.md` before ticket
