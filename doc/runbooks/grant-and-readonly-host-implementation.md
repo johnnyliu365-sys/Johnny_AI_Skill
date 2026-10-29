@@ -2,6 +2,13 @@
 
 ## Exact Owner decision — S36 partial-state adoption, NOT YET ADMITTED
 
+Owner has now approved this exact revision27 operation at control commit92100566,
+including controller03719613/launch932ab97e, same-subject finite renewal and both
+specified RemoteSigned processes. Original Ticket30 records derived one-shot
+runtime01 Grant; pending independent consistency admission and committed readback.
+The historical proposal wording below is preserved as the exact approved scope,
+not a new request. No execution or Host qualification is claimed by this entry.
+
 Local work complete: Source36 commit5a9d6cabe0d1cd88a82c8ecd8b88362754fcd426
 received original different-seat SOURCE_ONLY_PASS and was fast-forwarded only to
 Root's engineering hold. Root17PASS/1existing-symlink-SKIP, strict/compile/blob

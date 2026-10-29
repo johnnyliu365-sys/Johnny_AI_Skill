@@ -1,5 +1,15 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## S36 runtime01 precise Owner approval / pre-execution admission
+
+Owner approved 92100566/runbook27/controller03719613/launch932ab97e, explicitly
+including subject1006 renewal and operator/SYSTEM-child RemoteSigned; all other
+boundaries retained. Root recorded the one-shot runtime01 Grant in original
+Ticket30 before launch. This is not source-review substitution, a new Host/CVQ
+test grant, Recovery clearance or 30B/43 completion. Original different-seat
+reviewer checks only authority consistency and exact proposed payload/targets,
+then independently reads actual protected results; no fresh source review needed.
+
 ## Exact S36 operator proposal sealed for Owner decision, not execution
 
 Final independent seal at dc694682908e3e3ea986770803186af2ed2555d6:

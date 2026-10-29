@@ -15,6 +15,30 @@
 
 ### Current readback correction — 2026-10-29
 
+### S36 exact runtime admission — Owner approval received, one execution only
+
+Human Owner explicitly approved control commit92100566ecea6457268eb255241e94c6ac3f1bba,
+runbook revision27 S36 package, controller03719613 and launch932ab97e in this
+session. This is actual external-effect authority, distinct from the completed
+source-only child Grant and from Host/CVQ qualification. Root derives operational
+Grant `batch-checklist-local-20261019-uncapped/t30-s36-adopt-runtime01`, baseline
+92100566ecea6457268eb255241e94c6ac3f1bba, preceding ticket blob
+03dda289cc2dbd6bb26d6933291e5694ea573896; operatorRoot/GameBoy SID1001,
+independent readback original authority_install_inventory. The exact operation
+scope/targets/ACLs/bounds remain runbook27, not a caller-supplied authority source.
+Controller SHA256 03719613c79c8bbf79c68e2923ad799acfaebbeb0bc92b20f49bbca49a8a3068;
+launch SHA256 932ab97e03b74aa4fbd8edc3a66ec442328c806c7003dedd323aa5283687327c.
+Grant may execute once only after different-seat consistency admission and exact
+committed leaf/registry/payload readback. Both specified process-scoped
+RemoteSigned invocations and subject1006 expiry2026-10-30T05:29Z are included.
+No other permission, service start, Registry mutation, Host/model test, cleanup,
+push/release/deployment or standing authority is added. Native55s/task185s bounds
+remain; monitor outer operator with240s deadline, unknown terminal state is
+Recovery, never retry or claim completion. Source36 engineering/30B/43 statuses
+remain unchanged until their own required evidence. Prior failures/accounting and
+Recovery holds persist. Admission is recorded before launch; launch attempt
+consumes this operational Grant even if elevation or preflight fails.
+
 Source36 local allocation已完成：作者5a9d6cabe0d1cd88a82c8ecd8b88362754fcd426，
 原不同席SOURCE_ONLY_PASS，Root只FF自有engineering hold c14→5a。兩blob精確，
 Root17PASS/1原symlink-SKIP、strict/compile/diff/clean通過；作者c14真分支紅→候選綠，
