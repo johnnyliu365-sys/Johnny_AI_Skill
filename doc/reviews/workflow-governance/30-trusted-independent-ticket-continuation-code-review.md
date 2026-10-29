@@ -2,6 +2,16 @@
 
 ## S36 runtime01 precise Owner approval / pre-execution admission
 
+Original authority_install_inventory independently returned
+READY_FOR_EXACT_ONE_SHOT for84c4d378c381da940149be7310bdf862ec67f3a6;
+ticket blob3108dd5321d645a93f01b3a5aa3f7d59da31be3c/LF d49643e291223c0f348f0506d77572d26dbb19551042ecb3ef2293b6062c388d,
+both registry edges match. Four-document amendment matches the exact Owner
+decision and exclusions, without source/Host/cleanup scope expansion. Root
+passively re-read launch JSON14596bytes in one snapshot, exact932ab97e, fixed
+System32 PS5.1 path, argument13162chars; no effect in that check. Runtime01 is
+now issued for the single designated launch after final committed readback.
+No prior Source36 or WinPS5.1 checker evidence is upgraded by this admission.
+
 Owner approved 92100566/runbook27/controller03719613/launch932ab97e, explicitly
 including subject1006 renewal and operator/SYSTEM-child RemoteSigned; all other
 boundaries retained. Root recorded the one-shot runtime01 Grant in original
