@@ -47,6 +47,8 @@ create = tests/test_boundary_map.py
 create = library/local_orchestration/boundary_map_python.py
 create = library/local_orchestration/boundary_map_admission.py
 create = tests/test_boundary_map_admission.py
+create = shared/__init__.py
+create = shared/git_fixture.py
 modify = modules/tickets/TEMPLATE.md
 modify = template/modules/tickets/TEMPLATE.md
 modify = tests/test_ticket_template_contract.py
@@ -169,6 +171,36 @@ compile、baseline-red/還原green、reviewer不同門突變；保持每命令60
 工作量增長先診斷而不無限等待。候選未獨審通過前不整合、不勾整項清單。
 
 ## 實作與獨審
+
+### 38B shared fixture correction allocation
+
+原候選265c431495a0dc74e74241f0f335333141513a41的180 tests/6 subtests、
+strict及ancestry不同門反向突變維持其覆蓋；獨審仍CHANGES_REQUESTED：
+NamedExpr loader alias被錯判VERIFIED。作者同票修正cba7c810abb12f409d216fb9a8ba8212895f35fb
+（parent265c4314、treeead91e49）補NamedExpr/getattr兩個真Git入口反例，作者
+182 tests/8 subtests、strict、compile及停用偵測的紅→綠。此為作者證據，尚非獨審通過。
+
+Root結構審查：新增map入口案例與fixture堆入原path-gate測試，使原檔由924增至
+1220實體行（265c時）；這是責任混放訊號，不是自動拆檔門檻。Architecture Owner
+原席判定只抽既有共用件：shared/__init__.py保持空或package說明、無re-export；
+shared/git_fixture.py只封裝原fictional-Git的ticket/root/layout/read/write/commit/
+request helpers，不新增class/framework/policy/assertion/第二套Git或path行為。
+map將其分類HARNESS，只允許TEST→HARNESS→既有gate contract；產品不得依賴
+HARNESS，HARNESS不得import tests。將38B新增map真Git案例移至既有
+test_boundary_map_admission.py，純admission與真入口案例分class；原path-gate
+回歸留原檔，兩者消費唯一fixture，不複製helper。保留既有案例名稱、拒絕時不
+merge、合法merge、stale digest/ancestry/map替換/ticket pin/legacy及F2負例。
+同步實際BOUNDARY_MAP及source conformance。TemporaryDirectory沿用單次測試
+owner/TTL/teardown，不新增外部clone/持久worktree/ref。
+
+派生Grant `batch-checklist-local-20261019-uncapped/t38b-boundary-map-local-03`：
+Root依原批次、原PRD/SPEC/本票簽發，僅增加上述兩CREATE，原11路徑、角色、
+38與38-review worktrees、source baseline4ed5bc69、歷史記帳/AC/findings不變。
+correction baseline精確cba7c810abb12f409d216fb9a8ba8212895f35fb；先獨審本段與
+allowlist，再讀回最終control commit/ticket blob，作者乾淨候選以additive merge
+承接文件後實作。無DELETE/Host/security/全域啟用/外部effect授權。
+聚焦pytest、strict、compile、實際map符合性與原獨審不同門突變均須通過。
+不得把來源結構或測試通過當成30B/43或Host資格證據。
 
 初版 `f95face6` 被獨審指出目錄型 `create` 未逐檔綁定責任、暫存樣本會污染
 Git worktree。原實作者在同票 correction commits `d28f55ca`、`3557bc20` 修正兩項
