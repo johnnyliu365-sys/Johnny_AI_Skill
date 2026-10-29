@@ -19,6 +19,33 @@ actual partial-recovery adoption requires a new exact Owner effect decision.
 Do not repeat DIAG01/Apply, cleanup, change policy or start the service/Host.
 30B/43 remain blocked; first-entry construction is not qualification.
 
+## Current local preparation — not execution authority
+
+Source36 source candidate5a9d6cabe0d1cd88a82c8ecd8b88362754fcd426 is under
+original different-seat review; no accepted-source/Host claim yet. Root prepares
+only the next exact Owner operation under the existing local batch authority.
+Artifacts under the already owned review parent:
+C:\Users\GameBoy\AppData\Local\Temp\johnny30-native-service-review-20261021\setup33-s36-adopt-sid1006-20261029.
+Owner Root/Ticket30; EPHEMERAL_VERIFICATION, TTL24h plus active Review/Recovery
+hold, teardown only after sealed evidence/independent readback and safe permitted
+cleanup. No denied cleanup retry. Exact preparation files: prepare-inputs.ps1,
+owner-s36.ps1, check-owner.ps1; generated fixed frame/manifest/operation/metadata
+and bounded raw preparation/check records stay in this same directory. No target
+repository, service or registry changes. This does not expand Source36's two-path
+production allowlist. Source candidate review must pass before package generation.
+
+Producer reuses the pinned old frame-reader helper closure. Original reviewer
+closed its unbounded Git finding after capped concurrent reads and a10s deadline.
+The subsequent two-line byte-array assignment fix avoids boxing large payloads;
+final byte review remains necessary. Owner controller is a non-executed template:
+candidate source/frame pins are placeholders and cannot be used as admission.
+It proposes exact adoption (no existing Registry write/delete), fresh protected
+stage/logs, one existing-task run and exact disabled-definition restore. A finite
+same-SID expiry change to2026-10-30T05:29Z is only a candidate because the current
+lease2026-10-29T05:29Z expired; no automatic renewal. No service start/Host/model/
+network effect or Source35 record installation is included. All actual effects
+wait for the single exact reviewed Owner operation package.
+
 ## READONLY-DIAG01 — CONSUMED; historical exact admitted command, do not rerun
 
 Architecture Owner's same-Ticket30 determination: the existing same-target repair
