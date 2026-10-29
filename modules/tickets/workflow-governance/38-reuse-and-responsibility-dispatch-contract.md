@@ -2,11 +2,11 @@
 
 | 欄位 | 內容 |
 | --- | --- |
-| State | `TEMPLATE_SLICE_LOCAL_INTEGRATED` at `3557bc20`；不得宣稱已具 Host dispatch admission 或語意耦合自動判斷 |
-| Authority | 既有 `PRD-20260805-009`、Owner 2026-10-18 清單 03／11 及「程式與腳本不得堆疊」指示；不新增 PRD／SPEC |
-| Baseline | 本票 docs-only commit，派工時釘完整 SHA |
-| Roles | 低成本實作席位、不同獨審席位、Root 控制面 |
-| Profile | `COMPACT`；本票只改既有模板及其測試，不呼叫外部模型或產品 effect |
+| State | 38A 歷史 `TEMPLATE_SLICE_LOCAL_INTEGRATED` at `3557bc20`；current38B `SOURCE_BUILD_ADMITTED / NOT_HOST_ENFORCED`，不得宣稱已具 Host dispatch admission 或語意耦合自動判斷 |
+| Authority | 既有 `PRD-20260805-009`／原SPEC AC-10/11、Owner 2026-10-29 BOUNDARY_MAP/shared/程式與腳本責任要求及既有批次本地授權；38A沿用2026-10-18清單03／11歷史；不新增 PRD／SPEC |
+| Baseline | current38B為含本次文件修訂的精確docs-only commit，dispatch釘完整SHA與ticket blob；38A歷史基準不變 |
+| Roles | current38B：Root控制面、/root/native_service_impl實作、/root/authority_install_inventory獨審，限定下節既有38／38-review worktrees |
+| Profile | current38B `STANDARD` local-only source construction；歷史38A `COMPACT` template/test切片。無外部模型、Host／產品effect或全域正式啟用 |
 
 ## 查重與精確邊界
 
