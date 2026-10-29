@@ -11,7 +11,6 @@ still breaks.
 from __future__ import annotations
 
 import json
-import hashlib
 import subprocess
 import unittest
 from collections.abc import Callable
@@ -45,38 +44,22 @@ from library.local_orchestration.document_mutation_gate import (
     parse_raw_diff,
     read_boundary,
 )
-from library.local_orchestration.johnny_root_layout import JohnnyRootLayout
+from shared.git_fixture import (
+    _commit,
+    _layout,
+    _request,
+    _run,
+    _seed,
+    _ticket_text,
+    _write,
+)
 
 _TICKET = "modules/tickets/demo.md"
-_MODULE_MAP = "shared/BOUNDARY_MAP.toml"
 
 
 # ---------------------------------------------------------------------------
-# Fixtures
+# Local value fixture
 # ---------------------------------------------------------------------------
-
-
-def _ticket_text(
-    *,
-    modify: tuple[str, ...] = ("doc/",),
-    create: tuple[str, ...] = (),
-    delete: tuple[str, ...] = (),
-    forbid: tuple[str, ...] = (),
-    block: bool = True,
-) -> str:
-    lines = ["# 08 示範工單", "", "| 欄位 | 內容 |", "| 責任邊界 | 給人看的摘要 |", ""]
-    if block:
-        lines.append("```johnny-boundary")
-        for key, entries in (
-            ("modify", modify),
-            ("create", create),
-            ("delete", delete),
-            ("forbid", forbid),
-        ):
-            lines.extend(f"{key} = {entry}" for entry in entries)
-        lines.append("```")
-    lines.append("")
-    return "\n".join(lines)
 
 
 def _boundary(
@@ -89,154 +72,6 @@ def _boundary(
     return DocumentBoundary(
         modify=modify, create=create, delete=delete, forbid=forbid
     )
-
-
-def _run(root: Path, *arguments: str) -> str:
-    completed = subprocess.run(
-        ("git", "-C", str(root), *arguments), capture_output=True, shell=False
-    )
-    if completed.returncode != 0:
-        raise AssertionError(
-            "git " + " ".join(arguments) + " failed: "
-            + completed.stderr.decode("utf-8", errors="replace")
-        )
-    return completed.stdout.decode("utf-8", errors="replace").strip()
-
-
-def _repository(base: Path) -> Path:
-    root = (base / "repo").resolve()
-    root.mkdir()
-    subprocess.run(
-        ("git", "init", "-q", "-b", "main", str(root)),
-        check=True,
-        capture_output=True,
-    )
-    for name, value in (
-        ("user.name", "Gate Test"),
-        ("user.email", "gate@example.com"),
-        ("commit.gpgsign", "false"),
-        ("core.autocrlf", "false"),
-    ):
-        _run(root, "config", name, value)
-    return root
-
-
-def _write(root: Path, relative: str, text: str) -> None:
-    path = root / relative
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8")
-
-
-def _commit(root: Path, message: str) -> str:
-    _run(root, "add", "-A")
-    _run(root, "commit", "-q", "-m", message)
-    return _run(root, "rev-parse", "HEAD")
-
-
-def _layout(base: Path) -> JohnnyRootLayout:
-    layout = JohnnyRootLayout(base=(base / "johnny").resolve())
-    layout.queue_root.mkdir(parents=True, exist_ok=True)
-    return layout
-
-
-def _seed(base: Path, ticket: str) -> Path:
-    """A repository whose `main` already holds the ticket and two real files."""
-
-    root = _repository(base)
-    _write(root, _TICKET, ticket)
-    _write(root, "doc/existing.md", "before\n")
-    _write(root, "library/untouchable.py", "keep\n")
-    _commit(root, "baseline")
-    return root
-
-
-def _request(root: Path, *, ticket_path: str = _TICKET) -> DocumentMutationRequest:
-    return DocumentMutationRequest(
-        repository_root=str(root),
-        ticket_path=ticket_path,
-        integration_branch="main",
-        candidate_ref="candidate",
-    )
-
-
-def _mapped_ticket(
-    map_sha256: str,
-    baseline: str,
-    selected_modules: tuple[str, ...] = ("feature",),
-) -> str:
-    ticket = _ticket_text(
-        modify=("doc/", "src/", "tests/", "scripts/", "shared/", "modules/"),
-        create=("src/", "tests/", "scripts/", "shared/"),
-    )
-    selected = ", ".join(f'"{module_id}"' for module_id in selected_modules)
-    return (
-        ticket
-        + "```johnny-module-boundary\n"
-        + "schema_revision = 1\n"
-        + f'map_sha256 = "{map_sha256}"\n'
-        + f'baseline = "{baseline}"\n'
-        + f"selected_modules = [{selected}]\n"
-        + "```\n"
-    )
-
-
-def _mapped_map(baseline: str) -> str:
-    return (
-        "schema_revision = 1\n"
-        'scope = "LOCAL_SOURCE_BOUNDARY"\n'
-        f'baseline = "{baseline}"\n\n'
-        '[[modules]]\nid = "feature"\nroots = ["src/feature.py"]\n'
-        'owner = "feature-team"\nresponsibility = "Own the feature entry point."\n'
-        'kind = "LIBRARY"\nallowed_dependencies = ["shared"]\n\n'
-        '[[modules]]\nid = "shared"\nroots = ["src/shared.py"]\n'
-        'owner = "platform-team"\nresponsibility = "Provide the shared normalization function."\n'
-        'kind = "SHARED"\nallowed_dependencies = []\nshared_alias = "normalizer"\n\n'
-        '[[modules]]\nid = "contract_tests"\nroots = ["tests/test_feature.py"]\n'
-        'owner = "feature-tests"\nresponsibility = "Verify the feature contract."\n'
-        'kind = "TEST"\nallowed_dependencies = ["feature"]\n\n'
-        '[[modules]]\nid = "shell_entry"\nroots = ["scripts/run.ps1"]\n'
-        'owner = "operations"\nresponsibility = "Run the bounded feature script."\n'
-        'kind = "SCRIPT"\nallowed_dependencies = []\n'
-    )
-
-
-def _seed_mapped(
-    base: Path,
-    *,
-    selected_modules: tuple[str, ...] = ("feature",),
-    pin_digest: str | None = None,
-    pin_baseline: str | None = None,
-    map_baseline: str | None = None,
-    include_map: bool = True,
-) -> Path:
-    root = _seed(
-        base,
-        _ticket_text(
-            modify=("doc/", "src/", "tests/", "scripts/", "shared/", "modules/"),
-            create=("src/", "tests/", "scripts/", "shared/"),
-        ),
-    )
-    _write(root, "src/feature.py", "import src.shared\n")
-    _write(root, "src/shared.py", "VALUE = 1\n")
-    _write(root, "tests/test_feature.py", "def test_feature():\n    assert True\n")
-    _write(root, "scripts/run.ps1", "Write-Output 'ready'\n")
-    baseline = _commit(root, "seed module-source baseline")
-    declared_baseline = map_baseline or baseline
-    map_text = _mapped_map(declared_baseline)
-    map_bytes = map_text.encode("utf-8")
-    digest = hashlib.sha256(map_bytes).hexdigest()
-    ticket = _mapped_ticket(
-        pin_digest or digest,
-        pin_baseline or declared_baseline,
-        selected_modules,
-    )
-    _write(root, _TICKET, ticket)
-    if include_map:
-        map_path = root / _MODULE_MAP
-        map_path.parent.mkdir(parents=True, exist_ok=True)
-        map_path.write_bytes(map_bytes)
-    _commit(root, "pin module map on integration branch")
-    return root
 
 
 # ---------------------------------------------------------------------------
@@ -700,226 +535,6 @@ class IntegrationTests(unittest.TestCase):
             self.assertEqual(
                 (root / "doc" / "existing.md").read_text(encoding="utf-8"), "after\n"
             )
-
-    def test_opt_in_map_allows_a_selected_python_change_through_real_merge(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed_mapped(base)
-            before = _run(root, "rev-parse", "HEAD")
-            _run(root, "checkout", "-q", "-b", "candidate")
-            _write(root, "src/feature.py", "import src.shared\nVALUE = 2\n")
-            candidate = _commit(root, "edit selected module with an allowed import")
-            _run(root, "checkout", "-q", "main")
-
-            result = admit_document_mutation(_layout(base), _request(root))
-
-            self.assertIs(result.status, DocumentMutationStatus.INTEGRATED)
-            self.assertEqual(result.integrated_commit, candidate)
-            self.assertNotEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def _mapped_refused(
-        self,
-        base: Path,
-        mutate: Callable[[Path], None],
-        *,
-        selected_modules: tuple[str, ...] = ("feature",),
-    ) -> tuple[Path, str, DocumentMutationResult]:
-        root = _seed_mapped(base, selected_modules=selected_modules)
-        before = _run(root, "rev-parse", "HEAD")
-        _run(root, "checkout", "-q", "-b", "candidate")
-        mutate(root)
-        _commit(root, "module-map candidate")
-        _run(root, "checkout", "-q", "main")
-        result = admit_document_mutation(_layout(base), _request(root))
-        return root, before, result
-
-    def test_a_ticket_map_digest_mismatch_refuses_without_moving_main(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed_mapped(base, pin_digest="0" * 64)
-            before = _run(root, "rev-parse", "HEAD")
-            _run(root, "checkout", "-q", "-b", "candidate")
-            _write(root, "src/feature.py", "VALUE = 2\n")
-            _commit(root, "candidate with a stale map pin")
-            _run(root, "checkout", "-q", "main")
-
-            result = admit_document_mutation(_layout(base), _request(root))
-
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_MISMATCH)
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_a_ticket_baseline_mismatch_refuses_without_moving_main(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed_mapped(base, pin_baseline="b" * 40)
-            before = _run(root, "rev-parse", "HEAD")
-            _run(root, "checkout", "-q", "-b", "candidate")
-            _write(root, "src/feature.py", "VALUE = 2\n")
-            _commit(root, "candidate with a stale baseline pin")
-            _run(root, "checkout", "-q", "main")
-
-            result = admit_document_mutation(_layout(base), _request(root))
-
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_MISMATCH)
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_a_well_formed_but_unreachable_baseline_never_merges(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed_mapped(base, map_baseline="f" * 40)
-            before = _run(root, "rev-parse", "HEAD")
-            _run(root, "checkout", "-q", "-b", "candidate")
-            _write(root, "src/feature.py", "VALUE = 2\n")
-            _commit(root, "candidate pinned to an unreachable baseline")
-            _run(root, "checkout", "-q", "main")
-
-            result = admit_document_mutation(_layout(base), _request(root))
-
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_MISMATCH)
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_opt_in_pin_without_an_integration_map_is_not_verified(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed_mapped(base, include_map=False)
-            before = _run(root, "rev-parse", "HEAD")
-            _run(root, "checkout", "-q", "-b", "candidate")
-            _write(root, "src/feature.py", "VALUE = 2\n")
-            _commit(root, "candidate while pinned map is absent")
-            _run(root, "checkout", "-q", "main")
-
-            result = admit_document_mutation(_layout(base), _request(root))
-
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED)
-            self.assertIn("NOT_VERIFIED", result.detail or "")
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_candidate_cannot_replace_the_map_that_judges_its_changes(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-
-            def mutate(root: Path) -> None:
-                with (root / _MODULE_MAP).open("a", encoding="utf-8") as handle:
-                    handle.write("# candidate attempted map rewrite\n")
-                _write(root, "src/feature.py", "VALUE = 2\n")
-
-            root, before, result = self._mapped_refused(base, mutate)
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_VIOLATION)
-            self.assertEqual(result.offending_path, _MODULE_MAP)
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_candidate_cannot_rewrite_its_integration_pinned_module_selection(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-
-            def mutate(root: Path) -> None:
-                ticket_path = root / _TICKET
-                ticket_path.write_text(
-                    ticket_path.read_text(encoding="utf-8").replace(
-                        'selected_modules = ["feature"]',
-                        'selected_modules = ["feature", "shared"]',
-                    ),
-                    encoding="utf-8",
-                )
-                _write(root, "src/feature.py", "VALUE = 2\n")
-
-            root, before, result = self._mapped_refused(base, mutate)
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_MISMATCH)
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_unselected_or_unowned_source_never_reaches_main(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-
-            def mutate(root: Path) -> None:
-                _write(root, "src/shared.py", "VALUE = 2\n")
-
-            root, before, result = self._mapped_refused(base, mutate)
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_VIOLATION)
-            self.assertEqual(result.offending_path, "src/shared.py")
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-        with TemporaryDirectory() as name:
-            base = Path(name)
-
-            def mutate_unowned(root: Path) -> None:
-                _write(root, "src/unowned.py", "VALUE = 3\n")
-
-            root, before, result = self._mapped_refused(base, mutate_unowned)
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_VIOLATION)
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_product_import_of_a_test_module_refuses_without_moving_main(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-
-            def mutate(root: Path) -> None:
-                _write(root, "src/feature.py", "import tests.test_feature\n")
-
-            root, before, result = self._mapped_refused(base, mutate)
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_VIOLATION)
-            self.assertIn("TEST", result.detail or "")
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_unresolved_python_import_forms_refuse_without_moving_main(self) -> None:
-        sources = (
-            ("relative escape", b"from ..peer import Thing\n"),
-            ("mixed from-list", b"from src import shared, unowned\n"),
-            (
-                "builtins loader alias",
-                b"from builtins import __import__ as load_module\nload_module('src.shared')\n",
-            ),
-            (
-                "importlib loader walrus",
-                b"import importlib as il\n(loader := il.import_module)('src.shared')\n",
-            ),
-            (
-                "importlib loader getattr alias",
-                b"import importlib as il\nloader = getattr(il, 'import_module')\nloader('src.shared')\n",
-            ),
-        )
-        for label, source in sources:
-            with self.subTest(label=label), TemporaryDirectory() as name:
-                base = Path(name)
-
-                def mutate(root: Path) -> None:
-                    _write(root, "src/feature.py", source.decode("utf-8"))
-
-                root, before, result = self._mapped_refused(base, mutate)
-                self.assertIs(
-                    result.failure,
-                    DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED,
-                )
-                self.assertIn("NOT_VERIFIED", result.detail or "")
-                self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_from_mapped_module_importing_a_symbol_reaches_main(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed_mapped(base)
-            _run(root, "checkout", "-q", "-b", "candidate")
-            _write(root, "src/feature.py", "from src.shared import VALUE\nVALUE = 2\n")
-            candidate = _commit(root, "import a symbol from the mapped module")
-            _run(root, "checkout", "-q", "main")
-
-            result = admit_document_mutation(_layout(base), _request(root))
-
-            self.assertIs(result.status, DocumentMutationStatus.INTEGRATED)
-            self.assertEqual(result.integrated_commit, candidate)
-
-    def test_unsupported_changed_script_is_not_verified_and_does_not_merge(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-
-            def mutate(root: Path) -> None:
-                _write(root, "scripts/run.ps1", "Write-Output 'changed'\n")
-
-            root, before, result = self._mapped_refused(
-                base, mutate, selected_modules=("shell_entry",)
-            )
-            self.assertIs(result.failure, DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED)
-            self.assertIn("NOT_VERIFIED", result.detail or "")
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
 
     def _refused(
         self, base: Path, ticket: str, mutate: Callable[[Path], None]
