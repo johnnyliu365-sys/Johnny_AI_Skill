@@ -1,5 +1,27 @@
 # Ticket 38 independent review — 2026-10-18
 
+## 38B first review — CHANGES_REQUESTED, 2026-10-29
+
+Exact candidatee66e2ef3464e5e1557b7cd1abf7ca1cdca81ce4e, parent4ed5bc69,
+tree70a4710f, original reviewer /root/authority_install_inventory in its own
+38-review worktree. It independently reproduced three F2 bypasses: relative
+import escaping top level, mixed resolved/unresolved internal from-aliases,
+and statically aliased builtins dynamic loader all incorrectly VERIFIED.
+These are same-AC defects, not permission for a new analysis framework.
+
+Independent focused suite165PASS/3subtests39.11s, strict product modules,
+compile/diff passed but missed these cases. The reviewer's own different-door
+mutation disabled only candidate-map replacement protection; the real Git
+IntegrationTests.test_candidate_cannot_replace_the_map_that_judges_its_changes
+turned RED (expected violation, actual None). Exact restore matched gate blob
+7b81571d; targeted test then1PASS, review worktree clean. Source/test green does
+not erase the reproduced failures. Candidate is NOT integrated or Host-qualified.
+
+Reviewer found no separate structural blocker from line count or inline binding
+logic. Root separately adopts Architecture Owner's minimal AST/admission seam
+decision for the Owner's module-boundary objective; it is not falsely attributed
+to the review. Scope/Grant/failure cases remain in the original Ticket38.
+
 | Field | Value |
 | --- | --- |
 | Ticket | `modules/tickets/workflow-governance/38-reuse-and-responsibility-dispatch-contract.md` |

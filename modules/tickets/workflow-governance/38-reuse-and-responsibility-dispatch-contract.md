@@ -44,6 +44,9 @@ deployment/帳戶/ACL/服務/Host/model/network/正式閘門啟用授權。
 create = shared/BOUNDARY_MAP.toml
 create = library/local_orchestration/boundary_map.py
 create = tests/test_boundary_map.py
+create = library/local_orchestration/boundary_map_python.py
+create = library/local_orchestration/boundary_map_admission.py
+create = tests/test_boundary_map_admission.py
 modify = modules/tickets/TEMPLATE.md
 modify = template/modules/tickets/TEMPLATE.md
 modify = tests/test_ticket_template_contract.py
@@ -130,6 +133,40 @@ Run：`python -m pytest tests/test_ticket_template_contract.py -q`、
 `git diff --check`。Return：`IMPLEMENTED | BLOCKED | CHANGE_DETECTED`、完整候選 SHA、
 實際兩檔、驗證與突變證據、未解 Host admission／結構語意缺口。
 不新增檔案、PRD、SPEC、Gate、Framework，不整合、不推送。
+
+### 38B 原候選獨審與同票修正
+
+候選e66e2ef3464e5e1557b7cd1abf7ca1cdca81ce4e（parent4ed5bc69、
+tree70a4710f）由原不同席位獨審CHANGES_REQUESTED。165tests/3subtests、
+strict、compile及真Git正負例沿用其實際覆蓋，不代表下列F2缺口已驗收。
+三個已重現F2缺陷必須保留e66e baseline-red：relative import越出top-level、
+同一from混合已知與未知內部alias、builtins的靜態alias動態loader，當時皆錯回
+VERIFIED。修後應NOT_VERIFIED，合法relative/外部import/明確mapped module
+的普通symbol import仍可通過。不得為修負例全面拒絕import。
+
+Root採Architecture Owner原席的限定責任修正，非行數驅動或額外審閱標準：
+boundary_map.py保留typed models/TOML/ticket pin/digest/ownership graph與generic
+evaluator；新增boundary_map_python.py只觀察Python AST，產出於map模組定義的
+typed SourceDependencyObservation，依賴方向python→map、map不反向import。
+新增boundary_map_admission.py編排trusted ticket/map、digest、ancestry、candidate
+替換與blobs，僅消費原gate提供的typed read/ancestry callbacks，不另做Git/
+normalize/raw-diff。原document_mutation_gate只呼這個helper一次並映射結果後
+沿原merge；不得繼續內嵌170行新分析。新增test_boundary_map_admission.py測
+此seam，沿用原fixtures，真Git合法整合/拒絕HEAD不動案例必須保留，不能只驗
+delegation或以fake取代。原獨審沒有提出獨立結構blocking finding；此段是
+Owner本次責任分界目標下的Architecture決定，不偽稱其審閱結論。
+
+Grant補綁 `batch-checklist-local-20261019-uncapped/t38b-boundary-map-local-02`：
+原批次、原角色/兩worktrees、原source baseline4ed5bc69、原candidate e66e、
+原記帳/findings/AC不重置；僅增加上方三個CREATE精確路徑，原八路徑不變。
+含本段的最終control commit/ticket blob在修正dispatch精確讀回。作者於乾淨
+e66e上合法合併該control文件commit，再同票additive修正，不reset/amend/
+force。新source authority僅限本地建置與既有核准路徑，不授予Host/global
+activation/網路/外部effect。所有未知或unsupported結果不可報PASS。
+
+Run新增test_boundary_map_admission.py，連同原三個test檔、受影響產品strict/
+compile、baseline-red/還原green、reviewer不同門突變；保持每命令60s，必要
+工作量增長先診斷而不無限等待。候選未獨審通過前不整合、不勾整項清單。
 
 ## 實作與獨審
 
