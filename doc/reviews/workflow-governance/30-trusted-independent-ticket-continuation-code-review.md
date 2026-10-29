@@ -1,5 +1,16 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## READONLY-DIAG01 effective one-shot admission
+
+Original different seat /root/authority_install_inventory returns
+DOC_PASS_READONLY_EXECUTION_ADMISSION for exact655c42d872fbcb821329b26f5056c7fe774a00c2:
+source payload9b1e007c and the recorded bounded transport/pins. The output-owner
+finding is closed by atomic FileStream CreateNew security plus pre-write exact
+SDDL readback, not by relaxing the evidence boundary. Root activates only the
+original same-target derived t30-readonly-diag01 Grant. One same-user UAC
+read-only execution; no Source34/35 reimplementation, setup retry, service/Host
+start or new OS permission. Reviewer did not execute it; actual result pending.
+
 ## READONLY-DIAG01 admission preparation — not executed
 
 Correction01 remains unexecuted: original different reviewer rejected the first

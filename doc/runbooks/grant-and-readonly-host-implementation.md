@@ -11,7 +11,7 @@ internal cause UNKNOWN. Do not repeat Apply, cleanup, change policy or start
 the service/Host. Precisely admitted protected read-only observation is the
 next diagnostic need, not another broad setup attempt.30B/43 remain blocked.
 
-## READONLY-DIAG01 — pending independent admission, not another Apply
+## READONLY-DIAG01 — independently admitted, not another Apply
 
 Architecture Owner's same-Ticket30 determination: the existing same-target repair
 and protected failure-readback authority cover one narrowly admitted read-only
