@@ -2,6 +2,12 @@
 
 ## 38B final source review and controlled local integration — 2026-10-29
 
+Evidence/index seal: original reviewer /root/authority_install_inventory returned
+DOC_EVIDENCE_SEAL_PASS for seven-document commit
+b64491ac05dc2c18537045cd71a440063dcd9859. It independently checked local/Host
+limits, retained Recovery/UNKNOWN evidence, only04checked and Ticket30's two
+matching LF-digest edges. No source, qualification or authority changed in this seal.
+
 Original different seat /root/authority_install_inventory APPROVED_SOURCE_SLICE
 at e45a3e5e1a1d5f6965334abf5754edcafcb30792, tree
 d09153de405845a1f9e893ee6653d1e3311e826f. Four focused files182PASS/8subtests
