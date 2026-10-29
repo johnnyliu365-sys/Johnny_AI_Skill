@@ -278,6 +278,19 @@ def test_from_mapped_module_importing_a_symbol_remains_verified() -> None:
     assert result.status is EvaluationStatus.VERIFIED
 
 
+@pytest.mark.parametrize(
+    "source",
+    (
+        b"import importlib as il\nversion_name = il.__name__\n",
+        b"import importlib as il\nversion_name = getattr(il, '__name__')\n",
+    ),
+    ids=("ordinary-module-attribute", "ordinary-getattr-attribute"),
+)
+def test_non_loader_importlib_attributes_remain_verified(source: bytes) -> None:
+    result = _evaluate("src/feature.py", source)
+    assert result.status is EvaluationStatus.VERIFIED
+
+
 def test_dynamic_import_syntax_and_unreadable_python_are_not_verified() -> None:
     dynamic = _evaluate("src/feature.py", b"module = __import__('src.shared')\n")
     syntax = _evaluate("src/feature.py", b"def incomplete(:\n")

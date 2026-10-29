@@ -28,6 +28,10 @@ def _dynamic_function_expression(
     builtin_modules: set[str],
     importlib_modules: set[str],
 ) -> bool:
+    if isinstance(expression, ast.NamedExpr):
+        return _dynamic_function_expression(
+            expression.value, loader_names, builtin_modules, importlib_modules
+        )
     if isinstance(expression, ast.Name):
         return expression.id in loader_names
     if isinstance(expression, ast.Attribute) and isinstance(expression.value, ast.Name):
@@ -42,12 +46,16 @@ def _dynamic_function_expression(
         if expression.func.id != "getattr" or len(expression.args) < 2:
             return False
         target, attribute = expression.args[:2]
+        if (
+            not isinstance(target, ast.Name)
+            or not isinstance(attribute, ast.Constant)
+            or not isinstance(attribute.value, str)
+        ):
+            return False
         return (
-            isinstance(target, ast.Name)
-            and target.id in builtin_modules
-            and isinstance(attribute, ast.Constant)
-            and isinstance(attribute.value, str)
-            and attribute.value in _DYNAMIC_BUILTINS
+            target.id in builtin_modules and attribute.value in _DYNAMIC_BUILTINS
+        ) or (
+            target.id in importlib_modules and attribute.value == "import_module"
         )
     return False
 
@@ -92,6 +100,13 @@ def _has_dynamic_loader_call(tree: ast.AST) -> bool:
                             loader_names.add(name)
                             changed = True
             elif isinstance(node, ast.AnnAssign) and node.value is not None and _dynamic_function_expression(
+                node.value, loader_names, builtin_modules, importlib_modules
+            ):
+                for name in _target_names(node.target):
+                    if name not in loader_names:
+                        loader_names.add(name)
+                        changed = True
+            elif isinstance(node, ast.NamedExpr) and _dynamic_function_expression(
                 node.value, loader_names, builtin_modules, importlib_modules
             ):
                 for name in _target_names(node.target):

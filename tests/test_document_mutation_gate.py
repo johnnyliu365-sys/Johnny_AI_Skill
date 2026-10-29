@@ -869,6 +869,14 @@ class IntegrationTests(unittest.TestCase):
                 "builtins loader alias",
                 b"from builtins import __import__ as load_module\nload_module('src.shared')\n",
             ),
+            (
+                "importlib loader walrus",
+                b"import importlib as il\n(loader := il.import_module)('src.shared')\n",
+            ),
+            (
+                "importlib loader getattr alias",
+                b"import importlib as il\nloader = getattr(il, 'import_module')\nloader('src.shared')\n",
+            ),
         )
         for label, source in sources:
             with self.subTest(label=label), TemporaryDirectory() as name:
