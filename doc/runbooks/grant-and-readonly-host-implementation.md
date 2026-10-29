@@ -1,6 +1,27 @@
-# Core capability implementation decision — revision27
+# Core capability implementation decision — revision28
 
-## Exact Owner decision — S36 partial-state adoption, NOT YET ADMITTED
+## Actual S36 runtime01 result — consumed, RECOVERY_REQUIRED
+
+The exact Owner-approved revision27 operation ran once, operatorPID33156,
+2026-10-29T08:34:39.4107070Z..08:35:08.3676172Z, operatorexit1. Account renewal
+to2026-10-30T05:29Z and staging completed; Apply returned only19-byte Recovery,
+Observe was not reached, success readback absent. Original different-seat
+OBSERVED_NOT_QUALIFIED confirms protected failure675/ef270db8 and logs/ACLs;
+final code/data roots remain absent, service stopped. Runtime01 is consumed.
+Do not replay its command or interpret the prior proposal below as live authority.
+
+Task restoration is UNKNOWN: ordinary readback is E_ACCESSDENIED0x80070005.
+The controller's local versus script-qualified restore state is a reproduced
+dynamic-ScriptBlock defect; its false flags are not reliable state proof.
+Real-function/fake-task evidence331e2733 proves the minimal in-memory scope
+correction and refuses reentry; it is PS7 fixture proof, not Windows5.1 runtime
+or actual task recovery. Existing TaskScheduler/Operational log is disabled
+(tool918ac0), not enabled by this work; lost Apply phase remains UNKNOWN.
+New bounded recovery02 tool preparation is local-only under original Ticket30.
+Any additional elevation or actual task repair needs exact external authority;
+no Apply/native/Host test/service start or cleanup is permitted by its build Grant.
+
+## Historical exact Owner decision — revision27 operation, NOW CONSUMED
 
 Owner has now approved this exact revision27 operation at control commit92100566,
 including controller03719613/launch932ab97e, same-subject finite renewal and both
