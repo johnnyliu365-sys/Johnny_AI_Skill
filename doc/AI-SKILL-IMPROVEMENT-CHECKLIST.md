@@ -40,6 +40,10 @@ Apply只有RECOVERY_REQUIRED、Observe未到，沒有success readback。原不�
 沿原Ticket30只準備最小recovery02操作工具，無新框架/PRD；真UAC/task還原另須
 精確核准。完整原始記錄/失敗/限制見原Review30與runbook28。Only04 checked。
 
+Recovery02同票工具已完成五項修正、聚焦fake/parse/transport及原不同席複驗，
+source8ea04787/launch ebba451b，結論PREPARATION_ONLY；runtime Grant尚未發出。
+只剩其精確新增UAC/條件式task還原等待外部決定，不重問已核准local batch。
+
 ### revision131 已驗證來源（沿用，不重做）
 
 Source36已完成限定實作、真c14分支紅→候選綠及三種作者突變；原不同席

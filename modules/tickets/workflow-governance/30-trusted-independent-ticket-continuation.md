@@ -54,6 +54,17 @@ full bytes independently hash exactly5fad3d70; otherwise leave it unmodified
 except separately approved conditional disable. Real recovery/elevation requires
 a new exact Owner decision; no candidate marker or ordinary review grants it.
 
+Recovery02 local preparation now completed: source24920bytes/SHA256
+8ea0478766cc2868839bc4e659d859198c4b0f0d7e2f79fa74bd9b170c75112c,
+launch12403bytes/SHA256 ebba451b567a7d40282ce00c6f88179cdb4b11bef7ee4f67aad7a8099f504bca.
+Original author corrected the same five scoped findings; original reviewer
+SOURCE_PASS_PREPARATION_ONLY_NOT_EXECUTION_ADMISSION and independent protected-
+DACL reverse mutation passed. Raw/pretty-XML and already-disabled positives,
+wrong identity/ACL/ControlSet/instances, registration/reentry/teardown negatives
+are fake evidence only. Build Grant complete/closed; exact new single-UAC/task
+recovery runtime Grant remains NOT_ISSUED. Runbook28 binds full commands/targets/
+ACLs/pins/risks for one necessary external decision, not a new SPEC request.
+
 ### S36 exact runtime admission — Owner approval received, one execution only
 
 Human Owner explicitly approved control commit92100566ecea6457268eb255241e94c6ac3f1bba,

@@ -1,5 +1,65 @@
 # Core capability implementation decision — revision28
 
+## Exact pending Owner operation — recovery02, NOT EXECUTION ADMITTED
+
+This is the only new external decision: read the protected current state and,
+only if exact reconstruction proves the previously approved definition, restore
+the same task disabled. It is NOT a retry of S36 installation or its consumed
+Grant. All local preparation/correction and original different-seat review are
+complete; no SPEC/local-batch/source authorization is being requested again.
+
+| Bound item | Proposed single operation |
+| --- | --- |
+| Machine/operator | DESKTOP-28ERPQ1, same GameBoy SID S-1-5-21-3542654388-73774624-397494543-1001, one UAC-elevated System32 x64 Windows PowerShell5.1 process; process-only RemoteSigned, no other scope/policy change |
+| Subject/service | No account change/login/extension. No service creation/configuration/start/ACL change. Read exact JohnnyGrantAuthority WMI configuration and only fixed System32 sc.exe qsidtype JohnnyGrantAuthority; own query child5s/streams1s/kill-wait2s, uncertain teardown remains UNKNOWN |
+| Readback | Exact S36 seven protected logs/failure, fixed task full XML/action/SDDL/state/instances/results, Registry64 Current and service Parameters names/kinds/length/digests/ACL; Registry opened read-only and values never serialized raw |
+| Task mutation | Only \\JohnnyAuthoritySetup33-20261027. Allowed current action SHA3c7afd93 or88fcf2c4, exact existing SDDL/principal/settings/path/zero instances/non-running. Reconstruct original full raw XML using old pinned action; require exact SHA5fad3d70. Only then at most one disable and one RegisterTask update with unchanged SYSTEM principal/SDDL. Fresh readback must be disabled/quiescent/exact original XML/action/SDDL. Already exact disabled returns NOT_REQUIRED with zero writes |
+| Refusal | Any unknown XML/action/ACL/instance/Registry/service/log mismatch: snapshot only, ZERO task write. If a write/readback fails: preserve uncertainty/Recovery, no repeated restore or fallback source |
+| Output | ONE fresh C:\Program Files\JohnnySetup33S36Adopt-20261029.recovery02.json, CreateNew only, exact protected owner/groupBA; SY/BA FullControl and controller1001 Read. No existing evidence is changed, overwritten or deleted |
+| Excluded | No task Run, Apply, NativeAOT provisioning/qualification, Host/model session, paid call, credential, account/Registry/service mutation, network/listener/firewall change, cleanup, push/release/deployment |
+
+Candidate in the same registered S36 Temp package (ownerRoot/Ticket30,
+TTL24h+Review/Recovery hold): owner-s36-recovery02.ps124920bytes/SHA256
+8ea0478766cc2868839bc4e659d859198c4b0f0d7e2f79fa74bd9b170c75112c;
+owner-s36-recovery02-launch01.json12403bytes/SHA256
+ebba451b567a7d40282ce00c6f88179cdb4b11bef7ee4f67aad7a8099f504bca.
+Original full XML pin5fad3d706a30aa927b0952d2222dd040e089f4b96d84c6126cdee4122bdb1f43;
+old action3c7afd9356d4786b05c65b311a3fc00578bd533267f15a4414c3ef7136f7222f;
+S36 action88fcf2c42f80fb14d455c844518ec7811f657e6d3bc572d4235eb770af45afee.
+
+One future command, AFTER exact Owner admission only:
+`C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command "<exact bounded inline-gzip loader>"`.
+Root must use one bounded memory snapshot of the exact12403byte launch JSON,
+verify its fixed SHA before parse, then verify the exact executable and argument
+SHA256465fb9ffef66886b703a6994cde69ff638717ecb9297da3154a42220b5bda881.
+The existing single-argument loader is reused, not a new transport: gzip7196bytes,
+decoded24920bytes/exact8ea04787, full CLI10693chars; no source-path reopen after
+hash. Launch via Start-Process -Verb RunAs -WindowStyle Hidden with that one exact
+argument string. Parent observation deadline90s; it is NOT proof of child/COM
+fail-stop. Timeout, missing snapshot, incomplete readback or unproved terminal
+state retains Recovery and stops; no automatic relaunch/kill/cleanup.
+
+Original different-seat SOURCE_PASS_PREPARATION_ONLY_NOT_EXECUTION_ADMISSION:
+fixed Utility import, raw/pretty-CRLF XML positive, exact protected ControlSet001,
+known stage digest, owned-child teardown, negative/reentry/registration failures,
+PS5.1 parser-only and transport byte equality. Reviewer independently removes
+only protected-DACL guard in memory: candidate rejects unprotected fake, mutation
+accepts, file remains exact.333nonblank lines form one finite observation/recovery
+controller; splitting adds another executable trust source, so no forced split.
+PS7 fake/parser evidence is not Windows5.1 runtime, actual task or Host proof.
+
+Approval text:
+「核准 runbook revision28 recovery02 精確單次操作包（source8ea04787、launch
+ebba451b）：同主機同GameBoy一次UAC／程序級RemoteSigned、固定只讀快照與一份
+新受保護report；僅在完整XML精確符合5fad3d70及其他既定檢查時還原原task為停用。
+不符合則只記錄、零task寫入；不重跑Apply、不啟動task/服務、不改帳戶或Registry，
+其餘禁止邊界維持。」
+
+This clears at most the shared30B/43 protected-state/readback prerequisite when
+actually verified. It does not clear old Recovery Hold, prove Apply success,
+qualify Host, issue a real READ_MAINLINE Grant or integrate30B/43. Continue the
+same mainline after actual evidence; no parallel framework or new PRD.
+
 ## Actual S36 runtime01 result — consumed, RECOVERY_REQUIRED
 
 The exact Owner-approved revision27 operation ran once, operatorPID33156,

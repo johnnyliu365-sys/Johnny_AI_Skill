@@ -1,5 +1,33 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## recovery02 local correction / independent preparation PASS
+
+Original architecture author CREATE-only candidates in original S36 package:
+source24920/SHA8ea0478766cc2868839bc4e659d859198c4b0f0d7e2f79fa74bd9b170c75112c,
+launch12403/SHAebba451b567a7d40282ce00c6f88179cdb4b11bef7ee4f67aad7a8099f504bca.
+Original authority_install_inventory returns
+SOURCE_PASS_PREPARATION_ONLY_NOT_EXECUTION_ADMISSION. Initial263d1e89/c8f0c5e8
+full bytes preserved as generated-data recovery02-initial-candidate-bytes01.json,
+not overwritten evidence or an executable second trust source. Five findings
+closed in same candidates: explicit Utility dependency; exact raw/pretty CRLF
+reconstruction positives; protected DACL plus Current001; exact stage digest;
+owned sc child kill/wait with UNKNOWN refusal. No acceptance or scope expansion.
+
+Correction fake2075bytes/SHA09e59cbe3f5d46a06a4e8074172bac9832c609597876abef10a1378b438935a4;
+transport1108bytes/SHA465e5bfc4f5cd8d0e9d46d71e1d91fafa394695a2e798bd8fef3c83f40a2bfb6.
+Reviewer PS5.1 Parser.ParseFile-only0errors. Own different-door mutation removes
+only AreAccessRulesProtected guard from real Assert-RegistryIdentity in memory:
+normal candidate rejects unprotected fake with parameters_acl_shape; mutant
+accepts. Restored original candidate file unchanged8ea04787; no real OS calls.
+Structure333nonblank remains one finite protected-state/conditional-restore
+controller, not a new Gate/Runner/framework; forced split not justified.
+
+Original source36 tests are not rerun or changed; only effect-tool preparation
+is corrected. Runtime01 consumed; recovery02 runtime Grant NOT issued. Runbook28
+binds exact future single-UAC/policy/task/output effects plus90s parent observation
+limit and failure limitations for Owner decision. No actual elevation/task/SCM/
+Registry/native/account/Host/model operation, no cleanup, no main/source integration.
+
 ## S36 runtime01 consumed / actual failure, not acceptance
 
 Exact launch ca6c4d52/tool4be38e PID33156 terminal62e970: operatorexit1,
