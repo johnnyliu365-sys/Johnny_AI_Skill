@@ -861,6 +861,44 @@ class IntegrationTests(unittest.TestCase):
             self.assertIn("TEST", result.detail or "")
             self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
 
+    def test_unresolved_python_import_forms_refuse_without_moving_main(self) -> None:
+        sources = (
+            ("relative escape", b"from ..peer import Thing\n"),
+            ("mixed from-list", b"from src import shared, unowned\n"),
+            (
+                "builtins loader alias",
+                b"from builtins import __import__ as load_module\nload_module('src.shared')\n",
+            ),
+        )
+        for label, source in sources:
+            with self.subTest(label=label), TemporaryDirectory() as name:
+                base = Path(name)
+
+                def mutate(root: Path) -> None:
+                    _write(root, "src/feature.py", source.decode("utf-8"))
+
+                root, before, result = self._mapped_refused(base, mutate)
+                self.assertIs(
+                    result.failure,
+                    DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED,
+                )
+                self.assertIn("NOT_VERIFIED", result.detail or "")
+                self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
+
+    def test_from_mapped_module_importing_a_symbol_reaches_main(self) -> None:
+        with TemporaryDirectory() as name:
+            base = Path(name)
+            root = _seed_mapped(base)
+            _run(root, "checkout", "-q", "-b", "candidate")
+            _write(root, "src/feature.py", "from src.shared import VALUE\nVALUE = 2\n")
+            candidate = _commit(root, "import a symbol from the mapped module")
+            _run(root, "checkout", "-q", "main")
+
+            result = admit_document_mutation(_layout(base), _request(root))
+
+            self.assertIs(result.status, DocumentMutationStatus.INTEGRATED)
+            self.assertEqual(result.integrated_commit, candidate)
+
     def test_unsupported_changed_script_is_not_verified_and_does_not_merge(self) -> None:
         with TemporaryDirectory() as name:
             base = Path(name)

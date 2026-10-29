@@ -6,10 +6,26 @@ baseline = "4ed5bc69e9001c43cc8490dcf48f1168c3edcac7"
 id = "source_boundary_map"
 roots = ["library/local_orchestration/boundary_map.py"]
 owner = "local-orchestration"
-responsibility = "Parse the versioned module map and evaluate selected source ownership and Python dependency edges."
+responsibility = "Parse the versioned module map and evaluate selected source ownership and dependency observations."
 kind = "SHARED"
 allowed_dependencies = []
 shared_alias = "local-source-boundary"
+
+[[modules]]
+id = "source_boundary_python"
+roots = ["library/local_orchestration/boundary_map_python.py"]
+owner = "local-orchestration"
+responsibility = "Observe Python import syntax and emit typed dependency observations."
+kind = "SHARED"
+allowed_dependencies = ["source_boundary_map"]
+
+[[modules]]
+id = "source_boundary_admission"
+roots = ["library/local_orchestration/boundary_map_admission.py"]
+owner = "local-orchestration"
+responsibility = "Bind an integration-pinned module map and candidate observations to one admission result."
+kind = "LIBRARY"
+allowed_dependencies = ["source_boundary_map", "source_boundary_python"]
 
 [[modules]]
 id = "document_mutation_gate"
@@ -17,7 +33,11 @@ roots = ["library/local_orchestration/document_mutation_gate.py"]
 owner = "local-orchestration"
 responsibility = "Read integration-side ticket and Git facts, then admit or refuse one document mutation."
 kind = "LIBRARY"
-allowed_dependencies = ["source_boundary_map", "johnny_root_layout"]
+allowed_dependencies = [
+    "source_boundary_map",
+    "source_boundary_admission",
+    "johnny_root_layout",
+]
 
 [[modules]]
 id = "johnny_root_layout"
@@ -65,4 +85,17 @@ roots = ["tests/test_boundary_map.py"]
 owner = "local-orchestration-tests"
 responsibility = "Check boundary-map parsing, ownership and dependency evaluation."
 kind = "TEST"
-allowed_dependencies = ["source_boundary_map", "document_mutation_gate"]
+allowed_dependencies = ["source_boundary_map", "source_boundary_python", "document_mutation_gate"]
+
+[[modules]]
+id = "test_boundary_map_admission"
+roots = ["tests/test_boundary_map_admission.py"]
+owner = "local-orchestration-tests"
+responsibility = "Check integration-pinned module-boundary admission and its real source dependency graph."
+kind = "TEST"
+allowed_dependencies = [
+    "source_boundary_map",
+    "source_boundary_python",
+    "source_boundary_admission",
+    "document_mutation_gate",
+]

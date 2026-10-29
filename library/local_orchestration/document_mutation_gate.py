@@ -68,16 +68,12 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .boundary_map import (
-    BoundaryChange,
-    ChangeKind as ModuleChangeKind,
-    EvaluationStatus as ModuleEvaluationStatus,
-    MAP_PATH,
-    ReadStatus as ModuleReadStatus,
-    evaluate_module_changes,
-    map_digest,
-    parse_boundary_map,
-    parse_ticket_selection,
+from .boundary_map import BoundaryChange, ChangeKind as ModuleChangeKind
+from .boundary_map_admission import (
+    BoundaryAdmissionFailure,
+    BoundaryAdmissionRequest,
+    BoundaryAdmissionStatus,
+    admit_module_boundary,
 )
 from .johnny_root_layout import JohnnyRootLayout
 
@@ -659,60 +655,6 @@ def admit_document_mutation(
             detail=reason,
         )
 
-    module_selection_result = parse_ticket_selection(_decode(ticket))
-    if module_selection_result.status is ModuleReadStatus.INVALID:
-        return _refuse(
-            layout,
-            request,
-            DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED,
-            offending_path=request.ticket_path,
-            detail=module_selection_result.detail,
-        )
-    module_selection = module_selection_result.selection
-    module_map = None
-    if module_selection_result.status is ModuleReadStatus.VALID:
-        if module_selection is None:
-            return _refuse(
-                layout, request, DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED,
-                offending_path=request.ticket_path,
-                detail="NOT_VERIFIED: ticket selection has no validated value",
-            )
-        map_bytes = _git(root, "show", f"{request.integration_branch}:{MAP_PATH}")
-        if map_bytes is None:
-            return _refuse(
-                layout,
-                request,
-                DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED,
-                offending_path=MAP_PATH,
-                detail="NOT_VERIFIED: integration branch has no readable boundary map",
-            )
-        map_result = parse_boundary_map(map_bytes, normalize_change_path, path_matches_entry)
-        if map_result.status is not ModuleReadStatus.VALID or map_result.boundary_map is None:
-            return _refuse(
-                layout,
-                request,
-                DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED,
-                offending_path=MAP_PATH,
-                detail=map_result.detail,
-            )
-        if map_digest(map_bytes) != module_selection.map_sha256:
-            return _refuse(
-                layout,
-                request,
-                DocumentMutationFailure.MODULE_BOUNDARY_MISMATCH,
-                offending_path=MAP_PATH,
-                detail="ticket map digest does not match the integration-branch map",
-            )
-        if map_result.boundary_map.baseline != module_selection.baseline:
-            return _refuse(
-                layout,
-                request,
-                DocumentMutationFailure.MODULE_BOUNDARY_MISMATCH,
-                offending_path=request.ticket_path,
-                detail="ticket baseline does not match the integration-branch map",
-            )
-        module_map = map_result.boundary_map
-
     base = _git(root, "merge-base", request.integration_branch, request.candidate_ref)
     if base is None:
         return _refuse(
@@ -721,18 +663,6 @@ def admit_document_mutation(
             DocumentMutationFailure.REPOSITORY_UNREADABLE,
             detail="the candidate shares no history with the integration branch",
         )
-
-    if module_selection is not None:
-        for reference in (request.integration_branch, _decode(base).strip()):
-            ancestor = _git(root, "merge-base", "--is-ancestor", module_selection.baseline, reference)
-            if ancestor is None:
-                return _refuse(
-                    layout,
-                    request,
-                    DocumentMutationFailure.MODULE_BOUNDARY_MISMATCH,
-                    offending_path=request.ticket_path,
-                    detail="pinned module baseline is not an ancestor of the reviewed source base",
-                )
 
     payload = _git(
         root,
@@ -763,95 +693,51 @@ def admit_document_mutation(
     if failure is not None:
         return _refuse(layout, request, failure, offending_path)
 
-    if module_selection is not None and module_map is not None:
-        normalized_changes = tuple(
-            (normalize_change_path(change.path), change) for change in changes
-        )
-        if any(
-            normalized is not None
-            and normalized.casefold() == MAP_PATH.casefold()
-            for normalized, _ in normalized_changes
-        ):
-            return _refuse(
-                layout,
-                request,
-                DocumentMutationFailure.MODULE_BOUNDARY_VIOLATION,
-                offending_path=MAP_PATH,
-                detail="candidate cannot replace the integration-branch map that judges it",
-            )
-        ticket_changed = any(
-            normalized is not None
-            and normalized.casefold() == request.ticket_path.casefold()
-            for normalized, _ in normalized_changes
-        )
-        if ticket_changed:
-            candidate_ticket = _git(root, "show", f"{request.candidate_ref}:{request.ticket_path}")
-            candidate_selection_result = (
-                parse_ticket_selection(_decode(candidate_ticket))
-                if candidate_ticket is not None
-                else None
-            )
-            if (
-                candidate_selection_result is None
-                or candidate_selection_result.status is not ModuleReadStatus.VALID
-                or candidate_selection_result.selection != module_selection
-            ):
-                return _refuse(
-                    layout,
-                    request,
-                    DocumentMutationFailure.MODULE_BOUNDARY_MISMATCH,
-                    offending_path=request.ticket_path,
-                    detail="candidate changed or removed the integration-pinned module selection",
-                )
+    def read_revision_blob(reference: str, path: str) -> bytes | None:
+        return _git(root, "show", f"{reference}:{path}")
 
-        candidate_sources: dict[str, bytes] = {}
-        for change in changes:
-            if change.kind is ChangeKind.DELETE:
-                continue
-            leaf = change.path.rsplit("/", 1)[-1]
-            extension = f".{leaf.rsplit('.', 1)[-1].casefold()}" if "." in leaf else ""
-            if extension not in {".py", ".pyi"}:
-                continue
-            source = _git(root, "show", f"{request.candidate_ref}:{change.path}")
-            if source is None:
-                return _refuse(
-                    layout,
-                    request,
-                    DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED,
-                    offending_path=change.path,
-                    detail="NOT_VERIFIED: changed Python blob is unreadable from candidate",
-                )
-            candidate_sources[change.path] = source
+    def check_ancestor(ancestor: str, reference: str) -> bool:
+        return _git(root, "merge-base", "--is-ancestor", ancestor, reference) is not None
 
-        module_changes = tuple(
+    module_request = BoundaryAdmissionRequest(
+        integration_ref=request.integration_branch,
+        candidate_ref=request.candidate_ref,
+        merge_base=_decode(base).strip(),
+        ticket_path=request.ticket_path,
+        integration_ticket=ticket,
+        changes=tuple(
             BoundaryChange(
                 path=change.path,
                 kind=ModuleChangeKind(change.kind.value),
                 entry_mode=change.entry_mode,
             )
             for change in changes
+        ),
+    )
+    module_result = admit_module_boundary(
+        module_request,
+        read_blob=read_revision_blob,
+        is_ancestor=check_ancestor,
+        normalize_path=normalize_change_path,
+        path_matches=path_matches_entry,
+    )
+    if module_result.status not in {
+        BoundaryAdmissionStatus.UNDECLARED,
+        BoundaryAdmissionStatus.VERIFIED,
+    }:
+        failure = {
+            BoundaryAdmissionFailure.MISMATCH: DocumentMutationFailure.MODULE_BOUNDARY_MISMATCH,
+            BoundaryAdmissionFailure.VIOLATION: DocumentMutationFailure.MODULE_BOUNDARY_VIOLATION,
+            BoundaryAdmissionFailure.NOT_VERIFIED: DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED,
+            None: DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED,
+        }[module_result.failure]
+        return _refuse(
+            layout,
+            request,
+            failure,
+            offending_path=module_result.offending_path,
+            detail=module_result.detail,
         )
-        module_result = evaluate_module_changes(
-            module_map,
-            module_selection,
-            module_changes,
-            candidate_sources,
-            normalize_change_path,
-            path_matches_entry,
-        )
-        if module_result.status is not ModuleEvaluationStatus.VERIFIED:
-            failure = (
-                DocumentMutationFailure.MODULE_BOUNDARY_NOT_VERIFIED
-                if module_result.status is ModuleEvaluationStatus.NOT_VERIFIED
-                else DocumentMutationFailure.MODULE_BOUNDARY_VIOLATION
-            )
-            return _refuse(
-                layout,
-                request,
-                failure,
-                offending_path=module_result.offending_path,
-                detail=module_result.detail,
-            )
 
     merged = _git(root, "merge", "--ff-only", request.candidate_ref)
     if merged is None:

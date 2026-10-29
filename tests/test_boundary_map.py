@@ -10,6 +10,7 @@ from library.local_orchestration.boundary_map import (
     BoundaryChange,
     BoundaryMap,
     ChangeKind,
+    DependencyObservationStatus,
     EvaluationResult,
     EvaluationStatus,
     MapReadResult,
@@ -20,6 +21,7 @@ from library.local_orchestration.boundary_map import (
     parse_boundary_map,
     parse_ticket_selection,
 )
+from library.local_orchestration.boundary_map_python import observe_python_dependencies
 from library.local_orchestration.document_mutation_gate import (
     normalize_change_path,
     path_matches_entry,
@@ -103,7 +105,11 @@ def _evaluate(
     kind: ChangeKind = ChangeKind.MODIFY,
     entry_mode: str = "100644",
 ) -> EvaluationResult:
-    sources = {} if source is None else {path: source}
+    sources = (
+        {}
+        if source is None
+        else {path: observe_python_dependencies(path, source)}
+    )
     return evaluate_module_changes(
         _valid_map(),
         _selection(*selected),
@@ -239,6 +245,36 @@ def test_python_ast_imports_allow_only_declared_internal_edges() -> None:
 
 def test_relative_python_imports_use_the_same_declared_dependency_edge() -> None:
     result = _evaluate("src/feature.py", b"from . import shared\n")
+    assert result.status is EvaluationStatus.VERIFIED
+
+
+@pytest.mark.parametrize(
+    "source",
+    (
+        b"from ..peer import Thing\n",
+        b"from src import shared, unowned\n",
+        b"from builtins import __import__ as load_module\nload_module('src.shared')\n",
+    ),
+    ids=("relative-import-escapes-top-level", "mixed-resolved-and-unknown", "aliased-builtin-loader"),
+)
+def test_unresolved_or_escaping_python_imports_are_not_verified(source: bytes) -> None:
+    result = _evaluate("src/feature.py", source)
+    assert result.status is EvaluationStatus.NOT_VERIFIED
+    assert result.detail is not None and result.detail.startswith("NOT_VERIFIED:")
+
+
+def test_ast_observation_is_typed_and_fails_closed_for_builtin_aliases() -> None:
+    observation = observe_python_dependencies(
+        "src/feature.py",
+        b"from builtins import __import__ as load_module\nload_module('src.shared')\n",
+    )
+    assert observation.status is DependencyObservationStatus.NOT_VERIFIED
+    assert observation.imports == ()
+    assert observation.detail is not None
+
+
+def test_from_mapped_module_importing_a_symbol_remains_verified() -> None:
+    result = _evaluate("src/feature.py", b"from src.shared import normalize\n")
     assert result.status is EvaluationStatus.VERIFIED
 
 

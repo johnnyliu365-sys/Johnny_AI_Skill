@@ -8,7 +8,6 @@ classify semantic responsibility or enforce a host boundary.
 
 from __future__ import annotations
 
-import ast
 import hashlib
 import re
 import tomllib
@@ -45,6 +44,16 @@ class EvaluationStatus(str, Enum):
     VERIFIED = "VERIFIED"
     REFUSED = "REFUSED"
     NOT_VERIFIED = "NOT_VERIFIED"
+
+
+class DependencyObservationStatus(str, Enum):
+    OBSERVED = "OBSERVED"
+    NOT_VERIFIED = "NOT_VERIFIED"
+
+
+class PythonImportKind(str, Enum):
+    MODULE = "MODULE"
+    FROM_MODULE = "FROM_MODULE"
 
 
 class ChangeKind(str, Enum):
@@ -113,6 +122,20 @@ class EvaluationResult:
     status: EvaluationStatus
     detail: str | None = None
     offending_path: str | None = None
+
+
+@dataclass(frozen=True)
+class PythonImportObservation:
+    kind: PythonImportKind
+    module: str
+    names: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class SourceDependencyObservation:
+    status: DependencyObservationStatus
+    imports: tuple[PythonImportObservation, ...] = ()
+    detail: str | None = None
 
 
 class _RawModule(BaseModel):
@@ -371,140 +394,55 @@ def _module_ids_for_import(
     return tuple(sorted(found))
 
 
-def _relative_import_name(
-    source_path: str, level: int, module: str | None
-) -> str | None:
-    components = source_path[:-3].split("/")
-    package = components[:-1]
-    ascend = level - 1
-    if ascend > len(package):
-        return None
-    root = package[: len(package) - ascend]
-    if module:
-        root.extend(module.split("."))
-    return ".".join(root)
-
-
-def _dynamic_import_present(tree: ast.AST) -> bool:
-    importlib_names: set[str] = set()
-    import_function_names: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            for alias in node.names:
-                if alias.name == "importlib":
-                    importlib_names.add(alias.asname or "importlib")
-        elif isinstance(node, ast.ImportFrom) and node.module == "importlib":
-            for alias in node.names:
-                if alias.name == "import_module":
-                    import_function_names.add(alias.asname or alias.name)
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call):
-            continue
-        function = node.func
-        if isinstance(function, ast.Name) and function.id in {
-            "__import__", "eval", "exec", *import_function_names
-        }:
-            return True
-        if (
-            isinstance(function, ast.Attribute)
-            and function.attr == "import_module"
-            and isinstance(function.value, ast.Name)
-            and function.value.id in importlib_names
-        ):
-            return True
-    return False
-
-
 def _internal_namespace(import_name: str, modules: tuple[BoundaryModule, ...]) -> bool:
     first = import_name.split(".", 1)[0]
     return any(root.path.split("/", 1)[0] == first for module in modules for root in module.roots)
 
 
-def _imports_for_node(
-    node: ast.Import | ast.ImportFrom,
-    source_path: str,
+def _resolve_import_observation(
+    observation: PythonImportObservation,
     modules: tuple[BoundaryModule, ...],
     normalize_path: PathNormalizer,
     path_matches: PathMatcher,
 ) -> tuple[str, ...] | None:
-    if isinstance(node, ast.Import):
-        names = tuple(alias.name for alias in node.names)
-    else:
-        base = (
-            node.module or ""
-            if node.level == 0
-            else _relative_import_name(source_path, node.level, node.module)
-        )
-        if base is None:
-            return None
-        base_ids = _module_ids_for_import(base, modules, normalize_path, path_matches)
-        alias_ids = tuple(
-            module_id
-            for alias in node.names
-            if alias.name != "*"
-            for module_id in _module_ids_for_import(
-                f"{base}.{alias.name}" if base else alias.name,
-                modules,
-                normalize_path,
-                path_matches,
-            )
-        )
-        resolved_from_import = tuple(sorted(set(alias_ids or base_ids)))
-        if resolved_from_import:
-            return resolved_from_import
-        internal_name = base or ""
-        if _internal_namespace(internal_name, modules):
-            return None
-        return ()
-    resolved_imports: list[str] = []
-    for name in names:
-        module_ids = _module_ids_for_import(name, modules, normalize_path, path_matches)
-        if module_ids:
-            resolved_imports.extend(module_ids)
-        elif _internal_namespace(name, modules):
-            return None
-    return tuple(sorted(set(resolved_imports)))
+    base_ids = _module_ids_for_import(
+        observation.module, modules, normalize_path, path_matches
+    )
+    if observation.kind is PythonImportKind.MODULE:
+        if base_ids:
+            return base_ids
+        return None if _internal_namespace(observation.module, modules) else ()
 
-
-def _python_imports(
-    module: BoundaryModule,
-    path: str,
-    source: bytes,
-    modules: tuple[BoundaryModule, ...],
-    normalize_path: PathNormalizer,
-    path_matches: PathMatcher,
-) -> str | None:
-    try:
-        tree = ast.parse(source.decode("utf-8"), filename=path, type_comments=True)
-    except (UnicodeDecodeError, SyntaxError, ValueError):
-        return "NOT_VERIFIED: changed Python source cannot be parsed as UTF-8 Python"
-    if _dynamic_import_present(tree):
-        return "NOT_VERIFIED: changed Python source uses unresolved dynamic loading"
-    by_id = {entry.module_id: entry for entry in modules}
-    for node in ast.walk(tree):
-        if not isinstance(node, (ast.Import, ast.ImportFrom)):
+    resolved: set[str] = set()
+    for name in observation.names:
+        if name == "*":
+            if base_ids:
+                resolved.update(base_ids)
+            elif _internal_namespace(observation.module, modules):
+                return None
             continue
-        imported_ids = _imports_for_node(node, path, modules, normalize_path, path_matches)
-        if imported_ids is None:
-            return "NOT_VERIFIED: changed Python source has an unresolved internal import"
-        for dependency_id in imported_ids:
-            target = by_id[dependency_id]
-            if target.module_id == module.module_id:
-                continue
-            if module.kind is ModuleKind.SHARED and target.kind is not ModuleKind.SHARED:
-                return "shared module depends on a non-SHARED module"
-            if module.kind is ModuleKind.LIBRARY and target.kind in {ModuleKind.HARNESS, ModuleKind.TEST}:
-                return f"product module imports {target.kind.value} module {target.module_id!r}"
-            if target.module_id not in module.allowed_dependencies:
-                return f"internal dependency {module.module_id!r} → {target.module_id!r} is not allowed"
-    return None
+        candidate = f"{observation.module}.{name}" if observation.module else name
+        candidate_ids = _module_ids_for_import(
+            candidate, modules, normalize_path, path_matches
+        )
+        if candidate_ids:
+            resolved.update(candidate_ids)
+        elif base_ids:
+            # `from mapped.module import Symbol` depends on the mapped module,
+            # even though Symbol is not itself a module path.
+            resolved.update(base_ids)
+        elif _internal_namespace(candidate, modules) or _internal_namespace(
+            observation.module, modules
+        ):
+            return None
+    return tuple(sorted(resolved))
 
 
 def evaluate_module_changes(
     boundary_map: BoundaryMap,
     selection: TicketModuleSelection,
     changes: tuple[BoundaryChange, ...],
-    candidate_sources: Mapping[str, bytes],
+    source_observations: Mapping[str, SourceDependencyObservation],
     normalize_path: PathNormalizer,
     path_matches: PathMatcher,
 ) -> EvaluationResult:
@@ -547,23 +485,54 @@ def evaluate_module_changes(
             )
         if change.kind is ChangeKind.DELETE:
             continue
-        source = candidate_sources.get(normalized)
-        if source is None:
+        observation = source_observations.get(normalized)
+        if observation is None:
             return EvaluationResult(
                 EvaluationStatus.NOT_VERIFIED,
-                "NOT_VERIFIED: candidate Python blob is unavailable",
+                "NOT_VERIFIED: candidate Python dependency observation is unavailable",
                 normalized,
             )
-        import_error = _python_imports(
-            owner, normalized, source, modules, normalize_path, path_matches
-        )
-        if import_error is not None:
-            status = (
-                EvaluationStatus.NOT_VERIFIED
-                if import_error.startswith("NOT_VERIFIED:")
-                else EvaluationStatus.REFUSED
+        if observation.status is DependencyObservationStatus.NOT_VERIFIED:
+            return EvaluationResult(
+                EvaluationStatus.NOT_VERIFIED,
+                observation.detail or "NOT_VERIFIED: Python dependency parsing failed",
+                normalized,
             )
-            return EvaluationResult(status, import_error, normalized)
+        for imported in observation.imports:
+            imported_ids = _resolve_import_observation(
+                imported, modules, normalize_path, path_matches
+            )
+            if imported_ids is None:
+                return EvaluationResult(
+                    EvaluationStatus.NOT_VERIFIED,
+                    "NOT_VERIFIED: changed Python source has an unresolved internal import",
+                    normalized,
+                )
+            for dependency_id in imported_ids:
+                target = by_id[dependency_id]
+                if target.module_id == owner.module_id:
+                    continue
+                if owner.kind is ModuleKind.SHARED and target.kind is not ModuleKind.SHARED:
+                    return EvaluationResult(
+                        EvaluationStatus.REFUSED,
+                        "shared module depends on a non-SHARED module",
+                        normalized,
+                    )
+                if owner.kind is ModuleKind.LIBRARY and target.kind in {
+                    ModuleKind.HARNESS,
+                    ModuleKind.TEST,
+                }:
+                    return EvaluationResult(
+                        EvaluationStatus.REFUSED,
+                        f"product module imports {target.kind.value} module {target.module_id!r}",
+                        normalized,
+                    )
+                if target.module_id not in owner.allowed_dependencies:
+                    return EvaluationResult(
+                        EvaluationStatus.REFUSED,
+                        f"internal dependency {owner.module_id!r} → {target.module_id!r} is not allowed",
+                        normalized,
+                    )
     return EvaluationResult(EvaluationStatus.VERIFIED)
 
 
@@ -572,15 +541,19 @@ __all__ = [
     "BoundaryMap",
     "BoundaryModule",
     "ChangeKind",
+    "DependencyObservationStatus",
     "EvaluationResult",
     "EvaluationStatus",
     "MAP_PATH",
     "MapReadResult",
     "ModuleKind",
     "ModuleRoot",
+    "PythonImportKind",
+    "PythonImportObservation",
     "ReadStatus",
     "TicketModuleSelection",
     "TicketSelectionResult",
+    "SourceDependencyObservation",
     "evaluate_module_changes",
     "map_digest",
     "parse_boundary_map",
