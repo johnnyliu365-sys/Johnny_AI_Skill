@@ -11,6 +11,120 @@
 | Profile | Current30G=`HIGH_ASSURANCE`, exact scope below；historical30A=`STANDARD` fixture only；均不授予真實Host/source/effect資格 |
 | Implementation language | Python3.11 strict；current30G checker／constructor順序依下節；原30A命令為歷史證據不重跑 |
 
+## WPC01 — approved-package continuation / local construction — 2026-10-31
+
+Authority: PROJECT_OWNER's current approved-work-package request and existing
+12-item local batch delegation authorize this narrow local slice in the same
+PRD/CHG/SPEC/Ticket30 lineage. Root derives child Grant
+`batch-checklist-local-20261019-uncapped/t30-wpc01`; no remote/native dispatch,
+credential issuance, Host qualification, cleanup, installation or gate activation.
+Historical30B/30G/43 and RECOVERY_REQUIRED remain unchanged. This independent
+STANDARD in-process continuation slice does not downgrade their HIGH_ASSURANCE
+review or borrow their candidates. Existing AC1–8 Router decisions remain mandatory.
+
+Control baseline: dcf0e5e77722fc718cc791a2b76a8a6e65825a58. First commit only
+the four policy amendments (Workflow.md, takeover SKILL.md, router-control.md,
+implementation-tdd.md), this leaf and its registry edges after independent
+consistency review. The resulting exact reviewed commit is the implementation
+baseline; record it and the ticket blob in the handoff before allocating the owner.
+Root owns policy/control records; implementation owner `/root/work_package_impl`,
+different reviewer `/root/authority_install_inventory`. Allocate exactly
+`.worktrees/skill-improvement-30-work-package`, branch
+`codex/skill-improvement-30-work-package`; no reuse or deletion of held worktrees.
+
+Implementation MODIFY: library/workflow_router/private_router.py (thin existing
+Runner entry only), library/workflow_router/__init__.py (exports),
+library/workflow_router/profile.py and tests/test_workflow_router.py (exact policy
+digest refresh), shared/BOUNDARY_MAP.toml and tests/test_boundary_map.py (module
+ownership and its regression). CREATE ONLY
+library/workflow_router/package_continuation.py and
+tests/test_work_package_continuation.py. DELETE none. No other product/test/docs
+changes by implementer. Root may update this leaf, registry, existing review and
+checklist records after evidence; no duplicate PRD or planning report.
+
+Reuse MainlineProjectionRequest/project_mainline_tickets, PrivateRouterClient,
+RouterRequestEnvelope/ContinuationPlan and existing AutomaticContinuationRunner.
+New module owns only the bounded package loop and its minimal typed ports/results;
+private_router delegates without changing run_until_pause behavior. Do not put
+the loop into the already-large private_router or create another Runner/Gate.
+Pure fixture tests reuse existing typed Router constructions; no subprocess,
+network, real target source, provider, account, Registry, service or task effects.
+
+Contract: existing Runner gains run_work_package_until_pause with fresh typed
+state/request ports, a ticket-bound action executor, positive package-recheck and
+per-ticket-step ceilings. Constructor tests precede behavior; these contracts are
+local construction, not prerequisites requiring a qualified Host before building
+them. A state snapshot is a candidate, never a Grant. Only ADMITTED nodes with
+completed dependencies may execute, after an independently validated Router plan.
+Bind every request and executor call to project, ticket and snapshot revision;
+require a full64-hex source revision and exact namespace conversion from rev- to
+the existing private request rev_ digest, not truncation or caller assertion.
+Revalidate returned envelopes before another action. Stop the affected attempt
+on wait/halt/missing/mismatched input; reassess independent tickets. Stop globally
+on unavailable/malformed state or project/mainline identity drift. Try a ticket
+only once per unchanged snapshot/ticket revision; no polling or unchanged retry.
+Result retains typed attempts/final plans and remaining ticket references so the
+existing control plane can persist evidence and handback. COMPLETE requires ALL
+included tickets completed; projection closure_candidate alone cannot terminate
+an included optional runnable ticket. No eligible untried item means QUIESCENT,
+not a formal closure certificate; explicit ceilings mean SAFETY_CEILING, missing
+state means ENVIRONMENT_INTERRUPTED. Neither grants authority nor forces a model
+to keep generating turns or intercepts arbitrary native spawn.
+
+Acceptance WPC1–6: (1) waiting/failed A cannot freeze admitted independent B;
+(2) dependent C and unadmitted work have ZERO request/executor calls;
+(3) project/ticket/revision mismatch and foreign returned ticket cause ZERO next
+effects; (4) unchanged failures are not retried, changed snapshots are reread;
+(5) all-complete, all-blocked, optional-included and interrupted cases have distinct
+truthful outcomes; (6) every action still passes existing Router, old single-chain
+behavior and P0/Owner waits remain intact. Retain failing baseline against absent
+package entry; reverse-mutate dependency filtering, binding, Router refusal and
+unchanged retry guard. Each mutation must make a named cell fail, then restore
+exact bytes. Independent reviewer uses at least one different attack door.
+
+Commands: python -m pytest tests/test_work_package_continuation.py
+tests/test_private_router_metadata_gate.py tests/test_mainline_projection.py
+tests/test_workflow_router.py tests/test_boundary_map.py -q;
+python -m mypy --strict library/workflow_router/package_continuation.py
+library/workflow_router/private_router.py;
+python -m compileall -q library/workflow_router/package_continuation.py;
+git diff --check. Only affected checks, no unrelated Host retest.
+Line expectations: product module about250–350, tests about250–400; 500+ effective
+lines trigger responsibility review, not compression or artificial splitting.
+No generated versioned artifacts/screenshots. Test outputs use owned temporary
+fixtures with teardown; worktree/ref and needed evidence retained through review,
+then existing lifecycle policy only. No denied cleanup retry. Historical resource
+accounting stays; positive single-command deadlines/resource bounds remain.
+
+The former native construction boundary below is historical text, not this
+allocation. The only active implementation boundary for WPC01 is:
+
+```johnny-boundary
+modify = library/workflow_router/private_router.py
+modify = library/workflow_router/__init__.py
+modify = library/workflow_router/profile.py
+modify = tests/test_workflow_router.py
+modify = shared/BOUNDARY_MAP.toml
+modify = tests/test_boundary_map.py
+create = library/workflow_router/package_continuation.py
+create = tests/test_work_package_continuation.py
+forbid = AGENTS.md
+forbid = CONTEXT.md
+forbid = Workflow.md
+forbid = CodeReview.md
+forbid = skills/
+forbid = template/
+forbid = modules/
+forbid = doc/
+forbid = library/local_orchestration/
+```
+
+Grant condition: independent policy/ticket review PASS and exact baseline/blob
+readback activate this source-only child allocation under existing batch authority;
+no further Owner approval is required. Source review PASS permits controlled local
+integration into Root's control worktree only, not main/Host qualification or
+full Ticket30/checklist01/02 completion.
+
 ## Effective local batch resource / convergence amendment — 2026-10-19
 
 ### Current readback correction — 2026-10-29
@@ -8324,7 +8438,7 @@ Final source review independently checks the resulting dependency direction and
 the same J1–J5 behavior, with original N1 cases retained. No actual Host qualification
 or formal integration follows from adding these exact missing source boundaries.
 
-```johnny-boundary
+```text
 modify = library/local_orchestration/native_windows/JohnnyAuthority.Tools.csproj
 modify = library/local_orchestration/native_windows/Program.cs
 modify = tests/test_native_authority_tools.py

@@ -20,8 +20,12 @@ from a filename or repair another feature by changing an approved interface outs
 4. Run affected tests, strict type checks, lint, formatting, build and data validation.
 5. Run the ticket's primary-path smoke test.
 
-Do not start another behavior, ticket or commit before the current behavior and smoke gate are
-green.
+Within the current ticket, do not advance dependent behavior, commit its
+implementation or submit it as complete before its behavior and smoke gate are green. If the ticket is blocked,
+return its typed status and evidence to the supervisor/reviewer; this does not
+freeze an independent admitted ticket. Cross-ticket selection and fresh admission
+follow [approved work-package continuation](router-control.md#approved-work-package-continuation),
+not an implementer's local scope expansion.
 
 A change declared with a test-exempt `ChangeClass` (`DOCS_ONLY`, `COMMENT_ONLY`,
 `SCHEMA_VALIDATED_CONFIG`, `TYPE_CHECKED_RENAME` in

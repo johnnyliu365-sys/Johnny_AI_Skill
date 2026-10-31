@@ -94,6 +94,42 @@ local ceiling is not a new human-wait reason. Amendments and stagnation handling
 [implementation-authority](implementation-authority.md#explicit-resource-policy-amendment).
 Platform/tool/security and separately granted operational bounds are never removed by it.
 
+## Approved work-package continuation
+
+The supervisor/reviewer owns the approved package and its remaining work; an
+implementation owner continues its one currently admitted ticket, investigates
+ordinary technical failures within that scope, and returns its typed event.
+Changing tickets requires the existing fresh source/Grant/owner/Context admission;
+package approval does not give an implementer orchestration or cross-ticket rights.
+
+After every completion, review wait, validation failure, block or external wait,
+record the ticket-bound status, evidence and handback, then reassess the remaining
+approved work. Continue the next independently eligible action through the same
+Router. A ticket completion, progress report or waiting review is not a package
+terminal. A blocked or unapproved item blocks only itself and its actual dependent
+items; preserve those reasons while unrelated admitted work continues. Never
+borrow another item's approval, evidence or receipt, or retry an unchanged failed
+observation in a busy loop.
+
+Read existing decisions from their versioned formal sources and recheck affected
+live facts before effect; do not ask the owner to approve the same unchanged
+decision again. New authority, requirement or source conflicts retain their exact
+source references and affected scope. Production operations, financial risk,
+sensitive data, all P0 boundaries and declared human gates still require their own
+specific authority. Ordinary engineering decisions do not create such authority.
+
+End the active package run only when all included work is complete, every
+remaining item is concretely blocked with no independently eligible action, or
+the execution environment cannot continue. Preserve a resumable evidence checkpoint
+on interruption; neither a pause nor a projection's closure candidate is formal
+package completion. "Wait for the next assignment" is not a default terminal for
+already approved work. Optional work outside the approved package is not silently
+added, and optional-work closure semantics do not authorize dropping included work.
+
+The in-process continuation runner can enforce this only for its managed action
+and result path. This policy does not intercept arbitrary native tools, force a
+new model turn, prove a Host qualification or activate a pending effect gate.
+
 ## Dispatch admission
 
 Dispatch admission has two lifetime-scoped paths. A same-lifetime synchronous reviewer-owned

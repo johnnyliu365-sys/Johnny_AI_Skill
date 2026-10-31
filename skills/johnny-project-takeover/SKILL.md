@@ -97,6 +97,11 @@ INTAKE → WAYFINDER → ARCHITECTURE → GRILL → CONTEXT → SPEC → TICKETS
 An implementation or docs-only commit emits `ACTION_COMPLETED`; a commit does not itself select
 the next stage. This skill cannot bypass host approval, permission or receipt enforcement.
 
+For an approved work package, apply the
+[package continuation rule](references/router-control.md#approved-work-package-continuation)
+after each status change. A single ticket's return or wait does not finish the
+package; the reviewer selects and re-admits independent work through the Router.
+
 ### Automation readiness — check before narrating any automatic effect
 
 This readiness gate applies to cross-lifetime wake and supervision protocols. The admitted

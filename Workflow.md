@@ -103,6 +103,11 @@ Router 每次輸出必須包含：
 
 ### 0.1 自動接續
 
+已核准工作包每次狀態變更後，依
+[`router-control.md` 的工作包接續規則](skills/johnny-project-takeover/references/router-control.md#approved-work-package-continuation)
+重評剩餘工作；單票完成／受阻或一次進度回報不代表整包結束。跨票仍由 reviewer／Router
+重新准入，不讓單票實作者自行擴權。
+
 - `AUTO_CONTINUE`：來源、證據、authority 與唯一 capability 完整時，執行一個
   宣告動作後重新路由。
 - `WAIT_FOR_HUMAN`：只用於 Profile 宣告的核准、owner 決策或不可逆外部 effect。
