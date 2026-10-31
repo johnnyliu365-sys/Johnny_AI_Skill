@@ -58,6 +58,7 @@ class PackageAttemptOutcome(str, Enum):
     EXECUTOR_FAILED = "executor_failed"
     RETURN_BINDING_MISMATCH = "return_binding_mismatch"
     STATE_CHANGED = "state_changed"
+    TICKET_STEP_CEILING = "ticket_step_ceiling"
 
 
 class PackageStatePort(Protocol):
@@ -146,6 +147,7 @@ def run_package_continuation(
     limits = WorkPackageContinuationLimits.model_validate(limits.model_dump())
     attempts: list[PackageTicketAttempt] = []
     attempted: set[MainlineTicket] = set()
+    ticket_step_ceiling_refs: set[MainlineTicketRef] = set()
     ticket_steps: dict[MainlineTicketRef, int] = {}
     total_steps = 0
     package_rechecks = 0
@@ -212,12 +214,22 @@ def run_package_continuation(
                 if ticket.ticket_ref in included_refs
                 and ticket.ticket_ref in ready
                 and ticket.status is MainlineTicketStatus.ADMITTED
+                and ticket.ticket_ref not in ticket_step_ceiling_refs
                 and ticket not in attempted
             ),
             None,
         )
         if candidate is None:
-            return finish(PackageContinuationStatus.QUIESCENT, current_state)
+            ceiling_remains = any(
+                tickets[ref].status is not MainlineTicketStatus.COMPLETED
+                for ref in ticket_step_ceiling_refs
+            )
+            status = (
+                PackageContinuationStatus.SAFETY_CEILING
+                if ceiling_remains
+                else PackageContinuationStatus.QUIESCENT
+            )
+            return finish(status, current_state)
 
         source_revision = _full_source_revision(current_state.source_revision)
         if source_revision is None:
@@ -255,10 +267,9 @@ def run_package_continuation(
                     outcome = PackageAttemptOutcome.ROUTER_HALT
                     break
                 if ticket_steps.get(candidate.ticket_ref, 0) >= limits.max_ticket_steps:
-                    pending = _make_attempt(
-                        current_state, candidate, source_revision, outcome, steps, attempt_plan
-                    )
-                    return finish(PackageContinuationStatus.SAFETY_CEILING, current_state, pending=pending)
+                    ticket_step_ceiling_refs.add(candidate.ticket_ref)
+                    outcome = PackageAttemptOutcome.TICKET_STEP_CEILING
+                    break
 
                 fresh_state, ceiling = recheck()
                 if ceiling:

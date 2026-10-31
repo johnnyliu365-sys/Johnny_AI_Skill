@@ -192,6 +192,40 @@ class _WaitForAService:
         return self.normal.decide(request)
 
 
+class _PackageCeilingService:
+    def __init__(self) -> None:
+        self.calls: dict[str, int] = {}
+
+    def decide(self, request: RouterRequestEnvelope) -> RouterResponseEnvelope:
+        ticket_ref = request.ticket_reference
+        self.calls[ticket_ref] = self.calls.get(ticket_ref, 0) + 1
+        decision_id = f"dec_{request.request_id[4:]}"
+        if ticket_ref == "ticket-b" and self.calls[ticket_ref] > 1:
+            return RouterResponseEnvelope(
+                request_id=request.request_id,
+                decision_id=decision_id,
+                outcome=RouterOutcome.SUSPEND,
+                continuation=ContinuationDirective.WAIT_FOR_HUMAN,
+                next_stage=None,
+                action_label=ProductActionLabel.REQUEST_APPROVAL,
+                allowed_action_labels=(),
+                required_source_kinds=(),
+                context_budget=None,
+                wait_reason=HumanWaitReason.TICKET_APPROVAL_REQUIRED,
+            )
+        return RouterResponseEnvelope(
+            request_id=request.request_id,
+            decision_id=decision_id,
+            outcome=RouterOutcome.ADVANCE,
+            continuation=ContinuationDirective.AUTO_CONTINUE,
+            next_stage=ProcessStage.WAYFINDER,
+            action_label=ProductActionLabel.DEFINE_STARTING_POINT,
+            allowed_action_labels=(ProductActionLabel.DEFINE_STARTING_POINT,),
+            required_source_kinds=(ArtifactKind.PROJECT_GOAL,),
+            context_budget=1_000,
+        )
+
+
 def _runner(service: object | None = None) -> AutomaticContinuationRunner:
     actual_service = service or FakePrivateRouterService(
         profile=build_router_poc_profile(),
@@ -273,6 +307,53 @@ def test_waiting_ticket_does_not_freeze_independent_admitted_ticket() -> None:
     assert [call[1] for call in executor.calls] == ["ticket-b"]
     assert [call[0] for call in requests.calls] == ["ticket-a", "ticket-b"]
     assert result.remaining_ticket_refs == ("ticket-a",)
+
+
+def test_ticket_step_ceiling_does_not_freeze_independent_ready_ticket() -> None:
+    state = _state(
+        _ticket("ticket-a"),
+        _ticket("ticket-b"),
+        _ticket("ticket-c", dependencies=("ticket-a",)),
+    )
+    service = _PackageCeilingService()
+    requests = _RequestPort({
+        "ticket-a": _request("ticket-a", suffix=1),
+        "ticket-b": _request("ticket-b", suffix=3),
+    })
+    executor = _PackageExecutor([
+        _request("ticket-a", suffix=2),
+        _request("ticket-b", stage=ProcessStage.WAYFINDER,
+                 event=RouterEventKind.WAYFINDER_NO_GO, suffix=4),
+    ])
+    result = _run(
+        _runner(service), _StatePort([state]), requests, executor,
+        limits=WorkPackageContinuationLimits(max_package_rechecks=16, max_ticket_steps=1),
+    )
+
+    assert result.status is PackageContinuationStatus.SAFETY_CEILING
+    assert [attempt.ticket_ref for attempt in result.attempts] == ["ticket-a", "ticket-b"]
+    assert result.attempts[0].outcome is PackageAttemptOutcome.TICKET_STEP_CEILING
+    assert result.attempts[0].steps and len(result.attempts[0].steps) == 1
+    assert result.attempts[1].outcome is PackageAttemptOutcome.ROUTER_WAIT
+    assert result.attempts[1].steps and len(result.attempts[1].steps) == 1
+    assert [call[1] for call in executor.calls] == ["ticket-a", "ticket-b"]
+    assert [call[0] for call in requests.calls] == ["ticket-a", "ticket-b"]
+    assert result.remaining_ticket_refs == ("ticket-a", "ticket-b", "ticket-c")
+
+
+def test_global_recheck_ceiling_stops_before_another_ticket_effect() -> None:
+    state = _state(_ticket("ticket-a"), _ticket("ticket-b"))
+    requests = _RequestPort({"ticket-a": _request("ticket-a", suffix=1)})
+    executor = _PackageExecutor([_request("ticket-a", suffix=2)])
+    result = _run(
+        _runner(_PackageCeilingService()), _StatePort([state]), requests, executor,
+        limits=WorkPackageContinuationLimits(max_package_rechecks=1, max_ticket_steps=4),
+    )
+
+    assert result.status is PackageContinuationStatus.SAFETY_CEILING
+    assert result.total_steps == 1
+    assert [call[1] for call in executor.calls] == ["ticket-a"]
+    assert [call[0] for call in requests.calls] == ["ticket-a"]
 
 
 def test_dependency_and_planned_tickets_never_get_requests_or_actions() -> None:
