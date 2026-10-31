@@ -283,22 +283,46 @@ def run_package_continuation(
                         attempt_plan,
                     )
                     return finish(
-                        PackageContinuationStatus.ENVIRONMENT_INTERRUPTED, fresh_state, pending=pending
+                        PackageContinuationStatus.ENVIRONMENT_INTERRUPTED, current_state, pending=pending
+                    )
+                fresh_source_revision = _full_source_revision(fresh_state.source_revision)
+                if fresh_source_revision != source_revision:
+                    current_state = fresh_state
+                    outcome = PackageAttemptOutcome.STATE_CHANGED
+                    break
+                if fresh_state.tickets != current_state.tickets:
+                    pending = _make_attempt(
+                        current_state,
+                        candidate,
+                        source_revision,
+                        PackageAttemptOutcome.STATE_CHANGED,
+                        steps,
+                        attempt_plan,
+                    )
+                    return finish(
+                        PackageContinuationStatus.ENVIRONMENT_INTERRUPTED, current_state, pending=pending
                     )
                 fresh_ticket = next(
                     (item for item in fresh_state.tickets if item.ticket_ref == candidate.ticket_ref),
                     None,
                 )
                 if (
-                    _full_source_revision(fresh_state.source_revision) != source_revision
-                    or fresh_ticket is None
-                    or fresh_ticket.ticket_revision != candidate.ticket_revision
+                    fresh_ticket is None
+                    or fresh_ticket != candidate
                     or fresh_ticket.status is not MainlineTicketStatus.ADMITTED
                     or candidate.ticket_ref not in project_mainline_tickets(fresh_state).ready_for_recheck
                 ):
-                    current_state = fresh_state
-                    outcome = PackageAttemptOutcome.STATE_CHANGED
-                    break
+                    pending = _make_attempt(
+                        current_state,
+                        candidate,
+                        source_revision,
+                        PackageAttemptOutcome.STATE_CHANGED,
+                        steps,
+                        attempt_plan,
+                    )
+                    return finish(
+                        PackageContinuationStatus.ENVIRONMENT_INTERRUPTED, current_state, pending=pending
+                    )
 
                 step = PackageActionStep(
                     project_id=fresh_state.project_id,

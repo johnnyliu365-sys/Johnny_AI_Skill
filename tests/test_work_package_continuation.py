@@ -386,6 +386,38 @@ def test_graph_identity_drift_stops_package_globally() -> None:
     assert result.remaining_ticket_refs == ("ticket-a",)
 
 
+@pytest.mark.parametrize("changed_fact", ["admission_ref", "dependency", "required", "evidence"])
+def test_same_revision_ticket_fact_drift_interrupts_before_any_effect(changed_fact: str) -> None:
+    ticket_a = _ticket("ticket-a", dependencies=("ticket-b",))
+    ticket_b = _ticket("ticket-b", status=MainlineTicketStatus.COMPLETED)
+    changed_a = ticket_a
+    changed_b = ticket_b
+    if changed_fact == "admission_ref":
+        changed_a = ticket_a.model_copy(update={"admission_ref": "admission-replaced"})
+    elif changed_fact == "dependency":
+        changed_a = ticket_a.model_copy(update={"depends_on": ()})
+    elif changed_fact == "required":
+        changed_a = ticket_a.model_copy(update={"required": False})
+    else:
+        changed_b = ticket_b.model_copy(update={"evidence_refs": ("evidence-replaced",)})
+
+    initial = _state(ticket_a, ticket_b)
+    conflicting_same_revision = _state(changed_a, changed_b)
+    executor = _PackageExecutor([
+        _request("ticket-a", stage=ProcessStage.WAYFINDER,
+                 event=RouterEventKind.WAYFINDER_NO_GO, suffix=2),
+    ])
+    result = _run(
+        _runner(), _StatePort([initial, conflicting_same_revision]),
+        _RequestPort({"ticket-a": _request("ticket-a", suffix=1)}), executor,
+    )
+
+    assert result.status is PackageContinuationStatus.ENVIRONMENT_INTERRUPTED
+    assert result.attempts[0].outcome is PackageAttemptOutcome.STATE_CHANGED
+    assert not result.attempts[0].steps
+    assert not executor.calls
+
+
 @pytest.mark.parametrize("identity", ["project", "mainline"])
 def test_project_or_mainline_drift_stops_before_action(identity: str) -> None:
     initial = _state(_ticket("ticket-a"))
@@ -401,6 +433,26 @@ def test_project_or_mainline_drift_stops_before_action(identity: str) -> None:
 
     assert result.status is PackageContinuationStatus.ENVIRONMENT_INTERRUPTED
     assert result.total_steps == 0
+
+
+def test_foreign_completed_snapshot_preserves_last_trusted_package_result() -> None:
+    original = _state(_ticket("ticket-a"))
+    foreign = _state(
+        _ticket("ticket-a", status=MainlineTicketStatus.COMPLETED),
+        source_revision=_REV_B,
+        project_id="prj_1123456789abcdef",
+        mainline_ref="mainline-foreign",
+    )
+    result = _run(
+        _runner(), _StatePort([original, foreign]),
+        _RequestPort({"ticket-a": _request("ticket-a", suffix=1)}), _PackageExecutor(),
+    )
+
+    assert result.status is PackageContinuationStatus.ENVIRONMENT_INTERRUPTED
+    assert result.project_id == original.project_id
+    assert result.mainline_ref == original.mainline_ref
+    assert result.source_revision == original.source_revision
+    assert result.remaining_ticket_refs == ("ticket-a",)
 
 
 def test_changed_snapshot_refreshes_request_and_never_executes_stale_next_step() -> None:
@@ -436,6 +488,7 @@ def test_optional_included_ticket_must_complete_before_complete_status() -> None
     complete = _state(
         _ticket("ticket-required", status=MainlineTicketStatus.COMPLETED),
         _ticket("ticket-optional", required=False, status=MainlineTicketStatus.COMPLETED),
+        source_revision=_REV_B,
     )
     requests = _RequestPort({
         "ticket-optional": _request("ticket-optional", suffix=1),
