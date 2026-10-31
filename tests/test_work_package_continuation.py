@@ -455,6 +455,28 @@ def test_foreign_completed_snapshot_preserves_last_trusted_package_result() -> N
     assert result.remaining_ticket_refs == ("ticket-a",)
 
 
+def test_foreign_completed_snapshot_after_wait_preserves_last_trusted_result() -> None:
+    original = _state(_ticket("ticket-a"))
+    foreign = _state(
+        _ticket("ticket-a", status=MainlineTicketStatus.COMPLETED),
+        source_revision=_REV_B,
+        project_id="prj_1123456789abcdef",
+        mainline_ref="mainline-foreign",
+    )
+    result = _run(
+        _runner(_WaitForAService()), _StatePort([original, foreign]),
+        _RequestPort({"ticket-a": _request("ticket-a", suffix=1)}), _PackageExecutor(),
+    )
+
+    assert result.status is PackageContinuationStatus.ENVIRONMENT_INTERRUPTED
+    assert result.project_id == original.project_id
+    assert result.mainline_ref == original.mainline_ref
+    assert result.source_revision == original.source_revision
+    assert result.remaining_ticket_refs == ("ticket-a",)
+    assert result.attempts[0].outcome is PackageAttemptOutcome.ROUTER_WAIT
+    assert result.total_steps == 0
+
+
 def test_changed_snapshot_refreshes_request_and_never_executes_stale_next_step() -> None:
     before = _state(_ticket("ticket-a"), source_revision=_REV_A)
     after = _state(_ticket("ticket-a", revision="rev-2222222222222222"), source_revision=_REV_B)

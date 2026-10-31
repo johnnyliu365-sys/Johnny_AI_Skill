@@ -388,7 +388,7 @@ def run_package_continuation(
         if fresh_state is None:
             return finish(PackageContinuationStatus.ENVIRONMENT_INTERRUPTED, current_state)
         if not _state_matches(fresh_state, expected_project, expected_mainline, included_refs):
-            return finish(PackageContinuationStatus.ENVIRONMENT_INTERRUPTED, fresh_state)
+            return finish(PackageContinuationStatus.ENVIRONMENT_INTERRUPTED, current_state)
         current_state = fresh_state
 
 
