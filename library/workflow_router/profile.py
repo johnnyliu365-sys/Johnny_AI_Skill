@@ -237,13 +237,13 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="specification-ticketing",
-        source_revision="rev-26e443dfca8e8434",
-        content_digest="sha256_26e443dfca8e84342bb2ca40d748ac155a2b34010fcd6dc7fd5b59c6de5936b3",
+        source_revision="rev-2d33a7aab84ca891",
+        content_digest="sha256_2d33a7aab84ca891daf84e694bd9710775974ed1c23016f09296aab48114ea87",
     ),
     SkillReference(
         reference_id="implementation-authority",
-        source_revision="rev-0c75d40550cb3e27",
-        content_digest="sha256_0c75d40550cb3e27d49b48cc7ed52630f2c930f58969c1b2fb5fc07a3232cbf8",
+        source_revision="rev-c547840725bec0eb",
+        content_digest="sha256_c547840725bec0eb02a523a1bb2178c41a1a28fba666244ba9a47bf208d98736",
     ),
     SkillReference(
         reference_id="implementation-tdd",
