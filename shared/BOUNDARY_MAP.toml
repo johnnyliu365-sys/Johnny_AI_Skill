@@ -108,3 +108,19 @@ allowed_dependencies = [
     "document_mutation_gate",
     "shared_git_fixture",
 ]
+
+[[modules]]
+id = "workflow_package_continuation"
+roots = ["library/workflow_router/package_continuation.py"]
+owner = "workflow-router"
+responsibility = "Continue included admitted work-package tickets through the existing private Router with per-action state revalidation and finite terminal outcomes."
+kind = "LIBRARY"
+allowed_dependencies = []
+
+[[modules]]
+id = "test_work_package_continuation"
+roots = ["tests/test_work_package_continuation.py"]
+owner = "workflow-router-tests"
+responsibility = "Verify bounded package continuation, strict project-ticket-revision binding, freshness, and independent ticket progress."
+kind = "TEST"
+allowed_dependencies = ["workflow_package_continuation"]

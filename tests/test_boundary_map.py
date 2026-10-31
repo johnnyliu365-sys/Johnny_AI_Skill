@@ -5,6 +5,7 @@ from dataclasses import replace
 import pytest
 
 from collections.abc import Callable
+from pathlib import Path
 
 from library.local_orchestration.boundary_map import (
     BoundaryChange,
@@ -316,3 +317,23 @@ def test_deleting_owned_python_needs_no_candidate_source_blob() -> None:
 def test_map_and_ticket_pins_are_immutable_values() -> None:
     selection = _selection("feature", "shared")
     assert replace(selection, map_sha256="0" * 64) != selection
+
+
+def test_package_continuation_has_narrow_source_and_regression_ownership() -> None:
+    parsed = parse_boundary_map(
+        Path("shared/BOUNDARY_MAP.toml").read_bytes(), normalize_change_path, path_matches_entry
+    )
+    assert parsed.status is ReadStatus.VALID
+    assert parsed.boundary_map is not None
+    modules = {module.module_id: module for module in parsed.boundary_map.modules}
+    package = modules["workflow_package_continuation"]
+    tests = modules["test_work_package_continuation"]
+
+    assert tuple(root.path for root in package.roots) == (
+        "library/workflow_router/package_continuation.py",
+    )
+    assert package.kind.value == "LIBRARY" and package.owner == "workflow-router"
+    assert "per-action state revalidation" in package.responsibility
+    assert tuple(root.path for root in tests.roots) == ("tests/test_work_package_continuation.py",)
+    assert tests.kind.value == "TEST" and tests.owner == "workflow-router-tests"
+    assert tests.allowed_dependencies == ("workflow_package_continuation",)

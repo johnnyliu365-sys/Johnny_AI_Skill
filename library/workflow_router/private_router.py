@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from enum import Enum
-from typing import Annotated, Literal, Protocol
+from typing import TYPE_CHECKING, Annotated, Literal, Protocol
 from uuid import NAMESPACE_URL, uuid5
 
 from pydantic import Field, ValidationError, model_validator
@@ -59,6 +59,15 @@ from .policy_response import (
     resolve_approved_dispatch_artifact,
 )
 from .router import ContextResolver, RouterEngine
+
+if TYPE_CHECKING:
+    from .package_continuation import (
+        PackageRequestPort,
+        PackageStatePort,
+        TicketBoundPackageExecutor,
+        WorkPackageContinuationLimits,
+        WorkPackageRunResult,
+    )
 
 
 OpaqueAccountSubjectId = Annotated[str, Field(pattern=r"^acct_[0-9a-f]{16}$")]
@@ -1092,3 +1101,23 @@ class AutomaticContinuationRunner:
                     ),
                 )
             auto_steps += 1
+
+    def run_work_package_until_pause(
+        self,
+        *,
+        state_port: PackageStatePort,
+        request_port: PackageRequestPort,
+        executor: TicketBoundPackageExecutor,
+        limits: WorkPackageContinuationLimits,
+    ) -> WorkPackageRunResult:
+        """Delegate one bounded approved-package run through this existing Router client."""
+
+        from .package_continuation import run_package_continuation
+
+        return run_package_continuation(
+            client=self._client,
+            state_port=state_port,
+            request_port=request_port,
+            executor=executor,
+            limits=limits,
+        )
