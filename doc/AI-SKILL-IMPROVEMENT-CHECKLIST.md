@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `132`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `133`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -18,7 +18,7 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | 項目 | 狀態 | 作者／修改位置 | 驗證方式與目前結果 | 獨審結論 | 剩餘問題 |
 | --- | --- | --- | --- | --- | --- |
 | [ ] 01 主線與單票 | `PROJECTION_FIXTURE_DOCS_INTEGRATED / 30B_REVIEW_BLOCKED` | 原29／30A／30M不重做；30B作者Luna、不同Sol獨審，候選0f6d467a尚未整合；[證據](reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md) | 原91tests沿用；原30B140tests、R2修正保留；最新43聚焦tests及public繞過突變2紅→還原2綠只證明containment | `FIXTURE_APPROVED / CONTAINMENT_ONLY` | 合法可信Grant讀回成功另列R1 OPEN；必要合格隔離audit UNAVAILABLE；正式fresh來源／完整主線及結案未證明 |
-| [ ] 02 已核准工作接續 | `OWNER_WAIT_FIXTURE_INTEGRATED / LOCAL_BATCH_EXECUTED / EFFECT_OPEN` | 原24／30A與Context04／SPEC03保留；本批Root限縮Grant、分開派30B／31B／43／44及獨審，未逐票詢問Owner | 30A91tests／精確cleanup證據保留；等待30B／43審查時31B與44繼續並本地整合；30B140tests只支持readback候選，不代表可派工 | `30A_APPROVED / 30B_REVIEW_BLOCKED` | 真來源、`admit_dispatch`發憑證前接線、原生spawn硬攔截及正式結案仍未驗證；批次自主工作的真實紀錄不是新Host gate資格 |
+| [ ] 02 已核准工作接續 | `WPC01_MANAGED_CONTINUATION_LOCAL_INTEGRATED / EFFECT_OPEN` | 原24／30A保留；Root修正Router/TDD/SKILL入口，work_package_impl補既有Runner包級接續，authority_install_inventory獨審；原Ticket30不增PRD | exact9a6f8201經原路徑gate整合，實際載入Root版本145PASS/211subtests、strict2檔；作者4類與獨審2門突變紅→精確還原；F1完整票資料／F2中斷checkpoint／F3單票上限不凍B均CLOSED | `WPC01_SOURCE_PASS_LOCAL_ONLY / 30B_REVIEW_BLOCKED` | 真來源、Grant issuer、`admit_dispatch`接線、原生spawn／Host資格與正式結案未驗證；in-process typed結果不等於持久化adapter或強迫模型新turn，整項不勾 |
 | [ ] 03 派工完整最小 | `TEMPLATE_AND_CONTENT_LOCAL_INTEGRATED / HOST_ADMISSION_OPEN` | 原28/38/40模板證據沿用；Luna票45新增ticket_content.py及聚焦test，獨審見[45 review](reviews/workflow-governance/45-ticket-content-completeness-code-review.md) | 45獨審與整合後152tests、strict、F1–F3基準紅→綠、reviewer duplicate不同門8紅→還原綠；gate a29c0e53及兩blob一致 | `APPROVED_CONTENT_SLICE / CLEANUP_BLOCKED` | 真committed/approved來源與Host effect前接線仍缺；純內容診斷不證明Expected語意/授權/依賴ready，也不自動識別耦合 |
 | [x] 04 TEST → A → B | `COMPLETE_LOCAL / NO_PUSH` | Luna：Ticket 25 規則 `970b99cc`、Ticket 33 產品 A `ac369235`、Ticket 34 測試 B `b4a7dbe6`；獨審見 `doc/reviews/workflow-governance/33-shared-context-service-seam-code-review.md` 與 `34-shared-context-test-seam-transfer-code-review.md` | A 先在候選公開入口通過；Reviewer 改壞新 service 的 sealed read／writer role，公開 Router 格轉紅→綠。B 五格 contract-only 測試搬到聚焦檔、六格公開入口保留；Reviewer 改壞 service 與 contract guard，各自轉紅→綠；整合分支 61 tests／217 subtests、strict mypy 綠，五檔 Git blob 與各受審候選相同 | `APPROVED_A + APPROVED_B` | 此為本機 Johnny Router 能力回放；未推送／發布，不代表任何 target 產品已拆分 |
 | [ ] 05 候選來源與 Expected | `CONTRACT_LOCAL_INTEGRATED / HOST_GAP` | Luna 改既有 `TestBinding`／`ReviewAdmissionGate`；`beff0050`，審閱見 `doc/reviews/controlled-verification/cve-d10-candidate-source-observation-code-review.md` | 19 tests／50 subtests 綠、`mypy --strict` 綠、Expected 反向突變紅→綠；型別契約拒絕舊基準載入與 Expected 漂移 | `APPROVED_CONTRACT_ONLY` | 尚無合格 Host adapter 觀察實際載入來源及核准 Expected 的來源；不得把 port 自報當實測 |
@@ -30,7 +30,16 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision132）
+## 當前工程接續與精確證據（revision133）
+
+Owner新增的已授權工作包持續執行規則已在原Router正文、TDD衝突修正與薄入口
+落地；原Runner新增包級方法，獨立受阻A不凍B、依賴C不派、未准入不執行、
+每動作前重讀與Router驗權、同版矛盾拒絕、無新相關證據不重試、included optional
+不能被required-only closure漏掉。不同席獨審拒收後原作者修F1–F3，exact9a6f8201
+SOURCE_PASS並通過原gate本地整合；實際受測Root候選145/211、strict/compile/import
+均綠。證據集中原[Ticket30 review](reviews/workflow-governance/30-trusted-independent-ticket-continuation-code-review.md)。
+這是管理路徑的本地機制，不宣稱任意Host攔截、可信Grant或12項全結案；Only04
+checked。未新增PRD/框架，main與30B/43/Recovery保持原狀，不push/release/deploy。
 
 已核准S36 runtime01實跑一次但失敗：PID33156/exit1，帳戶延期與staging完成，
 Apply只有RECOVERY_REQUIRED、Observe未到，沒有success readback。原不同席確認

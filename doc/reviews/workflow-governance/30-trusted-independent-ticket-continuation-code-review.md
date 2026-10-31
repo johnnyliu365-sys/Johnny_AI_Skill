@@ -1,5 +1,85 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## WPC01 — approved-package continuation / independent SOURCE PASS — 2026-10-31
+
+Owner's current package-continuation request and existing local batch are the
+authority; original PRD/CHG/SPEC/Ticket30 lineage remains. Root policy/ticket
+commit60c5a6cf74c4b60d3daac4b36c330f03095f0af6, ticketblob79faca51b8a7ccd258d3bb171e74b51cbe8e21af,
+was independently DOC_PASS by authority_install_inventory after preserving the
+current-ticket green-before-commit rule. Baseline template67PASS; skill frontmatter
+validation passed with Python-Xutf8 after defaultcp950 decoding failed. These are
+document checks, not behavior or Host evidence.
+
+Author work_package_impl, reviewer authority_install_inventory, Root control.
+Separate repository-contained author/review worktrees are
+.worktrees/skill-improvement-30-work-package and its -review sibling, respective
+codex/ branches, exact baseline60c5a6cf. Source Grant
+batch-checklist-local-20261019-uncapped/t30-wpc01:6MODIFY/2CREATE/0DELETE.
+Candidate chain a10f779e85e0c49bbc3aff94c0ec0bb6d45d3eca,
+4e666165fdd7f5d3f9bd95a9e16675fe4ae1b599,
+dcf495d7169e71f13fad3e9b85e803fa05a8962e,
+b5b843ce02d92dde60720aa0f315bfc7e05d8710,
+9a6f8201bafee3f9266326ea81f9fb25e8d4b0ea. No failure/history was rewritten.
+
+Baseline red: existing runner lacked run_work_package_until_pause. Author's
+dependency/planned eligibility, request project/ticket/revision binding, Router
+WAIT bypass and unchanged-observation mutations each failed their named cells,
+then restored green. Initial137PASS/209subtests contained TWO failing pre-existing
+policy-pin subtests: specification-ticketing and implementation-authority. Root
+read back approved265d27a3/05528c12 source and authorized exact pin synchronization
+in the already allowed profile/test paths, not policy changes or skipped checks.
+Final pins use LF-normalized content; raw CRLF checkout hashes are not authority.
+
+Independent review rejected4e666165, preserving:
+- F1: same source/ticket version but altered admission_ref, dependency declaration,
+  required flag or completed-dependency evidence could reach an old action.
+  Four regressions red before full same-version snapshot comparison, then green.
+- F2: foreign project/mainline snapshot with completed A could erase original
+  unfinished A from interruption results. Both pre-effect and after-WAIT doors
+  reproduced red; final code retains the last trusted identity/checkpoint.
+- F3: A's ticket-step ceiling froze independent B. Baselineb5 reproduced attempts
+  [A] rather than [A,B]; final code records TICKET_STEP_CEILING, suppresses capped A
+  this run, executes admitted independent B, leaves dependent C unrequested and
+  reports honest SAFETY_CEILING after other eligible work drains. A separate global
+  recheck-limit case stops before an additional effect.
+
+Original reviewer SOURCE_PASS_LOCAL_ONLY on exact9a6f8201: F1–F3 CLOSED.
+Independent mainline-identity mutation: named test1FAIL/1PASS, exact restoration
+2PASS; later returned-ticket-binding mutation:1FAIL/3PASS, exact restoration13PASS.
+Own review worktree clean at exact candidate. Structure review: product523 physical/
+457nonblank, test634/546; one bounded coordinator and cohesive fixture/regression
+suite, existing runner thin delegation. The test's500-line signal received actual
+responsibility review; no arbitrary splitting/compression or deleted assertions.
+Shared map adds narrow ownership records only; this legacy slice is not claimed
+as fully import-graph-qualified. Integration path checks still use original gate.
+
+Root executed admit_document_mutation with integration-side original Ticket30
+and Git-derived eight-path diff: INTEGRATED exact9a6f8201. Journal ownerRoot,
+tests/.johnny-runtime/wpc01-integration/queue/document-mutation-journal.jsonl,
+UTC2026-10-31T11:38:11.109851+00:00, principalGameBoy; retain through evidence seal/
+Ticket30 Review/Recovery hold, no denied cleanup retry. Author/review refs remain
+owned evidence, not automatic permission for another source attempt.
+
+Root POST-INTEGRATION commands and unreduced results:
+```text
+python -m pytest tests/test_work_package_continuation.py tests/test_private_router_metadata_gate.py tests/test_mainline_projection.py tests/test_workflow_router.py tests/test_boundary_map.py -q -p no:cacheprovider
+145 passed, 211 subtests passed in 5.70s; exit0
+python -m mypy --strict library/workflow_router/package_continuation.py library/workflow_router/private_router.py
+Success: no issues found in 2 source files; exit0
+python -m compileall -q library/workflow_router/package_continuation.py
+exit0
+git diff --check
+exit0
+```
+Import smoke asserted actual loaded module under Root's control worktree, not old
+baseline/installed cache. Sourceblob22ea26f779b5e495f836a1e0416f58c86a676f14,
+testblob29ed012d17f4223842c1bb7bd709e97554a8e681 match reviewed candidate.
+No push/release/deploy/Host/account/task/ACL effect. main staysa1cb6c13.
+Managed in-process return data is not a durable state adapter, Grant issuer,
+native-tool interception, model-turn forcing, Host/CVQ qualification or formal
+closure certificate. Ticket30/30B/43 and checklist01/02 stay incomplete; previous
+Recovery state/runtime02 authority are unchanged. Local WPC01 build Grant closed.
+
 ## recovery02 local correction / independent preparation PASS
 
 Final original different-seat doc seal of06272050965205131288ea20d81f00187cad5341:

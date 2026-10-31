@@ -13,6 +13,28 @@
 
 ## WPC01 — approved-package continuation / local construction — 2026-10-31
 
+Local status: SOURCE_PASS / LOCAL_INTEGRATED / CHILD_BUILD_GRANT_CLOSED.
+Policy/ticket baseline60c5a6cf74c4b60d3daac4b36c330f03095f0af6,
+leafblob79faca51b8a7ccd258d3bb171e74b51cbe8e21af, LF0b29b531427749b28acd5f9da1f3990551377147520582545b5e18f1ac55a412,
+were independently reviewed before author allocation. Original author and
+different reviewer closed F1 full same-version ticket-fact drift, F2 both foreign
+checkpoint paths, F3 local step ceiling freezing independent B. Final candidate
+9a6f8201bafee3f9266326ea81f9fb25e8d4b0ea passed original document_mutation_gate
+and was read back/tested in Root control:145PASS/211subtests, strict2source,
+compile/import/diff clean. Existing policy-pin drift was synchronized only in the
+authorized profile/test files against approved265d27a3/05528c12 policy sources.
+Package executor explicitly receives project_id/ticket_ref/source_revision/action;
+unchanged relevant ticket facts are deduplicated even when unrelated work advances.
+Per-ticket ceiling records A and still tries independent B; only global bounds
+stop all effects. Existing mainline projection/old single-chain API unchanged.
+Map ownership entries are not a claim of full legacy import-graph qualification.
+Detailed exact commits/blobs, red/green evidence, structure review and owned journal
+are in the original Review30 WPC01 section. Source/test worktrees and refs retain
+owner and review/parent-Ticket30 Recovery hold; no denied cleanup is retried.
+This closes only the local WPC01 build, not Ticket30/30B/43 or checklist01/02.
+No actual trusted-source adapter, Grant issuer, native interception, Host/CVQ
+qualification, model-turn forcing or new operational authority is claimed.
+
 Authority: PROJECT_OWNER's current approved-work-package request and existing
 12-item local batch delegation authorize this narrow local slice in the same
 PRD/CHG/SPEC/Ticket30 lineage. Root derives child Grant
