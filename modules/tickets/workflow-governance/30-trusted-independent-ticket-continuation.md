@@ -68,6 +68,22 @@ repair only a discriminated failure, not unchanged replay. Resources ownedRoot/
 named seats, TTL24h plus review hold; seal minimal raw evidence before exact
 safe teardown. Unknown ownership or cleanup refusal preserves state, no retry.
 
+ENTRY02 result: policy a1a8c186 DOC_PASS; exact pin candidate6175f7ea received
+different-seat SOURCE_PASS and original-gate LOCAL_INTEGRATED. Source pin Grant
+closed; no authority to extend it. Root candidate186PASS/205subtests and actual
+profile construction passed. Fresh finite native reviewer exercised committed
+fictional fixture c999d46d, one worker, same-owner evidence correction84c8f946 to
+d7244f46003ad35dbe7fce25924e35c295e08c3a. Final3PASS; independent real-function
+upper-bound mutation red/restored green; actual Git diff only two authorized
+MODIFY paths. Existing boundary rejects counterfactual new PRD/validator edit.
+Source-first/no unnecessary question/no new PRD scenario observed, not universal
+compliance. Worker generated ignored checker cache and attempted rejected cleanup
+twice despite no-cleanup instruction: LIFECYCLE_CLEANUP_BLOCKED, no full closure.
+Preserve three owned fixture worktrees/refs/cache under review/Recovery hold;
+no cleanup retry or policy bypass. Raw results/limits are in original Review30
+ENTRY02 section. No scratch integration, installed-cache modification, Goal or
+Host qualification; Ticket30/30B/43/Recovery and full checklist remain open.
+
 ## WPC01 — approved-package continuation / local construction — 2026-10-31
 
 Local status: SOURCE_PASS / LOCAL_INTEGRATED / CHILD_BUILD_GRANT_CLOSED.

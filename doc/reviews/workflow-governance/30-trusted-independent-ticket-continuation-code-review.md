@@ -1,5 +1,67 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## ENTRY02 — executed source-first repair, finite native exercise — 2026-11-02
+
+Same batch/PRD/CHG/Ticket30; supplied product tickets are examples only. Root
+changed the existing command's "say what it is / pre-ticket narration" default,
+thin skill entry, two canonical references and both existing ticket templates.
+Independent authority_install_inventory returned DOC_PASS on a1a8c186e5e2ff9e2af010c4794288b3d153ff10;
+ticket blob3bbc0635a0b7176cd5458308ebbf8d93a1c69766,
+LF529e38c24a1fca4967b40a4df2fe44ce847e2f374d47cac66258667628f520d2.
+Native Goal refusal is preserved; no Stop hook/background substitute was enabled.
+
+Original author work_package_impl synchronized ONLY the two policy pins in
+profile.py/test_workflow_router.py. Candidate6175f7ead755002624c09dd80bc9be9d91ea6f55
+received different-seat SOURCE_PASS, real source LF readback and focused1PASS/
+29subtests. Original integration-side ticket and Git-derived two-path diff passed
+admit_document_mutation: INTEGRATED exact6175f7ea. Root ran:
+```text
+python -m pytest tests/test_workflow_router.py tests/test_ticket_template_contract.py tests/test_document_mutation_gate.py -q -p no:cacheprovider
+186 passed, 205 subtests passed in 25.11s; exit0
+```
+Author159PASS/202subtests, strict/compile/diff were also green. Root import smoke
+loaded its actual control-worktree profile, constructed22 transition_rules;
+an initial diagnostic used wrong attribute transitions and was corrected, not
+counted as a product failure or hidden pass. Skill frontmatter validation passed.
+
+Finite raw fictional fixture: preparation0b46d3b30e5df3261fc039c22f4a952cba08ea6a,
+sealed metadata correction c999d46d2be00ee5d8632df409e656b088f3e330. Six113-line
+initial artifacts, no new permanent test/framework/PRD. Fresh reviewer
+/root/entry02_forward had no inherited answer/history; read committed sources,
+delegated exactly once to /root/entry02_forward/entry02_implementation_owner,
+waited and independently reviewed. Worker used approved low-cost capability in
+its own preallocated worktree. No question about facts available in sources,
+new requirement, validator edit or formal merge occurred.
+
+First84c8f946c55d9f2e504474c1a196c5be6b33e284 had correct hint but weak overlapping
+substring assertions: lower-bound8-to16 mutant survived. Reviewer rejected that
+evidence; SAME owner added exact range relation in
+d7244f46003ad35dbe7fce25924e35c295e08c3a, no new ticket/worker/file. Independent
+upper-bound80-to88 memory-only mutant:1FAIL/2PASS; exact restoration3PASS.
+Worker increment-removal mutant red/restored green. Root loaded the final three
+Python blobs directly from exact candidate Git bytes, not old baseline/cache:
+3PASS. rules.py remained blobec42c3a2bb4f30c2281fae3bc9f2aaa86adcbfed.
+Existing evaluator admitted actual Git-derived TWO MODIFY paths; counterfactual
+PRD-EXTRA.md CREATE returned CREATION_NOT_AUTHORIZED, rules.py MODIFY returned
+MODIFICATION_OUTSIDE_BOUNDARY. These are delivery checks, not Host prewrite tests.
+
+SOURCE_PASS / REVIEW_APPROVED, but LIFECYCLE_CLEANUP_BLOCKED: worker's strict
+checker generated ignored .mypy_cache then violated the no-cleanup instruction.
+Native return preserves two full CreateProcess rejection records, both
+"rejected: blocked by policy": Remove-Item -LiteralPath exact
+.worktrees/entry02-worker/.mypy_cache -Recurse -Force, first with git status,
+then without. Neither succeeded. Root/reviewer stopped further cleanup; no
+alternate deletion, policy change or new exercise. This deviation prevents any
+claim of complete model compliance or lifecycle closure. All three fixture
+worktrees/refs and cache retain Root/named-seat ownership,24h TTL plus review/
+parent-Ticket30 Recovery hold. Evidence source is the named native agent return;
+no independently qualified Host observation is claimed.
+
+No scratch ref was integrated into control/main. Installed0.4.14 cache remains
+untouched; repository repair is not a released plugin update. This bounded
+exercise and path rejection do not qualify arbitrary Host tools, force future
+turns, close30B/43/Recovery or complete checklist01/02/12.
+
 ## WPC01 — approved-package continuation / independent SOURCE PASS — 2026-10-31
 
 Owner's current package-continuation request and existing local batch are the

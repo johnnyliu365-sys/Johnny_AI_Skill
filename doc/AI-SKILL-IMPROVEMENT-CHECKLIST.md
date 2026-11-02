@@ -3,7 +3,7 @@
 | 欄位 | 值 |
 | --- | --- |
 | 文件身分 | `AI-SKILL-IMPROVEMENT-CHECKLIST`；本專案工作追蹤，非新 PRD／SPEC／Gate |
-| Revision／來源 | `133`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
+| Revision／來源 | `134`；沿用既有12項與acf0ffa1／ded322b3批准；Owner `batch-checklist-local-20261019-uncapped` 取消本批人為累計秒數／固定修正次數，舊帳不歸零；首次CVQ順序例外及所有安全／外部效應限制保留 |
 | 工作基準 | `a1cb6c13adbeb52a4117991727dcc3d4af6d2a33`；分支 `codex/skill-improvement-checklist` |
 | 主線 | 先對照、優先 02→04→05→06→07，再處理餘項與整合回放 |
 | 負責 | Root 理解需求、衝突與派工；票級實作者依有效能力 Profile；獨立審閱另席 |
@@ -30,7 +30,18 @@ Router、Reviewer、文件索引與結案規則仍各有唯一正文。`[x]` 只
 | [ ] 11 去重與衝突 | `WPR_TEMPLATE_AND_HISTORY_LOCAL_INTEGRATED / ACTIVATION_OPEN` | 原37／38／40／42保留；Luna44在既有RequirementLineageGate增加純revision-history驗證、重用原test；[獨審](reviews/workflow-governance/44-requirement-revision-compatibility-code-review.md) | 原42之46tests／不同位置WPR突變證據保留；44獨審14tests／30subtests、鏈結與terminal不同門突變紅→綠、Root gate1aa5ed22與兩blob一致；獨立seal確認 | `APPROVED_44 / LOCAL_INTEGRATED / CLEANUP_BLOCKED` | 舊一對一validate維持生效；可信creation issuer／效應前grant讀回／原子consume及真Host尚缺，不用純history方法冒充正式身分遷移；清理政策阻擋 |
 | [ ] 12 回放與獨審 | `EXISTING_CASES_MAPPED / END_TO_END_NOT_VERIFIED` | Root沿既有案例／review；46增加受版控本地命令來源，未新增回放框架；30B／43仍未整合 | 46合法command-plan與拒絕／版本釘選／不同門突變均有獨審；整合後36tests／22subtests。04不重做，既有局部PASS沿用，候選不冒充整合版 | `PARTIAL_ONLY` | 完整01–10正式來源/effect回放仍缺；Owner已採納首次入口順序例外，但未授權Host測試；不是資格或總驗收 |
 
-## 當前工程接續與精確證據（revision133）
+## 當前工程接續與精確證據（revision134）
+
+02／03／11／12新增ENTRY02證據，仍不勾整項：原command不再以「說下一步／
+pre-ticket narration」為預設終點；既有skill／兩正文／兩模板採source-first、
+精簡完整派工及沿用原需求，並尊重不用Goal。政策a1a8c186獨審DOC_PASS，
+兩個policy-pin6175f7ea獨審SOURCE_PASS後經原gate整合；Root186PASS/205subtests。
+真實native有限虛構案例已派工並完成修改／獨審，沒有額外PRD或測試檔；弱range
+斷言先被拒收，同一作者修正後d7244f46三格綠、不同門突變紅→還原綠，實際Git
+越界新增PRD／改validator的反事實輸入由原gate拒收。完整證據見原Review30 ENTRY02。
+另有不可隱藏偏差：worker產生ignored checker cache，兩次清理被政策拒絕；
+已停止嘗試並保留，LIFECYCLE_CLEANUP_BLOCKED。不能聲稱模型全面遵循／正式結案。
+安裝中0.4.14未更新；沒有Goal／hook、Host資格或30B/43解除。Only04 checked。
 
 Owner新增的已授權工作包持續執行規則已在原Router正文、TDD衝突修正與薄入口
 落地；原Runner新增包級方法，獨立受阻A不凍B、依賴C不派、未准入不執行、
