@@ -5,6 +5,7 @@ from typing import Annotated, Literal, Self
 
 from pydantic import (
     BaseModel,
+    BeforeValidator,
     ConfigDict,
     Field,
     StringConstraints,
@@ -31,6 +32,15 @@ _ExecutionState = Literal["NOT_STARTED", "RUNNING"]
 _EstimateKind = Literal["CONSERVATIVE", "P90", "P95"]
 _ReturnState = Literal["EXPECTED", "RECEIVED_UNACKNOWLEDGED"]
 _ReturnPriority = Literal["ALERT", "SUCCESS"]
+
+
+def _require_advisory_only(value: object) -> Literal[True]:
+    if value is not True:
+        raise ValueError("advisory_only must be the boolean true value")
+    return True
+
+
+_AdvisoryOnly = Annotated[Literal[True], BeforeValidator(_require_advisory_only)]
 
 
 class BoundaryDecision(str, Enum):
@@ -146,7 +156,7 @@ class ContextBudgetAssessmentRequest(BaseModel):
     )
 
     schema_version: Literal["1"]
-    advisory_only: Literal[True]
+    advisory_only: _AdvisoryOnly
     ticket_ref: _Reference
     context_ticket_ref: _Reference
     unit_ref: _Reference
@@ -168,6 +178,12 @@ class ContextBudgetAssessmentRequest(BaseModel):
             raise ValueError("return_ref values must be unique")
         if len(set(budget_refs)) != len(budget_refs):
             raise ValueError("dispatch_budget_ref values must be unique")
+        success_seen = False
+        for item in self.pending_returns:
+            if item.priority == "SUCCESS":
+                success_seen = True
+            elif success_seen:
+                raise ValueError("alerts must precede success returns")
         return self
 
 
@@ -180,7 +196,7 @@ class ContextBudgetAssessmentResult(BaseModel):
     )
 
     schema_version: Literal["1"]
-    advisory_only: Literal[True]
+    advisory_only: _AdvisoryOnly
     ticket_ref: _Reference | None
     unit_ref: _Reference | None
     decision: BoundaryDecision
@@ -230,7 +246,7 @@ class ContextBudgetGuard:
     __slots__ = ()
 
     def assess(
-        self, request: ContextBudgetAssessmentRequest
+        self, request: ContextBudgetAssessmentRequest, /
     ) -> ContextBudgetAssessmentResult:
         try:
             raw_request: dict[str, object] = request.model_dump(warnings="none")
@@ -291,6 +307,22 @@ class ContextBudgetGuard:
             if has_alerts
             else validated.pending_returns
         )
+        if not has_alerts:
+            first_unacknowledged = next(
+                (
+                    item
+                    for item in ordered_returns
+                    if item.state == "RECEIVED_UNACKNOWLEDGED"
+                ),
+                None,
+            )
+            if first_unacknowledged is not None:
+                return _advice(
+                    validated,
+                    BoundaryDecision.RETURN_SCHEDULE_REQUIRED,
+                    base_projection,
+                    (first_unacknowledged.return_ref,),
+                )
         projection = base_projection
         selected_refs: list[_Reference] = []
         for item in ordered_returns:

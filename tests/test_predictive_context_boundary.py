@@ -233,6 +233,32 @@ def test_request_rejects_bad_refs_extra_fields_and_primitive_coercion() -> None:
             ContextBudgetAssessmentRequest.model_validate(invalid)
 
 
+def test_advisory_only_rejects_numeric_truthy_values_for_request_and_result() -> None:
+    request = make_request()
+    result = ContextBudgetAssessmentResult(
+        schema_version="1",
+        advisory_only=True,
+        ticket_ref="ticket-current",
+        unit_ref="unit-next",
+        decision=BoundaryDecision.EXECUTE_WITHOUT_COMPACTION,
+        projected_tokens=350,
+        next_return_refs=(),
+    )
+    for model_type, raw in (
+        (ContextBudgetAssessmentRequest, request.model_dump()),
+        (ContextBudgetAssessmentResult, result.model_dump()),
+    ):
+        assert model_type.model_validate(raw).advisory_only is True
+        assert model_type.model_validate_json(json.dumps(raw)).advisory_only is True
+        for numeric_truthy in (1, 1.0):
+            invalid: dict[str, object] = dict(raw)
+            invalid["advisory_only"] = numeric_truthy
+            with pytest.raises(ValidationError):
+                model_type.model_validate(invalid)
+            with pytest.raises(ValidationError):
+                model_type.model_validate_json(json.dumps(invalid))
+
+
 def test_request_rejects_duplicate_return_and_dispatch_budget_refs() -> None:
     first = make_return(return_ref="return-first", dispatch_budget_ref="budget-first")
     duplicate_return = make_return(return_ref="return-first", dispatch_budget_ref="budget-second")
@@ -241,6 +267,21 @@ def test_request_rejects_duplicate_return_and_dispatch_budget_refs() -> None:
     for pending in ((first, duplicate_return), (first, duplicate_budget)):
         with pytest.raises(ValidationError):
             make_request(pending_returns=pending)
+
+
+def test_request_rejects_success_before_alert_and_accepts_alert_first() -> None:
+    alert = make_return(
+        return_ref="return-alert",
+        dispatch_budget_ref="budget-alert",
+        priority="ALERT",
+    )
+    success = make_return(
+        return_ref="return-success",
+        dispatch_budget_ref="budget-success",
+    )
+    with pytest.raises(ValidationError):
+        make_request(pending_returns=(success, alert))
+    assert make_request(pending_returns=(alert, success)).pending_returns == (alert, success)
 
 
 def test_result_constructor_and_json_round_trip_cover_all_decisions() -> None:
@@ -303,6 +344,12 @@ def test_result_rejects_inconsistent_nullability_projection_and_schedule() -> No
 def test_guard_is_constructible_without_state() -> None:
     assert type(ContextBudgetGuard()) is ContextBudgetGuard
     assert ContextBudgetGuard() is not ContextBudgetGuard()
+
+
+def test_guard_assess_accepts_only_positional_request_argument() -> None:
+    with pytest.raises(TypeError):
+        ContextBudgetGuard().assess(request=make_request())
+    assert assess(make_request()).decision is BoundaryDecision.EXECUTE_WITHOUT_COMPACTION
 
 
 def test_safe_projection_includes_observed_usage_dispatch_and_review_reserve() -> None:
@@ -498,7 +545,6 @@ def test_alerts_are_ordered_ahead_of_success_even_when_success_also_fits() -> No
     request = make_request(
         observation=make_observation(used_context_tokens=100, effective_host_capacity_tokens=600),
         pending_returns=(
-            make_return(return_ref="success-first", dispatch_budget_ref="budget-success-first", expected_accepted_tokens=20),
             make_return(
                 return_ref="alert-first",
                 dispatch_budget_ref="budget-alert-first",
@@ -511,6 +557,7 @@ def test_alerts_are_ordered_ahead_of_success_even_when_success_also_fits() -> No
                 expected_accepted_tokens=150,
                 priority="ALERT",
             ),
+            make_return(return_ref="success-first", dispatch_budget_ref="budget-success-first", expected_accepted_tokens=20),
             make_return(return_ref="success-second", dispatch_budget_ref="budget-success-second", expected_accepted_tokens=20),
         ),
     )
@@ -520,7 +567,7 @@ def test_alerts_are_ordered_ahead_of_success_even_when_success_also_fits() -> No
     assert result.next_return_refs == ("alert-first",)
 
 
-def test_received_unacknowledged_content_is_not_counted_twice_or_mutated() -> None:
+def test_unacknowledged_success_is_selected_before_later_returns_even_when_all_fit() -> None:
     request = make_request(
         observation=make_observation(used_context_tokens=200, effective_host_capacity_tokens=500),
         estimate=make_estimate(estimated_tokens=100),
@@ -540,8 +587,10 @@ def test_received_unacknowledged_content_is_not_counted_twice_or_mutated() -> No
     )
     first = assess(request)
     second = assess(request)
-    assert first.decision is BoundaryDecision.EXECUTE_WITHOUT_COMPACTION
-    assert first.projected_tokens == 450
+    assert 350 + request.pending_returns[1].expected_accepted_tokens < 500
+    assert first.decision is BoundaryDecision.RETURN_SCHEDULE_REQUIRED
+    assert first.next_return_refs == ("return-received",)
+    assert first.projected_tokens == 350
     assert first == second
     assert request.pending_returns[0].state == "RECEIVED_UNACKNOWLEDGED"
 
@@ -579,6 +628,30 @@ def test_first_unacknowledged_success_precedes_later_expected_and_is_not_auto_ac
     assert progressed.next_return_refs == ()
 
 
+def test_unacknowledged_success_precedes_earlier_expected_when_window_is_tight() -> None:
+    expected = make_return(
+        return_ref="return-earlier-expected",
+        dispatch_budget_ref="budget-earlier-expected",
+        expected_accepted_tokens=100,
+    )
+    unacknowledged = make_return(
+        return_ref="return-later-unacknowledged",
+        dispatch_budget_ref="budget-later-unacknowledged",
+        state="RECEIVED_UNACKNOWLEDGED",
+        expected_accepted_tokens=100,
+    )
+    request = make_request(
+        observation=make_observation(used_context_tokens=200, effective_host_capacity_tokens=430),
+        estimate=make_estimate(estimated_tokens=100),
+        pending_returns=(expected, unacknowledged),
+    )
+    result = assess(request)
+    assert result.decision is BoundaryDecision.RETURN_SCHEDULE_REQUIRED
+    assert result.projected_tokens == 350
+    assert result.next_return_refs == ("return-later-unacknowledged",)
+    assert request.pending_returns[1].state == "RECEIVED_UNACKNOWLEDGED"
+
+
 def test_alert_selection_keeps_unacknowledged_success_pending() -> None:
     unacknowledged_success = make_return(
         return_ref="return-unacknowledged-success",
@@ -592,11 +665,11 @@ def test_alert_selection_keeps_unacknowledged_success_pending() -> None:
         expected_accepted_tokens=100,
         priority="ALERT",
     )
-    request = make_request(pending_returns=(unacknowledged_success, alert))
+    request = make_request(pending_returns=(alert, unacknowledged_success))
     result = assess(request)
     assert result.decision is BoundaryDecision.RETURN_SCHEDULE_REQUIRED
     assert result.next_return_refs == ("return-alert",)
-    assert request.pending_returns[0].state == "RECEIVED_UNACKNOWLEDGED"
+    assert request.pending_returns[1].state == "RECEIVED_UNACKNOWLEDGED"
 
 
 def test_no_first_expected_return_fit_compacts_only_when_fresh_fit_is_possible() -> None:
