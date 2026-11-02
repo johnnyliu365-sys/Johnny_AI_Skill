@@ -44,6 +44,10 @@ two-layer return contract; no new semantic result format or authority source.
 
 Public surface: BoundaryDecision, ContextCapacityObservation, NextUnitEstimate,
 ExpectedReturnBudget, ContextBudgetAssessmentRequest/Result, ContextBudgetGuard.
+Decision values: EXECUTE_WITHOUT_COMPACTION, CHECKPOINT_COMPACT_REVERIFY,
+FRESH_CONTEXT_REQUIRED, SERIAL_DECOMPOSITION_REQUIRED, DEFER_UNTIL_UNIT_BOUNDARY,
+OBSERVATION_UNAVAILABLE, CONTEXT_EPOCH_MISMATCH, UNIT_ESTIMATE_MISMATCH,
+RETURN_SCHEDULE_REQUIRED, INVALID_REQUEST.
 Models strict/frozen/extra-forbid/revalidate-always; primitive coercion rejected.
 Local opaque refs match ^[a-z][a-z0-9-]{2,127}$. Observation has available:bool,
 used_context_tokens>=0?, effective_host_capacity_tokens>0?, context_epoch?,
