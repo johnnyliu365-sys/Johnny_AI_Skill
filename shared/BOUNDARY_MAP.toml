@@ -124,3 +124,27 @@ owner = "workflow-router-tests"
 responsibility = "Verify bounded package continuation, strict project-ticket-revision binding, freshness, and independent ticket progress."
 kind = "TEST"
 allowed_dependencies = ["workflow_package_continuation"]
+
+[[modules]]
+id = "predictive_context_boundary"
+roots = ["library/local_orchestration/predictive_context_boundary.py"]
+owner = "local-collaboration"
+responsibility = "Advise a work-unit context and accepted-return window from strictly typed observations without performing Host or workflow effects."
+kind = "LIBRARY"
+allowed_dependencies = []
+
+[[modules]]
+id = "predictive_context_cli"
+roots = ["library/local_orchestration/predictive_context_cli.py"]
+owner = "local-collaboration"
+responsibility = "Validate one bounded stdin request and emit one advisory JSON result from the predictive context guard."
+kind = "LIBRARY"
+allowed_dependencies = ["predictive_context_boundary"]
+
+[[modules]]
+id = "test_predictive_context_boundary"
+roots = ["tests/test_predictive_context_boundary.py"]
+owner = "local-collaboration-tests"
+responsibility = "Verify predictive context arithmetic, serial decomposition advice, bounded priority receipt windows and the advisory CLI."
+kind = "TEST"
+allowed_dependencies = ["predictive_context_boundary", "predictive_context_cli"]

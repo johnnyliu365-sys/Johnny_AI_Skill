@@ -11,6 +11,111 @@
 | Profile | Current30G=`HIGH_ASSURANCE`, exact scope below；historical30A=`STANDARD` fixture only；均不授予真實Host/source/effect資格 |
 | Implementation language | Python3.11 strict；current30G checker／constructor順序依下節；原30A命令為歷史證據不重跑 |
 
+## PBC01 — predictive boundary compaction / advisory construction — 2026-11-03
+
+Authority: current Owner directions on predictive unit budgeting, serial tickets,
+two-layer returns and priority, within the existing local batch and original
+PRD/CHG/SPEC/Ticket30. Root derives child t30-pbc01, construction baseline
+36dcbe4de629b44a02ce47aad837099be845db1f; STANDARD / SOURCE_ONLY / NOT_ACTIVATED.
+No new PRD, Router/state/queue/framework, Host calls, hook installation, model API,
+configuration change, source/Grant qualification or permission elevation.
+The os10050 app-server probe is preserved, not retried.30B/43/Recovery unchanged.
+
+Root owns this ticket/registry/review/checklist and pre-registers the three exact
+responsibilities in shared/BOUNDARY_MAP.toml. After independent preparation review,
+bind its committed baseline/ticket blob/map pin before source allocation. Same
+existing author work_package_impl in .worktrees/skill-improvement-30-work-package,
+branch codex/skill-improvement-30-work-package; different reviewer
+authority_install_inventory in its existing -review worktree. Both read the SAME
+reviewed baseline. Direct same-lifetime lane, no fabricated receipt/bridge.
+Use the current approved low-cost capability of that existing author seat; no
+global provider/model literal. Old allocations closed; held fixtures untouched.
+
+Author may CREATE only predictive_context_boundary.py, predictive_context_cli.py
+under library/local_orchestration/ and tests/test_predictive_context_boundary.py.
+Subsequent edits only those newly introduced paths; no pre-existing source MODIFY,
+DELETE or dependency. No source prompts, owner narration or copied ticket prose.
+Guard owns pure typed arithmetic, CLI owns bounded stdin/stdout serialization,
+test owns their behavioral cells. No raw logs/transcripts in the budget contract.
+Reuse Pydantic strict/frozen validation, stdlib and existing pytest; catalog has
+no READY compaction component, so workflow-router-poc is not a near-match import.
+Existing ImplementationReturn and version-pinned review sections remain the
+two-layer return contract; no new semantic result format or authority source.
+
+Public surface: BoundaryDecision, ContextCapacityObservation, NextUnitEstimate,
+ExpectedReturnBudget, ContextBudgetAssessmentRequest/Result, ContextBudgetGuard.
+Models strict/frozen/extra-forbid/revalidate-always; primitive coercion rejected.
+Local opaque refs match ^[a-z][a-z0-9-]{2,127}$. Observation has available:bool,
+used_context_tokens>=0?, effective_host_capacity_tokens>0?, context_epoch?,
+observation_ref?: available requires all four, unavailable forbids all four.
+Estimate has unit_ref, kind CONSERVATIVE/P90/P95, estimated_tokens>0, evidence_ref,
+sample_count>0?: conservative forbids sample count; percentiles require it.
+These are supplied fixture/provenance labels, NOT a calculated percentile or
+verified Host observation. Existing terminal provider usage is not live context.
+Return budget has return_ref, producer_ref, dispatch_budget_ref,
+state EXPECTED/RECEIVED_UNACKNOWLEDGED, expected_accepted_tokens>0,
+priority ALERT/SUCCESS. return_ref and dispatch_budget_ref individually unique;
+producer may repeat. ALERT precedes SUCCESS; stable order within
+each class. No caller priority/budget ref is treated as trusted admission.
+
+Request: schema_version="1", advisory_only=True, ticket_ref, context_ticket_ref,
+unit_ref, phase PRE_UNIT/POST_COMPACTION_REVERIFY, unit_kind SQL/GIT/TEST/OTHER,
+execution_state NOT_STARTED/RUNNING, expected_context_epoch, observation, estimate,
+dispatch_overhead_tokens>=0, review_reserve_tokens>=0, pending_returns tuple.
+Result: schema_version="1", advisory_only=True, same ticket_ref/unit_ref
+(both null only for INVALID_REQUEST, never invented identifiers),
+decision, projected_tokens>=0?, next_return_refs tuple. Guard.assess is stateless.
+CLI: python -B -m library.local_orchestration.predictive_context_cli; one bounded
+UTF-8 JSON stdin object (maximum65536bytes), one JSON stdout result, no file/path/Host arguments.
+Exit0 only EXECUTE_WITHOUT_COMPACTION;3 other valid advice;2 fixed INVALID_REQUEST
+on malformed/schema/extra/oversized input. Always advisory_only=true; no effects.
+
+Precedence: RUNNING defers; changed ticket requests fresh context; wrong estimate
+unit rejects; unavailable observation stays unknown; wrong epoch rejects. Then
+base=used+dispatch overhead+parent-unit estimate+review reserve. Child FULL context
+is assessed separately using the same guard, never added to parent's window.
+Add only EXPECTED return envelopes to their selected receipt window; received but
+unacknowledged content is already counted in observed used context, remains
+pending, and is never added twice or silently acknowledged.
+If fresh dispatch+estimate+review cannot fit, advise SERIAL_DECOMPOSITION_REQUIRED.
+PRE_UNIT overflow advises CHECKPOINT_COMPACT_REVERIFY; POST_COMPACTION_REVERIFY
+overflow advises serial decomposition, never another compact loop. Equality is
+not a fit: used+unit+reserve >= effective capacity requires action. Unit splitting
+means sequential dependent tickets under SAME original requirement/SPEC/AC,
+findings and accounting; guard does not create tickets or reset lineage.
+
+All-success envelopes that fit proceed without compaction. Otherwise advise only
+the maximal feasible ordered prefix as RETURN_SCHEDULE_REQUIRED, not future
+batch promises; re-read actual context before another receipt. Alerts alone take
+priority even when success also fits. An unacknowledged success remains pending
+when a small alert is selected ahead; without alerts, select first unacknowledged
+ref before later expected returns. If no first envelope fits: compact/reverify
+only when it could fit fresh; otherwise serial decomposition. Early decisions
+carry no arithmetic projection. Scheduling has a nonempty next_return_refs;
+all other decisions have none. Never drop a risk to meet a summary budget.
+Actual source-verifying construction, receipt/ack persistence, immediate Host
+injection control and role-specific return budgets remain separate UNVERIFIED
+adapter work; fixture planning is not effect admission or package-global halt.
+
+Cells PBC1-4: safe execute, exact equality, reserve/dispatch inclusion and different
+capacities; PBC5-8: fresh-ticket, unavailable/coercion, wrong unit/epoch, all running
+SQL/Git/test deferred; PBC9-11: fresh/postcompact serial no-loop, percentile shape,
+CLI normal/invalid/extra/bounded-input; PBC12-14: all returns fit, ordered feasible
+prefix/exact-capacity/first-only-fresh cases, unacknowledged no-doublecount/ack
+progress; PBC15-16: alert-only selection incl unacked success and raw transcript/
+unknown/duplicate budget rejection. Same request cannot consume/ack an envelope.
+Constructor/round-trip cells precede dependent behavior in this authorized pure
+build; no unbuilt Host capability is required to build this local component.
+Each behavior gets author reverse mutation; reviewer uses a different door.
+Use affected pytest plus tests/test_boundary_map.py; mypy --strict --cache-dir=nul
+on both source files; compile/import in memory with -B; CLI smoke; diffcheck.
+PYTHONDONTWRITEBYTECODE=1 and pytest -p no:cacheprovider; no default checker cache,
+generated screenshot/report or new test helper. Expected growth core250-350,
+CLI40-70,test300-450 lines;500 effective triggers responsibility review, not
+compression/splintering. Resources ownerRoot/named seats,24h TTL plus review hold;
+only owned outputs through existing lifecycle, no denied cleanup retry. Uncapped
+batch accounting remains; per-command deadlines and independent review preserved.
+
 ## ENTRY02 — source-first action, no Goal / bounded native exercise — 2026-11-02
 
 Same PRD/CHG/SPEC/Ticket30; Owner requests actual repair and supplies206/310 as
@@ -191,13 +296,17 @@ fixtures with teardown; worktree/ref and needed evidence retained through review
 then existing lifecycle policy only. No denied cleanup retry. Historical resource
 accounting stays; positive single-command deadlines/resource bounds remain.
 
-The former native construction boundary below is historical. WPC01's eight-path
-build boundary is preserved in60c5a6cf, not reusable authority. The only active
-implementation boundary now belongs to ENTRY02's two-path pin synchronization:
+The former native/WPC01/ENTRY02 boundaries are historical; their reviewed commits
+are retained, not reusable authority. Active boundary is PBC01's three NEW paths;
+modify entries permit same-path edits after creation, not pre-existing source work:
 
 ```johnny-boundary
-modify = library/workflow_router/profile.py
-modify = tests/test_workflow_router.py
+modify = library/local_orchestration/predictive_context_boundary.py
+modify = library/local_orchestration/predictive_context_cli.py
+modify = tests/test_predictive_context_boundary.py
+create = library/local_orchestration/predictive_context_boundary.py
+create = library/local_orchestration/predictive_context_cli.py
+create = tests/test_predictive_context_boundary.py
 forbid = AGENTS.md
 forbid = CONTEXT.md
 forbid = Workflow.md
@@ -206,7 +315,15 @@ forbid = skills/
 forbid = template/
 forbid = modules/
 forbid = doc/
-forbid = library/local_orchestration/
+forbid = library/workflow_router/
+forbid = shared/
+```
+
+```johnny-module-boundary
+schema_revision = 1
+map_sha256 = "3dc11014fd919589264550d2eb7bb9902a317825871286b81a612892489240af"
+baseline = "4ed5bc69e9001c43cc8490dcf48f1168c3edcac7"
+selected_modules = ["predictive_context_boundary", "predictive_context_cli", "test_predictive_context_boundary"]
 ```
 
 Grant condition: independent policy/ticket review PASS and exact baseline/blob
