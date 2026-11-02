@@ -11,7 +11,15 @@
 | Profile | Current30G=`HIGH_ASSURANCE`, exact scope below；historical30A=`STANDARD` fixture only；均不授予真實Host/source/effect資格 |
 | Implementation language | Python3.11 strict；current30G checker／constructor順序依下節；原30A命令為歷史證據不重跑 |
 
-## PBC01 — predictive boundary compaction / advisory construction — 2026-11-03
+## PBC01 — predictive boundary compaction / advisory local integration — 2026-11-03
+
+Status: SOURCE_PASS / LOCAL_INTEGRATED / NOT_ACTIVATED. Original author
+work_package_impl corrected35b6d11d to exactf0ba14b1212c7b83d5ddc4fe221141a5362b7152;
+different-seat authority_install_inventory independently SOURCE_PASS. Original
+document/module boundary gate integrated exactly three CREATE paths. Root91PASS,
+strict2, actual CLI and candidate-source readback; evidence/mutations/structure
+review in original Review30 PBC01. No Host, persistent queue, trusted return-source
+adapter or actual compaction qualification;30B/43/Recovery/checklist remain open.
 
 Authority: current Owner directions on predictive unit budgeting, serial tickets,
 two-layer returns and priority, within the existing local batch and original

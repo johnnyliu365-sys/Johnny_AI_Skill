@@ -1,5 +1,67 @@
 # Ticket 30 source-contract decision review — 2026-10-18
 
+## PBC01 — predictive boundary / two-layer return budgeting — 2026-11-03
+
+Original PRD/CHG/SPEC/Ticket30 and local batch; no new requirement or Router.
+Root preparation55b15c61 and exact enum correctioncabc8de1 were DOC_PASS by
+authority_install_inventory. Final preparation ticketblob049b0bd764485c0bc12b6c12fa4d771b4946b8be,
+LF99428eb86872db84e4a014310f602de10fa57ef420b3ee51a50d4274de8eff4b.
+Root pre-registered the three responsibilities; the author could not widen its map.
+work_package_impl created exactly the two source modules and one focused test.
+
+First candidate35b6d11d3bb78952b5a9b6a39a7ed26423983e3c was NOT accepted:
+numeric1 passed Literal[True], and no-alert scheduling could skip unacknowledged
+returns. Root also checked priority-order validation and positional-only signature.
+Four baseline-red regressions preceded the additive same-owner correction;
+the reversed EXPECTED-before-UNACKNOWLEDGED edge got its own red/restored-green.
+Finalf0ba14b1212c7b83d5ddc4fe221141a5362b7152 received different-seat SOURCE_PASS.
+Reviewer verified request/result/CLI numeric1/1.0 rejection, alert-first positives,
+unsorted-priority rejection, both unacknowledged-order cases and assess(request,/).
+Reviewer independently reversed the no-alert prioritization guard: tight-window
+regression red, exact restoration green. Its earlier result-nullability mutation
+also went red/restored green; review worktree clean. Test setup uses shared
+builders; constructor/arithmetic/scheduling/CLI groups are cohesive. Exceeding500
+effective lines triggered this structural review, not arbitrary compression/split.
+
+Author evidence:16 original mutations plus4 correction mutations and1 reverse-order
+edge, each red/restored green with source hashes. Raw outputs remain in the owned,
+ignored author-worktree tests/.johnny-runtime/pbc01-evidence/implementation.json,
+SHA256753742a36d0a8314e6540724afb744f5aabdd14267fd906cd122ef592e74c91d.
+This is diagnostic evidence, not a Host observation or independent approval.
+
+Original integration-side ticket and Git-derived THREE CREATE paths passed
+admit_document_mutation: INTEGRATED exactf0ba14b1. Root journal under owned
+tests/.johnny-runtime/pbc01-integration;24h TTL plus review/Recovery hold, no cleanup.
+Root independently ran the integrated candidate:
+```text
+python -B -m pytest tests/test_predictive_context_boundary.py tests/test_boundary_map.py -q -p no:cacheprovider
+91 passed in 1.15s; exit0
+python -B -m mypy --strict --cache-dir=nul library/local_orchestration/predictive_context_boundary.py library/local_orchestration/predictive_context_cli.py
+Success: no issues found in 2 source files; exit0
+```
+PYTHONDONTWRITEBYTECODE=1; in-memory compile/import checked actual module paths.
+An initial raw-byte assertion exposed ordinary Git LF/checkout CRLF differences;
+it was not counted as a pass. LF-normalized checkout bytes then matched exact
+candidate blobs391be830bc7f44bcd051ef5fbecdffdc8409d033 and
+1b7fbebdb16606731d30a63cc1df712b617d85c6. No source change or retry of denied effect.
+
+Six actual subprocess CLI cases:160000/200000 EXECUTE exit0; equality200000
+COMPACT exit3; same post-compact SERIAL exit3; feasible return prefix180000
+selects only return-first; alert window161000 selects only return-alert;
+unavailable observation stays unknown. All outputs advisory_only=true.
+No child full transcript is in the contract; parent budgets only return envelopes,
+dispatch/unit/review space. Received content is counted once, never silently acked.
+
+SOURCE_PASS / LOCAL_INTEGRATED / NOT_ACTIVATED. This slice supplies pure planning
+and bounded JSON CLI, not a durable queue, verified historical estimator, trusted
+result producer, automatic compact command, sequential-ticket creator or Hook.
+Existing ImplementationReturn/version-pinned review refs remain the two-layer
+contract. Actual source/exit/SHA validation needs its trusted construction adapter;
+caller JSON is not authority. Host os10050 observation remains unresolved and was
+not retried. No actual compaction completion, receipt scheduling or Host/CVQ
+qualification is claimed.30B/43/Recovery and checklist open items stay unchanged;
+no push, release, deployment, installed-cache change or native Goal activation.
+
 ## ENTRY02 — executed source-first repair, finite native exercise — 2026-11-02
 
 Same batch/PRD/CHG/Ticket30; supplied product tickets are examples only. Root
