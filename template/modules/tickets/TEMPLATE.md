@@ -63,6 +63,10 @@ selected_modules = ["<module-id>"]
 
 ## 使用者拍板與可觀察結果
 
+先讀相關核准來源、現行程式／驗證與測試，留下版本及精確位置；可由來源查明的現況不交回 owner 重答。
+只列本票的完整契約與必要查核矩陣；歷史／協調敘事留在原紀錄。盤點逐列指定證據欄與「系統無此概念」處置。
+修復既有契約沿用原 PRD／SPEC／票；只有實際改變核准行為才走變更流程，不因換票新增腳本或重開需求。
+
 - 核准 Expected（使用者可觀察結果）：`<observable result for the named input, bound to the approved source above>`
 - 正常／失敗／邊界驗收：`<observable acceptance for each case>`
 - 停止條件：`<if implementation requires a new or unapproved business decision, stop and return CHANGE_DETECTED → REQUIREMENT_CHANGED; do not invent Expected>`

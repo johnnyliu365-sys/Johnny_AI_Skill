@@ -15,7 +15,12 @@ target project's runtime, CI, hook, import, submodule or symlink dependency.
 3. Read exactly the reference named by that row, plus the minimum committed target artifacts it
    requires. Do not load unrelated references, the full library or chat history.
 4. Execute one legal action, emit its typed completion event and return to the Router. Do not
-   select the next stage locally.
+   select the next stage locally or end an approved package merely by naming its next action.
+
+For an existing feature, apply the discovery reference's source-before-question
+rule. Use the specification reference's compact complete contract; reuse existing
+requirements, tickets and test tools instead of creating planning artifacts for
+every repair. Source reading is not authority to change product behavior.
 
 Default delivery maturity is `POC` unless an approved target artifact proves otherwise.
 
@@ -101,6 +106,8 @@ For an approved work package, apply the
 [package continuation rule](references/router-control.md#approved-work-package-continuation)
 after each status change. A single ticket's return or wait does not finish the
 package; the reviewer selects and re-admits independent work through the Router.
+This is same-turn work, not implicit consent to enable a Goal, Stop hook,
+heartbeat or background wake-up. Respect a user's refusal of those mechanisms.
 
 ### Automation readiness — check before narrating any automatic effect
 

@@ -22,6 +22,17 @@ marks the old SPEC `SUPERSEDED`.
 
 ## Ticket
 
+Keep the smallest complete applicable contract: exact source/baseline, observable
+input/output, precise allowed changes and preserved behavior, named acceptance,
+verification and return. Reference existing authority instead of copying history,
+owner prompts, coordination chatter or another ticket's full narrative.
+For an inventory, enumerate every required row and evidence column, with an
+explicit missing-concept disposition; do not delegate the coverage matrix to the
+implementer. A read-only inventory does not need invented runtime/type/effect work.
+For a repair, search existing tests/harness first; a new ticket is not a reason
+to create a new script, change approved expectations or reopen settled decisions.
+These are document-shaping rules, not exemptions from applicable admission/P0.
+
 Use `ticket-decomposition.md` for splitting and low-model admission. This section owns the
 canonical ticket schema; do not duplicate its fields in prompts or decomposition records.
 

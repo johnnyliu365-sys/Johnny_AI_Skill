@@ -11,6 +11,63 @@
 | Profile | Current30G=`HIGH_ASSURANCE`, exact scope below；historical30A=`STANDARD` fixture only；均不授予真實Host/source/effect資格 |
 | Implementation language | Python3.11 strict；current30G checker／constructor順序依下節；原30A命令為歷史證據不重跑 |
 
+## ENTRY02 — source-first action, no Goal / bounded native exercise — 2026-11-02
+
+Same PRD/CHG/SPEC/Ticket30; Owner requests actual repair and supplies206/310 as
+examples only, not authority to touch their product. Native Goal was explicitly
+revoked; get_goal readback is null. No Goal, Stop hook, heartbeat, service, Host
+config, external clone, paid API, push or release. Old30B/43/Recovery holds stay.
+
+Root derives batch child `t30-entry02`, baselineaeefa4410bb846ffe01d5cd1c5aeaa9fad041db3.
+Root MODIFY only commands/johnny-project-takeover.md, takeover SKILL.md,
+discovery-change.md, specification-ticketing.md and the two existing ticket
+templates, plus original ticket/registry/review/checklist records. The defect is
+the command's "say what it is / pre-ticket narration" default, not absent PRD.
+Read scoped approved/current sources before questions; execute already-authorized
+control preparation, then exact admitted owner delegation; no reviewer fallback.
+Keep exact source/input/output/allowlist/acceptance and explicit missing concepts,
+reuse original requirement/test tools, and do not copy ticket history or project
+paths/model names into global policy. Actual contract changes keep their gates.
+
+After independent policy review, original implementation owner work_package_impl
+may MODIFY ONLY library/workflow_router/profile.py and
+tests/test_workflow_router.py to synchronize the two changed canonical LF policy
+pins. CREATE/DELETE0. Rebind its own existing repository-contained worktree and
+branch to the exact resulting docs commit/ticket blob before work. Reviewer is
+authority_install_inventory. No new public types or product behavior; ordinary
+profile construction, existing Router/template regression and diffcheck apply.
+
+Primary behavior check is a finite native forward exercise with fictional raw
+requirements/code/tests and a fresh evaluator, not a wording-count test. Isolated
+fixture commits/refs must stay in repository-contained owned worktrees, never
+formal integration sources. No arbitrary Temp repository or external clone.
+Freeze exact fixture paths/roles/baseline before creating them; record one finite
+request and actual reads, changes, test results and returned candidate. Evaluate
+source-first/no unnecessary question/no new PRD or speculative changes, preserve
+existing validation, reviewer-only delegation and real guarded return. Do not
+give the evaluator the intended answer. An observed pass is scoped evidence, not
+proof of universal model compliance or cross-turn continuation without a Host.
+Retain P0 and concrete stop conditions. Owner/TTL/teardown are explicit; preserve
+review evidence and never retry earlier denied cleanup. Same batch history stays.
+
+Finite fixture allocation `t30-entry02-fixture`: after pin-source review/integration,
+work_package_impl prepares only six synthetic files AGENTS.md, approved.md,
+ticket.md, view.py, rules.py and test_view.py under
+tests/.johnny-runtime/entry02-fixture/ in `.worktrees/entry02-fixture`,
+branch codex/entry02-fixture. Commit ONLY those exact files to that isolated
+scratch ref; never merge this ref into control/main. Use a generic numeric input
+and existing validation plus an incomplete text hint; no supplied product paths,
+IDs, prompts or external dependencies. Fresh reviewer `/root/entry02_forward`
+gets raw artifacts and the realistic request, not intended answers, in
+`.worktrees/entry02-forward`; it may delegate exactly one named worker in
+`.worktrees/entry02-worker`, both from the sealed fixture commit. Worker MODIFY
+ONLY fixture view.py/test_view.py, CREATE/DELETE0, no other source/project changes.
+Reviewer receives/independently checks actual diff, source readback and tests;
+no Goal, recurring loop or background wake. At most one finite forward exercise;
+repair only a discriminated failure, not unchanged replay. Resources ownedRoot/
+named seats, TTL24h plus review hold; seal minimal raw evidence before exact
+safe teardown. Unknown ownership or cleanup refusal preserves state, no retry.
+
 ## WPC01 — approved-package continuation / local construction — 2026-10-31
 
 Local status: SOURCE_PASS / LOCAL_INTEGRATED / CHILD_BUILD_GRANT_CLOSED.
@@ -118,18 +175,13 @@ fixtures with teardown; worktree/ref and needed evidence retained through review
 then existing lifecycle policy only. No denied cleanup retry. Historical resource
 accounting stays; positive single-command deadlines/resource bounds remain.
 
-The former native construction boundary below is historical text, not this
-allocation. The only active implementation boundary for WPC01 is:
+The former native construction boundary below is historical. WPC01's eight-path
+build boundary is preserved in60c5a6cf, not reusable authority. The only active
+implementation boundary now belongs to ENTRY02's two-path pin synchronization:
 
 ```johnny-boundary
-modify = library/workflow_router/private_router.py
-modify = library/workflow_router/__init__.py
 modify = library/workflow_router/profile.py
 modify = tests/test_workflow_router.py
-modify = shared/BOUNDARY_MAP.toml
-modify = tests/test_boundary_map.py
-create = library/workflow_router/package_continuation.py
-create = tests/test_work_package_continuation.py
 forbid = AGENTS.md
 forbid = CONTEXT.md
 forbid = Workflow.md

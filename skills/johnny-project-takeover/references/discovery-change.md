@@ -116,6 +116,14 @@ only in this reference is a rank the running Agent never reads.
 
 ## Grill
 
+Before asking about an existing feature, read the relevant approved requirement,
+current implementation/validation and existing tests at the scoped baseline.
+Report which source spans establish the current rule; do not ask the owner to
+rediscover a readable fact or reinterpret a screenshot as a new business rule.
+If sources conflict or cannot resolve a necessary decision, identify the exact
+conflict, already-checked sources, affected behavior and smallest remaining choice.
+Do not reread the whole repository or freeze unrelated admitted work.
+
 Before a new feature, cross-module change, requirement redefinition or formal UI change,
 read only the scoped requirements, approved artifacts, code, tests, Context and change history.
 Close the following questions:
@@ -135,6 +143,12 @@ receive an ADR. Without owner authorization, report a draft or gap and do not cr
 artifact.
 
 ## Requirement change
+
+First compare the requested result with the approved contract. Restoring that
+contract, fixing a defect or adding its missing test reuses the existing PRD/SPEC
+and ticket lineage; it is not automatically a new requirement or amendment.
+If the requested result actually changes an approved observable rule, apply the
+change route below. Labels such as "cosmetic" do not override a pinned contract.
 
 When approved requirements, formal UI, data contracts, permissions, cache, Provider or
 business rules change:
