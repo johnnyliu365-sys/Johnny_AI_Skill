@@ -307,8 +307,8 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "discovery-change",
-        "rev-973a99e6b2ce604f",
-        "sha256_973a99e6b2ce604f31560f8e193440b3f18baa8845e97b8363d144e95feb85ef",
+        "rev-4247b0012cac2149",
+        "sha256_4247b0012cac2149ee03eb47468ca19450ba9313aafa6b1162b525595d0c9764",
         PurePosixPath("skills/johnny-project-takeover/references/discovery-change.md"),
     ),
     _ExpectedPolicy(
@@ -319,8 +319,8 @@ _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     ),
     _ExpectedPolicy(
         "specification-ticketing",
-        "rev-2d33a7aab84ca891",
-        "sha256_2d33a7aab84ca891daf84e694bd9710775974ed1c23016f09296aab48114ea87",
+        "rev-2534a469767a2a27",
+        "sha256_2534a469767a2a27921f00e4ea7152ea9a316dbb2824ca57d5ff309151870120",
         PurePosixPath("skills/johnny-project-takeover/references/specification-ticketing.md"),
     ),
     _ExpectedPolicy(

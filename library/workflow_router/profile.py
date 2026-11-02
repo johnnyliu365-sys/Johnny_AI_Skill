@@ -227,8 +227,8 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="discovery-change",
-        source_revision="rev-973a99e6b2ce604f",
-        content_digest="sha256_973a99e6b2ce604f31560f8e193440b3f18baa8845e97b8363d144e95feb85ef",
+        source_revision="rev-4247b0012cac2149",
+        content_digest="sha256_4247b0012cac2149ee03eb47468ca19450ba9313aafa6b1162b525595d0c9764",
     ),
     SkillReference(
         reference_id="context-routing",
@@ -237,8 +237,8 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="specification-ticketing",
-        source_revision="rev-2d33a7aab84ca891",
-        content_digest="sha256_2d33a7aab84ca891daf84e694bd9710775974ed1c23016f09296aab48114ea87",
+        source_revision="rev-2534a469767a2a27",
+        content_digest="sha256_2534a469767a2a27921f00e4ea7152ea9a316dbb2824ca57d5ff309151870120",
     ),
     SkillReference(
         reference_id="implementation-authority",
