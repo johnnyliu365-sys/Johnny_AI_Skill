@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CORRECTION_DISPATCHED (correction 1 of closure revision04 after its initial review returned CHANGES_REQUESTED on NF-12, NF-13, NF-14; one correction review remains); 48-P1–P10 revision04; c7 `4861c208` |
+| State / Closure | CONVERGENCE_REPLANNED / CORRECTION_DISPATCHED; 48-P1–P11 revision05 after the revision04 correction review returned CHANGES_REQUESTED with CONVERGENCE_REVIEW_REQUIRED on evidence defects only (NF-14 residue, NF-15); c9 `280782e0` |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 R4-2 (dispatch lint, evidence gate precursor, index pins) |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47; candidate commits c1 `1d9f2a96`, c2 `c41cc29d` on branch `cp/wave1-ticket48-candidate` (base `f4d43817`); the correction is an additive commit c3 on that branch; the control plane cherry-picks c1–c3 onto the branch tip at integration (no rebase by the seat) |
 | Grant / roles | Control plane dispatches; `implementation-standard` seat in a disposable clone; independent review by a `ticket-review` seat |
@@ -67,7 +67,8 @@ path, id or name from any target project.
 | P7 | options cannot void a rule | `--chat-words` with an empty or blank list → exit 3 with usage; `--sealed-state` empty or blank → exit 3; the sealed word matches the whole stripped state cell, never a substring; one test per case |
 | P8 | generic source cases restored | tests cover: pin-shape negatives (bare 40- and 64-hex, `sha256=` form, only one side present); the three-row `MALFORMED_PIN` orphan canary; a `../leaf` parent-relative leaf; `SEALED_PIN_MISSING`; every word of the default R3 list (subTest over the list itself, not a copy); R5 on line 1 |
 | P10 | git failures: fault versus red | In `index_pins.py` a git invocation that fails because the environment cannot serve the query is a tool fault exit 2 whose message contains git's own stderr text: `git log`, `git ls-files` or the shallow-boundary query failing; `git show <rev>:<leaf>` failing although `<rev>` resolves to a commit whose tree lists `<leaf>` (object store or promisor fault). A failure that stems from the index row or the work tree is a contract red exit 1: a sealed row whose recorded revision is not a commit of this repository, or whose tree does not list the leaf (`SEALED_PIN_INVALID`); an open row whose leaf is tracked but absent from the tree of its last commit (`SKIP_NO_BLOB`). The script therefore checks the revision and the tree listing (`git cat-file -e <rev>^{commit}`, `git ls-tree <rev> -- <leaf>`) before reading the blob. The shallow-boundary check issues one git query, not two. One test per fault case and one per red case, each asserting the exit and, for faults, git's stderr text |
-| P9 | receipt cells | every cell carries `cell`, `candidate`, `tool_digest` (one `path=sha256` line per script at the candidate), `capture` (path relative to the receipt's directory), `exit`; captures written with LF; the control plane commits receipt and captures under `doc/reviews/workflow-governance/evidence/48/` at integration |
+| P9 | receipt cells | `python -I -X utf8 doc/reviews/workflow-governance/evidence/48/receipt_check.py <RETURN.md> <repo>` exits 0: every run cell carries `cell`, `candidate`, `tool_digest` (one `path=sha256` line per gate script, equal to the sha256 of `git show <candidate>:<path>`), `capture`, `exit`; every capture holds no CR byte and equals its raw block byte for byte; exactly one F1 cell; statement sections carry `cell: STATEMENT`. The seat runs the check before it returns and records its output as a cell; the control plane commits receipt and captures under `doc/reviews/workflow-governance/evidence/48/` at integration |
+| P11 | the missing-object rule is exact | in a shallow repository a sealed row whose recorded revision names an object that is present but is not a commit (for example a blob) is `SEALED_PIN_INVALID` exit 1, not `SHALLOW_HISTORY`; a failure of the object-presence query itself is a tool fault exit 2 whose message carries git's stderr; one test each |
 | M1 | remove rule R3 from dispatch_lint | P1 red |
 | M2 | make receipt_fence_check accept a fence without capture | P2 red |
 | M3 | make index_pins ignore the digest column | P3 red |
@@ -89,6 +90,12 @@ path, id or name from any target project.
 | M19 | index_pins reports a sealed row whose revision is not a commit, or whose tree lacks the leaf, as exit 2 instead of `SEALED_PIN_INVALID` exit 1 | P3 red |
 | M20 | index_pins reports an open row whose leaf is absent from the tree of its last commit as exit 2 instead of `SKIP_NO_BLOB` exit 1 | P3 red |
 | M21 | index_pins turns a failing shallow-boundary query into an empty set | P3 red |
+| M22 | index_pins drops the missing-revision shallow check for sealed rows | P3 red |
+| M23 | index_pins reads the shallow boundary from `--git-dir` instead of `--git-common-dir` | P3 red |
+| M24 | index_pins applies the missing-revision shallow rule to open rows | P3 red |
+| M25 | index_pins drops the object-presence check, so any non-commit sealed revision in a shallow repository becomes `SHALLOW_HISTORY` | P3 red |
+| M26 | index_pins treats a present non-commit object as missing | P3 red |
+| M27 | index_pins swallows a failing object-presence query as "missing" | P3 red |
 
 ## Re-plan to closure revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
 
@@ -149,3 +156,13 @@ Review record section "Revision04 initial review". The P10 text already decides 
 | NF-14 | EVIDENCE_DEFECT | the c8 receipt lists the three scripts in every `tool_digest`, writes every capture with LF and has one F1 cell |
 
 Disposition correction (control plane, before the correction review): the first wording of the NF-12 row said "a sealed or open row". Commit c8 implemented it literally and turned a stale open row whose recorded revision predates a shallow boundary, while its leaf is newer, from a repairable STALE (exit 1) into exit 2. P10 makes that a red: the environment can serve the drift decision for an open row. The row now names sealed rows only; commit c9 restores the open-row behaviour and adds its test. c8 and c9 together are correction 1.
+
+## Re-plan to closure revision05 (after the revision04 correction review `CHANGES_REQUESTED`, `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision04 correction review". No implementation defect is open; the two evidence defects are the receipt format (NF-14 residue: CRLF captures and blocks one trailing LF short) and an unpinned half of the missing-revision rule (NF-15). The receipt defect has recurred in four corrections, so P9 now names a committed checker (`evidence/48/receipt_check.py`) that the seat runs before returning; the checker reproduces the reviewer's six failing cells on the c8 and c9 receipts. P11 and M25–M27 pin the object-presence rule; M22–M24 enter the frozen table. Frozen here before the correction commit c10.
+
+| Finding | Class | Disposition in revision05 |
+| --- | --- | --- |
+| NF-14 residue | EVIDENCE_DEFECT | P9 checker; the c10 receipt passes it |
+| NF-15 | EVIDENCE_DEFECT | P11; tests for the present-non-commit sealed pin in a shallow clone and for a failing object-presence query; M25–M27 |
+| dispatch wording | note | the repairable open-row case needs a clone deeper than one commit (`--depth 3`); a depth-1 clone holds only the boundary |

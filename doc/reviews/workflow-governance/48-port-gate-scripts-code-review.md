@@ -370,3 +370,62 @@ Not verified: the seat's own mutation runs; whether `rev-parse --git-dir` can fa
 Raw logs: retained by the reviewer seat on its host; not committed.
 
 Not verified: the seat's own mutation runs; blobless and promisor partial clones at c7; POSIX/Linux behaviour; a real console under cp950; unreadable-permission directories; why the two workflow-router base names passed in this F1 run. Another seat's pytest (a different checkout) ran during the per-file mutation runs; none during F1.
+
+## Revision04 correction review
+
+**Verdict: `CHANGES_REQUESTED`, `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | c9 `280782e0d916221f998ec61fdd04fab4f791db0a` (correction 1 = c8 `64128301` + c9; chain to base `f4d43817` verified) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; LF review clone of the seat's clone |
+| Summary | The code defects are fixed: NF-12 and NF-13 are closed, every probe and all 24 ticket and dispatch mutations behave as specified, F1 has no new red. Two evidence defects remain (NF-14 partly closed, new NF-15). This is the one correction review §5 allows for closure revision04, so the ticket returns to the control plane. No implementation defect is open. |
+
+### Findings status
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| NF-12 | CLOSED | S0 full repository, sealed row pinned to the first commit: check 0, write 0. S1 its `--depth 1` clone: check 2 and write 2 with `SHALLOW_HISTORY: the recorded revision <sha> of leaf.md is missing…`, index unchanged; the same in a `--depth 3` clone. A missing revision in a complete repository gives `SEALED_PIN_INVALID` exit 1 on check and write. |
+| NF-13 | CLOSED | S4 main work tree of a `--depth 1` clone, stale open row older than the boundary: 2/2, unchanged. S5 linked worktree at `<clone>/.worktrees/t48`: 2/2, unchanged; S5b sealed row in the linked worktree 2/2; S5c from a subdirectory without `--root`: 2. `GIT_TRACE` shows one `git rev-parse --is-shallow-repository --git-common-dir`. Shallow reported with no file in the common directory: 2/2 with a tool-fault message, stdout empty. |
+| NF-14 | PARTLY CLOSED; residue open (`EVIDENCE_DEFECT`, P9) | fixed: both receipts list the three scripts in every `tool_digest`, each equal to sha256 of `git show <candidate>:<path>`; exactly one F1 cell each; both RETURN.md 0 CR. Still broken: the c8 captures P1, P2, P3, P5 contain CR (2, 2, 2, 18 bytes) while the c8 receipt states every capture has 0 CR bytes; the raw blocks of c8 N12-N13 and c9 N12b are one trailing LF shorter than their captures. |
+| Disposition correction | LEGITIMATE | P10 and the observable behaviour already decide the open-row case: an open row's drift decision uses the recorded revision string and digest and the leaf's current revision, which the shallow clone holds, so it is STALE (exit 1) and `--write` repairs it. The note changes no closure item; c9 is additive and made before the correction review, so c8 plus c9 count as one correction. Reproduced: depth 3, recorded revision before the boundary, leaf's current revision present: check 1 STALE, write 0 `rewrote=1`, check after write 0; depth 1 with the leaf's current revision = boundary: 2/2. Note: the c9 dispatch asked for the repairable open-row test "in a real --depth 1 clone", which cannot exist (in a depth-1 clone every leaf's current revision is the boundary); the seat's depth-3 test is the only working shape: a dispatch wording slip, not a defect. |
+
+### Cells
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / P2 / P3 / P5 | PASS | 24 passed; 48 passed; 74 passed, 99 subtests; P5 only the pinned-sha base name |
+| P4 | PASS | the 8-term dispatch denylist: zero hits; sanity grep 1 hit in the dispatch file |
+| P6 | PASS | one invocation per (script, code) pair on the c9 blobs, all as specified |
+| P7 | PASS | empty or blank options exit 3; substring states STALE; whole-cell case-insensitive match is sealed |
+| P8 | PASS | no P8 case removed; M4–M7, M9, M10 red |
+| P9 | FAIL in part | NF-14 residue |
+| P10 | PASS (behaviour) | J1, J2, J5 exit 1; J3 exit 1 SKIP_NO_BLOB; J4 0; broken repositories exit 2 with git's stderr; lost commit in a non-shallow repository 1 (accepted); shallow cases as above; a sealed row pinning an existing blob object in a shallow clone exits 1 (correct but unpinned: NF-15); cp950 B7–B9 exit 1 escaped; `--root` absent or a file 2 |
+| M1–M21, M22–M24 | PASS | all red, plus M18a–h; single-occurrence edits restored byte for byte |
+| Counter-mutations | 22 red, 4 survive | survive R18 (drop `object_missing`: any non-commit sealed revision in a shallow repository becomes 2), R24 (`object_missing` treats a present non-commit object as missing), R25 (`object_missing` batch-check failure swallowed as "missing", losing git's stderr) and R28 (harmless equivalent); R18, R24, R25 are NF-15 |
+| F1 | PASS | 8 failed, 2066 passed, 31 skipped; every failure among the 12 base names; zero new red |
+| Boundary | PASS | 7 create paths; c8 and c9 touch only `index_pins.py`, the scripts README and `tests/test_gate_index_pins.py`; the other two scripts unchanged since c4; stdlib only; `mypy --strict --python-version 3.11` no issues; no `Any`, `type: ignore` or `cast`; docstring and README state the sealed-row rule and the common-dir read; c8 and c9 author and committer are the repository identity |
+| Receipt integrity | FAIL in part | NF-14 residue; the reviewer's checker exits 1 on 6 of 13 cells |
+| Changed assertions | PASS | relative to c7 purely additive; inside c8..c9 the c8 open-row exit-2 test is replaced by the repairable-open-row test and the leaf-beyond-boundary test, as the c9 receipt states |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| NF-15 | `EVIDENCE_DEFECT` (P10 and the NF-12 disposition: missing from the object store and shallow → 2; a present non-commit revision stays a red; faults carry git's stderr) | Low | `index_pins.py:192-206` (`object_missing`, `require_available`); `tests/test_gate_index_pins.py:490-686` (`ShallowRevisionTests`) | c9 behaves correctly (a sealed row pinning an existing blob object in a shallow clone exits 1), but no test pins the `object_missing` half of the rule: dropping it (R18) or widening it to "not a commit" (R24) turns that red into a SHALLOW_HISTORY fault, against R4-2, with every test green. Its batch-check failure path is untested too: swallowing it (R25) turns an object-store fault into SHALLOW_HISTORY without git's stderr. | mutation harness R18, R24, R25 exit 0 (74 passed); probe in a `--depth 1` clone: c9 1, the R18 copy 2 |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1–2 | LF review clone at `280782e0`; `git ls-files --eol`; chain and identity; diffs c7..c8, c8..c9; name-status from base; quiet diff of the two unchanged scripts | 0 |
+| 3–5 | P1, P2, P3, P5; P4 grep; mypy and grep for `Any`/`type: ignore`/`cast` | 0/0/0/1; 1; 0 and 1 |
+| 6–8 | P6/P7 probes; shallow probes (S0, S1, complete-repository missing revision, D1–D5, S4, S5, S5b, S5c, `GIT_TRACE`, shallow file absent); judge, broken and cp950 probes | 0, per-case exits as in the cells |
+| 9 | receipt check on the c8 and c9 receipts | 1 (NF-14 residue) |
+| 10–11 | mutation harness (M1–M24, M18a–h, R1–R6, R9–R11, R16–R28); blob-object sealed pin in a shallow clone, c9 vs the R18 copy | 1 for every M and 22 R, 0 for R18, R24, R25, R28; 1 / 2 |
+| 12 | process check, then F1 | 1 (8 failed, all base names) |
+| 13 | `git status --porcelain` in the review clone, the seat clone and the control-plane checkout | 0 lines each |
+
+Raw logs: retained by the reviewer seat on its host; not committed.
+
+Not verified: the seat's own mutation and probe runs (captures read only); blobless or promisor partial clones; POSIX/Linux behaviour; a real cp950 console; a legitimate `GIT_SHALLOW_FILE` setup (reported as a tool fault, conservatively); why the four base names absent from this F1 passed; `mypy --strict` on the test file (one `attr-defined` on `index_pins.subprocess`, present since c3, outside the c8/c9 diff). M22–M24 come from the dispatches and are not in the ticket's frozen M table.
