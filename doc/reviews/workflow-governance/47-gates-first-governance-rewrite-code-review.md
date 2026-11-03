@@ -719,3 +719,76 @@ Not verified: whether the control-plane checkout really was at 497f147a when its
 D6 was run three times on the candidate and every run is committed. Run 1 (`rev09-D6-full-run1.txt`, in parallel with the main-clone suite) had one name not on main, `tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a5_foreign_records_and_payload_bytes_are_preserved`. Run 2 (`rev09-D6-full-run2.txt`, serial, but with another seat's pytest on the host; 319 s) had that file green alone (10 passed) and one other name not on main, `tests/test_codex_registration_target_project_isolation_acceptance.py::CodexRegistrationTargetProjectIsolationAcceptanceTests::test_b5_compensation_acceptance_preserves_both_external_repository_snapshots`. Run 3 (`rev09-D6-full.txt`, serial, both files green alone first: 22 passed; 271 s) has exactly main's ten names. Both load-sensitive names are acceptance tests that spawn host processes and touch no path changed by this ticket; they are reported here, not hidden. The first revision09 return, committed at `76e585d2` with `BLOCKED` on the strength of run 1, is replaced by the section above.
 
 Correction 1 (after the revision09 initial review, N9-01): the run-2 capture header says the suite ran "with no other pytest running on this host". That sentence was written into the header before the run as the intended condition and was not observed; the c7 implementation seat later reported that it had waited for an active pytest on this host, so an overlap with its P3 run during run 2 is possible and the record's "another seat's pytest on the host" is the better description. Run 3 is the run whose serial condition is supported by the seat's wait log. The capture itself is unchanged, as evidence must be.
+
+## Revision09 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `b2e28cc2` (corrected evidence commit; first evidence commit `76e585d2`); content commit `1c5c1336`; re-plan commit `ab7472b4` |
+| Baseline | `a1cb6c1` (main) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; fresh LF clones of the candidate, of main, and a separate mutation clone |
+| Summary | The revision09 content is correct; every cell D1–D9 reproduces as written and N8-01 to N8-04 are closed in the files. Two small additive fixes are needed before approval: one evidence fix (N9-01) and one dropped earlier disposition (N9-02). Four hardening gaps (N9-03..N9-06) do not block and go to wave 2. Documents only, so one correction commit is enough; the correction review stays available. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| D1 | PASS | candidate (b2e28cc2, 0 modified) `3 failed, 121 passed, 564 subtests`; main `3 failed, 120 passed, 563 subtests`; same three names (pinned sha, two temporal tests blocked by the host's application-control policy); matches `rev09-D1.txt` |
+| D2 | PASS | 1 / 1 / 1 |
+| D3 | PASS | 2 / 1; the reviewer sentence unchanged |
+| D4 | PASS | 1 / 7 |
+| D5 | PASS | exit 0, 133 paths at HEAD, 0 outside; `a1cb6c1..1c5c1336` gives exactly the 118 paths of `rev09-D5.txt` |
+| D6 | PASS (with environment note) | first pair: candidate `10 failed, 1919 passed`; main `8 failed, 1920 passed`; the two candidate-only names are the temporal DLL-blocked tests, which had failed on main in D1 six minutes earlier and in the committed main capture; both pass alone on both trees. Second candidate run after the DLL loaded: `8 failed, 1921 passed, 3950 subtests`, its FAILED+SUBFAILED set equal to the main set (8 = 8). The first candidate set equals committed run 3. |
+| D7 | PASS as written | exit 0, 48 hits, identical to `rev09-D7.txt`; all 48 checked by hand; own sweep (listed phrasings plus merge, 提交, 承接, 閘門, re-enter, 回到/返回 Router; 238 sentences) found no live retired-rule statement and no wrong exemption; instrument gaps under N9-06 |
+| D8 | PASS | exit 0, identical to `rev09-D8.txt`; 18 historical SPECs plus the handover runbook carry the note; TEMPLATE.md and README.md carry none; `doc/runbooks/live-verification-047.md` is in neither D7 nor D8 (0 D7 hits under rev08; a record); absence-check weakness N9-04 |
+| D9 | PASS | 1 (Workflow.md:86); restoring Workflow.md from bfbd58ff makes D9 0; phrase-only weakness N9-05 |
+| M1 | PASS (check performed) | exit-code phrase 0; D2 1 1 1, D9 1, D7 0; restored; porcelain 0 |
+| M2 | PASS | five restorations give D7 exit 1 with 2 / 2 / 1 / 2 / 2 live hits, matching `rev09-M2.txt`. Own run: 94 earlier versions of the 34 changed files in the D7/D8 roots plus four more; 84 red in D2–D9; of the 10 green: the two AGENTS queue-half versions (routed N8-04), 6 governance-SPEC text versions (D4 pins headings only), CodeReview before the wave-2 `review-verdict` sentence, and codex-native before the phrase restore turns D6 red through the t3 pin |
+| Observable behavior | PASS | Workflow.md:79–86, CodeReview.md:47–52, R4-1..R4-7, the change log |
+| Order | PASS | `ab7472b4` → `1c5c1336` → `76e585d2` (BLOCKED return) → `b2e28cc2` (corrected); linear; the ticket/script diff over the range empty; `1c5c1336..b2e28cc2` touches only `doc/reviews/`; `rev09-D6-full-run1.txt` byte-identical to `76e585d2:rev09-D6-full.txt` |
+| F-07 mutation | RED as expected; one green door | own door "is its admission, and the reviewer is its executor": SUBFAILED, 1 failed; an extra sentence "the reviewer also integrates the candidate by hand" is caught by D7 (a1 LIVE); changing "by whoever holds budget" to "by the reviewer who approved it" leaves the test and D7 green (N9-06) |
+| Receipt | PASS except N9-01 | every cell has a result; every capture headed `candidate: 1c5c1336` with its command; runs 2 and 3 record `head: 76e585d2` (tree differs from 1c5c1336 only under `doc/reviews/`); D6 run 3, D7, D8 and D9 claims match; all 18 rev09 captures valid UTF-8 |
+| Policy pins / payload | PASS | `policy_digest` of all 7 references equals the pins; no stale digest; PolicyPinTests + adversarial 15 passed; `test_plugin_payload_boundary.py -rA` 40 passed, all 9 PayloadClosureTests pass, only the pinned-sha environment failure |
+| Added-line scan | PASS | 2071 added lines in `a1cb6c1..b2e28cc2`, evidence excluded: no host absolute path; vendor words only in branch ids, the codex-native file name, boundary rules, quoted findings, ticket-49 denylists and one pre-existing product-host sentence; no external project name; no chat tone |
+
+### Prior findings
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| N8-01 | CLOSED | D7 ROOTS list only `doc/runbooks/dispatch-model-profile.md`; the handover runbook is in the boundary with the note at line 3; D8 covers `doc/runbooks/handover-*.md` and removing the note turns D8 red; residual N9-03 |
+| N8-02 | CLOSED (as frozen) | both notes removed in 1c5c1336; D8 reports "no note, as required" for both and restoring either turns D8 red; residual N9-04 |
+| N8-03 | CLOSED | D9 = 1; earlier Workflow.md versions give D9 0; residual N9-05 |
+| N8-04 | CLOSED | Order row names `ab7472b4`; the Revision07 section reads "No evidence of that run is committed"; change-log row 13 routes the sweep and the R4-1 contract-gate pin to wave 2 |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| N9-01 | `EVIDENCE_DEFECT` | Low (fix in correction) | `evidence/47/rev09-D6-full-run2.txt:5`; the D6 note after the revision09 return; return rows D7 and D8 | (1) The run-2 capture header says the suite ran "with no other pytest running on this host" while the record says run 2 had "another seat's pytest on the host"; one is false, and they describe the run whose extra name is explained as load-sensitive. (2) The D7 row says "revision08 instrument" but the script was re-committed with new ROOTS in ab7472b4. (3) The D8 row says "every historical SPEC listed" while the capture also lists the handover runbook and the two absence checks. Replacing the BLOCKED return is acceptable: a control-plane return, not a review conclusion; additive; names 76e585d2; all three runs committed; both extra names pass alone; the reviewer's independent pair agrees. | header vs record; `git show ab7472b4 -- d7_sweep.py` |
+| N9-02 | `IMPLEMENTATION_DEFECT` | Low (fix in correction) | REQ-20261103-043.md:18 | The revision02 disposition N-04 ("REQ Scope lists every widened file") no longer holds: Scope lists neither the precedence notes on the historical SPECs nor the handover runbook. | grep of Scope; `git log` of the REQ |
+| N9-03 | `OUT_OF_SCOPE_HARDENING` | Low | Workflow.md:86; handover runbook:3 | The section-0 waiver covers only pre-Revision-04 SPECs; the runbook note grants itself "raises no ROUTE_REFERENCE_INVALID" with no routed rule behind it; no routed document references the runbook. | grep of references |
+| N9-04 | `OUT_OF_SCOPE_HARDENING` | Low | d8_precedence.py:14,25 | presence checked by regex, absence only by the exact old substring; a reworded note on TEMPLATE.md that the regex accepts leaves D8 green. | own doors |
+| N9-05 | `OUT_OF_SCOPE_HARDENING` | Low | ticket D9; Workflow.md:86 | D9 pins a phrase, not the rule or its place: reversing the precedence or moving the sentence out of section 0 keeps D9 at 1. | own doors |
+| N9-06 | `OUT_OF_SCOPE_HARDENING` | Low | d7_sweep.py; tests/test_adversarial_review_policy.py | instrument gaps with no live instance today: the a1 exemption "integration script" masks a reviewer named in the same sentence; no pattern for reviewer merges/pushes/lands, "審閱者…代為 commit", or "派工以整合佇列列表示". Route next to R3-07 and change-log row 13. | 8 injections, 2 caught |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | `--no-hardlinks` LF clones: candidate, main, and a separate mutation clone | 0 |
+| 2 | process check for other pytest before each run (scripted wait loop) | 0 |
+| 3–4 | D1 candidate / main; D2, D3, D4, D9 greps; CodeReview diff vs main | 1 / 1 (same 3 names); 0 |
+| 5 | `d5_union.py`, `d7_sweep.py`, `d8_precedence.py` diffed against the captures | 0 / 0 / 0 |
+| 6 | D6 candidate; D6 main; temporal pair alone ×4; D6 candidate second run; name-set `comm` | 1 (10) / 1 (8); 0; 1 (8, equals main) |
+| 7 | own sentence sweep (238 sentences); reviewer/merge/push greps | 0 |
+| 8 | M1; M2 five restorations | 0; 1 ×5; porcelain 0 |
+| 9 | 94 own earlier-version restorations with D2/D3/D4/D7/D8/D9; the green ones re-run with the D1 files; codex-native before the phrase restore with test_plugin_publication.py | 84 red / 10 green; t3 SUBFAILED |
+| 10–11 | own doors on D8, D9, D7; F-07 doors with the policy test and D7 | see N9-04..N9-06; porcelain 0 |
+| 12 | `policy_digest` vs pins; stale-digest grep; PolicyPinTests + adversarial; `test_plugin_payload_boundary.py -rA` | 0; 0; 0 (15 passed); 1 (pinned-sha only) |
+| 13–14 | `git log`/`show --stat` of the four commits; ancestry; empty ticket/script diff; cmp of run1 vs 76e585d2; capture header and UTF-8 checks; added-line scan (2071 lines) | 0 |
+
+Raw logs: retained by the reviewer seat on its host; not committed.
+
+Not verified: which of the two run-2 statements is true; whether the control-plane checkout matched its `head:` lines when its D6 ran; why the application-control DLL block on the temporal bridge comes and goes; the owner's F-05 confirmation; external target-project names other than those this seat knows; Markdown and mermaid rendering; tickets 48 and 49 and the commits after b2e28cc2; wave-2 behaviour of the R4-7 schemas.
