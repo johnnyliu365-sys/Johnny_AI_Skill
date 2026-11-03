@@ -265,3 +265,12 @@ No new findings. The record is honest about `50731c4e` (one file, +1 line; its m
 | 14 | `git log -1 746a1737 40ab88eb`; `git merge-base --is-ancestor 40ab88eb 0aae3bf8`; secret/email grep over added lines of `449f3bf9..5ad316bf` | 0 / 0 / 1 (no hits) |
 
 Not verified: no pytest, by instruction, and no scratch clone (rev-qualified `git grep`/`git show` in the read-only checkout, HEAD `a47e976b`); classification of hits inside the captures accepted by file path; the `rev05-W4.txt` tagging logic not re-executed (own matcher used). For the integration gate to admit this candidate the record must hold this review against `5ad316bf`; the control plane appends both revision05 reviews.
+
+```review-verdict
+candidate: 3707a78fffa5071aca2e74a352621952fd71a5ae
+verdict: APPROVED
+reviewer: seat:ticket-review/49-rev05-correction
+reviewed_at: 2026-11-03
+```
+
+The candidate above is the post-rewrite identifier of the reviewed commit `5ad316bf24b57f90491db250fd32f7c73790dce8` (identical tree; `evidence/47/commit-identity-rewrite-2026-11-03.txt`).

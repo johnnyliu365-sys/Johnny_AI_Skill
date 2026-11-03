@@ -1,0 +1,24 @@
+cell: integration check
+candidate: a0ef596500d8a89d8dab7b03ac99a4d969fd69f2
+command: pytest tests/test_gate_dispatch_lint.py tests/test_gate_receipt_fence_check.py tests/test_gate_index_pins.py tests/test_plugin_payload_boundary.py -q -p no:cacheprovider
+---
+.................................... [ 18%]
+...................................................................................................................................................F.......                      [100%]
+================================== FAILURES ===================================
+________________ CommittedPinTests.test_the_pinned_sha_exists _________________
+
+self = <test_plugin_payload_boundary.CommittedPinTests testMethod=test_the_pinned_sha_exists>
+
+    def test_the_pinned_sha_exists(self) -> None:
+        source = pinned_plugin_source(_MARKETPLACE_MANIFEST)
+>       self.assertTrue(
+            commit_exists(_REPO_ROOT, str(source["sha"])),
+            "the pinned sha names no commit in this repository",
+        )
+E       AssertionError: False is not true : the pinned sha names no commit in this repository
+
+tests\test_plugin_payload_boundary.py:623: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists
+1 failed, 190 passed, 364 subtests passed in 34.61s
+exit=1

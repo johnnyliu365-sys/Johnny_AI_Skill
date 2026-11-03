@@ -429,3 +429,71 @@ Not verified: the seat's own mutation runs; blobless and promisor partial clones
 Raw logs: retained by the reviewer seat on its host; not committed.
 
 Not verified: the seat's own mutation and probe runs (captures read only); blobless or promisor partial clones; POSIX/Linux behaviour; a real cp950 console; a legitimate `GIT_SHALLOW_FILE` setup (reported as a tool fault, conservatively); why the four base names absent from this F1 passed; `mypy --strict` on the test file (one `attr-defined` on `index_pins.subprocess`, present since c3, outside the c8/c9 diff). M22–M24 come from the dispatches and are not in the ticket's frozen M table.
+
+## Revision05 initial review
+
+**Verdict: `APPROVED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | c10 `21f91a24de2bf3426752cfa250e1a2bd27520d94` (chain c10 → c9 `280782e0` → c8 `64128301` → c7 `4861c208` → … → c1 `1d9f2a96` → base `f4d43817`, verified) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; LF review clone of the seat's clone |
+| Summary | Every cell reproduces. All 27 ticket mutations go red, as do 9 extra variants (M4b, M8b, M18a–i), the earlier survivors R18, R24, R25 rebuilt through new doors, and 5 counter-mutations of the reviewer's own (45 red, 0 survivors). F1 has no new red. The c10 receipt passes the committed checker and the reviewer's stricter verifier. Two new findings are `OUT_OF_SCOPE_HARDENING` and do not block (NF-16, NF-17). |
+| References | CodeReview.md §1–§5, AGENTS.md P0, Workflow.md §0, review-checks.md (counter-mutation points 1–5; pytest read unfiltered); XSS, secret, provider and UI references not applicable |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / P2 / P3 / P5 | PASS | 24 passed; 48 passed; 78 passed, 105 subtests (c10 adds 4 tests); P5 only the pinned-sha base name |
+| P4 | PASS | the 8-term dispatch denylist over the scripts and `tests/test_gate_*.py`: zero hits; sanity grep 1 hit in the dispatch file |
+| P6 | PASS | one invocation per (script, code) pair on the c10 scripts (worktree sha256 = `git show` sha256 = receipt digest), every code as specified |
+| P7 | PASS | empty or blank options exit 3; substring states STALE; whole-cell case-insensitive match sealed and verified |
+| P8 | PASS | no P8 case removed; M4–M7, M9, M10 red |
+| P9 | PASS | committed checker on the c10 receipt: exit 0, `receipt defects: 0`, its output (CR stripped, `exit=0` appended) byte-identical to the seat's `P9.txt`; the reviewer's verifier exits 0; 15 of 22 counter-mutations exit 1 as required (gaps in NF-16). The seat's self-referential P9 note is accepted: the literal redirect truncates `P9.txt` before the checker reads it and Windows `print` writes CRLF, so the literal command cannot produce a passing capture; a capture the checker reproduces byte for byte is a faithful record. |
+| P10 | PASS | healthy repositories: J1, J2, J5 (tree), J5b (blob) exit 1 SEALED_PIN_INVALID, index unchanged; J3 1 SKIP_NO_BLOB; J4 0. Broken repositories exit 2 with git's stderr (blob, tree, HEAD, index, malformed shallow file). Shallow: S0 0/0; complete repository missing revision 1/1; S1 2/2; D1 1, D2 0 `rewrote=1`, D3 0; D4/S4 2/2; D5 2/2; S5 linked worktree 2/2. cp950 B7–B9 exit 1, escaped. 102 probes, 0 unexpected. |
+| P11 | PASS | depth 1 and 3: a sealed row pinning a present blob exits 1 SEALED_PIN_INVALID on check and write, index unchanged, no SHALLOW_HISTORY; a present tree object and a blob pin in a linked worktree the same; an absent object 2 SHALLOW_HISTORY. Fault through a door other than the seat's mock (a real failing `git cat-file --batch-check` swapped in): exit 2 with git's own stderr. The new tests use real shallow clones, assert the object type, check index bytes and count the batch-checks. |
+| M1–M27 | PASS (27 of 27 red, plus M4b, M8b, M18a–i) | own single-occurrence edits, restored byte for byte, porcelain empty |
+| Earlier survivors | PASS (now red) | R18 6 failed; R24 5; R25 2 |
+| Counter-mutations | PASS (5 of 5 red) | is_commit faulting on a present non-commit; object presence through `cat-file -e` swallowing every failure; is_shallow always False; SHALLOW_HISTORY only for boundary revisions; presence test inverted |
+| F1 | PASS | 8 failed, 2070 passed, 31 skipped; all 8 base names; zero new red; the same set as the seat's F1 |
+| Observable behavior | PASS | every exit path of the paragraph reproduced; no option voids a rule |
+| Boundary | PASS | 7 create paths; c10 touches only `tests/test_gate_index_pins.py`; `index_pins.py` untouched by c10; plugin.json and the tickets README untouched; the other two scripts unchanged since c4; stdlib only; Python 3.11.9; `mypy --strict --python-version 3.11` no issues; no `Any`, `type: ignore` or `cast`; docstring and README state the sealed-row rule and the common-dir read; c8, c9, c10 author and committer are the repository identity |
+| Receipt integrity | PASS | 8 sections; 7 run cells with candidate = c10, the three scripts in `tool_digest` equal to `git show 21f91a24:<path>`, a capture next to the receipt, an `exit:` list equal to the capture's `exit=` lines, one block byte-identical to the capture; no CR; one F1 cell |
+| Changed assertions | PASS | `git diff 280782e0..21f91a24 -- tests/` is +82/−0: one helper and four tests in `ShallowRevisionTests` |
+
+### Prior findings
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| F-01..F-05, NF-01..NF-03, NF-05..NF-07, NF-09..NF-15 | CLOSED | as in the cells; NF-14 closed by the c10 receipt and the committed checker; NF-15 closed by P11 with M25, M26, M27, R18, R24, R25 red (each survived at c9) |
+| F-06, NF-04, NF-08 | CARRIED | OUT_OF_SCOPE_HARDENING (wave 2) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| NF-16 | `OUT_OF_SCOPE_HARDENING` (P9 instrument; the c10 receipt itself satisfies every P9 clause by independent check) | Low | `doc/reviews/workflow-governance/evidence/48/receipt_check.py` | The checker does not check every P9 clause: a section with no `cell:` line is skipped; any cell can opt out by declaring `cell: STATEMENT`; the `tool_digest:` label is not required; a missing capture file exits 2 (a receipt red reported as a tool fault); `candidate` is not checked to be the same across cells; `exit` is checked for presence only. Carry with F-06 to the wave-2 evidence gate (R4-7: a cell without all five fields is `NOT_RUN`). | 22 counter-mutation cases on receipt copies: 15 as required, 7 gaps |
+| NF-17 | `OUT_OF_SCOPE_HARDENING` | Low | `skills/johnny-project-takeover/scripts/index_pins.py:174-190` | A sealed row whose revision cell is an annotated tag object pointing to the right commit exits 0 (`^{commit}` peels the tag); integrity holds because the digest is verified, but the revision column then holds a non-commit; P10 names this exact check. A follow-up could require `cat-file -t` to be `commit`. | probe: tag object, sealed row with the correct digest, `--check` exit 0 |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1–3 | LF review clone at `21f91a24`; chain, identities, name-status from base, c10 stat, skills unchanged by c10; sha256 of the three scripts vs worktree vs receipt | 0 |
+| 4–8 | P1, P2, P3; P5; P4 grep and sanity grep; mypy, import and `Any`/`type: ignore`/`cast` scans; plugin.json, README and two-script quiet diffs | 0/0/0; 1; 1 and 0; 0; 0 |
+| 9–11 | committed checker on the c10 receipt and `cmp` with `P9.txt`; the reviewer's verifier; 22 P9 counter-mutations | 0, identical; 0; 15 as required, 7 gaps |
+| 12–13 | probe harness (102 probes); annotated-tag probe | 0; 0 (NF-17) |
+| 14 | mutation harness (45 mutations, restored byte for byte) | 1 for all 45 |
+| 15–17 | process check, then F1; `comm` against the base names; porcelain in the three checkouts | 1 (8 base names); 0 new; 0 lines each |
+
+Raw logs: retained by the reviewer seat on its host; not committed.
+
+Not verified: the seat's own mutation and probe runs; the clone depth the seat used for its P11 probe; blobless or promisor partial clones; POSIX/Linux behaviour; a real interactive cp950 console; unreadable-permission directories; why 4 of the 12 base names pass in this run; `mypy --strict` on the test file.
+
+```review-verdict
+candidate: 21f91a24de2bf3426752cfa250e1a2bd27520d94
+verdict: APPROVED
+reviewer: seat:ticket-review/48-rev05-initial
+reviewed_at: 2026-11-03
+```

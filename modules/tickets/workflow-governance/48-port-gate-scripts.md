@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / CORRECTION_DISPATCHED; 48-P1–P11 revision05 after the revision04 correction review returned CHANGES_REQUESTED with CONVERGENCE_REVIEW_REQUIRED on evidence defects only (NF-14 residue, NF-15); c9 `280782e0` |
+| State / Closure | REVIEW_APPROVED (initial review of closure revision05 on c10 `21f91a24`, record `doc/reviews/workflow-governance/48-port-gate-scripts-code-review.md`); integrated onto `cp/wave1-gates-first` by the control plane (integration commits in the review record); 48-P1–P11 revision05 |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 R4-2 (dispatch lint, evidence gate precursor, index pins) |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47; candidate commits c1 `1d9f2a96`, c2 `c41cc29d` on branch `cp/wave1-ticket48-candidate` (base `f4d43817`); the correction is an additive commit c3 on that branch; the control plane cherry-picks c1–c3 onto the branch tip at integration (no rebase by the seat) |
 | Grant / roles | Control plane dispatches; `implementation-standard` seat in a disposable clone; independent review by a `ticket-review` seat |

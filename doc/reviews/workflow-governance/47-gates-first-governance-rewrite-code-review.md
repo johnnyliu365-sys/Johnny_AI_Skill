@@ -847,3 +847,12 @@ Added-line scan (92 lines): no host absolute path; vendor-like words only inside
 | 9–11 | D6 capture header reads and greps; added-line scan; `git status --porcelain` (0 lines) | 0 |
 
 Not verified: D1 and D6 not rerun (no file outside `doc/` and `modules/tickets/` changed); which run-2 statement is true and what the uncommitted wait log contains; that the appended review section is word-for-word the initial reviewer's report; the owner's F-05 confirmation; external target-project names other than those this seat knows; Markdown rendering; tickets 48 and 49. No record on this line yet has a `review-verdict` block (wave-2 scope).
+
+```review-verdict
+candidate: f5d9bebc773ad5ddf4979947b3f3c000f52a54ee
+verdict: APPROVED
+reviewer: seat:ticket-review/47-rev09-correction
+reviewed_at: 2026-11-03
+```
+
+The candidate above is the post-rewrite identifier of the reviewed commit `9483ef19b56e7f9c3b6eea7ba1a4f39db22cafcb` (identical tree; `evidence/47/commit-identity-rewrite-2026-11-03.txt`).
