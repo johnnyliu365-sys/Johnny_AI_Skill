@@ -791,6 +791,35 @@ class ToolFaultTests(PinCase):
             self.assertEqual(repository.shallow_boundary(), set())
         self.assertEqual(len(calls), 1, calls)
 
+    def test_a_failing_commit_probe_is_a_tool_fault_with_gits_message(self) -> None:
+        """`cat-file -e` fails and the follow-up probe cannot tell why: the object store is broken, not the row."""
+        repository = index_pins.Repo(self.repo.dir)
+
+        def broken(*args: str, stdin: str | None = None) -> tuple[int, str]:
+            repository.last_stderr = f"fatal: simulated failure of {args[0]} {args[1]}"
+            return 128, ""
+
+        with mock.patch.object(repository, "git_text", broken):
+            with self.assertRaises(index_pins.GitFault) as raised:
+                repository.is_commit(self.repo.last_commit())
+        self.assertIn("fatal: simulated failure of cat-file --batch-check", str(raised.exception))
+
+    def test_a_commit_that_cat_file_rejects_for_another_reason_is_a_tool_fault_with_gits_message(self) -> None:
+        repository = index_pins.Repo(self.repo.dir)
+        commit = self.repo.last_commit()
+
+        def odd(*args: str, stdin: str | None = None) -> tuple[int, str]:
+            if args[1] == "-e":
+                repository.last_stderr = "fatal: simulated refusal of the commit probe"
+                return 128, ""
+            repository.last_stderr = ""
+            return 0, f"{commit} commit 200\n"
+
+        with mock.patch.object(repository, "git_text", odd):
+            with self.assertRaises(index_pins.GitFault) as raised:
+                repository.is_commit(commit)
+        self.assertIn("fatal: simulated refusal of the commit probe", str(raised.exception))
+
     def test_a_tree_object_that_cannot_be_read_is_a_tool_fault(self) -> None:
         """The recorded revision is a commit, but its tree object is gone: the object store is broken."""
         commit, digest = self.repo.last_commit(), self.repo.digest()
