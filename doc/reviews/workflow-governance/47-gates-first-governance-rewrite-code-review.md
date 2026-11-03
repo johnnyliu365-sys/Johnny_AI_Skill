@@ -519,3 +519,81 @@ Not verified: whether the control-plane checkout's HEAD was `6f199b5a` when its 
 | F-07 mutation | executor reworded to a reviewer seat running the merge by hand → `1 failed, 7 passed, 72 subtests passed in 0.10s` (`test_tara1b` red); restored; raw `evidence/47/rev06-F07-mutation.txt` |
 | Policy pins | every reference whose text changed has its digest moved in profile.py and test_workflow_router.py (listed in the content commit message) |
 | Deviations | none: the candidate failure-name set equals the same-environment main run; captures carry host paths as recorded (R3-09, routed) |
+
+## Revision06 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `7804a937` (evidence commit); content commit `bfbd58ff`; re-plan commit `99c06388` |
+| Baseline | `a1cb6c1` (main) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; fresh LF clones of the candidate and of main |
+| Summary | The content commit breaks a test that passes on main while the receipt claims equal failure sets; a live statement of a retired rule remains in `SKILL.md` inside the boundary; two counter-mutations left D7 green. The instrument and template problems are `TICKET_DEFECT`s and return to the control plane before any fix. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| D1 | PASS | candidate `3 failed, 121 passed, 564 subtests`; main `3 failed, 120 passed, 563 subtests`; same three names; matches `rev06-D1.txt` |
+| D2 | PASS | phrase 1 (Workflow.md:81); anchors :75, :246 |
+| D3 | PASS | `Revision 04 R4-4` 2 (:50, :99); reviewer sentence once, unchanged |
+| D4 | PASS | `^## Revision 04` 1; R4-1..R4-7 at :162, 167, 180, 185, 189, 193, 199 |
+| D5 | PASS | committed `d5_union.py`: exit 0, 94 paths, 0 outside; identical to `rev06-D5.txt` once the 11 rev06 captures are removed |
+| D6 | FAIL | candidate `12 failed, 1918 passed`; main (fresh clone, same venv) `10 failed, 1918 passed`; nothing fails on main only. Candidate-only: (1) `SUBFAILED(phrase='cross-lifetime receipt-bound handoff') tests/test_plugin_publication.py::SynchronousDispatchGuidanceTests::test_t3_wait_is_native_one_shot_and_bridge_is_not_required`, fails alone on the candidate and passes alone on main; the same line sits in the committed `rev06-D6-full.txt`; (2) `test_codex_receipt_removal_acceptance.py::…test_a7_…` failed in the full run and passed alone (treated as flaky). The candidate set is not a subset of main's. |
+| D7 | PASS as written; not pinning | committed `d7_sweep.py`: exit 0, 33 hits, identical to `rev06-D7.txt`; every hit checked by hand (markers in the same sentence; the two dated rows are Amendments rows; the one scoped file carries its note at line 3). The sweep misses SKILL.md:134-135 and template/README.md:43-45, and two counter-mutations stay green (N-03). |
+| M1 | PASS (check performed) | exit-code bullet removed in a disposable edit: exit-code phrase 0, D2 phrase 1, anchors 1/1; D1 files only the 3 environment failures; restored; porcelain empty |
+| M2 | PASS as written; own counter-mutations 2 of 22 not red | model-role-routing.md from `a47e976b`: D7 exit 1, 2 LIVE hits (:23 a2, :36 b2); restored. 22 earlier versions restored one at a time: 20 turn D7 red; not red: `implementation-authority.md` from `a47e976b` (and from `a1cb6c1`), the R4-03 text; `Workflow.md` from `8597f8bc`, the R5-08 flowchart. |
+| Observable behavior | PASS (scoped) | section 0, CodeReview.md:49-52, R4-1..R4-7 and the change log read as the ticket states; SKILL.md:134-135 competes (N-02) → `HALT / ROUTE_REFERENCE_INVALID` under Workflow.md:85 |
+| Order | PASS | `99c06388` → (`5bcc0db9`, ticket 48) → `bfbd58ff` → `7804a937`; `git diff 99c06388..7804a937` over the ticket and both scripts empty; the evidence commit adds only captures and the return section |
+| F-07 mutation | RED as expected | a different clause mutated ("is its admission, not its executor" → "the reviewer also executes integration"): `test_adversarial_review_policy.py` 1 failed, 8 passed; D7 also flags CodeReview.md:49 LIVE; restored; 8 passed |
+| Receipt | FAIL | every capture headed with `bfbd58ff` and its command (D6-main with `a1cb6c13`), all valid UTF-8; `rev06-D6-full.txt` states `head` and `tree: 0 tracked files modified`; the D7 claim matches. The D6 claim does not: the return says "candidate failures (10) vs main failures (10): none" and Deviations "none" while the same row quotes `11 failed` and the capture holds a SUBFAILED not on main (N-01). |
+
+### Re-plan rows
+
+| Row | Status | Evidence |
+| --- | --- | --- |
+| R5-01 | CLOSED | claude-code-plugin-distribution.md:66-67 and Amendments :392 |
+| R5-02 | CLOSED | adversarial-review.md:13-14 |
+| R5-03 | PARTIAL | instrument replaced (paragraph units, 7 patterns, sentence-scoped markers) and M2 turns it red; still missing: fenced code skipped; one match per pattern per unit; `reviewer\b` misses "reviewers"; b1 lacks bare `require`, `remains bound` and a bare `descriptor`; two counter-mutations stay green (N-03) |
+| R5-04 | PARTIAL | autonomous-collaboration-audit.md:61 still names a fixed owner of guarded integration while its Amendments row says "no fixed integrator" (N-05) |
+| R5-05 | CLOSED | template/modules/tickets/README.TEMPLATE.md:7 integration row; D5 tags it [47]; nothing else under template/ changed |
+| R5-06 | CLOSED | router-control.md:116, :120-121 |
+| R5-07 | CLOSED | dispatch runbook:59-61 |
+| R5-08 | CLOSED (text), unpinned | Workflow.md:22 node; reverting it leaves D7 green because the node sits in a fenced mermaid block |
+| R5-09 | CLOSED | executor-routing.md:191, :238, Amendments :269; plugin-distribution.md:132, Amendments :317; receipt-bound-role-supervision.md scope note line 3, Amendments :579; every edited approved SPEC (10 files) carries a `CHG-20261103-043` entry |
+| R5-10 | OPEN | the Deviations row is generated but the comparison reads only `^FAILED` lines, so it misses the SUBFAILED and states "none" next to `11 failed` (N-01) |
+| R5-11 | PARTIAL | spec:201-202 define `<ticket>@<candidate>`, `CLEARED`, the submitter rule and the submission timing; the anti-replay list omits `CLEARED` while router-control.md:16 includes it (N-04) |
+| R5-12 | CLOSED | spec:164 dispatch-file location |
+| R3-07 | CLOSED (routed) | pins for all 7 references equal `policy_digest`; PolicyPinTests plus `test_adversarial_review_policy.py` 15 passed, 79 subtests |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| N-01 | `IMPLEMENTATION_DEFECT` + `EVIDENCE_DEFECT` | Medium (blocking) | references/codex-native-same-lifetime-delegation.md:48; tests/test_plugin_publication.py:888; revision06 return D6/Deviations rows | `bfbd58ff` rewrote "cross-lifetime receipt-bound handoff" as "cross-lifetime handoff that takes the receipt-bound bridge route"; the `_assert_t3` phrase pin now fails on the candidate and passes on main, so D6 is red; the phrase count is 1 at a1cb6c1, 8597f8bc and 99c06388 and 0 at bfbd58ff; the test file is outside the boundary; the receipt's name set ignores `SUBFAILED`; D1 does not cover this test file. | own D6 runs; single-test reruns; `git show <c>:… \| grep -c` |
+| N-02 | `IMPLEMENTATION_DEFECT` | Medium (blocking) | SKILL.md:134-135 | "A pending dispatch remains bound to its live descriptor." Unscoped, in the boundary, in the skill entry file; contradicts R4-1 and AGENTS.md:20-22; unchanged since a1cb6c1; D7 misses it ("remains bound" is not in its verb set). | own paragraph-joined sweep |
+| N-03 | `TICKET_DEFECT` | Medium (blocking) | evidence/47/d7_sweep.py (fence skip in `units()`, b1 verb list, `reviewer\b`, single `pat.search`) | Zero red under review-checks.md counter-mutation point 2: restoring implementation-authority.md from a47e976b (the R4-03 text) gives exit 0; restoring Workflow.md from 8597f8bc (the R5-08 flowchart inside a mermaid fence, which the sweep skips) gives exit 0; the sweep also misses N-02 and N-06. `SCOPE_NOTE` matches any one-line "not the default … R4-1" in the first 40 lines and then exempts every b/d hit in the whole file, wider than the header note D7 describes. | own counter-mutations |
+| N-04 | `IMPLEMENTATION_DEFECT` | Low (wave 2) | spec:201 | the anti-replay refusal list omits `CLEARED`, which the same bullet calls terminal; router-control.md:16 lists it; read literally the SPEC lets a `CLEARED` key be re-queued. | read both lines |
+| N-05 | `IMPLEMENTATION_DEFECT` | Low | modules/spec/autonomous-collaboration-audit.md:61 | "The control-plane/main owner owns … guarded integration (run by the versioned integration script, R4-4)" still names a fixed owner, against R4-4; the Amendments row claims "no fixed integrator"; D7 exempts it on the `R4-4` marker. | read file |
+| N-06 | `TICKET_DEFECT` | Medium | template/README.md:43-45 | "A fixed dispatch response is produced only from the live Private Router pending descriptor and its reviewed ticket/handoff receipt." makes the live descriptor the only dispatch source, a live statement of the retired rule in a D7 root; `forbid = template/*` blocks a fix; D7 misses it. | `grep -rn -i descriptor template/` |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | `--no-hardlinks` LF clones of the candidate at 7804a937 and of main a1cb6c1 | 0 |
+| 2–4 | D6 candidate; D6 main; `comm` of the FAILED/SUBFAILED name sets; single-test reruns (a7, t3 class on both) | 1 (12 failed); 1 (10 failed); candidate-only 2, main-only 0; t3 SUBFAILED on the candidate, 10 passed on main |
+| 5–6 | D1 candidate / main; D2 / D3 / D4 greps | 1 / 1 (3 failed each, same names); 0 |
+| 7–8 | `python -I -X utf8 d5_union.py` and `d7_sweep.py`; diffs against the captures | 0 (94 paths, 0 outside) / 0 (0 live); identical |
+| 9–10 | own D7 detail script (sentence plus exempting marker, finditer); own sweeps a/b/c; Chinese greps; descriptor and pending-dispatch greps | 0 (N-02, N-06 found) |
+| 11–12 | M1; M2 (model-role-routing ← a47e976b), D7, restore | 1 (3 environment failures only); D7 1 (2 LIVE); porcelain empty |
+| 13 | 23 counter-mutations one file at a time | D7 1 on 20; 0 on implementation-authority (×2) and Workflow.md; porcelain empty each time |
+| 14 | own F-07 mutation; policy test; D7; restore | 1 (1 failed); 1 (1 LIVE); 0 (8 passed) |
+| 15–16 | `policy_digest` of 7 references vs the pins; PolicyPinTests plus `test_adversarial_review_policy.py`; Amendments grep over the 10 edited SPECs | 0; 0 (15 passed); 0 |
+| 17–18 | `git log`, `rev-list --parents`, `show --stat`, `merge-base --is-ancestor`; ticket/script diff `99c06388..7804a937`; capture header and UTF-8 checks | 0 (empty); 0 (all UTF-8; D7 mixed CRLF/LF) |
+| 19 | added-line scan of `a1cb6c1..7804a937` excluding evidence (1680 lines) | 0 (no host path; vendor words only in branch ids, the `codex-native` file name, boundary rules, quoted findings and pre-existing product-host sentences; no project name; no chat tone) |
+
+Raw logs: retained by the reviewer seat on its host; not committed.
+
+Not verified: why a7 fails only in the full run (passes alone; treated as flaky); whether the control-plane checkout's HEAD really was `bfbd58ff` when D6 ran (only the capture's `head:` line); the owner's F-05 confirmation; external target-project names other than the ones this seat knows; Markdown and mermaid rendering; tickets 48 and 49 and the commits after `7804a937`; wave-2 behaviour of the R4-7 schemas.
