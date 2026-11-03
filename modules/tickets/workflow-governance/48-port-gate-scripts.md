@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / CORRECTION_DISPATCHED; 48-P1–P10 revision04 after the revision03 initial review returned CHANGES_REQUESTED with TICKET_DEFECT NF-09, NF-11; c5 `947e0e51` |
+| State / Closure | CORRECTION_DISPATCHED (correction 1 of closure revision04 after its initial review returned CHANGES_REQUESTED on NF-12, NF-13, NF-14; one correction review remains); 48-P1–P10 revision04; c7 `4861c208` |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 R4-2 (dispatch lint, evidence gate precursor, index pins) |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47; candidate commits c1 `1d9f2a96`, c2 `c41cc29d` on branch `cp/wave1-ticket48-candidate` (base `f4d43817`); the correction is an additive commit c3 on that branch; the control plane cherry-picks c1–c3 onto the branch tip at integration (no rebase by the seat) |
 | Grant / roles | Control plane dispatches; `implementation-standard` seat in a disposable clone; independent review by a `ticket-review` seat |
@@ -137,3 +137,13 @@ Review record section "Revision03 initial review". NF-09 (`TICKET_DEFECT`): the 
 | NF-10 | EVIDENCE_DEFECT | one shallow-boundary query; its failure tested (M21) |
 | NF-11 | TICKET_DEFECT | M13–M16 listed in the Acceptance table |
 | F-06, NF-04, NF-08 | OUT_OF_SCOPE_HARDENING | carried unchanged |
+
+## Correction 1 of closure revision04 (after its initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision04 initial review". The P10 text already decides both cases: a commit that lies beyond a shallow boundary is a commit of the repository the environment cannot serve, so it is a fault; the defects are in the implementation. One additive commit c8, then the correction review.
+
+| Finding | Class | Disposition (commit c8) |
+| --- | --- | --- |
+| NF-12 | IMPLEMENTATION_DEFECT | when a sealed or open row's revision is missing from the object store and the repository is shallow, index_pins exits 2 (`SHALLOW_HISTORY`, naming the revision) instead of a red; a test in a real `--depth 1` clone for a sealed row pinned before the boundary, check and write; a missing revision in a complete repository stays a red |
+| NF-13 | IMPLEMENTATION_DEFECT | the shallow boundary is read from `--git-common-dir`, so a linked worktree of a shallow clone raises `SHALLOW_HISTORY`; `--is-shallow-repository` true with no shallow file found is a fault exit 2; a test in a linked worktree of a `--depth 1` clone, check and write |
+| NF-14 | EVIDENCE_DEFECT | the c8 receipt lists the three scripts in every `tool_digest`, writes every capture with LF and has one F1 cell |

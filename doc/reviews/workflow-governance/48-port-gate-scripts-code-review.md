@@ -305,3 +305,66 @@ Not verified: M1–M12 re-run at c4 (code unchanged since c3; c3 review 12 of 12
 Raw logs: retained by the reviewer seat on its host; not committed.
 
 Not verified: the seat's own mutation runs; whether `rev-parse --git-dir` can fail after `--is-shallow-repository` succeeds; blobless or promisor partial clones at c5 (covered at c4); POSIX/Linux behaviour; a real console under cp950; unreadable-permission directories; the root cause of the transient oracle `PROCESS_FAILED` beyond host load.
+
+## Revision04 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | c7 `4861c208cc9647dbd9482c9b2dcc44121bb70b40` (chain c7 → c6 `a02856b7` → c5 `947e0e51` → c4 `9e98c962` → c3 `0d1ef754` → c2 `c41cc29d` → c1 `1d9f2a96` → base `f4d43817`) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; LF review clone of the seat's clone |
+| Summary | Closure revision04 mostly holds: every cell reproduces, all 21 ticket mutations (plus M18 variants a–h) turn red, J1–J3 exit 1 in healthy repositories while environment faults exit 2 with git's stderr. One Medium defect blocks approval (NF-12): a sealed row in a shallow clone is reported as `SEALED_PIN_INVALID` exit 1, an environment fault reported as a red; c6 re-introduced it (c5 gave exit 2). One Low implementation defect (NF-13) and one Low evidence defect (NF-14). One correction review remains. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / P2 / P3 / P5 | PASS | 24 passed; 48 passed; 65 passed, 85 subtests; P5 only the pinned-sha base name |
+| P4 | PASS | the dispatch denylist (8 terms) over the scripts and `tests/test_gate_*.py`: zero hits; pattern sanity check 1 hit |
+| P6 | PASS | one invocation per (script, code) pair on copies of the c7 blobs: dispatch_lint 0/1/3; receipt_fence_check 0/1/2/3; index_pins 0, 1, 2 (not a repository with git's `fatal:` text, `--json` to a missing directory, unusable PATH), 3 (`--bogus`, no mode, no args, `--check --write`, missing file, directory argument, non-UTF-8 index) |
+| P7 | PASS | empty or blank options exit 3; substring states give STALE; whole-cell match |
+| P8 | PASS | no P8 case removed; M4–M7, M9, M10 red |
+| P9 | PASS with note (NF-14) | see Receipt integrity |
+| P10 | FAIL in part (NF-12, NF-13) | healthy repositories: J1, J2, J5 (revision names a tree object) exit 1 SEALED_PIN_INVALID on check and write; J3 exit 1 SKIP_NO_BLOB, index unchanged; J4 (nested leaf, correct sealed pin) exit 0. Broken repositories: blob deleted with revision and tree intact (open/sealed × check/write) exit 2 with `fatal: bad object <rev>:leaf.md`; tree object deleted exit 2; HEAD object removed exit 2; corrupt `.git/index` exit 2; malformed `.git/shallow` exit 2. `GIT_TRACE` shows the shallow check is one invocation. cp950 B7–B9 exit 1, escaped, no traceback; `--root` absent or a file exit 2. Failures: in a `--depth 1` clone a sealed row pinned before the boundary exits 1 SEALED_PIN_INVALID on check and write (NF-12); in a linked worktree of a shallow clone SHALLOW_HISTORY is never raised (NF-13) |
+| M1–M21 | PASS (21 of 21 red, plus M18 a–h) | own single-occurrence edits, restored byte for byte, porcelain empty |
+| Counter-mutations | 14 red, 2 survive (harmless) | red R1–R6, R9–R16 (pre-checks skipped, faults swallowed into reds or empty results, batch-check stdin dropped, wrong answer line); survive R7 (unreachable answer guard) and R8 (`tree_lists` accepting a non-blob entry still ends in a digest mismatch, exit 1); no mutation covers NF-12 or NF-13 because neither has a test |
+| F1 | PASS | 8 failed, 2057 passed, 31 skipped; every failure among the 12 base names; zero new red |
+| Observable behavior | FAIL in part (NF-12) | main path, J1–J3 and every environment fault as specified; "history is shallow → exit 2" fails for sealed rows in a shallow clone and for any row in a linked worktree of one |
+| Boundary | PASS | 7 `create` paths only; plugin.json and the tickets README untouched; `dispatch_lint.py` and `receipt_fence_check.py` unchanged since c4; stdlib only; `mypy --strict --python-version 3.11` no issues; no `Any`, no `type: ignore`; docstring and README state the fault-versus-red rule |
+| Receipt integrity | PASS with note (NF-14) | both receipts 0 CR bytes; every run cell carries the five fields; exit lists in capture order; statement sections `cell: STATEMENT`; c6 changed-assertions statement matches the diff |
+| Changed assertions | PASS | `git diff 947e0e51..4861c208 -- tests/` removes exactly two things, both correct under P10 (the J1 shape back to a red with a `missing_reason` assertion and the unreadable-blob fault moved to its own test; the shallow-check test probing the single combined query); everything else additive; c7 changes no existing assertion |
+
+### Prior findings
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| F-01, F-03, F-04, NF-01, NF-02, NF-03, NF-05, NF-06, NF-07, NF-10, NF-11 | CLOSED | as in the cells |
+| F-02 | CLOSED for the main work tree; residue NF-12, NF-13 | real `--depth 1` SHALLOW_HISTORY on an open row exits 2; M8 red |
+| F-05 | CLOSED; new residue NF-14 | |
+| NF-09 | CLOSED for full repositories; residue NF-12 | J1, J2, J3, J5 exit 1 with `git fsck` exit 0; M19, M20 red |
+| F-06, NF-04, NF-08 | CARRIED | OUT_OF_SCOPE_HARDENING |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| NF-12 | `IMPLEMENTATION_DEFECT` (against P10 "the environment cannot serve the query → exit 2", the observable behaviour "history is shallow → 2", and R4-2) | Medium | `index_pins.py:149-165` (`is_commit`: batch-check `missing` → `False`), `:190-192`, `:443-447`; docstring `:37-41` | In a shallow clone a sealed row whose recorded revision lies beyond the boundary names a real commit of the repository that is not present locally; `is_commit` returns False and the row is reported `SEALED_PIN_INVALID … is not a commit of this repository` exit 1, a false red that R4-3 routes to an index repair of a correct pin. The SHALLOW_HISTORY check inspects only DRIFT findings. c4 1, c5 2, c6 back to 1; no test. The script already asks git whether the repository is shallow, so it can fault (exit 2) when a revision is missing in a shallow repository. Not blocking: in a non-shallow repository whose commit object was deleted, the same row is also exit 1; a script cannot tell that from a mistyped revision without a connectivity walk. | S0 full repository sealed row exit 0; S1 its `--depth 1` clone (fsck 0, shallow true) `--check` and `--write` exit 1; S1 under the c4/c5/c7 blobs 1/2/1 |
+| NF-13 | `IMPLEMENTATION_DEFECT` (P6 "2 = SHALLOW_HISTORY", M8 path) | Low | `index_pins.py:223`, `:231-234` | `shallow_boundary` reads `<git-dir>/shallow`; in a linked worktree `--git-dir` is `.git/worktrees/<name>` while `shallow` lives in the common directory, so the boundary set is empty: a stale open row reports STALE (exit 1) and `--write` pins the leaf to the boundary commit with exit 0, exactly what SHALLOW_HISTORY prevents; AGENTS.md P0 puts agent worktrees at `.worktrees/<ticket-id>`. Candidate fix: `--git-common-dir`. Related: `--is-shallow-repository` true with no shallow file found yields an empty set instead of a fault. | S4 main work tree exit 2 SHALLOW_HISTORY; S5 linked worktree `--check` exit 1 STALE, `--write` exit 0 `rewrote=1` |
+| NF-14 | `EVIDENCE_DEFECT` (P9) | Low | c6 receipt run cells; captures in both out directories | (1) every c6 `tool_digest` block names `index_pins.py`, `scripts/README.md` and `tests/test_gate_index_pins.py` instead of the three scripts (values correct; c7 receipt has the right set); (2) c6 P1, P2, P3, P5, P10, F1 and c7 P3, M18f, F1 captures contain CRLF; raw blocks equal only after normalisation; P10 differs by two trailing LFs; (3) the c6 `## F1 failure set` section is a second run-shaped cell reusing `F1.txt` with no raw block | receipt check per cell; CR counts |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1–2 | LF review clone at `4861c208`; `git ls-files --eol`; chain; `git diff --name-status f4d43817..4861c208`; script and test diffs | 0 |
+| 3–5 | P1, P2, P3, P5; P4 grep; mypy | 0/0/0/1; 1; 0 |
+| 6–10 | P6/P7 probes; P10 judge (J1–J5 with fsck), broken (blob, tree, HEAD, index, lost commit), shallow (S0–S5 with `GIT_TRACE`, S1 under c4/c5/c7), cp950 and `--root` | as in the cells |
+| 11 | receipt check on both receipts | 0 (NF-14) |
+| 12 | process check, then F1 | 1 (8 failed, all base names) |
+| 13 | mutation harness M1–M21, M18a–h, R1–R16 | 1 for every M and R1–R6, R9–R16; 0 for R7, R8 |
+| 14 | `git status --porcelain` in the review clone, the seat clone and the control plane | 0 lines each |
+
+Raw logs: retained by the reviewer seat on its host; not committed.
+
+Not verified: the seat's own mutation runs; blobless and promisor partial clones at c7; POSIX/Linux behaviour; a real console under cp950; unreadable-permission directories; why the two workflow-router base names passed in this F1 run. Another seat's pytest (a different checkout) ran during the per-file mutation runs; none during F1.
