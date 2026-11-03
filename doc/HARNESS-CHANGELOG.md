@@ -22,5 +22,5 @@ One row per change that altered what the plugin does. Working history lives in G
 | 09 窄修窄審 | cases verified | kept as review policy |
 | 10 成本／外部呼叫／回報 | local integrated | token column in receipts (wave 2) |
 | 11 去重與衝突 | local integrated | requirement snapshot ids (wave 2) |
-| 12 回放與獨審 | end to end not verified | first run on a target project (wave 2 acceptance) |
+| 12 回放與獨審 | end to end not verified | implementation-readiness criterion 1 (fixture target project, session ended mid-ticket and resumed from files) is wave 2 acceptance; criteria 2–5 in REQ-20261103-043 |
 | 13 歷史 SPEC 舊規則殘留 | precedence notes (wave 1) | sentence-level sweep over every SPEC and dated runbook with the ticket 47 D7 instrument, a contract-gate pin for both halves of R4-1 (dispatch = ticket state row; queue = integration candidates only), and the D7/D8/D9 instrument gaps listed in ticket 47 correction 1 of revision09 (wave 2); archive through requirement lineage when the router library retires (wave 3) |
