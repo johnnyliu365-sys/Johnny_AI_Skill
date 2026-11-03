@@ -117,5 +117,5 @@ and plan digest.
   dirty base, divergence, repository mismatch or wrong ancestry halts before effect.
 - Staging integration is not release. Packaging requires a separate promotion gate.
 - Staging is not an installation/effect sandbox. Host, installation, removal, migration and other effects require a receipt-bound disposable
-environment (a host-effect control, separate from the dispatch route, which is the ticket state
-row by default, R4-1).
+  environment (a host-effect control, separate from the dispatch route, which is the ticket state
+  row by default, R4-1).
