@@ -1,0 +1,5 @@
+cell: W3
+candidate: fb55623f747039d24555fab0e5017831da9926ac
+command: git grep -nE '(^|[^A-Za-z])[A-Z]:[/\\]' -- modules/spec/workflow-governance.md modules/tickets/workflow-governance/47-*.md modules/tickets/workflow-governance/48-*.md modules/tickets/workflow-governance/49-*.md modules/tickets/workflow-governance/README.md doc/requirements/active/2026/workflow-governance
+---
+exit=1

@@ -1,0 +1,57 @@
+cell: D5
+candidate: fb55623f747039d24555fab0e5017831da9926ac
+command: git diff --stat a1cb6c1..HEAD; echo; git diff --name-only a1cb6c1..HEAD
+---
+ AGENTS.md                                          |   7 +-
+ CodeReview.md                                      |  11 +-
+ Workflow.md                                        |  32 +-
+ doc/HARNESS-CHANGELOG.md                           |  24 +
+ doc/README.md                                      |   4 +
+ .../active/2026/workflow-governance/README.md      |   1 +
+ .../2026/workflow-governance/REQ-20261103-043.md   |  21 +
+ ...7-gates-first-governance-rewrite-code-review.md | 205 ++++++++
+ ...9-wording-drift-and-vendor-names-code-review.md |  52 ++
+ .../evidence/47/c2-mutation-F07.txt                |  30 ++
+ .../evidence/47/c2-pytest-full.txt                 | 499 +++++++++++++++++++
+ .../evidence/47/rev02-review-pytest-full-cand.txt  | 547 ++++++++++++++++++++
+ .../evidence/47/rev02-review-pytest-full-main.txt  | 548 +++++++++++++++++++++
+ library/workflow_router/profile.py                 |   4 +-
+ modules/spec/workflow-governance.md                |  58 +++
+ .../47-gates-first-governance-rewrite.md           | 112 +++++
+ .../workflow-governance/48-port-gate-scripts.md    |  54 ++
+ .../49-wording-drift-and-vendor-names.md           |  48 ++
+ modules/tickets/workflow-governance/README.md      |   5 +-
+ skills/johnny-project-takeover/SKILL.md            |  14 +-
+ .../references/adversarial-review.md               |   3 +-
+ .../codex-native-same-lifetime-delegation.md       |   2 +-
+ .../references/router-control.md                   |  17 +-
+ tests/test_adversarial_review_policy.py            |  13 +-
+ tests/test_workflow_router.py                      |  12 +-
+ 25 files changed, 2274 insertions(+), 49 deletions(-)
+
+AGENTS.md
+CodeReview.md
+Workflow.md
+doc/HARNESS-CHANGELOG.md
+doc/README.md
+doc/requirements/active/2026/workflow-governance/README.md
+doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md
+doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md
+doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md
+doc/reviews/workflow-governance/evidence/47/c2-mutation-F07.txt
+doc/reviews/workflow-governance/evidence/47/c2-pytest-full.txt
+doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-cand.txt
+doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-main.txt
+library/workflow_router/profile.py
+modules/spec/workflow-governance.md
+modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md
+modules/tickets/workflow-governance/48-port-gate-scripts.md
+modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md
+modules/tickets/workflow-governance/README.md
+skills/johnny-project-takeover/SKILL.md
+skills/johnny-project-takeover/references/adversarial-review.md
+skills/johnny-project-takeover/references/codex-native-same-lifetime-delegation.md
+skills/johnny-project-takeover/references/router-control.md
+tests/test_adversarial_review_policy.py
+tests/test_workflow_router.py
+exit=0

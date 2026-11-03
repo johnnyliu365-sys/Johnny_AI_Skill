@@ -203,3 +203,21 @@ Not verified: the full repository test suite, and whether an owner decision for 
 Raw logs: `doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-cand.txt`, `doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-main.txt` (committed copies of the reviewer seat's files).
 
 Not verified: whether the owner has confirmed the F-05 decision; Markdown rendering in a real renderer.
+
+## ImplementationReturn (control plane, closure revision03)
+
+| Field | Value |
+| --- | --- |
+| Return | `COMPLETED` |
+| Candidate | `fb55623f747039d24555fab0e5017831da9926ac` (content); the commit that carries this section adds only evidence files under `evidence/47/`, `evidence/49/` and this record (`git diff fb55623..HEAD --stat`) |
+| Re-plan commit | `3ffe1b12` (tickets re-frozen before the fix); content commit `fb55623` |
+| D1 | PASS — `3 failed, 121 passed, 564 subtests passed in 5.27s`; the three failures are the environment set of main (two temporal DLL loads blocked by application control policy, one pinned sha absent in this clone); raw `evidence/47/rev03-D1.txt` |
+| D2 | PASS — count 1; anchors `workflow-router` and `role-boundary` present (1 / 1); raw `evidence/47/rev03-D2.txt` |
+| D3 | PASS — count 2; the reviewer sentence present once; raw `evidence/47/rev03-D3.txt` |
+| D4 | PASS — `## Revision 04` once; `### R4-1`..`R4-7` seven; raw `evidence/47/rev03-D4.txt` |
+| D5 | PASS — every path in `a1cb6c1..HEAD` is in ticket 47's boundary block or (the ticket 49 review record and evidence directory) in ticket 49's; raw `evidence/47/rev03-D5.txt` |
+| D6 | PASS — `10 failed, 1919 passed, 31 skipped, 15 warnings, 3950 subtests passed in 227.21s (0:03:47)`; failure set vs the revision02 reviewer's main run (`rev02-review-pytest-full-main.txt`, 12 names): extra on candidate = none; absent on candidate = ['tests/test_atomic_conditional_replace_capability.py::test_acr6_committed_candidate_diff_and_forbidden_paths', 'tests/test_plugin_publication.py::PinnedTreeBindingTests::test_pinning_the_root_commit_is_rejected']; raw `evidence/47/rev03-D6-full.txt` |
+| M1 | check performed — with the exit-code bullet removed in a disposable edit the exit-code phrase counts 0 while D2 still counts 1; the loss is visible to a reader only, as the ticket says; file restored, worktree clean; raw `evidence/47/rev03-M1.txt` |
+| F-07 mutation | executor reworded to "the versioned reviewer seat, who runs the merge by hand" → `1 failed, 7 passed, 72 subtests passed in 0.10s` (`test_tara1b` red); restored; raw `evidence/47/rev03-F07-mutation.txt` |
+| Policy pin | router-control.md digest moved to `rev-8d6082758541d385` in profile.py and test_workflow_router.py |
+| Deviations | the D6 failures are the environment and publication-pin set already recorded for this environment; one ACR test varies between runs and is listed by name above when it differs |

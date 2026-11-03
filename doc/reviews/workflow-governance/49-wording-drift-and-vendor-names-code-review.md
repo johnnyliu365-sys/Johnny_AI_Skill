@@ -50,3 +50,15 @@
 | 11 | `git diff -U0 7335e78..924f5bb \| grep '^+' \| grep -iE "<drive-letter path>\|token\|secret\|password\|key="` | 1 (no hits) |
 
 Not verified: the dispatch's source-project denylist (not provided; only the one name known to this seat was checked). No pytest was run, by instruction. Nothing was found contradicting Workflow §0 or spec Revision 04; the only governance conflict is R49-02 against CodeReview §4.3. Added lines show no chat tone, host absolute paths or secrets.
+
+## ImplementationReturn (control plane, closure revision02)
+
+| Field | Value |
+| --- | --- |
+| Return | `COMPLETED` |
+| Candidate | `fb55623f747039d24555fab0e5017831da9926ac` (content); the commit that carries this section adds only evidence files and this record |
+| Re-plan commit | `3ffe1b12` (closure rebuilt before the fix) |
+| W1 | PASS — 3 hits: the W1 row, the spec "Authoring AI / baseline" row, the spec Revision Signatures row dated 2026-08-05; raw `evidence/49/rev02-W1.txt` |
+| W2 | PASS — ticket 48 P4 names the dispatch file as the carrier of its denylist and spells no name; raw `evidence/49/rev02-W2.txt` |
+| W3 | PASS — zero hits (`git grep` exit 1); raw `evidence/49/rev02-W3.txt` |
+| Observable behavior | no source-project name on this line (checked by the ticket 48 reviewer's P4 denylist, outside this record); tickets 47 and 48 Grant rows, REQ Authority row and the README authority paragraph name roles and profiles; dated spec rows exempt as stated in the ticket |

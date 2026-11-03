@@ -56,7 +56,7 @@ revision-135 checklist stays on the Codex branch where it was written.
 | D2 | `grep -c "狀態只存在三種檔案" Workflow.md` | 1; and the section-zero anchors `#workflow-router`, `#role-boundary` still exist |
 | D3 | `grep -c "Revision 04 R4-4" CodeReview.md` | 2 (the integration clause in section 2 and the integration sentence in section 5); the sentence "The reviewer alone owns the final review conclusion." is unchanged |
 | D4 | `grep -c "^## Revision 04" modules/spec/workflow-governance.md` | 1; R4-1 to R4-6 present |
-| D5 | `git diff --stat a1cb6c1..HEAD` | only the paths in the boundary block; the policy digest pins for router-control.md move with the document under `CHG-20261103-043` |
+| D5 | `git diff --stat a1cb6c1..HEAD` | only the paths in this boundary block or in ticket 49's boundary block (the two tickets share this branch; ticket 49's review record and evidence directory are its); the policy digest pins for router-control.md move with the document under `CHG-20261103-043` |
 | D6 | `pytest tests -q` full suite, raw output committed under `doc/reviews/workflow-governance/evidence/47/` | failure set equals the main baseline (environment failures only), listed by name in the receipt |
 | M1 | remove the exit-code sentence from Workflow.md section 0 | D2 still 1 but the reviewer must flag the contract loss; recorded as a review check, not a script |
 
@@ -110,3 +110,4 @@ The revision02 initial review (record: `doc/reviews/workflow-governance/47-gates
 | F-07 residual | EVIDENCE_DEFECT | `tests/test_adversarial_review_policy.py` pins the whitespace-normalised executor phrase "Integration is executed by the versioned integration script from the merge queue". |
 | F-05 | REQUIREMENT_CHANGED (recorded) | Owner confirmation of the descriptor decision is still pending; it gates integration onto `main`, not this review. |
 | R49-06 (from ticket 49) | OUT_OF_SCOPE_HARDENING | Host absolute paths removed from this ticket's Workspace row and from the review record; raw logs are committed under evidence instead of referenced on a host. |
+| D5 wording (control plane, before the revision03 review) | TICKET_DEFECT | D5 said "only the paths in the boundary block"; since ticket 49 shares the branch, its review record and evidence directory also appear in `a1cb6c1..HEAD`. D5 now names both boundary blocks. |

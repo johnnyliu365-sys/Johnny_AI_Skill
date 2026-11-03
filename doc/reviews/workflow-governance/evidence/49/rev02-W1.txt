@@ -1,0 +1,8 @@
+cell: W1
+candidate: fb55623f747039d24555fab0e5017831da9926ac
+command: git grep -nE 'Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Codex/current worktree' -- modules/spec/workflow-governance.md modules/tickets/workflow-governance/47-*.md modules/tickets/workflow-governance/48-*.md modules/tickets/workflow-governance/49-*.md modules/tickets/workflow-governance/README.md doc/requirements/active/2026/workflow-governance
+---
+modules/spec/workflow-governance.md:7:| Authoring AI / baseline | Codex control plane / current worktree / `7769710` |
+modules/spec/workflow-governance.md:148:| 2026-08-05 | Codex control plane / `7769710` | Initial draft after the owner-directed post-commit Grill. |
+modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:33:| W1 | `git grep -nE "Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Codex/current worktree" -- modules/spec/workflow-governance.md modules/tickets/workflow-governance/47-*.md modules/tickets/workflow-governance/48-*.md modules/tickets/workflow-governance/49-*.md modules/tickets/workflow-governance/README.md doc/requirements/active/2026/workflow-governance` | exactly three hits: this row (it carries the pattern), the spec "Authoring AI / baseline" row and the spec Revision Signatures row dated 2026-08-05 (dated records, exempt above) |
+exit=0
