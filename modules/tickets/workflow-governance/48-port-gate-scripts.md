@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CORRECTION_DISPATCHED (correction 1 of closure revision02 after its initial review returned CHANGES_REQUESTED on NF-01, NF-02, NF-03, NF-05; one correction review remains); 48-P1–P9 revision02; c3 `0d1ef754` |
+| State / Closure | CONVERGENCE_REPLANNED / CORRECTION_DISPATCHED; 48-P1–P10 revision03 after the revision02 correction review returned CHANGES_REQUESTED with CONVERGENCE_REVIEW_REQUIRED (NF-06, NF-07); c4 `9e98c962` |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 R4-2 (dispatch lint, evidence gate precursor, index pins) |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47; candidate commits c1 `1d9f2a96`, c2 `c41cc29d` on branch `cp/wave1-ticket48-candidate` (base `f4d43817`); the correction is an additive commit c3 on that branch; the control plane cherry-picks c1–c3 onto the branch tip at integration (no rebase by the seat) |
 | Grant / roles | Control plane dispatches; `implementation-standard` seat in a disposable clone; independent review by a `ticket-review` seat |
@@ -66,6 +66,7 @@ path, id or name from any target project.
 | P6 | exit codes | `dispatch_lint` 0/1/3; `receipt_fence_check` 0/1/2/3 (2 = evidence or scan root not a readable directory); `index_pins` 0/1/2/3 (2 = `SHALLOW_HISTORY`, `git` not startable or not a repository, `--json` path not writable; 3 = bad option, index argument missing, not a file or not UTF-8); one test case per code per script |
 | P7 | options cannot void a rule | `--chat-words` with an empty or blank list → exit 3 with usage; `--sealed-state` empty or blank → exit 3; the sealed word matches the whole stripped state cell, never a substring; one test per case |
 | P8 | generic source cases restored | tests cover: pin-shape negatives (bare 40- and 64-hex, `sha256=` form, only one side present); the three-row `MALFORMED_PIN` orphan canary; a `../leaf` parent-relative leaf; `SEALED_PIN_MISSING`; every word of the default R3 list (subTest over the list itself, not a copy); R5 on line 1 |
+| P10 | every git query is a tool fault when it fails | in `index_pins.py` a non-zero exit of any git invocation (`git log -1 -- <leaf>`, `git ls-files`, `git show <rev>:<leaf>`, `git rev-parse` in the shallow-boundary check) exits 2 with a message that contains git's own stderr text, never `SKIP_NO_BLOB`, `SEALED_PIN_INVALID`, `SKIP_UNTRACKED` or any red; one test per query, each asserting the git stderr text in the output |
 | P9 | receipt cells | every cell carries `cell`, `candidate`, `tool_digest` (one `path=sha256` line per script at the candidate), `capture` (path relative to the receipt's directory), `exit`; captures written with LF; the control plane commits receipt and captures under `doc/reviews/workflow-governance/evidence/48/` at integration |
 | M1 | remove rule R3 from dispatch_lint | P1 red |
 | M2 | make receipt_fence_check accept a fence without capture | P2 red |
@@ -79,6 +80,8 @@ path, id or name from any target project.
 | M10 | dispatch_lint R5 skips line 1 | P1 red |
 | M11 | dispatch_lint accepts an empty `--chat-words` list | P1 red |
 | M12 | index_pins `--sealed-state` matches as a substring | P3 red |
+| M17 | index_pins turns a failing `git show` into `None` (`SKIP_NO_BLOB`, exit 1) | P3 red |
+| M18 | index_pins drops git's stderr from a fault message | P3 red |
 
 ## Re-plan to closure revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
 
@@ -104,3 +107,15 @@ Review record: `doc/reviews/workflow-governance/48-port-gate-scripts-code-review
 | NF-04 | OUT_OF_SCOPE_HARDENING | `core.quotepath` for non-ASCII leaf names: follow-up ticket, not c4 |
 | NF-05 | EVIDENCE_DEFECT | receipt P6 `exit` lists every exit in capture order |
 | P6 wording | note | "index argument missing" means an index argument naming a missing file; no argument keeps discovery mode (reviewer-accepted reading; reworded at the next closure revision if one is needed) |
+
+## Re-plan to closure revision03 (after the revision02 correction review `CHANGES_REQUESTED`, `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision02 correction review". Per CodeReview.md §5 the revision02 rounds are used; the control plane re-plans instead of a third correction. The residue is one family: the Correction 1 NF-03 row named two git queries by example, and c4 fixed exactly those two. Revision03 states the rule for every git query (P10) and pins git's message (M17, M18). Frozen here before the correction commit c5.
+
+| Finding | Class | Disposition in revision03 |
+| --- | --- | --- |
+| NF-06 | IMPLEMENTATION_DEFECT | P10: a failing `git show <rev>:<leaf>` (and a failing `rev-parse` in the shallow-boundary check) is a tool fault exit 2; `SKIP_NO_BLOB` and `SEALED_PIN_INVALID … = N/A` are no longer reachable through a git failure; docstring and README say "any git query". |
+| NF-07 | EVIDENCE_DEFECT | P10 tests assert git's stderr text in the fault output; M18. |
+| NF-08 | OUT_OF_SCOPE_HARDENING | Unborn HEAD: a `git log` failure is a fault (exit 2) by P10; recorded for the follow-up that decides whether an unborn HEAD deserves its own code. |
+| NF-04 | OUT_OF_SCOPE_HARDENING | Carried: `core.quotepath` for non-ASCII leaf names, follow-up ticket. |
+| receipt note | EVIDENCE_DEFECT (Low) | The `changed_assertions` section of the receipt is a statement, not a run: it carries `cell: STATEMENT` and no capture, and the evidence gate treats statement cells as informational, not `NOT_RUN`. |

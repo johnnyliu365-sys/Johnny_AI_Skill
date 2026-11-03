@@ -153,3 +153,78 @@ The 10 F1 failures: `test_atomic_conditional_replace_capability.py::test_acr2_li
 Raw logs: retained by the reviewer seat on its host (P1–P5, P9, mypy, F1, probes 1–4, mutation summary, M1–M12, M2b, M3b, X*); not committed.
 
 Not verified: the seat's own mutation runs; why the two base names pass in this environment; POSIX/Linux behaviour (Windows host only); unreadable-permission directories; the source checkout of the original scripts.
+
+## Revision02 correction review
+
+**Verdict: `CHANGES_REQUESTED`, `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | c4 `9e98c9626e26e09fc4209c21d2450686e118a857` (chain c4 → c3 `0d1ef754` → c2 `c41cc29d` → c1 `1d9f2a96` → base `f4d43817`) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; LF review clone of the seat's clone |
+| Summary | c4 closes NF-01, NF-02 and NF-05, and NF-03 for the two git queries the finding named. One implementation defect stays open in the NF-03 family: a third git query, `git show <rev>:<leaf>`, still turns a failure into a contract red with exit 1 (NF-06), and the "with the git message" clause is not pinned by any test (NF-07). CodeReview.md §5 allows no third correction, so the candidate returns to the control plane. |
+| References | CodeReview.md §1–§5, AGENTS.md P0, Workflow.md §0, review-checks.md (reviewer counter-mutation rule), implementation-tdd.md; XSS, secret, provider and UI references not applicable |
+
+### Findings status
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| NF-01 | CLOSED | B7, B8, B9 on the c4 blobs with `PYTHONUTF8` unset and `PYTHONIOENCODING=cp950` (and also with it unset): each exits 1, no traceback, prints `ก`; a tool fault whose stderr holds U+0E01 exits 2, escaped; `_harden_streams` reconfigures with `errors="backslashreplace"` only, so the host encoding stays. Mutations M13, R1, R2, R3 (`replace`), R4 (forcing utf-8) red; R8, R9 (dropping stderr from the reconfigure) survive harmlessly because stderr already defaults to `backslashreplace`. |
+| NF-02 | CLOSED | B3: `--root <absent>` with `--check` and `--root <file>` with `--write` exit 2 with `tool fault: --root … is not a readable directory`; the usage case moved to `ToolFaultTests::test_root_that_is_missing_or_not_a_directory_exits_2`; docstring and README updated; M14 (back to 3) 6 subfailures, R7 (fault as exit 1) 6. |
+| NF-03 | PARTIAL | B5 (HEAD object removed): `git log` 128, `ls-files` 0, index_pins exits 2 with `git log -1 -- leaf.md failed with exit 128: fatal: bad object HEAD`, no `SKIP_UNTRACKED`; corrupt `.git/index` makes `ls-files` 128 and index_pins exits 2 on `--check` and `--write`; M15 3 red, M16 (X9c) 2 red. Open: a failing `git show` reports `SKIP_NO_BLOB` or `SEALED_PIN_INVALID` with exit 1 (NF-06); the git-message clause unpinned (NF-07). |
+| NF-04 | CARRIED | OUT_OF_SCOPE_HARDENING; c4 does not touch `core.quotepath`, as the dispatch required. |
+| NF-05 | CLOSED | receipt P6 `exit:` lists 26 values equal in order to the 26 `exit=` lines of the capture; N1 3 of 3; N3 6 of 6. |
+
+### Cells
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 | PASS | exit 0; 24 passed, 36 subtests (c3 23, plus the cp950 test) |
+| P2 | PASS | exit 0; 48 passed, 3 subtests |
+| P3 | PASS | exit 0; 52 passed, 67 subtests (c3 47, plus root fault, git log fault, ls-files fault, git fault as a process, cp950) |
+| P4 | PASS | denylist (8 terms) over the scripts and `tests/test_gate_*.py`: exit 1, zero hits |
+| P5 | PASS | exit 1; only `CommittedPinTests::test_the_pinned_sha_exists` (base name) |
+| P6 | PASS, with gap NF-06 | one invocation per (script, code) pair: dispatch_lint 0/1/3; receipt_fence_check 0/1/2/3; index_pins 0, 1 (STALE), 2 (SHALLOW_HISTORY check and write, not a repository, empty PATH, `--root` missing, `--root` file, `--json` missing directory, `--json` directory, `git log` failing, `ls-files` failing), 3 (`--bogus`, no mode, missing index file, directory argument, non-UTF-8 index) |
+| P7 | PASS | default R3 exits 1; `--chat-words` `''`, `,`, `' '`, `' , ,'` exit 3 with a usage line; `--sealed-state` `''`, `' '` exit 3; stale `open` row with `o`, `pen` exit 1 STALE; `OPEN` matches the whole cell |
+| P8 | PASS | c4 removes no test line except the moved `--root` case; every named case present; P1 and P3 green |
+| P9 | PASS, one note | see Receipt integrity |
+| M1–M12 | not re-run (c3 review 12 of 12 red) | c4 changes none of those code paths; P1–P3 green at c4 |
+| M13–M16 | PASS (4 of 4 red, reviewer's own edits) | M13 1 failed; M14 6 subfailed; M15 2 subfailed + 1 failed; M16 2 subfailed; all restored byte for byte, porcelain empty |
+| Reviewer counter-mutations | 6 red, 4 survive | red R1, R2, R3, R4, R7; survive R8, R9 (harmless), R5, R6 (removing git stderr from the fault message leaves P3 green: NF-07) |
+| F1 | PASS | 10 failed, 2042 passed, 31 skipped, exit 1 (2035 + 7 new tests); all 10 in the 12 base names; zero new red; same set as the seat's |
+| c3 → c4 non-weakening | PASS | only removed test line is the UsageTests `--root` entry, now asserted as exit 2 in ToolFaultTests; every other test change additive; script removals are old docstrings, the `--root` usage return, the `code == 0 and` condition (replaced by a raise) and the old `ls-files` message |
+| Code review | PASS except NF-06, NF-07 | streams reconfigured once at entry before any output, encoding kept; typing complete; `mypy --strict --python-version 3.11` no issues (mypy 2.3.0); no `Any`, no `type: ignore`; stdlib only (`io` added); README and docstrings cover `--root` and the git-query exits |
+| Boundary | PASS | `git diff --name-only f4d43817..9e98c962`: the 7 create paths; plugin.json and the tickets README untouched; no forbid path |
+| Receipt integrity | PASS, one note | the 13 run cells each carry `cell`, `candidate`=c4, three `tool_digest` lines equal to sha256 of `git show 9e98c962:<path>`, `capture`, `exit`; RETURN.md and all captures 0 CR bytes; every raw block byte-identical to its capture; `exit` lists match capture order. Note: the trailing `## changed_assertions` section carries `cell:` but no `tool_digest`, `capture` or `exit`; a statement, not a run, which an R4-7 evidence gate would read as `NOT_RUN`; its content (one changed assertion) matches the diff |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| NF-06 | `IMPLEMENTATION_DEFECT` (residue of NF-03; against R4-2 and the Correction 1 NF-03 row) | Low | `index_pins.py:137-149` (`blob_sha256_at` turns a non-zero `git show` into `None`), `:391-393` (`SKIP_NO_BLOB`), `:380-384` (`SEALED_PIN_INVALID … = N/A`); docstring `:36-37`; README lines 75-77 | `git show <rev>:<leaf>` is the third git query and its failure is still a contract red with exit 1; the rev comes from a successful `git log` and the leaf is tracked, so this failure can only be an object-store or promisor fault. c4 narrowed the docstring and README from "a git query fails" to the two named queries instead of fixing it. If the control plane reads the NF-03 parenthetical as the complete scope, reclassify as OUT_OF_SCOPE_HARDENING. Code read only: `shallow_boundary` (`:157-171`) also turns a failing `rev-parse` into `set()`. | offline blobless sparse clone (`--filter=blob:none --sparse`, promisor remote moved away): `git log` 0, `ls-files` 0, `git show` 128; `--check` and `--write` give `SKIP_NO_BLOB`, exit 1; a sealed row gives `SEALED_PIN_INVALID … = N/A differs`, exit 1; a local repo with the leaf blob deleted also gives `SKIP_NO_BLOB`, exit 1 |
+| NF-07 | `EVIDENCE_DEFECT` (NF-03 disposition "with the git message") | Low | `tests/test_gate_index_pins.py:638`, `:653` | The new fault tests assert only the script's own prefix (`"git log"`, `"git ls-files"`), never git's stderr; removing `{self.last_stderr}` from either message leaves P3 green. The behaviour is correct at c4. | counter-mutations R5, R6: P3 exit 0, 52 passed |
+| NF-08 | `OUT_OF_SCOPE_HARDENING` (note) | Low | `index_pins.py:131-132` | In a repository with no commits a staged leaf now exits 2 (`does not have any commits yet`); before c4 it was `SKIP_UNTRACKED` exit 1. A leaf with no history in a repository that has commits is still exit 1. Matches the dispatch; recorded so a follow-up decides whether an unborn HEAD is a red or a fault. | probe "unborn HEAD": `git log` 128, index_pins exit 2 |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | LF review clone of the seat's clone at `9e98c962`; `git log --format='%h %p'` | 0 (chain as stated) |
+| 2 | CRLF scan of the worktree against the blobs | 0 (2 out-of-scope files, explained) |
+| 3 | sha256 of `git show 9e98c962:<script>` against the worktree and the receipt | 0 (13 of 13 cells) |
+| 4 | `git diff --name-only f4d43817..9e98c962`; `git diff 0d1ef754..9e98c962` (removed lines) | 0 (7 paths; 1 test line removed) |
+| 5 | F1 `PYTHONUTF8=1 python -m pytest tests -q -p no:cacheprovider` | 1 (10 failed, all base names) |
+| 6 | P1, P2, P3, P5 pytest one at a time | 0 / 0 / 0 / 1 |
+| 7 | P4 grep with the denylist | 1 (zero hits) |
+| 8 | `python -m mypy --strict --python-version 3.11` on the three scripts | 0 |
+| 9 | probes: cp950 B7/B8/B9 (PYTHONIOENCODING=cp950, then unset), B3, B5, `ls-files` failure, blob removed, unborn HEAD | 1/1/1; 2/2; 2; 2/2; 1 (NF-06); 2 |
+| 10 | offline blobless sparse clone: `--check`, `--write`, sealed row | 1 / 1 / 1 (NF-06) |
+| 11 | one invocation per (script, code) plus the P7 options | as in P6 and P7 |
+| 12 | mutation harness M13 M14 M15 M16 R1–R9 (single-occurrence edit, named test file, byte restore, porcelain) | 1 for M13–M16, R1, R2, R3, R4, R7; 0 for R5, R6, R8, R9 |
+| 13 | stderr-only mutated copies with a non-cp950 fault message | 2 / 2 (harmless) |
+| 14 | receipt check (fields, digests, LF, block equals capture, exit order) | 0 |
+| 15 | `git status --porcelain` in the review clone, the seat clone and the control plane | 0 lines each |
+
+Raw logs: retained by the reviewer seat on its host; not committed.
+
+Not verified: M1–M12 re-run at c4 (code unchanged since c3; c3 review 12 of 12 red); the seat's own mutation runs; POSIX/Linux behaviour; unreadable-permission directories; a real console (as opposed to a pipe) under cp950; whether `rev-parse` can fail inside `shallow_boundary` while the other queries succeed (code read only).
