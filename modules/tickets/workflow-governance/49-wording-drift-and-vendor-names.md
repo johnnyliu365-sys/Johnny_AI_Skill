@@ -13,6 +13,7 @@ modify = modules/spec/workflow-governance.md
 modify = doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md
 modify = modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md
 modify = modules/tickets/workflow-governance/48-port-gate-scripts.md
+modify = modules/tickets/workflow-governance/README.md
 forbid = library/
 forbid = skills/
 forbid = tests/
@@ -34,3 +35,4 @@ No document on this line names the source project the gate scripts were ported f
 | Cell | Was | Now |
 | --- | --- | --- |
 | W1 | scanned every ticket under `modules/tickets/workflow-governance`, including closed tickets 01–23 outside this boundary and this row itself, so zero hits was unreachable | scoped to the boundary files; this row is the one permitted occurrence of the pattern |
+| boundary | did not list `modules/tickets/workflow-governance/README.md`, whose status row for this ticket must change when it closes | row added |
