@@ -11,8 +11,8 @@ One row per change that altered what the plugin does. Working history lives in G
 | Item | Status at freeze | Disposition under Revision 04 |
 | --- | --- | --- |
 | 01 主線與單票 | 30B review blocked | superseded by the contract gate (wave 2) |
-| 02 已核准工作接續 | local integrated, effect open | state-in-files continuation (R4-1) |
-| 03 派工完整最小 | local integrated | dispatch lint script (wave 1) |
+| 02 已核准工作接續 | local integrated, effect open | state-in-files continuation (R4-1); grant-issuer and admit_dispatch residuals carried to wave 2 queue admission (R4-7) |
+| 03 派工完整最小 | local integrated | dispatch lint script (wave 1); host-admission residuals carried to wave 2 |
 | 04 TEST → A → B | complete local | kept; four layers (R4-6) |
 | 05 候選來源與 Expected | contract local | contract gate provenance check (wave 2) |
 | 06 共用樹覆蓋 | worker claim local | one writer per file; integration script (wave 2) |
@@ -21,4 +21,4 @@ One row per change that altered what the plugin does. Working history lives in G
 | 09 窄修窄審 | cases verified | kept as review policy |
 | 10 成本／外部呼叫／回報 | local integrated | token column in receipts (wave 2) |
 | 11 去重與衝突 | local integrated | requirement snapshot ids (wave 2) |
-| 12 回放與獨審 | end to end not verified | first target run on Vita360 (wave 2 acceptance) |
+| 12 回放與獨審 | end to end not verified | first run on a target project (wave 2 acceptance) |

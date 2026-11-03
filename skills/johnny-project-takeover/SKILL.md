@@ -14,8 +14,9 @@ target project's runtime, CI, hook, import, submodule or symlink dependency.
 2. Read `../../Workflow.md` only far enough to identify the current stage and its routing row.
 3. Read exactly the reference named by that row, plus the minimum committed target artifacts it
    requires. Do not load unrelated references, the full library or chat history.
-4. Execute one legal action, emit its typed completion event and return to the Router. Do not
-   select the next stage locally.
+4. Execute one legal action, record its typed completion event in the receipt and let the next
+   gate script read the state files (Revision 04: the Router is the gate scripts over the state
+   files, not a process to re-enter). Do not select the next stage locally.
 
 Default delivery maturity is `POC` unless an approved target artifact proves otherwise.
 

@@ -28,7 +28,8 @@ The helper's finite return is one of `FINDINGS`, `NO_FINDINGS`, `BLOCKED`, `UNAV
 references and a sanitized reason. A helper return is evidence only: it cannot approve, cannot
 integrate, cannot issue an implementation return and cannot act as an effect receipt. The reviewer
 independently verifies every finding against source and behavior and alone owns the final review
-conclusion and integration.
+conclusion; integration is executed by the versioned integration script from the merge queue
+(workflow-governance Revision 04 R4-4), admitted by that conclusion.
 
 ## Requiredness and unavailable evidence
 

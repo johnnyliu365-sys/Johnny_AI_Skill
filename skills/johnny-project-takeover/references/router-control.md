@@ -4,6 +4,18 @@ Read this reference when resolving a workflow event, emitting a decision, valida
 completion return, or admitting an implementation dispatch. Do not load it merely to
 implement an already admitted ticket.
 
+## Revision 04 note (gates-first control plane)
+
+From workflow-governance SPEC Revision 04 the stage sequence below applies to `GREENFIELD` only;
+`TAKEOVER` and `DELTA` enter from a requirement snapshot. Typed events are records written into
+the receipt by the agent that finished the action; the gate scripts read the state files and
+decide the transition. The live `PendingDispatchDescriptor` path in Dispatch admission is kept
+only for the cross-lifetime bridge until it retires; the default cross-session route is the
+merge-queue file. Its single-consume and anti-replay invariants are: an entry is keyed by
+(ticket, candidate sha); a key already in `LANDED` or `BOUNCED` is refused; landing requires a
+compare-and-swap on the queue file commit and on the remote tip sha; caller-provided shas stay
+assertions compared against the repository, never authority.
+
 ## Closed state machine
 
 ```text

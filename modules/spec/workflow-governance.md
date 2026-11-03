@@ -161,7 +161,7 @@ Source: `PRD-20261103-043` / `CHG-20261103-043`. This revision changes how trans
 
 ### R4-1 State lives in files
 
-- A ticket leaf, its receipt and the merge queue (`MERGE-QUEUE.json`) are the only state. Nothing an agent holds in memory or in a live descriptor is authoritative. Any session, on any host, resumes from these files.
+- A ticket leaf, its receipt and the merge queue (`MERGE-QUEUE.json`) are the only state. Nothing an agent holds in memory is authoritative. The live `PendingDispatchDescriptor` of the cross-lifetime bridge is retained as a transitional path until wave 3; its single-consume and anti-replay guarantees are carried by the queue (R4-7). Any session, on any host, resumes from these files.
 - `ACTION_COMPLETED`, `ImplementationReturn`, `ImplementationHandoff`, `WAIT_FOR_HUMAN` and `HALT` remain the vocabulary of receipts and return records. They are written into the receipt by the agent that finished the action; no Router process has to be re-entered for them to count.
 
 ### R4-2 Transitions are decided by scripts
@@ -173,7 +173,7 @@ Source: `PRD-20261103-043` / `CHG-20261103-043`. This revision changes how trans
 | contract gate | every requirement id has a spec, every spec cites an existing source at its recorded digest, no spec binds a retired requirement, no literal expected value, every contract has a named mutation | 0 / 1 / 3 |
 | evidence gate | every cell carries candidate, tool digest and capture; stale tool digests and missing captures fail | 0 / 1 / 2 / 3 |
 | coverage map | every retired assertion is carried, dropped with a reason, or escalated | 0 / 1 / 3 |
-| integration | queue entry fast-forwards onto the current tip, affected specs rerun green, remote sha equals the sha checked, then push | 0 / 1 / 2 / 3 |
+| integration | the candidate has an independent review record with verdict `APPROVED`, the queue entry fast-forwards onto the current tip, affected specs rerun green, remote sha equals the sha checked, then push | 0 / 1 / 2 / 3 |
 
 Exit code meaning is fixed across all gates: 0 pass, 1 contract red, 2 tool fault, 3 usage error. A red is never reported as a tool fault and a tool fault is never reported as a red.
 
@@ -195,6 +195,15 @@ The eleven-stage sequence applies to `GREENFIELD`. `TAKEOVER` and `DELTA` enter 
 - harness (no assertions) / fixtures / contract sources and ledgers (expected values with provenance) / one-contract-per-file specs that read from the layers above.
 - CI runs two classes, positively pinned: hard business rules and security locks. Removing or weakening one is a red. Requirement-driven regression runs inside the ticket loop, not in CI.
 - A contract-preserving change (copy, asset, style parameter with no behaviour, layout or acceptance change) takes the fast lane: existing contract, implement, existing specs, integrate. Touching any expected value leaves the fast lane.
+
+### R4-7 Wave-2 schemas (binding for the implementation tickets)
+
+- Merge-queue entry: `ticket`, `candidate` (full sha), `parent` (tip sha checked), `review` (path of the review record whose verdict is `APPROVED`), `submitter`, `state` (`QUEUED` | `LANDED` | `BOUNCED`), `landed_sha`, `reason`. Key = (`ticket`, `candidate`); a key already `LANDED` or `BOUNCED` is refused (anti-replay). Landing = compare-and-swap: the queue file commit read at admission and the remote tip sha read at admission must both still hold at push time, otherwise `BOUNCED` with reason `TIP_MOVED` or `QUEUE_MOVED` (single consume). One lock row per run, released by the same run.
+- Receipt cell: `cell`, `candidate`, `tool_digest` (one line per tool file, `path=sha256` of the blob at `candidate`), `capture` (repository-relative path), `exit`. A cell without all five fields is `NOT_RUN`.
+- Requirement snapshot row: `requirement_id`, `page_id`, `title`, `type`, `source_ref` (URL or path), `source_sha256`, `status`, `version`. A new snapshot never overwrites an earlier version; later edits become the next version.
+- Contract gate codes: `NO_SPEC_FOR_REQUIREMENT`, `SOURCE_MISSING`, `SOURCE_DIGEST_MISMATCH`, `RETIRED_REQUIREMENT_BOUND`, `LITERAL_EXPECTED`, `NO_MUTATION`. Any code is exit 1.
+- Post-push readback: the integration script records the CI run result for the landed sha and, where a deploy target exists, the served fingerprint of at least one changed file; both go into the integration receipt before the entry is marked `LANDED`.
+- Exit mapping is the single table in R4-2; a gate that cannot start (missing interpreter, unreadable input directory) exits 2, never 1.
 
 ### Revision Signatures (Revision 04)
 

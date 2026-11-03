@@ -14,6 +14,8 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [02-repo-contained-worktree-layout](02-repo-contained-worktree-layout.md) | Every agent's worktree lives under the repository root, proven host-side | `CLOSED` | Owner-executed 2026-08-19; R1-R6 green, reverse mutation proven. The dispatch-admission gate its R3 anticipated is now wired by workstation-dispatch W1 |
 | [03-suite-order-fragility](03-suite-order-fragility.md) | A poisoned shared runtime root is reported once, with its cause and remedy, instead of eighty misleading failures | `CLOSED` | Real cause found: per-process claim map versus a shared on-disk root, orphaned by concurrent pytest processes. The opening diagnosis was wrong and is corrected in place |
 | [04-skill-implies-a-runtime-that-may-not-exist](04-skill-implies-a-runtime-that-may-not-exist.md) | The skill no longer narrates wakes nothing performs; agents must verify automation readiness before claiming any automatic effect | `CLOSED` | Found by the owner watching a false wake narrative on a real project; ships as 0.4.4 |
+| [47-gates-first-governance-rewrite](47-gates-first-governance-rewrite.md) | Workflow section 0 states that state lives in files and transitions are decided by scripts; CodeReview names the integration script as executor | `CORRECTION_1_LOCAL` | Independent review before integration |
+| [48-port-gate-scripts](48-port-gate-scripts.md) | Dispatch lint, receipt fence check and index pins run from the plugin with the fixed exit-code contract | `PLANNED` | Ticket 47 reviewed |
 
 ## Shared baseline
 
@@ -28,5 +30,3 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 Codex/current worktree is the control-plane owner and reviewer. The implementation owner is the separate `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree on branch `codex/implementation-private-router-saas-01`. It is currently based on `7769710` and must fast-forward to `main` before the first red test. The project owner approved this ticket on `2026-08-05`; source/test work is authorised only in that assigned worktree.
 
 The implementation handoff consists of the approved specification, this ticket, Context references, TDD cuts, exact target paths, and the return-event rules. A completion returns evidence for review; a requirement, architecture, public-contract, frontend composition/DI, or acceptance change returns `REQUIREMENT_CHANGED` to Grill.
-| [47-gates-first-governance-rewrite](47-gates-first-governance-rewrite.md) | Workflow section 0 states that state lives in files and transitions are decided by scripts; CodeReview names the integration script as executor | `LOCAL_IMPLEMENTED` | Independent review before integration |
-| [48-port-gate-scripts](48-port-gate-scripts.md) | Dispatch lint, receipt fence check and index pins run from the plugin with the fixed exit-code contract | `PLANNED` | Ticket 47 reviewed |
