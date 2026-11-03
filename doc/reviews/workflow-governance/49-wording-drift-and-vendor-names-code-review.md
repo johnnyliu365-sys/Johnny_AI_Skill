@@ -127,6 +127,8 @@ Not verified: the dispatch's source-project denylist (only the one external name
 
 ## ImplementationReturn (control plane, closure revision04)
 
+Superseded by the revision05 return below: W4 and W5 were red in this run (`evidence/49/rev04-W4.txt`, `rev04-W5.txt`), W4 because the Expected named only ticket 47 as the other ticket on the line, W5 because the classifier did not recognise the short file reference "the codex-native reference".
+
 | Field | Value |
 | --- | --- |
 | Return | `COMPLETED` |
