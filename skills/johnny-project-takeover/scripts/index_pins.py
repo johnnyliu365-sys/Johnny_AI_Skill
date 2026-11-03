@@ -29,13 +29,15 @@ row is a defect. The sealed word must not be empty or blank.
 
 Defects (exit 1): ROW_SHAPE_MISMATCH, ORPHAN_PINNED_ROW, SEALED_PIN_INVALID,
 SEALED_PIN_MISSING, SKIP_UNRESOLVED, SKIP_UNTRACKED, SKIP_NO_PATH_IN_CELL,
-SKIP_NO_HASH_IN_CELL, SKIP_NO_BLOB.
+SKIP_NO_HASH_IN_CELL.
 
 Exit codes: 0 all pins current, 1 drift or defect, 2 tool fault (SHALLOW_HISTORY: a
 shallow clone whose history would pin the boundary commit; git cannot be started; not
-inside a git repository; --root missing or not a directory; a git query fails
-(`git log -1 -- <leaf>` or `git ls-files` exits non-zero); the --json path cannot be
-written; any other unexpected error), 3 usage error (bad option, missing mode, empty
+inside a git repository; --root missing or not a directory; any git query that
+fails exits 2 with git's message (`git log -1 -- <leaf>`, `git ls-files`,
+`git show <revision>:<leaf>`, `git rev-parse` exits non-zero), never a defect such as
+SKIP_UNTRACKED, SKIP_NO_BLOB or SEALED_PIN_INVALID; the --json path cannot be written;
+any other unexpected error), 3 usage error (bad option, missing mode, empty
 --sealed-state, index argument that is not a file, index file that is not UTF-8). The
 console encoding never changes an exit code: stdout and stderr keep the host encoding
 but escape what it cannot encode.
@@ -73,12 +75,11 @@ _BACKTICKED = re.compile(r"`([^`]+)`")
 DEFECTS = (
     "ROW_SHAPE_MISMATCH", "ORPHAN_PINNED_ROW", "SEALED_PIN_INVALID", "SEALED_PIN_MISSING",
     "SKIP_UNRESOLVED", "SKIP_UNTRACKED", "SKIP_NO_PATH_IN_CELL", "SKIP_NO_HASH_IN_CELL",
-    "SKIP_NO_BLOB",
 )
 
 
 class GitFault(Exception):
-    """git cannot be started, or a query the pins depend on failed: a tool fault."""
+    """git cannot be started, or any git query the pins depend on failed: a tool fault."""
 
 
 class IndexUnreadable(Exception):
@@ -107,7 +108,7 @@ class Repo:
     def __init__(self, root: Path) -> None:
         self.root = root.resolve()
         self._commits: dict[str, str | None] = {}
-        self._digests: dict[tuple[str, str], str | None] = {}
+        self._digests: dict[tuple[str, str], str] = {}
         self.last_stderr = ""
 
     def git_text(self, *args: str) -> tuple[int, str]:
@@ -134,10 +135,11 @@ class Repo:
             self._commits[leaf] = sha if len(sha) == 40 else None
         return self._commits[leaf]
 
-    def blob_sha256_at(self, commit: str, leaf: str) -> str | None:
+    def blob_sha256_at(self, commit: str, leaf: str) -> str:
         """sha256 of `git show <commit>:<leaf>` (repository bytes, not a git blob hash).
 
         Computed on raw bytes so a working-tree CRLF conversion can never change it.
+        A failing `git show` is a tool fault carrying git's message, never a missing digest.
         """
         key = (commit, leaf)
         if key not in self._digests:
@@ -145,7 +147,10 @@ class Repo:
                 done = subprocess.run(["git", "show", f"{commit}:{leaf}"], cwd=self.root, capture_output=True)
             except OSError as exc:
                 raise GitFault(f"git cannot be started: {exc}") from exc
-            self._digests[key] = hashlib.sha256(done.stdout).hexdigest() if done.returncode == 0 else None
+            if done.returncode != 0:
+                stderr = (done.stderr or b"").decode("utf-8", errors="replace").strip()
+                raise GitFault(f"git show {commit}:{leaf} failed with exit {done.returncode}: {stderr}")
+            self._digests[key] = hashlib.sha256(done.stdout).hexdigest()
         return self._digests[key]
 
     def tracked_files(self) -> set[str]:
@@ -161,11 +166,13 @@ class Repo:
         boundary commit: right content, wrong revision. Such pins must not be produced.
         """
         code, out = self.git_text("rev-parse", "--is-shallow-repository")
-        if code != 0 or out.strip() != "true":
+        if code != 0:
+            raise GitFault(f"git rev-parse --is-shallow-repository failed with exit {code}: {self.last_stderr}")
+        if out.strip() != "true":
             return set()
         code, gitdir = self.git_text("rev-parse", "--git-dir")
         if code != 0:
-            return set()
+            raise GitFault(f"git rev-parse --git-dir failed with exit {code}: {self.last_stderr}")
         shallow_file = self.root / gitdir.strip() / "shallow"
         if not shallow_file.exists():
             return set()
@@ -381,7 +388,7 @@ def scan(repo: Repo, index_file: Path, tracked: set[str], sealed_state: str = DE
                 if actual != old_digest:
                     add(lineno, "SEALED_PIN_INVALID", prefix, leaf_raw=leaf_raw, leaf=leaf,
                         old_rev=old_rev, old_digest=old_digest,
-                        detail=f"sha256(git show {old_rev[:12]}:{leaf}) = {(actual or 'N/A')[:12]} differs from the recorded value")
+                        detail=f"sha256(git show {old_rev[:12]}:{leaf}) = {actual[:12]} differs from the recorded value")
                 continue
 
             new_rev = repo.current_commit_for(leaf)
@@ -389,9 +396,6 @@ def scan(repo: Repo, index_file: Path, tracked: set[str], sealed_state: str = DE
                 add(lineno, "SKIP_UNTRACKED", prefix, leaf_raw=leaf_raw, leaf=leaf, old_rev=old_rev, old_digest=old_digest)
                 continue
             new_digest = repo.blob_sha256_at(new_rev, leaf)
-            if new_digest is None:
-                add(lineno, "SKIP_NO_BLOB", prefix, leaf_raw=leaf_raw, leaf=leaf, old_rev=old_rev, old_digest=old_digest)
-                continue
             if old_rev == new_rev and old_digest == new_digest:
                 continue
             drift = add(lineno, "DRIFT", prefix, leaf_raw=leaf_raw, leaf=leaf, old_rev=old_rev,
@@ -462,7 +466,7 @@ def _usage_error(message: str | None = None) -> int:
 
 
 def _toplevel(cwd: Path) -> Path | None:
-    """The work tree root; None when cwd is not inside a repository; GitFault when git cannot start."""
+    """The work tree root; None when git reports no work tree; GitFault when git cannot start or fails."""
     try:
         done = subprocess.run(
             ["git", "rev-parse", "--show-toplevel"], cwd=cwd, capture_output=True, text=True,
@@ -470,8 +474,13 @@ def _toplevel(cwd: Path) -> Path | None:
         )
     except OSError as exc:
         raise GitFault(f"git cannot be started: {exc}") from exc
+    if done.returncode != 0:
+        raise GitFault(
+            f"not inside a git repository (git rev-parse --show-toplevel failed with exit {done.returncode}: "
+            f"{(done.stderr or '').strip()})"
+        )
     top = done.stdout.strip()
-    return Path(top) if done.returncode == 0 and top else None
+    return Path(top) if top else None
 
 
 def _tool_fault(message: str) -> int:

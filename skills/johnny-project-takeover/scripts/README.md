@@ -72,8 +72,9 @@ argument every tracked Markdown file that has a `revision` and `digest` header i
 scanned. Structural defects (rows with the wrong column count, pinned rows outside a
 table, unresolved or untracked leaves, cells without a hash) exit 1. Exit 2: a shallow
 clone whose history would pin the boundary commit (`SHALLOW_HISTORY`), `git` cannot be
-started, not inside a git repository, `--root` is missing or not a directory, a git
-query fails (`git log -1 -- <leaf>` or `git ls-files` exits non-zero; never reported as
-`SKIP_UNTRACKED` or any other red), the `--json` path cannot be written, or an
+started, not inside a git repository, `--root` is missing or not a directory, any git
+query that fails exits 2 with git's message (`git log -1 -- <leaf>`, `git ls-files`,
+`git show <revision>:<leaf>` or `git rev-parse` exits non-zero; never reported as
+`SKIP_UNTRACKED`, `SKIP_NO_BLOB`, `SEALED_PIN_INVALID` or any other red), the `--json` path cannot be written, or an
 unexpected error. Exit 3: bad option, missing mode, empty `--sealed-state`, an index
 argument that is not a file, or an index file that is not UTF-8.

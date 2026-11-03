@@ -119,7 +119,9 @@ class DigestAlgorithmTests(PinCase):
     def test_untracked_and_unknown_leaves_have_no_pin(self) -> None:
         repository = index_pins.Repo(self.repo.dir)
         self.assertIsNone(repository.current_commit_for("never-added.md"))
-        self.assertIsNone(repository.blob_sha256_at(self.repo.last_commit(), "never-added.md"))
+        with self.assertRaises(index_pins.GitFault) as raised:
+            repository.blob_sha256_at(self.repo.last_commit(), "never-added.md")
+        self.assertIn("fatal:", str(raised.exception))
 
 
 class CheckAndWriteTests(PinCase):
@@ -553,6 +555,16 @@ class ToolFaultTests(PinCase):
             code = index_pins.main(argv)
         return code, out.getvalue(), err.getvalue()
 
+    def git_messages(self, *args: str) -> list[str]:
+        """Run a git query that must fail in the broken repository; return git's own message lines."""
+        probe = subprocess.run(
+            ["git", *args], cwd=self.repo.dir, capture_output=True, text=True, encoding="utf-8", errors="replace",
+        )
+        self.assertNotEqual(probe.returncode, 0, probe.stdout)
+        lines = [line.strip() for line in probe.stderr.splitlines() if line.strip().startswith(("fatal:", "error:"))]
+        self.assertTrue(lines, probe.stderr)
+        return lines
+
     def test_not_inside_a_git_repository_exits_2(self) -> None:
         with tempfile.TemporaryDirectory(prefix="idxpin-norepo-") as outside:
             for mode in ("--check", "--write"):
@@ -560,6 +572,7 @@ class ToolFaultTests(PinCase):
                     code, out, err = self.run_main(["--root", outside, mode])
                     self.assertEqual(code, 2, out + err)
                     self.assertIn("not inside a git repository", err)
+                    self.assertIn("fatal:", err)
                     self.assertEqual(out, "")
 
     def test_git_that_cannot_be_started_exits_2(self) -> None:
@@ -626,16 +639,15 @@ class ToolFaultTests(PinCase):
         branch_ref = self.repo.dir / ".git" / "refs" / "heads" / "main"
         self.assertTrue(branch_ref.is_file())
         branch_ref.write_text("1" * 40 + "\n", encoding="utf-8", newline="\n")
-        probe = subprocess.run(
-            ["git", "log", "-1", "--format=%H", "--", "leaf.md"], cwd=self.repo.dir, capture_output=True,
-        )
-        self.assertNotEqual(probe.returncode, 0)
+        messages = self.git_messages("log", "-1", "--format=%H", "--", "leaf.md")
         for mode in ("--check", "--write"):
             with self.subTest(mode):
                 code, out, err = self.repo.run(mode, "INDEX.md")
                 self.assertEqual(code, 2, out + err)
                 self.assertIn("tool fault", err)
                 self.assertIn("git log", err)
+                for message in messages:
+                    self.assertIn(message, err)
                 self.assertNotIn("SKIP_UNTRACKED", out + err)
 
     def test_a_failing_git_ls_files_is_a_tool_fault(self) -> None:
@@ -643,14 +655,75 @@ class ToolFaultTests(PinCase):
         self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
         self.repo.commit("index")
         (self.repo.dir / ".git" / "index").write_bytes(b"not an index file\n")
-        probe = subprocess.run(["git", "ls-files"], cwd=self.repo.dir, capture_output=True)
-        self.assertNotEqual(probe.returncode, 0)
+        messages = self.git_messages("ls-files")
         for mode in ("--check", "--write"):
             with self.subTest(mode):
                 code, out, err = self.repo.run(mode, "INDEX.md")
                 self.assertEqual(code, 2, out + err)
                 self.assertIn("tool fault", err)
                 self.assertIn("git ls-files", err)
+                for message in messages:
+                    self.assertIn(message, err)
+
+    def delete_leaf_blob(self) -> str:
+        """Remove the leaf's blob object so that `git show <rev>:leaf.md` fails while log and ls-files work."""
+        blob = git(self.repo.dir, "rev-parse", f"{self.repo.last_commit()}:leaf.md").strip()
+        loose = self.repo.dir / ".git" / "objects" / blob[:2] / blob[2:]
+        self.assertTrue(loose.is_file(), "the blob is expected to be a loose object")
+        os.chmod(loose, 0o666)
+        loose.unlink()
+        return blob
+
+    def test_a_failing_git_show_is_a_tool_fault_never_skip_no_blob(self) -> None:
+        """The leaf blob object is gone: `git show <rev>:<leaf>` exits 128 while log and ls-files still work."""
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        commit = self.repo.last_commit()
+        self.delete_leaf_blob()
+        messages = self.git_messages("show", f"{commit}:leaf.md")
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("tool fault", err)
+                self.assertIn("git show", err)
+                for message in messages:
+                    self.assertIn(message, err)
+                self.assertNotIn("SKIP_NO_BLOB", out + err)
+                self.assertNotIn("SEALED_PIN_INVALID", out + err)
+
+    def test_a_failing_git_show_on_a_sealed_row_is_a_tool_fault_never_n_a(self) -> None:
+        commit, digest = self.repo.last_commit(), self.repo.digest()
+        self.repo.write_index(self.repo.row(commit, digest, state="SEALED"))
+        self.repo.commit("index")
+        self.delete_leaf_blob()
+        messages = self.git_messages("show", f"{commit}:leaf.md")
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("tool fault", err)
+                for message in messages:
+                    self.assertIn(message, err)
+                self.assertNotIn("SEALED_PIN_INVALID", out + err)
+                self.assertNotIn("N/A", out + err)
+
+    def test_a_failing_rev_parse_in_the_shallow_check_is_a_tool_fault(self) -> None:
+        """A malformed shallow file fails `git rev-parse`; no pin row is read, so no other query runs into it first."""
+        path = self.repo.write_index("")
+        self.repo.commit("index")
+        (self.repo.dir / ".git" / "shallow").write_text("garbage\n", encoding="utf-8", newline="\n")
+        messages = self.git_messages("rev-parse", "--is-shallow-repository")
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("tool fault", err)
+                self.assertIn("git rev-parse", err)
+                for message in messages:
+                    self.assertIn(message, err)
+                self.assertEqual(out, "")
+        self.assertEqual(path.read_text(encoding="utf-8"), HEADER)
 
     def test_a_failing_git_query_is_a_tool_fault_as_a_process(self) -> None:
         self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
@@ -662,6 +735,7 @@ class ToolFaultTests(PinCase):
         )
         self.assertEqual(done.returncode, 2, done.stdout + done.stderr)
         self.assertNotIn("SKIP_UNTRACKED", done.stdout + done.stderr)
+        self.assertIn("fatal:", done.stderr)
 
     def test_a_red_with_a_non_cp950_character_exits_1_under_a_cp950_console(self) -> None:
         """The console encoding never changes an exit code (R4-2): a red stays 1, with no traceback."""
