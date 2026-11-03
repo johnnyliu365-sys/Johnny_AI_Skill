@@ -6,7 +6,7 @@
 | --- | --- |
 | Candidate | `f4d43817fbcce48188e66c986b23ed7acde42046` on `cp/wave1-gates-first` |
 | Baseline | `a1cb6c1` (main) |
-| Reviewer | independent seat (Opus); authored nothing in this ticket |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket |
 | Reviewed at | 2026-11-03 11:45 +0800 |
 | Closure | 47-D1–D5 revision01 + M1 review check + "One observable behavior" |
 
@@ -50,8 +50,8 @@
 
 | # | Command | Exit |
 | --- | --- | --- |
-| 1 | `git clone --no-hardlinks --depth 50 -b cp/wave1-gates-first <repo> C:/Temp/claude/jas47-rv` + autocrlf=false, `rm -r --cached`, `reset --hard` | 0 (HEAD f4d43817fb) |
-| 2 | same for `-b main` → `C:/Temp/claude/jas47-main` | 0 (HEAD a1cb6c1) |
+| 1 | `git clone --no-hardlinks --depth 50 -b cp/wave1-gates-first <repo> <fresh clone>` + autocrlf=false, `rm -r --cached`, `reset --hard` | 0 (HEAD f4d43817fb) |
+| 2 | same for `-b main` → a second fresh clone | 0 (HEAD a1cb6c1) |
 | 3 | `git diff --name-only a1cb6c1..HEAD` | 0 (11 paths) |
 | 4 | D1 pytest (4 files), candidate | 1 (3 failed / 120 passed) |
 | 5 | D1 pytest (4 files), main | 1 (3 failed / 120 passed) |
@@ -63,7 +63,7 @@
 | 11 | `git fetch --depth 1 <repo> codex/skill-improvement-checklist` + `git show FETCH_HEAD:doc/AI-SKILL-IMPROVEMENT-CHECKLIST.md` | 0 (3913fd65) |
 | 12 | added-line scan for target/vendor/narrative terms | 0 (hits listed in F-08, F-12) |
 
-Raw pytest logs: `C:/Temp/claude/jas47-rv-pytest-cand.txt`, `-main.txt`, `-cand2.txt`, `-main2.txt`.
+Raw pytest logs: retained by the reviewer seat on its host; not committed (the revision02 review commits its full-suite logs under `evidence/47/`).
 
 Not verified: the full repository test suite (only the eight document-reading suites were run), and Markdown rendering in a real renderer (F-10 is judged from GFM table rules).
 
@@ -109,7 +109,7 @@ Not verified: the full repository test suite (only the eight document-reading su
 
 | # | Command | Exit |
 | --- | --- | --- |
-| 1 | `git clone --no-hardlinks --depth 50 -b cp/wave1-gates-first <repo> C:/Temp/claude/jas47-rv2` + LF normalisation | 0 (HEAD d581ebc) |
+| 1 | `git clone --no-hardlinks --depth 50 -b cp/wave1-gates-first <repo> <fresh clone>` + LF normalisation | 0 (HEAD d581ebc) |
 | 2 | `git diff --stat f4d4381..HEAD`; `git diff --name-only a1cb6c1..HEAD` | 0 (10 files +140/-18; 15 paths, all in the widened boundary) |
 | 3 | D1 pytest (4 files) | 1 (4 failed: 3 environment failures identical to main + `SUBFAILED policy='router-control'`) |
 | 4 | `diff` of the FAILED lines against the main log | 0, but this diff hides the SUBFAILED line; checked the summary by hand |
@@ -118,7 +118,7 @@ Not verified: the full repository test suite (only the eight document-reading su
 | 7 | F-08..F-12 greps and reads | 0 |
 | 8 | `git grep` of the router-control digest prefix | 0 (profile.py:209-210, test_workflow_router.py:296-297, 756-761, 2437) |
 
-Raw log: `C:/Temp/claude/jas47-rv2-pytest-cand.txt`.
+Raw log: retained by the reviewer seat on its host; not committed.
 
 Not verified: the full repository test suite, and whether an owner decision for F-05 exists outside the repository.
 
@@ -135,3 +135,71 @@ Not verified: the full repository test suite, and whether an owner decision for 
 | F-07 mutation | old integration sentence restored in a disposable edit: `2 failed, 7 passed, 71 subtests passed in 0.10s`; raw: `doc/reviews/workflow-governance/evidence/47/c2-mutation-F07.txt` |
 | Policy pin | router-control.md digest moved to `rev-59038c10683e71ea` in profile.py and test_workflow_router.py |
 | Deviations | the 11 baseline failures are environment or publication-pin failures not addressed by this ticket; one ACR test varies between runs |
+
+## Revision02 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `9e02e95` on `cp/wave1-gates-first` (Closure revision02, 47-D1–D6) |
+| Review kind | initial review of revision02 (CodeReview.md §5 re-plan; not a third correction) |
+| Reviewed at | 2026-11-03 12:12 +0800 |
+| Clones | fresh `--depth 50` clones of the candidate and of main `a1cb6c1`, `core.autocrlf=false`, index rebuilt to LF |
+
+### Cells
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Boundary / D5 | PASS | `git diff --name-only a1cb6c1..9e02e95` gives 22 paths, all in the boundary block (`create = doc/reviews/workflow-governance/evidence/47/` covers the 2 evidence files). No path under `.github/`, `.claude-plugin/`, `.codex-plugin/` or `template/` is touched. |
+| D1 | PASS | `3 failed, 121 passed, 564 subtests`, same 3 environment failures as main (2 × temporal DLL blocked, 1 × pinned sha in shallow clone). The router-control subtest is green. |
+| D2 | **FAIL** | `grep -c "狀態在檔案，轉移在腳本" Workflow.md` → **0**, expected 1. Correction 1 replaced that phrase at Workflow.md:79 and revision02 did not update the cell. Anchors `workflow-router` and `role-boundary` are present (2). |
+| D3 | **FAIL** | `grep -c "Revision 04 R4-4" CodeReview.md` → **2** (CodeReview.md:50, :97), expected 1. "The reviewer alone owns the final review conclusion." is present once and unchanged. |
+| D4 | PASS | count 1; `### R4-1`..`### R4-7` present (7) |
+| D6 | PASS with deviation | Reviewer full suite on the candidate: `12 failed, 1917 passed, 31 skipped, 3950 subtests`, exit 1. On main: `12 failed, 1916 passed, 31 skipped, 3949 subtests`, exit 1. The two failure-name sets are **identical** (12 names). The receipt raw (`evidence/47/c2-pytest-full.txt`) has 11 names. The extra name in both of my runs is `test_atomic_conditional_replace_capability.py::test_acr6_committed_candidate_diff_and_forbidden_paths` (`RuntimeError: ticket authority baseline is not an ancestor of candidate`, depth-dependent). The receipt already states this as the ACR deviation. The +1 pass on the candidate is the new `test_tara1b`. |
+| M1 | PASS (check performed) | exit-code sentence present at Workflow.md:82 |
+
+### Per-item status
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| N-01 | CLOSED | `PolicyPinTests` + `RouteInstructionContractTests::test_profile_route_table_and_policy_metadata_are_exact`: `8 passed, 35 subtests`. The digest moved to `rev-59038c10683e71ea` in profile.py:209-210 and test_workflow_router.py:296-297, :756-761, :2437. |
+| N-02 | CLOSED (Low residual, see R2-02) | The receipt D6 failure set matches the committed raw output (11 names). The deviation about the environment-sensitive ACR test is stated and agrees with my runs. |
+| N-03 | CLOSED | Workflow.md:81 allows repository-relative paths and excludes host absolute paths; router-control.md:17-19 says the same. |
+| N-04 | CLOSED | REQ:18 lists the widened files, including the profile.py and test_workflow_router.py pins. |
+| F-01 leftovers | CLOSED | AGENTS.md:18, SKILL.md:94 and codex-native-same-lifetime-delegation.md:39 now say record-then-gate. The remaining "route again" at router-control.md:82 is covered by the Workflow.md:79 reading rule. |
+| F-03 | CLOSED (Low residual) | spec:201 adds `review_candidate` (must equal `candidate`) and `submitter` != `reviewer`. Workflow.md:82 states the same and adds the coverage-map guard. Residual: R4-7 does not say these two values are read from the review record rather than taken from the queue row the submitter writes. Workflow.md:82 implies the record. The wave-2 ticket must make it explicit. |
+| F-04 | CLOSED | SKILL.md:27-31 and router-control.md:100-102 now route integration to the versioned script. `grep` finds no remaining "reviewer … integrates" in skills/, Workflow.md, CodeReview.md or AGENTS.md. |
+| F-05 | RECORDED, owner confirmation pending | REQ:19 "Open owner decision" row and spec signature row 2. Both state that the control plane decided and that the owner has not yet confirmed. This must be confirmed before integration onto `main`. |
+| F-06 | CLOSED (Low residual, see R2-05) | spec:201-203 add the queue path, `LANDED_CI_RED`, the affected-spec rule, lock reclaim and the snapshot file and location. |
+| F-07 | PARTIAL (Low, `EVIDENCE_DEFECT`, non-blocking) | M-old (main sentence restored) → 3 red (both pinned halves + `tara1b`), exit 1. M-B (admission weakened) → red. M-A keeps both pinned halves and swaps the executor ("Integration is executed by the versioned reviewer seat, who runs the merge by hand …") → `8 passed`, exit 0. The executor phrase sits between the two pins across a line break and is still unpinned. `tara1b` is a denylist of two literal strings. Fix: pin the whitespace-normalised phrase "Integration is executed by the versioned integration script from the merge queue". |
+| F-11 | CLOSED | Workflow.md:279 and CodeReview.md:96-97 now name the integration script. |
+| F-12 | CLOSED (tracked) | spec signature narrative removed; vendor/model names carried by ticket 49 (`PLANNED`) |
+
+### New findings on revision02
+
+| ID | Class (CodeReview §4) | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| R2-01 | `TICKET_DEFECT` | High (blocking) | ticket 47 Acceptance D2, D3; Workflow.md:79; CodeReview.md:50, :97 | Two frozen cells are red against the delivered text: D2 = 0 (expected 1) and D3 = 2 (expected 1). Both changes are intended content: the section-0 phrase was rewritten in correction 1, and CodeReview §5 now also cites R4-4. The revision02 re-plan kept the old expectations, so the control plane must re-freeze D2 and D3. Restoring the old text would reopen F-01 / F-11. | the greps in "Cells" above |
+| R2-02 | `EVIDENCE_DEFECT` | Low | review record, `ImplementationReturn (closure revision02)`; evidence/47/c2-pytest-full.txt | The ImplementationReturn reports only D6 and F-07. There are no D1–D5 results for revision02, which is how R2-01 went unreported. The raw capture has no header naming the candidate sha or the command. | read the record and the raw file |
+| R2-03 | `IMPLEMENTATION_DEFECT` | Medium (blocking) | AGENTS.md:20-21 vs Workflow.md:81; spec:164 | AGENTS.md still says every pending implementation dispatch must be bound by the live descriptor, a receipt and exact artifact references. Workflow.md:81 and R4-1 say pending dispatch is ticket state plus queue rows, with the descriptor only a transitional cross-lifetime path. Under Workflow.md:85 these are competing references. AGENTS.md is already in the boundary. | read both |
+| R2-04 | `TICKET_DEFECT` | Low | ticket 47 "Profile / limits" row; REQ:20 "Effect boundary" | Both still say "documents only; no runtime", but the candidate edits `library/workflow_router/profile.py` (the pinned policy constants). State the exception: pin constants move with the document; no behaviour change. | `git diff a1cb6c1..9e02e95 -- library/` |
+| R2-05 | `IMPLEMENTATION_DEFECT` | Low | router-control.md:15 vs spec:201 | The router-control note lists the refused terminal states as `LANDED` or `BOUNCED`; R4-7 adds `LANDED_CI_RED`. Wave-2 gaps that remain under-specified: "run id is not live" has no cross-host liveness test; how `LANDED_CI_RED` is cleared is not specified; `pages.json` is used in the affected-spec rule without a definition. | read both |
+
+### Commands (revision02)
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | fresh clones of `cp/wave1-gates-first` (HEAD 9e02e95) and `main` (a1cb6c1), LF-normalised | 0 / 0 |
+| 2 | `git diff --name-only a1cb6c1..HEAD` vs boundary block | 0 (22 paths, all covered) |
+| 3 | `pytest tests -q` candidate, then main, run one after the other | 1 / 1 (12 failed each; name sets identical) |
+| 4 | diff of my candidate failure set vs receipt raw | 1 (receipt lacks `test_acr6_committed_candidate_diff_and_forbidden_paths`; deviation already stated) |
+| 5 | D1 pytest (4 files) | 1 (3 environment failures, same as main) |
+| 6 | PolicyPinTests + route-table policy test | 0 (8 passed) |
+| 7 | D2 / D3 / D4 greps | counts 0 / 2 / 1 (D2, D3 red) |
+| 8 | TARA under M-old / M-A / M-B, restored after each, `git status --porcelain` empty | 1 / 0 / 1 |
+| 9 | greps for remaining reviewer-integrates and re-enter-Router sentences | 0 (none outside the covered reading rule) |
+
+Raw logs: `doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-cand.txt`, `doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-main.txt` (committed copies of the reviewer seat's files).
+
+Not verified: whether the owner has confirmed the F-05 decision; Markdown rendering in a real renderer.

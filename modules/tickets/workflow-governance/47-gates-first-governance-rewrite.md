@@ -2,12 +2,12 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision02 (47-D1–D6) after initial review and correction review on revision01 both returned CHANGES_REQUESTED |
+| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision03 (47-D1–D6) after the revision02 initial review returned CHANGES_REQUESTED with TICKET_DEFECT R2-01 (revision01: initial and correction review both CHANGES_REQUESTED) |
 | Authority | Owner 2026-11-03 takeover instruction; `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 |
 | Baseline | `a1cb6c1` (main); branch `cp/wave1-gates-first` |
 | Grant / roles | Control plane authors the documents; independent review by a separate `ticket-review` seat before integration |
-| Workspace | clone `C:/Temp/claude/jas-main`, branch `cp/wave1-gates-first` |
-| Profile / limits | COMPACT: documents only; no runtime, installer, publication pin or target-project write |
+| Workspace | a disposable clone of branch `cp/wave1-gates-first` |
+| Profile / limits | COMPACT: documents only; no runtime behaviour change — the policy digest pins in `library/workflow_router/profile.py` and `tests/test_workflow_router.py` move with the reference they pin; no installer, publication pin or target-project write |
 | Language / return | Markdown; `ImplementationReturn` COMPLETED with the exact commit, the five document diffs and the pytest result of the document-pinning tests |
 
 ```johnny-boundary
@@ -53,8 +53,8 @@ revision-135 checklist stays on the Codex branch where it was written.
 | Cell | Check | Expected |
 | --- | --- | --- |
 | D1 | `pytest tests/test_workflow_router.py tests/test_plugin_policy_and_response.py tests/test_adversarial_review_policy.py tests/test_plugin_payload_boundary.py` | same pass set as main `a1cb6c1` with the venv from `requirements-dev.txt`; the four document-term tests pass |
-| D2 | `grep -c "狀態在檔案，轉移在腳本" Workflow.md` | 1; and the section-zero anchors `#workflow-router`, `#role-boundary` still exist |
-| D3 | `grep -c "Revision 04 R4-4" CodeReview.md` | 1; the sentence "The reviewer alone owns the final review conclusion." is unchanged |
+| D2 | `grep -c "狀態只存在三種檔案" Workflow.md` | 1; and the section-zero anchors `#workflow-router`, `#role-boundary` still exist |
+| D3 | `grep -c "Revision 04 R4-4" CodeReview.md` | 2 (the integration clause in section 2 and the integration sentence in section 5); the sentence "The reviewer alone owns the final review conclusion." is unchanged |
 | D4 | `grep -c "^## Revision 04" modules/spec/workflow-governance.md` | 1; R4-1 to R4-6 present |
 | D5 | `git diff --stat a1cb6c1..HEAD` | only the paths in the boundary block; the policy digest pins for router-control.md move with the document under `CHG-20261103-043` |
 | D6 | `pytest tests -q` full suite, raw output committed under `doc/reviews/workflow-governance/evidence/47/` | failure set equals the main baseline (environment failures only), listed by name in the receipt |
@@ -94,3 +94,19 @@ Per CodeReview.md section 5 the initial review plus one correction review were u
 | F-06 | R4-7 adds lock recovery, `LANDED_CI_RED`, queue path, affected-spec rule, snapshot file format and location. |
 | F-07 | The test pins both halves of the new sentence and rejects the old one. |
 | F-11, F-12 | Wording drift fixed here (Workflow.md section 5, CodeReview.md section 5); vendor and model names tracked by ticket 49. |
+
+## Re-plan to closure revision03 (after the revision02 initial review `CHANGES_REQUESTED`)
+
+The revision02 initial review (record: `doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md`, "Revision02 initial review") returned R2-01 as a `TICKET_DEFECT`; per CodeReview.md §4 item 3 the closure is rebuilt before the fix. Cells D2 and D3 are re-frozen against the delivered text; the text is not reverted. Revision03 keeps D1, D4, D5, D6 and M1 unchanged.
+
+| Finding | Class | Disposition in revision03 |
+| --- | --- | --- |
+| R2-01 | TICKET_DEFECT | D2 greps the section-0 phrase that exists ("狀態只存在三種檔案"); D3 expects 2 because section 5 also cites R4-4 since correction 1. |
+| R2-02 | EVIDENCE_DEFECT | The `ImplementationReturn` for revision03 lists every cell D1–D6 and M1 with its result; every raw capture under `doc/reviews/workflow-governance/evidence/47/` opens with the candidate sha and the command. |
+| R2-03 | IMPLEMENTATION_DEFECT | AGENTS.md states that pending dispatch is ticket state plus queue row (R4-1, R4-7) and that the live descriptor is the transitional cross-lifetime path, not the default. |
+| R2-04 | TICKET_DEFECT | Profile row above and the REQ effect-boundary row state the pin exception: digest pins move with the reference; no behaviour change. |
+| R2-05 | IMPLEMENTATION_DEFECT | router-control.md note lists `LANDED_CI_RED` among the refused terminal states. R4-7: lock reclaim no longer depends on a liveness test; clearing `LANDED_CI_RED` is defined; `pages.json` is defined. |
+| F-03 residual | IMPLEMENTATION_DEFECT | R4-7: the integration script reads `review_candidate` and `reviewer` from the review record; queue-row copies that differ bounce with `REVIEW_MISMATCH`. |
+| F-07 residual | EVIDENCE_DEFECT | `tests/test_adversarial_review_policy.py` pins the whitespace-normalised executor phrase "Integration is executed by the versioned integration script from the merge queue". |
+| F-05 | REQUIREMENT_CHANGED (recorded) | Owner confirmation of the descriptor decision is still pending; it gates integration onto `main`, not this review. |
+| R49-06 (from ticket 49) | OUT_OF_SCOPE_HARDENING | Host absolute paths removed from this ticket's Workspace row and from the review record; raw logs are committed under evidence instead of referenced on a host. |
