@@ -1,0 +1,6 @@
+cell: Observable behavior (source-project names)
+candidate: 50731c4efd52ac259e83b22f89b0462dc1ca5626
+command: git grep -niE <denylist: the P4 pattern of the ticket 48 dispatch file, 8 alternatives, not spelled here> -- <B>
+---
+hits=0
+exit=1

@@ -146,11 +146,14 @@ Superseded by the revision05 return below: W4 and W5 were red in this run (`evid
 | Field | Value |
 | --- | --- |
 | Return | `COMPLETED` |
-| Candidate | `0aae3bf8ffa389dbabd2b6b2a87dd6df76887b73` (the ticket text of revision04 and the one content change, ticket 47 line "stays on branch `codex/skill-improvement-checklist`", are both at this candidate; the commit that carries this section adds only the captures and this record) |
+| Candidate | `0aae3bf8ffa389dbabd2b6b2a87dd6df76887b73` (the ticket text of revision05 and the one content change, ticket 47 line "stays on branch `codex/skill-improvement-checklist`", are both at this candidate; the commit that carries this section adds only the captures and this record) |
 | Order | re-plan `bf6a4632` (revision03) → content `40ab88eb` → re-plan `b927e48d` (revision04) → evidence `746a1737` (W4, W5 red as recorded) → re-plan `0aae3bf8` (revision05, W4 wording) → this evidence |
 | W1 | PASS — every hit classified into places (a)–(e); live role holder or location: 0; counts {'(a) the W1/W5 check row': 1, '(b) dated spec record': 2, '(c) Ticket corrections row': 1, '(d) review record line': 7, '(e) capture of a W1/W5 run': 19}; raw `evidence/49/rev05-W1.txt` |
 | W2 | PASS — ticket 48 P4 names the dispatch file as the carrier and spells no name; raw `evidence/49/rev05-W2.txt` |
 | W3 | PASS — zero hits (`git grep` exit 1); raw `evidence/49/rev05-W3.txt` |
-| W4 | PASS — every path in `7335e78..HEAD` tagged 47, 49 or both; paths in neither boundary: 0; raw `evidence/49/rev05-W4.txt` |
+| W4 | PASS — every path in `7335e78..HEAD` tagged with the tickets whose boundary covers it (47, 48, 49 or a combination); paths in neither boundary: 0; raw `evidence/49/rev05-W4.txt` |
 | W5 | PASS — every hit classified; live role holder or location: 0; counts {'(a) the W1/W5 check row': 2, '(b) dated spec record': 2, '(c) Ticket corrections row': 2, '(d) review record line': 9, '(e) capture of a W1/W5 run': 31, 'functional host, file or ref name': 11}; raw `evidence/49/rev05-W5.txt` |
+| Observable behavior | PASS — the ticket 48 dispatch file's P4 denylist run over `<B>` at `50731c4e`: hits=0; the names are not written in this record; raw `evidence/49/rev05-observable.txt`. Live role, grant, authority, workspace and handoff rows name roles, refs or "the control plane" (W1, W5) |
 | Deviations | none |
+
+Record correction after the revision05 initial review (NF-01, NF-02, NF-03): identifiers above corrected to revision05 and to the three-ticket tagging; Observable-behavior row and capture added; the W4 clause change recorded in the ticket's corrections table (commit `50731c4e`, whose message also claimed the record and capture changes that only this commit carries). Cell results unchanged.
