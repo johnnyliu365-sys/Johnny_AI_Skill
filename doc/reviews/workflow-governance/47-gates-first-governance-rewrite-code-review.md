@@ -418,3 +418,84 @@ Not verified: whether the control-plane checkout's tree equalled `a47e976b` when
 | F-07 mutation | executor reworded to a reviewer seat running the merge by hand → `1 failed, 7 passed, 72 subtests passed in 0.10s` (`test_tara1b` red); restored; raw `evidence/47/rev05-F07-mutation.txt` |
 | Policy pins | router-control.md, review-checks.md and implementation-authority.md digests moved with the documents in profile.py and test_workflow_router.py |
 | Deviations | D6 names present on main but absent on the candidate are the run-to-run variable ones listed above; captures carry host paths as recorded (R3-09, routed) |
+
+## Revision05 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `8597f8bc` (evidence commit); content commit `6f199b5a`; re-plan commit `217e2db1` |
+| Baseline | `a1cb6c1` (main) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; fresh LF clones of the candidate and of main |
+| Summary | All executable cells pass as written; D1 and D6 give the same failure-name sets on the candidate and on main; the committed D5 and D7 scripts reproduce their captures exactly. Approval is blocked because two live statements of retired rules remain inside the boundary (R5-01, R5-02), the D7 sweep cannot see statements that wrap across lines or use other verbs and did not catch a counter-mutation restoring the revision04 text (R5-03, `TICKET_DEFECT`), and competing references mean `HALT / ROUTE_REFERENCE_INVALID` under Workflow.md:85. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| D1 | PASS | candidate `3 failed, 121 passed, 564 subtests`; main `3 failed, 120 passed, 563 subtests`; same three environment names; matches `rev05-D1.txt` |
+| D2 | PASS | phrase 1 (Workflow.md:81); anchors :75, :246 |
+| D3 | PASS | `Revision 04 R4-4` 2 (CodeReview.md:50, :99); reviewer sentence once, as on main |
+| D4 | PASS | `^## Revision 04` 1; R4-1..R4-7 at :162, 167, 180, 185, 189, 193, 199 |
+| D5 | PASS | committed `d5_union.py` from the clone root: exit 0, 77 paths, 0 outside; the 67 paths in `rev05-D5.txt` carry identical tags; the other 10 are the rev05 captures, [47] |
+| D6 | PASS | candidate `10 failed, 1919 passed, 31 skipped, 3950 subtests`; fresh main clone, same venv `10 failed, 1918 passed, 31 skipped, 3949 subtests`; both 10-name sets identical to each other and to `rev05-D6-full.txt` and `rev05-D6-main.txt`; the candidate capture states `tree: 0 tracked files modified` |
+| D7 | PASS as written; not pinning | exit 0; same 16 hits as `rev05-D7.txt`, every class correct by hand; but the sweep misses claude-code-plugin-distribution.md:67-68, adversarial-review.md:13-14 and the runbook:59, and the counter-mutation was not caught (R5-03) |
+| M1 | PASS (check performed) | exit-code bullet removed in a throwaway edit: exit-code phrase 0, D2 phrase 1, anchors 1/1; doc suites only the 3 environment failures; restored; porcelain empty |
+| Observable behavior | PASS (scoped) | section 0, CodeReview.md:49-52, R4-1..R4-7 and the change log read as the ticket states; competing statements remain outside them (R5-01, R5-02, R5-06..R5-08) |
+| Order | PASS | `217e2db1` → `6f199b5a` → `8597f8bc`; the ticket diff over that range is empty; both scripts committed in the re-plan; the evidence commit adds only captures and the return section |
+| F-07 mutation | RED as expected | executor reworded: `3 failed, 7 passed` (tara1b and two tara1 subtests); restored `8 passed, 72 subtests`; porcelain empty |
+| Receipt | PASS with one Low residual | every cell has a result; every capture headed with `6f199b5a` and its command; `rev05-D6-main.txt` headed with `a1cb6c13`; the D6 claim matches; the Deviations row is stale (R5-10) |
+
+### Re-plan rows
+
+| Row | Status | Evidence |
+| --- | --- | --- |
+| R4-01 | CLOSED | router-control.md:12-15 names the ticket state row plus dispatch-file digest as the default; the merge-queue file holds integration candidates only |
+| R4-02 | CLOSED | model-role-routing.md:39-41 and SKILL.md:47-48; the same wording problem remains in adversarial-review.md:13-14 (R5-02) |
+| R4-03 | CLOSED | review-checks.md:64-66 and implementation-authority.md:22-23, :35 scoped to the receipt-bound route; `policy_digest` = `rev-ff325539648f7eec`, `rev-c8178b809b9552a1`, router-control `rev-9ce1ed43d5660ec6`, equal to the pins; old digests gone; PolicyPinTests 7 passed; `test_adversarial_review_policy.py` 8 passed incl. tara7 |
+| R4-04 | CLOSED (text) | model-role-routing.md:23-27: the reviewer never submits what it reviewed; runbook:64-68 and :92-94 carry the amendment; `submitter != reviewer` can be met with one reviewer seat; two wave-2 gaps remain (R5-11) |
+| R4-05 | PARTIAL | closed in workflow-adoption-activation.md:89-92 (Amendments :204) and project-authority-integration.md:250, :254 (Amendments :570); open: executor-routing.md:195 edited without an Amendments entry (R5-09); claude-code-plugin-distribution.md:67-68 (R5-01) and autonomous-collaboration-audit.md:61 (R5-04) still assign integration to a role |
+| R4-06 | CLOSED | spec:201: `clears` lists every red key and only an entry clearing all currently red keys is admitted; trace A red, B (clears A) red, C (clears A,B) green lifts the block; "currently red" only implied (R5-11) |
+| R4-07 | CLOSED | spec:202 identity format and checks; CodeReview.md:67-68 `review-verdict` bullet |
+| R4-08 | CLOSED | M1 row matches `rev05-M1.txt`; `rev05-D6-main.txt` committed, its 10 names equal the reviewer's main run; residual R5-10 |
+| R4-09 | CLOSED | both scripts committed in `217e2db1`; run from the clone root they reproduce their captures |
+| R4-10 | PARTIAL | R4-1 defines the dispatch file by reference to dispatch lint and the State-row entry; no location is defined for the dispatch file (R5-12) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| R5-01 | `IMPLEMENTATION_DEFECT` | Medium (blocking) | modules/spec/claude-code-plugin-distribution.md:67-68 | APPROVED SPEC: "The reviewer, not the implementation owner, reviews and integrates after the returned result." A live statement of retired rule (a) inside the boundary; untouched since `a1cb6c1`; D7 misses it because the sentence wraps across two lines. | paragraph-joined sweep |
+| R5-02 | `IMPLEMENTATION_DEFECT` | Medium (blocking) | references/adversarial-review.md:13-14 | "Cross-lifetime handoff keeps the separate receipt and live-descriptor controls from `review-checks.md`": unscoped, same shape as R4-02, inside the boundary; D7 misses it (hyphenated `live-descriptor`, verb "keeps", line wrap). | own sweep |
+| R5-03 | `TICKET_DEFECT` | Medium (blocking) | evidence/47/d7_sweep.py:10-16; ticket D7 | The sweep greps line by line, so wrapped statements are invisible; its verb set lacks `requires`/`keeps`/`retain`/`reserved`; its patterns lack `live-descriptor`; the classifier exempts on bare substrings (`NOT_REQUIRED`, `R4-1` which also matches `R4-10`, `retired`, `transitional`). Counter-mutation: restoring the `a47e976b` model-role-routing.md (both the R4-02 and R4-04 regressions) left D7 at exit 0 with 0 live hits and the doc tests at the 3 environment failures: zero red. | own counter-mutation; restored; porcelain empty |
+| R5-04 | `IMPLEMENTATION_DEFECT` | Low | modules/spec/autonomous-collaboration-audit.md:61 | APPROVED SPEC: "The control-plane/main owner owns … guarded integration" assumes a fixed integrator, against R4-4; outside D7's patterns. | `grep -rniE "guarded integration"` |
+| R5-05 | `TICKET_DEFECT` | Low | template/modules/tickets/README.TEMPLATE.md:7 | The template field `整合負責人 \| <AI／worktree>` names a fixed integration owner, against R4-4; `template/` is `forbid` in the 47 boundary and not among the D7 roots. | `grep -rn 整合負責人 template/` |
+| R5-06 | `IMPLEMENTATION_DEFECT` | Low | references/router-control.md:116-121 | "Only `IMPLEMENTATION_DISPATCH_CONFIRMED` may consume … receipt and create a cross-lifetime implementation lane" and "A cross-lifetime handoff with no proved bridge is `UNAVAILABLE`" are not scoped to the bridge path and read as "cross-lifetime means bridge only". | read file |
+| R5-07 | `IMPLEMENTATION_DEFECT` | Low | doc/runbooks/dispatch-model-profile.md:52-62 | The runbook offers only two dispatch kinds; "Cross-lifetime receipt-bound dispatch … requires the live descriptor" is its only cross-lifetime option; it never names the R4-1 default. | read file |
+| R5-08 | `IMPLEMENTATION_DEFECT` | Low | Workflow.md:22 | The flowchart node "Implementation dispatch → receipt、descriptor、…host gate" still puts the descriptor on every dispatch; the section-0 reading rule covers "Router" but not this node. | read file |
+| R5-09 | `IMPLEMENTATION_DEFECT` | Low | modules/spec/executor-routing.md:195 | The body of this APPROVED SPEC was edited in `6f199b5a` with no Amendments entry under `CHG-20261103-043`, against the R4-05 disposition. | `git diff a1cb6c1..8597f8bc`; grep Amendment |
+| R5-10 | `EVIDENCE_DEFECT` | Low | review record, revision05 return, Deviations row | Says main-only names are "listed above" while the D6 row says main-only = none; stale text. | read record |
+| R5-11 | `TICKET_DEFECT` | Low (wave 2) | spec:201-202 | (1) the `seat:<profile>/<run-id>` inequality compares runs, so a reviewer submitting from a second run passes; (2) submission time relative to the review is undefined; (3) the key format inside `clears` and a cleared state are undefined. | read R4-7 |
+| R5-12 | `TICKET_DEFECT` | Low (wave 2) | spec:164; Workflow.md:81 | The default dispatch depends on a dispatch file with no defined location; a resuming session cannot resolve the digest. | grep `dispatch file\|派工檔` |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | `--no-hardlinks` LF clones of `8597f8bc` and of main `a1cb6c1` | 0 |
+| 2–4 | D6 candidate; D6 main; FAILED-name set diffs (candidate vs main, vs both committed captures) | 1 / 1 (10 failed each); 0 / 0 / 0 |
+| 5 | D1 candidate; D1 main; name-set diff | 1 / 1 (3 failed each); 0 |
+| 6 | D2 / D3 / D4 greps | 0 |
+| 7–8 | committed `d5_union.py` and `d7_sweep.py` from the clone root; diffs vs captures | 0 (77 paths, 0 outside); 0 (0 live; identical) |
+| 9 | `policy_digest` of the three references; pin greps; PolicyPinTests; `test_adversarial_review_policy.py -v` | 0; 0; 0 (7 passed); 0 (8 passed) |
+| 10 | M1 throwaway edit, greps, D1 files + control_plane_mutation, restore | 1 (3 environment failures only); porcelain empty |
+| 11 | F-07 mutation, policy test, restore, rerun | 1 (3 failed); 0 (8 passed); porcelain empty |
+| 12 | counter-mutation: model-role-routing.md ← `a47e976b`; D7 plus doc tests; restore | D7 0 (not caught); 1 (3 environment failures only); porcelain empty |
+| 13 | own paragraph-joined sweeps over skills/, modules/spec/, Workflow.md, CodeReview.md, AGENTS.md, doc/runbooks/, template/ | 0 |
+| 14 | `git log`, `rev-list --parents`, `show --stat`; ticket diff `217e2db1..8597f8bc` | 0 (empty) |
+| 15 | added-line scan of `a1cb6c1..8597f8bc` without evidence (1318 lines) | 0 (no host path; vendor literals only in branch ids, the `codex-native` file name, boundary rules, ticket-49 denylists and quoted findings; no external project name; no chat tone) |
+
+Raw logs: retained by the reviewer seat on its host; not committed.
+
+Not verified: whether the control-plane checkout's HEAD was `6f199b5a` when its D6 ran (the capture states the tracked-file count and the claimed candidate, not HEAD output); the owner's F-05 confirmation; external target-project names other than the ones this seat knows; Markdown rendering; tickets 48 and 49 cells and commit `34c79f0f`; wave-2 behaviour of the R4-7 schemas.

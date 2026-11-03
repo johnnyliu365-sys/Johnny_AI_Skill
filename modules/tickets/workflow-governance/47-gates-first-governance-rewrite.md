@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision05 (47-D1–D7) after the revision04 initial review returned CHANGES_REQUESTED with TICKET_DEFECT R4-03, R4-05, R4-10 (revision03: R3-01, R3-04; revision02: R2-01; revision01: initial and correction review both CHANGES_REQUESTED) |
+| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision06 (47-D1–D7, M1–M2) after the revision05 initial review returned CHANGES_REQUESTED with TICKET_DEFECT R5-03, R5-05 (revision04: R4-03, R4-05, R4-10; revision03: R3-01, R3-04; revision02: R2-01; revision01: initial and correction review both CHANGES_REQUESTED) |
 | Authority | Owner 2026-11-03 takeover instruction; `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 |
 | Baseline | `a1cb6c1` (main); branch `cp/wave1-gates-first` |
 | Grant / roles | Control plane authors the documents; independent review by a separate `ticket-review` seat before integration |
@@ -38,10 +38,13 @@ create = doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md
 create = doc/HARNESS-CHANGELOG.md
 create = modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md
 create = modules/tickets/workflow-governance/48-port-gate-scripts.md
+modify = template/modules/tickets/README.TEMPLATE.md
 forbid = .github/
 forbid = .claude-plugin/
 forbid = .codex-plugin/
-forbid = template/
+forbid = template/*
+forbid = template/modules/*
+forbid = template/modules/tickets/TEMPLATE.md
 ```
 
 ## One observable behavior
@@ -64,8 +67,9 @@ revision-135 checklist stays on branch `codex/skill-improvement-checklist` where
 | D4 | `grep -c "^## Revision 04" modules/spec/workflow-governance.md` | 1; R4-1 to R4-6 present |
 | D5 | `python doc/reviews/workflow-governance/evidence/47/d5_union.py` (committed script; reads the three boundary blocks at HEAD and tags every path of `git diff --name-only a1cb6c1..HEAD`) | exit 0: no path outside every boundary; the policy digest pins for router-control.md, review-checks.md and implementation-authority.md move with the documents under `CHG-20261103-043` |
 | D6 | `pytest tests -q` full suite on the candidate and on a fresh clone of main `a1cb6c1`, both in the same environment and both raw outputs committed under `doc/reviews/workflow-governance/evidence/47/` | the candidate's failure-name set is a subset of main's run; both sets listed by name in the receipt |
-| D7 | `python doc/reviews/workflow-governance/evidence/47/d7_sweep.py` (committed script): `grep -rniE` over `skills/`, `modules/spec/`, `Workflow.md`, `CodeReview.md`, `AGENTS.md`, `doc/runbooks/` for (a) a reviewer who integrates or alone submits and (b) a receipt-bound bridge, live descriptor or merge-queue file that is mandatory, required or the default for a cross-lifetime handoff; every hit classified | exit 0: every hit is one of: states the Revision 04 rule (script integrates; bridge available until wave 3, not the default; pending dispatch is the ticket state row); a dated signature, approval or revision record; a quoted finding or retired-rule citation; a ticket or review record of this line. Zero hits classified LIVE RETIRED RULE |
+| D7 | `python doc/reviews/workflow-governance/evidence/47/d7_sweep.py` (committed script, revision06 instrument): paragraph-joined units over `skills/`, `modules/spec/`, `Workflow.md`, `CodeReview.md`, `AGENTS.md`, `doc/runbooks/`, `template/`; patterns a1 (a reviewer who integrates), a2 (a reviewer who submits), a3 (a fixed integrator role), b (a receipt-bound bridge, live descriptor or merge-queue file that is mandatory, required, kept, retained, reserved or the default); every hit printed with its class | exit 0: every hit is one of: states the Revision 04 rule with a pattern-specific word-bounded marker in its own unit; a dated record row or a row under an Amendments, Revision Signatures or Approval Record heading; a ticket or review record of this line; for pattern b, a document whose first 40 lines carry the scope note "not the default (R4-1)" (it describes the bridge's own mechanics). Zero hits classified LIVE RETIRED RULE |
 | M1 | remove the exit-code sentence from Workflow.md section 0 | D2 still 1 but the reviewer must flag the contract loss; recorded as a review check, not a script |
+| M2 | restore `skills/johnny-project-takeover/references/model-role-routing.md` from commit `a47e976b` (the text the revision04 review flagged as R4-02 and R4-04) in a disposable edit, run D7, restore | D7 exit 1 with at least two LIVE hits in that file; `git status --porcelain` empty after restore |
 
 ## Correction 1 (after REVIEW-001 `CHANGES_REQUESTED`)
 
@@ -154,3 +158,23 @@ Review record section "Revision04 initial review". R4-03, R4-05 and R4-10 are `T
 | R4-09 | EVIDENCE_DEFECT | D5 and D7 run scripts committed under `evidence/47/`. |
 | R4-10 | TICKET_DEFECT (wave 2) | R4-1 defines the dispatch file (the machine-form dispatch that dispatch lint admits) and the State-row entry `dispatch=sha256:<hex>`; the template field is delivered by the wave-2 state-file templates ticket. |
 | R3-07 | OUT_OF_SCOPE_HARDENING | Unchanged: routed to the wave-2 contract gate (pin the integrator rule in every reference). D7 is the document-level check until then. |
+
+## Re-plan to closure revision06 (after the revision05 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision05 initial review". R5-03 (`TICKET_DEFECT`): the D7 instrument was line-based, used a narrow verb set and loose substring exemptions, and did not catch a counter-mutation; R5-05 (`TICKET_DEFECT`): the ticket template names a fixed integration owner and `template/` was forbidden. Revision06 replaces the instrument (paragraph-joined units, four patterns, word-bounded pattern-specific exemptions, a header scope note for bridge-internal documents) and adds M2, the counter-mutation that must turn D7 red; the boundary admits exactly the one template file. Frozen here before any content or evidence commit of revision06.
+
+| Finding | Class | Disposition in revision06 |
+| --- | --- | --- |
+| R5-01 | IMPLEMENTATION_DEFECT | claude-code-plugin-distribution.md: the reviewer reviews after the returned result; integration runs by the integration script (R4-4); Amendments entry. |
+| R5-02 | IMPLEMENTATION_DEFECT | adversarial-review.md: the cross-lifetime receipt and live-descriptor controls belong to the receipt-bound route, available until wave 3 and not the default (R4-1). |
+| R5-03 | TICKET_DEFECT | D7 instrument replaced as described; M2 added. |
+| R5-04 | IMPLEMENTATION_DEFECT | autonomous-collaboration-audit.md: guarded integration is run by the integration script (R4-4); Amendments entry. |
+| R5-05 | TICKET_DEFECT | Boundary admits `template/modules/tickets/README.TEMPLATE.md`; its integration-owner field becomes an integration row naming the script (R4-4), no fixed integrator. |
+| R5-06 | IMPLEMENTATION_DEFECT | router-control.md:116-121 scoped to the bridge path. |
+| R5-07 | IMPLEMENTATION_DEFECT | dispatch runbook: the receipt-bound kind is the bridge route, available until wave 3 and not the default; the R4-1 default named as the cross-lifetime default. |
+| R5-08 | IMPLEMENTATION_DEFECT | Workflow.md flowchart dispatch node names the ticket state row and dispatch-file digest; the descriptor only on the transitional bridge. |
+| R5-09 | IMPLEMENTATION_DEFECT | executor-routing.md gets its Amendments entry (lines 195 and 240); plugin-distribution.md and receipt-bound-role-supervision.md get a scope note and an Amendments entry where their text is touched. |
+| R5-10 | EVIDENCE_DEFECT | Receipt Deviations row generated from the D6 comparison, never stale text. |
+| R5-11 | TICKET_DEFECT (wave 2) | R4-7: the inequality compares seat identities (profile and run) and the submitter must not appear as `reviewer` in any `review-verdict` block of the candidate's record; submission happens after the record exists and copies its fields; `clears` keys are written `<ticket>@<candidate>`; a red entry whose block has lifted is marked `CLEARED`. |
+| R5-12 | TICKET_DEFECT (wave 2) | R4-1: the dispatch file lives in the target project at `doc/handoffs/<year>/governance/dispatch/<ticket>-<n>.yaml` (path parameterised) so any host can recompute the digest. |
+| R3-07 | OUT_OF_SCOPE_HARDENING | Unchanged: routed to the wave-2 contract gate; D7 with M2 is the document-level check until then. |
