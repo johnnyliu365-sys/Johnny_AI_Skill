@@ -228,3 +228,80 @@ Not verified: the seat's own mutation runs; why the two base names pass in this 
 Raw logs: retained by the reviewer seat on its host; not committed.
 
 Not verified: M1–M12 re-run at c4 (code unchanged since c3; c3 review 12 of 12 red); the seat's own mutation runs; POSIX/Linux behaviour; unreadable-permission directories; a real console (as opposed to a pipe) under cp950; whether `rev-parse` can fail inside `shallow_boundary` while the other queries succeed (code read only).
+
+## Revision03 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | c5 `947e0e51446acf5516ca7a9f910ff39d13217c51` (chain c5 → c4 `9e98c962` → c3 `0d1ef754` → c2 `c41cc29d` → c1 `1d9f2a96` → base `f4d43817`) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; LF review clone of the seat's clone, index rebuilt |
+| Summary | c5 does what it was asked: all four git queries exit 2 with git's own message when the environment is broken; all cells reproduce and all 18 mutations go red. One problem blocks approval: P10's own rule makes some real reds come out as tool faults. In a healthy repository (`git fsck` exit 0) a sealed row whose recorded revision is wrong, and an open row whose leaf was deleted in its last commit, now exit 2 where c4 correctly exited 1. R4-2 says a red is never reported as a tool fault and R4-3 would send the fault to tool repair instead of an index fix. The script follows P10 word for word, so this is a ticket defect (NF-09) for the control plane. |
+| References | CodeReview.md §1–§5, AGENTS.md P0, Workflow.md §0, review-checks.md (counter-mutation rule; pytest read unfiltered), implementation-tdd.md; XSS, secret, provider and UI references not applicable |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 | PASS | exit 0; 24 passed, 36 subtests |
+| P2 | PASS | exit 0; 48 passed, 3 subtests |
+| P3 | PASS | exit 0; 55 passed, 73 subtests (c4's 52 plus git show open, git show sealed, rev-parse in the shallow check) |
+| P4 | PASS | dispatch denylist over the scripts and `tests/test_gate_*.py`: exit 1, zero hits |
+| P5 | PASS | exit 1; only `CommittedPinTests::test_the_pinned_sha_exists` (base name) |
+| P6 | PASS | one invocation per (script, code) pair on the c5 blobs: dispatch_lint 0/1/3; receipt_fence_check 0/1/2/3; index_pins 0, 1, 2 (real `--depth 1` SHALLOW_HISTORY check and write with the index unchanged, not a repository now with git's `fatal:` text, empty PATH, `--json` to a missing directory), 3 (`--bogus`, no mode, missing index file, non-UTF-8 index) |
+| P7 | PASS | default chat word 1; `--chat-words` `''`, `,`, `' '`, `' , ,'` exit 3; `--sealed-state` `''`, `' '` exit 3; stale `open` row with `o`, `pen` exit 1 STALE; `open` against an `OPEN` cell matches the whole cell |
+| P8 | PASS | every named case present and run; c5 touches none |
+| P9 | PASS | see Receipt integrity |
+| P10 | PASS as frozen; the frozen rule itself is NF-09 | own probes, each exit 2 with git's stderr and no `SKIP_NO_BLOB` / `SEALED_PIN_INVALID` / `SKIP_UNTRACKED`: leaf blob deleted (open and sealed × check/write, index unchanged); corrupt `.git/index`; HEAD object removed; real `--depth 1` clone with a malformed `.git/shallow`. cp950 probes B7, B8, B9 exit 1, no traceback, `ก` printed. `--root` absent or a file exit 2 |
+| M1–M12 | PASS (12 of 12 red) | own edits on c5 |
+| M13–M18 | PASS (6 of 6 red) | M13 1, M14 6, M15 3, M16 2; M17 rebuilt as the ticket describes 5 (the seat's `return None` shape 5); M18 per message: git log 3, git show 5, ls-files 2, `--is-shallow-repository` 2, `--show-toplevel` 2, `rev-parse --git-dir` 0 (NF-10); every file restored byte for byte, porcelain empty |
+| Counter-mutations | 7 red, 1 survives | R1 GitFault as exit 1: 15; R2 git show stderr cut: 4; R3 `--is-shallow-repository` failure → `set()`: 2; R5 `_toplevel` failure → `None`: 2; R6 sealed path swallows the fault: 2; R7 open path swallows the fault: 2; R8 `last_stderr` from stdout: 7; R4 `--git-dir` failure → `set()` survives (NF-10) |
+| F1 | PASS | run 1: 11 failed = the 10 base names plus one transient oracle `PROCESS_FAILED` under host load (that file alone: 34 passed); run 2: 10 failed, 2045 passed, 31 skipped; all 10 among the 12 base names; zero new red |
+| Observable behavior | FAIL in part (NF-09) | the main path holds and environment faults exit 2; reds that now exit 2 in a healthy repository: J1 (sealed row, revision a real commit where the leaf did not exist), J2 (sealed row, revision names no object), J3 (open row, leaf deleted in its last commit then re-added to the index only); c4 gave 1/1/1 |
+| Boundary | PASS | `git diff --name-only f4d43817..947e0e51`: the 7 create paths; c5 touches only `index_pins.py`, the scripts README and `tests/test_gate_index_pins.py`; plugin.json and the tickets README untouched; stdlib only; `mypy --strict --python-version 3.11` no issues; no `Any`, no `type: ignore`; docstring and README say any failing git query exits 2 with git's message |
+| Receipt integrity | PASS | 8 run cells each carry `cell`, `candidate`=c5, three `tool_digest` lines equal to sha256 of `git show 947e0e51:<path>`, `capture`, `exit` in capture order (P10 7 values; M17-M18 1,1); 0 CR bytes; every raw block byte-identical (P10 compared fence-aware); the statement section carries `cell: STATEMENT` |
+| Changed assertions | PASS (diff); judgement in NF-09 | the only weakened-looking line is `assertIsNone(blob_sha256_at(..., "never-added.md"))` → `assertRaises(GitFault)` + `assertIn("fatal:")`; the helper move keeps `assertNotEqual(returncode, 0)`; everything else additive. The changed assertion is literally what P10 requires but pins the J1 shape as a tool fault; the seat's behaviour note is not accepted under R4-2 when the cause is the recorded revision rather than the environment (NF-09) |
+
+### Prior findings
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| F-01 | CLOSED | non-UTF-8 index exits 3 without traceback; `--json` to a missing directory exits 2 |
+| F-02 | CLOSED | SHALLOW_HISTORY, git not startable and not a repository exit 2; M8 red |
+| F-03 | CLOSED | P7; M11, M12 red |
+| F-04 | CLOSED | P8; M4–M7, M9, M10 red |
+| F-05 | CLOSED | five fields per run cell, LF, byte-identical blocks |
+| F-06 | CARRIED | OUT_OF_SCOPE_HARDENING |
+| NF-01 | CLOSED | cp950 probes exit 1; M13 red |
+| NF-02 | CLOSED | `--root` absent or a file exits 2; M14 red |
+| NF-03 | CLOSED | git log and ls-files failures exit 2 with git's text; M15, M16 red |
+| NF-04 | CARRIED | OUT_OF_SCOPE_HARDENING; the non-ASCII leaf still gives a red (SKIP_NO_PATH_IN_CELL) |
+| NF-05 | CLOSED | `exit` lists every exit in capture order |
+| NF-06 | CLOSED for environment failures; overreach in NF-09 | blob-deleted and malformed-shallow probes exit 2; `SKIP_NO_BLOB` removed; M17 red |
+| NF-07 | CLOSED except one query (NF-10) | git's message pinned for log, show, ls-files, `--is-shallow-repository`, `--show-toplevel`; not for `rev-parse --git-dir` |
+| NF-08 | CARRIED | OUT_OF_SCOPE_HARDENING; an unborn HEAD is a fault |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| NF-09 | `TICKET_DEFECT` (P10 against R4-2 and R4-3) | Medium | ticket P10 row; `index_pins.py:150-152`, `:387-391`; docstring `:26-28` vs `:36-39`; `tests/test_gate_index_pins.py:119-124` | P10 makes every non-zero `git show` exit 2. On the sealed path the revision comes from the index under check, so a wrong sealed pin is a red; on the open path a tracked leaf whose last commit deleted it is a work-tree red. Both now exit 2, contradicting R4-2 and routing an index error to tool repair (R4-3), and contradicting the docstring's own sealed rule. NF-06's premise holds only for the open path with a live leaf. Suggested rule: check the recorded revision and path first; revision not a commit, or path not in its tree, while the repository is complete → red; tree lists the path but the blob cannot be read → fault (exit 2); one test per side. | J1/J2/J3 probes with `git fsck --no-dangling` exit 0: c5 2/2/2 (`fatal: path '…' exists on disk, but not in '<rev>'`); c4 1/1/1 |
+| NF-10 | `EVIDENCE_DEFECT` (P10 "one test per query") | Low | `index_pins.py:173-175`; ToolFaultTests | `git rev-parse --git-dir` in the shallow-boundary check has no test: turning its failure into `set()` (R4) or dropping git's text (M18e) leaves P3 green; probably unreachable once `--is-shallow-repository` succeeded; merge the two calls into one query. | R4, M18e: P3 exit 0, 55 passed |
+| NF-11 | `TICKET_DEFECT` (closure set) | Low | ticket Acceptance table | The revision03 table lists M1–M12, M17 and M18; M13–M16 exist only in the c4 dispatch, so the frozen closure does not name them. | ticket at the control plane; the c4 dispatch cell M13-M16 |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | LF clone of the seat's clone at `947e0e51`; `git log --format='%H %P' f4d43817..947e0e51`; `git ls-files --eol` | 0 |
+| 2–4 | sha256 of `git show 947e0e51:<script>` vs the working tree and the receipt; `git diff --name-status f4d43817..947e0e51`; `git diff 9e98c962..947e0e51 -- skills/ tests/` | 0 (3 of 3 equal); 0 (7 A paths); 0 |
+| 5 | F1 full suite twice, plus the oracle file alone | 1 (11: 10 base + 1 transient) / 1 (10 base) / 0 |
+| 6–8 | P1, P2, P3, P5 pytest; P4 grep; `mypy --strict --python-version 3.11` | 0 / 0 / 0 / 1; 1 (zero hits); 0 |
+| 9–12 | P10 probes (blob deleted ×4, corrupt index ×2, HEAD removed ×2, shallow malformed ×4); judgement probes J1–J3 on c5 and c4; cp950 B7–B9 and `--root` probes; P6/P7 probe script plus a real `--depth 1` SHALLOW_HISTORY check and write | 2 each; c5 2/2/2 vs c4 1/1/1; 1/1/1 and 2/2/2; as in P6 and P7; 2/2 |
+| 13–14 | mutation harness M1–M12; M13–M16, M17, M17b, M18a–f, R1–R8 | 1 for each; 1 for each except M18e and R4 (0) |
+| 15–16 | receipt check (fields, digests, CR bytes, block equals capture, exit order; fence-aware P10 compare); `git status --porcelain` in the review clone and the seat clone | 0; 0 / 0 |
+
+Raw logs: retained by the reviewer seat on its host; not committed.
+
+Not verified: the seat's own mutation runs; whether `rev-parse --git-dir` can fail after `--is-shallow-repository` succeeds; blobless or promisor partial clones at c5 (covered at c4); POSIX/Linux behaviour; a real console under cp950; unreadable-permission directories; the root cause of the transient oracle `PROCESS_FAILED` beyond host load.
