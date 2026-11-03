@@ -685,6 +685,88 @@ class ShallowRevisionTests(unittest.TestCase):
                 repository.shallow_boundary()
         self.assertIn("no shallow file", str(raised.exception))
 
+    def present_blob_pinned_by_a_sealed_row(self) -> tuple[str, str]:
+        """Source history of four commits; the index holds a sealed row whose revision cell is a blob object that every clone holds."""
+        blob = git(self.source.dir, "rev-parse", f"{self.source.last_commit()}:leaf.md").strip()
+        digest = self.source.digest()
+        for number in (2, 3):
+            self.source.write_leaf(f"commit number {number}\n", name="unrelated.md")
+            self.source.commit(f"commit {number}")
+        row = self.source.row(blob, digest, state="SEALED")
+        self.source.write_index(row)
+        self.source.commit("index")
+        return blob, row
+
+    def test_a_sealed_row_pinning_a_present_blob_in_a_shallow_clone_is_sealed_pin_invalid(self) -> None:
+        """P11: the object is present but is no commit, so it is a red (1) at any depth; only an absent object may be beyond the boundary."""
+        blob, _ = self.present_blob_pinned_by_a_sealed_row()
+        for depth in (1, 3):
+            clone = self.shallow_clone(depth, name=f"clone-{depth}")
+            self.assertEqual(git(clone, "rev-parse", "--is-shallow-repository").strip(), "true")
+            self.assertEqual(git(clone, "cat-file", "-t", blob).strip(), "blob")
+            index = clone / "INDEX.md"
+            before = index.read_bytes()
+            for mode in ("--check", "--write"):
+                with self.subTest(depth=depth, mode=mode):
+                    code, out, err = self.run_main(["--root", str(clone), mode, str(index)])
+                    self.assertEqual(code, 1, out + err)
+                    self.assertIn("SEALED_PIN_INVALID", out)
+                    self.assertNotIn("SHALLOW_HISTORY", out + err)
+                    self.assertNotIn("tool fault", err)
+                    self.assertEqual(index.read_bytes(), before)
+
+    def test_the_object_presence_query_tells_a_present_object_from_an_absent_one(self) -> None:
+        blob = git(self.source.dir, "rev-parse", f"{self.source.last_commit()}:leaf.md").strip()
+        repository = index_pins.Repo(self.source.dir)
+        self.assertFalse(repository.object_missing(blob))
+        self.assertFalse(repository.object_missing(self.source.last_commit()))
+        self.assertTrue(repository.object_missing("1" * 40))
+
+    def test_a_failing_object_presence_query_is_a_tool_fault_carrying_gits_stderr(self) -> None:
+        """The commit probe answers, then the presence query fails: the shallow verdict is not made up from a fault."""
+        self.present_blob_pinned_by_a_sealed_row()
+        clone = self.shallow_clone(1)
+        index = clone / "INDEX.md"
+        before = index.read_bytes()
+        simulated = "fatal: simulated failure of the object-presence query"
+        original = index_pins.Repo.git_text
+        batch_checks: list[int] = []
+
+        def failing_second_batch_check(
+            repository: index_pins.Repo, *args: str, stdin: str | None = None
+        ) -> tuple[int, str]:
+            if args[:2] == ("cat-file", "--batch-check"):
+                batch_checks.append(len(batch_checks) + 1)
+                if len(batch_checks) > 1:
+                    repository.last_stderr = simulated
+                    return 128, ""
+            return original(repository, *args, stdin=stdin)
+
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                del batch_checks[:]
+                with mock.patch.object(index_pins.Repo, "git_text", failing_second_batch_check):
+                    code, out, err = self.run_main(["--root", str(clone), mode, str(index)])
+                self.assertEqual(len(batch_checks), 2, batch_checks)
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("tool fault", err)
+                self.assertIn(simulated, err)
+                self.assertNotIn("SHALLOW_HISTORY", out + err)
+                self.assertNotIn("SEALED_PIN_INVALID", out + err)
+                self.assertEqual(index.read_bytes(), before)
+
+    def test_object_missing_raises_a_fault_with_gits_stderr_when_its_query_fails(self) -> None:
+        repository = index_pins.Repo(self.source.dir)
+
+        def broken(*args: str, stdin: str | None = None) -> tuple[int, str]:
+            repository.last_stderr = "fatal: simulated failure of the presence query"
+            return 128, ""
+
+        with mock.patch.object(repository, "git_text", broken):
+            with self.assertRaises(index_pins.GitFault) as raised:
+                repository.object_missing("1" * 40)
+        self.assertIn("fatal: simulated failure of the presence query", str(raised.exception))
+
 
 class UsageTests(PinCase):
     def run_main(self, argv: list[str]) -> tuple[int, str, str]:
