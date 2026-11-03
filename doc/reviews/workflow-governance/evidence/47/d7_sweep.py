@@ -1,4 +1,4 @@
-"""D7 (ticket 47 closure revision07): governance-wide sweep for the rules Revision 04 retired, on paragraph-joined units.
+"""D7 (ticket 47 closure revision08): sweep of the routed governance set for the rules Revision 04 retired, on paragraph-joined units. Historical SPECs under modules/spec/ (all but workflow-governance.md) are covered by D8 (precedence note), not by this sweep.
 
 Units: a Markdown table row, a list item joined with its indented continuation lines, a heading, a
 line inside a fenced block (code and diagrams are scanned, not skipped), or a paragraph joined
@@ -23,7 +23,7 @@ Run from the repository root with `python -I -X utf8`.
 """
 import os, re, sys
 
-ROOTS = ['skills', 'modules/spec', 'Workflow.md', 'CodeReview.md', 'AGENTS.md', 'doc/runbooks', 'template']
+ROOTS = ['AGENTS.md', 'Workflow.md', 'CodeReview.md', 'skills', 'modules/spec/workflow-governance.md', 'doc/runbooks', 'template']
 NOUN = r'(live[- ]descriptor|pending descriptor|dispatch descriptor|its descriptor|receipt-bound|PendingDispatchDescriptor|merge-queue file|durable bridge|the bridge\b)'
 VERB = r'\b(mandatory|required|requires?|must|default|keeps?|retains?|reserved|bound|only)\b'
 B_EXEMPT = (r'\bR4-1\b', r'not the default', r'\bNOT_REQUIRED\b', r'\bnot required\b', r'does not (consume|require)', r'bridge-free',

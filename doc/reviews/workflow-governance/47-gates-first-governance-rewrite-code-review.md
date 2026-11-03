@@ -597,3 +597,7 @@ Not verified: whether the control-plane checkout's HEAD was `6f199b5a` when its 
 Raw logs: retained by the reviewer seat on its host; not committed.
 
 Not verified: why a7 fails only in the full run (passes alone; treated as flaky); whether the control-plane checkout's HEAD really was `bfbd58ff` when D6 ran (only the capture's `head:` line); the owner's F-05 confirmation; external target-project names other than the ones this seat knows; Markdown and mermaid rendering; tickets 48 and 49 and the commits after `7804a937`; wave-2 behaviour of the R4-7 schemas.
+
+## Revision07 (superseded without review)
+
+Revision07 was frozen at `b5c25bea`, its content committed at `ab624d06` and `bff31425`, and its cells were run; before a review was dispatched the owner decided on 2026-11-03 to scope the consistency check to the routed governance set (closure revision08). The revision07 captures were not committed; the revision07 content stays on the branch and is covered by the revision08 cells.

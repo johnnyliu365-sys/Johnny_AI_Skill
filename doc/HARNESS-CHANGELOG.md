@@ -22,3 +22,4 @@ One row per change that altered what the plugin does. Working history lives in G
 | 10 成本／外部呼叫／回報 | local integrated | token column in receipts (wave 2) |
 | 11 去重與衝突 | local integrated | requirement snapshot ids (wave 2) |
 | 12 回放與獨審 | end to end not verified | first run on a target project (wave 2 acceptance) |
+| 13 歷史 SPEC 舊規則殘留 | precedence notes (wave 1) | sentence-level sweep over every SPEC with the ticket 47 D7 instrument (wave 2); archive through requirement lineage when the router library retires (wave 3) |
