@@ -25,7 +25,7 @@ capacity must be evidence-based and proportional to risk and coupling.
 - No silent task/model/worktree creation, host-login bypass or unverified host
   automation.
 - No reduction of reviewer-only orchestration, TDD, typed contracts, XSS,
-  Secret, ownership or guarded-integration gates. Exact workspace binding remains mandatory for
+  Secret, ownership or guarded-integration gates (the integration script runs integration, R4-4). Exact workspace binding remains mandatory for
   `HIGH_ASSURANCE` host effects; an approved POC manual-evidence path records an absent binding
   as a named gap rather than representing it as proof.
 - No model name, project file count or source-line count as authority or the
@@ -1188,3 +1188,9 @@ provider, push, publication, installation, release or deployment effect.
 | 2026-08-29 | Project owner / exact candidate `3453f3e5709502bff64647eb2b4d6ad0b829212a` | Approved Revision 13 Remote Authority Commit and authorized reviewer opening of `CAP-REMOTE-AUTHORITY-01` only; no remote or implementation effect authority. |
 | 2026-08-29 | Codex architecture owner / `control/host-external-effect-gateway-architecture` / `083c41588e92e227ea27b1fde3fea33e15d6f3dc` | Drafted Revision 14 Host External-Effect Gateway after `CR-CAPREMOTE-01` established that a caller-forgeable activation cannot authorize a remote effect; exact owner approval pending. |
 | 2026-08-29 | Project owner / exact candidate `c3da092eb5cbd78938fb6f43480c525a9ee2258e` | Approved Revision 14 Host External-Effect Gateway and authorized reviewer opening of `CAP-HOST-EFFECT-GRANT-01` only; no gateway implementation or external-effect authority. |
+
+## Amendments
+
+| Date | Authority | Change |
+| --- | --- | --- |
+| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04) | Gate list: guarded integration is run by the versioned integration script (R4-4). |

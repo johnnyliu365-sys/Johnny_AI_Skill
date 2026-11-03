@@ -238,7 +238,7 @@ assert a host workspace/profile binding, consume a receipt, or claim automatic d
 The replacement implementation ticket must contain focused TDD, strict typing, canonical nested
 DTO admission, typed assessment-verification and source-boundary checks, all named negative cases
 and the reverse mutations above. The reviewer runs the full suite and independent mutation review
-before integration. It replaces the blocked P8R-R03 leaf, which is not dispatch authority after
+before integration by the integration script (R4-4). It replaces the blocked P8R-R03 leaf, which is not dispatch authority after
 `CHG-20260823-033`.
 
 Owner approval must name this exact SPEC revision. Approval then seals the feature Context,
@@ -261,3 +261,9 @@ contracts remain read-only dependencies and retain their high-assurance requirem
 | 01 | Project owner, 2026-08-22 (Asia/Taipei) | Approved this exact provider-neutral routing policy, the single-ticket Terra implementation exception, and the reviewer-strength invariant. Reviewer decomposition is authorized; dispatch and host effects are not. |
 | 02 | Project owner, 2026-08-23 (Asia/Taipei) / `CHG-20260822-032` | Reclassified the pure P8R closure as `POC` / `STANDARD`, bound Context revision 02, and requires explicit manual-evidence/known-gap recording. Host binding remains a separate `HIGH_ASSURANCE` path. |
 | 03 | Project owner, 2026-08-23 (Asia/Taipei) / `CHG-20260823-033` | Adds canonical injected-graph admission, the two finite invalid-input outcomes, and typed hard-ticket assessment verification. It blocks R03 and requires a replacement POC ticket; host binding remains a separate `HIGH_ASSURANCE` path. |
+
+## Amendments
+
+| Date | Authority | Change |
+| --- | --- | --- |
+| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04) | Two sentences state that integration runs by the versioned integration script (R4-4): the manual-orchestration evidence sentence and the verification-path sentence. |

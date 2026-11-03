@@ -129,7 +129,7 @@ replays a consumed handoff.
 
 ## Host wake capability gate
 
-Git proves a committed candidate, not a Codex callback. Production automatic wake requires an
+Git proves a committed candidate, not a Codex callback. Production automatic wake (bridge route, not the default since R4-1) requires an
 injected `HostWakePort` that independently proves exact Senior task/thread/host availability,
 receipt-bound event registration, claim-before-effect, one effect invocation and exact readback.
 An uncertain effect is settled once and never retried.
@@ -309,3 +309,9 @@ rollback target.
 | --- | --- |
 | 2026-08-02 | Project owner approved the skill-only private Git plugin POC. |
 | 2026-08-17 | Project owner approved Revision 02: complete versioned Codex bundle, isolated dependency/runtime, native Git event runner, fail-closed host wake gate, reversible install/uninstall and SourceProjectA package verification. |
+
+## Amendments
+
+| Date | Authority | Change |
+| --- | --- | --- |
+| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04) | Host wake capability gate scoped to the bridge route, which is not the default (R4-1). |

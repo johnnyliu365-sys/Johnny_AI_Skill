@@ -1,5 +1,7 @@
 # Receipt-bound Role Supervision Specification
 
+> Scope note (`CHG-20261103-043`): this SPEC describes the mechanics of the receipt-bound bridge route. Since workflow-governance Revision 04 that route is available until wave 3 and is not the default (R4-1); "must" below binds the bridge route only.
+
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` |
@@ -569,3 +571,9 @@ route any missing meaning back to architecture.
 - Exact SPEC revision: `APPROVED` on `2026-08-15 (Asia/Taipei)`.
 - Approval effect: authorizes reviewer decomposition and ticket drafting only. It
   does not authorize dispatch, implementation, heartbeat, push, release or deployment.
+
+## Amendments
+
+| Date | Authority | Change |
+| --- | --- | --- |
+| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04) | Scope note added: the receipt-bound route is not the default (R4-1); the SPEC binds that route only. |

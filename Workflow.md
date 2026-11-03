@@ -19,7 +19,7 @@ flowchart TD
     C -->|"HALT"| H["停止；不得 fallback 或自行跨關"]
 
     A -->|"Stage action"| S["單一獲准 Stage<br/>INTAKE / WAYFINDER / ARCHITECTURE / GRILL / CONTEXT / SPEC / TICKETS / IMPLEMENT / SMOKE_TEST / REVIEW / HANDOFF"]
-    A -->|"Implementation dispatch"| D["receipt、descriptor、owner、task、worktree、branch、baseline 與 host gate"]
+    A -->|"Implementation dispatch"| D["票面狀態列（派工檔 digest）、receipt、owner、task、worktree、branch、baseline 與 host gate；descriptor 僅限過渡 bridge（R4-1）"]
 
     S --> T["Typed return + CompletionEvidence"]
     D --> T

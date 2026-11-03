@@ -4,7 +4,7 @@
 | --- | --- |
 | 對應規格 | `modules/spec/<feature>.md`／完整 `SPEC-<PROJECT>-<FEATURE>-<YYYYMMDD>-<ULID>` |
 | 共同基準 | `<docs-only commit SHA>` |
-| 整合負責人 | `<AI／worktree>` |
+| 整合 | 由版本化整合腳本自整合佇列執行（workflow-governance R4-4），不指定固定整合者 |
 | 集群交接狀態 | `ASSIGNED`／`IN_PROGRESS`／`BLOCKED`／`READY_FOR_REVIEW` |
 
 | 工單 | 實作者 | 審閱者 | 責任邊界 | 交接狀態 |

@@ -64,8 +64,8 @@ The command/skill boundary is finite:
    repository-contained worktree, named branch/baseline, and a ticket/profile-bound
    implementation capability.
 2. Codex invokes its native subagent operation for exactly that owner, then awaits the owner
-   completion without polling. The reviewer, not the implementation owner, reviews and
-   integrates after the returned result.
+   completion without polling. The reviewer, not the implementation owner, reviews after the returned result, and the
+   versioned integration script (R4-4) integrates.
 3. The direct path has `NOT_REQUIRED` bridge disposition. It neither issues/consumes a receipt
    nor requires a runner, queue, descriptor, gateway, or host workspace readback.
 4. Absent native delegation or profile capability is the finite
@@ -384,3 +384,9 @@ forward-fix/revert decision for the owner, not an automatic retry.
 The approval applies to the exact draft named above. This candidate changes only lifecycle and
 approval metadata, binds the resulting sealed Context blob, and opens the `TICKETS` stage; it does
 not authorize repository creation, remote ref mutation, release publication or user installation.
+
+## Amendments
+
+| Date | Authority | Change |
+| --- | --- | --- |
+| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04) | Reviewer sentence: the reviewer reviews after the returned result; integration is executed by the versioned integration script (R4-4). |

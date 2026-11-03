@@ -13,7 +13,7 @@ decide the transition. The live `PendingDispatchDescriptor` path in Dispatch adm
 only for the cross-lifetime bridge until it retires; the default cross-session route is the
 ticket's state row plus the digest of its dispatch file (R4-1), and the merge-queue file holds
 integration candidates only. The queue's single-consume and anti-replay invariants are: an entry is keyed by
-(ticket, candidate sha); a key already in `LANDED`, `LANDED_CI_RED` or `BOUNCED` is refused; landing requires a
+(ticket, candidate sha); a key already in `LANDED`, `LANDED_CI_RED`, `CLEARED` or `BOUNCED` is refused; landing requires a
 compare-and-swap on the queue file commit and on the remote tip sha; caller-provided shas stay
 assertions compared against the repository, never authority. The rule that serialized state
 carries no filesystem paths applies to host absolute paths; the queue, receipt and snapshot
@@ -113,12 +113,12 @@ path, the Private Router owns the live `PendingDispatchDescriptor`, and a typed 
 resolves the exact project, ticket, reviewed handoff, ticket and handoff commits, implementation
 owner, task/workspace binding, worktree and expected baseline.
 
-Only `IMPLEMENTATION_DISPATCH_CONFIRMED` may consume a matching, unconsumed receipt and create a
+On the receipt-bound route (not the default since R4-1), only `IMPLEMENTATION_DISPATCH_CONFIRMED` may consume a matching, unconsumed receipt and create a
 cross-lifetime implementation lane. Missing, copied, forged, replayed or mismatched project,
 ticket, handoff, owner, task, worktree, branch, baseline, action, question or correlation halts
 before source, capability, receipt, branch or host effect. Caller-provided commits are assertions
-to compare, never authority sources. A cross-lifetime handoff with no proved bridge is
-`UNAVAILABLE`: it is an unarmed wake and must not be reported as delivered.
+to compare, never authority sources. A cross-lifetime handoff that chose the bridge route and has no proved bridge is `UNAVAILABLE`
+(the default route, R4-1, needs no bridge): it is an unarmed wake and must not be reported as delivered.
 
 Wake capability has exactly three finite dispositions: `NOT_REQUIRED` when the host delivers
 natively (including a same-lifetime synchronous lane), `AVAILABLE` when a cross-lifetime bridge is

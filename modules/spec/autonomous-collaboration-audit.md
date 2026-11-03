@@ -58,7 +58,7 @@ ReviewerOrchestrationGrant = { project_id, ticket_ref, reviewed_handoff_ref,
 OrchestrationDecision = AUTHORIZED | ROLE_FORBIDDEN | RECEIPT_INVALID
 ```
 
-The control-plane/main owner owns Wayfinder, Architecture, Grill, Context, SPEC, tickets, dispatch question, guarded integration, audit and handoff. The implementation owner owns only its assigned ticket branch/worktree, TDD, source/tests, verification and implementation commit. The integration capability may update `main` only while holding an exclusive project lock and only after a validated return; it is an automated action, not a second human approval.
+The control-plane/main owner owns Wayfinder, Architecture, Grill, Context, SPEC, tickets, dispatch question, guarded integration (run by the versioned integration script, R4-4), audit and handoff. The implementation owner owns only its assigned ticket branch/worktree, TDD, source/tests, verification and implementation commit. The integration capability may update `main` only while holding an exclusive project lock and only after a validated return; it is an automated action, not a second human approval.
 
 For Agent-to-Agent effects the named reviewer, not a generic control-plane or implementation capability, is the sole authority. The orchestration adapter accepts only a previously issued exact grant and consumes its receipt/action binding at most once. It exposes no fallback that infers authority from an agent profile string.
 
@@ -119,3 +119,9 @@ The approved implementation ticket must first produce executable red evidence fo
 - Decision maker: project owner.
 - Date: `2026-08-05 (Asia/Taipei)`.
 - Approval scope: this SPEC including the `CHG-20260811-012` revision and ticket planning. A ticket's source/test implementation is authorised only when a named implementation owner/worktree receives the ticket and the project owner confirms dispatch; only the named reviewer may perform Agent-to-Agent orchestration and no separate ceremonial ticket approval is required.
+
+## Amendments
+
+| Date | Authority | Change |
+| --- | --- | --- |
+| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04) | Role sentence: guarded integration is run by the versioned integration script (R4-4); no fixed integrator. |
