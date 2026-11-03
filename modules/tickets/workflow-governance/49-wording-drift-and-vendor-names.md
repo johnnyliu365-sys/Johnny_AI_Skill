@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | LOCAL_IMPLEMENTED (W2 and source-project names done; W1 vendor names pending); 49-W1–W2 revision01 |
+| State / Closure | LOCAL_IMPLEMENTED / INDEPENDENT_REVIEW_PENDING (W1, W2 and source-project names done); 49-W1–W2 revision01 |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; REVIEW of ticket 47 finding F-12 |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47 revision02 |
 | Grant / roles | Control plane authors; independent review |
@@ -26,5 +26,11 @@ No document on this line names the source project the gate scripts were ported f
 
 | Cell | Check | Expected |
 | --- | --- | --- |
-| W1 | `git grep -nE "Opus|Sonnet|Haiku|Claude control plane" modules/spec modules/tickets/workflow-governance doc/requirements/active/2026/workflow-governance` | zero hits after the change |
+| W1 | `git grep -nE "Opus|Sonnet|Haiku|Claude control plane" -- modules/spec modules/tickets/workflow-governance/47-*.md modules/tickets/workflow-governance/48-*.md modules/tickets/workflow-governance/49-*.md doc/requirements/active/2026/workflow-governance` | exactly one hit: this row, which carries the pattern. Closed tickets 01–23 are historical records outside this boundary and keep their text |
 | W2 | ticket 48 cell P4 | reads its denylist from a parameter file named in the ticket, not from the ticket text |
+
+## Ticket correction (control plane, before review)
+
+| Cell | Was | Now |
+| --- | --- | --- |
+| W1 | scanned every ticket under `modules/tickets/workflow-governance`, including closed tickets 01–23 outside this boundary and this row itself, so zero hits was unreachable | scoped to the boundary files; this row is the one permitted occurrence of the pattern |

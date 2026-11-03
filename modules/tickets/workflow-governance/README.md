@@ -16,7 +16,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [04-skill-implies-a-runtime-that-may-not-exist](04-skill-implies-a-runtime-that-may-not-exist.md) | The skill no longer narrates wakes nothing performs; agents must verify automation readiness before claiming any automatic effect | `CLOSED` | Found by the owner watching a false wake narrative on a real project; ships as 0.4.4 |
 | [47-gates-first-governance-rewrite](47-gates-first-governance-rewrite.md) | Workflow section 0 states that state lives in files and transitions are decided by scripts; CodeReview names the integration script as executor | `CONVERGENCE_REPLANNED` | Independent review before integration |
 | [48-port-gate-scripts](48-port-gate-scripts.md) | Dispatch lint, receipt fence check and index pins run from the plugin with the fixed exit-code contract | `PLANNED` | Ticket 47 reviewed |
-| [49-wording-drift-and-vendor-names](49-wording-drift-and-vendor-names.md) | Governance documents name roles and profiles, never vendor or model literals | `PLANNED` | Ticket 47 integrated |
+| [49-wording-drift-and-vendor-names](49-wording-drift-and-vendor-names.md) | Governance documents name roles and profiles, never vendor or model literals | `LOCAL_IMPLEMENTED` | Independent review pending; lands with ticket 47 on this line |
 
 ## Shared baseline
 

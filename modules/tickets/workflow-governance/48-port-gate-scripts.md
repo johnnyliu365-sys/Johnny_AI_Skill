@@ -5,7 +5,7 @@
 | State / Closure | PLANNED; 48-P1–P6 revision01 |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 R4-2 (dispatch lint, evidence gate precursor, index pins) |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47 |
-| Grant / roles | Control plane dispatches; implementation seat Sonnet in a disposable clone; independent review Opus |
+| Grant / roles | Control plane dispatches; `implementation-standard` seat in a disposable clone; independent review by a `ticket-review` seat |
 | Source of the scripts | a target project checkout, read only: `scripts/review/dispatch_lint.py` + `scripts/test_dispatch_lint.py`, `scripts/receipt_fence_check.py` + `scripts/test_receipt_fence_check.py`, `scripts/fix_artifact_index_pins.py` + `scripts/test_fix_artifact_index_pins.py` at a recorded commit; the seat records the source commit and the sha256 of each copied file |
 | Workspace | clone `C:/Temp/claude/jas48` from `cp/wave1-gates-first` |
 | Profile / limits | STANDARD; Python 3.11 only, no new dependency; every target-specific path, ticket id, lane name or model name stripped or parameterised |

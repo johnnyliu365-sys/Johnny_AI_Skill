@@ -5,7 +5,7 @@
 | State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision02 (47-D1–D6) after initial review and correction review on revision01 both returned CHANGES_REQUESTED |
 | Authority | Owner 2026-11-03 takeover instruction; `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 |
 | Baseline | `a1cb6c1` (main); branch `cp/wave1-gates-first` |
-| Grant / roles | Control plane (Claude) authors the documents; independent review by a separate reviewer seat (Opus) before integration |
+| Grant / roles | Control plane authors the documents; independent review by a separate `ticket-review` seat before integration |
 | Workspace | clone `C:/Temp/claude/jas-main`, branch `cp/wave1-gates-first` |
 | Profile / limits | COMPACT: documents only; no runtime, installer, publication pin or target-project write |
 | Language / return | Markdown; `ImplementationReturn` COMPLETED with the exact commit, the five document diffs and the pytest result of the document-pinning tests |
