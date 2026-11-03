@@ -223,3 +223,16 @@ Review record section "Revision08 initial review". N8-01 (`TICKET_DEFECT`): the 
 | N8-02 | TICKET_DEFECT | notes removed from `modules/spec/TEMPLATE.md` and `modules/spec/README.md`; D8 asserts their absence |
 | N8-03 | TICKET_DEFECT | D9 pins the precedence sentence |
 | N8-04 | OUT_OF_SCOPE_HARDENING / EVIDENCE_DEFECT | Order row with the re-plan sha; Revision07 wording; R4-1 queue half routed to wave 2 (change log row 13) |
+
+## Correction 1 of closure revision09 (after its initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision09 initial review". No ticket defect: two Low fixes in one additive commit, four hardening gaps routed to wave 2.
+
+| Finding | Class | Disposition |
+| --- | --- | --- |
+| N9-01 | EVIDENCE_DEFECT | Return rows D7 and D8 corrected (revision09 roots; every covered file); the run-2 header sentence explained in the record; captures unchanged |
+| N9-02 | IMPLEMENTATION_DEFECT | REQ Scope lists the precedence notes, the handover runbook and the three committed scripts |
+| N9-03 | OUT_OF_SCOPE_HARDENING | Workflow.md section 0 waiver names SPECs only; the handover runbook is a record no routed document references; wave 2 may widen the waiver wording |
+| N9-04 | OUT_OF_SCOPE_HARDENING | D8 absence check by exact substring; wave 2 (regex absence) |
+| N9-05 | OUT_OF_SCOPE_HARDENING | D9 pins a phrase; the rule and its place are pinned by the wave-2 contract gate |
+| N9-06 | OUT_OF_SCOPE_HARDENING | D7 instrument gaps (reviewer named inside an "integration script" sentence; merge/push/land verbs; Chinese 代為 commit; queue-row dispatch): wave-2 contract gate next to R3-07 and change-log row 13 |
