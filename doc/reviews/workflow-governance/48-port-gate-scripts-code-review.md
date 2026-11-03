@@ -1,0 +1,73 @@
+# REVIEW — ticket 48 Port three proven gate scripts
+
+## Revision01 initial review
+
+| Field | Value |
+| --- | --- |
+| Verdict | `CHANGES_REQUESTED` |
+| Reviewer | independent review seat. Authored nothing in this ticket. |
+| Ticket leaf | `modules/tickets/workflow-governance/48-port-gate-scripts.md`. The blob was `6851ae4` at base `f4d4381`. It is `b180d06` at branch tip `7335e78`, which changed P4 during this review (P4 now also scopes `tests/test_gate_*.py` and reads its denylist from the dispatch). Both revisions were checked. |
+| Spec | `modules/spec/workflow-governance.md` Revision 04 R4-2 (exit 0 pass / 1 red / 2 tool fault / 3 usage; "a red is never reported as a tool fault and a tool fault is never reported as a red"); R4-7 last bullet (a gate that cannot start exits 2, never 1) |
+| Candidate | base `f4d43817fbcce48188e66c986b23ed7acde42046`; c1 `1d9f2a96f88d0ce36cc7fe744e5a024b5da8182c` (scripts); c2 `c41cc29d9ee760ceea4ad1ccd9365e1774e2103f` (tests) |
+| Review checkout | `git clone --no-hardlinks` of the implementation clone; c2 detached; `core.autocrlf=false`; index rebuilt; `git status` empty. Base checkout made the same way at `f4d4381`. |
+| Source | read-only checkout at `f9f4a64def9c205a656411da10509eea1c6de9e3`, clean. All six receipt sha256 values equal the sha256 of the working-tree files. Those files are CRLF, so the values are not the sha256 of the `git show` blobs. |
+| References applied | CodeReview.md §1–§5; review-checks; implementation-tdd (reverse mutation); language-policy (Python 3.11 strict). XSS, secret, provider and UI references: not applicable, because the change is three stdlib CLI scripts and their tests, with no network, secret or DOM surface. |
+
+## Findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| F-01 | `IMPLEMENTATION_DEFECT` | Medium | `skills/johnny-project-takeover/scripts/index_pins.py:256`, `:535`; docstring `:33-34` | An index file that is not UTF-8 raises an uncaught `UnicodeDecodeError` in `scan()`, and the process exits **1**, which reads as a contract red. The docstring promises exit 3 for an "unreadable index file". `main()` only checks `is_file()`. Likewise, `--json` to a path that cannot be written raises `FileNotFoundError`, which also exits 1. Both are tool or usage faults reported as reds, against R4-2. `dispatch_lint.py:97` catches the same case and exits 3, and has a test for it. `index_pins` has no such case. | probe B3: `printf '\xff\xfe| x |\n' > BAD.md; index_pins.py --check BAD.md` gives a traceback with exit=1. probe B3b: `--json <missing-dir>/out.json` gives a traceback with exit=1. |
+| F-02 | `TICKET_DEFECT` | Medium | ticket "One observable behavior" and P6 (0/1/3 for every script); `index_pins.py:501-506`, `:421-430`, `:468-469`; `scripts/README.md` exit paragraph and index_pins paragraph | `SHALLOW_HISTORY` exits **1**. A shallow clone is an environment or tool fault: the history needed to derive the revision is absent. It is not a red of the index. The source exited 2 here. The scripts README states "a tool fault is never reported as a red" and, a few lines later, lists the shallow clone under exit 1. When `git` cannot start, the script reports "not inside a git repository" and exits 3, whereas R4-7 calls for 2. The ticket lists only 0/1/3 for each script, but the seat still gave `receipt_fence_check` an exit 2, so the ticket's list is not what decides the matter. The control plane should state the tool-fault exit for `index_pins` (proposed: `SHALLOW_HISTORY` and git-not-startable exit 2), add it to P6, and then the implementation follows. | Test `ShallowHistoryTests` asserts `code == 1`. probe B4: with `PATH=/nonexistent`, `index_pins.py --check INDEX.md` exits 3 with the message "not inside a git repository". |
+| F-03 | `IMPLEMENTATION_DEFECT` | Medium | `dispatch_lint.py:43`, `:86`; `index_pins.py:321`, `:458` | Two options the seat added let a caller make a rule vacuous and still get exit 0. (a) `--chat-words ","` or `--chat-words ""` yields an empty list, so `chat = None` and R3 never fires: a dispatch containing a default chat word gets `LINT PASS` with exit 0. (b) `--sealed-state ""`, or any substring of a state cell such as `o`, makes every row "sealed" through the substring test at `:321`. A stale row is then never compared with `git log -1` and `--check` exits 0. That contradicts the ticket's observable behaviour ("gets the stale rows with exit 1"). The source hard-coded both values, so it had neither bypass. Expected fix: an empty or blank value is a usage error (exit 3), and the sealed word matches as a whole word. | probe B1: default exit=1; `--chat-words ,` exit=0; `--chat-words ''` exit=0. probe B2: stale row with default options exit=1; `--sealed-state ''` exit=0; `--sealed-state o` exit=0. |
+| F-04 | `EVIDENCE_DEFECT` | Medium | `tests/test_gate_index_pins.py`, `tests/test_gate_dispatch_lint.py`; receipt "decisions" bullet 5 | The receipt says the port removed only project-specific real-shape cases, the mutation harness and correction ids. It also dropped generic source cases: the `_looks_pinned` negatives (bare hex, `sha256=` form, only one side present) and the three-row `MALFORMED_PIN` orphan canary. The parent-relative `../leaf` resolution and `SEALED_PIN_MISSING` also have no case in the port. Reverse mutations in a disposable copy survive, with `test_gate_index_pins.py` exit 0 on every one: X2 (bare 40/64-hex accepted as a pin), X5 (`MALFORMED_PIN` orphan finding removed), X1 (`while startswith("./")` replaced by `lstrip("./")`), X3 (`SEALED_PIN_MISSING` replaced by silent `continue`). For dispatch_lint, cutting the default R3 list from 9 words to the 3 the tests use (X6) still exits 0, and so does R5 skipping line 1 (X7). This is lower risk because the source tested only one word. | Commands below; X1–X3, X5–X7 each exit=0. X4 and X4b (`SKIP_UNTRACKED` / `SKIP_NO_BLOB` removed from `DEFECTS`) also survive. They are not counted against the tests, because after `resolve_leaf` filters on tracked files those branches can only be reached through a git failure. |
+| F-05 | `EVIDENCE_DEFECT` | Low | `jas48_RETURN.md` cells P1–F1 | (1) No cell carries its own `tool_digest` or `exit` field. Tool digests appear once, in a header block. Their values are correct: each equals the sha256 of `git show c2:<path>`. Exit appears only in `result:` text. (2) Each `capture:` is a bare file name outside the repository, not a repository-relative path. (3) The raw blocks are not byte-identical to their captures. The P1, P2, P3, P5, P6 and F1 captures (and both base captures) are CRLF while the receipt blocks are LF. They are equal after CRLF→LF normalisation, which is the comparison `receipt_fence_check` itself makes. M1–M3 and P4 are identical apart from the final LF. (4) The P4 cell ran the `6851ae4` wording (scripts only). The current blob `b180d06` also scopes the tests, so the P4 evidence predates the current ticket revision. The reviewer reran P4 over both scopes: zero hits. | `receipt_check.py` (reviewer script) per cell: missing=['tool_digest','exit']; status IDENTICAL_AFTER_CRLF_NORMALIZE / IDENTICAL(+final LF). |
+| F-06 | `OUT_OF_SCOPE_HARDENING` | Low | `receipt_fence_check.py` `main`, `explicit`, `scan` | Exit-0 passes inherited from the source, where nothing was checked: a section with zero fences (`fences=0 failures=0`, exit 0), `--scan` of a directory with no receipts (exit 0), and `--help` (exit 0, while the other two scripts exit 3). `--scan` ignores extra positional arguments, and `--require-cmd` is parsed but never used. None of this breaks the ticket's closure set. It belongs in the wave-2 evidence-gate ticket, which requires every cell to carry its fields. | probes: empty section exit=0; empty scan dir exit=0; `--help` exit=0. |
+
+## Requested judgements
+
+- **Port fidelity of dispatch_lint.** R1–R5 regexes, quote stripping, fence toggling and the 400-character limit are unchanged. Only the list became data, and the default keeps all 9 source words. No rule was weakened, apart from the F-03 empty-list bypass.
+- **Port fidelity of receipt_fence_check.** The `## `-section, capture-distance (3 lines), cmd, redirect/chain/EVD/authority/loop/filter, elision, `LEGACY_UNCLAIMED_EXIT` and self-note logic is unchanged. The diff touches comments and docstrings, plus three things: the allowlist moved from a sidecar file to `--legacy-allowlist` (empty by default, so stricter); `default_authority_root` was added; and the filter-destination resolve was renamed, with the same value. The set of failure codes is identical, except for the new `EVIDENCE_ROOT_UNREADABLE` / `SCAN_ROOT_UNREADABLE`.
+- **Port fidelity of index_pins.** Revision is still `git log -1 --format=%H -- <leaf>`, and Digest is still `sha256(git show <rev>:<leaf>)` on raw bytes. The defect set is the source's, plus `SHALLOW_HISTORY`. The state column now also accepts `state`. The source-specific leaf column aliases were removed, which is acceptable for the generic row format.
+- **Exit decision, receipt_fence_check 2 vs 3.** An unreadable evidence or scan root exits 2, which matches R4-7. A missing heading, a missing receipt and an unreadable allowlist exit 3; this is accepted, since the result is never 0 and never a red. A missing heading could equally be a missing cell, which is a NOT_RUN red. Note this for the wave-2 evidence gate.
+- **Exit decision, index_pins 1 for the shallow boundary.** Not accepted (F-02).
+- **Exit decision, dispatch_lint --chat-words.** Replacing the list is accepted, and keeping the default is correct because it is R3. Accepting an empty list is not (F-03). An unreadable dispatch exits 3, which is consistent with the dispatch-lint row (0/1/3).
+- **Genericity.** Neither the old P4 denylist nor the dispatch denylist (`<source-project names>`, not reproduced here) hits the scripts or `tests/test_gate_*.py`. A wider scan also found no hits for ticket, review or correction ids, rule-history tags, model or vendor names, environment names or dated narrative. The only CJK text is the R3 default list and the R4 terminator, which are rule data. The docstrings carry no project history.
+- **Boundary.** `git diff --name-only f4d4381..c2` lists 7 created paths, all inside the `create` set. No forbidden path appears. The two `modify` paths (`.claude-plugin/plugin.json`, ticket README) are untouched. The payload `trees` already include `skills`.
+- **Strict typing.** `mypy --strict --python-version 3.11` on the three scripts: no issues.
+- **Admission note (not a seat defect).** The candidate sits on `f4d4381`. The branch tip is now `7335e78`. The README dependency "Ticket 47 reviewed" is not met: ticket 47 is `CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING`. Integration therefore needs that dependency cleared and a rebase. The candidate touches no path changed in `f4d4381..7335e78`.
+
+## Commands and exits
+
+| Cell | Command (reviewer's own) | Exit / result |
+| --- | --- | --- |
+| P1 | `python -m pytest tests/test_gate_dispatch_lint.py -q -p no:cacheprovider` | 0; 17 passed, 17 subtests |
+| P2 | `python -m pytest tests/test_gate_receipt_fence_check.py -q -p no:cacheprovider` | 0; 45 passed, 3 subtests |
+| P3 | `python -m pytest tests/test_gate_index_pins.py -q -p no:cacheprovider` | 0; 32 passed, 22 subtests |
+| P4 | `grep -rniE "<source-project names>" skills/johnny-project-takeover/scripts` | 1 (zero hits) |
+| P4 (b180d06 scope) | the same grep, plus a wider id/vendor/narrative pattern, over the scripts and `tests/test_gate_*.py` | zero hits |
+| P5 | `python -m pytest tests/test_plugin_payload_boundary.py -q` | 1; only `CommittedPinTests::test_the_pinned_sha_exists`, the same id that fails at base (see F1 base set) |
+| P6 | dispatch_lint: good / prose / no-args / `--bogus` | 0 / 1 / 3 / 3 |
+| P6 | receipt_fence_check: match / body mismatch / no capture / missing ev-root / unknown heading / no-args / `--bogus` | 0 / 1 / 1 / 2 / 3 / 3 / 3 |
+| P6 | index_pins: stale `--check` / `--write` / `--check` after write / no-args / `--check --write` | 1 / 0 / 0 / 3 / 3 |
+| M1 | R3 append block deleted from a disposable copy of `dispatch_lint.py`; P1 | 1; 6 failed (R3 subtests, independent-violations, word-list, `--chat-words`) |
+| M2 | `FENCE_CAPTURE_MISSING` append replaced by `pass`; P2 | 1; 2 failed (`test_requires_nearby_capture`, distance 3/4) |
+| M2b | `CAPTURE_MISSING` append replaced by `pass`; P2 | 1; 2 failed |
+| M3 | drift test `old_rev == new_rev and old_digest == new_digest` changed to `old_rev == new_rev`; P3 | 1; 5 failed |
+| M3b | sealed verify `actual != old_digest` changed to `actual is None`; P3 | 1; 3 failed |
+| X1–X7 | survivor probes (F-04) | 0 each |
+| B1–B4 | behaviour probes (F-01, F-02, F-03) | as quoted in findings |
+| mypy | `mypy --strict --python-version 3.11` on the 3 scripts | 0 |
+| F1 c2 | `python -m pytest tests -q -p no:cacheprovider` on c2 | 1; 12 failed, 2010 passed, 31 skipped |
+| F1 base | the same, on a disposable `f4d4381` checkout | 1; 12 failed, 1916 passed, 31 skipped |
+
+The failure sets are identical: c2 adds no red. The 94 extra passes are the 17 + 45 + 32 new gate tests. The receipt's claim of 12 base failures is confirmed. All 12 are environment- or pin-bound; none touches the new files.
+
+- `test_atomic_conditional_replace_capability.py`: `test_acr2_linux_requires_an_actual_linux_kernel_and_backend`, `test_acr6_exact_test_only_boundary`, `test_acr6_committed_candidate_diff_and_forbidden_paths`
+- `test_guarded_integration_corrections.py`: `ReceiptBoundCorrectionTests::test_reviewed_router_profile_composes_return_integration_and_audit`
+- `test_plugin_payload_boundary.py`: `CommittedPinTests::test_the_pinned_sha_exists`
+- `test_plugin_publication.py`: `CandidateMetadataTests::test_l5_stale_candidate_pin_is_named_before_generation`, `PinnedTreeBindingTests::test_pinning_the_root_commit_is_rejected`, `PublicationReachabilityTests::test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable`, `PublicationReachabilityTests::test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor`
+- `test_refusal_guidance.py`: `ClassificationAuditTests::test_every_failure_enum_in_the_library_is_covered_or_uncovered`
+- `test_workflow_router.py`: `WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services`, `WorkflowRouterTests::test_temporal_approval_signal_requires_matching_authority_state`
+
+Not verified: whether the seat's mutation runs are reproducible. Only the reviewer's own edits were run. Linux/POSIX behaviour of the cross-OS path normalisation was not run: this host is Windows only and WSL Ubuntu is unavailable.
