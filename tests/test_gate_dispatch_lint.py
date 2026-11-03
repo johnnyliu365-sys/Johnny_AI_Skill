@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import os
 import subprocess
 import sys
 import tempfile
@@ -21,6 +22,7 @@ SCRIPT = _SCRIPTS / "dispatch_lint.py"
 LINE_LIMIT = 400
 CHAT_WORDS = ("請", "麻煩", "謝謝")
 TERMINATOR = "。"
+NON_CP950 = chr(0x0E01)  # outside code page 950
 
 
 def rule_ids(problems: list[str]) -> list[str]:
@@ -214,6 +216,23 @@ class ExitCodeTests(unittest.TestCase):
                     [sys.executable, "-I", str(SCRIPT), *args], capture_output=True, text=True, encoding="utf-8",
                 )
                 self.assertEqual(done.returncode, code, done.stdout + done.stderr)
+
+    def test_a_red_with_a_non_cp950_character_exits_1_under_a_cp950_console(self) -> None:
+        """The console encoding never changes an exit code (R4-2): a red stays 1, with no traceback."""
+        env = {key: value for key, value in os.environ.items() if key not in ("PYTHONUTF8", "PYTHONIOENCODING")}
+        env["PYTHONIOENCODING"] = "cp950"
+        with self.assertRaises(UnicodeEncodeError):
+            NON_CP950.encode("cp950")
+        bad = self.write("nonascii.yaml", dispatch(f"prose {NON_CP950} line"))
+        done = subprocess.run(
+            [sys.executable, str(SCRIPT), str(bad)], capture_output=True, env=env,
+        )
+        out, err = done.stdout.decode("cp950"), done.stderr.decode("cp950", errors="replace")
+        self.assertEqual(done.returncode, 1, out + err)
+        self.assertNotIn("Traceback", err)
+        self.assertIn("R2", out)
+        self.assertIn(NON_CP950.encode("unicode_escape").decode("ascii"), out)
+        self.assertIn("LINT FAIL (1)", out)
 
 
 if __name__ == "__main__":

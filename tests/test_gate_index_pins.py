@@ -9,6 +9,7 @@ import contextlib
 import hashlib
 import io
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -21,6 +22,7 @@ sys.path.insert(0, str(_SCRIPTS))
 import index_pins  # noqa: E402
 
 SCRIPT = _SCRIPTS / "index_pins.py"
+NON_CP950 = chr(0x0E01)  # outside code page 950
 HEADER = "| id | kind | state | revision | digest | leaf |\n| --- | --- | --- | --- | --- | --- |\n"
 
 
@@ -496,7 +498,6 @@ class UsageTests(PinCase):
                 "missing index file": ["--root", root, "--check", str(self.repo.dir / "absent.md")],
                 "index outside the repository": ["--root", root, "--check", str(Path(outside) / "x.md")],
                 "index argument is a directory": ["--root", root, "--check", str(self.repo.dir)],
-                "root is not a directory": ["--root", str(Path(outside) / "absent"), "--check"],
                 "empty sealed state": ["--root", root, "--check", "--sealed-state", ""],
                 "blank sealed state": ["--root", root, "--check", "--sealed-state", "  "],
             }
@@ -596,6 +597,91 @@ class ToolFaultTests(PinCase):
         self.assertEqual(code, 2, out + err)
         self.assertIn("tool fault", err)
         self.assertIn("boom", err)
+
+    def test_root_that_is_missing_or_not_a_directory_exits_2(self) -> None:
+        """An unreadable input directory is a tool fault (R4-7), never a usage error or a red."""
+        with tempfile.TemporaryDirectory(prefix="idxpin-norepo-") as outside:
+            plain_file = Path(outside) / "plain.txt"
+            plain_file.write_text("x", encoding="utf-8")
+            roots = {"missing": Path(outside) / "absent", "file": plain_file}
+            for label, root in roots.items():
+                for mode in ("--check", "--write"):
+                    with self.subTest(label=label, mode=mode):
+                        code, out, err = self.run_main(["--root", str(root), mode])
+                        self.assertEqual(code, 2, out + err)
+                        self.assertIn("tool fault", err)
+                        self.assertNotIn("usage:", err)
+                        self.assertEqual(out, "")
+                with self.subTest(label=label, how="process"):
+                    done = subprocess.run(
+                        [sys.executable, "-I", str(SCRIPT), "--root", str(root), "--check"],
+                        capture_output=True, text=True, encoding="utf-8",
+                    )
+                    self.assertEqual(done.returncode, 2, done.stdout + done.stderr)
+
+    def test_a_failing_git_log_is_a_tool_fault_never_skip_untracked(self) -> None:
+        """HEAD names a missing object: `git log -1 -- <leaf>` exits 128 while `git ls-files` still works."""
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        branch_ref = self.repo.dir / ".git" / "refs" / "heads" / "main"
+        self.assertTrue(branch_ref.is_file())
+        branch_ref.write_text("1" * 40 + "\n", encoding="utf-8", newline="\n")
+        probe = subprocess.run(
+            ["git", "log", "-1", "--format=%H", "--", "leaf.md"], cwd=self.repo.dir, capture_output=True,
+        )
+        self.assertNotEqual(probe.returncode, 0)
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("tool fault", err)
+                self.assertIn("git log", err)
+                self.assertNotIn("SKIP_UNTRACKED", out + err)
+
+    def test_a_failing_git_ls_files_is_a_tool_fault(self) -> None:
+        """A corrupt index file makes `git ls-files` exit non-zero: exit 2, not 3 and not 1."""
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        (self.repo.dir / ".git" / "index").write_bytes(b"not an index file\n")
+        probe = subprocess.run(["git", "ls-files"], cwd=self.repo.dir, capture_output=True)
+        self.assertNotEqual(probe.returncode, 0)
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("tool fault", err)
+                self.assertIn("git ls-files", err)
+
+    def test_a_failing_git_query_is_a_tool_fault_as_a_process(self) -> None:
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        (self.repo.dir / ".git" / "refs" / "heads" / "main").write_text("1" * 40 + "\n", encoding="utf-8", newline="\n")
+        done = subprocess.run(
+            [sys.executable, "-I", str(SCRIPT), "--root", str(self.repo.dir), "--check", str(self.repo.dir / "INDEX.md")],
+            capture_output=True, text=True, encoding="utf-8",
+        )
+        self.assertEqual(done.returncode, 2, done.stdout + done.stderr)
+        self.assertNotIn("SKIP_UNTRACKED", done.stdout + done.stderr)
+
+    def test_a_red_with_a_non_cp950_character_exits_1_under_a_cp950_console(self) -> None:
+        """The console encoding never changes an exit code (R4-2): a red stays 1, with no traceback."""
+        with self.assertRaises(UnicodeEncodeError):
+            NON_CP950.encode("cp950")
+        leaf = f"gone-{NON_CP950}.md"
+        self.repo.write_index(f"| a1 | spec | open | `git:{'0' * 40}` | `sha256:{'f' * 64}` | `{leaf}` |\n")
+        self.repo.commit("index")
+        env = {key: value for key, value in os.environ.items() if key not in ("PYTHONUTF8", "PYTHONIOENCODING")}
+        env["PYTHONIOENCODING"] = "cp950"
+        done = subprocess.run(
+            [sys.executable, str(SCRIPT), "--root", str(self.repo.dir), "--check", str(self.repo.dir / "INDEX.md")],
+            capture_output=True, env=env,
+        )
+        out, err = done.stdout.decode("cp950"), done.stderr.decode("cp950", errors="replace")
+        self.assertEqual(done.returncode, 1, out + err)
+        self.assertNotIn("Traceback", err)
+        self.assertNotIn("tool fault", err)
+        self.assertIn("SKIP_UNRESOLVED", out)
+        self.assertIn(NON_CP950.encode("unicode_escape").decode("ascii"), out)
 
     def test_not_a_repository_exits_2_as_a_process(self) -> None:
         with tempfile.TemporaryDirectory(prefix="idxpin-norepo-") as outside:

@@ -6,11 +6,14 @@ Usage:
   receipt_fence_check.py --scan <dir> [--authority-root PATH] [--legacy-allowlist FILE]
 
 Exit codes: 0 pass, 1 contract red, 2 tool fault (the evidence or scan root is not a
-readable directory, or any other unexpected error), 3 usage error.
+readable directory, or any other unexpected error), 3 usage error. The console encoding
+never changes an exit code: stdout and stderr keep the host encoding but escape what it
+cannot encode.
 """
 from __future__ import annotations
 
 import argparse
+import io
 import os
 import re
 import sys
@@ -857,6 +860,16 @@ def scan(
     return 1 if failures else 0
 
 
+def _harden_streams() -> None:
+    """Keep the host's encoding but never let an unencodable character raise on output."""
+    for stream in (sys.stdout, sys.stderr):
+        if isinstance(stream, io.TextIOWrapper):
+            try:
+                stream.reconfigure(errors="backslashreplace")
+            except (OSError, ValueError):
+                pass
+
+
 class _UsageError(Exception):
     pass
 
@@ -868,6 +881,7 @@ class _Parser(argparse.ArgumentParser):
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the gate; every unexpected error is a tool fault (exit 2), never a red (exit 1)."""
+    _harden_streams()
     try:
         return _run(argv)
     except Exception as exc:  # noqa: BLE001 - an uncaught error must never reach the caller as exit 1

@@ -7,7 +7,10 @@ Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, 
 usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
 `receipt_fence_check.py` and `index_pins.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
-never reported as a tool fault and a tool fault is never reported as a red.
+never reported as a tool fault and a tool fault is never reported as a red. The console
+encoding never changes an exit code: each script keeps the encoding the host chose for
+stdout and stderr but escapes any character it cannot encode as a backslash sequence, so a red whose
+text holds such a character still exits `1` under a cp950 console.
 
 ## dispatch_lint.py
 
@@ -69,6 +72,8 @@ argument every tracked Markdown file that has a `revision` and `digest` header i
 scanned. Structural defects (rows with the wrong column count, pinned rows outside a
 table, unresolved or untracked leaves, cells without a hash) exit 1. Exit 2: a shallow
 clone whose history would pin the boundary commit (`SHALLOW_HISTORY`), `git` cannot be
-started, not inside a git repository, the `--json` path cannot be written, or an
+started, not inside a git repository, `--root` is missing or not a directory, a git
+query fails (`git log -1 -- <leaf>` or `git ls-files` exits non-zero; never reported as
+`SKIP_UNTRACKED` or any other red), the `--json` path cannot be written, or an
 unexpected error. Exit 3: bad option, missing mode, empty `--sealed-state`, an index
 argument that is not a file, or an index file that is not UTF-8.

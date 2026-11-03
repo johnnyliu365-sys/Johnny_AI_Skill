@@ -9,6 +9,7 @@ import contextlib
 import io
 import os
 import posixpath
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -22,6 +23,8 @@ sys.path.insert(0, str(_SCRIPTS))
 import receipt_fence_check as rf  # noqa: E402
 
 EXPECTED_ELISIONS = ("(empty)", "<snip>", "…", "...")
+SCRIPT = _SCRIPTS / "receipt_fence_check.py"
+NON_CP950 = chr(0x0E01)  # outside code page 950
 
 
 class ReceiptFenceTests(unittest.TestCase):
@@ -1581,6 +1584,27 @@ class ExitCodeContractTests(unittest.TestCase):
         allowlist.write_text("\t".join([receipt.as_posix(), "## delivery", "other.txt"]) + "\n", encoding="utf-8")
         code, _, _ = self.run_main(argv + ["--legacy-allowlist", str(allowlist)])
         self.assertEqual(code, 1)
+
+    def test_a_red_with_a_non_cp950_capture_name_exits_1_under_a_cp950_console(self) -> None:
+        """The console encoding never changes an exit code (R4-2): a red stays 1, with no traceback."""
+        with self.assertRaises(UnicodeEncodeError):
+            NON_CP950.encode("cp950")
+        env = {key: value for key, value in os.environ.items() if key not in ("PYTHONUTF8", "PYTHONIOENCODING")}
+        env["PYTHONIOENCODING"] = "cp950"
+        name = f"cap-{NON_CP950}.txt"
+        receipt = self.root / "receipt.md"
+        receipt.write_text(
+            f"## delivery\ncmd: tool > {name} 2>&1\ncapture: {name}\n```text\nok\n```\n", encoding="utf-8",
+        )
+        done = subprocess.run(
+            [sys.executable, str(SCRIPT), str(receipt), "## delivery", str(self.ev)], capture_output=True, env=env,
+        )
+        out, err = done.stdout.decode("cp950"), done.stderr.decode("cp950", errors="replace")
+        self.assertEqual(done.returncode, 1, out + err)
+        self.assertNotIn("Traceback", err)
+        self.assertNotIn("tool fault", err)
+        self.assertIn("CAPTURE_MISSING", out)
+        self.assertIn(NON_CP950.encode("unicode_escape").decode("ascii"), out)
 
 
 if __name__ == "__main__":

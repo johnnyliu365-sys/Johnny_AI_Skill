@@ -14,10 +14,12 @@ Rules (each problem line starts with its rule id):
 
 Exit codes: 0 LINT PASS, 1 one or more rule violations, 3 usage error
 (missing or extra argument, unreadable or non-UTF-8 file, unknown option, a
---chat-words list with no non-blank word).
+--chat-words list with no non-blank word). The console encoding never changes an exit
+code: stdout and stderr keep the host encoding but escape what it cannot encode.
 """
 from __future__ import annotations
 
+import io
 import re
 import sys
 from collections.abc import Sequence
@@ -67,6 +69,16 @@ def lint(text: str, chat_words: Sequence[str] | None = None) -> list[str]:
     return problems
 
 
+def _harden_streams() -> None:
+    """Keep the host's encoding but never let an unencodable character raise on output."""
+    for stream in (sys.stdout, sys.stderr):
+        if isinstance(stream, io.TextIOWrapper):
+            try:
+                stream.reconfigure(errors="backslashreplace")
+            except (OSError, ValueError):
+                pass
+
+
 def _usage_error(message: str | None = None) -> int:
     print(USAGE, file=sys.stderr)
     if message:
@@ -75,6 +87,7 @@ def _usage_error(message: str | None = None) -> int:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    _harden_streams()
     args = list(sys.argv[1:] if argv is None else argv)
     chat_words: list[str] | None = None
     positional: list[str] = []

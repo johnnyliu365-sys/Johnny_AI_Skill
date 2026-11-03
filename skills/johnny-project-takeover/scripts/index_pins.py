@@ -33,9 +33,12 @@ SKIP_NO_HASH_IN_CELL, SKIP_NO_BLOB.
 
 Exit codes: 0 all pins current, 1 drift or defect, 2 tool fault (SHALLOW_HISTORY: a
 shallow clone whose history would pin the boundary commit; git cannot be started; not
-inside a git repository; a git query fails; the --json path cannot be written; any
-other unexpected error), 3 usage error (bad option, missing mode, empty --sealed-state,
-index argument that is not a file, index file that is not UTF-8).
+inside a git repository; --root missing or not a directory; a git query fails
+(`git log -1 -- <leaf>` or `git ls-files` exits non-zero); the --json path cannot be
+written; any other unexpected error), 3 usage error (bad option, missing mode, empty
+--sealed-state, index argument that is not a file, index file that is not UTF-8). The
+console encoding never changes an exit code: stdout and stderr keep the host encoding
+but escape what it cannot encode.
 """
 from __future__ import annotations
 
@@ -105,6 +108,7 @@ class Repo:
         self.root = root.resolve()
         self._commits: dict[str, str | None] = {}
         self._digests: dict[tuple[str, str], str | None] = {}
+        self.last_stderr = ""
 
     def git_text(self, *args: str) -> tuple[int, str]:
         try:
@@ -114,14 +118,20 @@ class Repo:
             )
         except OSError as exc:
             raise GitFault(f"git cannot be started: {exc}") from exc
+        self.last_stderr = (done.stderr or "").strip()
         return done.returncode, done.stdout or ""
 
     def current_commit_for(self, leaf: str) -> str | None:
-        """The commit that last changed the leaf; None when untracked or without history."""
+        """The commit that last changed the leaf; None when git reports no history for it.
+
+        A failing query (non-zero exit) is a tool fault, never an absent history.
+        """
         if leaf not in self._commits:
             code, out = self.git_text("log", "-1", "--format=%H", "--", leaf)
+            if code != 0:
+                raise GitFault(f"git log -1 -- {leaf} failed with exit {code}: {self.last_stderr}")
             sha = out.strip()
-            self._commits[leaf] = sha if code == 0 and len(sha) == 40 else None
+            self._commits[leaf] = sha if len(sha) == 40 else None
         return self._commits[leaf]
 
     def blob_sha256_at(self, commit: str, leaf: str) -> str | None:
@@ -141,7 +151,7 @@ class Repo:
     def tracked_files(self) -> set[str]:
         code, out = self.git_text("ls-files")
         if code != 0:
-            raise GitFault("git ls-files failed")
+            raise GitFault(f"git ls-files failed with exit {code}: {self.last_stderr}")
         return set(out.splitlines())
 
     def shallow_boundary(self) -> set[str]:
@@ -434,6 +444,16 @@ def index_candidates(root: Path, tracked: set[str]) -> list[Path]:
 # ------------------------------------------------------------------------ CLI
 
 
+def _harden_streams() -> None:
+    """Keep the host's encoding but never let an unencodable character raise on output."""
+    for stream in (sys.stdout, sys.stderr):
+        if isinstance(stream, io.TextIOWrapper):
+            try:
+                stream.reconfigure(errors="backslashreplace")
+            except (OSError, ValueError):
+                pass
+
+
 def _usage_error(message: str | None = None) -> int:
     print(USAGE, file=sys.stderr)
     if message:
@@ -461,6 +481,7 @@ def _tool_fault(message: str) -> int:
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the gate; every unexpected error is a tool fault (exit 2), never a red (exit 1)."""
+    _harden_streams()
     try:
         return _run(argv)
     except GitFault as exc:
@@ -506,7 +527,7 @@ def _run(argv: Sequence[str] | None) -> int:
     if mode is None:
         return _usage_error("one of --check or --write is required")
     if root_arg is not None and not Path(root_arg).is_dir():
-        return _usage_error(f"--root {root_arg} is not a directory")
+        return _tool_fault(f"--root {root_arg} is not a readable directory")
     root = _toplevel(Path(root_arg) if root_arg else Path.cwd())
     if root is None:
         return _tool_fault("not inside a git repository")
