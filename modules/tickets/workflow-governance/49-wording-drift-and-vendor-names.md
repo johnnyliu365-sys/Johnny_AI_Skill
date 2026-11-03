@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | PLANNED; 49-W1–W2 revision01 |
+| State / Closure | LOCAL_IMPLEMENTED (W2 and source-project names done; W1 vendor names pending); 49-W1–W2 revision01 |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; REVIEW of ticket 47 finding F-12 |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47 revision02 |
 | Grant / roles | Control plane authors; independent review |
@@ -20,7 +20,7 @@ forbid = tests/
 
 ## One observable behavior
 
-Governance documents name roles and profiles (`decision-support`, `ticket-review`, `implementation-standard`), never a vendor or model literal; ticket denylists for target names are expressed as a parameter file, not spelled in the ticket.
+No document on this line names the source project the gate scripts were ported from; governance documents name roles and profiles (`decision-support`, `ticket-review`, `implementation-standard`), never a vendor or model literal; ticket denylists for target names are expressed as a parameter file, not spelled in the ticket.
 
 ## Acceptance
 
