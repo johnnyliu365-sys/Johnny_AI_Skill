@@ -1,0 +1,474 @@
+cell: D6
+candidate: 497f147aa14353d86351126c730150b30a4b4c9c
+head: 497f147aa14353d86351126c730150b30a4b4c9c
+command: pytest tests -q -p no:cacheprovider (control plane's checkout)
+tree: 0 tracked files modified
+---
+..................................F....F............................................... [  4%]
+............................................................................................................................................................................................................................................ [ 16%]
+............................................................................................... [ 21%]
+........................................ [ 23%]
+......................................................................... [ 27%]
+.............................................................................................................. [ 32%]
+.................................. [ 34%]
+..................................................................... [ 37%]
+.......................sssss........................ [ 40%]
+....................................................... [ 43%]
+.................F....................... [ 45%]
+....................sssss........................ [ 48%]
+.............................................................. [ 51%]
+...........................................................................................................ssssss............. [ 57%]
+....................F........................... [ 60%]
+............................F................ [ 62%]
+.......sssssssss......F...F....................................................................... [ 67%]
+...........................................................F......... [ 70%]
+.............s............................................................................................................................................................................. [ 80%]
+................................................. [ 82%]
+.................................... [ 84%]
+...................................................................sssss........................................................... [ 91%]
+.................................................................... [ 94%]
+............................... [ 96%]
+..F.................F................... [ 98%]
+....................... [ 99%]
+......                                                                   [100%]
+================================== FAILURES ===================================
+_________ test_acr2_linux_requires_an_actual_linux_kernel_and_backend _________
+
+    def test_acr2_linux_requires_an_actual_linux_kernel_and_backend() -> None:
+        worktree = Path(__file__).resolve().parents[1]
+>       qualification = _qualify_exact_linux_subject(worktree)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_atomic_conditional_replace_capability.py:1027: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_atomic_conditional_replace_capability.py:892: in _qualify_exact_linux_subject
+    return _wsl_linux_qualification(worktree)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+worktree = WindowsPath('C:/Users/User/Desktop/Johnny_AI_Skill')
+
+    def _wsl_linux_qualification(worktree: Path) -> AtomicConditionalReplaceQualification:
+        if worktree.drive.upper() != "C:" or not worktree.is_absolute():
+            raise _PlatformProofUnavailable(
+                QualificationSubject.LINUX,
+                "WSL_UBUNTU_DRVFS_WORKTREE",
+            )
+        wsl_worktree = "/mnt/c/" + "/".join(worktree.parts[1:])
+        completed = subprocess.run(
+            (
+                "wsl.exe",
+                "-d",
+                "Ubuntu",
+                "--cd",
+                wsl_worktree,
+                "--",
+                "python3",
+                "-c",
+                _WSL_LINUX_PROOF_SCRIPT,
+            ),
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=45,
+        )
+        if completed.returncode != 0:
+>           raise _PlatformProofUnavailable(
+                QualificationSubject.LINUX,
+                "WSL_UBUNTU_PYTHON3_RENAMEAT2_EXECUTION",
+            )
+E           test_atomic_conditional_replace_capability._PlatformProofUnavailable: LINUX
+
+tests\test_atomic_conditional_replace_capability.py:828: _PlatformProofUnavailable
+_____________________ test_acr6_exact_test_only_boundary ______________________
+
+    def test_acr6_exact_test_only_boundary() -> None:
+        repository = Path(__file__).resolve().parents[1]
+>       _assert_exact_candidate_boundary(repository)
+
+tests\test_atomic_conditional_replace_capability.py:1320: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+repository = WindowsPath('C:/Users/User/Desktop/Johnny_AI_Skill')
+
+    def _assert_exact_candidate_boundary(repository: Path) -> None:
+>       assert _candidate_change_paths(repository) == _ALLOWED_CANDIDATE_PATHS
+E       AssertionError: assert frozenset({'A...DME.md', ...}) == frozenset({'t...pability.py'})
+E         
+E         Extra items in the left set:
+E         'CodeReview.md'
+E         'doc/reviews/workflow-governance/evidence/49/rev02-W3.txt'
+E         'library/workflow_router/review_admission.py'
+E         'doc/reviews/local-orchestration-installer/env-msix-01-provisioning-review.md'
+E         'doc/reviews/workflow-governance/evidence/47/rev08-M1.txt'...
+E         
+E         ...Full output truncated (199 lines hidden), use '-vv' to show
+
+tests\test_atomic_conditional_replace_capability.py:359: AssertionError
+_ ReceiptBoundCorrectionTests.test_reviewed_router_profile_composes_return_integration_and_audit _
+
+self = <test_guarded_integration_corrections.ReceiptBoundCorrectionTests testMethod=test_reviewed_router_profile_composes_return_integration_and_audit>
+
+    def test_reviewed_router_profile_composes_return_integration_and_audit(self) -> None:
+        profile = build_router_poc_profile()
+        self.assertIsNone(profile.rule_for(
+            current_stage=ProcessStage.TICKETS,
+            event_kind=RouterEventKind.APPROVAL_GRANTED,
+        ))
+        for event_kind in (
+            RouterEventKind.TICKET_DISPATCH_REQUIRED,
+            RouterEventKind.IMPLEMENTATION_DISPATCH_CONFIRMED,
+            RouterEventKind.IMPLEMENTATION_RETURNED,
+            RouterEventKind.INTEGRATION_COMPLETED,
+            RouterEventKind.AUDIT_COMPLETED,
+        ):
+            self.assertTrue(any(rule.event_kind is event_kind for rule in profile.transition_rules))
+    
+        ticket_ref = ArtifactRef(
+            kind=ArtifactKind.TICKET,
+            identifier=self.ticket,
+            uri="ticket://correction-02",
+            revision="rev-0123456789abcdef",
+        )
+        state = RouterState(
+            project_id="project-correction-02",
+            stage=ProcessStage.IMPLEMENT,
+            authority_state=AuthorityState.APPROVED,
+            delivery_stage=profile.delivery_stage,
+            artifact_refs=(ticket_ref,),
+        )
+        event = self._event()
+        returned = RouterEngine().decide(
+            state=state,
+            event=RouterEvent(
+                event_id=event.event_id,
+                kind=RouterEventKind.IMPLEMENTATION_RETURNED,
+                implementation_return=event.implementation_return,
+            ),
+            profile=profile,
+        )
+        self.assertEqual(RouterOutcome.ADVANCE, returned.outcome)
+        self.assertEqual(ProcessStage.SMOKE_TEST, returned.next_stage)
+    
+        audit_state = state.model_copy(update={"stage": ProcessStage.GRILL})
+        integrated = RouterEngine().decide(
+            state=audit_state,
+            event=RouterEvent(event_id="integration-completed-02", kind=RouterEventKind.INTEGRATION_COMPLETED),
+            profile=profile,
+        )
+        self.assertEqual(RouterOutcome.ADVANCE, integrated.outcome)
+        self.assertEqual(ContinuationDirective.AUTO_CONTINUE, integrated.continuation)
+        self.assertEqual(ProcessStage.GRILL, integrated.next_stage)
+        self.assertIsNone(integrated.wait_reason)
+        audited = RouterEngine().decide(
+            state=audit_state,
+            event=RouterEvent(event_id="audit-completed-02", kind=RouterEventKind.AUDIT_COMPLETED),
+            profile=profile,
+        )
+>       self.assertEqual(RouterOutcome.ADVANCE, audited.outcome)
+E       AssertionError: <RouterOutcome.ADVANCE: 'advance'> != <RouterOutcome.SUSPEND: 'suspend'>
+
+tests\test_guarded_integration_corrections.py:751: AssertionError
+________________ CommittedPinTests.test_the_pinned_sha_exists _________________
+
+self = <test_plugin_payload_boundary.CommittedPinTests testMethod=test_the_pinned_sha_exists>
+
+    def test_the_pinned_sha_exists(self) -> None:
+        source = pinned_plugin_source(_MARKETPLACE_MANIFEST)
+>       self.assertTrue(
+            commit_exists(_REPO_ROOT, str(source["sha"])),
+            "the pinned sha names no commit in this repository",
+        )
+E       AssertionError: False is not true : the pinned sha names no commit in this repository
+
+tests\test_plugin_payload_boundary.py:623: AssertionError
+_ CandidateMetadataTests.test_l5_stale_candidate_pin_is_named_before_generation _
+
+self = <test_plugin_publication.CandidateMetadataTests testMethod=test_l5_stale_candidate_pin_is_named_before_generation>
+
+    def test_l5_stale_candidate_pin_is_named_before_generation(self) -> None:
+        payload = load_payload_declaration(_PLUGIN_MANIFEST)
+        live_manifest = _MARKETPLACE_MANIFEST.read_bytes()
+        live_source = pinned_plugin_source(_MARKETPLACE_MANIFEST)
+        live_sha = live_source["sha"]
+        self.assertIsInstance(live_sha, str)
+        assert isinstance(live_sha, str)
+>       live_diff = compare_commit_to_declaration(
+            _REPO_ROOT, payload, live_sha, pin_carrier=_PIN_CARRIER
+        )
+
+tests\test_plugin_publication.py:804: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+library\local_orchestration\plugin_publication.py:820: in compare_commit_to_declaration
+    carried = tree_blob_ids(root, sha)
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+library\local_orchestration\plugin_publication.py:748: in tree_blob_ids
+    require_existing_commit(root, sha)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = WindowsPath('C:/Users/User/Desktop/Johnny_AI_Skill')
+sha = '0b3afd3645946f97662c336f0e6ac0dcae502e69'
+
+    def require_existing_commit(root: Path, sha: str) -> str:
+        """Return the pinned sha, or name the failure.
+    
+        Malformed input is a declaration failure; a well-formed id that names no
+        commit is a repository fact, and gets its own name so the two cannot be
+        confused at the call site.
+        """
+    
+        if not isinstance(sha, str) or _FULL_SHA.fullmatch(sha) is None:
+            raise PayloadDeclarationError("pinned sha must be a full 40-hex lowercase id")
+        if not commit_exists(root, sha):
+>           raise PinnedCommitError(f"the pinned sha names no commit in this repository: {sha}")
+E           library.local_orchestration.plugin_publication.PinnedCommitError: the pinned sha names no commit in this repository: 0b3afd3645946f97662c336f0e6ac0dcae502e69
+
+library\local_orchestration\plugin_publication.py:580: PinnedCommitError
+_ PublicationReachabilityTests.test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable _
+
+self = <test_plugin_publication.PublicationReachabilityTests testMethod=test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable>
+
+    def test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable(
+        self,
+    ) -> None:
+        """Deleting the clean-clone tracking anchor must turn fetchability red."""
+    
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+>           clone, sha, remote_ref = self._clone_real_publication(Path(raw))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_plugin_publication.py:1437: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_plugin_publication.py:1252: in _clone_real_publication
+    require_existing_commit(_REPO_ROOT, sha)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = WindowsPath('C:/Users/User/Desktop/Johnny_AI_Skill')
+sha = '0b3afd3645946f97662c336f0e6ac0dcae502e69'
+
+    def require_existing_commit(root: Path, sha: str) -> str:
+        """Return the pinned sha, or name the failure.
+    
+        Malformed input is a declaration failure; a well-formed id that names no
+        commit is a repository fact, and gets its own name so the two cannot be
+        confused at the call site.
+        """
+    
+        if not isinstance(sha, str) or _FULL_SHA.fullmatch(sha) is None:
+            raise PayloadDeclarationError("pinned sha must be a full 40-hex lowercase id")
+        if not commit_exists(root, sha):
+>           raise PinnedCommitError(f"the pinned sha names no commit in this repository: {sha}")
+E           library.local_orchestration.plugin_publication.PinnedCommitError: the pinned sha names no commit in this repository: 0b3afd3645946f97662c336f0e6ac0dcae502e69
+
+library\local_orchestration\plugin_publication.py:580: PinnedCommitError
+_ PublicationReachabilityTests.test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor _
+
+self = <test_plugin_publication.PublicationReachabilityTests testMethod=test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor>
+
+    def test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor(self) -> None:
+        with TemporaryDirectory(ignore_cleanup_errors=True) as raw:
+>           clone, sha, remote_ref = self._clone_real_publication(Path(raw))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_plugin_publication.py:1417: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_plugin_publication.py:1252: in _clone_real_publication
+    require_existing_commit(_REPO_ROOT, sha)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = WindowsPath('C:/Users/User/Desktop/Johnny_AI_Skill')
+sha = '0b3afd3645946f97662c336f0e6ac0dcae502e69'
+
+    def require_existing_commit(root: Path, sha: str) -> str:
+        """Return the pinned sha, or name the failure.
+    
+        Malformed input is a declaration failure; a well-formed id that names no
+        commit is a repository fact, and gets its own name so the two cannot be
+        confused at the call site.
+        """
+    
+        if not isinstance(sha, str) or _FULL_SHA.fullmatch(sha) is None:
+            raise PayloadDeclarationError("pinned sha must be a full 40-hex lowercase id")
+        if not commit_exists(root, sha):
+>           raise PinnedCommitError(f"the pinned sha names no commit in this repository: {sha}")
+E           library.local_orchestration.plugin_publication.PinnedCommitError: the pinned sha names no commit in this repository: 0b3afd3645946f97662c336f0e6ac0dcae502e69
+
+library\local_orchestration\plugin_publication.py:580: PinnedCommitError
+_ ClassificationAuditTests.test_every_failure_enum_in_the_library_is_covered_or_uncovered _
+
+self = <test_refusal_guidance.ClassificationAuditTests testMethod=test_every_failure_enum_in_the_library_is_covered_or_uncovered>
+
+    def test_every_failure_enum_in_the_library_is_covered_or_uncovered(self) -> None:
+        audit = audit_classification(_REPO_ROOT)
+    
+        self.assertEqual(set(audit.covered_enums), _COVERED_ENUM_ROSTER)
+>       self.assertEqual(set(audit.uncovered_enums), _UNCOVERED_ROSTER)
+E       AssertionError: {'library/local_orchestration/worker_assi[3734 chars]ure'} != frozenset({'library/workflow_router/conte[3485 chars]re'})
+
+tests\test_refusal_guidance.py:443: AssertionError
+_ WorkflowRouterTests.test_agents_mcp_and_temporal_adapters_load_without_external_services _
+
+self = <test_workflow_router.WorkflowRouterTests testMethod=test_agents_mcp_and_temporal_adapters_load_without_external_services>
+
+    def test_agents_mcp_and_temporal_adapters_load_without_external_services(self) -> None:
+        from library.workflow_router.integrations import (
+            AgentCapabilityDefinition,
+            McpResourceGateway,
+            OpenAICapabilityAdapter,
+        )
+>       from library.workflow_router.temporal_runtime import RouterRoundInput, route_round
+
+tests\test_workflow_router.py:1286: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+library\workflow_router\temporal_runtime.py:8: in <module>
+    from temporalio import activity, workflow
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\__init__.py:13: in <module>
+    from .service import __version__ as __sdk_version
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\service.py:20: in <module>
+    import temporalio.bridge.client
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\bridge\client.py:15: in <module>
+    import temporalio.bridge.runtime
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    """Telemetry for SDK Core. (unstable)
+    
+    Nothing in this module should be considered stable. The API may change.
+    """
+    
+    from __future__ import annotations
+    
+    from collections.abc import Callable, Mapping, Sequence
+    from dataclasses import dataclass
+    from typing import Any
+    
+    from typing_extensions import Protocol
+    
+>   import temporalio.bridge.temporal_sdk_bridge
+E   ImportError: DLL load failed while importing temporal_sdk_bridge: 應用程式控制原則已封鎖此檔案。
+
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\bridge\runtime.py:14: ImportError
+_ WorkflowRouterTests.test_temporal_approval_signal_requires_matching_authority_state _
+
+self = <test_workflow_router.WorkflowRouterTests testMethod=test_temporal_approval_signal_requires_matching_authority_state>
+
+    def test_temporal_approval_signal_requires_matching_authority_state(self) -> None:
+>       from library.workflow_router.temporal_runtime import ApprovalSignal
+
+tests\test_workflow_router.py:1332: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+library\workflow_router\temporal_runtime.py:8: in <module>
+    from temporalio import activity, workflow
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\__init__.py:13: in <module>
+    from .service import __version__ as __sdk_version
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\service.py:20: in <module>
+    import temporalio.bridge.client
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\bridge\client.py:15: in <module>
+    import temporalio.bridge.runtime
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    """Telemetry for SDK Core. (unstable)
+    
+    Nothing in this module should be considered stable. The API may change.
+    """
+    
+    from __future__ import annotations
+    
+    from collections.abc import Callable, Mapping, Sequence
+    from dataclasses import dataclass
+    from typing import Any
+    
+    from typing_extensions import Protocol
+    
+>   import temporalio.bridge.temporal_sdk_bridge
+E   ImportError: DLL load failed while importing temporal_sdk_bridge: 應用程式控制原則已封鎖此檔案。
+
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\bridge\runtime.py:14: ImportError
+============================== warnings summary ===============================
+library\workflow_router\test_engineer_contracts.py:87
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:87: PytestCollectionWarning: cannot collect test class 'TestBinding' because it has a __init__ constructor (from: tests/test_review_admission.py)
+    class TestBinding(_TestEngineerModel):
+
+library\workflow_router\test_engineer_contracts.py:109
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:109: PytestCollectionWarning: cannot collect test class 'TestCellObservation' because it has a __init__ constructor (from: tests/test_review_admission.py)
+    class TestCellObservation(_TestEngineerModel):
+
+library\workflow_router\test_engineer_contracts.py:49
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:49: PytestCollectionWarning: cannot collect test class 'TestCleanup' because it has a __init__ constructor (from: tests/test_review_admission.py)
+    class TestCleanup(str, Enum):
+
+library\workflow_router\test_engineer_contracts.py:57
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:57: PytestCollectionWarning: cannot collect test class 'TestEvidenceUnavailableReason' because it has a __init__ constructor (from: tests/test_review_admission.py)
+    class TestEvidenceUnavailableReason(str, Enum):
+
+library\workflow_router\test_engineer_contracts.py:127
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:127: PytestCollectionWarning: cannot collect test class 'TestReviewAuthority' because it has a __init__ constructor (from: tests/test_review_admission.py)
+    class TestReviewAuthority(_TestEngineerModel):
+
+library\workflow_router\test_engineer_contracts.py:40
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:40: PytestCollectionWarning: cannot collect test class 'TestVerdict' because it has a __init__ constructor (from: tests/test_review_admission.py)
+    class TestVerdict(str, Enum):
+
+library\workflow_router\test_engineer_contracts.py:49
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:49: PytestCollectionWarning: cannot collect test class 'TestCleanup' because it has a __init__ constructor (from: tests/test_router_review_admission.py)
+    class TestCleanup(str, Enum):
+
+library\workflow_router\test_engineer_contracts.py:57
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:57: PytestCollectionWarning: cannot collect test class 'TestEvidenceUnavailableReason' because it has a __init__ constructor (from: tests/test_router_review_admission.py)
+    class TestEvidenceUnavailableReason(str, Enum):
+
+library\workflow_router\test_engineer_contracts.py:87
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:87: PytestCollectionWarning: cannot collect test class 'TestBinding' because it has a __init__ constructor (from: tests/test_test_engineer_contracts.py)
+    class TestBinding(_TestEngineerModel):
+
+library\workflow_router\test_engineer_contracts.py:109
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:109: PytestCollectionWarning: cannot collect test class 'TestCellObservation' because it has a __init__ constructor (from: tests/test_test_engineer_contracts.py)
+    class TestCellObservation(_TestEngineerModel):
+
+library\workflow_router\test_engineer_contracts.py:49
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:49: PytestCollectionWarning: cannot collect test class 'TestCleanup' because it has a __init__ constructor (from: tests/test_test_engineer_contracts.py)
+    class TestCleanup(str, Enum):
+
+library\workflow_router\test_engineer_contracts.py:57
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:57: PytestCollectionWarning: cannot collect test class 'TestEvidenceUnavailableReason' because it has a __init__ constructor (from: tests/test_test_engineer_contracts.py)
+    class TestEvidenceUnavailableReason(str, Enum):
+
+library\workflow_router\test_engineer_contracts.py:127
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:127: PytestCollectionWarning: cannot collect test class 'TestReviewAuthority' because it has a __init__ constructor (from: tests/test_test_engineer_contracts.py)
+    class TestReviewAuthority(_TestEngineerModel):
+
+library\workflow_router\test_engineer_contracts.py:40
+  C:\Users\User\Desktop\Johnny_AI_Skill\library\workflow_router\test_engineer_contracts.py:40: PytestCollectionWarning: cannot collect test class 'TestVerdict' because it has a __init__ constructor (from: tests/test_test_engineer_contracts.py)
+    class TestVerdict(str, Enum):
+
+tests/test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an_actual_linux_kernel_and_backend
+  C:\Temp\claude\jas-venv\Lib\site-packages\_pytest\threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-34 (_readerthread)
+  
+  Traceback (most recent call last):
+    File "C:\Users\User\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 1045, in _bootstrap_inner
+      self.run()
+    File "C:\Users\User\AppData\Local\Programs\Python\Python311\Lib\threading.py", line 982, in run
+      self._target(*self._args, **self._kwargs)
+    File "C:\Users\User\AppData\Local\Programs\Python\Python311\Lib\subprocess.py", line 1599, in _readerthread
+      buffer.append(fh.read())
+                    ^^^^^^^^^
+    File "<frozen codecs>", line 322, in decode
+  UnicodeDecodeError: 'utf-8' codec can't decode byte 0x92 in position 0: invalid start byte
+  
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an_actual_linux_kernel_and_backend
+FAILED tests/test_atomic_conditional_replace_capability.py::test_acr6_exact_test_only_boundary
+FAILED tests/test_guarded_integration_corrections.py::ReceiptBoundCorrectionTests::test_reviewed_router_profile_composes_return_integration_and_audit
+FAILED tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists
+FAILED tests/test_plugin_publication.py::CandidateMetadataTests::test_l5_stale_candidate_pin_is_named_before_generation
+FAILED tests/test_plugin_publication.py::PublicationReachabilityTests::test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable
+FAILED tests/test_plugin_publication.py::PublicationReachabilityTests::test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor
+FAILED tests/test_refusal_guidance.py::ClassificationAuditTests::test_every_failure_enum_in_the_library_is_covered_or_uncovered
+FAILED tests/test_workflow_router.py::WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services
+FAILED tests/test_workflow_router.py::WorkflowRouterTests::test_temporal_approval_signal_requires_matching_authority_state
+10 failed, 1919 passed, 31 skipped, 15 warnings, 3950 subtests passed in 369.34s (0:06:09)
+exit=1

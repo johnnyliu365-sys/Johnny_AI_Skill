@@ -1,0 +1,26 @@
+cell: D8
+candidate: 497f147aa14353d86351126c730150b30a4b4c9c
+command: "C:/Temp/claude/jas-venv/Scripts/python.exe" -I -X utf8 doc/reviews/workflow-governance/evidence/47/d8_precedence.py
+---
+[note present] modules/spec/README.md
+[note present] modules/spec/TEMPLATE.md
+[note present] modules/spec/adaptive-project-orchestration.md
+[note present] modules/spec/autonomous-collaboration-audit.md
+[note present] modules/spec/claude-code-plugin-distribution.md
+[note present] modules/spec/context-load-telemetry.md
+[note present] modules/spec/designerless-ui-codesign.md
+[note present] modules/spec/environment-capability-bootstrap.md
+[note present] modules/spec/executor-routing.md
+[note present] modules/spec/local-orchestration-installer.md
+[note present] modules/spec/module-application-skill.md
+[note present] modules/spec/plugin-distribution.md
+[note present] modules/spec/plugin-release-telemetry.md
+[note present] modules/spec/private-router-saas.md
+[note present] modules/spec/project-authority-integration.md
+[note present] modules/spec/receipt-bound-role-supervision.md
+[note present] modules/spec/reusable-module-library.md
+[note present] modules/spec/review-assurance.md
+[note present] modules/spec/router-framework.md
+[note present] modules/spec/workflow-adoption-activation.md
+--- SPECs without the precedence note: 0
+exit=0

@@ -1,0 +1,19 @@
+cell: M2
+candidate: 497f147aa14353d86351126c730150b30a4b4c9c
+command: for each (file, commit): restore the file from the commit in a disposable edit; run D7; count LIVE hits naming the file; restore; git status --porcelain -- file
+---
+[LIVE RETIRED RULE] (a2 reviewer submits) skills/johnny-project-takeover/references/model-role-routing.md:23: - `SUPERVISOR_REVIEWER` owns approved-SPEC ticket decomposition, schema/type preflight, dispatch, monitoring, 
+[LIVE RETIRED RULE] (b2 cross-lifetime requires controls) skills/johnny-project-takeover/references/model-role-routing.md:36: those controls remain required only for a cross-lifetime handoff
+restored skills/johnny-project-takeover/references/model-role-routing.md <- a47e976b: d7_exit=1 live_in_file=2 porcelain=0
+[LIVE RETIRED RULE] (b2 cross-lifetime requires controls) skills/johnny-project-takeover/references/implementation-authority.md:22: For a cross-lifetime handoff, Johnny's reviewer-owned gateway is the only Agent-control 
+[LIVE RETIRED RULE] (b2 cross-lifetime requires controls) skills/johnny-project-takeover/references/implementation-authority.md:33: Effective-session tool absence and gateway unreachability require supported host readbac
+restored skills/johnny-project-takeover/references/implementation-authority.md <- a47e976b: d7_exit=1 live_in_file=2 porcelain=0
+[LIVE RETIRED RULE] (e dispatch carries a descriptor) Workflow.md:22: "Implementation dispatch"| D["receipt、descriptor、owner、task、worktree、branch、baseline 與 host gate"]
+restored Workflow.md <- 8597f8bc: d7_exit=1 live_in_file=1 porcelain=0
+[LIVE RETIRED RULE] (b1 bridge required or default) skills/johnny-project-takeover/SKILL.md:134: A pending dispatch remains bound to its live descriptor
+[LIVE RETIRED RULE] (e dispatch carries a descriptor) skills/johnny-project-takeover/SKILL.md:134: A pending dispatch remains bound to its live descriptor
+restored skills/johnny-project-takeover/SKILL.md <- 7804a937: d7_exit=1 live_in_file=2 porcelain=0
+[LIVE RETIRED RULE] (b1 bridge required or default) template/README.md:42: A fixed dispatch response is produced only from the live Private Router pending descriptor and its reviewed ticket/handoff receipt
+[LIVE RETIRED RULE] (e dispatch carries a descriptor) template/README.md:42: A fixed dispatch response is produced only from the live Private Router pending descriptor and its reviewed ticket/handoff receipt
+restored template/README.md <- 7804a937: d7_exit=1 live_in_file=2 porcelain=0
+exit=0
