@@ -1,0 +1,8 @@
+cell: D2
+candidate: a47e976bae2204be398025f92da6922b89b4079b
+command: grep -c '狀態只存在三種檔案' Workflow.md; grep -c 'id="workflow-router"' Workflow.md; grep -c 'id="role-boundary"' Workflow.md
+---
+1
+1
+1
+exit=0

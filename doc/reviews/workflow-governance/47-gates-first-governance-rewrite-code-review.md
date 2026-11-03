@@ -300,3 +300,21 @@ Added-line scan of `a1cb6c1..34997e8f`, excluding evidence: no external target-p
 Raw logs: retained by the reviewer seat on its host (D6 candidate and main, D1 candidate and main, policy pins, control-plane mutation, mutations, D5, boundary, added-line scan, failure-name sets); not committed.
 
 Not verified: whether the owner has confirmed the F-05 descriptor decision outside the repository; external target-project names other than the one this seat knows (the dispatch denylist was not supplied); Markdown rendering in a real renderer; ticket 49 cells.
+
+## ImplementationReturn (control plane, closure revision04)
+
+| Field | Value |
+| --- | --- |
+| Return | `COMPLETED` |
+| Order | re-plan `70c7a97c` (revision04 frozen: boundary widened, D5 as the union of the boundaries on this line, Workspace row) → content `a47e976b` → this evidence commit (adds captures and this section only) |
+| Candidate | `a47e976bae2204be398025f92da6922b89b4079b` (content); every capture below is headed with it |
+| D1 | PASS — `3 failed, 121 passed, 564 subtests passed in 4.98s`; failures: ['tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists', 'tests/test_workflow_router.py::WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services', 'tests/test_workflow_router.py::WorkflowRouterTests::test_temporal_approval_signal_requires_matching_authority_state']; the environment set of main; raw `evidence/47/rev04-D1.txt` |
+| D2 | PASS — counts ['1', '1', '1'] (phrase, `workflow-router` anchor, `role-boundary` anchor); raw `evidence/47/rev04-D2.txt` |
+| D3 | PASS — counts ['2', '1'] (`Revision 04 R4-4`, reviewer sentence); raw `evidence/47/rev04-D3.txt` |
+| D4 | PASS — counts ['1', '7']; raw `evidence/47/rev04-D4.txt` |
+| D5 | PASS — `--- paths: 51; outside every boundary: 0`; every path tagged with the tickets (47, 48, 49) whose boundary at HEAD covers it; raw `evidence/47/rev04-D5.txt` |
+| D6 | PASS — `10 failed, 1919 passed, 31 skipped, 15 warnings, 3950 subtests passed in 223.31s (0:03:43)`; vs the revision02 reviewer's main run (12 names): extra on candidate = none; absent on candidate = ['tests/test_atomic_conditional_replace_capability.py::test_acr6_committed_candidate_diff_and_forbidden_paths', 'tests/test_plugin_publication.py::PinnedTreeBindingTests::test_pinning_the_root_commit_is_rejected']; run in the control plane's checkout as the Workspace row states; raw `evidence/47/rev04-D6-full.txt` |
+| M1 | check performed — exit-code bullet removed in a disposable edit: exit-code phrase 0, D2 phrase 1; file restored (porcelain for Workflow.md empty: NO); raw `evidence/47/rev04-M1.txt` |
+| F-07 mutation | executor reworded to a reviewer seat running the merge by hand → `1 failed, 7 passed, 72 subtests passed in 0.10s` (`test_tara1b` red); restored; raw `evidence/47/rev04-F07-mutation.txt` |
+| Policy pin | router-control.md digest moved to `rev-5735230f566619df` in profile.py and test_workflow_router.py |
+| Deviations | the D6 failures are the environment and publication-pin set of this environment; names absent on the candidate are the run-to-run variable ones listed above; captures carry host paths as recorded (R3-09, routed) |

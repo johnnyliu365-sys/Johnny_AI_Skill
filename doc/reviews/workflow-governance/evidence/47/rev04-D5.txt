@@ -1,0 +1,57 @@
+cell: D5
+candidate: a47e976bae2204be398025f92da6922b89b4079b
+command: "C:/Temp/claude/jas-venv/Scripts/python.exe" -I "C:/Users/User/AppData/Local/Temp/claude/C--Users-User-Desktop-Johnny-AI-Skill/a95cc259-bfa9-4910-8406-9474d96b6be4/scratchpad/d5_union.py"
+---
+[47] AGENTS.md
+[47] CodeReview.md
+[47] Workflow.md
+[47] doc/HARNESS-CHANGELOG.md
+[47] doc/README.md
+[47] doc/requirements/active/2026/workflow-governance/README.md
+[47+49] doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md
+[47] doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md
+[48] doc/reviews/workflow-governance/48-port-gate-scripts-code-review.md
+[49] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md
+[47] doc/reviews/workflow-governance/evidence/47/c2-mutation-F07.txt
+[47] doc/reviews/workflow-governance/evidence/47/c2-pytest-full.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-cand.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-main.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D1.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D2.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D3.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D4.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D5.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D6-full.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-F07-mutation.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-M1.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev02-W2.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev02-W3.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev04-W2.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev04-W3.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev04-W4.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev05-W1.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev05-W2.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev05-W3.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev05-W4.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev05-W5.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev05-observable.txt
+[47] library/workflow_router/profile.py
+[47] modules/spec/review-assurance.md
+[47+49] modules/spec/workflow-governance.md
+[47+49] modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md
+[47+48+49] modules/tickets/workflow-governance/48-port-gate-scripts.md
+[47+49] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md
+[47+48+49] modules/tickets/workflow-governance/README.md
+[47] skills/johnny-project-takeover/SKILL.md
+[47] skills/johnny-project-takeover/references/adversarial-review.md
+[47] skills/johnny-project-takeover/references/codex-native-same-lifetime-delegation.md
+[47] skills/johnny-project-takeover/references/delivery-profile.md
+[47] skills/johnny-project-takeover/references/model-role-routing.md
+[47] skills/johnny-project-takeover/references/router-control.md
+[47] tests/test_adversarial_review_policy.py
+[47] tests/test_workflow_router.py
+--- paths: 51; outside every boundary: 0
+exit=0
