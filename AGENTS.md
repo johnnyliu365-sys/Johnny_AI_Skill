@@ -17,8 +17,9 @@
    library 或聊天歷史。
 5. 完成一個動作後把 typed event 寫進受據，由下一個閘門腳本讀取狀態檔判定（Revision 04）；不得自行選下一關。
 
-Router state 只保存 metadata；任何 pending implementation dispatch 都必須由 live
-descriptor、receipt 與精確 artifact references 綁定。
+狀態只保存 metadata（識別碼、revision、digest、repo 相對路徑）；pending implementation
+dispatch 以票面狀態與整合佇列列表示，並由受據與精確 artifact references 綁定（Revision 04
+R4-1、R4-7）。跨生命週期的 live descriptor 是第三波退場前的過渡路徑，不是預設。
 
 找不到、讀不到、版本不符或索引競爭時，在 mutation 前
 `HALT / ROUTE_REFERENCE_INVALID`，不得憑記憶補規則。

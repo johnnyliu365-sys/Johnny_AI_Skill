@@ -42,7 +42,7 @@ No document on this line names the source project the gate scripts were ported f
 | revision01, after the README edit (defective: order) | boundary | did not list the tickets README | row added |
 | revision02 (R49-02) | closure | revision01 kept after an Expected change | rebuilt as revision02 in its own commit before the implementation commit |
 | revision02 (R49-03) | W1 reason | said tickets 01–23 are "closed"; six are `IN_PROGRESS` | exemption restated: they are the earlier line's tickets, outside this boundary, kept as records; the W1 file list is explicit and includes the README |
-| revision02 (R49-04) | W1 pattern | could not see "Codex control plane" or "Codex/current worktree" | pattern extended; dated records exempt by name |
+| revision02 (R49-04) | W1 pattern | could not see the two other control-plane vendor literals left in the spec header rows and the README authority paragraph | pattern extended to them; dated records exempt by name |
 | revision02 (R49-05) | boundary | this ticket's own leaf missing | row added, plus the review record and evidence directory |
 | revision02 (R49-01) | W2 | required "a parameter file named in the ticket"; ticket 48 named none | the dispatch file is that parameter file; ticket 48 P4 names it as the carrier |
 | revision02 (R49-06) | W3 | — | new cell: no host absolute paths in boundary files |

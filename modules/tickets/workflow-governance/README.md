@@ -28,6 +28,6 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 
 ## Authority and handoff
 
-Codex/current worktree is the control-plane owner and reviewer. The implementation owner is the separate `C:\Users\<user>\Desktop\AI控制工作workflow-implementation` worktree on branch `codex/implementation-private-router-saas-01`. It is currently based on `7769710` and must fast-forward to `main` before the first red test. The project owner approved this ticket on `2026-08-05`; source/test work is authorised only in that assigned worktree.
+The control plane owns the tickets, the dispatch and the review binding; it does not implement. Implementation seats work in `.worktrees/<ticket-id>` under the repository root or in the disposable clone the dispatch names; the reviewer seat owns the review conclusion; integration is run by the versioned integration script from the merge queue (Revision 04 R4-4). The earlier line's implementation binding (branch `codex/implementation-private-router-saas-01`, base `7769710`, owner approval of `2026-08-05`) is a record kept in Git history.
 
 The implementation handoff consists of the approved specification, this ticket, Context references, TDD cuts, exact target paths, and the return-event rules. A completion returns evidence for review; a requirement, architecture, public-contract, frontend composition/DI, or acceptance change returns `REQUIREMENT_CHANGED` to Grill.

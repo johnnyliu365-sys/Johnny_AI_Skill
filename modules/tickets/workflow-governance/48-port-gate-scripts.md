@@ -7,7 +7,7 @@
 | Baseline | branch `cp/wave1-gates-first` after ticket 47 |
 | Grant / roles | Control plane dispatches; `implementation-standard` seat in a disposable clone; independent review by a `ticket-review` seat |
 | Source of the scripts | a target project checkout, read only: `scripts/review/dispatch_lint.py` + `scripts/test_dispatch_lint.py`, `scripts/receipt_fence_check.py` + `scripts/test_receipt_fence_check.py`, `scripts/fix_artifact_index_pins.py` + `scripts/test_fix_artifact_index_pins.py` at a recorded commit; the seat records the source commit and the sha256 of each copied file |
-| Workspace | clone `C:/Temp/claude/jas48` from `cp/wave1-gates-first` |
+| Workspace | a disposable clone of `cp/wave1-gates-first`, named by the dispatch |
 | Profile / limits | STANDARD; Python 3.11 only, no new dependency; every target-specific path, ticket id, lane name or model name stripped or parameterised |
 | Language / return | Python 3.11 strict; `ImplementationReturn` COMPLETED with commit, file list, pytest result, mutation proof per script |
 
@@ -46,7 +46,7 @@ from any target project.
 | P1 | `pytest tests/test_gate_dispatch_lint.py` | self-test ported; fixtures generated in a temp dir; expectations derived from fixtures |
 | P2 | `pytest tests/test_gate_receipt_fence_check.py` | as P1 |
 | P3 | `pytest tests/test_gate_index_pins.py` | as P1; the index format is the generic `| id | kind | state | git:<sha> | sha256:<hex> | leaf |` row |
-| P4 | `grep -rniE "<source-project names from the dispatch, not written in this ticket>" skills/johnny-project-takeover/scripts tests/test_gate_*.py` | zero hits |
+| P4 | `grep -rniE "<denylist>" skills/johnny-project-takeover/scripts tests/test_gate_*.py`, where `<denylist>` is carried by the P4 command of the dispatch file for this ticket (the parameter file of the run) and is not written in this ticket | zero hits |
 | P5 | `.claude-plugin/plugin.json` payload | `skills` tree already covers the scripts; `tests/test_plugin_payload_boundary.py` still passes |
 | P6 | exit codes | each script: 0 pass, 1 red, 3 usage, proven by one case each in its test |
 | M1 | remove rule R3 from dispatch_lint | P1 red |

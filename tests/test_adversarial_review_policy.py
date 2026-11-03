@@ -71,6 +71,11 @@ class AdversarialReviewPolicyTests(unittest.TestCase):
         document = _read(_CODE_REVIEW)
         self.assertNotIn("alone owns integration", document)
         self.assertNotIn("who alone owns integration", document)
+        normalized = " ".join(document.split())
+        self.assertIn(
+            "Integration is executed by the versioned integration script from the merge queue",
+            normalized,
+        )
 
     def test_tara3_requiredness_scales_and_unavailable_required_evidence_blocks(self) -> None:
         adversarial = " ".join(_read(_ADVERSARIAL).split())

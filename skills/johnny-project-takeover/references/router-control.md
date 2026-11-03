@@ -12,7 +12,7 @@ the receipt by the agent that finished the action; the gate scripts read the sta
 decide the transition. The live `PendingDispatchDescriptor` path in Dispatch admission is kept
 only for the cross-lifetime bridge until it retires; the default cross-session route is the
 merge-queue file. Its single-consume and anti-replay invariants are: an entry is keyed by
-(ticket, candidate sha); a key already in `LANDED` or `BOUNCED` is refused; landing requires a
+(ticket, candidate sha); a key already in `LANDED`, `LANDED_CI_RED` or `BOUNCED` is refused; landing requires a
 compare-and-swap on the queue file commit and on the remote tip sha; caller-provided shas stay
 assertions compared against the repository, never authority. The rule that serialized state
 carries no filesystem paths applies to host absolute paths; the queue, receipt and snapshot
