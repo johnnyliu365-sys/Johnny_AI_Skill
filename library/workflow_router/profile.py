@@ -206,8 +206,8 @@ class _PolicyRoute:
 _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     SkillReference(
         reference_id="router-control",
-        source_revision="rev-8ac507168f938503",
-        content_digest="sha256_8ac507168f938503ad92fc3b2ec42128438efdff2e7daadc586254c5435a38b4",
+        source_revision="rev-59038c10683e71ea",
+        content_digest="sha256_59038c10683e71ea90ea6a0d32d34c040307e83ed5a7c973846f3c6b739b3e3f",
     ),
     SkillReference(
         reference_id="discovery-change",

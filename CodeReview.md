@@ -93,6 +93,6 @@ defect。分類固定為：
 - 同一 Closure revision 最多一次 initial review 加一次 correction review。第二次
   仍有 implementation/evidence defect，結論附 `CONVERGENCE_REVIEW_REQUIRED` 並回
   控制面做架構／ticket 分解；不得自動第三次 correction。
-- 只有全部 blocking findings 關閉、證據完整且結論 `APPROVED`，Router 才可進入
-  guarded integration／handoff。Review approval 不自動授權 push、release、部署、
+- 只有全部 blocking findings 關閉、證據完整且結論 `APPROVED`，整合腳本才可把候選列入
+  guarded integration／handoff（Revision 04 R4-4）。Review approval 不自動授權 push、release、部署、
   付費、正式權限或其他外部 effect。

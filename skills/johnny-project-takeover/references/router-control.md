@@ -14,7 +14,9 @@ only for the cross-lifetime bridge until it retires; the default cross-session r
 merge-queue file. Its single-consume and anti-replay invariants are: an entry is keyed by
 (ticket, candidate sha); a key already in `LANDED` or `BOUNCED` is refused; landing requires a
 compare-and-swap on the queue file commit and on the remote tip sha; caller-provided shas stay
-assertions compared against the repository, never authority.
+assertions compared against the repository, never authority. The rule that serialized state
+carries no filesystem paths applies to host absolute paths; the queue, receipt and snapshot
+records carry repository-relative paths only.
 
 ## Closed state machine
 
@@ -96,7 +98,8 @@ Automatic continuation has a bounded step/time ceiling. Reaching it is `HALT`.
 ## Dispatch admission
 
 Dispatch admission has two lifetime-scoped paths. A same-lifetime synchronous reviewer-owned
-lane is direct: the reviewer dispatches, waits, receives, reviews and integrates. It does not
+lane is direct: the reviewer dispatches, waits, receives and reviews; integration runs through
+the versioned integration script admitted by that review (Revision 04 R4-4). It does not
 consume a receipt or require a runner, queue, live descriptor, host gateway or host workspace
 readback, and an unavailable bridge must not halt that lane. The reviewer directly allocates the
 repository-contained owner worktree and binds it to the exact ticket, branch and baseline.

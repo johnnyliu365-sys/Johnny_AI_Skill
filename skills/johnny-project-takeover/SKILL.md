@@ -25,8 +25,10 @@ Default delivery maturity is `POC` unless an approved target artifact proves oth
 The entry command may continue implementation only after the Router has emitted
 an exact ticket-bound same-lifetime `AUTO_CONTINUE → IMPLEMENT` decision. This
 is a direct synchronous lane, not a new runtime or a cross-lifetime handoff.
-The current-session reviewer is the owner of delegation, waiting, review and
-integration; the implementation owner is the one owner named by the ticket.
+The current-session reviewer is the owner of delegation, waiting and review;
+integration is executed by the versioned integration script admitted by that review
+(workflow-governance Revision 04 R4-4). The implementation owner is the one owner named by
+the ticket.
 
 Before delegating, the reviewer must bind all of the following to the exact
 committed ticket: the reviewer-created repository-contained worktree, branch,
@@ -89,7 +91,8 @@ INTAKE → WAYFINDER → ARCHITECTURE → GRILL → CONTEXT → SPEC → TICKETS
 ```
 
 - `AUTO_CONTINUE`: execute the one declared next action when sources, evidence, authority and
-  capability are complete; then route again.
+  capability are complete; then route again (Revision 04: write the typed record into the receipt
+  and run the next gate script).
 - `WAIT_FOR_HUMAN`: pause only for a declared approval/owner decision or irreversible effect.
 - `HALT`: stop on invalid source, authority, capability, verification, security boundary or
   undeclared transition. Never guess, fallback or wait indefinitely.

@@ -15,7 +15,7 @@
    artifact refs、skill reference、typed return 與 continuation。
 4. 完整讀取被指定的 skill reference；不要載入完整 Workflow、全部 references、
    library 或聊天歷史。
-5. 完成一個動作後回傳 typed event，回到 Router；不得自行選下一關。
+5. 完成一個動作後把 typed event 寫進受據，由下一個閘門腳本讀取狀態檔判定（Revision 04）；不得自行選下一關。
 
 Router state 只保存 metadata；任何 pending implementation dispatch 都必須由 live
 descriptor、receipt 與精確 artifact references 綁定。

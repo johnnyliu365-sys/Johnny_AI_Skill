@@ -67,13 +67,71 @@ Raw pytest logs: `C:/Temp/claude/jas47-rv-pytest-cand.txt`, `-main.txt`, `-cand2
 
 Not verified: the full repository test suite (only the eight document-reading suites were run), and Markdown rendering in a real renderer (F-10 is judged from GFM table rules).
 
-## ImplementationReturn (control plane, correction 1)
+## Correction 1 re-review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `d581ebc` (parent `f4d4381`) on `cp/wave1-gates-first` |
+| Re-reviewed at | 2026-11-03 11:53 +0800 |
+| Clone | fresh `--depth 50` clone, `core.autocrlf=false`, index rebuilt to LF |
+| Scope | F-01..F-13 plus defects introduced by the correction |
+
+### Per-finding status
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| F-01 | CLOSED | Workflow.md:79 defines "Router" as running the gate scripts over the state files and says how to read "回到 Router" / "返回 Router" in this file and in router-control.md. SKILL.md:17-19 item 4 and router-control.md:7-17 (Revision 04 note) say the same. Read this way, :26, :31, :38 and :93 are now consistent. Low residual: the reading rule names only "本檔" and router-control.md. AGENTS.md:18 ("回到 Router"), SKILL.md:92 ("route again") and codex-native-same-lifetime-delegation.md:39 are outside that stated scope. They are readable only through the general definition. |
+| F-02 | CLOSED | Workflow.md:84 defers to router-control.md Continuation rule 2 (router-control.md:81-88: Profile approval, owner decision, irreversible effect, Wayfinder gap). It treats R4-3 as a filter. Workflow.md:94 and :169 now agree. spec:183 still says "only" but limits it to what a seat escalates, so it does not compete. |
+| F-03 | PARTIAL | spec:176 and Workflow.md:82 now require an independent review record with verdict `APPROVED` before integration. Residual (Medium, IMPLEMENTATION_DEFECT): the R4-7 queue field `review` (spec:201) is only "path of the review record whose verdict is `APPROVED`". Nothing binds the record to `candidate`, and reviewer ≠ implementer/submitter is never checked, so the gate cannot enforce "independent": a submitter can commit their own `APPROVED` record. The coverage-map gate is still missing from the Workflow.md:82 chain (Low). |
+| F-04 | PARTIAL | Fixed: adversarial-review.md:30-32, Workflow.md:81 (paths removed, bridge stated as transitional) and router-control.md authority scope via the note. Not fixed, although the ticket's Correction 1 table says "edited at their lines": SKILL.md:27-28 still makes the reviewer "the owner of delegation, waiting, review and integration", and router-control.md:99 still says "the reviewer dispatches, waits, receives, reviews and integrates". Both compete with CodeReview.md:49-51 and R4-4, which triggers `HALT / ROUTE_REFERENCE_INVALID` under Workflow.md:85. |
+| F-05 | PARTIAL | R4-1 (spec:164) and R4-7 (spec:201) now state single-consume and anti-replay: a (ticket, candidate) key, terminal states refused, and compare-and-swap on the queue commit and the remote tip. router-control.md:13-16 repeats this. The invariant now sits at integration, the only external effect; that design is acceptable. Residual (Low): the Correction 1 table says "Owner decision recorded", but REQ-20261103-043 is unchanged (no diff f4d4381..d581ebc). There is no new Revision Signature row (spec:212 is still the original) and no owner record anywhere in the candidate. |
+| F-06 | PARTIAL | R4-7 adds the queue entry, receipt cell, snapshot row, contract-gate codes, post-push readback and exit mapping. Residual (Medium, TICKET_DEFECT; blocks the wave-2 merge-queue ticket, not this integration): (1) "one lock row per run, released by the same run" has no schema and no recovery for a run that dies holding it. That contradicts REQ:8 ("a session that dies loses nothing") and leaves the queue permanently locked. (2) No state is defined for the entry when CI on the landed sha is red after the push. (3) The queue file path and the derivation of "affected specs" are still unspecified. (4) The snapshot row has no file format or location. |
+| F-07 | PARTIAL | Requested check: restoring CodeReview.md to the main sentence turns TARA1 red (`SUBFAILED term='is its admission, not its executor'`, exit 1). Mutation M-B (admission weakened to "`APPROVED` is optional") is also red. Mutation M-A ("Integration is executed by the versioned reviewer, who alone owns integration; the review `APPROVED` is its admission, not its executor") still passes, exit 0. The executor (integration script, merge queue) is not pinned, so the pin accepts the retired rule. Residual Medium, EVIDENCE_DEFECT. |
+| F-08 | CLOSED | `grep -ciE "vita360|zeabur|railway|champion" doc/HARNESS-CHANGELOG.md` → 0; :24 reads "first run on a target project". |
+| F-09 | CLOSED | HARNESS-CHANGELOG.md:14-15 carry the residuals of items 02 and 03 to wave 2. |
+| F-10 | CLOSED | README.md: rows 47 and 48 sit at lines 17-18, inside the status table, before "## Shared baseline". |
+| F-11 | OPEN (non-blocking, OUT_OF_SCOPE_HARDENING) | Workflow.md:279 and CodeReview.md:96 are unchanged. The ticket table says "deferred to wave 2 tickets", but no `PLANNED` ticket carries it, as CodeReview.md §4 item 5 requires. |
+| F-12 | OPEN (non-blocking, OUT_OF_SCOPE_HARDENING) | spec:212 is unchanged; same note as F-11. |
+| F-13 | CLOSED | The review record with `ImplementationReturn` is committed at doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md. Its content is false; see N-02. |
+
+### New findings introduced by correction 1
+
+| ID | Class (CodeReview §4) | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| N-01 | `IMPLEMENTATION_DEFECT` (the fix needs a boundary change by the control plane) | High (blocking) | skills/johnny-project-takeover/references/router-control.md (whole file); library/workflow_router/profile.py:209-210; tests/test_workflow_router.py:296-297, :756-761, :2437 | Editing router-control.md changed its content digest from `sha256_8ac50716…` to `sha256_a35c381e…`, but the pin sits in library/workflow_router/profile.py and test_workflow_router.py. D1 now fails: `SUBFAILED(policy='router-control') RouteInstructionContractTests::test_profile_route_table_and_policy_metadata_are_exact`. Main passes that test. A second doc suite also turns red: `SUBFAILED(policy='router-control') test_control_plane_mutation.py::PolicyPinTests::test_the_recomputed_digest_matches_the_repository_s_own_pin`, where main had 146/146 green. The ticket boundary still forbids `library/` and does not list tests/test_workflow_router.py. | D1 pytest: 4 failed (3 environment failures + 1 new subfail) / 120 passed / 562 subtests, exit 1. Extra suites: 1 failed / 146 passed, exit 1. `git grep 8ac507168f938503` → profile.py + test file. |
+| N-02 | `EVIDENCE_DEFECT` | High (blocking) | doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md, `ImplementationReturn` "Checks" row | The record says the four D1 files give the "same failure set as main (environment only)" and lists "Deviations: none". Both are false (N-01), and no raw output is attached. | reviewer re-ran D1 in a fresh clone |
+| N-03 | `IMPLEMENTATION_DEFECT` | Low | Workflow.md:81 vs spec:201-203 | Workflow.md:81 says the persisted state "不含檔案系統路徑". R4-7 makes the state files carry paths: queue `review`, receipt `capture`, `tool_digest` `path=sha256`, snapshot `source_ref` "URL or path". State that repository-relative artifact references are allowed and host filesystem paths or URIs are not, or align the two. | read both |
+| N-04 | `TICKET_DEFECT` | Low | doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md:18; ticket 47 boundary | The boundary was widened to SKILL.md, router-control.md, adversarial-review.md and the review record "under CHG-20261103-043", but the CHG Scope row still lists only Workflow.md section 0, the CodeReview clause, the checklist, the new scripts, tests and the SPEC revision. | `git diff f4d4381..d581ebc --stat -- doc/requirements` → empty |
+
+### Commands (correction 1)
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | `git clone --no-hardlinks --depth 50 -b cp/wave1-gates-first <repo> C:/Temp/claude/jas47-rv2` + LF normalisation | 0 (HEAD d581ebc) |
+| 2 | `git diff --stat f4d4381..HEAD`; `git diff --name-only a1cb6c1..HEAD` | 0 (10 files +140/-18; 15 paths, all in the widened boundary) |
+| 3 | D1 pytest (4 files) | 1 (4 failed: 3 environment failures identical to main + `SUBFAILED policy='router-control'`) |
+| 4 | `diff` of the FAILED lines against the main log | 0, but this diff hides the SUBFAILED line; checked the summary by hand |
+| 5 | pytest control_plane_mutation, payload_manifest, private_router_metadata_gate, ticket_status_template | 1 (1 failed / 146 passed; main 0) |
+| 6 | TARA1 under M-old / M-A / M-B, restored after each, `git status --porcelain` empty | 1 / 0 / 1 |
+| 7 | F-08..F-12 greps and reads | 0 |
+| 8 | `git grep` of the router-control digest prefix | 0 (profile.py:209-210, test_workflow_router.py:296-297, 756-761, 2437) |
+
+Raw log: `C:/Temp/claude/jas47-rv2-pytest-cand.txt`.
+
+Not verified: the full repository test suite, and whether an owner decision for F-05 exists outside the repository.
+
+## ImplementationReturn (control plane, closure revision02)
 
 | Field | Value |
 | --- | --- |
 | Return | `COMPLETED` |
-| Candidate | the commit that carries this file (see `git log -1 -- doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md`) |
-| Files | Workflow.md, CodeReview.md, modules/spec/workflow-governance.md, skills/johnny-project-takeover/SKILL.md, skills/johnny-project-takeover/references/router-control.md, skills/johnny-project-takeover/references/adversarial-review.md, doc/HARNESS-CHANGELOG.md, modules/tickets/workflow-governance/README.md, modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md, tests/test_adversarial_review_policy.py |
-| Checks | tests/test_workflow_router.py tests/test_plugin_policy_and_response.py tests/test_adversarial_review_policy.py tests/test_plugin_payload_boundary.py: same failure set as main (environment only) |
-| Findings | F-01..F-13 dispositions in the ticket Correction 1 table |
-| Deviations | none |
+| Candidate | the commit that carries this file (`git log -1 -- doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md`) |
+| Files | AGENTS.md, Workflow.md, CodeReview.md, modules/spec/workflow-governance.md, doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md, skills/johnny-project-takeover/SKILL.md, references router-control.md / adversarial-review.md / codex-native-same-lifetime-delegation.md, library/workflow_router/profile.py, tests/test_workflow_router.py, tests/test_adversarial_review_policy.py, modules/tickets/workflow-governance/47-*.md, 49-*.md, README.md, doc/HARNESS-CHANGELOG.md |
+| D6 full suite | `11 failed, 1918 passed, 31 skipped, 15 warnings, 3950 subtests passed in 222.22s (0:03:42)`; raw: `doc/reviews/workflow-governance/evidence/47/c2-pytest-full.txt` |
+| D6 failure set | tests/test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an_actual_linux_kernel_and_backend; tests/test_atomic_conditional_replace_capability.py::test_acr6_exact_test_only_boundary; tests/test_guarded_integration_corrections.py::ReceiptBoundCorrectionTests::test_reviewed_router_profile_composes_return_integration_and_audit; tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists; tests/test_plugin_publication.py::CandidateMetadataTests::test_l5_stale_candidate_pin_is_named_before_generation; tests/test_plugin_publication.py::PinnedTreeBindingTests::test_pinning_the_root_commit_is_rejected; tests/test_plugin_publication.py::PublicationReachabilityTests::test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable; tests/test_plugin_publication.py::PublicationReachabilityTests::test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor; tests/test_refusal_guidance.py::ClassificationAuditTests::test_every_failure_enum_in_the_library_is_covered_or_uncovered; tests/test_workflow_router.py::WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services; tests/test_workflow_router.py::WorkflowRouterTests::test_temporal_approval_signal_requires_matching_authority_state |
+| D6 comparison | identical to the main `a1cb6c1` baseline measured in the same environment (11 names); the ticket 48 seat measured 12 at `f4d4381` with `test_acr6_committed_candidate_diff_and_forbidden_paths` additionally red, so that test is environment-sensitive and is listed as a deviation, not claimed green |
+| F-07 mutation | old integration sentence restored in a disposable edit: `2 failed, 7 passed, 71 subtests passed in 0.10s`; raw: `doc/reviews/workflow-governance/evidence/47/c2-mutation-F07.txt` |
+| Policy pin | router-control.md digest moved to `rev-59038c10683e71ea` in profile.py and test_workflow_router.py |
+| Deviations | the 11 baseline failures are environment or publication-pin failures not addressed by this ticket; one ACR test varies between runs |

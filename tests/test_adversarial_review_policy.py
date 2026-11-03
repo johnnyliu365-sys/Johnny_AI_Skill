@@ -38,6 +38,7 @@ class AdversarialReviewPolicyTests(unittest.TestCase):
             (
                 "adversarial-review.md",
                 "reviewer alone owns the final review conclusion",
+                "Integration is executed by the versioned",
                 "is its admission, not its executor",
             ),
         )
@@ -65,6 +66,11 @@ class AdversarialReviewPolicyTests(unittest.TestCase):
                 "NOT_REQUIRED",
             ),
         )
+
+    def test_tara1b_integration_is_not_owned_by_the_reviewer(self) -> None:
+        document = _read(_CODE_REVIEW)
+        self.assertNotIn("alone owns integration", document)
+        self.assertNotIn("who alone owns integration", document)
 
     def test_tara3_requiredness_scales_and_unavailable_required_evidence_blocks(self) -> None:
         adversarial = " ".join(_read(_ADVERSARIAL).split())

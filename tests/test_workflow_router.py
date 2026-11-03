@@ -293,8 +293,8 @@ _EXPECTED_ROUTES: tuple[_ExpectedRoute, ...] = (
 _EXPECTED_POLICIES: tuple[_ExpectedPolicy, ...] = (
     _ExpectedPolicy(
         "router-control",
-        "rev-8ac507168f938503",
-        "sha256_8ac507168f938503ad92fc3b2ec42128438efdff2e7daadc586254c5435a38b4",
+        "rev-59038c10683e71ea",
+        "sha256_59038c10683e71ea90ea6a0d32d34c040307e83ed5a7c973846f3c6b739b3e3f",
         PurePosixPath("skills/johnny-project-takeover/references/router-control.md"),
     ),
     _ExpectedPolicy(
@@ -753,12 +753,12 @@ class WorkflowRouterTests(unittest.TestCase):
             delivery_stage=DeliveryStage.POC,
             router_control_reference=SkillReference(
                 reference_id="router-control",
-                source_revision="rev-8ac507168f938503",
-                content_digest="sha256_8ac507168f938503ad92fc3b2ec42128438efdff2e7daadc586254c5435a38b4",
+                source_revision="rev-59038c10683e71ea",
+                content_digest="sha256_59038c10683e71ea90ea6a0d32d34c040307e83ed5a7c973846f3c6b739b3e3f",
             ),
             halt_return_contract=ExpectedReturnContract(
                 contract_id="router-control-no-return",
-                contract_revision="rev-8ac507168f938503",
+                contract_revision="rev-59038c10683e71ea",
                 return_kind=ReturnContractKind.NO_RETURN,
                 router_events=(),
                 implementation_statuses=(),
@@ -2434,7 +2434,7 @@ class RouteInstructionContractTests(unittest.TestCase):
         profile = build_router_poc_profile()
         self.assertEqual("router-control", profile.router_control_reference.reference_id)
         self.assertEqual(
-            "rev-8ac507168f938503",
+            "rev-59038c10683e71ea",
             profile.router_control_reference.source_revision,
         )
         self.assertEqual(

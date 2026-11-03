@@ -36,7 +36,7 @@ The reviewer then waits for the delegated owner's completion with `wait_agent`.
 Waiting is synchronous and one-shot, without activity/status polling. Do not
 poll activity, status, heartbeats or an equivalent progress endpoint. On
 completion, receive the owner's typed `ImplementationReturn`, perform the ticket's review and
-reverse-mutation gates, and return an `ACTION_COMPLETED` event to the Router
+reverse-mutation gates, and record an `ACTION_COMPLETED` event in the receipt
 only when the declared implementation evidence is complete.
 
 ## Lifetime and failure boundary

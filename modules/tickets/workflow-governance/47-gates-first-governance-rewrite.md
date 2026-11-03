@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CORRECTION_1_LOCAL / INDEPENDENT_REVIEW_PENDING; 47-D1–D5 revision02 |
+| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision02 (47-D1–D6) after initial review and correction review on revision01 both returned CHANGES_REQUESTED |
 | Authority | Owner 2026-11-03 takeover instruction; `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 |
 | Baseline | `a1cb6c1` (main); branch `cp/wave1-gates-first` |
 | Grant / roles | Control plane (Claude) authors the documents; independent review by a separate reviewer seat (Opus) before integration |
@@ -21,12 +21,17 @@ modify = tests/test_adversarial_review_policy.py
 modify = skills/johnny-project-takeover/SKILL.md
 modify = skills/johnny-project-takeover/references/router-control.md
 modify = skills/johnny-project-takeover/references/adversarial-review.md
+modify = skills/johnny-project-takeover/references/codex-native-same-lifetime-delegation.md
+modify = AGENTS.md
+modify = library/workflow_router/profile.py
+modify = tests/test_workflow_router.py
+create = doc/reviews/workflow-governance/evidence/47/
+create = modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md
 create = doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md
 create = doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md
 create = doc/HARNESS-CHANGELOG.md
 create = modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md
 create = modules/tickets/workflow-governance/48-port-gate-scripts.md
-forbid = library/
 forbid = .github/
 forbid = .claude-plugin/
 forbid = .codex-plugin/
@@ -51,7 +56,8 @@ revision-135 checklist stays on the Codex branch where it was written.
 | D2 | `grep -c "狀態在檔案，轉移在腳本" Workflow.md` | 1; and the section-zero anchors `#workflow-router`, `#role-boundary` still exist |
 | D3 | `grep -c "Revision 04 R4-4" CodeReview.md` | 1; the sentence "The reviewer alone owns the final review conclusion." is unchanged |
 | D4 | `grep -c "^## Revision 04" modules/spec/workflow-governance.md` | 1; R4-1 to R4-6 present |
-| D5 | `git diff --stat a1cb6c1..HEAD` | only the paths in the boundary block; `tests/test_adversarial_review_policy.py` changes exactly one pinned phrase because the rule it pinned changed under `CHG-20261103-043` |
+| D5 | `git diff --stat a1cb6c1..HEAD` | only the paths in the boundary block; the policy digest pins for router-control.md move with the document under `CHG-20261103-043` |
+| D6 | `pytest tests -q` full suite, raw output committed under `doc/reviews/workflow-governance/evidence/47/` | failure set equals the main baseline (environment failures only), listed by name in the receipt |
 | M1 | remove the exit-code sentence from Workflow.md section 0 | D2 still 1 but the reviewer must flag the contract loss; recorded as a review check, not a script |
 
 ## Correction 1 (after REVIEW-001 `CHANGES_REQUESTED`)
@@ -70,3 +76,21 @@ revision-135 checklist stays on the Codex branch where it was written.
 | F-10 | IMPLEMENTATION_DEFECT | Rows 47 and 48 sit inside the status table. |
 | F-11, F-12 | OUT_OF_SCOPE_HARDENING | Deferred to wave 2 tickets. |
 | F-13 | EVIDENCE_DEFECT | Review record and `ImplementationReturn` committed at `doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md`. |
+
+## Convergence replan (closure revision02, after correction 1 re-review `CHANGES_REQUESTED`)
+
+Per CodeReview.md section 5 the initial review plus one correction review were used on revision01; the ticket returns to the control plane for re-planning instead of a third correction. Revision02 widens the closure to every file that states who integrates or how the Router is re-entered, moves the router-control policy digest pins with the document, and adds D6 (full suite with committed raw output).
+
+| Finding | Disposition in revision02 |
+| --- | --- |
+| N-01 | `library/workflow_router/profile.py` and `tests/test_workflow_router.py` pin the new router-control.md digest computed by `policy_digest`. |
+| N-02 | The receipt lists the full-suite failure set by name with the raw output committed under evidence; deviations stated. |
+| N-03 | Section 0 and router-control.md say host absolute paths are excluded; repository-relative paths are allowed. |
+| N-04 | REQ Scope lists every widened file. |
+| F-01 leftovers | AGENTS.md item 5, SKILL.md AUTO_CONTINUE bullet and the codex-native reference now say record-then-gate. |
+| F-03 | R4-7 binds `review_candidate` = `candidate` and `reviewer` != `submitter`; section 0 chain includes the coverage-map guard. |
+| F-04 | SKILL.md and router-control.md no longer say the reviewer integrates. |
+| F-05 | Decision recorded in the REQ (open owner decision row) and in the Revision 04 signatures. |
+| F-06 | R4-7 adds lock recovery, `LANDED_CI_RED`, queue path, affected-spec rule, snapshot file format and location. |
+| F-07 | The test pins both halves of the new sentence and rejects the old one. |
+| F-11, F-12 | Wording drift fixed here (Workflow.md section 5, CodeReview.md section 5); vendor and model names tracked by ticket 49. |
