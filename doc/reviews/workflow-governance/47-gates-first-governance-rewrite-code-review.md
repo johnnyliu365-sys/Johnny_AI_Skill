@@ -600,7 +600,7 @@ Not verified: why a7 fails only in the full run (passes alone; treated as flaky)
 
 ## Revision07 (superseded without review)
 
-Revision07 was frozen at `b5c25bea`, its content committed at `ab624d06` and `bff31425`, and its cells were run; before a review was dispatched the owner decided on 2026-11-03 to scope the consistency check to the routed governance set (closure revision08). The revision07 captures were not committed; the revision07 content stays on the branch and is covered by the revision08 cells.
+Revision07 was frozen at `b5c25bea`, its content committed at `ab624d06` and `bff31425`, and a cell run was started; before a review was dispatched the owner decided on 2026-11-03 to scope the consistency check to the routed governance set (closure revision08). No evidence of that run is committed; the revision07 content stays on the branch and is covered by the revision08 cells.
 
 ## ImplementationReturn (control plane, closure revision08)
 
@@ -622,3 +622,74 @@ Revision07 was frozen at `b5c25bea`, its content committed at `ab624d06` and `bf
 | F-07 mutation | executor reworded to a reviewer seat running the merge by hand → `1 failed, 7 passed, 72 subtests passed in 0.13s` (`test_tara1b` red); restored; raw `evidence/47/rev08-F07-mutation.txt` |
 | Policy pins | every reference whose text changed has its digest moved in profile.py and test_workflow_router.py (listed in the content commit message) |
 | Deviations | none: the candidate failure-name set (FAILED and SUBFAILED) equals the same-environment main run; captures carry host paths as recorded (R3-09, routed) |
+
+## Revision08 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `641850d5` (evidence commit); content commit `497f147a`; re-plan commit `bbfe3c1a` |
+| Baseline | `a1cb6c1` (main) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; fresh LF clones of the candidate and of main |
+| Summary | The revision08 content is correct and every cell reproduces as written; the receipt matches the reviewer's runs; N-01 to N-06 are closed in the files. One live retired-rule statement remains in a D7 root that the instrument misses and the boundary keeps it from being fixed (N8-01, `TICKET_DEFECT`); three Low findings to fix in the same re-plan. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| D1 | PASS | candidate `3 failed, 121 passed, 564 subtests`; main `3 failed, 120 passed, 563 subtests`; same three names; matches `rev08-D1.txt` |
+| D2 | PASS | 1 / 1 / 1 |
+| D3 | PASS | 2 / 1; reviewer sentence unchanged |
+| D4 | PASS | 1 / 7; R4-1..R4-7 at spec:162, 167, 180, 185, 189, 193, 199 |
+| D5 | PASS | exit 0, 119 paths at the candidate, 0 outside; the path set of `a1cb6c1..497f147a` (107) identical to `rev08-D5.txt`; pins for router-control, implementation-authority and review-checks moved |
+| D6 | PASS | candidate `10 failed, 1919 passed, 31 skipped, 3950 subtests` (head 641850d5, 0 files modified at start); main fresh clone, same venv `10 failed, 1918 passed, 31 skipped, 3949 subtests`; FAILED+SUBFAILED name sets equal (10 = 10) and equal to both committed captures |
+| D7 | PASS as written; not complete | exit 0, 48 hits, byte-identical to `rev08-D7.txt` after CRLF strip; every hit checked by hand (45 "states the rule" with the marker in their own sentence; runbook:84 under a "Revision record" heading; spec:214 a dated row; no scope-note exemption used). Own paragraph-joined sweep with fenced lines (118 sentences) found one miss: N8-01; no wrong exemption |
+| D8 | PASS | exit 0, identical to `rev08-D8.txt`; all 20 notes byte-identical at non-empty line 2 (line 3 in receipt-bound-role-supervision.md); two of the twenty files are not historical SPECs (N8-02) |
+| M1 | PASS (check performed) | exit-code phrase 0, D2 still 1 1 1; restored; porcelain empty |
+| M2 | PASS | all five restorations give D7 exit 1 with LIVE hits in the restored file: 2, 2, 1, 2, 2; matches `rev08-M2.txt`. Own run: 50 earlier versions of the 15 D7-root files changed on this line, restored one at a time: 37 red, 13 green; 11 of the green ones expected (no a–e statement, or another cell pins the change); the two unexpected are N8-03 and N8-04 |
+| Observable behavior | PASS (scoped) | Workflow.md:78-86 and CodeReview.md:47-52 read as the ticket states; R4-1..R4-7 present; the change log replaces the checklist; the handover runbook still competes (N8-01) |
+| Order | PASS | `bbfe3c1a` → `497f147a` (21 files: notes plus one Workflow.md line) → `641850d5` (captures plus the return section only); the ticket/script diff over that range is empty; the Revision07 section matches git (no review, no captures); its claim "its cells were run" has no capture behind it (N8-04) |
+| F-07 mutation | RED as expected | own door ("admits it and the reviewer then executes it"): `SUBFAILED(term='is its admission, not its executor')`, 1 failed, 8 passed; D7 stays 0 on that wording (no "integrat" word) but the test pins it; restored |
+| Receipt | PASS with one note | every cell has a result; every capture headed with 497f147a and its command; D6-full states `head:` and `tree: 0 tracked files modified`; D6, D7 and D8 claims match; all 12 captures valid UTF-8; the M2 header describes the loop rather than an exact command; the Order row gives no re-plan sha (N8-04) |
+| Policy pins / payload | PASS | `policy_digest` of all 7 references equals the pins; no stale pin; PolicyPinTests + `test_adversarial_review_policy.py` + the t3 class 25 passed; `test_plugin_payload_boundary.py` 40 passed with only the pinned-sha environment failure; all 9 PayloadClosureTests pass |
+| Added-line scan | PASS | 1870 added lines, evidence excluded: no host absolute path; vendor words only in branch ids, the codex-native file name, boundary rules, quoted findings, ticket-49 denylists and one pre-existing product-host sentence; no external project name; no chat tone |
+
+### Prior findings
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| N-01 | CLOSED | codex-native:48 keeps "cross-lifetime receipt-bound handoff" (count 1), scoped in the same sentence; the t3 pin passes; D6 and the receipt read FAILED and SUBFAILED |
+| N-02 | CLOSED | SKILL.md:134-136; the 7804a937 restoration turns D7 red |
+| N-03 | CLOSED (as frozen) | fenced lines scanned, finditer per sentence, bound/only/requires verbs, five-line scope note; M2 red on all five; residual gaps N8-01, N8-03 |
+| N-04 | CLOSED | spec:201 refusal list includes `CLEARED` |
+| N-05 | CLOSED | autonomous-collaboration-audit.md:63; Amendments :129 |
+| N-06 | CLOSED | template/README.md:41-44; admitted in the boundary; the 7804a937 restoration turns D7 red |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| N8-01 | `TICKET_DEFECT` | Medium (blocking) | doc/runbooks/handover-2026-08-22-plugin-distribution.md:107-117 | Under "## 整合怎麼做" a present-tense instruction says the reviewer commits the reviewed candidate to the candidate branch and passes it through the gate ("審閱者審完後代為 commit 到候選分支，再過閘門"): a live statement of the retired rules (reviewer integrates and submits), against R4-4, R4-7 and model-role-routing.md:23-26. The file is in a frozen D7 root (`doc/runbooks/`) and no exemption covers a dated handover document; D7 misses it (pattern c needs 整合 in the same sentence; no Chinese submit or commit pattern; the heading is its own unit). The boundary admits only `doc/runbooks/dispatch-model-profile.md`; the re-plan prose names "the dispatch runbook" while the D7 row and ROOTS name `doc/runbooks/`. | own sweep; reviewer and commit grep; D7 output has 0 lines naming the file |
+| N8-02 | `TICKET_DEFECT` | Low (fix with N8-01) | modules/spec/TEMPLATE.md:3; modules/spec/README.md:3 | D8 requires the note on every file in `modules/spec/` except workflow-governance.md, so the SPEC template (pinned as a template by test_workflow_router.py:1003) now says every new SPEC predates Revision 04, waives `ROUTE_REFERENCE_INVALID` and archives it in wave 3; the index README is called "this SPEC" too. | read both files; the D8 script's `listdir` scope |
+| N8-03 | `TICKET_DEFECT` | Low | Workflow.md:86; ticket Acceptance | No cell pins the revision08 precedence sentence: restoring Workflow.md from bfbd58ff leaves D2 at 1, D7 and D8 at exit 0 and the doc tests at the 3 environment failures (zero red under review-checks point 2); a D2-style grep would pin it. | counter-mutation |
+| N8-04 | `OUT_OF_SCOPE_HARDENING` / `EVIDENCE_DEFECT` | Low | review record Order row and Revision07 section; AGENTS.md (fb55623f text) | (a) the revision08 Order row gives no re-plan sha; the Revision07 section claims "its cells were run" with no capture behind it. (b) Restoring AGENTS.md from fb55623f (pending dispatch "票面狀態與整合佇列列") gives D7 exit 0: pattern d has no 整合佇列 noun and b1 needs a mandatory or default verb, so the "queue holds integration candidates only" half of R4-1 is not pinned; no live statement of that kind exists today; route to the wave-2 contract gate next to R3-07. | read the record; counter-mutation |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | `--no-hardlinks` LF clones: candidate at 641850d5, main at a1cb6c13 | 0 |
+| 2–4 | D6 candidate; D6 main; `comm` of FAILED/SUBFAILED name sets vs each other and both captures | 1 (10 failed) / 1 (10 failed); 0 |
+| 5–6 | D1 candidate / main; D2 / D3 / D4 greps | 1 / 1 (same 3 names); 0 |
+| 7–8 | `d5_union.py` and path-set comparison; `d7_sweep.py`, `d8_precedence.py` and `cmp` against the captures | 0 (119 paths, 0 outside; identical); 0 / 0 (identical) |
+| 9–10 | own sentence sweep over the D7 roots (fences included); reviewer/commit/merge and queue/dispatch greps; note position and wording check over 20 SPECs | 0 (N8-01 found); 0 |
+| 11–12 | M1; M2 five restorations with D7 each | 0; 1 ×5; porcelain empty |
+| 13–14 | 50 own counter-mutations; Workflow.md ← bfbd58ff and AGENTS.md ← fb55623f with D2/D7/D8 and the D1 files | 37 red / 13 green; all green apart from environment failures (N8-03, N8-04) |
+| 15 | own F-07 mutation; policy test; D7; restore | 1 (1 failed); 0; 0 (8 passed) |
+| 16–17 | `policy_digest` of 7 references vs pins; stale-pin search; PolicyPinTests + adversarial + t3; `test_plugin_payload_boundary.py -rA` | 0; 0; 0 (25 passed); 1 (only pinned-sha; 40 passed) |
+| 18–20 | `git log`/`show --stat` of the three commits and revision07; ticket/script diff `bbfe3c1a..641850d5`; capture header and UTF-8 checks; added-line scan (1870 lines) | 0 (empty); 0; 0 |
+
+Raw logs: retained by the reviewer seat on its host; not committed.
+
+Not verified: whether the control-plane checkout really was at 497f147a when its D6 ran (only the capture's `head:` line); that revision07's cells were ever run (no captures exist); the owner's F-05 confirmation; external target-project names other than the ones this seat knows; Markdown and mermaid rendering; whether Workflow.md:86 "專案 SPEC" is meant to cover a pre-Revision-04 SPEC in a target project that has no note; ticket 48 and the commits after 641850d5; wave-2 behaviour of the R4-7 schemas.

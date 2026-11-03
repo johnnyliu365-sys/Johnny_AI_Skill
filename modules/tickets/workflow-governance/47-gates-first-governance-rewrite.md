@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision08 (47-D1–D8, M1–M2) by owner decision of 2026-11-03: the governance-wide consistency check is scoped to the documents an agent is routed to read, and SPECs that predate Revision 04 carry a precedence note instead of sentence-by-sentence edits (revision07 was frozen but superseded before review; revision06: N-03, N-06; revision05: R5-03, R5-05; revision04: R4-03, R4-05, R4-10; revision03: R3-01, R3-04; revision02: R2-01; revision01: initial and correction review both CHANGES_REQUESTED) |
+| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision09 (47-D1–D9, M1–M2) after the revision08 initial review returned CHANGES_REQUESTED with TICKET_DEFECT N8-01, N8-02, N8-03 (revision08 by owner decision; revision07 superseded without review; revision06: N-03, N-06; revision05: R5-03, R5-05; revision04: R4-03, R4-05, R4-10; revision03: R3-01, R3-04; revision02: R2-01; revision01: initial and correction review both CHANGES_REQUESTED) |
 | Authority | Owner 2026-11-03 takeover instruction; `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 |
 | Baseline | `a1cb6c1` (main); branch `cp/wave1-gates-first` |
 | Grant / roles | Control plane authors the documents; independent review by a separate `ticket-review` seat before integration |
@@ -28,6 +28,7 @@ modify = modules/spec/review-assurance.md
 modify = skills/johnny-project-takeover/
 modify = modules/spec/
 modify = doc/runbooks/dispatch-model-profile.md
+modify = doc/runbooks/handover-2026-08-22-plugin-distribution.md
 modify = AGENTS.md
 modify = library/workflow_router/profile.py
 modify = tests/test_workflow_router.py
@@ -71,8 +72,9 @@ revision-135 checklist stays on branch `codex/skill-improvement-checklist` where
 | D4 | `grep -c "^## Revision 04" modules/spec/workflow-governance.md` | 1; R4-1 to R4-6 present |
 | D5 | `python doc/reviews/workflow-governance/evidence/47/d5_union.py` (committed script; reads the three boundary blocks at HEAD and tags every path of `git diff --name-only a1cb6c1..HEAD`) | exit 0: no path outside every boundary; the policy digest pins for router-control.md, review-checks.md and implementation-authority.md move with the documents under `CHG-20261103-043` |
 | D6 | `pytest tests -q` full suite on the candidate and on a fresh clone of main `a1cb6c1`, both in the same environment and both raw outputs committed under `doc/reviews/workflow-governance/evidence/47/` | the candidate's failure-name set, built from every `FAILED` and `SUBFAILED` line (a subtest name carries its parameter), is a subset of main's run; both sets listed by name in the receipt |
-| D7 | `python -I -X utf8 doc/reviews/workflow-governance/evidence/47/d7_sweep.py` (committed script, revision08 instrument): paragraph-joined units including fenced blocks, over the routed governance set `AGENTS.md`, `Workflow.md`, `CodeReview.md`, `skills/`, `modules/spec/workflow-governance.md`, `doc/runbooks/`, `template/`; patterns a1–a3, b1–b2, c–d, e as in the instrument docstring; every match classified | exit 0: every match is one of: states the Revision 04 rule with a pattern-specific word-bounded marker in its own sentence; a dated record row or a row under an Amendments, Revision Signatures, Approval Record or Revision record heading; a ticket or review record of this line; for b, d and e, a document that opens with a blockquote scope note "not the default (R4-1)" within its first five lines. Zero matches classified LIVE RETIRED RULE |
-| D8 | `python -I -X utf8 doc/reviews/workflow-governance/evidence/47/d8_precedence.py` (committed script): every file under `modules/spec/` other than `workflow-governance.md` opens with a blockquote precedence note naming `CHG-20261103-043`, R4-1 and R4-4 within its first five non-empty lines | exit 0: every such SPEC carries the note; the capture lists each file |
+| D7 | `python -I -X utf8 doc/reviews/workflow-governance/evidence/47/d7_sweep.py` (committed script, revision09 roots): paragraph-joined units including fenced blocks, over the routed governance set `AGENTS.md`, `Workflow.md`, `CodeReview.md`, `skills/`, `modules/spec/workflow-governance.md`, `doc/runbooks/dispatch-model-profile.md`, `template/`; patterns a1–a3, b1–b2, c–d, e as in the instrument docstring; every match classified | exit 0: every match is one of: states the Revision 04 rule with a pattern-specific word-bounded marker in its own sentence; a dated record row or a row under an Amendments, Revision Signatures, Approval Record or Revision record heading; a ticket or review record of this line; for b, d and e, a document that opens with a blockquote scope note "not the default (R4-1)" within its first five lines. Zero matches classified LIVE RETIRED RULE |
+| D8 | `python -I -X utf8 doc/reviews/workflow-governance/evidence/47/d8_precedence.py` (committed script): every historical SPEC under `modules/spec/` (every file except `workflow-governance.md`, the SPEC template `TEMPLATE.md` and the index `README.md`) and every dated handover runbook `doc/runbooks/handover-*.md` opens with a blockquote precedence note naming `CHG-20261103-043`, R4-1 and R4-4 within its first five non-empty lines; the template and the index carry no such note | exit 0: every covered file carries the note and the two excluded files do not; the capture lists each file |
+| D9 | `grep -c "以其檔頭的優先序註記讀取" Workflow.md` | 1 (the section-0 precedence sentence) |
 | M1 | remove the exit-code sentence from Workflow.md section 0 | D2 still 1 but the reviewer must flag the contract loss; recorded as a review check, not a script |
 | M2 | restore, one at a time in disposable edits, (i) `references/model-role-routing.md` from `a47e976b`, (ii) `references/implementation-authority.md` from `a47e976b`, (iii) `Workflow.md` from `8597f8bc`, (iv) `skills/johnny-project-takeover/SKILL.md` from `7804a937`, (v) `template/README.md` from `7804a937`; run D7 after each; restore | D7 exit 1 with at least one LIVE hit in the restored file for every one of the five; `git status --porcelain` empty after each restore |
 
@@ -210,3 +212,14 @@ The owner chose, on 2026-11-03, to scope the consistency check to the documents 
 | Workflow.md section 0 | one sentence: a SPEC that predates Revision 04 is read through its precedence note; where it conflicts with R4-1 or R4-4 this revision prevails and no `ROUTE_REFERENCE_INVALID` is raised |
 | HARNESS-CHANGELOG | wave-2 row: sentence-level sweep over every SPEC (the revision07 instrument over `modules/spec/`) |
 | Historical SPEC retirement | not deleted: archived through the requirement-lineage process when wave 3 retires the router library |
+
+## Re-plan to closure revision09 (after the revision08 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision08 initial review". N8-01 (`TICKET_DEFECT`): the dated handover runbook of 2026-08-22 still instructs the reviewer to commit the candidate and pass the gate, sat inside the D7 root `doc/runbooks/` and outside the boundary. Under the owner's scope decision the routed runbook is `dispatch-model-profile.md`; D7 roots name that file, and dated handover runbooks join the historical SPECs under D8 (precedence note). N8-02: the SPEC template and the index carry no note and D8 checks that they do not. N8-03: D9 pins the section-0 precedence sentence. N8-04: the Order row names the re-plan sha; the Revision07 section states that no evidence of its run is committed; the "queue holds integration candidates only" half of R4-1 is routed to the wave-2 contract gate next to R3-07. Frozen here before any content or evidence commit of revision09.
+
+| Finding | Class | Disposition in revision09 |
+| --- | --- | --- |
+| N8-01 | TICKET_DEFECT | D7 roots: `doc/runbooks/dispatch-model-profile.md` instead of the directory; `handover-2026-08-22-plugin-distribution.md` admitted to the boundary and given the precedence note; D8 covers `doc/runbooks/handover-*.md` |
+| N8-02 | TICKET_DEFECT | notes removed from `modules/spec/TEMPLATE.md` and `modules/spec/README.md`; D8 asserts their absence |
+| N8-03 | TICKET_DEFECT | D9 pins the precedence sentence |
+| N8-04 | OUT_OF_SCOPE_HARDENING / EVIDENCE_DEFECT | Order row with the re-plan sha; Revision07 wording; R4-1 queue half routed to wave 2 (change log row 13) |
