@@ -487,6 +487,175 @@ class ShallowHistoryTests(unittest.TestCase):
             self.assertEqual(index.read_text(encoding="utf-8"), HEADER + row)
 
 
+class ShallowRevisionTests(unittest.TestCase):
+    """A recorded revision missing from the object store: SHALLOW_HISTORY in a shallow repository, a red in a complete one."""
+
+    def setUp(self) -> None:
+        self.source = Repo()
+        self.addCleanup(self.source.close)
+        self.temp = tempfile.TemporaryDirectory(prefix="idxpin-shallow-")
+        self.addCleanup(self.temp.cleanup)
+        self.base = Path(self.temp.name)
+
+    def run_main(self, argv: list[str]) -> tuple[int, str, str]:
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = index_pins.main(argv)
+        return code, out.getvalue(), err.getvalue()
+
+    def commit_sealed_row_pinned_to_the_first_commit(self) -> tuple[str, str]:
+        """Source history: leaf, an unrelated file, then an index holding a sealed row pinned to the first commit."""
+        first, digest = self.source.last_commit(), self.source.digest()
+        self.source.write_leaf("a second commit\n", name="unrelated.md")
+        self.source.commit("second")
+        row = self.source.row(first, digest, state="SEALED")
+        self.source.write_index(row)
+        self.source.commit("index")
+        return first, row
+
+    def shallow_clone(self, depth: int, name: str = "clone") -> Path:
+        clone = self.base / name
+        git(self.base, "clone", "-q", "--depth", str(depth), self.source.dir.as_uri(), str(clone))
+        git(clone, "config", "core.autocrlf", "input")
+        return clone
+
+    def test_a_sealed_row_pinned_before_the_boundary_is_green_in_the_full_repository(self) -> None:
+        self.commit_sealed_row_pinned_to_the_first_commit()
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.source.run(mode, "INDEX.md")
+                self.assertEqual(code, 0, out + err)
+
+    def test_a_sealed_row_pinned_before_the_boundary_is_shallow_history_in_a_depth_1_clone(self) -> None:
+        """S1: the revision is a real commit of the repository that the shallow clone does not hold."""
+        first, row = self.commit_sealed_row_pinned_to_the_first_commit()
+        clone = self.shallow_clone(1)
+        self.assertEqual(git(clone, "rev-parse", "--is-shallow-repository").strip(), "true")
+        index = clone / "INDEX.md"
+        before = index.read_bytes()
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.run_main(["--root", str(clone), mode, str(index)])
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("SHALLOW_HISTORY", out)
+                self.assertIn(first, out)
+                self.assertNotIn("SEALED_PIN_INVALID", out + err)
+                self.assertEqual(index.read_bytes(), before)
+
+    def test_an_open_row_with_a_missing_revision_is_shallow_history_in_a_shallow_clone(self) -> None:
+        """The leaf changed after the boundary, so only the recorded revision lies beyond it."""
+        first, digest = self.source.last_commit(), self.source.digest()
+        self.source.write_leaf("a second commit\n", name="unrelated.md")
+        self.source.commit("second")
+        self.source.write_leaf("leaf changed\n")
+        self.source.commit("leaf changed")
+        self.source.write_index(self.source.row(first, digest))
+        self.source.commit("index")
+        clone = self.shallow_clone(3)
+        self.assertNotIn(first, git(clone, "rev-list", "HEAD").split())
+        index = clone / "INDEX.md"
+        before = index.read_bytes()
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.run_main(["--root", str(clone), mode, str(index)])
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("SHALLOW_HISTORY", out)
+                self.assertIn(first, out)
+                self.assertEqual(index.read_bytes(), before)
+
+    def test_a_missing_revision_in_a_complete_repository_stays_sealed_pin_invalid(self) -> None:
+        missing = "1" * 40
+        self.assertEqual(git(self.source.dir, "rev-parse", "--is-shallow-repository").strip(), "false")
+        row = self.source.row(missing, self.source.digest(), state="SEALED")
+        index = self.source.write_index(row)
+        self.source.commit("index")
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.source.run(mode, "INDEX.md")
+                self.assertEqual(code, 1, out + err)
+                self.assertIn("SEALED_PIN_INVALID", out)
+                self.assertNotIn("SHALLOW_HISTORY", out + err)
+                self.assertNotIn("tool fault", err)
+        self.assertEqual(index.read_text(encoding="utf-8"), HEADER + row)
+
+    def stale_open_row_in_a_clone(self, depth: int) -> tuple[Path, str]:
+        """A shallow clone whose index row is stale (wrong digest) for a leaf last changed at the boundary."""
+        self.source.write_leaf("a second commit\n", name="unrelated.md")
+        boundary = self.source.commit("second")
+        clone = self.shallow_clone(depth)
+        row = f"| a1 | spec | open | `git:{boundary}` | `sha256:{'f' * 64}` | leaf.md |\n"
+        (clone / "INDEX.md").write_text(HEADER + row, encoding="utf-8", newline="\n")
+        git(clone, "add", "INDEX.md")
+        git(clone, "commit", "-q", "-m", "index")
+        return clone, row
+
+    def test_a_linked_worktree_of_a_depth_1_clone_raises_shallow_history(self) -> None:
+        """S5: the boundary file lives in the common git directory, not in the worktree's own git directory."""
+        clone, row = self.stale_open_row_in_a_clone(1)
+        worktree = self.base / "linked"
+        git(clone, "worktree", "add", "-q", str(worktree))
+        git(worktree, "config", "core.autocrlf", "input")
+        self.assertFalse((Path(git(worktree, "rev-parse", "--git-dir").strip()) / "shallow").exists())
+        for where in (clone, worktree):
+            index = where / "INDEX.md"
+            for mode in ("--check", "--write"):
+                with self.subTest(root=where.name, mode=mode):
+                    code, out, err = self.run_main(["--root", str(where), mode, str(index)])
+                    self.assertEqual(code, 2, out + err)
+                    self.assertIn("SHALLOW_HISTORY", out)
+                    self.assertIn("leaf.md", out)
+                    self.assertNotIn("STALE", out)
+                    self.assertEqual(index.read_text(encoding="utf-8"), HEADER + row)
+
+    def test_the_boundary_of_a_linked_worktree_is_read_in_one_query(self) -> None:
+        clone, _ = self.stale_open_row_in_a_clone(1)
+        worktree = self.base / "linked"
+        git(clone, "worktree", "add", "-q", str(worktree))
+        boundary = {line.strip() for line in (clone / ".git" / "shallow").read_text(encoding="utf-8").splitlines()}
+        repository = index_pins.Repo(worktree)
+        calls: list[tuple[str, ...]] = []
+        original = repository.git_text
+
+        def counting(*args: str, stdin: str | None = None) -> tuple[int, str]:
+            calls.append(args)
+            return original(*args, stdin=stdin)
+
+        with mock.patch.object(repository, "git_text", counting):
+            self.assertEqual(repository.shallow_boundary(), boundary)
+            self.assertTrue(repository.is_shallow())
+        self.assertEqual(len(calls), 1, calls)
+        self.assertIn("--git-common-dir", calls[0])
+
+    def test_shallow_reported_without_a_shallow_file_is_a_tool_fault(self) -> None:
+        """A boundary file that git reads from elsewhere: the script finds none in the common directory."""
+        elsewhere = self.base / "boundary-elsewhere"
+        elsewhere.write_text(self.source.last_commit() + "\n", encoding="utf-8", newline="\n")
+        index = self.source.write_index("")
+        self.source.commit("index")
+        with mock.patch.dict(os.environ, {"GIT_SHALLOW_FILE": str(elsewhere)}):
+            self.assertEqual(git(self.source.dir, "rev-parse", "--is-shallow-repository").strip(), "true")
+            self.assertFalse((self.source.dir / ".git" / "shallow").exists())
+            for mode in ("--check", "--write"):
+                with self.subTest(mode):
+                    code, out, err = self.source.run(mode, "INDEX.md")
+                    self.assertEqual(code, 2, out + err)
+                    self.assertIn("tool fault", err)
+                    self.assertIn("no shallow file", err)
+                    self.assertEqual(out, "")
+        self.assertEqual(index.read_text(encoding="utf-8"), HEADER)
+
+    def test_a_simulated_shallow_answer_without_a_shallow_file_is_a_tool_fault(self) -> None:
+        repository = index_pins.Repo(self.source.dir)
+
+        def shallow_without_file(*args: str, stdin: str | None = None) -> tuple[int, str]:
+            return 0, "true\n.git\n"
+
+        with mock.patch.object(repository, "git_text", shallow_without_file):
+            with self.assertRaises(index_pins.GitFault) as raised:
+                repository.shallow_boundary()
+        self.assertIn("no shallow file", str(raised.exception))
+
+
 class UsageTests(PinCase):
     def run_main(self, argv: list[str]) -> tuple[int, str, str]:
         out, err = io.StringIO(), io.StringIO()

@@ -40,6 +40,12 @@ lists the leaf before it reads the blob, so a sealed row failing either check is
 SEALED_PIN_INVALID and an open row whose tracked leaf is absent from the tree of its last
 commit is SKIP_NO_BLOB.
 
+A revision recorded in a row that is missing from the object store of a shallow repository
+is SHALLOW_HISTORY (exit 2), not a red, because it may be a real commit beyond the boundary;
+the boundary file is read through `git rev-parse --git-common-dir`, so a linked work tree of
+a shallow clone raises it too, and git reporting a shallow repository without that file is a
+tool fault. In a complete repository the same missing revision stays SEALED_PIN_INVALID.
+
 Exit codes: 0 all pins current, 1 drift or defect, 2 tool fault (SHALLOW_HISTORY: a
 shallow clone whose history would pin the boundary commit; git cannot be started; not
 inside a git repository; --root missing or not a directory; an environment git query
@@ -92,6 +98,19 @@ class GitFault(Exception):
     """git cannot be started, or any git query the pins depend on failed: a tool fault."""
 
 
+class ShallowHistory(Exception):
+    """A recorded revision is missing from the object store of a shallow repository.
+
+    The revision may be a real commit beyond the shallow boundary, so the row cannot be
+    judged: SHALLOW_HISTORY, exit 2, never a red.
+    """
+
+    def __init__(self, revision: str, leaf: str) -> None:
+        super().__init__(revision)
+        self.revision = revision
+        self.leaf = leaf
+
+
 class IndexUnreadable(Exception):
     """An index file cannot be read as UTF-8 text: a usage error."""
 
@@ -121,6 +140,7 @@ class Repo:
         self._digests: dict[tuple[str, str], str | None] = {}
         self.last_stderr = ""
         self._reasons: dict[tuple[str, str], str] = {}
+        self._shallow: tuple[bool, set[str]] | None = None
 
     def git_text(self, *args: str, stdin: str | None = None) -> tuple[int, str]:
         try:
@@ -164,6 +184,22 @@ class Repo:
             return False
         raise GitFault(f"git cat-file -e {rev}^{{commit}} failed with exit {first_code}: {first}")
 
+    def object_missing(self, rev: str) -> bool:
+        """True when the object store holds no object named `rev`; a failing query is a tool fault."""
+        code, out = self.git_text("cat-file", "--batch-check", stdin=rev + "\n")
+        if code != 0:
+            raise GitFault(f"git cat-file --batch-check {rev} failed with exit {code}: {self.last_stderr}")
+        fields = out.split()
+        return len(fields) >= 2 and fields[1] == "missing"
+
+    def require_available(self, rev: str, leaf: str) -> None:
+        """Raise ShallowHistory when the repository is shallow and `rev` is missing from its object store.
+
+        In a complete repository a missing revision is an index-row fact, so nothing is raised.
+        """
+        if self.is_shallow() and self.object_missing(rev):
+            raise ShallowHistory(rev, leaf)
+
     def tree_lists(self, rev: str, leaf: str) -> bool:
         """True when the tree of commit `rev` lists `leaf` as a file. `rev` must be a commit.
 
@@ -188,6 +224,7 @@ class Repo:
         key = (commit, leaf)
         if key not in self._digests:
             if not self.is_commit(commit):
+                self.require_available(commit, leaf)
                 self._digests[key] = None
                 self._reasons[key] = f"{commit[:12]} is not a commit of this repository"
             elif not self.tree_lists(commit, leaf):
@@ -214,26 +251,46 @@ class Repo:
             raise GitFault(f"git ls-files failed with exit {code}: {self.last_stderr}")
         return set(out.splitlines())
 
+    def _shallow_state(self) -> tuple[bool, set[str]]:
+        """(is the repository shallow, boundary commits) from one `git rev-parse` invocation.
+
+        The boundary file lives in the common git directory, which is not the git directory
+        of a linked work tree; both facts come from the same combined query.
+        """
+        if self._shallow is None:
+            code, out = self.git_text("rev-parse", "--is-shallow-repository", "--git-common-dir")
+            if code != 0:
+                raise GitFault(
+                    f"git rev-parse --is-shallow-repository --git-common-dir failed with exit {code}: {self.last_stderr}"
+                )
+            answers = out.splitlines()
+            if len(answers) != 2:
+                raise GitFault(
+                    f"git rev-parse --is-shallow-repository --git-common-dir printed an unexpected answer: {out.strip()!r}"
+                )
+            if answers[0].strip() != "true":
+                self._shallow = (False, set())
+            else:
+                shallow_file = self.root / answers[1].strip() / "shallow"
+                if not shallow_file.is_file():
+                    raise GitFault(
+                        f"git reports a shallow repository but no shallow file was found at {shallow_file}"
+                    )
+                with io.open(shallow_file, encoding="utf-8") as handle:
+                    self._shallow = (True, {line.strip() for line in handle if line.strip()})
+        return self._shallow
+
+    def is_shallow(self) -> bool:
+        """True when git reports the repository as shallow."""
+        return self._shallow_state()[0]
+
     def shallow_boundary(self) -> set[str]:
         """Boundary commits of a shallow clone (their parents are not available locally).
 
         For every leaf last changed at or before the boundary, `git log -1` reports the
         boundary commit: right content, wrong revision. Such pins must not be produced.
         """
-        code, out = self.git_text("rev-parse", "--is-shallow-repository", "--git-dir")
-        if code != 0:
-            raise GitFault(f"git rev-parse --is-shallow-repository --git-dir failed with exit {code}: {self.last_stderr}")
-        answers = out.splitlines()
-        if len(answers) != 2:
-            raise GitFault(f"git rev-parse --is-shallow-repository --git-dir printed an unexpected answer: {out.strip()!r}")
-        if answers[0].strip() != "true":
-            return set()
-        gitdir = answers[1]
-        shallow_file = self.root / gitdir.strip() / "shallow"
-        if not shallow_file.exists():
-            return set()
-        with io.open(shallow_file, encoding="utf-8") as handle:
-            return {line.strip() for line in handle if line.strip()}
+        return self._shallow_state()[1]
 
 
 # ------------------------------------------------------------- table parsing
@@ -451,6 +508,8 @@ def scan(repo: Repo, index_file: Path, tracked: set[str], sealed_state: str = DE
                         detail=f"sha256(git show {old_rev[:12]}:{leaf}) = {actual[:12]} differs from the recorded value")
                 continue
 
+            if old_rev is not None:
+                repo.require_available(old_rev, leaf)
             new_rev = repo.current_commit_for(leaf)
             if new_rev is None:
                 add(lineno, "SKIP_UNTRACKED", prefix, leaf_raw=leaf_raw, leaf=leaf, old_rev=old_rev, old_digest=old_digest)
@@ -629,6 +688,10 @@ def _run(argv: Sequence[str] | None) -> int:
             out, findings = scan(repo, candidate, tracked, sealed_state)
         except IndexUnreadable as exc:
             return _usage_error(str(exc))
+        except ShallowHistory as exc:
+            print(f"SHALLOW_HISTORY: the recorded revision {exc.revision} of {exc.leaf} is missing from this "
+                  "shallow repository; fetch the full history and run again")
+            return 2
         all_findings.extend(findings)
         if any(finding.status == "DRIFT" for finding in findings):
             pending.append((candidate, "".join(out)))
