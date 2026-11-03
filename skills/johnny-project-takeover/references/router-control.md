@@ -38,7 +38,7 @@ The executable typed contracts in `library/workflow_router/` are authoritative f
 shape and validation. The policy invariants below are authoritative for routing behavior:
 
 - `RouterState` binds one `project_id`, stage, authority state, delivery stage, artifact
-  references and at most one live pending dispatch descriptor.
+  references and at most one live pending dispatch descriptor (transitional bridge path only, R4-1).
 - `RouterDecision` returns one outcome, one continuation, one optional next stage, the
   minimum required source references, one optional `ContextView`, eligible capabilities
   and typed blockers.

@@ -45,7 +45,7 @@ only when the declared implementation evidence is complete.
 The bridge disposition for this direct lane is `NOT_REQUIRED`. The lane neither
 requires nor creates a handoff receipt, pending descriptor, runner, queue,
 gateway, durable state, host readback adapter or fabricated native adapter.
-Those mechanisms remain reserved for a cross-lifetime handoff that takes the receipt-bound bridge route (not the default since R4-1);
+Those mechanisms remain reserved for a cross-lifetime receipt-bound handoff on the bridge route (not the default since R4-1);
 their absence cannot block this already-admitted same-lifetime continuation.
 
 If native delegation or the selected ticket/profile capability is unavailable,

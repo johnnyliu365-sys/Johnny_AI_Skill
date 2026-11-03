@@ -206,8 +206,8 @@ class _PolicyRoute:
 _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     SkillReference(
         reference_id="router-control",
-        source_revision="rev-5d8acaca8762389b",
-        content_digest="sha256_5d8acaca8762389b2175efd8e166518c59643bf7f2564740a22f060ba387abe2",
+        source_revision="rev-d24934a046898ee3",
+        content_digest="sha256_d24934a046898ee3844bb33dc4c846ac4173d947bb666e641523b6eead70c75a",
     ),
     SkillReference(
         reference_id="discovery-change",
@@ -226,8 +226,8 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="implementation-authority",
-        source_revision="rev-c8178b809b9552a1",
-        content_digest="sha256_c8178b809b9552a1fc0edba1d9279ac56e6a5594e75523761290fa436d776fa7",
+        source_revision="rev-176813be46e16412",
+        content_digest="sha256_176813be46e164128a4e9447b6a0a36a247ca517d78ed5d4946e8227889c4c80",
     ),
     SkillReference(
         reference_id="implementation-tdd",

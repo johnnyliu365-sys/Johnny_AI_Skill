@@ -41,8 +41,9 @@
 
 Templates keep policy reads metadata-only: raw document text, prompts, paths,
 URIs, secrets and PII do not enter Router models or handoff evidence. A fixed
-dispatch response is produced only from the live Private Router pending
-descriptor and its reviewed ticket/handoff receipt. A copied, replayed, absent
-or mismatched descriptor is fail-closed. `COMMERCIAL` is not an implied
+dispatch response is produced from the ticket's state row and the digest of its dispatch file
+(workflow-governance Revision 04 R4-1); on the transitional bridge path it is produced from the live
+Private Router pending descriptor and its reviewed ticket/handoff receipt, and a copied, replayed,
+absent or mismatched descriptor is fail-closed there. `COMMERCIAL` is not an implied
 objective; use `POC` unless an approved Profile and change record establish
 another stage.

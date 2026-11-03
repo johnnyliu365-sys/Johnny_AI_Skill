@@ -58,7 +58,7 @@ ReviewerOrchestrationGrant = { project_id, ticket_ref, reviewed_handoff_ref,
 OrchestrationDecision = AUTHORIZED | ROLE_FORBIDDEN | RECEIPT_INVALID
 ```
 
-The control-plane/main owner owns Wayfinder, Architecture, Grill, Context, SPEC, tickets, dispatch question, guarded integration (run by the versioned integration script, R4-4), audit and handoff. The implementation owner owns only its assigned ticket branch/worktree, TDD, source/tests, verification and implementation commit. The integration capability may update `main` only while holding an exclusive project lock and only after a validated return; it is an automated action, not a second human approval.
+The control-plane/main owner owns Wayfinder, Architecture, Grill, Context, SPEC, tickets, dispatch question, submission of reviewed candidates to the merge queue, audit and handoff; guarded integration is run by the versioned integration script by whoever holds budget (R4-4), not by a fixed owner. The implementation owner owns only its assigned ticket branch/worktree, TDD, source/tests, verification and implementation commit. The integration capability may update `main` only while holding an exclusive project lock and only after a validated return; it is an automated action, not a second human approval.
 
 For Agent-to-Agent effects the named reviewer, not a generic control-plane or implementation capability, is the sole authority. The orchestration adapter accepts only a previously issued exact grant and consumes its receipt/action binding at most once. It exposes no fallback that infers authority from an agent profile string.
 

@@ -35,8 +35,8 @@ Prompt text, model name, role name, configuration, `CapabilityRef`, MCP alias an
 adapter are not authority. Each cross-lifetime gateway effect on that route validates reviewer role/capability,
 project, ticket, handoff, unconsumed receipt, target owner, worktree, branch, baseline, action and
 correlation against the live pending descriptor. Copy, forgery, replay or substitution fails
-closed. Effective-session tool absence and gateway unreachability require supported host readback
-only on that cross-lifetime path; source/config inspection alone is insufficient. A missing bridge
+closed. Effective-session tool absence and gateway unreachability require supported host readback only on that cross-lifetime bridge path (not the default since
+R4-1); source/config inspection alone is insufficient. A missing bridge
 is `UNAVAILABLE`, not evidence that a wake was delivered.
 
 ## Task/worktree admission

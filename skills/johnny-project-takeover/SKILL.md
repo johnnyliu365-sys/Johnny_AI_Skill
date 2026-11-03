@@ -131,7 +131,8 @@ not observe: a committed handoff leaf is evidence of a commit, not of a delivery
 unobserved wake manufactures a false completion narrative, which is precisely the failure this
 workflow exists to prevent.
 
-Durable Router state contains metadata only. A pending dispatch remains bound to its live
+Durable Router state contains metadata only. A pending dispatch is the ticket's state row plus
+the digest of its dispatch file (Revision 04 R4-1); only the transitional bridge path binds a live
 descriptor. The implementation owner returns an `ImplementationReturn`; `CHANGE_DETECTED`
 emits `REQUIREMENT_CHANGED` rather than changing the ticket locally.
 
