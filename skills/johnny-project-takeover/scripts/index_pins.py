@@ -40,11 +40,15 @@ lists the leaf before it reads the blob, so a sealed row failing either check is
 SEALED_PIN_INVALID and an open row whose tracked leaf is absent from the tree of its last
 commit is SKIP_NO_BLOB.
 
-A revision recorded in a row that is missing from the object store of a shallow repository
-is SHALLOW_HISTORY (exit 2), not a red, because it may be a real commit beyond the boundary;
-the boundary file is read through `git rev-parse --git-common-dir`, so a linked work tree of
-a shallow clone raises it too, and git reporting a shallow repository without that file is a
-tool fault. In a complete repository the same missing revision stays SEALED_PIN_INVALID.
+The revision recorded in a sealed row that is missing from the object store of a shallow
+repository is SHALLOW_HISTORY (exit 2), not a red, because it may be a real commit beyond the
+boundary; in a complete repository the same missing revision stays SEALED_PIN_INVALID. An open
+row never needs its recorded revision object: its drift decision uses the recorded digest and
+the leaf's current revision, so a stale open row whose recorded revision predates the boundary
+stays STALE (exit 1) and --write repairs it; only an open row whose leaf's current revision
+lies beyond the boundary is SHALLOW_HISTORY. The boundary file is read through
+`git rev-parse --git-common-dir`, so a linked work tree of a shallow clone raises it too, and
+git reporting a shallow repository without that file is a tool fault.
 
 Exit codes: 0 all pins current, 1 drift or defect, 2 tool fault (SHALLOW_HISTORY: a
 shallow clone whose history would pin the boundary commit; git cannot be started; not
@@ -99,10 +103,11 @@ class GitFault(Exception):
 
 
 class ShallowHistory(Exception):
-    """A recorded revision is missing from the object store of a shallow repository.
+    """The recorded revision of a sealed row is missing from the object store of a shallow repository.
 
     The revision may be a real commit beyond the shallow boundary, so the row cannot be
-    judged: SHALLOW_HISTORY, exit 2, never a red.
+    judged: SHALLOW_HISTORY, exit 2, never a red. Open rows never raise this: their drift
+    decision does not need the recorded revision object.
     """
 
     def __init__(self, revision: str, leaf: str) -> None:
@@ -508,8 +513,6 @@ def scan(repo: Repo, index_file: Path, tracked: set[str], sealed_state: str = DE
                         detail=f"sha256(git show {old_rev[:12]}:{leaf}) = {actual[:12]} differs from the recorded value")
                 continue
 
-            if old_rev is not None:
-                repo.require_available(old_rev, leaf)
             new_rev = repo.current_commit_for(leaf)
             if new_rev is None:
                 add(lineno, "SKIP_UNTRACKED", prefix, leaf_raw=leaf_raw, leaf=leaf, old_rev=old_rev, old_digest=old_digest)

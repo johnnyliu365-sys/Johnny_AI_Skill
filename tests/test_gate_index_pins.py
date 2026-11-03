@@ -542,8 +542,8 @@ class ShallowRevisionTests(unittest.TestCase):
                 self.assertNotIn("SEALED_PIN_INVALID", out + err)
                 self.assertEqual(index.read_bytes(), before)
 
-    def test_an_open_row_with_a_missing_revision_is_shallow_history_in_a_shallow_clone(self) -> None:
-        """The leaf changed after the boundary, so only the recorded revision lies beyond it."""
+    def stale_open_row_with_revision_before_the_boundary(self) -> tuple[str, str, str]:
+        """Source history: leaf, unrelated, leaf changed, index; the row pins the first commit (digest of the first body)."""
         first, digest = self.source.last_commit(), self.source.digest()
         self.source.write_leaf("a second commit\n", name="unrelated.md")
         self.source.commit("second")
@@ -551,7 +551,37 @@ class ShallowRevisionTests(unittest.TestCase):
         self.source.commit("leaf changed")
         self.source.write_index(self.source.row(first, digest))
         self.source.commit("index")
+        return first, digest, self.source.row(first, digest)
+
+    def test_a_stale_open_row_with_a_revision_before_the_boundary_is_stale_and_repairable(self) -> None:
+        """The drift decision needs the recorded digest and the leaf's current revision, not the recorded revision object."""
+        first, _, row = self.stale_open_row_with_revision_before_the_boundary()
         clone = self.shallow_clone(3)
+        self.assertEqual(git(clone, "rev-parse", "--is-shallow-repository").strip(), "true")
+        self.assertNotIn(first, git(clone, "rev-list", "HEAD").split())
+        current = git(clone, "log", "-1", "--format=%H", "--", "leaf.md").strip()
+        self.assertNotIn(current, (clone / ".git" / "shallow").read_text(encoding="utf-8").split())
+        index = clone / "INDEX.md"
+        before = index.read_bytes()
+        code, out, err = self.run_main(["--root", str(clone), "--check", str(index)])
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("STALE", out)
+        self.assertNotIn("SHALLOW_HISTORY", out + err)
+        self.assertEqual(index.read_bytes(), before)
+        code, out, err = self.run_main(["--root", str(clone), "--write", str(index)])
+        self.assertEqual(code, 0, out + err)
+        self.assertNotIn("SHALLOW_HISTORY", out + err)
+        repinned = index.read_text(encoding="utf-8")
+        self.assertNotEqual(repinned, HEADER + row)
+        self.assertIn(f"git:{current}", repinned)
+        self.assertNotIn(first, repinned)
+        code, out, err = self.run_main(["--root", str(clone), "--check", str(index)])
+        self.assertEqual(code, 0, out + err)
+
+    def test_an_open_row_whose_leaf_lies_beyond_the_boundary_stays_shallow_history(self) -> None:
+        """The recorded revision is missing too, but the decisive fact is the leaf's current revision at the boundary."""
+        first, _, row = self.stale_open_row_with_revision_before_the_boundary()
+        clone = self.shallow_clone(1)
         self.assertNotIn(first, git(clone, "rev-list", "HEAD").split())
         index = clone / "INDEX.md"
         before = index.read_bytes()
@@ -560,7 +590,7 @@ class ShallowRevisionTests(unittest.TestCase):
                 code, out, err = self.run_main(["--root", str(clone), mode, str(index)])
                 self.assertEqual(code, 2, out + err)
                 self.assertIn("SHALLOW_HISTORY", out)
-                self.assertIn(first, out)
+                self.assertIn("leaf.md", out)
                 self.assertEqual(index.read_bytes(), before)
 
     def test_a_missing_revision_in_a_complete_repository_stays_sealed_pin_invalid(self) -> None:

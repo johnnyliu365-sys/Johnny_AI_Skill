@@ -78,9 +78,13 @@ message, never `SKIP_UNTRACKED`. A failure that stems from an index row or the w
 a red, exit 1: the script checks that the recorded revision is a commit and that its tree
 lists the leaf before it reads the blob, so a sealed row failing either check is
 `SEALED_PIN_INVALID` and an open row whose tracked leaf is absent from the tree of its last
-commit is `SKIP_NO_BLOB`. A revision missing in a shallow repository is `SHALLOW_HISTORY`
-(exit 2), read through the common git directory so a linked work tree of a shallow clone
-raises it too, while in a complete repository it stays `SEALED_PIN_INVALID`. Exit 2: a shallow clone whose history would pin the boundary
+commit is `SKIP_NO_BLOB`. The recorded revision of a sealed row that is missing in a shallow
+repository is `SHALLOW_HISTORY` (exit 2), read through the common git directory so a linked
+work tree of a shallow clone raises it too, while in a complete repository it stays
+`SEALED_PIN_INVALID`. An open row never needs its recorded revision object: a stale open row
+whose recorded revision predates the boundary is still `STALE` (exit 1) and `--write` repairs
+it; only an open row whose leaf's current revision lies beyond the boundary is
+`SHALLOW_HISTORY`. Exit 2: a shallow clone whose history would pin the boundary
 commit (`SHALLOW_HISTORY`), `git` cannot be started, not inside a git repository, `--root`
 is missing or not a directory, an environment git query fails as above, the `--json` path
 cannot be written, or an unexpected error. Exit 3: bad option, missing mode, empty
