@@ -5,8 +5,8 @@ Usage:
                          [--self-note] [--authority-root PATH] [--legacy-allowlist FILE]
   receipt_fence_check.py --scan <dir> [--authority-root PATH] [--legacy-allowlist FILE]
 
-Exit codes: 0 pass, 1 contract red, 2 tool fault (evidence root unreadable),
-3 usage error.
+Exit codes: 0 pass, 1 contract red, 2 tool fault (the evidence or scan root is not a
+readable directory, or any other unexpected error), 3 usage error.
 """
 from __future__ import annotations
 
@@ -867,6 +867,15 @@ class _Parser(argparse.ArgumentParser):
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """Run the gate; every unexpected error is a tool fault (exit 2), never a red (exit 1)."""
+    try:
+        return _run(argv)
+    except Exception as exc:  # noqa: BLE001 - an uncaught error must never reach the caller as exit 1
+        print(f"receipt_fence_check.py: tool fault: {type(exc).__name__}: {exc}", file=sys.stderr)
+        return 2
+
+
+def _run(argv: Sequence[str] | None) -> int:
     parser = _Parser(prog="receipt_fence_check.py", usage=USAGE, add_help=True)
     parser.add_argument("--scan", metavar="ROOT")
     parser.add_argument("--require-cmd", action="store_true")

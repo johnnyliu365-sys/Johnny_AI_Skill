@@ -15,6 +15,7 @@ import unittest
 from collections.abc import Callable
 from pathlib import Path
 from types import ModuleType
+from unittest import mock
 
 _SCRIPTS = Path(__file__).resolve().parents[1] / "skills" / "johnny-project-takeover" / "scripts"
 sys.path.insert(0, str(_SCRIPTS))
@@ -1483,6 +1484,21 @@ class ExitCodeContractTests(unittest.TestCase):
         code, out, _ = self.run_main(["--scan", str(missing)])
         self.assertEqual(code, 2)
         self.assertIn("SCAN_ROOT_UNREADABLE", out)
+
+    def test_an_unexpected_error_exits_2_never_1(self) -> None:
+        receipt = self.build_receipt({"a.txt": "x\n"})
+        with mock.patch.object(rf, "explicit", side_effect=RuntimeError("boom")):
+            code, out, err = self.run_main([str(receipt), "## delivery", str(self.ev)])
+        self.assertEqual(code, 2, out + err)
+        self.assertIn("tool fault", err)
+        self.assertIn("boom", err)
+
+    def test_a_scan_entry_that_cannot_be_read_exits_2_never_1(self) -> None:
+        scan_root = self.root / "scan"
+        (scan_root / "broken.md").mkdir(parents=True)
+        code, out, err = self.run_main(["--scan", str(scan_root)])
+        self.assertEqual(code, 2, out + err)
+        self.assertIn("tool fault", err)
 
     def test_exit_3_prints_one_line_of_usage_for_every_usage_error(self) -> None:
         receipt = self.build_receipt({"a.txt": "x\n"})

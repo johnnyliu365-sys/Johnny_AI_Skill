@@ -76,6 +76,20 @@ class RuleTests(unittest.TestCase):
         self.assertEqual(rule_ids(dispatch_lint.lint(text, ["please"])), ["R3"])
         self.assertEqual(dispatch_lint.lint(dispatch(f"note: {CHAT_WORDS[0]}"), []), [])
 
+    def test_every_default_chat_word_is_reported(self) -> None:
+        self.assertGreaterEqual(len(dispatch_lint.DEFAULT_CHAT_WORDS), 1)
+        for word in dispatch_lint.DEFAULT_CHAT_WORDS:
+            with self.subTest(word):
+                problems = dispatch_lint.lint(dispatch(f"note: {word}"))
+                self.assertEqual(rule_ids(problems), ["R3"])
+                self.assertIn(repr(word), problems[0])
+
+    def test_default_chat_word_list_is_the_full_rule_list(self) -> None:
+        self.assertEqual(
+            dispatch_lint.DEFAULT_CHAT_WORDS,
+            ("請", "你", "我們", "注意", "謝謝", "先做", "再做", "麻煩", "辛苦"),
+        )
+
     def test_r4_terminator_outside_quotes_is_reported(self) -> None:
         self.assertEqual(rule_ids(dispatch_lint.lint(dispatch(f"note: done{TERMINATOR}"))), ["R4"])
         self.assertEqual(dispatch_lint.lint(dispatch(f'note: "done{TERMINATOR}"')), [])
@@ -89,6 +103,14 @@ class RuleTests(unittest.TestCase):
         problems = dispatch_lint.lint(dispatch(over))
         self.assertEqual(rule_ids(problems), ["R5"])
         self.assertIn(f"({len(over)})", problems[0])
+
+    def test_r5_applies_to_line_1_of_a_one_line_document(self) -> None:
+        first_line = "ticket: " + "x" * LINE_LIMIT
+        for text in (first_line + chr(10), first_line):
+            with self.subTest(len(text)):
+                problems = dispatch_lint.lint(text)
+                self.assertEqual(rule_ids(problems), ["R5"])
+                self.assertIn("line 1 ", problems[0])
 
     def test_independent_violations_are_all_reported(self) -> None:
         text = "not a field\nticket: T\nprose line\n" + f"note: {CHAT_WORDS[0]}{TERMINATOR}\n"
@@ -157,6 +179,30 @@ class ExitCodeTests(unittest.TestCase):
         path = self.write("custom.yaml", dispatch("note: please"))
         self.assertEqual(self.run_main([str(path)])[0], 0)
         self.assertEqual(self.run_main([str(path), "--chat-words", "please,thanks"])[0], 1)
+
+    def test_blank_chat_word_lists_exit_3_and_never_void_rule_r3(self) -> None:
+        path = self.write("chat.yaml", dispatch(f"note: {dispatch_lint.DEFAULT_CHAT_WORDS[0]}"))
+        self.assertEqual(self.run_main([str(path)])[0], 1)
+        for value in ("", ",", " ", " , ,", ",,,"):
+            with self.subTest(repr(value)):
+                code, out, err = self.run_main([str(path), "--chat-words", value])
+                self.assertEqual(code, 3)
+                self.assertEqual(out, "")
+                self.assertEqual(len([line for line in err.splitlines() if line.startswith("usage:")]), 1, err)
+
+    def test_chat_words_list_with_one_real_word_is_used(self) -> None:
+        path = self.write("chat.yaml", dispatch("note: please"))
+        for value in ("please", ",please,", " ,please"):
+            with self.subTest(repr(value)):
+                self.assertEqual(self.run_main([str(path), "--chat-words", value])[0], 1)
+
+    def test_blank_chat_word_list_exits_3_as_a_process(self) -> None:
+        path = self.write("chat.yaml", dispatch(f"note: {dispatch_lint.DEFAULT_CHAT_WORDS[0]}"))
+        done = subprocess.run(
+            [sys.executable, "-I", str(SCRIPT), str(path), "--chat-words", ","],
+            capture_output=True, text=True, encoding="utf-8",
+        )
+        self.assertEqual(done.returncode, 3, done.stdout + done.stderr)
 
     def test_script_exit_codes_as_a_process(self) -> None:
         good = self.write("good.yaml", dispatch())

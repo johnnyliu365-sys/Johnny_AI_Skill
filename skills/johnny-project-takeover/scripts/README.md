@@ -3,10 +3,11 @@
 Three stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
-Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault (only
-`receipt_fence_check.py`: the evidence root is not a readable directory), `3` usage
-error. Each script prints a one-line `usage:` on stderr for exit `3`. A red is never
-reported as a tool fault and a tool fault is never reported as a red.
+Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
+usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
+`receipt_fence_check.py` and `index_pins.py` an unexpected error is also a tool fault
+(`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
+never reported as a tool fault and a tool fault is never reported as a red.
 
 ## dispatch_lint.py
 
@@ -17,7 +18,9 @@ outside a code fence is a field, list item, table row or indented continuation; 
 chat word outside quotes or backticks; R4 no full-width sentence terminator outside
 quotes or backticks; R5 no line over 400 characters. Prints one line per violation,
 then `LINT PASS` (exit 0) or `LINT FAIL (n)` (exit 1). The default chat-word list is
-Chinese politeness and filler words; replace it with `--chat-words`.
+Chinese politeness and filler words; replace it with `--chat-words`, which needs at
+least one non-blank word. Exit 3: missing or extra argument, unknown option, a file that
+cannot be read or is not UTF-8, an empty or blank `--chat-words` list.
 
 ## receipt_fence_check.py
 
@@ -42,8 +45,9 @@ last line is `fences=N failures=M`; exit 0 only when `failures=0`.
 - A section may declare `EVD=<dir>` on its own line; a redirect target that starts with
   the EVD variable (shell, braced, PowerShell environment or percent-delimited
   spelling) then resolves through that directory.
-- Exit 2: the evidence root (or the scan root) is not a readable directory. Exit 3: bad
-  arguments, a heading that names no section, or an unreadable receipt or allowlist.
+- Exit 2: the evidence root (or the scan root) is not a readable directory, or an
+  unexpected error. Exit 3: bad arguments, a heading that names no section, or an
+  unreadable receipt or allowlist.
 
 ## index_pins.py
 
@@ -59,9 +63,12 @@ revision (`git log -1 -- <leaf>`) and a digest (sha256 of `git show <revision>:<
 
 `--check` reports stale rows (`STALE <index>:<line> <leaf>`) and exits 1; `--write`
 rewrites only the two pin cells in place and keeps line endings and spelling. Rows whose
-state contains the sealed word (default `SEALED`) are verified, never rewritten. With no
-index argument every tracked Markdown file that has a `revision` and `digest` header is
+state cell, stripped, equals the sealed word (default `SEALED`, case-insensitive) are
+verified, never rewritten; `--sealed-state` must not be empty or blank. With no index
+argument every tracked Markdown file that has a `revision` and `digest` header is
 scanned. Structural defects (rows with the wrong column count, pinned rows outside a
-table, unresolved or untracked leaves, cells without a hash, a shallow clone whose
-history would pin the boundary commit) exit 1. Exit 3: bad option, unreadable index
-file, or not inside a git repository.
+table, unresolved or untracked leaves, cells without a hash) exit 1. Exit 2: a shallow
+clone whose history would pin the boundary commit (`SHALLOW_HISTORY`), `git` cannot be
+started, not inside a git repository, the `--json` path cannot be written, or an
+unexpected error. Exit 3: bad option, missing mode, empty `--sealed-state`, an index
+argument that is not a file, or an index file that is not UTF-8.

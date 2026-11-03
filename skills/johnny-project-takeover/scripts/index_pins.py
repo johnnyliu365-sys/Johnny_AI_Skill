@@ -23,15 +23,19 @@ Behaviour:
 Only the two pin cells of existing rows are rewritten. Rows are never added or
 removed, other cells, other lines and the line endings are left untouched, and the
 existing `git:` / `sha256:` prefix and backtick spelling of each cell is kept. Rows
-whose state cell contains the sealed word (default SEALED) are never repinned; their
-digest must verify under the recorded revision or the row is a defect.
+whose whole state cell (stripped, case-insensitive) equals the sealed word (default
+SEALED) are never repinned; their digest must verify under the recorded revision or the
+row is a defect. The sealed word must not be empty or blank.
 
-Defects (all exit 1): ROW_SHAPE_MISMATCH, ORPHAN_PINNED_ROW, SEALED_PIN_INVALID,
+Defects (exit 1): ROW_SHAPE_MISMATCH, ORPHAN_PINNED_ROW, SEALED_PIN_INVALID,
 SEALED_PIN_MISSING, SKIP_UNRESOLVED, SKIP_UNTRACKED, SKIP_NO_PATH_IN_CELL,
-SKIP_NO_HASH_IN_CELL, SKIP_NO_BLOB, SHALLOW_HISTORY.
+SKIP_NO_HASH_IN_CELL, SKIP_NO_BLOB.
 
-Exit codes: 0 all pins current, 1 drift or defect, 3 usage error (bad option,
-unreadable index file, not inside a git repository).
+Exit codes: 0 all pins current, 1 drift or defect, 2 tool fault (SHALLOW_HISTORY: a
+shallow clone whose history would pin the boundary commit; git cannot be started; not
+inside a git repository; a git query fails; the --json path cannot be written; any
+other unexpected error), 3 usage error (bad option, missing mode, empty --sealed-state,
+index argument that is not a file, index file that is not UTF-8).
 """
 from __future__ import annotations
 
@@ -66,8 +70,16 @@ _BACKTICKED = re.compile(r"`([^`]+)`")
 DEFECTS = (
     "ROW_SHAPE_MISMATCH", "ORPHAN_PINNED_ROW", "SEALED_PIN_INVALID", "SEALED_PIN_MISSING",
     "SKIP_UNRESOLVED", "SKIP_UNTRACKED", "SKIP_NO_PATH_IN_CELL", "SKIP_NO_HASH_IN_CELL",
-    "SKIP_NO_BLOB", "SHALLOW_HISTORY",
+    "SKIP_NO_BLOB",
 )
+
+
+class GitFault(Exception):
+    """git cannot be started, or a query the pins depend on failed: a tool fault."""
+
+
+class IndexUnreadable(Exception):
+    """An index file cannot be read as UTF-8 text: a usage error."""
 
 
 @dataclass
@@ -95,10 +107,13 @@ class Repo:
         self._digests: dict[tuple[str, str], str | None] = {}
 
     def git_text(self, *args: str) -> tuple[int, str]:
-        done = subprocess.run(
-            ["git", *args], cwd=self.root, capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
-        )
+        try:
+            done = subprocess.run(
+                ["git", *args], cwd=self.root, capture_output=True, text=True,
+                encoding="utf-8", errors="replace",
+            )
+        except OSError as exc:
+            raise GitFault(f"git cannot be started: {exc}") from exc
         return done.returncode, done.stdout or ""
 
     def current_commit_for(self, leaf: str) -> str | None:
@@ -116,13 +131,18 @@ class Repo:
         """
         key = (commit, leaf)
         if key not in self._digests:
-            done = subprocess.run(["git", "show", f"{commit}:{leaf}"], cwd=self.root, capture_output=True)
+            try:
+                done = subprocess.run(["git", "show", f"{commit}:{leaf}"], cwd=self.root, capture_output=True)
+            except OSError as exc:
+                raise GitFault(f"git cannot be started: {exc}") from exc
             self._digests[key] = hashlib.sha256(done.stdout).hexdigest() if done.returncode == 0 else None
         return self._digests[key]
 
     def tracked_files(self) -> set[str]:
         code, out = self.git_text("ls-files")
-        return set(out.splitlines()) if code == 0 else set()
+        if code != 0:
+            raise GitFault("git ls-files failed")
+        return set(out.splitlines())
 
     def shallow_boundary(self) -> set[str]:
         """Boundary commits of a shallow clone (their parents are not available locally).
@@ -253,8 +273,11 @@ def _malformed_pin_cells(cells: list[str]) -> list[str]:
 
 def scan(repo: Repo, index_file: Path, tracked: set[str], sealed_state: str = DEFAULT_SEALED_STATE) -> tuple[list[str], list[Finding]]:
     """Return (corrected lines, findings). Line endings and non-table text are untouched."""
-    with io.open(index_file, encoding="utf-8", newline="") as handle:
-        text = handle.read()
+    try:
+        with io.open(index_file, encoding="utf-8", newline="") as handle:
+            text = handle.read()
+    except (OSError, UnicodeDecodeError) as exc:
+        raise IndexUnreadable(f"cannot read {index_file.name} as UTF-8 text: {exc}") from exc
     lines = text.splitlines(keepends=True)
     root = repo.root
     rel_index = index_file.resolve().relative_to(root).as_posix()
@@ -318,7 +341,7 @@ def scan(repo: Repo, index_file: Path, tracked: set[str], sealed_state: str = DE
         state_col = groups.get("", {}).get("state")
         sealed_row = (
             state_col is not None and state_col < len(cells)
-            and sealed_state.upper() in cells[state_col].upper()
+            and cells[state_col].strip().upper() == sealed_state.strip().upper()
         )
 
         for prefix, group in groups.items():
@@ -419,18 +442,34 @@ def _usage_error(message: str | None = None) -> int:
 
 
 def _toplevel(cwd: Path) -> Path | None:
+    """The work tree root; None when cwd is not inside a repository; GitFault when git cannot start."""
     try:
         done = subprocess.run(
             ["git", "rev-parse", "--show-toplevel"], cwd=cwd, capture_output=True, text=True,
             encoding="utf-8", errors="replace",
         )
-    except OSError:
-        return None
+    except OSError as exc:
+        raise GitFault(f"git cannot be started: {exc}") from exc
     top = done.stdout.strip()
     return Path(top) if done.returncode == 0 and top else None
 
 
+def _tool_fault(message: str) -> int:
+    print(f"index_pins.py: tool fault: {message}", file=sys.stderr)
+    return 2
+
+
 def main(argv: Sequence[str] | None = None) -> int:
+    """Run the gate; every unexpected error is a tool fault (exit 2), never a red (exit 1)."""
+    try:
+        return _run(argv)
+    except GitFault as exc:
+        return _tool_fault(str(exc))
+    except Exception as exc:  # noqa: BLE001 - an uncaught error must never reach the caller as exit 1
+        return _tool_fault(f"{type(exc).__name__}: {exc}")
+
+
+def _run(argv: Sequence[str] | None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     if not args:
         return _usage_error()
@@ -456,6 +495,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 json_path = args[index + 1]
             else:
                 sealed_state = args[index + 1]
+                if not sealed_state.strip():
+                    return _usage_error("--sealed-state must not be empty or blank")
             index += 2
         elif arg.startswith("-"):
             return _usage_error(f"unknown option {arg}")
@@ -464,9 +505,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             index += 1
     if mode is None:
         return _usage_error("one of --check or --write is required")
+    if root_arg is not None and not Path(root_arg).is_dir():
+        return _usage_error(f"--root {root_arg} is not a directory")
     root = _toplevel(Path(root_arg) if root_arg else Path.cwd())
     if root is None:
-        return _usage_error("not inside a git repository")
+        return _tool_fault("not inside a git repository")
     repo = Repo(root)
     tracked = repo.tracked_files()
     if not tracked:
@@ -480,7 +523,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         except ValueError:
             return _usage_error(f"{name} is outside the repository root")
         if not path.is_file():
-            return _usage_error(f"cannot read {name}")
+            return _usage_error(f"{name} is not a file")
         candidates.append(path)
     if not positional:
         candidates = index_candidates(repo.root, tracked)
@@ -488,7 +531,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     all_findings: list[Finding] = []
     pending: list[tuple[Path, str]] = []
     for candidate in candidates:
-        out, findings = scan(repo, candidate, tracked, sealed_state)
+        try:
+            out, findings = scan(repo, candidate, tracked, sealed_state)
+        except IndexUnreadable as exc:
+            return _usage_error(str(exc))
         all_findings.extend(findings)
         if any(finding.status == "DRIFT" for finding in findings):
             pending.append((candidate, "".join(out)))
@@ -503,7 +549,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         for leaf in grafted[:10]:
             print("    " + leaf)
         print(f"    ({len(grafted)} in total; fetch the full history and run again)")
-        return 1
+        return 2
+
+    if json_path:
+        try:
+            with io.open(json_path, "w", encoding="utf-8") as handle:
+                handle.write(json.dumps([asdict(finding) for finding in all_findings], ensure_ascii=False, indent=2))
+        except OSError as exc:
+            return _tool_fault(f"cannot write {json_path}: {exc}")
 
     changed_files: list[str] = []
     if mode == "--write":
@@ -530,10 +583,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"    {finding.index}:{finding.line}  {finding.status}  {finding.detail or finding.leaf_raw or ''}")
         if any(finding.status == "ROW_SHAPE_MISMATCH" for finding in defects):
             print("   Rows with a broken shape must be fixed first: re-pinning would lock the misplacement in.")
-
-    if json_path:
-        with io.open(json_path, "w", encoding="utf-8") as handle:
-            handle.write(json.dumps([asdict(finding) for finding in all_findings], ensure_ascii=False, indent=2))
 
     if mode == "--write":
         print(f"rewrote={len(changed_files)}")

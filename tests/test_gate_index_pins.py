@@ -1,4 +1,4 @@
-"""Behavioural tests for the index_pins gate script (exit codes 0/1/3).
+"""Behavioural tests for the index_pins gate script (exit codes 0/1/2/3).
 
 Each case builds a throwaway git repository in a temporary directory; every expected
 revision and digest is computed from that repository with git and hashlib.
@@ -14,6 +14,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 _SCRIPTS = Path(__file__).resolve().parents[1] / "skills" / "johnny-project-takeover" / "scripts"
 sys.path.insert(0, str(_SCRIPTS))
@@ -55,6 +56,7 @@ class Repo:
         self.tmp.cleanup()
 
     def write_leaf(self, body: str, newline: str = "\n", name: str = "leaf.md") -> None:
+        (self.dir / name).parent.mkdir(parents=True, exist_ok=True)
         with open(self.dir / name, "w", encoding="utf-8", newline=newline) as handle:
             handle.write(body)
 
@@ -72,6 +74,7 @@ class Repo:
     def write_index(self, rows: str, newline: str = "\n", header: str = HEADER, name: str = "INDEX.md") -> Path:
         text = (header + rows).replace("\n", newline)
         path = self.dir / name
+        path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8", newline="") as handle:
             handle.write(text)
         return path
@@ -272,6 +275,61 @@ class SealedRowTests(PinCase):
         self.assertIn("SEALED_PIN_INVALID", out)
 
 
+    def test_sealed_pin_missing_when_a_sealed_row_lacks_its_revision_or_digest(self) -> None:
+        digest, commit = self.repo.digest(), self.repo.last_commit()
+        rows = {
+            "revision cell without a hash": f"| a1 | spec | SEALED | n/a | `sha256:{digest}` | leaf.md |\n",
+            "digest cell without a hash": f"| a1 | spec | SEALED | `git:{commit}` | n/a | leaf.md |\n",
+        }
+        for label, row in rows.items():
+            path = self.repo.write_index(row)
+            self.repo.commit("index " + label)
+            for mode in ("--check", "--write"):
+                with self.subTest(label, mode=mode):
+                    code, out, _ = self.repo.run(mode, "INDEX.md")
+                    self.assertEqual(code, 1, out)
+                    self.assertIn("SEALED_PIN_MISSING", out)
+                    self.assertEqual(path.read_text(encoding="utf-8"), HEADER + row)
+
+    def test_sealed_word_matches_the_whole_state_cell_never_a_substring(self) -> None:
+        row = self.repo.row(self.repo.last_commit(), self.repo.digest(), state="FROZEN")
+        self.repo.write_index(row)
+        self.repo.commit("index")
+        self.repo.write_leaf("advanced body\n")
+        self.repo.commit("advance")
+        # Unsealed under the default word: the pin is behind the leaf, so the row is stale.
+        self.assertEqual(self.repo.run("--check", "INDEX.md")[0], 1)
+        for word in ("FROZEN", "frozen", "  Frozen  "):
+            with self.subTest(sealed=word):
+                code, out, _ = self.repo.run("--check", "--sealed-state", word, "INDEX.md")
+                self.assertEqual(code, 0, out)
+        for word in ("o", "froz", "ZEN", "FROZEN-X", "FROZEN FROZEN"):
+            with self.subTest(substring=word):
+                code, out, _ = self.repo.run("--check", "--sealed-state", word, "INDEX.md")
+                self.assertEqual(code, 1, out)
+                self.assertIn("STALE INDEX.md:3 leaf.md", out)
+
+    def test_state_cell_is_compared_after_stripping_padding(self) -> None:
+        row = self.repo.row(self.repo.last_commit(), self.repo.digest(), state="  SEALED  ")
+        self.repo.write_index(row)
+        self.repo.commit("index")
+        self.repo.write_leaf("advanced body\n")
+        self.repo.commit("advance")
+        self.assertEqual(self.repo.run("--check", "INDEX.md")[0], 0)
+
+    def test_empty_or_blank_sealed_state_is_a_usage_error_not_a_pass(self) -> None:
+        row = self.repo.row(self.repo.last_commit(), "0" * 64, state="SEALED")
+        self.repo.write_index(row)
+        self.repo.commit("index")
+        self.assertEqual(self.repo.run("--check", "INDEX.md")[0], 1)
+        for word in ("", " ", "\t"):
+            with self.subTest(repr(word)):
+                code, out, err = self.repo.run("--check", "--sealed-state", word, "INDEX.md")
+                self.assertEqual(code, 3, out + err)
+                self.assertEqual(out, "")
+                self.assertEqual(len([line for line in err.splitlines() if line.startswith("usage:")]), 1, err)
+
+
 class DefectTests(PinCase):
     def check_defect(self, text: str, status: str) -> None:
         (self.repo.dir / "INDEX.md").write_text(text, encoding="utf-8", newline="\n")
@@ -301,6 +359,69 @@ class DefectTests(PinCase):
         row = "| a1 | spec | open | n/a | `sha256:" + "f" * 64 + "` | leaf.md |\n"
         self.check_defect(HEADER + row, "SKIP_NO_HASH_IN_CELL")
 
+    def test_pinned_shape_negatives_are_not_pins(self) -> None:
+        sha40, sha64 = "a" * 40, "b" * 64
+        negatives = {
+            "bare 40-hex and 64-hex": [sha40, sha64],
+            "bare 40-hex with a prefixed digest": [sha40, f"sha256:{sha64}"],
+            "prefixed revision with a bare 64-hex": [f"git:{sha40}", sha64],
+            "sha256= form": [f"git:{sha40}", f"sha256={sha64}"],
+            "only the revision side": [f"git:{sha40}", "none"],
+            "only the digest side": ["none", f"sha256:{sha64}"],
+        }
+        self.assertTrue(index_pins._looks_pinned([f"git:{sha40}", f"sha256:{sha64}"]))
+        for label, cells in negatives.items():
+            with self.subTest(label):
+                self.assertFalse(index_pins._looks_pinned(cells))
+                text = "| " + " | ".join(["a1", "spec", *cells, "leaf.md"]) + " |\n"
+                (self.repo.dir / "INDEX.md").write_text(text, encoding="utf-8", newline="\n")
+                self.repo.commit("index " + label)
+                code, out, _ = self.repo.run("--check", "INDEX.md")
+                self.assertEqual(code, 0, out)
+                self.assertNotIn("ORPHAN_PINNED_ROW", out)
+
+    def test_malformed_pin_orphan_canary_reports_each_of_three_rows(self) -> None:
+        sha40, sha64 = "a" * 40, "b" * 64
+        rows = [
+            f"| a1 | spec | open | `git:{sha40[:-1]}` | `sha256:{sha64}` | leaf.md |",
+            f"| a2 | spec | open | `git:{sha40}` | `sha256:{sha64[:-1]}` | leaf.md |",
+            f"| a3 | spec | open | `git:{sha40.upper()}` | `sha256:{sha64}` | leaf.md |",
+        ]
+        text = "\n".join(rows) + "\n"
+        (self.repo.dir / "INDEX.md").write_text(text, encoding="utf-8", newline="\n")
+        self.repo.commit("index")
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, _ = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 1, out)
+                self.assertIn("defects=3", out)
+                for number in (1, 2, 3):
+                    line = next((item for item in out.splitlines() if f"INDEX.md:{number} " in item), "")
+                    self.assertIn("ORPHAN_PINNED_ROW", line)
+                    self.assertIn("MALFORMED_PIN", line)
+                self.assertEqual((self.repo.dir / "INDEX.md").read_text(encoding="utf-8"), text)
+
+    def test_parent_relative_leaf_resolves_against_the_index_directory(self) -> None:
+        self.repo.write_leaf("root body\n", name="x.md")
+        self.repo.write_leaf("nested body\n", name="a/x.md")
+        self.repo.commit("two leaves named x.md")
+        self.assertNotEqual(self.repo.digest("x.md"), self.repo.digest("a/x.md"))
+        for spelling in ("../x.md", "./../x.md"):
+            good = self.repo.row(self.repo.last_commit("a/x.md"), self.repo.digest("a/x.md"), leaf=spelling)
+            self.repo.write_index(good, name="a/b/INDEX.md")
+            self.repo.commit("index " + spelling)
+            with self.subTest(spelling):
+                code, out, _ = self.repo.run("--check", "a/b/INDEX.md")
+                self.assertEqual(code, 0, out)
+                self.assertNotIn("SKIP_UNRESOLVED", out)
+            stale = self.repo.row(self.repo.last_commit("a/x.md"), "0" * 64, leaf=spelling)
+            self.repo.write_index(stale, name="a/b/INDEX.md")
+            self.repo.commit("stale " + spelling)
+            with self.subTest(spelling, stale=True):
+                code, out, _ = self.repo.run("--check", "a/b/INDEX.md")
+                self.assertEqual(code, 1, out)
+                self.assertIn("STALE a/b/INDEX.md:3 a/x.md", out)
+
     def test_hex_text_inside_a_table_that_is_not_an_index_is_not_flagged(self) -> None:
         text = (
             "| name | note |\n| --- | --- |\n"
@@ -329,9 +450,30 @@ class ShallowHistoryTests(unittest.TestCase):
             out, err = io.StringIO(), io.StringIO()
             with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
                 code = index_pins.main(["--root", str(clone), "--check", str(index)])
-            self.assertEqual(code, 1)
+            self.assertEqual(code, 2)
             self.assertIn("SHALLOW_HISTORY", out.getvalue())
             self.assertIn("leaf.md", out.getvalue())
+            self.assertEqual(index.read_text(encoding="utf-8"), HEADER + row)
+
+    def test_a_shallow_clone_also_refuses_write_and_leaves_the_index_unchanged(self) -> None:
+        source = Repo()
+        self.addCleanup(source.close)
+        source.write_leaf("a second commit\n", name="unrelated.md")
+        source.commit("second")
+        with tempfile.TemporaryDirectory(prefix="idxpin-shallow-") as temp:
+            clone = Path(temp) / "clone"
+            git(Path(temp), "clone", "-q", "--depth", "1", source.dir.as_uri(), str(clone))
+            git(clone, "config", "core.autocrlf", "input")
+            index = clone / "INDEX.md"
+            row = f"| a1 | spec | open | `git:{'0' * 40}` | `sha256:{'f' * 64}` | leaf.md |\n"
+            index.write_text(HEADER + row, encoding="utf-8", newline="\n")
+            git(clone, "add", "INDEX.md")
+            git(clone, "commit", "-q", "-m", "index")
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = index_pins.main(["--root", str(clone), "--write", str(index)])
+            self.assertEqual(code, 2)
+            self.assertEqual(index.read_text(encoding="utf-8"), HEADER + row)
 
 
 class UsageTests(PinCase):
@@ -353,13 +495,27 @@ class UsageTests(PinCase):
                 "option without value": ["--root", root, "--check", "--json"],
                 "missing index file": ["--root", root, "--check", str(self.repo.dir / "absent.md")],
                 "index outside the repository": ["--root", root, "--check", str(Path(outside) / "x.md")],
-                "not a repository": ["--root", outside, "--check"],
+                "index argument is a directory": ["--root", root, "--check", str(self.repo.dir)],
+                "root is not a directory": ["--root", str(Path(outside) / "absent"), "--check"],
+                "empty sealed state": ["--root", root, "--check", "--sealed-state", ""],
+                "blank sealed state": ["--root", root, "--check", "--sealed-state", "  "],
             }
             for label, argv in cases.items():
                 with self.subTest(label):
                     code, out, err = self.run_main(argv)
                     self.assertEqual(code, 3, out + err)
                     self.assertEqual(len([line for line in err.splitlines() if line.startswith("usage:")]), 1, err)
+
+    def test_index_that_is_not_utf8_exits_3_not_1(self) -> None:
+        bad = self.repo.dir / "BAD.md"
+        bad.write_bytes(b"\xff\xfe| x |\n")
+        self.repo.commit("bad index")
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "BAD.md")
+                self.assertEqual(code, 3, out + err)
+                self.assertEqual(len([line for line in err.splitlines() if line.startswith("usage:")]), 1, err)
+                self.assertNotIn("Traceback", err)
 
     def test_no_arguments_prints_only_the_usage_line(self) -> None:
         code, out, err = self.run_main([])
@@ -385,6 +541,69 @@ class UsageTests(PinCase):
             capture_output=True, text=True, encoding="utf-8",
         )
         self.assertEqual(done.returncode, 1, done.stdout + done.stderr)
+
+
+class ToolFaultTests(PinCase):
+    """Exit 2: the gate could not decide; never reported as a red (1) and never as usage (3)."""
+
+    def run_main(self, argv: list[str]) -> tuple[int, str, str]:
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = index_pins.main(argv)
+        return code, out.getvalue(), err.getvalue()
+
+    def test_not_inside_a_git_repository_exits_2(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="idxpin-norepo-") as outside:
+            for mode in ("--check", "--write"):
+                with self.subTest(mode):
+                    code, out, err = self.run_main(["--root", outside, mode])
+                    self.assertEqual(code, 2, out + err)
+                    self.assertIn("not inside a git repository", err)
+                    self.assertEqual(out, "")
+
+    def test_git_that_cannot_be_started_exits_2(self) -> None:
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        with mock.patch.object(index_pins.subprocess, "run", side_effect=FileNotFoundError("git")):
+            code, out, err = self.run_main(["--root", str(self.repo.dir), "--check", str(self.repo.dir / "INDEX.md")])
+        self.assertEqual(code, 2, out + err)
+        self.assertIn("git cannot be started", err)
+
+    def test_unwritable_json_path_exits_2_even_when_the_index_has_drift(self) -> None:
+        path = self.repo.write_index(self.repo.row("0" * 40, "f" * 64))
+        self.repo.commit("index")
+        original = path.read_text(encoding="utf-8")
+        missing = self.repo.dir / "no-such-dir" / "report.json"
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "--json", str(missing), "INDEX.md")
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("tool fault", err)
+                self.assertFalse(missing.exists())
+                self.assertEqual(path.read_text(encoding="utf-8"), original)
+
+    def test_json_path_that_is_a_directory_exits_2(self) -> None:
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        code, out, err = self.repo.run("--check", "--json", str(self.repo.dir), "INDEX.md")
+        self.assertEqual(code, 2, out + err)
+
+    def test_an_unexpected_error_exits_2_never_1(self) -> None:
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        with mock.patch.object(index_pins, "scan", side_effect=RuntimeError("boom")):
+            code, out, err = self.run_main(["--root", str(self.repo.dir), "--check", str(self.repo.dir / "INDEX.md")])
+        self.assertEqual(code, 2, out + err)
+        self.assertIn("tool fault", err)
+        self.assertIn("boom", err)
+
+    def test_not_a_repository_exits_2_as_a_process(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="idxpin-norepo-") as outside:
+            done = subprocess.run(
+                [sys.executable, "-I", str(SCRIPT), "--root", outside, "--check"],
+                capture_output=True, text=True, encoding="utf-8",
+            )
+        self.assertEqual(done.returncode, 2, done.stdout + done.stderr)
 
 
 class ParsingHelperTests(unittest.TestCase):

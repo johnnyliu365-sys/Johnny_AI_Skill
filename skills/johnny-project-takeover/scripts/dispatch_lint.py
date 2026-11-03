@@ -13,7 +13,8 @@ Rules (each problem line starts with its rule id):
   R5  no line longer than 400 characters
 
 Exit codes: 0 LINT PASS, 1 one or more rule violations, 3 usage error
-(missing or extra argument, unreadable file, unknown option).
+(missing or extra argument, unreadable or non-UTF-8 file, unknown option, a
+--chat-words list with no non-blank word).
 """
 from __future__ import annotations
 
@@ -83,7 +84,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         if arg == "--chat-words":
             if index + 1 >= len(args):
                 return _usage_error("--chat-words needs a value")
-            chat_words = [word for word in args[index + 1].split(",") if word]
+            chat_words = [word for word in args[index + 1].split(",") if word.strip()]
+            if not chat_words:
+                return _usage_error("--chat-words needs at least one non-blank word")
             index += 2
             continue
         if arg.startswith("-"):
