@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / CORRECTION_DISPATCHED; 48-P1–P9 revision02 after the revision01 initial review returned CHANGES_REQUESTED with TICKET_DEFECT F-02 |
+| State / Closure | CORRECTION_DISPATCHED (correction 1 of closure revision02 after its initial review returned CHANGES_REQUESTED on NF-01, NF-02, NF-03, NF-05; one correction review remains); 48-P1–P9 revision02; c3 `0d1ef754` |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 R4-2 (dispatch lint, evidence gate precursor, index pins) |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47; candidate commits c1 `1d9f2a96`, c2 `c41cc29d` on branch `cp/wave1-ticket48-candidate` (base `f4d43817`); the correction is an additive commit c3 on that branch; the control plane cherry-picks c1–c3 onto the branch tip at integration (no rebase by the seat) |
 | Grant / roles | Control plane dispatches; `implementation-standard` seat in a disposable clone; independent review by a `ticket-review` seat |
@@ -93,3 +93,14 @@ Review record: `doc/reviews/workflow-governance/48-port-gate-scripts-code-review
 | F-05 | EVIDENCE_DEFECT | P9; the P4 rerun uses the current cell wording (scripts and `tests/test_gate_*.py`) |
 | F-06 | OUT_OF_SCOPE_HARDENING | carried to the wave-2 evidence-gate ticket: a run that checked nothing never exits 0 |
 | Admission note | — | c3 is additive on the candidate branch; the control plane cherry-picks c1–c3 onto the branch tip after `APPROVED`; the dependency "ticket 47 reviewed" is cleared before integration, not before this correction |
+
+## Correction 1 (closure revision02, after the revision02 initial review `CHANGES_REQUESTED`)
+
+| Finding | Class | Disposition (commit c4, additive on the candidate branch) |
+| --- | --- | --- |
+| NF-01 | IMPLEMENTATION_DEFECT | each script reconfigures its console streams with backslash-replacing error handling at entry, so a red prints and exits 1 under any console code page; one subprocess test per script under cp950 |
+| NF-02 | IMPLEMENTATION_DEFECT | `--root` missing or not a directory exits 2 (unreadable input directory, R4-7); the test moves to the tool-fault group; README exit lists follow |
+| NF-03 | IMPLEMENTATION_DEFECT + EVIDENCE_DEFECT | a failing git query (`git log -1 -- <leaf>` exit 128, `git ls-files` failing) is a tool fault exit 2 with the git message, never SKIP_UNTRACKED; tests for both; survivor X9c turns red |
+| NF-04 | OUT_OF_SCOPE_HARDENING | `core.quotepath` for non-ASCII leaf names: follow-up ticket, not c4 |
+| NF-05 | EVIDENCE_DEFECT | receipt P6 `exit` lists every exit in capture order |
+| P6 wording | note | "index argument missing" means an index argument naming a missing file; no argument keeps discovery mode (reviewer-accepted reading; reworded at the next closure revision if one is needed) |

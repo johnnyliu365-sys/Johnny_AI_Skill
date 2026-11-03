@@ -71,3 +71,85 @@ The failure sets are identical: c2 adds no red. The 94 extra passes are the 17 +
 - `test_workflow_router.py`: `WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services`, `WorkflowRouterTests::test_temporal_approval_signal_requires_matching_authority_state`
 
 Not verified: whether the seat's mutation runs are reproducible. Only the reviewer's own edits were run. Linux/POSIX behaviour of the cross-OS path normalisation was not run: this host is Windows only and WSL Ubuntu is unavailable.
+
+## Revision02 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | c3 `0d1ef7540dda513f562210846fdb3dcfcf536eeb` on `cp/wave1-ticket48-candidate` (parent c2 `c41cc29d`, grandparent c1 `1d9f2a96`, base `f4d43817`) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; LF review clone of the seat's clone |
+| Summary | Every cell in the closure set reproduces and all 12 ticket mutations go red; F-01..F-05 closed. Three new `IMPLEMENTATION_DEFECT`s against the exit contract (R4-2/R4-7, P6, the F-01 disposition) prevent `APPROVED`. One correction review remains for this closure revision. |
+| Method | mutations as single-occurrence text replacements restored byte for byte, porcelain empty after each; pytest output read directly; CLI probes against `git show 0d1ef754:<path>` copies whose sha256 equal the receipt's `tool_digest`; references applied: CodeReview.md §1–§5, AGENTS.md P0, Workflow.md §0, review-checks.md, implementation-tdd.md; XSS, secret, provider and UI references not applicable (stdlib CLI scripts, no network, secret or DOM surface) |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 | PASS | 23 passed, 36 subtests, exit 0; same as the receipt. |
+| P2 | PASS | 47 passed, 3 subtests, exit 0. |
+| P3 | PASS | 47 passed, 58 subtests, exit 0; generic row format used. |
+| P4 | PASS | dispatch denylist over the scripts and `tests/test_gate_*.py`: grep exit 1, zero hits; pattern extraction checked separately. |
+| P5 | PASS | exit 1; only `CommittedPinTests::test_the_pinned_sha_exists`, the base id. |
+| P6 | PASS, with gaps (NF-01, NF-02, NF-03) | one invocation per (script, code) pair: dispatch_lint 0/1/3; receipt_fence_check 0/1/2/3; index_pins 0/1/2/3 with 2 for SHALLOW_HISTORY (check and write; index unchanged), not a repository, unusable PATH, `--json` to a missing directory or a directory; 3 for bad option, no mode, missing file, directory argument, non-UTF-8 index. Every pair has a test (`ToolFaultTests` 6 cases, `ShallowHistoryTests` 2, `UsageTests::test_index_that_is_not_utf8_exits_3_not_1`, receipt_fence_check `ExitCodeContractTests`). |
+| P7 | PASS | `--chat-words` with `''`, `,`, `' '`, `' , ,'` exit 3 with one usage line; default run exits 1 (R3). `--sealed-state` `''` or `' '` exit 3; on a stale `open` row, `o` and `pen` exit 1 (STALE); `OPEN` exits 1 with SEALED_PIN_INVALID (whole-cell match). Each case has a test. |
+| P8 | PASS | every named case read and real: pinned-shape negatives (6 shapes, `_looks_pinned` and CLI), MALFORMED_PIN orphan canary (three rows), parent-relative leaf (`../x.md`, `./../x.md`), SEALED_PIN_MISSING, every default chat word (iterates `DEFAULT_CHAT_WORDS` itself), R5 on line 1. |
+| P9 | PASS, one note (NF-05) | all 21 cells carry `cell`, `candidate`=c3, three `tool_digest` lines, `capture`, `exit`; digests equal sha256 of `git show 0d1ef754:<path>`; captures and receipt LF with 0 CR bytes; every raw block byte-identical to its capture. |
+| M1–M12 | PASS (12 of 12 red) | own edits: M1 19 failed; M2 2 (+M2b 6); M3 7 (+M3b 4); M4 4 (different door); M5 2; M6 4; M7 4; M8 2; M9 4; M10 2; M11 6; M12 3; all restored clean. |
+| Survivor probes | 3 survive | red: X1 `sha256=` form; X2 one side only; X3 orphan case check; X4 first malformed row only; X5 `..` from the wrong directory; X6 SEALED_PIN_MISSING revision-only; X7, X7b default words; X8, X8b R5 boundary; X9a not-repo→3; X9b `_toplevel` swallows OSError; X9e, X9f catch-all narrowed; X9g GitFault→1; X9h shallow→3; X9i dispatch_lint without the UnicodeDecodeError catch; X9j `--root`→2; X9k IndexUnreadable→1; X9l json never written. Survive: X5b (redundant branch, no behaviour change); X9d (json `except`→`raise`, catch-all still gives 2); X9c (ls-files failure→`set()` gives exit 3 instead of 2, untested; NF-03). |
+| F1 | PASS | 10 failed, 2035 passed, 31 skipped, exit 1; same set as the receipt and ⊆ the 12 base names; zero new red; 2022 + 23 new = 2045 = 10 + 2035. |
+| Observable behavior | FAIL in part | main path holds; "a red is never reported as a tool fault" fails under the host's default cp950 stdout (NF-01). |
+| Boundary | PASS | 7 paths, all in `create`; plugin.json and the tickets README untouched; stdlib only, Python 3.11.9; `mypy --strict --python-version 3.11` no issues; no `Any`, no `type: ignore`. |
+| Changed assertions | PASS | exactly the two the seat lists (ShallowHistoryTests 1→2; "not a repository" moved to `ToolFaultTests` exit 2); all other test changes are additions. |
+| Receipt integrity | PASS, one note | chain, digests, captures and per-cell exits match; the F1 deviation (10 of 12 base names red) reproduced and accepted: both are environment- or pin-bound tests outside the change. |
+
+The seat's reading of P6 "index argument missing" (an argument naming a missing file → 3; no argument keeps discovery mode) is accepted; the control plane may reword the ticket at the next revision.
+
+### Prior findings
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| F-01 | CLOSED, residue in NF-01 | non-UTF-8 index exits 3 without traceback; unwritable or directory `--json` exits 2 before `--write`; both state-writing scripts have a catch-all to 2; dispatch_lint can still reach the caller as an uncaught traceback with exit 1 through stdout encoding. |
+| F-02 | CLOSED for the named cases | SHALLOW_HISTORY, git not startable and not a repository exit 2; README updated; `--root` not a directory (NF-02) and a failing git query (NF-03) do not follow the mapping. |
+| F-03 | CLOSED | P7 probes and tests; M11, M12 red. |
+| F-04 | CLOSED | P8 cases read; M4–M7, M9, M10 red; probes X1–X8 red. |
+| F-05 | CLOSED | all five fields per cell, LF, byte-identical blocks; P4 over both scopes; residue NF-05. |
+| F-06 | CARRIED (OUT_OF_SCOPE_HARDENING) | `--help` exits 0; empty section `fences=0 failures=0` exit 0; wave-2 evidence-gate ticket. |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| NF-01 | `IMPLEMENTATION_DEFECT` | Medium | `index_pins.py:462-469`, `receipt_fence_check.py:869-875`, `dispatch_lint.py:103-105` | Under the host's default stdout encoding (cp950, `PYTHONUTF8` unset) a red whose printed text contains a character outside the code page is reported wrongly: index_pins and receipt_fence_check as tool fault 2 (the c3 catch-all turns the `UnicodeEncodeError` into a fault after the red was computed); dispatch_lint ends in an uncaught traceback with exit 1. Against R4-2, the F-01 disposition and P6. Tests and dispatch always set `PYTHONUTF8=1`, so the guard exists only in that environment. Suggested fix: reconfigure stdout/stderr with `errors="backslashreplace"` at entry, plus a test with a non-cp950 leaf or capture name. | probes B7 (index_pins red row with a non-cp950 leaf: `tool fault: UnicodeEncodeError`, exit 2; with UTF-8, exit 1), B8 (receipt_fence_check CAPTURE_MISSING with a non-cp950 name: exit 2), B9 (dispatch_lint prose line: traceback, exit 1) |
+| NF-02 | `IMPLEMENTATION_DEFECT` | Low | `index_pins.py:508-509`; `tests/test_gate_index_pins.py` UsageTests "root is not a directory"; README exit-3 list | `--root` missing or not a directory → exit 3, pinned by a new assertion; R4-7 says an unreadable input directory exits 2 and P6 maps "not a repository" to 2; receipt_fence_check maps its missing roots to 2; the README exit-3 list does not mention it. | probe B3: `--root <absent>` and `--root <file>` exit 3; X9j turns the usage test red |
+| NF-03 | `IMPLEMENTATION_DEFECT` + `EVIDENCE_DEFECT` | Low | `index_pins.py:119-125`, `:138`, `:141-145`; docstring `:34-36` | The docstring says a failing git query exits 2; only a `git ls-files` failure does, and nothing tests it (X9c survives). When `git log -1 -- <leaf>` fails (exit 128) the leaf is reported as SKIP_UNTRACKED, a red with exit 1: a tool fault reported as a red. | probe B5 (HEAD object removed: `git log` 128, `ls-files` 0, `--check` reports SKIP_UNTRACKED, exit 1); X9c: P3 stays green |
+| NF-04 | `OUT_OF_SCOPE_HARDENING` | Low | `index_pins.py:141-145` | A tracked leaf with a non-ASCII name appears quoted in `git ls-files` output under the default `core.quotepath`, never resolves, and gives a false SKIP_UNRESOLVED red; dates from c1; no closure cell names it. Candidate fix: `-c core.quotepath=false ls-files -z`. | probe B7 with UTF-8: SKIP_UNRESOLVED for a tracked non-ASCII leaf |
+| NF-05 | `EVIDENCE_DEFECT` | Low | receipt cell P6 `exit:` | The field reads "0,1,2,3 per (script, code) pair; see capture" while the capture holds 23 exits; not machine-checkable. P7 shows the right form (exits listed in file order). | receipt P6 row |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | LF review clone of the seat's clone at `0d1ef754` (`core.autocrlf=false` set in the clone, index rebuilt) | 0 |
+| 2 | `git rev-parse HEAD HEAD~1 HEAD~2 HEAD~3`; `git diff --name-only f4d43817..HEAD` | 0 (7 paths) |
+| 3–5 | P1, P2, P3 pytest | 0 / 0 / 0 |
+| 6 | P4 grep with the dispatch denylist | 1 (zero hits) |
+| 7 | P5 pytest | 1 (base id only) |
+| 8 | P6 and P7 CLI probes on the c3 blobs | as in the cells |
+| 9 | shallow clone `--depth 1`, `index_pins --check` and `--write` | 2 / 2 |
+| 10 | corrupt object store, `index_pins --check` | 1 (NF-03) |
+| 11 | cp950 probes for the three scripts | 2 / 2 / 1 (NF-01) |
+| 12 | `receipt_fence_check --help`; empty section | 0 / 0 (F-06) |
+| 13 | sha256 of `git show 0d1ef754:<script>`; receipt field and capture check | 0 |
+| 14 | `python -m mypy --strict --python-version 3.11` on the three scripts | 0 |
+| 15 | mutation harness for M1–M12, M2b, M3b, X1–X9l, each followed by the named test file | 1 for each M; survivors X5b, X9c, X9d exit 0 |
+| 16 | `git diff c41cc29d 0d1ef754 -- tests/` (removed lines) | 0 |
+| 17 | F1 `pytest tests -q -p no:cacheprovider` | 1 (10 failed, all base names) |
+| 18 | `git status --porcelain` in the review clone, the seat clone and the control plane | 0 lines each |
+
+The 10 F1 failures: `test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an_actual_linux_kernel_and_backend`, `::test_acr6_exact_test_only_boundary`; `test_guarded_integration_corrections.py::ReceiptBoundCorrectionTests::test_reviewed_router_profile_composes_return_integration_and_audit`; `test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists`; `test_plugin_publication.py::CandidateMetadataTests::test_l5_stale_candidate_pin_is_named_before_generation`, `::PublicationReachabilityTests::test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable`, `::PublicationReachabilityTests::test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor`; `test_refusal_guidance.py::ClassificationAuditTests::test_every_failure_enum_in_the_library_is_covered_or_uncovered`; `test_workflow_router.py::WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services`, `::test_temporal_approval_signal_requires_matching_authority_state`.
+
+Raw logs: retained by the reviewer seat on its host (P1–P5, P9, mypy, F1, probes 1–4, mutation summary, M1–M12, M2b, M3b, X*); not committed.
+
+Not verified: the seat's own mutation runs; why the two base names pass in this environment; POSIX/Linux behaviour (Windows host only); unreadable-permission directories; the source checkout of the original scripts.
