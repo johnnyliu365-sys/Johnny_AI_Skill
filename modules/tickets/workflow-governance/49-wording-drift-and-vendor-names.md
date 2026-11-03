@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; 49-W1–W5 revision03 after the revision02 initial review returned CHANGES_REQUESTED (N49-01 TICKET_DEFECT, N49-04); revision01 initial review CHANGES_REQUESTED (R49-01 to R49-05) |
+| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; 49-W1–W5 revision04 (revision03 corrected before evidence: captures place added) after the revision02 initial review returned CHANGES_REQUESTED (N49-01 TICKET_DEFECT, N49-04); revision01 initial review CHANGES_REQUESTED (R49-01 to R49-05) |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; REVIEW of ticket 47 finding F-12 |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47 revision02 |
 | Grant / roles | Control plane authors; independent review |
@@ -33,11 +33,11 @@ The file list `<B>` of W1, W3, W4 and W5 is exactly the boundary set above:
 
 | Cell | Check | Expected |
 | --- | --- | --- |
-| W1 | `git grep -nE "Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Codex/current worktree|Codex branch" -- <B>` | every hit is in one of these places and the capture lists each hit under its place: (a) this W1 row; (b) the spec "Authoring AI / baseline" row and the spec Revision Signatures row dated 2026-08-05; (c) a row of this ticket's "Ticket corrections" table; (d) a line of the review record. No hit anywhere else |
+| W1 | `git grep -nE "Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Codex/current worktree|Codex branch" -- <B>` | every hit is in one of these places and the capture lists each hit under its place: (a) this W1 row; (b) the spec "Authoring AI / baseline" row and the spec Revision Signatures row dated 2026-08-05; (c) a row of this ticket's "Ticket corrections" table; (d) a line of the review record; (e) a capture under `evidence/49/` that records a W1 or W5 run. No hit anywhere else |
 | W2 | `grep -n "| P4 |" modules/tickets/workflow-governance/48-port-gate-scripts.md` | the P4 cell names the dispatch file as the carrier of its denylist and spells no name |
 | W3 | `git grep -nE "(^|[^A-Za-z])[A-Z]:[/\\\\]" -- <B>` | zero hits (no host absolute path in any boundary file, review record or capture of this ticket) |
 | W4 | `git diff --name-only 7335e78..HEAD` | every path is in this boundary block or in ticket 47's; the capture lists each path under the ticket it belongs to; no forbid path of either ticket outside the other's boundary |
-| W5 | `git grep -niE "codex|claude|anthropic|openai|gpt|gemini|opus|sonnet|haiku|fable" -- <B>` | every hit is classified in the capture as one of: functional host or file or ref name; dated record; object of a check or finding (W1 places a–d). Zero hits classified as a live role holder or location |
+| W5 | `git grep -niE "codex|claude|anthropic|openai|gpt|gemini|opus|sonnet|haiku|fable" -- <B>` | every hit is classified in the capture as one of: functional host or file or ref name; dated record; object of a check or finding (W1 places a–e). Zero hits classified as a live role holder or location |
 
 ## Ticket corrections (control plane)
 
@@ -56,3 +56,4 @@ The file list `<B>` of W1, W3, W4 and W5 is exactly the boundary set above:
 | revision03 (N49-02) | receipt | Boundary had no row; Observable behavior had no capture | W4 and W5 added as cells with captures |
 | revision03 (N49-03) | W1 pattern | "Codex branch" (ticket 47, a live location statement) invisible | pattern extended; the implementation names the ref instead |
 | revision03 (N49-05) | — | raw pytest captures under `evidence/47/` carry host paths | routed to ticket 47 as a wave-2 evidence-gate rule (the capture step strips the checkout and interpreter roots); not a cell of this ticket |
+| revision04, frozen before any evidence of revision03 was produced (self-found while running W1) | W1, W5 | the permitted places (a)–(d) left out the captures under `evidence/49/`, which quote the hits of every W1 and W5 run, so "no hit anywhere else" was unreachable | place (e) added; `<B>` unchanged |
