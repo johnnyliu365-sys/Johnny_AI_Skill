@@ -399,3 +399,22 @@ Not verified: whether the owner has confirmed the F-05 descriptor decision outsi
 Raw logs: retained by the reviewer seat on its host (D6 candidate and main with name sets, D1 candidate and main, D5 and tag diffs, digest and pins, policy tests, M1, F-07, counter-mutation, added-line scan); not committed.
 
 Not verified: whether the control-plane checkout's tree equalled `a47e976b` when its D6 ran (the capture shows the path, not the tree); the owner's F-05 confirmation; external target-project names beyond those this seat knows; Markdown rendering; tickets 48 and 49 cells and commit `1334f0c4`.
+
+## ImplementationReturn (control plane, closure revision05)
+
+| Field | Value |
+| --- | --- |
+| Return | `COMPLETED` |
+| Order | re-plan `217e2db1` (revision05 frozen: D7, boundary, committed D5/D7 scripts, D6 main baseline) → content `6f199b5a` → this evidence commit (adds captures and this section only) |
+| Candidate | `6f199b5ad9f326cbcdfc5ff689c58b4398c066b7` (content); every capture headed with it; the D6 capture records the tracked-file state of the tree at run start (tree: 0 tracked files modified) |
+| D1 | PASS — `3 failed, 121 passed, 564 subtests passed in 4.91s`; failures: ['tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists', 'tests/test_workflow_router.py::WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services', 'tests/test_workflow_router.py::WorkflowRouterTests::test_temporal_approval_signal_requires_matching_authority_state']; raw `evidence/47/rev05-D1.txt` |
+| D2 | PASS — counts ['1', '1', '1']; raw `evidence/47/rev05-D2.txt` |
+| D3 | PASS — counts ['2', '1']; raw `evidence/47/rev05-D3.txt` |
+| D4 | PASS — counts ['1', '7']; raw `evidence/47/rev05-D4.txt` |
+| D5 | PASS — `--- paths: 67; outside every boundary: 0` (committed script `evidence/47/d5_union.py`); raw `evidence/47/rev05-D5.txt` |
+| D6 | PASS — candidate `10 failed, 1919 passed, 31 skipped, 15 warnings, 3950 subtests passed in 231.64s (0:03:51)`; main `a1cb6c1` in a fresh clone, same environment: `10 failed, 1918 passed, 31 skipped, 15 warnings, 3949 subtests passed in 235.16s (0:03:55)`; candidate failures (10) ⊆ main failures (10): extra on candidate = none; main-only = none; raw `evidence/47/rev05-D6-full.txt`, `evidence/47/rev05-D6-main.txt` |
+| D7 | PASS — `--- live retired-rule hits: 0` (committed script `evidence/47/d7_sweep.py`; every hit listed with its class); raw `evidence/47/rev05-D7.txt` |
+| M1 | check performed — exit-code bullet removed in a disposable edit: exit-code phrase 0, D2 phrase 1; Workflow.md restored, porcelain for it empty; raw `evidence/47/rev05-M1.txt` |
+| F-07 mutation | executor reworded to a reviewer seat running the merge by hand → `1 failed, 7 passed, 72 subtests passed in 0.10s` (`test_tara1b` red); restored; raw `evidence/47/rev05-F07-mutation.txt` |
+| Policy pins | router-control.md, review-checks.md and implementation-authority.md digests moved with the documents in profile.py and test_workflow_router.py |
+| Deviations | D6 names present on main but absent on the candidate are the run-to-run variable ones listed above; captures carry host paths as recorded (R3-09, routed) |

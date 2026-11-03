@@ -1,0 +1,25 @@
+cell: D7
+candidate: 6f199b5ad9f326cbcdfc5ff689c58b4398c066b7
+command: "C:/Temp/claude/jas-venv/Scripts/python.exe" -I doc/reviews/workflow-governance/evidence/47/d7_sweep.py
+---
+--- pattern (a)
+[states the Revision 04 rule] skills/johnny-project-takeover/references/codex-native-same-lifetime-delegation.md:24:integration script from the merge queue (R4-4), not by the reviewer. The
+[states the Revision 04 rule] skills/johnny-project-takeover/references/router-control.md:102:lane is direct: the reviewer dispatches, waits, receives and reviews; the integration script (R4-4)
+[states the Revision 04 rule] skills/johnny-project-takeover/references/router-control.md:103:admitted by that review runs integration (integration script, never the reviewer). It does not
+[dated signature, approval or revision record] modules/spec/autonomous-collaboration-audit.md:115:| 2026-08-11 | Project owner / `CHG-20260811-012` | Approved reviewer-only Agent orchestration and implementation-owner tool denial; integrated tickets remain immutable 
+[states the Revision 04 rule] modules/spec/executor-routing.md:195:use reviewer-owned manual orchestration, but that route is integration evidence only (integration itself runs by the integration script, R4-4): it does not
+[states the Revision 04 rule] modules/spec/project-authority-integration.md:250:The reviewer establishes the exact clean-current-integration-main SHA (the integration script, not the reviewer, lands the result; R4-4) at same-lifetime dispatch as
+[dated signature, approval or revision record] modules/spec/project-authority-integration.md:570:| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04 R4-4) | Same-lifetime closure wording: the reviewer allocates, waits and reviews; guarded integration i
+[dated signature, approval or revision record] modules/spec/review-assurance.md:115:| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04 R4-4) | ARA-01 amended: the reviewer owns the review conclusion; integration is executed by the versioned integratio
+[states the Revision 04 rule] modules/spec/workflow-adoption-activation.md:91:   reviewer waits once and reviews; integration is run by the versioned integration script
+[dated signature, approval or revision record] modules/spec/workflow-adoption-activation.md:204:| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04 R4-4) | Activation step 2 amended: the reviewer waits once and reviews; integration is executed by the v
+[states the Revision 04 rule] modules/spec/workflow-governance.md:201:- Merge-queue file: `doc/handoffs/<year>/governance/MERGE-QUEUE.json` in the target project by default; the path is a parameter of the integration script. Entry: `ticket`, `candida
+[states the Revision 04 rule] doc/runbooks/dispatch-model-profile.md:67:  or a budget holder who is not its reviewer, and integration is run by the versioned integration
+--- pattern (b)
+[states the Revision 04 rule] skills/johnny-project-takeover/references/implementation-authority.md:22:For a cross-lifetime handoff on the receipt-bound route (not the default since workflow-governance
+[states the Revision 04 rule] skills/johnny-project-takeover/references/model-role-routing.md:39:return. A runner, queue, receipt, live descriptor or host readback is `NOT_REQUIRED` on that
+[states the Revision 04 rule] skills/johnny-project-takeover/references/review-checks.md:66:thread-control tools and the Johnny gateway caller surface. That route (not the default, R4-1) must bind one live descriptor and receipt, and the
+[states the Revision 04 rule] skills/johnny-project-takeover/references/review-checks.md:73:Its runner, queue, receipt, live descriptor and host readback are `NOT_REQUIRED`; the reviewer
+[states the Revision 04 rule] modules/spec/workflow-governance.md:164:- A ticket leaf, its receipt and the merge queue (`MERGE-QUEUE.json`) are the only state. Nothing an agent holds in memory is authoritative. A pending dispatch is the ticket's stat
+--- live retired-rule hits: 0
+exit=0

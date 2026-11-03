@@ -1,0 +1,8 @@
+cell: M1
+candidate: 6f199b5ad9f326cbcdfc5ff689c58b4398c066b7
+command: cp Workflow.md /tmp/Workflow.md.bak; grep -v '^- 轉移由腳本判定' /tmp/Workflow.md.bak > Workflow.md; grep -c '0 通過、1 契約紅' Workflow.md; grep -c '狀態只存在三種檔案' Workflow.md; cp /tmp/Workflow.md.bak Workflow.md; echo porcelain:; git status --porcelain -- Workflow.md
+---
+0
+1
+porcelain:
+exit=0
