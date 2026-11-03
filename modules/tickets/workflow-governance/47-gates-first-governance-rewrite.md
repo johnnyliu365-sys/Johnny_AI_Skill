@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision09 (47-D1–D9, M1–M2) after the revision08 initial review returned CHANGES_REQUESTED with TICKET_DEFECT N8-01, N8-02, N8-03 (revision08 by owner decision; revision07 superseded without review; revision06: N-03, N-06; revision05: R5-03, R5-05; revision04: R4-03, R4-05, R4-10; revision03: R3-01, R3-04; revision02: R2-01; revision01: initial and correction review both CHANGES_REQUESTED) |
+| State / Closure | REVIEW_APPROVED (correction review of closure revision09 on `9483ef19`, record `doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md`); integration onto `main` waits for the owner confirmation of the descriptor decision (F-05, REQ-20261103-043); 47-D1–D9, M1–M2 revision09 |
 | Authority | Owner 2026-11-03 takeover instruction; `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 |
 | Baseline | `a1cb6c1` (main); branch `cp/wave1-gates-first` |
 | Grant / roles | Control plane authors the documents; independent review by a separate `ticket-review` seat before integration |

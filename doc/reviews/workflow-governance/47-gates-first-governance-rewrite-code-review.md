@@ -792,3 +792,56 @@ Correction 1 (after the revision09 initial review, N9-01): the run-2 capture hea
 Raw logs: retained by the reviewer seat on its host; not committed.
 
 Not verified: which of the two run-2 statements is true; whether the control-plane checkout matched its `head:` lines when its D6 ran; why the application-control DLL block on the temporal bridge comes and goes; the owner's F-05 confirmation; external target-project names other than those this seat knows; Markdown and mermaid rendering; tickets 48 and 49 and the commits after b2e28cc2; wave-2 behaviour of the R4-7 schemas.
+
+## Revision09 correction review
+
+**Verdict: `APPROVED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `9483ef19` (chain `b2e28cc2` → `b0743a0c` → `9483ef19`, linear) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; fresh LF clone |
+| Summary | Both commits change documents only and leave every cell result as it was. N9-01 and N9-02 are closed. Hardening is non-blocking under CodeReview.md §4, so the two Low items below do not block. No implementation or evidence defect remains, so `CONVERGENCE_REVIEW_REQUIRED` is not appended. |
+
+### Findings status
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| N9-01 | CLOSED | The D7 row says "revision09 roots" (true: `d7_sweep.py` last changed in `ab7472b4`; its ROOTS equal ticket D7); the D8 row lists the historical SPECs, the handover runbook and the two absence checks (18 + 1 + 2 lines in `rev09-D8.txt`); the correction note withdraws the unobserved run-2 claim rather than rewriting the capture (`git diff b2e28cc2..9483ef19 -- evidence/` empty); D6's expected result does not depend on any run being serial. Residual wording under N10-02. |
+| N9-02 | CLOSED | REQ Scope lists the precedence note on every historical SPEC, the handover runbook and the three scripts; every one of the 45 non-review paths of `a1cb6c1..9483ef19` is covered, with the index rows, the ticket leaves and the review records belonging to the original boundary, the control plane and the review boundary respectively. Scope still names "new `skills/johnny-project-takeover/scripts/` with tests", absent on this line (over-lists, pre-existing). |
+| N9-03 | PARTIAL (non-blocking) | recorded as `OUT_OF_SCOPE_HARDENING` with "wave 2 may widen the waiver wording"; change-log row 13 names only the instrument gaps, so N9-03 has no tracker entry (N10-01). |
+| N9-04 | ROUTED | row 13 as a D8 instrument gap |
+| N9-05 | ROUTED | row 13 as a D9 instrument gap |
+| N9-06 | ROUTED | row 13 as D7 instrument gaps |
+
+### Cells
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| D2 / D3 / D4 / D9 | PASS | 1/1/1; 2/1; 1/7; 1, all equal to the rev09 captures |
+| D5 | PASS | exit 0, 133 paths, 0 outside; the only difference from `rev09-D5.txt` (118) is the 15 rev09 evidence files |
+| D7 / D8 | PASS | exit 0 each; bodies byte-identical to the rev09 captures |
+| D1 / D6 | not rerun (not required) | `git diff --name-only b2e28cc2..9483ef19` touches only the change log, the REQ, the ticket 47 review record and the ticket 47 leaf |
+| Order | PASS | linear; the ticket diff append-only; no script and no evidence changed; the correction note sits under the revision09 return and the review section is appended after it |
+| Record truthfulness | PASS | `b0743a0c`'s subject claims the review section while its stat shows only the two rows and the note; `9483ef19` adds the 73-line section and says that `b0743a0c` claimed but did not contain it; no file asserts otherwise |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| N10-01 | `OUT_OF_SCOPE_HARDENING` | Low (non-blocking) | doc/HARNESS-CHANGELOG.md:25; ticket 47 correction table | Row 13 carries only the instrument gaps, so N9-03 (the Workflow.md:86 waiver names SPECs only; the runbook note grants itself the waiver) has no wave-2 tracker entry; the ticket says only "may widen". Route it explicitly in wave 2. | row 13 vs the ticket rows |
+| N10-02 | `OUT_OF_SCOPE_HARDENING` | Info (non-blocking) | review record correction note | The note uses labels defined nowhere in the record ("the c7 implementation seat", "its P3 run") and cites an uncommitted wait log; the D6 note still states the overlap as fact while the correction calls it only possible. Nothing rests on it, because D6 passes by name-set equality. | greps over the record and the D6 headers |
+
+Added-line scan (92 lines): no host absolute path; vendor-like words only inside repository file names and quoted review text; no external project name; no chat tone.
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | fresh LF clone at `9483ef19` | 0 |
+| 2–3 | `git diff --name-only/--stat b2e28cc2..9483ef19`; evidence diff (0 bytes); per-commit diffs; `rev-list --parents` | 0 |
+| 4–6 | D2, D3, D4, D9 greps; `d5_union.py`, `d7_sweep.py`, `d8_precedence.py`; capture-body diffs after CRLF strip | 0; 0 / 0 / 0; 1 (D5: +15 paths) / 0 / 0 |
+| 7–8 | `git diff --name-only a1cb6c1..9483ef19` vs Scope; boundary grep; `git log` of `d7_sweep.py`; ROOTS grep; ticket removed-line count (0) | 0 |
+| 9–11 | D6 capture header reads and greps; added-line scan; `git status --porcelain` (0 lines) | 0 |
+
+Not verified: D1 and D6 not rerun (no file outside `doc/` and `modules/tickets/` changed); which run-2 statement is true and what the uncommitted wait log contains; that the appended review section is word-for-word the initial reviewer's report; the owner's F-05 confirmation; external target-project names other than those this seat knows; Markdown rendering; tickets 48 and 49. No record on this line yet has a `review-verdict` block (wave-2 scope).
