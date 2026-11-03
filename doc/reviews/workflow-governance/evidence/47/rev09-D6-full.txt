@@ -1,11 +1,16 @@
-cell: D6
+cell: D6 (third full run, serial; the load-sensitive names of runs 1 and 2 checked alone first)
 candidate: 1c5c1336da97e1a082330ae8b081601a5dd8f1fc
-head: 1c5c1336da97e1a082330ae8b081601a5dd8f1fc
-command: pytest tests -q -p no:cacheprovider (control plane's checkout)
+head: 76e585d224e2641cf841de68a28f793ddcf7f904
+command: pytest tests/test_codex_registration_target_project_isolation_acceptance.py tests/test_codex_receipt_removal_acceptance.py -q -p no:cacheprovider; then pytest tests -q -p no:cacheprovider
 tree: 0 tracked files modified
 ---
+### alone
+......................                                                   [100%]
+22 passed in 27.15s
+alone_exit=0
+### full suite
 ..................................F....F............................................... [  4%]
-.......................................................................................................................................................................................................................F.................... [ 16%]
+............................................................................................................................................................................................................................................ [ 16%]
 ............................................................................................... [ 21%]
 ........................................ [ 23%]
 ......................................................................... [ 27%]
@@ -96,31 +101,15 @@ repository = WindowsPath('C:/Users/User/Desktop/Johnny_AI_Skill')
 E       AssertionError: assert frozenset({'A...DME.md', ...}) == frozenset({'t...pability.py'})
 E         
 E         Extra items in the left set:
-E         'doc/reviews/workflow-governance/evidence/47/rev05-D4.txt'
-E         'doc/reviews/workflow-governance/evidence/47/rev08-D6-full.txt'
-E         'doc/requirements/active/2026/adaptive-orchestration/REQ-20260829-047.md'
-E         'modules/tickets/plugin-adoption-quality/uix-02-reference-renderer-evidence-admission.md'
-E         'doc/context/local-orchestration-installer/README.md'...
+E         'doc/reviews/workflow-governance/evidence/47/rev09-D5.txt'
+E         'doc/reviews/workflow-governance/evidence/47/rev09-F07-mutation.txt'
+E         'skills/johnny-project-takeover/references/codex-native-same-lifetime-delegation.md'
+E         'modules/tickets/plugin-adoption-quality/wa-02b-target-activation-behavioral-hook.md'
+E         'doc/context/plugin-adoption-quality/README.md'...
 E         
-E         ...Full output truncated (212 lines hidden), use '-vv' to show
+E         ...Full output truncated (215 lines hidden), use '-vv' to show
 
 tests\test_atomic_conditional_replace_capability.py:359: AssertionError
-_ CodexReceiptRemovalAcceptanceTests.test_a5_foreign_records_and_payload_bytes_are_preserved _
-
-self = <test_codex_receipt_removal_acceptance.CodexReceiptRemovalAcceptanceTests testMethod=test_a5_foreign_records_and_payload_bytes_are_preserved>
-
-    def test_a5_foreign_records_and_payload_bytes_are_preserved(self) -> None:
-        allocator, lease, oracle = _ready()
-        try:
-            _seed_foreign(lease, oracle)
-            before = _foreign_snapshot(lease, oracle)
-            with patch.dict(os.environ, {"LOCALAPPDATA": r"C:\Users\oracle\AppData\Local"}):
-                result = run_receipt_removal_acceptance(lease, oracle, _request())
-            if type(result) is not ReceiptRemovalAcceptanceAccepted:
->               raise AssertionError("foreign-state receipt removal did not accept")
-E               AssertionError: foreign-state receipt removal did not accept
-
-tests\test_codex_receipt_removal_acceptance.py:333: AssertionError
 _ ReceiptBoundCorrectionTests.test_reviewed_router_profile_composes_return_integration_and_audit _
 
 self = <test_guarded_integration_corrections.ReceiptBoundCorrectionTests testMethod=test_reviewed_router_profile_composes_return_integration_and_audit>
@@ -319,7 +308,7 @@ self = <test_refusal_guidance.ClassificationAuditTests testMethod=test_every_fai
     
         self.assertEqual(set(audit.covered_enums), _COVERED_ENUM_ROSTER)
 >       self.assertEqual(set(audit.uncovered_enums), _UNCOVERED_ROSTER)
-E       AssertionError: {'library/local_orchestration/antigravity[3734 chars]ure'} != frozenset({'library/local_orchestration/a[3485 chars]re'})
+E       AssertionError: {'library/workflow_router/thread_host_con[3734 chars]ure'} != frozenset({'library/workflow_router/threa[3485 chars]re'})
 
 tests\test_refusal_guidance.py:443: AssertionError
 _ WorkflowRouterTests.test_agents_mcp_and_temporal_adapters_load_without_external_services _
@@ -478,7 +467,6 @@ tests/test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an
 =========================== short test summary info ===========================
 FAILED tests/test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an_actual_linux_kernel_and_backend
 FAILED tests/test_atomic_conditional_replace_capability.py::test_acr6_exact_test_only_boundary
-FAILED tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a5_foreign_records_and_payload_bytes_are_preserved
 FAILED tests/test_guarded_integration_corrections.py::ReceiptBoundCorrectionTests::test_reviewed_router_profile_composes_return_integration_and_audit
 FAILED tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists
 FAILED tests/test_plugin_publication.py::CandidateMetadataTests::test_l5_stale_candidate_pin_is_named_before_generation
@@ -487,5 +475,5 @@ FAILED tests/test_plugin_publication.py::PublicationReachabilityTests::test_the_
 FAILED tests/test_refusal_guidance.py::ClassificationAuditTests::test_every_failure_enum_in_the_library_is_covered_or_uncovered
 FAILED tests/test_workflow_router.py::WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services
 FAILED tests/test_workflow_router.py::WorkflowRouterTests::test_temporal_approval_signal_requires_matching_authority_state
-11 failed, 1918 passed, 31 skipped, 15 warnings, 3950 subtests passed in 417.02s (0:06:57)
+10 failed, 1919 passed, 31 skipped, 15 warnings, 3950 subtests passed in 271.20s (0:04:31)
 exit=1
