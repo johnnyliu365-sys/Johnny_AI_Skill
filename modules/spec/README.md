@@ -1,7 +1,5 @@
 # 模組規格
 
-> Precedence note (`CHG-20261103-043`): this SPEC predates workflow-governance Revision 04. Where it assigns integration to a role, or treats the receipt-bound bridge or the live descriptor as required or as the default dispatch route, Revision 04 R4-1 and R4-4 prevail; reading this SPEC through this note raises no `ROUTE_REFERENCE_INVALID`. It is archived through the requirement-lineage process when the router library retires (wave 3).
-
 每個功能集群只有一份有效規格。`reusable-module-library.md` 已核准；其工單仍待使用者第二次核准，核准前不得建立實作或測試。
 
 ## 獨立規格
