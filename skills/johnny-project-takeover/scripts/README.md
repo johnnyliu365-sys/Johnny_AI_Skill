@@ -70,11 +70,16 @@ state cell, stripped, equals the sealed word (default `SEALED`, case-insensitive
 verified, never rewritten; `--sealed-state` must not be empty or blank. With no index
 argument every tracked Markdown file that has a `revision` and `digest` header is
 scanned. Structural defects (rows with the wrong column count, pinned rows outside a
-table, unresolved or untracked leaves, cells without a hash) exit 1. Exit 2: a shallow
-clone whose history would pin the boundary commit (`SHALLOW_HISTORY`), `git` cannot be
-started, not inside a git repository, `--root` is missing or not a directory, any git
-query that fails exits 2 with git's message (`git log -1 -- <leaf>`, `git ls-files`,
-`git show <revision>:<leaf>` or `git rev-parse` exits non-zero; never reported as
-`SKIP_UNTRACKED`, `SKIP_NO_BLOB`, `SEALED_PIN_INVALID` or any other red), the `--json` path cannot be written, or an
-unexpected error. Exit 3: bad option, missing mode, empty `--sealed-state`, an index
-argument that is not a file, or an index file that is not UTF-8.
+table, unresolved or untracked leaves, cells without a hash) exit 1.
+A git failure that stems from the environment (`git log -1 -- <leaf>`,
+`git ls-files`, the single shallow-boundary `git rev-parse`, or `git show <revision>:<leaf>`
+failing although the revision and its tree check out) is a tool fault, exit 2 with git's
+message, never `SKIP_UNTRACKED`. A failure that stems from an index row or the work tree is
+a red, exit 1: the script checks that the recorded revision is a commit and that its tree
+lists the leaf before it reads the blob, so a sealed row failing either check is
+`SEALED_PIN_INVALID` and an open row whose tracked leaf is absent from the tree of its last
+commit is `SKIP_NO_BLOB`. Exit 2: a shallow clone whose history would pin the boundary
+commit (`SHALLOW_HISTORY`), `git` cannot be started, not inside a git repository, `--root`
+is missing or not a directory, an environment git query fails as above, the `--json` path
+cannot be written, or an unexpected error. Exit 3: bad option, missing mode, empty
+`--sealed-state`, an index argument that is not a file, or an index file that is not UTF-8.

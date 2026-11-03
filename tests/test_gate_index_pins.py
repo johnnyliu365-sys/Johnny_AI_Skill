@@ -119,9 +119,16 @@ class DigestAlgorithmTests(PinCase):
     def test_untracked_and_unknown_leaves_have_no_pin(self) -> None:
         repository = index_pins.Repo(self.repo.dir)
         self.assertIsNone(repository.current_commit_for("never-added.md"))
-        with self.assertRaises(index_pins.GitFault) as raised:
-            repository.blob_sha256_at(self.repo.last_commit(), "never-added.md")
-        self.assertIn("fatal:", str(raised.exception))
+        self.assertIsNone(repository.blob_sha256_at(self.repo.last_commit(), "never-added.md"))
+        self.assertIn("does not list never-added.md", repository.missing_reason(self.repo.last_commit(), "never-added.md"))
+
+    def test_a_revision_that_is_no_commit_has_no_pin(self) -> None:
+        repository = index_pins.Repo(self.repo.dir)
+        blob = git(self.repo.dir, "rev-parse", f"{self.repo.last_commit()}:leaf.md").strip()
+        for name, revision in (("no object", "1" * 40), ("a blob", blob)):
+            with self.subTest(name):
+                self.assertIsNone(repository.blob_sha256_at(revision, "leaf.md"))
+                self.assertIn("is not a commit", repository.missing_reason(revision, "leaf.md"))
 
 
 class CheckAndWriteTests(PinCase):
@@ -546,6 +553,51 @@ class UsageTests(PinCase):
         self.assertEqual(done.returncode, 1, done.stdout + done.stderr)
 
 
+class IndexRowAndWorkTreeRedTests(PinCase):
+    """A failure that stems from the index row or the work tree is a red (exit 1), never a tool fault."""
+
+    def assert_red(self, rows: str, status: str) -> None:
+        self.repo.write_index(rows)
+        self.repo.commit("index")
+        self.assertEqual(git(self.repo.dir, "fsck", "--no-dangling"), "")
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 1, out + err)
+                self.assertIn(status, out)
+                self.assertNotIn("tool fault", err)
+
+    def test_a_sealed_revision_whose_tree_lacks_the_leaf_is_sealed_pin_invalid(self) -> None:
+        """J1: the revision is a real commit of this repository, but the leaf did not exist in it."""
+        before_leaf = git(self.repo.dir, "commit-tree", "-m", "empty", "4b825dc642cb6eb9a060e54bf8d69288fbee4904").strip()
+        self.assert_red(self.repo.row(before_leaf, self.repo.digest(), state="SEALED"), "SEALED_PIN_INVALID")
+
+    def test_a_sealed_revision_that_names_no_object_is_sealed_pin_invalid(self) -> None:
+        """J2."""
+        self.assert_red(self.repo.row("1" * 40, self.repo.digest(), state="SEALED"), "SEALED_PIN_INVALID")
+
+    def test_a_sealed_revision_that_names_a_blob_is_sealed_pin_invalid(self) -> None:
+        blob = git(self.repo.dir, "rev-parse", f"{self.repo.last_commit()}:leaf.md").strip()
+        self.assert_red(self.repo.row(blob, self.repo.digest(), state="SEALED"), "SEALED_PIN_INVALID")
+
+    def test_an_open_leaf_deleted_in_its_last_commit_and_re_added_to_the_index_only_is_skip_no_blob(self) -> None:
+        """J3: git log reports the deleting commit; its tree no longer lists the leaf."""
+        commit, digest = self.repo.last_commit(), self.repo.digest()
+        git(self.repo.dir, "rm", "-q", "leaf.md")
+        git(self.repo.dir, "commit", "-q", "-m", "delete the leaf")
+        self.repo.write_leaf("again\n")
+        git(self.repo.dir, "add", "leaf.md")
+        self.assertIn("leaf.md", git(self.repo.dir, "ls-files"))
+        self.assertNotEqual(self.repo.last_commit(), commit)
+        self.repo.write_index(self.repo.row(commit, digest))
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 1, out + err)
+                self.assertIn("SKIP_NO_BLOB", out)
+                self.assertNotIn("tool fault", err)
+
+
 class ToolFaultTests(PinCase):
     """Exit 2: the gate could not decide; never reported as a red (1) and never as usage (3)."""
 
@@ -713,7 +765,7 @@ class ToolFaultTests(PinCase):
         path = self.repo.write_index("")
         self.repo.commit("index")
         (self.repo.dir / ".git" / "shallow").write_text("garbage\n", encoding="utf-8", newline="\n")
-        messages = self.git_messages("rev-parse", "--is-shallow-repository")
+        messages = self.git_messages("rev-parse", "--is-shallow-repository", "--git-dir")
         for mode in ("--check", "--write"):
             with self.subTest(mode):
                 code, out, err = self.repo.run(mode, "INDEX.md")
@@ -724,6 +776,50 @@ class ToolFaultTests(PinCase):
                     self.assertIn(message, err)
                 self.assertEqual(out, "")
         self.assertEqual(path.read_text(encoding="utf-8"), HEADER)
+
+    def test_the_shallow_check_is_one_git_query(self) -> None:
+        """One invocation decides both facts, so a failure of it has exactly one place to be tested."""
+        repository = index_pins.Repo(self.repo.dir)
+        calls: list[tuple[str, ...]] = []
+        original = repository.git_text
+
+        def counting(*args: str, stdin: str | None = None) -> tuple[int, str]:
+            calls.append(args)
+            return original(*args, stdin=stdin)
+
+        with mock.patch.object(repository, "git_text", counting):
+            self.assertEqual(repository.shallow_boundary(), set())
+        self.assertEqual(len(calls), 1, calls)
+
+    def test_a_tree_object_that_cannot_be_read_is_a_tool_fault(self) -> None:
+        """The recorded revision is a commit, but its tree object is gone: the object store is broken."""
+        commit, digest = self.repo.last_commit(), self.repo.digest()
+        self.repo.write_index(self.repo.row(commit, digest, state="SEALED"))
+        self.repo.commit("index")
+        tree = git(self.repo.dir, "rev-parse", f"{commit}^{{tree}}").strip()
+        loose = self.repo.dir / ".git" / "objects" / tree[:2] / tree[2:]
+        self.assertTrue(loose.is_file(), "the tree is expected to be a loose object")
+        os.chmod(loose, 0o666)
+        loose.unlink()
+        messages = self.git_messages("ls-tree", commit, "--", "leaf.md")
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 2, out + err)
+                self.assertIn("tool fault", err)
+                for message in messages:
+                    self.assertIn(message, err)
+                self.assertNotIn("SEALED_PIN_INVALID", out + err)
+
+    def test_an_unreadable_blob_behind_a_good_revision_and_tree_is_a_fault_not_a_missing_pin(self) -> None:
+        commit = self.repo.last_commit()
+        self.delete_leaf_blob()
+        repository = index_pins.Repo(self.repo.dir)
+        with self.assertRaises(index_pins.GitFault) as raised:
+            repository.blob_sha256_at(commit, "leaf.md")
+        self.assertIn("git show", str(raised.exception))
+        for message in self.git_messages("show", f"{commit}:leaf.md"):
+            self.assertIn(message, str(raised.exception))
 
     def test_a_failing_git_query_is_a_tool_fault_as_a_process(self) -> None:
         self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))

@@ -29,15 +29,24 @@ row is a defect. The sealed word must not be empty or blank.
 
 Defects (exit 1): ROW_SHAPE_MISMATCH, ORPHAN_PINNED_ROW, SEALED_PIN_INVALID,
 SEALED_PIN_MISSING, SKIP_UNRESOLVED, SKIP_UNTRACKED, SKIP_NO_PATH_IN_CELL,
-SKIP_NO_HASH_IN_CELL.
+SKIP_NO_HASH_IN_CELL, SKIP_NO_BLOB.
+
+Fault versus red: a git failure that stems from the environment (git cannot run, the
+object store or the index is unreadable, `git log`, `git ls-files`, the shallow-boundary
+query or a blob read that fails although its revision and tree check out) is a tool fault,
+exit 2 with git's own stderr. A failure that stems from an index row or the work tree is a
+red, exit 1: the script checks that the recorded revision is a commit and that its tree
+lists the leaf before it reads the blob, so a sealed row failing either check is
+SEALED_PIN_INVALID and an open row whose tracked leaf is absent from the tree of its last
+commit is SKIP_NO_BLOB.
 
 Exit codes: 0 all pins current, 1 drift or defect, 2 tool fault (SHALLOW_HISTORY: a
 shallow clone whose history would pin the boundary commit; git cannot be started; not
-inside a git repository; --root missing or not a directory; any git query that
-fails exits 2 with git's message (`git log -1 -- <leaf>`, `git ls-files`,
-`git show <revision>:<leaf>`, `git rev-parse` exits non-zero), never a defect such as
-SKIP_UNTRACKED, SKIP_NO_BLOB or SEALED_PIN_INVALID; the --json path cannot be written;
-any other unexpected error), 3 usage error (bad option, missing mode, empty
+inside a git repository; --root missing or not a directory; an environment git query
+fails and exits 2 with git's message (`git log -1 -- <leaf>`, `git ls-files`, the single
+shallow-boundary `git rev-parse`, `git show <revision>:<leaf>` after the revision and
+tree checks passed), never a defect such as SKIP_UNTRACKED; the --json path cannot be
+written; any other unexpected error), 3 usage error (bad option, missing mode, empty
 --sealed-state, index argument that is not a file, index file that is not UTF-8). The
 console encoding never changes an exit code: stdout and stderr keep the host encoding
 but escape what it cannot encode.
@@ -75,6 +84,7 @@ _BACKTICKED = re.compile(r"`([^`]+)`")
 DEFECTS = (
     "ROW_SHAPE_MISMATCH", "ORPHAN_PINNED_ROW", "SEALED_PIN_INVALID", "SEALED_PIN_MISSING",
     "SKIP_UNRESOLVED", "SKIP_UNTRACKED", "SKIP_NO_PATH_IN_CELL", "SKIP_NO_HASH_IN_CELL",
+    "SKIP_NO_BLOB",
 )
 
 
@@ -108,14 +118,15 @@ class Repo:
     def __init__(self, root: Path) -> None:
         self.root = root.resolve()
         self._commits: dict[str, str | None] = {}
-        self._digests: dict[tuple[str, str], str] = {}
+        self._digests: dict[tuple[str, str], str | None] = {}
         self.last_stderr = ""
+        self._reasons: dict[tuple[str, str], str] = {}
 
-    def git_text(self, *args: str) -> tuple[int, str]:
+    def git_text(self, *args: str, stdin: str | None = None) -> tuple[int, str]:
         try:
             done = subprocess.run(
                 ["git", *args], cwd=self.root, capture_output=True, text=True,
-                encoding="utf-8", errors="replace",
+                encoding="utf-8", errors="replace", input=stdin,
             )
         except OSError as exc:
             raise GitFault(f"git cannot be started: {exc}") from exc
@@ -135,23 +146,67 @@ class Repo:
             self._commits[leaf] = sha if len(sha) == 40 else None
         return self._commits[leaf]
 
-    def blob_sha256_at(self, commit: str, leaf: str) -> str:
+    def is_commit(self, rev: str) -> bool:
+        """True when `rev` resolves to a commit of this repository; False when it names no commit.
+
+        A missing object or a non-commit object is an index-row fact (False); any other
+        failure of the object store is a tool fault carrying git's message.
+        """
+        first_code, _ = self.git_text("cat-file", "-e", f"{rev}^{{commit}}")
+        if first_code == 0:
+            return True
+        first = self.last_stderr
+        code, out = self.git_text("cat-file", "--batch-check", stdin=rev + "\n")
+        if code != 0:
+            raise GitFault(f"git cat-file --batch-check {rev} failed with exit {code}: {self.last_stderr}")
+        fields = out.split()
+        if len(fields) >= 2 and fields[1] != "commit":
+            return False
+        raise GitFault(f"git cat-file -e {rev}^{{commit}} failed with exit {first_code}: {first}")
+
+    def tree_lists(self, rev: str, leaf: str) -> bool:
+        """True when the tree of commit `rev` lists `leaf` as a file. `rev` must be a commit.
+
+        An empty listing is the not-in-tree answer; a non-zero exit means the tree
+        cannot be read, which is a tool fault carrying git's message.
+        """
+        code, out = self.git_text("ls-tree", rev, "--", leaf)
+        if code != 0:
+            raise GitFault(f"git ls-tree {rev} -- {leaf} failed with exit {code}: {self.last_stderr}")
+        fields = out.split(None, 3)
+        return len(fields) >= 2 and fields[1] == "blob"
+
+    def blob_sha256_at(self, commit: str, leaf: str) -> str | None:
         """sha256 of `git show <commit>:<leaf>` (repository bytes, not a git blob hash).
 
         Computed on raw bytes so a working-tree CRLF conversion can never change it.
-        A failing `git show` is a tool fault carrying git's message, never a missing digest.
+        The revision and the tree are checked before the blob is read: None (a red for
+        the caller, reason in `missing_reason`) when `commit` is not a commit of this
+        repository or its tree does not list `leaf`. A `git show` that fails although
+        both checks passed is a tool fault carrying git's message.
         """
         key = (commit, leaf)
         if key not in self._digests:
-            try:
-                done = subprocess.run(["git", "show", f"{commit}:{leaf}"], cwd=self.root, capture_output=True)
-            except OSError as exc:
-                raise GitFault(f"git cannot be started: {exc}") from exc
-            if done.returncode != 0:
-                stderr = (done.stderr or b"").decode("utf-8", errors="replace").strip()
-                raise GitFault(f"git show {commit}:{leaf} failed with exit {done.returncode}: {stderr}")
-            self._digests[key] = hashlib.sha256(done.stdout).hexdigest()
+            if not self.is_commit(commit):
+                self._digests[key] = None
+                self._reasons[key] = f"{commit[:12]} is not a commit of this repository"
+            elif not self.tree_lists(commit, leaf):
+                self._digests[key] = None
+                self._reasons[key] = f"the tree of {commit[:12]} does not list {leaf}"
+            else:
+                try:
+                    done = subprocess.run(["git", "show", f"{commit}:{leaf}"], cwd=self.root, capture_output=True)
+                except OSError as exc:
+                    raise GitFault(f"git cannot be started: {exc}") from exc
+                if done.returncode != 0:
+                    stderr = (done.stderr or b"").decode("utf-8", errors="replace").strip()
+                    raise GitFault(f"git show {commit}:{leaf} failed with exit {done.returncode}: {stderr}")
+                self._digests[key] = hashlib.sha256(done.stdout).hexdigest()
         return self._digests[key]
+
+    def missing_reason(self, commit: str, leaf: str) -> str:
+        """Why `blob_sha256_at` returned None for this pin."""
+        return self._reasons.get((commit, leaf), "no blob")
 
     def tracked_files(self) -> set[str]:
         code, out = self.git_text("ls-files")
@@ -165,14 +220,15 @@ class Repo:
         For every leaf last changed at or before the boundary, `git log -1` reports the
         boundary commit: right content, wrong revision. Such pins must not be produced.
         """
-        code, out = self.git_text("rev-parse", "--is-shallow-repository")
+        code, out = self.git_text("rev-parse", "--is-shallow-repository", "--git-dir")
         if code != 0:
-            raise GitFault(f"git rev-parse --is-shallow-repository failed with exit {code}: {self.last_stderr}")
-        if out.strip() != "true":
+            raise GitFault(f"git rev-parse --is-shallow-repository --git-dir failed with exit {code}: {self.last_stderr}")
+        answers = out.splitlines()
+        if len(answers) != 2:
+            raise GitFault(f"git rev-parse --is-shallow-repository --git-dir printed an unexpected answer: {out.strip()!r}")
+        if answers[0].strip() != "true":
             return set()
-        code, gitdir = self.git_text("rev-parse", "--git-dir")
-        if code != 0:
-            raise GitFault(f"git rev-parse --git-dir failed with exit {code}: {self.last_stderr}")
+        gitdir = answers[1]
         shallow_file = self.root / gitdir.strip() / "shallow"
         if not shallow_file.exists():
             return set()
@@ -385,7 +441,11 @@ def scan(repo: Repo, index_file: Path, tracked: set[str], sealed_state: str = DE
                         old_rev=old_rev, old_digest=old_digest)
                     continue
                 actual = repo.blob_sha256_at(old_rev, leaf)
-                if actual != old_digest:
+                if actual is None:
+                    add(lineno, "SEALED_PIN_INVALID", prefix, leaf_raw=leaf_raw, leaf=leaf,
+                        old_rev=old_rev, old_digest=old_digest,
+                        detail=f"the recorded revision cannot verify the leaf: {repo.missing_reason(old_rev, leaf)}")
+                elif actual != old_digest:
                     add(lineno, "SEALED_PIN_INVALID", prefix, leaf_raw=leaf_raw, leaf=leaf,
                         old_rev=old_rev, old_digest=old_digest,
                         detail=f"sha256(git show {old_rev[:12]}:{leaf}) = {actual[:12]} differs from the recorded value")
@@ -396,6 +456,10 @@ def scan(repo: Repo, index_file: Path, tracked: set[str], sealed_state: str = DE
                 add(lineno, "SKIP_UNTRACKED", prefix, leaf_raw=leaf_raw, leaf=leaf, old_rev=old_rev, old_digest=old_digest)
                 continue
             new_digest = repo.blob_sha256_at(new_rev, leaf)
+            if new_digest is None:
+                add(lineno, "SKIP_NO_BLOB", prefix, leaf_raw=leaf_raw, leaf=leaf, old_rev=old_rev,
+                    old_digest=old_digest, detail=repo.missing_reason(new_rev, leaf))
+                continue
             if old_rev == new_rev and old_digest == new_digest:
                 continue
             drift = add(lineno, "DRIFT", prefix, leaf_raw=leaf_raw, leaf=leaf, old_rev=old_rev,
