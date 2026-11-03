@@ -1,0 +1,27 @@
+cell: D8
+candidate: 1c5c1336da97e1a082330ae8b081601a5dd8f1fc
+command: "C:/Temp/claude/jas-venv/Scripts/python.exe" -I -X utf8 doc/reviews/workflow-governance/evidence/47/d8_precedence.py
+---
+[note present] modules/spec/adaptive-project-orchestration.md
+[note present] modules/spec/autonomous-collaboration-audit.md
+[note present] modules/spec/claude-code-plugin-distribution.md
+[note present] modules/spec/context-load-telemetry.md
+[note present] modules/spec/designerless-ui-codesign.md
+[note present] modules/spec/environment-capability-bootstrap.md
+[note present] modules/spec/executor-routing.md
+[note present] modules/spec/local-orchestration-installer.md
+[note present] modules/spec/module-application-skill.md
+[note present] modules/spec/plugin-distribution.md
+[note present] modules/spec/plugin-release-telemetry.md
+[note present] modules/spec/private-router-saas.md
+[note present] modules/spec/project-authority-integration.md
+[note present] modules/spec/receipt-bound-role-supervision.md
+[note present] modules/spec/reusable-module-library.md
+[note present] modules/spec/review-assurance.md
+[note present] modules/spec/router-framework.md
+[note present] modules/spec/workflow-adoption-activation.md
+[note present] doc/runbooks/handover-2026-08-22-plugin-distribution.md
+[no note, as required] modules/spec/TEMPLATE.md
+[no note, as required] modules/spec/README.md
+--- defects: 0 (covered files: 19)
+exit=0

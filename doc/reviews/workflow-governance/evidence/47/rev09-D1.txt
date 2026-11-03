@@ -1,0 +1,104 @@
+cell: D1
+candidate: 1c5c1336da97e1a082330ae8b081601a5dd8f1fc
+command: "C:/Temp/claude/jas-venv/Scripts/python.exe" -m pytest tests/test_workflow_router.py tests/test_plugin_policy_and_response.py tests/test_adversarial_review_policy.py tests/test_plugin_payload_boundary.py -q -p no:cacheprovider
+---
+F................. [ 14%]
+F.......................................................................................... [ 87%]
+.......F.......                                 [100%]
+================================== FAILURES ===================================
+_ WorkflowRouterTests.test_agents_mcp_and_temporal_adapters_load_without_external_services _
+
+self = <test_workflow_router.WorkflowRouterTests testMethod=test_agents_mcp_and_temporal_adapters_load_without_external_services>
+
+    def test_agents_mcp_and_temporal_adapters_load_without_external_services(self) -> None:
+        from library.workflow_router.integrations import (
+            AgentCapabilityDefinition,
+            McpResourceGateway,
+            OpenAICapabilityAdapter,
+        )
+>       from library.workflow_router.temporal_runtime import RouterRoundInput, route_round
+
+tests\test_workflow_router.py:1286: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+library\workflow_router\temporal_runtime.py:8: in <module>
+    from temporalio import activity, workflow
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\__init__.py:13: in <module>
+    from .service import __version__ as __sdk_version
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\service.py:20: in <module>
+    import temporalio.bridge.client
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\bridge\client.py:15: in <module>
+    import temporalio.bridge.runtime
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    """Telemetry for SDK Core. (unstable)
+    
+    Nothing in this module should be considered stable. The API may change.
+    """
+    
+    from __future__ import annotations
+    
+    from collections.abc import Callable, Mapping, Sequence
+    from dataclasses import dataclass
+    from typing import Any
+    
+    from typing_extensions import Protocol
+    
+>   import temporalio.bridge.temporal_sdk_bridge
+E   ImportError: DLL load failed while importing temporal_sdk_bridge: 應用程式控制原則已封鎖此檔案。
+
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\bridge\runtime.py:14: ImportError
+_ WorkflowRouterTests.test_temporal_approval_signal_requires_matching_authority_state _
+
+self = <test_workflow_router.WorkflowRouterTests testMethod=test_temporal_approval_signal_requires_matching_authority_state>
+
+    def test_temporal_approval_signal_requires_matching_authority_state(self) -> None:
+>       from library.workflow_router.temporal_runtime import ApprovalSignal
+
+tests\test_workflow_router.py:1332: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+library\workflow_router\temporal_runtime.py:8: in <module>
+    from temporalio import activity, workflow
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\__init__.py:13: in <module>
+    from .service import __version__ as __sdk_version
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\service.py:20: in <module>
+    import temporalio.bridge.client
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\bridge\client.py:15: in <module>
+    import temporalio.bridge.runtime
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    """Telemetry for SDK Core. (unstable)
+    
+    Nothing in this module should be considered stable. The API may change.
+    """
+    
+    from __future__ import annotations
+    
+    from collections.abc import Callable, Mapping, Sequence
+    from dataclasses import dataclass
+    from typing import Any
+    
+    from typing_extensions import Protocol
+    
+>   import temporalio.bridge.temporal_sdk_bridge
+E   ImportError: DLL load failed while importing temporal_sdk_bridge: 應用程式控制原則已封鎖此檔案。
+
+C:\Temp\claude\jas-venv\Lib\site-packages\temporalio\bridge\runtime.py:14: ImportError
+________________ CommittedPinTests.test_the_pinned_sha_exists _________________
+
+self = <test_plugin_payload_boundary.CommittedPinTests testMethod=test_the_pinned_sha_exists>
+
+    def test_the_pinned_sha_exists(self) -> None:
+        source = pinned_plugin_source(_MARKETPLACE_MANIFEST)
+>       self.assertTrue(
+            commit_exists(_REPO_ROOT, str(source["sha"])),
+            "the pinned sha names no commit in this repository",
+        )
+E       AssertionError: False is not true : the pinned sha names no commit in this repository
+
+tests\test_plugin_payload_boundary.py:623: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_workflow_router.py::WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services
+FAILED tests/test_workflow_router.py::WorkflowRouterTests::test_temporal_approval_signal_requires_matching_authority_state
+FAILED tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists
+3 failed, 121 passed, 564 subtests passed in 6.57s
+exit=1

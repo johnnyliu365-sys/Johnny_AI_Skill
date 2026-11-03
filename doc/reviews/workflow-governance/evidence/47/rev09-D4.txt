@@ -1,0 +1,7 @@
+cell: D4
+candidate: 1c5c1336da97e1a082330ae8b081601a5dd8f1fc
+command: grep -c '^## Revision 04' modules/spec/workflow-governance.md; grep -c '^### R4-[1-7]' modules/spec/workflow-governance.md
+---
+1
+7
+exit=0
