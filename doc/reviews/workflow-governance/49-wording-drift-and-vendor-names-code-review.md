@@ -1,5 +1,7 @@
 # REVIEW — ticket 49 Vendor and model names out of governance documents
 
+> Commit identifiers in this record that predate 2026-11-03's identity rewrite are the pre-rewrite identifiers; read them through `doc/reviews/workflow-governance/evidence/commit-identity-rewrite-2026-11-03.txt` (old commit, new commit, identical tree).
+
 ## Revision01 initial review
 
 **Verdict: `CHANGES_REQUESTED`**
