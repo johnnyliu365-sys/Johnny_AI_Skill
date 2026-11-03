@@ -1,5 +1,7 @@
 # Adaptive Project Orchestration Specification
 
+> Precedence note (`CHG-20261103-043`): this SPEC predates workflow-governance Revision 04. Where it assigns integration to a role, or treats the receipt-bound bridge or the live descriptor as required or as the default dispatch route, Revision 04 R4-1 and R4-4 prevail; reading this SPEC through this note raises no `ROUTE_REFERENCE_INVALID`. It is archived through the requirement-lineage process when the router library retires (wave 3).
+
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` |

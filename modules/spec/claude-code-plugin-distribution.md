@@ -1,5 +1,7 @@
 # Claude Code plugin distribution — Revision 07 installed-cache version-specific tag closure
 
+> Precedence note (`CHG-20261103-043`): this SPEC predates workflow-governance Revision 04. Where it assigns integration to a role, or treats the receipt-bound bridge or the live descriptor as required or as the default dispatch route, Revision 04 R4-1 and R4-4 prevail; reading this SPEC through this note raises no `ROUTE_REFERENCE_INVALID`. It is archived through the requirement-lineage process when the router library retires (wave 3).
+
 | Field | Value |
 | --- | --- |
 | Specification ID | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` |

@@ -1,5 +1,7 @@
 # 通用功能模組庫規格
 
+> Precedence note (`CHG-20261103-043`): this SPEC predates workflow-governance Revision 04. Where it assigns integration to a role, or treats the receipt-bound bridge or the live descriptor as required or as the default dispatch route, Revision 04 R4-1 and R4-4 prevail; reading this SPEC through this note raises no `ROUTE_REFERENCE_INVALID`. It is archived through the requirement-lineage process when the router library retires (wave 3).
+
 | 欄位 | 內容 |
 | --- | --- |
 | 規格 ID | `SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP` |
