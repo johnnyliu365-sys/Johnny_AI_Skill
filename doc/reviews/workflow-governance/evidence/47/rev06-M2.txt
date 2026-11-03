@@ -1,0 +1,10 @@
+cell: M2
+candidate: bfbd58ff516adb72176a23c1b86db01811d53381
+command: restore skills/johnny-project-takeover/references/model-role-routing.md from a47e976b in a disposable edit; python -I -X utf8 d7_sweep.py | grep LIVE and the summary; d7_exit; restore; git status --porcelain -- skills/johnny-project-takeover/references/model-role-routing.md
+---
+[LIVE RETIRED RULE] (a2 reviewer submits) skills/johnny-project-takeover/references/model-role-routing.md:23: - `SUPERVISOR_REVIEWER` owns approved-SPEC ticket decomposition, schema/type preflight, dispatch, monitoring, independent review, correction routing and submission of the approved candidate to the mer
+[LIVE RETIRED RULE] (b2 cross-lifetime requires controls) skills/johnny-project-takeover/references/model-role-routing.md:36: For same-lifetime use, the reviewer calls the helper directly and waits once for its finite return. A runner, queue, receipt, live descriptor or host readback is `NOT_REQUIRED` on that route; those co
+--- live retired-rule hits: 2
+d7_exit=1
+porcelain:
+exit=0

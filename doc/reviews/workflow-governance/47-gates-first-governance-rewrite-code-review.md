@@ -499,3 +499,23 @@ Not verified: whether the control-plane checkout's tree equalled `a47e976b` when
 Raw logs: retained by the reviewer seat on its host; not committed.
 
 Not verified: whether the control-plane checkout's HEAD was `6f199b5a` when its D6 ran (the capture states the tracked-file count and the claimed candidate, not HEAD output); the owner's F-05 confirmation; external target-project names other than the ones this seat knows; Markdown rendering; tickets 48 and 49 cells and commit `34c79f0f`; wave-2 behaviour of the R4-7 schemas.
+
+## ImplementationReturn (control plane, closure revision06)
+
+| Field | Value |
+| --- | --- |
+| Return | `COMPLETED` |
+| Order | re-plan `99c06388` (revision06 frozen: new D7 instrument, M2, template file admitted) → content `bfbd58ff` → this evidence commit (adds captures and this section only) |
+| Candidate | `bfbd58ff516adb72176a23c1b86db01811d53381` (content); every capture headed with it; the D6 capture records HEAD and the tracked-file state at run start (tree: 0 tracked files modified) |
+| D1 | PASS — `3 failed, 121 passed, 564 subtests passed in 5.17s`; failures: ['tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists', 'tests/test_workflow_router.py::WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services', 'tests/test_workflow_router.py::WorkflowRouterTests::test_temporal_approval_signal_requires_matching_authority_state']; raw `evidence/47/rev06-D1.txt` |
+| D2 | PASS — counts ['1', '1', '1']; raw `evidence/47/rev06-D2.txt` |
+| D3 | PASS — counts ['2', '1']; raw `evidence/47/rev06-D3.txt` |
+| D4 | PASS — counts ['1', '7']; raw `evidence/47/rev06-D4.txt` |
+| D5 | PASS — `--- paths: 83; outside every boundary: 0` (committed `evidence/47/d5_union.py`); raw `evidence/47/rev06-D5.txt` |
+| D6 | PASS — candidate `11 failed, 1919 passed, 31 skipped, 15 warnings, 3949 subtests passed in 274.12s (0:04:34)`; main `a1cb6c1` in a fresh clone, same environment: `10 failed, 1918 passed, 31 skipped, 15 warnings, 3949 subtests passed in 280.94s (0:04:40)`; candidate failures (10) vs main failures (10): none: the candidate failure-name set equals the same-environment main run; raw `evidence/47/rev06-D6-full.txt`, `evidence/47/rev06-D6-main.txt` |
+| D7 | PASS — `--- live retired-rule hits: 0` (committed `evidence/47/d7_sweep.py`, revision06 instrument; every hit listed with its class and pattern); raw `evidence/47/rev06-D7.txt` |
+| M1 | check performed — exit-code bullet removed in a disposable edit: exit-code phrase 0, D2 phrase 1; Workflow.md restored, porcelain empty; raw `evidence/47/rev06-M1.txt` |
+| M2 | PASS — model-role-routing.md restored from `a47e976b` in a disposable edit: D7 exit 1 with 2 LIVE hits in that file; file restored, porcelain empty; raw `evidence/47/rev06-M2.txt` |
+| F-07 mutation | executor reworded to a reviewer seat running the merge by hand → `1 failed, 7 passed, 72 subtests passed in 0.10s` (`test_tara1b` red); restored; raw `evidence/47/rev06-F07-mutation.txt` |
+| Policy pins | every reference whose text changed has its digest moved in profile.py and test_workflow_router.py (listed in the content commit message) |
+| Deviations | none: the candidate failure-name set equals the same-environment main run; captures carry host paths as recorded (R3-09, routed) |

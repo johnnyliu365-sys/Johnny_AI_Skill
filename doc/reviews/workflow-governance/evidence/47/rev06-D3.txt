@@ -1,0 +1,7 @@
+cell: D3
+candidate: bfbd58ff516adb72176a23c1b86db01811d53381
+command: grep -c 'Revision 04 R4-4' CodeReview.md; grep -c 'The reviewer alone owns the final review conclusion.' CodeReview.md
+---
+2
+1
+exit=0
