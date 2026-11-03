@@ -1,0 +1,69 @@
+cell: W5
+candidate: 0aae3bf8ffa389dbabd2b6b2a87dd6df76887b73
+command: git grep -niE "codex|claude|anthropic|openai|gpt|gemini|opus|sonnet|haiku|fable" -- <B>
+---
+[functional host, file or ref name] doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md:18:| Scope | `AGENTS.md` item 5; `Workflow.md` section 0, section 5 integrator sentence; `C
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:19:| W1 | PASS as written | The scoped command at `924f5bb` returns exactly 1 h
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:21:| Observable behavior | PARTIAL | Source-project names: 0 hits in `git diff 
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:31:| R49-03 | `TICKET_DEFECT` | Medium | 49-…md:37; tickets README:31 | The cor
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:32:| R49-04 | `TICKET_DEFECT` | Medium | 49-…md:30; modules/spec/workflow-gover
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:34:| R49-06 | `OUT_OF_SCOPE_HARDENING` | Low | 47-…md:9; 48-…md:10; tickets REA
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:84:| Observable behavior | PASS with one Low residual | 47:8 and 48:8 use `tick
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:105:| N49-03 | `OUT_OF_SCOPE_HARDENING` | Low | 47-…md:49 | "stays on the Codex
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:130:Superseded by the revision05 return below: W4 and W5 were red in this run (
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:135:| Candidate | `b927e48de565613307b1cba3da059f43050917b8` (the ticket text o
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:3:command: git grep -nE 'Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Codex/current workt
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:5:modules/spec/workflow-governance.md:7:| Authoring AI / baseline | Codex control plane / current workt
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:6:modules/spec/workflow-governance.md:148:| 2026-08-05 | Codex control plane / `7769710` | Initial draf
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:7:modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:33:| W1 | `git grep -nE "Opu
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:3:command: git grep -nE "Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Codex/current workt
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:11:[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-revi
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:12:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:3:command: git
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:13:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:5:modules/spec
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:14:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:6:modules/spec
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:16:[(b) dated spec record] modules/spec/workflow-governance.md:7:| Authoring AI / baseline | Codex cont
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:17:[(b) dated spec record] modules/spec/workflow-governance.md:148:| 2026-08-05 | Codex control plane /
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:18:[(a) the W1/W5 check row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:3
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:19:[(c) Ticket corrections row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.m
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:3:command: git grep -niE "codex|claude|anthropic|openai|gpt|gemini|opus|sonnet|haiku|fable" -- <B>
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:12:[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-revi
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:13:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:3:command: git
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:14:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:5:modules/spec
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:15:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:6:modules/spec
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:17:[(b) dated spec record] modules/spec/workflow-governance.md:7:| Authoring AI / baseline | Codex cont
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:19:[(b) dated spec record] modules/spec/workflow-governance.md:148:| 2026-08-05 | Codex control plane /
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:20:[functional host, file or ref name] modules/tickets/workflow-governance/47-gates-first-governance-re
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:21:[functional host, file or ref name] modules/tickets/workflow-governance/47-gates-first-governance-re
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:22:[functional host, file or ref name] modules/tickets/workflow-governance/47-gates-first-governance-re
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:23:[functional host, file or ref name] modules/tickets/workflow-governance/47-gates-first-governance-re
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:24:[LIVE ROLE HOLDER OR LOCATION] modules/tickets/workflow-governance/47-gates-first-governance-rewrite
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:25:[functional host, file or ref name] modules/tickets/workflow-governance/48-port-gate-scripts.md:15:m
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:26:[functional host, file or ref name] modules/tickets/workflow-governance/48-port-gate-scripts.md:65:|
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:27:[(a) the W1/W5 check row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:3
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:28:[(a) the W1/W5 check row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:4
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:29:[(c) Ticket corrections row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.m
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:30:[functional host, file or ref name] modules/tickets/workflow-governance/README.md:27:- Delivery envi
+[(b) dated spec record] modules/spec/workflow-governance.md:7:| Authoring AI / baseline | Codex control plane / current worktree / `7769710` |
+[functional host, file or ref name] modules/spec/workflow-governance.md:31:- Target-project runtime dependencies, automatic source edits, model execution, model hosting, a background worker, an ex
+[(b) dated spec record] modules/spec/workflow-governance.md:148:| 2026-08-05 | Codex control plane / `7769710` | Initial draft after the owner-directed post-commit Grill. |
+[functional host, file or ref name] modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md:24:modify = skills/johnny-project-takeover/references/codex-native-same-lifetime-delega
+[functional host, file or ref name] modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md:36:forbid = .claude-plugin/
+[functional host, file or ref name] modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md:37:forbid = .codex-plugin/
+[functional host, file or ref name] modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md:49:revision-135 checklist stays on branch `codex/skill-improvement-checklist` where it 
+[functional host, file or ref name] modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md:90:| F-01 leftovers | AGENTS.md item 5, SKILL.md AUTO_CONTINUE bullet and the codex-nat
+[functional host, file or ref name] modules/tickets/workflow-governance/48-port-gate-scripts.md:15:modify = .claude-plugin/plugin.json
+[functional host, file or ref name] modules/tickets/workflow-governance/48-port-gate-scripts.md:65:| P5 | `.claude-plugin/plugin.json` payload | `skills` tree already covers the scripts; `tests/te
+[(a) the W1/W5 check row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:36:| W1 | `git grep -nE "Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Cod
+[(a) the W1/W5 check row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:40:| W5 | `git grep -niE "codex|claude|anthropic|openai|gpt|gemini|opus|sonnet|haiku|fa
+[(c) Ticket corrections row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:57:| revision03 (N49-03) | W1 pattern | "Codex branch" (ticket 47, a live location stat
+[(c) Ticket corrections row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:60:| revision05, frozen before its evidence (the revision04 W4 and W5 captures at `746a
+[functional host, file or ref name] modules/tickets/workflow-governance/README.md:27:- Delivery environment: local Python workflow-router POC plus detached Codex/Claude guidance source. No hosted 
+[functional host, file or ref name] modules/tickets/workflow-governance/README.md:31:The control plane owns the tickets, the dispatch and the review binding; it does not implement. Implementation 
+--- classification counts
+(a) the W1/W5 check row: 2
+(b) dated spec record: 2
+(c) Ticket corrections row: 2
+(d) review record line: 9
+(e) capture of a W1/W5 run: 31
+functional host, file or ref name: 11
+exit=0

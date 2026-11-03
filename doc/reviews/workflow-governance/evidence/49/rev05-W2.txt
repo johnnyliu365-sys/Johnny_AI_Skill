@@ -1,0 +1,6 @@
+cell: W2
+candidate: 0aae3bf8ffa389dbabd2b6b2a87dd6df76887b73
+command: grep -n "| P4 |" modules/tickets/workflow-governance/48-port-gate-scripts.md
+---
+64:| P4 | `grep -rniE "<denylist>" skills/johnny-project-takeover/scripts tests/test_gate_*.py`, where `<denylist>` is carried by the P4 command of the dispatch file for this ticket (the parameter file of the run) and is not written in this ticket | zero hits |
+exit=0

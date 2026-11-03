@@ -1,0 +1,41 @@
+cell: W1
+candidate: 0aae3bf8ffa389dbabd2b6b2a87dd6df76887b73
+command: git grep -nE "Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Codex/current worktree|Codex branch" -- <B>
+---
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:19:| W1 | PASS as written | The scoped command at `924f5bb` returns exactly 1 h
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:21:| Observable behavior | PARTIAL | Source-project names: 0 hits in `git diff 
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:31:| R49-03 | `TICKET_DEFECT` | Medium | 49-…md:37; tickets README:31 | The cor
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:32:| R49-04 | `TICKET_DEFECT` | Medium | 49-…md:30; modules/spec/workflow-gover
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:34:| R49-06 | `OUT_OF_SCOPE_HARDENING` | Low | 47-…md:9; 48-…md:10; tickets REA
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:84:| Observable behavior | PASS with one Low residual | 47:8 and 48:8 use `tick
+[(d) review record line] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md:105:| N49-03 | `OUT_OF_SCOPE_HARDENING` | Low | 47-…md:49 | "stays on the Codex
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:3:command: git grep -nE 'Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Codex/current workt
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:5:modules/spec/workflow-governance.md:7:| Authoring AI / baseline | Codex control plane / current workt
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:6:modules/spec/workflow-governance.md:148:| 2026-08-05 | Codex control plane / `7769710` | Initial draf
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:7:modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:33:| W1 | `git grep -nE "Opu
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:3:command: git grep -nE "Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Codex/current workt
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:12:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:3:command: git
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:13:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:5:modules/spec
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:14:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:6:modules/spec
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:16:[(b) dated spec record] modules/spec/workflow-governance.md:7:| Authoring AI / baseline | Codex cont
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:17:[(b) dated spec record] modules/spec/workflow-governance.md:148:| 2026-08-05 | Codex control plane /
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:18:[(a) the W1/W5 check row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:3
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W1.txt:19:[(c) Ticket corrections row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.m
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:13:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:3:command: git
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:14:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:5:modules/spec
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:15:[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt:6:modules/spec
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:17:[(b) dated spec record] modules/spec/workflow-governance.md:7:| Authoring AI / baseline | Codex cont
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:19:[(b) dated spec record] modules/spec/workflow-governance.md:148:| 2026-08-05 | Codex control plane /
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:27:[(a) the W1/W5 check row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:3
+[(e) capture of a W1/W5 run] doc/reviews/workflow-governance/evidence/49/rev04-W5.txt:29:[(c) Ticket corrections row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.m
+[(b) dated spec record] modules/spec/workflow-governance.md:7:| Authoring AI / baseline | Codex control plane / current worktree / `7769710` |
+[(b) dated spec record] modules/spec/workflow-governance.md:148:| 2026-08-05 | Codex control plane / `7769710` | Initial draft after the owner-directed post-commit Grill. |
+[(a) the W1/W5 check row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:36:| W1 | `git grep -nE "Opus|Sonnet|Haiku|Claude control plane|Codex control plane|Cod
+[(c) Ticket corrections row] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md:57:| revision03 (N49-03) | W1 pattern | "Codex branch" (ticket 47, a live location stat
+--- classification counts
+(a) the W1/W5 check row: 1
+(b) dated spec record: 2
+(c) Ticket corrections row: 1
+(d) review record line: 7
+(e) capture of a W1/W5 run: 19
+exit=0
