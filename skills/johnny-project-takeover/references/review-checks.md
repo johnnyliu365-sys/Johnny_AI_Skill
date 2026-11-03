@@ -61,8 +61,9 @@ implementer already reported. Apply all four points below whenever this row is i
 
 ## Multi-Agent authority review
 
-For a cross-lifetime implementation or review handoff, enumerate actual thread-control tools and
-the Johnny gateway caller surface. That route must bind one live descriptor and receipt, and the
+For a cross-lifetime implementation or review handoff on the receipt-bound route (available until
+wave 3, not the default since workflow-governance Revision 04 R4-1), enumerate actual
+thread-control tools and the Johnny gateway caller surface. That route (not the default, R4-1) must bind one live descriptor and receipt, and the
 implementation session must prove both built-in tool absence and gateway unreachability. Direct
 tool, MCP alias, indirect adapter, forged identity, replay and every wrong
 project/ticket/handoff/target/worktree/branch/baseline/action/correlation combination must fail

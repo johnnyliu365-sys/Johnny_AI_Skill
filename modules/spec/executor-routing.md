@@ -192,7 +192,7 @@ The resolver imports neither host adapters nor `dispatch_session`, `dispatch_aut
 `worker_assignment`, `work_queue`, `document_mutation_gate`, credential stores, process
 launchers or runner modules. A later approved host adapter may consume a selected profile only
 after high-assurance receipt/host admission; this SPEC grants no such effect. The POC ticket may
-use reviewer-owned manual orchestration, but that route is integration evidence only: it does not
+use reviewer-owned manual orchestration, but that route is integration evidence only (integration itself runs by the integration script, R4-4): it does not
 assert a host workspace/profile binding, consume a receipt, or claim automatic delivery/wake.
 
 ## Acceptance criteria

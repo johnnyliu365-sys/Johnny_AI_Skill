@@ -21,8 +21,10 @@ SpecificationReadinessDecision = READY_FOR_SUPERVISION
   the formal SPEC, and owns creation/change-control revision of shared project Context. The
   architecture owner does not implement or review its own production work.
 - `SUPERVISOR_REVIEWER` owns approved-SPEC ticket decomposition, schema/type preflight,
-  dispatch, monitoring, independent review, correction routing and submission of the approved
-  candidate to the merge queue; integration itself is run by the versioned integration script
+  dispatch, monitoring, independent review and correction routing. The approved candidate is
+  submitted to the merge queue by the implementation owner or by a budget holder who is not that
+  candidate's reviewer (R4-7: `submitter` differs from `reviewer`); the reviewer never submits
+  what it reviewed, and integration itself is run by the versioned integration script
   (workflow-governance Revision 04 R4-4).
 - `IMPLEMENTATION_OWNER` receives one admitted ticket, implements it and returns only the
   ticket's typed result. It cannot alter the SPEC, architecture, public contract or AC.
@@ -35,7 +37,8 @@ SpecificationReadinessDecision = READY_FOR_SUPERVISION
 
 For same-lifetime use, the reviewer calls the helper directly and waits once for its finite
 return. A runner, queue, receipt, live descriptor or host readback is `NOT_REQUIRED` on that
-route; those controls remain required only for a cross-lifetime handoff. Missing mandatory
+route; those controls belong to the cross-lifetime receipt-bound route, which stays available
+until wave 3 and is not the default (workflow-governance Revision 04 R4-1). Missing mandatory
 helper evidence is `BLOCKED`, never a fabricated success.
 
 The versioned `ProjectWorkflowProfile` records opaque model references and capability evidence

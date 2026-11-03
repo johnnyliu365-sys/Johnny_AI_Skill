@@ -64,6 +64,8 @@ task/worktree、Profile fan-out 與 POC/staging ancestry。
   constructed evidence 充當 authority。
 - Review report 記錄命令、結果、檔案／位置、適用 reference、未解風險與 commit
   identity；不得重抄 ticket 正文。
+- Review record 以 `review-verdict` 區塊收尾（workflow-governance R4-7）：`candidate`、`verdict`、
+  `reviewer`、`reviewed_at`；整合腳本只讀該區塊，不讀散文結論。
 
 ## 4. Finding 路由
 

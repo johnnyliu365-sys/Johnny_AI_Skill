@@ -19,7 +19,8 @@ Agent-to-Agent orchestrator.
 
 ## Orchestration gateway
 
-For a cross-lifetime handoff, Johnny's reviewer-owned gateway is the only Agent-control effect
+For a cross-lifetime handoff on the receipt-bound route (not the default since workflow-governance
+Revision 04 R4-1), Johnny's reviewer-owned gateway is the only Agent-control effect
 entry. A reviewer capability bound to the exact project, ticket, reviewed handoff, unconsumed
 receipt and target owner may create/fork the implementation task, send/follow up/steer, wait,
 interrupt or close it. This gateway, its receipt and its host readback are not prerequisites for a
@@ -31,7 +32,7 @@ tool in either path. Direct or indirect spawn/delegate/send/follow-up/steer/wait
 returns `HALT / ROLE_FORBIDDEN` before effect.
 
 Prompt text, model name, role name, configuration, `CapabilityRef`, MCP alias and indirect
-adapter are not authority. Each cross-lifetime gateway effect validates reviewer role/capability,
+adapter are not authority. Each cross-lifetime gateway effect on that route validates reviewer role/capability,
 project, ticket, handoff, unconsumed receipt, target owner, worktree, branch, baseline, action and
 correlation against the live pending descriptor. Copy, forgery, replay or substitution fails
 closed. Effective-session tool absence and gateway unreachability require supported host readback

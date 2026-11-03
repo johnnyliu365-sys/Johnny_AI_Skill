@@ -61,8 +61,11 @@ values above; the values belong in injected profile data.
   baseline binding and the host gateway. A stopped or unarmed runner means no automatic wake may
   be claimed; an owner may relay the artifact, but that does not change delivery status to sent.
 - The implementation owner receives identifier-only dispatch, modifies only its declared
-  boundary, and returns a typed result. The owner directive for P8R says the reviewer writes
-  the candidate commit after review and is the only role that submits it to integration.
+  boundary, and returns a typed result. The owner directive for P8R said the reviewer writes
+  the candidate commit after review and alone submits it to integration; since Revision 04 R4-4
+  (`CHG-20261103-043`) the candidate is submitted to the merge queue by the implementation owner
+  or a budget holder who is not its reviewer, and integration is run by the versioned integration
+  script.
 - A provider credential or host execution failure is a named capability result. It is neither
   permission to substitute another profile nor evidence that a selected profile ran.
 
@@ -85,3 +88,7 @@ provider-neutral model policy remains unchanged: Luna/xhigh is the standard impl
 profile; Terra/xhigh is normal review and the sole single-ticket implementation elevation;
 Sol/high is limited to decision support and the corresponding elevated review. The previous
 mapping remains available through Git history, not as active dispatch policy.
+
+`CHG-20261103-043` (2026-11-03) amends the P8R submission sentence above: submission to the merge
+queue by the implementation owner or a budget holder who is not the candidate's reviewer;
+integration by the versioned integration script (workflow-governance Revision 04 R4-4).

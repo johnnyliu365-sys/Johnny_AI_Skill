@@ -87,8 +87,9 @@ contain codes, bounded paths/symbol IDs and digests only.
 ### Same-lifetime dispatch
 
 1. The activated takeover skill routes an admitted ticket to the reviewer.
-2. A distinct implementation owner is delegated once through the host-native operation; reviewer
-   waits once, reviews and integrates.
+2. A distinct implementation owner is delegated once through the host-native operation; the
+   reviewer waits once and reviews; integration is run by the versioned integration script
+   (amended under `CHG-20261103-043`, workflow-governance Revision 04 R4-4).
 3. Host provenance is reported only at the strength actually available. No durable bridge is
    created for this live call. An unavailable result includes exactly one bounded
    `NativeDispatchUnavailableReason`; it never triggers reviewer self-implementation.
@@ -195,3 +196,9 @@ readiness may ship alone, but two tickets never race separate pins or version bu
 | 2026-08-29 | Project owner / exact candidate `d684f1479573475c82cad7d4a4abecc60e9665e3` | Approved the workflow-adoption architecture and authorized reviewer opening of `WA-01` only; ticket approval, dispatch and effects remain separate. |
 
 Decision maker: Project owner. Exact approval accepted for candidate `d684f1479573475c82cad7d4a4abecc60e9665e3`.
+
+## Amendments
+
+| Date | Authority | Change |
+| --- | --- | --- |
+| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04 R4-4) | Activation step 2 amended: the reviewer waits once and reviews; integration is executed by the versioned integration script, not by the reviewer. |

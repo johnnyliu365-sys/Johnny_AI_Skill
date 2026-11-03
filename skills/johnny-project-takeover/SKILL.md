@@ -44,7 +44,8 @@ reviewer receives the typed `ImplementationReturn`, performs the declared
 review and reverse-mutation gates, and only then routes the result onward.
 The direct lane's bridge disposition is `NOT_REQUIRED`: it does not require or
 create a receipt, runner, queue, pending descriptor, gateway or fabricated
-adapter. Cross-lifetime handoffs retain their receipt-bound route.
+adapter. Cross-lifetime handoffs may still use the receipt-bound route until wave 3; the
+default is the ticket's state row plus the dispatch-file digest (Revision 04 R4-1).
 
 If native delegation or the selected ticket/profile capability is missing, the
 only result for this lane is `HALT / CODEX_NATIVE_DELEGATION_UNAVAILABLE`.

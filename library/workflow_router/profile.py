@@ -206,8 +206,8 @@ class _PolicyRoute:
 _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     SkillReference(
         reference_id="router-control",
-        source_revision="rev-5735230f566619df",
-        content_digest="sha256_5735230f566619df497657e6f5cd41c56386227eafe319c756145a1f6cebc397",
+        source_revision="rev-9ce1ed43d5660ec6",
+        content_digest="sha256_9ce1ed43d5660ec61b9acd0516f642ad7c85b6b808216231bd95bb2b0dd46aea",
     ),
     SkillReference(
         reference_id="discovery-change",
@@ -226,8 +226,8 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="implementation-authority",
-        source_revision="rev-0c75d40550cb3e27",
-        content_digest="sha256_0c75d40550cb3e27d49b48cc7ed52630f2c930f58969c1b2fb5fc07a3232cbf8",
+        source_revision="rev-c8178b809b9552a1",
+        content_digest="sha256_c8178b809b9552a1fc0edba1d9279ac56e6a5594e75523761290fa436d776fa7",
     ),
     SkillReference(
         reference_id="implementation-tdd",
@@ -236,8 +236,8 @@ _POLICY_REFERENCES: tuple[SkillReference, ...] = (
     ),
     SkillReference(
         reference_id="review-checks",
-        source_revision="rev-b3f7c8ae4f71fe1e",
-        content_digest="sha256_b3f7c8ae4f71fe1e26161a0ea68e29bf22c0bb9e6245f05299051366d189a5ea",
+        source_revision="rev-ff325539648f7eec",
+        content_digest="sha256_ff325539648f7eec31adebe2c168e3bcb42e35acb6dec0b166437a1f1b8796ef",
     ),
 )
 

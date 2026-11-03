@@ -247,11 +247,11 @@ Ticket 02's deterministic local commands are:
     if ($scopeDifference.Count -ne 0) { $scopeDifference | Format-Table -AutoSize; throw "HALT / CANDIDATE_SCOPE_MISMATCH" }
     $implementationScopeEvidence
 
-The reviewer establishes the exact clean-current-integration-main SHA at same-lifetime dispatch as
+The reviewer establishes the exact clean-current-integration-main SHA (the integration script, not the reviewer, lands the result; R4-4) at same-lifetime dispatch as
 `<implementation-admission-baseline>`; neither this SPEC provenance SHA nor a ticket SHA may be
 substituted. The sorted duplicate-free `implementation-scope-evidence` union must equal exactly
 the three declared paths, including an uncommitted creation. Same-lifetime reviewer allocation,
-wait, review, and guarded integration remain bridge-free: no receipt, descriptor, gateway, or
+wait, review and the script-run guarded integration (Revision 04 R4-4) remain bridge-free: no receipt, descriptor, gateway, or
 runner is required or authorized by this pure closure.
 
 ## Revision 07 — owner-selected single finalization boundary and Ticket 03 seam
@@ -562,3 +562,9 @@ are HIGH_ASSURANCE and can never be inferred from a pure-source success or the P
 | 2026-08-25 | Terra supervisor reviewer / main / c99add58297d71d8e9d6d5b85978f2a68980d45c | Revision 09 completes the same pre-mutation ticket-closure correction after enumerating every committed project-authority package-surface gate. It adds only the Ticket 02 observation test, which must retain its immutable observation-module checks while extending `__init__.py` to the exact already-approved Revision-07 surface. No public meaning or external boundary changes. |
 | 2026-08-25 | Project owner / Terra supervisor reviewer / main / 8db99208d6b363f7b34a731989a4a7085cb0da00 | Revision 10 records the owner-selected single provider-neutral high-collaboration admission API. It closes Ticket 04's strict fake PR/policy port contracts, `SINGLE_BRANCH` no-call result, finite evidence failures, exact five-path seam, historical package-surface updates, deterministic verification, and restore-backed mutations. It changes no authority topology, integration authority, live provider capability, remote, policy, credential, runner, queue, or release authority. |
 | 2026-08-25 | Project owner / Terra supervisor reviewer / main / 4df52d0df1fbe479cc9737d390df34d36e402b66 | Revision 11 implements CHG-20260825-039: PAI-06 and PAI-07 become explicit future operational-verification contracts, while PAI-08 receives the finite local-only closure `CORE_CLUSTER_CLOSED_WITH_DEFERRED_OPERATIONAL_VALIDATION`. It preserves every authority-line, direct-readback, provider-proof and Level 1 release condition; no external effect is authorized or claimed. |
+
+## Amendments
+
+| Date | Authority | Change |
+| --- | --- | --- |
+| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04 R4-4) | Same-lifetime closure wording: the reviewer allocates, waits and reviews; guarded integration is run by the versioned integration script. |
