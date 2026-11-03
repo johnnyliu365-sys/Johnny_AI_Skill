@@ -76,30 +76,16 @@ INTAKE → WAYFINDER → ARCHITECTURE → GRILL → CONTEXT → SPEC → TICKETS
 
 ## 0. Router：索引、權責與閉迴路
 
-Router 是確定性的流程控制層，不是事實來源、規則百科或授權替代品。高階控制面
-模型可做需求、架構、拆票與審閱判斷；Router 仍以 typed state、receipt、host
-capability gate 與 immutable references 約束它。
+Revision 04（`PRD-20261103-043`）起，Router 的角色改為兩句話：**狀態在檔案，轉移在腳本。**
 
-任何 Router event、continuation、completion 或 dispatch admission，完整閱讀：
+- 狀態只存在三種檔案：票面（target project 的 ticket leaf）、受據（票面指定的 receipt leaf）與整合佇列（target project 版控內的一份 JSON 佇列檔）。任何 session 在任何主機都從這三種檔案接續；模型記憶、聊天與 live descriptor 都不是 authority。pending 的派工只以票面狀態與佇列列存在，持久化內容只保存 metadata（識別碼、revision、digest、路徑）。
+- 轉移由腳本判定，exit 碼固定：0 通過、1 契約紅、2 工具故障、3 用法錯。派工 lint → 預檢 → 契約閘門 → 證據閘門 → 整合腳本；每支腳本的契約見 workflow-governance SPEC 的 Revision 04 R4-2。模型只在閘門紅的例外處介入，不模擬狀態機。
+- `ACTION_COMPLETED`、`ImplementationReturn`、`ImplementationHandoff`、`WAIT_FOR_HUMAN` 與 `HALT` 仍是受據與回傳紀錄的詞彙：完成動作的 agent 把它們寫進受據；`ACTION_COMPLETED` 必須先附 `CompletionEvidence`，commit 不能自行選下一關。
+- `WAIT_FOR_HUMAN` 只用於 P0 清單、真正的需求衝突（`REQUIREMENT_CHANGED`）與 Forbidden 互斥；工具故障、可自行查證的事實與受據格式不上拋（R4-3）。
+- 缺失、不可讀、版本不符或互相競爭的 reference 固定 `HALT / ROUTE_REFERENCE_INVALID`。不得用模型記憶重建規則。
+- 受據欄位的型別與事件名稱仍以 `router-control.md`（[skills/johnny-project-takeover/references/router-control.md](skills/johnny-project-takeover/references/router-control.md)）的 typed contracts 為準；該檔的狀態機段落自 Revision 04 起只描述 `GREENFIELD` 的 stage 順序。
 
-- [`router-control.md`](skills/johnny-project-takeover/references/router-control.md)
-
-Router 每次輸出必須包含：
-
-1. 目前 stage 與唯一 action；
-2. 具名 owner／reviewer 與 host 權限範圍；
-3. exact artifact refs 與版本綁定的 skill reference；
-4. 最小 `ContextView` 與 capability；
-5. 預期 typed return 與返回 event；
-6. `AUTO_CONTINUE`、`WAIT_FOR_HUMAN` 或 `HALT` 其中之一。
-
-可持久化內容只保存 metadata；實作派送的 live
-`PendingDispatchDescriptor` 由 Private Router 持有，完整不變量見
-`router-control.md`。`ImplementationHandoff` 只索引核准 artifact 與具名角色，
-不得成為另一份 ticket 或 Context。
-
-缺失、不可讀、版本不符或互相競爭的 reference 固定
-`HALT / ROUTE_REFERENCE_INVALID`。不得用模型記憶重建規則。
+十一個 stage 的順序只適用 `GREENFIELD`；`TAKEOVER` 與 `DELTA` 從需求快照直接進票（R4-5）。`library/workflow_router/` 的 typed contracts 保留為受據欄位的型別定義；其 graph 與 private router 不再是流程 authority，退場排在 Revision 04 第三波。
 
 ### 0.1 自動接續
 

@@ -38,7 +38,7 @@ class AdversarialReviewPolicyTests(unittest.TestCase):
             (
                 "adversarial-review.md",
                 "reviewer alone owns the final review conclusion",
-                "reviewer alone owns integration",
+                "Integration is executed by the versioned",
             ),
         )
 

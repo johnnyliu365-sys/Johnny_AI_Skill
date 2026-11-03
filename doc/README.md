@@ -1,3 +1,7 @@
 # 專案文件
 
 本目錄保存需求變更、進度、安全邊界、功能 Context、審閱與 ADR。它們是模組實作的追溯資料，不存放 secrets、PII、營運資料或來源專案的複製內容。
+
+| 項目 | 位置 |
+| --- | --- |
+| 變更表 | [`HARNESS-CHANGELOG.md`](HARNESS-CHANGELOG.md) |

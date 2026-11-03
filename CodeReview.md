@@ -46,9 +46,10 @@
 | reusable module catalog／card | [`module-catalog-routing.md`](skills/johnny-project-takeover/references/module-catalog-routing.md) |
 | 實作語言 | [`language-policy.md`](skills/johnny-project-takeover/references/language-policy.md) |
 
-The reviewer alone owns the final review conclusion. The reviewer alone owns integration. An
-adversarial helper may return evidence and findings, but it is never a co-reviewer and cannot
-replace that conclusion.
+The reviewer alone owns the final review conclusion. Integration is executed by the versioned
+integration script from the merge queue by whoever holds budget (Revision 04 R4-4); the review
+`APPROVED` is its admission, not its executor. An adversarial helper may return evidence and
+findings, but it is never a co-reviewer and cannot replace that conclusion.
 
 不適用也必須記錄可驗證理由，尤其是 XSS、privileged capability、Agent control、
 task/worktree、Profile fan-out 與 POC/staging ancestry。

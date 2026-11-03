@@ -153,3 +153,51 @@ The future implementation ticket must begin red and include the following explic
 - Decision maker: project owner.
 - Date: `2026-08-05 (Asia/Taipei)`.
 - Approval scope: Continuous Workflow Governance POC specification. Ticket planning is authorised. No source, test, migration, deployment, or implementation commit is authorised until a second explicit ticket approval and a separate named implementation owner are recorded.
+
+
+## Revision 04 — gates-first control plane (owner-approved 2026-11-03)
+
+Source: `PRD-20261103-043` / `CHG-20261103-043`. This revision changes how transitions are decided; it does not change the role boundary, the P0 list or the review conclusion vocabulary.
+
+### R4-1 State lives in files
+
+- A ticket leaf, its receipt and the merge queue (`MERGE-QUEUE.json`) are the only state. Nothing an agent holds in memory or in a live descriptor is authoritative. Any session, on any host, resumes from these files.
+- `ACTION_COMPLETED`, `ImplementationReturn`, `ImplementationHandoff`, `WAIT_FOR_HUMAN` and `HALT` remain the vocabulary of receipts and return records. They are written into the receipt by the agent that finished the action; no Router process has to be re-entered for them to count.
+
+### R4-2 Transitions are decided by scripts
+
+| Gate | Decides | Exit |
+| --- | --- | --- |
+| dispatch lint | a dispatch is machine-form (fields, commands, assertions) | 0 / 1 / 3 |
+| preflight | every named test tool starts and serves what the page or module needs, before any product edit | 0 / 2 / 3 |
+| contract gate | every requirement id has a spec, every spec cites an existing source at its recorded digest, no spec binds a retired requirement, no literal expected value, every contract has a named mutation | 0 / 1 / 3 |
+| evidence gate | every cell carries candidate, tool digest and capture; stale tool digests and missing captures fail | 0 / 1 / 2 / 3 |
+| coverage map | every retired assertion is carried, dropped with a reason, or escalated | 0 / 1 / 3 |
+| integration | queue entry fast-forwards onto the current tip, affected specs rerun green, remote sha equals the sha checked, then push | 0 / 1 / 2 / 3 |
+
+Exit code meaning is fixed across all gates: 0 pass, 1 contract red, 2 tool fault, 3 usage error. A red is never reported as a tool fault and a tool fault is never reported as a red.
+
+### R4-3 Bounded tool repair and escalation filter
+
+- A seat that meets a tool fault repairs the tool inside a declared allowlist, in its own commit, without touching assertions, expected values, product code or any gate. A repair guard checks the diff.
+- A seat escalates to the owner only for the P0 list, a genuine requirement conflict (`REQUIREMENT_CHANGED`) or a forbidden-versus-required clash. Tool faults, verifiable facts and receipt format never reach the owner.
+
+### R4-4 Integration is a script, not a role
+
+The reviewer alone owns the review conclusion. Integration is executed by the versioned integration script from the merge queue by whoever holds budget; the submitter is responsible for a fast-forwardable candidate. A single fixed integrator is not required and must not be assumed.
+
+### R4-5 Stages by intake mode
+
+The eleven-stage sequence applies to `GREENFIELD`. `TAKEOVER` and `DELTA` enter from a requirement snapshot (one row per requirement item with a stable id, source reference and digest) directly into tickets; Wayfinder contributes only its bounded information-gap protocol.
+
+### R4-6 Tests in four layers; CI holds invariants only
+
+- harness (no assertions) / fixtures / contract sources and ledgers (expected values with provenance) / one-contract-per-file specs that read from the layers above.
+- CI runs two classes, positively pinned: hard business rules and security locks. Removing or weakening one is a red. Requirement-driven regression runs inside the ticket loop, not in CI.
+- A contract-preserving change (copy, asset, style parameter with no behaviour, layout or acceptance change) takes the fast lane: existing contract, implement, existing specs, integrate. Touching any expected value leaves the fast lane.
+
+### Revision Signatures (Revision 04)
+
+| Date | AI / baseline SHA | Summary |
+| --- | --- | --- |
+| 2026-11-03 | Claude control plane / `a1cb6c1` | Revision 04 drafted from the owner takeover instruction and a section-zero loop already proven on real tickets in a target project. |
