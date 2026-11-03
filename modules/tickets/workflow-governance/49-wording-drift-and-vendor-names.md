@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; 49-W1–W5 revision05 (revision04 W4 named only ticket 47 as the other ticket on this line; corrected before the evidence of this revision) after the revision02 initial review returned CHANGES_REQUESTED (N49-01 TICKET_DEFECT, N49-04); revision01 initial review CHANGES_REQUESTED (R49-01 to R49-05) |
+| State / Closure | REVIEW_APPROVED (correction review of closure revision05 on `5ad316bf`, record `doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md`); lands with ticket 47 on this line; 49-W1–W5 revision05 |
 | Authority | `PRD-20261103-043` / `CHG-20261103-043`; REVIEW of ticket 47 finding F-12 |
 | Baseline | branch `cp/wave1-gates-first` after ticket 47 revision02 |
 | Grant / roles | Control plane authors; independent review |

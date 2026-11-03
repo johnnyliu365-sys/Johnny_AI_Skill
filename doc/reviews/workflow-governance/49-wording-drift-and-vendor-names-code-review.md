@@ -157,3 +157,109 @@ Superseded by the revision05 return below: W4 and W5 were red in this run (`evid
 | Deviations | none |
 
 Record correction after the revision05 initial review (NF-01, NF-02, NF-03): identifiers above corrected to revision05 and to the three-ticket tagging; Observable-behavior row and capture added; the W4 clause change recorded in the ticket's corrections table (commit `50731c4e`, whose message also claimed the record and capture changes that only this commit carries). Cell results unchanged.
+
+## Revision05 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `449f3bf9` (evidence commit of revision05) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; read-only, no pytest by instruction |
+| Summary | All five cells pass as written. The order of commits and every hit classification hold. Three Low defects in the record block approval; none needs a content change. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| W1 | PASS | 51 hits at the candidate; 30 match `rev05-W1.txt` by path:line and equal the run at `0aae3bf8`; the other 21 are the rev05 captures themselves (place (e)). Each classification checked: (a) the W1 row; (b) spec:7 and spec:148; (c) one corrections row; (d) seven review-record lines; (e) capture lines. No live role holder or location. |
+| W2 | PASS | 48:64 names the dispatch file as the carrier and spells no name. |
+| W3 | PASS | 0 hits over `<B>`; a wider user-profile, temp and home path grep matches only the regex text of the W3 rows. |
+| W4 | PASS | 37 paths; every tag checked against the three boundary blocks at the candidate; paths in no boundary: 0. |
+| W5 | PASS | 96 hits; 57 match `rev05-W5.txt`; the rest are the rev05 captures and one review-record line. All 11 "functional host, file or ref name" hits hold up on reading. Live role holder or location: 0. |
+| Observable behavior | PASS by the reviewer's own run; no receipt row | Live Grant, Workspace and Authority rows name roles, refs or "the control plane"; profile names exist in the runbook; model-tier grep 0 hits; no host path. The source-project clause rested only on the reviewer's own check (0 hits); no cell or receipt row of this ticket covered it. |
+| Order | PASS | Linear history; every closure revision frozen in its own commit before the content or evidence it governs; the red `rev04-*` and `rev02-*` captures unchanged. One gap: the W4 forbid-clause replacement was not in the corrections table. |
+| Receipt | PARTIAL | Every cell has a result and a headed capture; counts match. The Candidate row said "revision04" and the W4 row said "47, 49 or both"; no Observable-behavior row. |
+
+### Prior findings
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| R49-01 | CLOSED | 48:64 (W2). |
+| R49-02 | CLOSED | Each closure revision frozen in its own commit before what it governs; the N49-01 order defect did not recur. |
+| R49-03 | CLOSED | Exemption reason accurate; README in `<B>`. |
+| R49-04 | CLOSED | Pattern covers the spec header rows and the README paragraph; dated spec rows exempt by name; corrections-table hits are place (c). |
+| R49-05 | CLOSED | Leaf, review record and `evidence/49/` in the boundary. |
+| R49-06 | CLOSED (ticket 49 scope) | W3 0 hits; the `evidence/47/` residual is N49-05. |
+| N49-01 | CLOSED | Places (a)–(e) replace the count; the corrections row records the defect truthfully. |
+| N49-02 | PARTIAL | W4 and W5 exist with captures; no Observable-behavior row (NF-02). |
+| N49-03 | CLOSED | 47:49 names the ref. |
+| N49-04 | CLOSED | `<B>` is exactly the 6 modify and 2 create entries. |
+| N49-05 | ROUTED | Recorded for the wave-2 evidence-gate ticket; no PLANNED leaf yet, like the other wave-2 deferrals. |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| NF-01 | `EVIDENCE_DEFECT` | Low | this record, revision05 return rows "Candidate" and "W4" | The Candidate row said `0aae3bf8` carries "the ticket text of revision04" while the ticket there says revision05; the W4 row said "tagged 47, 49 or both" while the capture also uses [48] and [47+48+49]. Identifiers did not match the closure (CodeReview §1). Results correct. | `git show 0aae3bf8` line 5; `rev05-W4.txt` tags |
+| NF-02 | `EVIDENCE_DEFECT` | Low | this record, revision05 return; 49:27 | No Observable-behavior row; the source-project clause had no capture of this ticket's own (W5 scans vendor and model tokens; ticket 48's P4 scans scripts and gate tests only). Suggested: a row whose capture runs the dispatch file's denylist over `<B>`, records the hit count, names the dispatch file and spells no name. | 48:64 scope; `evidence/49/` held only W1–W5 |
+| NF-03 | `TICKET_DEFECT` (record only) | Low | 49:39, 49:60 | Revision05 replaced the revision04 W4 clause "no forbid path of either ticket outside the other's boundary" with "no path outside every boundary"; the corrections row recorded only "W4 names every ticket on this line". Result unaffected: every forbid-matched path is inside another ticket's boundary (49's library/, skills/, tests/ paths are in 47's; 48's AGENTS.md, library/ and doc/requirements/ paths are in 47's or 49's; none of 47's forbid paths touched). | `git show 0aae3bf8 -- 49` W4 hunk; the three boundary blocks |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1–3 | `git log`; reads of CodeReview.md, AGENTS.md, Workflow.md section 0, the ticket and this record at `449f3bf9` | 0 |
+| 4 | scratch clone outside the checkout, `git checkout 449f3bf9` | 0 |
+| 5 | W1 at the worktree and `git grep … 0aae3bf8 -- <B>`; path:line diff against `rev05-W1.txt` | 0 (51 / 30, identical to the capture) |
+| 6–7 | W2; W3 | 0 (1 hit); 1 (0 hits) |
+| 8–9 | W4 `git diff --name-only 7335e78..HEAD`; boundary blocks of 47 and 48 | 0 (37 paths) |
+| 10 | W5 at the worktree and at `0aae3bf8`; diff against `rev05-W5.txt`; per-file classification counts | 0 (96 / 57) |
+| 11–12 | `grep LIVE rev04-W5.txt`; `cat rev04-W4.txt`; REQ:18, spec:31, README:27/31, 47:49/90; `git show --stat` of all 12 commits and the re-plan/content diffs | 0 |
+| 13–15 | wave-2 routing grep; profile-name and role/grant/workspace greps; model-tier and user/temp/home-path greps over `<B>` | 0 / 0 / 1 (0 hits) |
+| 16–17 | added lines of `7335e78..449f3bf9 -- <B>` (562) grepped for target names, secret shapes, chat tone; capture and history linearity checks | 1 (0 target-name hits; secret words only in the record's own command text; 0 chat tone) / 0 |
+
+Not verified: the dispatch file's denylist (only the target-project names known to this seat, 0 hits); the control plane's classifier (labels checked by hand); no pytest; tickets 47 and 48 own cells; R4-7's receipt-cell schema (binds wave 2).
+
+## Revision05 correction review
+
+**Verdict: `APPROVED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `5ad316bf` (record correction; content unchanged since `40ab88eb`) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket; read-only, rev-qualified `git grep` and `git show` |
+| Summary | All three findings are closed, all W1–W5 results hold at the candidate, and the two commits introduce no new defect. |
+
+### Findings status
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| NF-01 | CLOSED | Revision05 return: Candidate row says revision05; `0aae3bf8` is the revision05 re-plan commit and `40ab88eb` is its ancestor (`merge-base --is-ancestor` exit 0). The W4 row describes the three-ticket tagging, matching the `[47]`/`[48]`/`[49]`/`[47+48+49]` tags in `rev05-W4.txt`. Order-row identifiers all resolve to the commits their roles describe. |
+| NF-02 | CLOSED | Observable-behavior row added, pointing to `evidence/49/rev05-observable.txt`, headed by cell, candidate (`50731c4e`) and command; the denylist appears only as a placeholder (8 alternatives); `hits=0`, `exit=1`, no name spelled. Reproduced with the P4 pattern of the ticket 48 dispatch file over `<B>` at `5ad316bf`, `50731c4e` and `449f3bf9`: 0 hits each. Positive control over the whole tree at `5ad316bf`: 200 hits in 55 files, so the pattern matches where names exist. |
+| NF-03 | CLOSED | Ticket 49 corrections row: the "Was" clause is word for word the revision04 W4 Expected and the "Now" clause word for word the revision05 W4. Substance holds: over `7335e78..5ad316bf` each of the 6 forbid-matched paths (AGENTS.md, REQ-043, profile.py, router-control.md, the two test files) lies inside another ticket's modify/create set. |
+
+### Cells
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| W1 | PASS (unchanged) | Hits outside the captures equal `rev05-W1.txt`: (a) 49:36; (b) spec:7, spec:148; (c) 49:57; (d) record lines 19, 21, 31, 32, 34, 84, 105. Capture hits now 40 (the rev05 captures are in the tree). `rev05-observable.txt` adds 0. |
+| W2 | PASS (unchanged) | 48:64. |
+| W3 | PASS (unchanged) | 0 hits; `rev05-observable.txt` has no drive-letter path. |
+| W4 | PASS (unchanged) | 38 paths against the three boundary blocks at `5ad316bf`; paths in no boundary 0; the 6 new paths are the rev05 captures and the observable capture, all `[49]`; the paths `70c7a97c` touched stay covered. |
+| W5 | PASS (unchanged) | Two extra hits since the capture, both classifiable: record line 149 (d) and ticket 47's R3-02 row "codex-native reference" (functional file reference, added by `70c7a97c`). None a live role holder or location. |
+| Observable behavior | PASS | Denylist over `<B>`: 0 hits (reproduced). Live role, grant, workspace and handoff rows produce no live hit. |
+
+No new findings. The record is honest about `50731c4e` (one file, +1 line; its message also claimed the record and capture that only `5ad316bf` carries). The diff `449f3bf9..5ad316bf` limited to ticket 49's files holds only the three changes; ticket 47's `70c7a97c` edits inside `<B>` add no denylist hit, host path or live vendor hit; added lines hold no secret, token, password or email.
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1–5 | `git log`; reads of CodeReview.md, AGENTS.md, Workflow.md section 0; `git diff --stat 449f3bf9 5ad316bf`; `git show 50731c4e 5ad316bf`; `git show --stat 70c7a97c`; `git show 5ad316bf:` ticket, record, captures; `git diff b927e48d 0aae3bf8 -- 49` | 0 |
+| 6–8 | P4 pattern of the ticket 48 dispatch file extracted to a scratch file outside the checkout; `git grep -niE -f <P4> <c> -- <B>` for `5ad316bf`, `50731c4e`, `449f3bf9`; positive control over the whole tree | 1 / 1 / 1 (0 hits); 0 (200 hits, 55 files) |
+| 9–12 | W1, W2, W3, W5 at `5ad316bf`; W5 and W3 patterns over `rev05-observable.txt` | 0 / 0 / 1 / 0; 1 (0 hits) |
+| 13 | boundary blocks at `5ad316bf`; `git diff --name-only 7335e78..5ad316bf`; tagging and forbid-coverage script in the scratch directory | 0 (38 paths, 0 in no boundary, 6 forbid-matched paths covered) |
+| 14 | `git log -1 746a1737 40ab88eb`; `git merge-base --is-ancestor 40ab88eb 0aae3bf8`; secret/email grep over added lines of `449f3bf9..5ad316bf` | 0 / 0 / 1 (no hits) |
+
+Not verified: no pytest, by instruction, and no scratch clone (rev-qualified `git grep`/`git show` in the read-only checkout, HEAD `a47e976b`); classification of hits inside the captures accepted by file path; the `rev05-W4.txt` tagging logic not re-executed (own matcher used). For the integration gate to admit this candidate the record must hold this review against `5ad316bf`; the control plane appends both revision05 reviews.
