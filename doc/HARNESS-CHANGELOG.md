@@ -5,7 +5,7 @@ One row per change that altered what the plugin does. Working history lives in G
 | Date | Change | Authority | Where |
 | --- | --- | --- | --- |
 | 2026-11-03 | Gates-first control plane: state in files, transitions by scripts; integration by script; stages by intake mode; four test layers; CI invariants only | `PRD-20261103-043` | `modules/spec/workflow-governance.md` Revision 04, `Workflow.md` section 0, `CodeReview.md` |
-| 2026-11-03 | Commit identity of the wave-1 branch rewritten to the repository identity (owner decision); trees unchanged; old-to-new map committed | project owner, 2026-11-03 | `doc/reviews/workflow-governance/evidence/commit-identity-rewrite-2026-11-03.txt` |
+| 2026-11-03 | Commit identity of the wave-1 branch rewritten to the repository identity (owner decision); trees unchanged; old-to-new map committed | project owner, 2026-11-03 | `doc/reviews/workflow-governance/evidence/47/commit-identity-rewrite-2026-11-03.txt` |
 
 ## Checklist items carried from revision 135
 

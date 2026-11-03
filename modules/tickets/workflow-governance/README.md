@@ -1,6 +1,6 @@
 # Continuous Workflow Governance POC — Ticket Set
 
-> Commit identifiers in this record that predate 2026-11-03's identity rewrite are the pre-rewrite identifiers; read them through `doc/reviews/workflow-governance/evidence/commit-identity-rewrite-2026-11-03.txt` (old commit, new commit, identical tree).
+> Commit identifiers in this record that predate 2026-11-03's identity rewrite are the pre-rewrite identifiers; read them through `doc/reviews/workflow-governance/evidence/47/commit-identity-rewrite-2026-11-03.txt` (old commit, new commit, identical tree).
 
 > Approved specification: [workflow-governance.md](../../spec/workflow-governance.md) (`SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`). This ticket set creates no implementation authority by itself.
 
