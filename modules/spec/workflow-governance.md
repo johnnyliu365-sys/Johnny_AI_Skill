@@ -212,3 +212,4 @@ The eleven-stage sequence applies to `GREENFIELD`. `TAKEOVER` and `DELTA` enter 
 | --- | --- | --- |
 | 2026-11-03 | Control plane / `a1cb6c1` | Revision 04 drafted under the owner takeover instruction of 2026-11-03. |
 | 2026-11-03 | Control plane / `d581ebc` | R4-7 added; the live dispatch descriptor kept as a transitional path with the queue carrying single-consume and anti-replay. Decision taken by the control plane under the takeover authority; owner confirmation requested in the next owner reply. |
+| 2026-11-03 | Project owner / `3896c3c` | Confirmed the R4-1 / R4-7 decision: the live dispatch descriptor stays a transitional path until wave 3; the default dispatch is the ticket state row plus the dispatch-file digest; single-consume and anti-replay are carried by the merge queue at integration; the queue script is the first wave-2 ticket. |

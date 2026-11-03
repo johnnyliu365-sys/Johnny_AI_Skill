@@ -2,7 +2,7 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | REVIEW_APPROVED (correction review of closure revision09 on `9483ef19`, record `doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md`); integration onto `main` waits for the owner confirmation of the descriptor decision (F-05, REQ-20261103-043); 47-D1–D9, M1–M2 revision09 |
+| State / Closure | REVIEW_APPROVED (correction review of closure revision09 on `9483ef19`, record `doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md`); owner confirmed the descriptor decision (F-05) on 2026-11-03, recorded in REQ-20261103-043 and the spec signatures; 47-D1–D9, M1–M2 revision09 |
 | Authority | Owner 2026-11-03 takeover instruction; `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 |
 | Baseline | `a1cb6c1` (main); branch `cp/wave1-gates-first` |
 | Grant / roles | Control plane authors the documents; independent review by a separate `ticket-review` seat before integration |
