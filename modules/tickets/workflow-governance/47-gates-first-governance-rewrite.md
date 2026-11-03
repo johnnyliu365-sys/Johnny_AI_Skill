@@ -46,7 +46,7 @@ contract; it is no longer told to re-enter a Router or to hold a live descriptor
 keeps the reviewer as the sole owner of the review conclusion and names the integration script,
 not the reviewer, as the executor of integration. The governance SPEC carries Revision 04 with
 rules R4-1 to R4-6. The improvement checklist is replaced by a change log on this line; the
-revision-135 checklist stays on the Codex branch where it was written.
+revision-135 checklist stays on branch `codex/skill-improvement-checklist` where it was written.
 
 ## Acceptance
 
@@ -111,3 +111,4 @@ The revision02 initial review (record: `doc/reviews/workflow-governance/47-gates
 | F-05 | REQUIREMENT_CHANGED (recorded) | Owner confirmation of the descriptor decision is still pending; it gates integration onto `main`, not this review. |
 | R49-06 (from ticket 49) | OUT_OF_SCOPE_HARDENING | Host absolute paths removed from this ticket's Workspace row and from the review record; raw logs are committed under evidence instead of referenced on a host. |
 | D5 wording (control plane, before the revision03 review) | TICKET_DEFECT | D5 said "only the paths in the boundary block"; since ticket 49 shares the branch, its review record and evidence directory also appear in `a1cb6c1..HEAD`. D5 now names both boundary blocks. |
+| N49-05 (from ticket 49 revision02 review) | OUT_OF_SCOPE_HARDENING | Raw pytest captures under `evidence/47/` carry the checkout and interpreter paths. Carried to the wave-2 evidence-gate ticket as a rule: the capture step strips the checkout root and the interpreter root before a capture is committed. Existing captures stay as recorded. |
