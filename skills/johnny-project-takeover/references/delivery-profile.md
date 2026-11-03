@@ -73,7 +73,8 @@ ordinary read-only helper. Separately, exactly one optional reviewer-owned `Adve
 audit may be used at `COMPACT` and `STANDARD` unless the approved ticket matrix makes it required.
 It is mandatory for `HIGH_ASSURANCE` and before any proposed release/deployment; that required
 `AdversarialReviewPlan` consumes one reviewer-owned `RESEARCH_HELPER`. The reviewer retains the
-final review conclusion and integration. If mandatory audit or isolation evidence is unavailable,
+final review conclusion; integration is run by the versioned integration script from the merge
+queue (workflow-governance Revision 04 R4-4). If mandatory audit or isolation evidence is unavailable,
 the review is `BLOCKED`; it is never replaced by an invented pass or a claim that a capability exists.
 
 `DELTA` intake combined with a derived `COMPACT` intensity is the minimal path: one combined

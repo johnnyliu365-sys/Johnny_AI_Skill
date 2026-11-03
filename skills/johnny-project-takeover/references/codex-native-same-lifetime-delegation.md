@@ -20,7 +20,8 @@ that ticket and the live repository state:
 | Lane | Same-lifetime direct synchronous continuation |
 
 The reviewer is the delegation owner and remains responsible for waiting,
-receiving the typed result, review, reverse mutation and integration gates. The
+receiving the typed result, review and reverse mutation; integration is run by the versioned
+integration script from the merge queue (R4-4), not by the reviewer. The
 delegated implementation owner is exactly the owner named by the ticket; do not
 create helpers or broaden the task.
 

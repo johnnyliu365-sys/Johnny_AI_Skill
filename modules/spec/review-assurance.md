@@ -65,7 +65,7 @@ The mandatory vector roster is:
 
 | ID | Acceptance criterion |
 | --- | --- |
-| ARA-01 | `CodeReview.md` exposes the adversarial-review reference and states that the reviewer alone owns review conclusion and integration. |
+| ARA-01 | `CodeReview.md` exposes the adversarial-review reference and states that the reviewer alone owns the review conclusion. Amended by `CHG-20261103-043` (workflow-governance Revision 04 R4-4): integration is run by the versioned integration script from the merge queue, with the review `APPROVED` as its admission; the earlier wording "and integration" is retired. |
 | ARA-02 | The policy admits one bounded same-lifetime reviewer-owned `RESEARCH_HELPER` audit with a finite return and no runner, queue, receipt, live descriptor or host-readback prerequisite. |
 | ARA-03 | The policy says an audit is optional at `COMPACT` and `STANDARD`, mandatory at `HIGH_ASSURANCE` and before a proposed release/deployment, and handles unavailable required evidence as `BLOCKED`. The delivery-profile research-helper row must admit the optional `COMPACT` adversarial plan while continuing to exclude an ordinary helper there. |
 | ARA-04 | The attack roster covers all ten ticket-level categories named in the requirement without treating a test name or helper claim as proof. |
@@ -107,3 +107,9 @@ authority and readback.
 - Decision: `ADR-20260827-030-adversarial-review-and-deployment-readiness.md`.
 - No unresolved product decision remains; policy wording and test implementation are Ticket 01's
   closed scope.
+
+## Amendments
+
+| Date | Authority | Change |
+| --- | --- | --- |
+| 2026-11-03 | `CHG-20261103-043` (workflow-governance Revision 04 R4-4) | ARA-01 amended: the reviewer owns the review conclusion; integration is executed by the versioned integration script. |

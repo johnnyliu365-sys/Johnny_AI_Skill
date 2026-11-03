@@ -105,8 +105,10 @@ readback, and an unavailable bridge must not halt that lane. The reviewer direct
 repository-contained owner worktree and binds it to the exact ticket, branch and baseline.
 The synchronous path must not invent a receipt issuer, durable queue or runner.
 
-The receipt-bound bridge remains mandatory for a cross-lifetime handoff. In that path, the Private
-Router owns the live `PendingDispatchDescriptor`, and a typed `ApprovedDispatchArtifactRegistry`
+The receipt-bound bridge remains available for a cross-lifetime handoff until it retires in wave 3;
+it is not the default. The default is the ticket's state row plus the digest of its dispatch file
+(Revision 04 R4-1), with the merge queue carrying integration candidates only (R4-7). In the bridge
+path, the Private Router owns the live `PendingDispatchDescriptor`, and a typed `ApprovedDispatchArtifactRegistry`
 resolves the exact project, ticket, reviewed handoff, ticket and handoff commits, implementation
 owner, task/workspace binding, worktree and expected baseline.
 

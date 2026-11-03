@@ -21,7 +21,9 @@ SpecificationReadinessDecision = READY_FOR_SUPERVISION
   the formal SPEC, and owns creation/change-control revision of shared project Context. The
   architecture owner does not implement or review its own production work.
 - `SUPERVISOR_REVIEWER` owns approved-SPEC ticket decomposition, schema/type preflight,
-  dispatch, monitoring, independent review, correction routing and guarded integration.
+  dispatch, monitoring, independent review, correction routing and submission of the approved
+  candidate to the merge queue; integration itself is run by the versioned integration script
+  (workflow-governance Revision 04 R4-4).
 - `IMPLEMENTATION_OWNER` receives one admitted ticket, implements it and returns only the
   ticket's typed result. It cannot alter the SPEC, architecture, public contract or AC.
 - `RESEARCH_HELPER` is reviewer-owned, read-only and no-code as defined by `delivery-profile.md`.
