@@ -2,11 +2,11 @@
 
 | Field | Binding |
 | --- | --- |
-| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision03 (47-D1–D6) after the revision02 initial review returned CHANGES_REQUESTED with TICKET_DEFECT R2-01 (revision01: initial and correction review both CHANGES_REQUESTED) |
+| State / Closure | CONVERGENCE_REPLANNED / INDEPENDENT_REVIEW_PENDING; Closure revision04 (47-D1–D6) after the revision03 initial review returned CHANGES_REQUESTED with TICKET_DEFECT R3-01 and R3-04 (revision02: R2-01; revision01: initial and correction review both CHANGES_REQUESTED) |
 | Authority | Owner 2026-11-03 takeover instruction; `PRD-20261103-043` / `CHG-20261103-043`; `modules/spec/workflow-governance.md` Revision 04 |
 | Baseline | `a1cb6c1` (main); branch `cp/wave1-gates-first` |
 | Grant / roles | Control plane authors the documents; independent review by a separate `ticket-review` seat before integration |
-| Workspace | a disposable clone of branch `cp/wave1-gates-first` |
+| Workspace | the control plane's own checkout of branch `cp/wave1-gates-first` (not disposable; its evidence runs there); the reviewer reproduces every cell in a fresh clone |
 | Profile / limits | COMPACT: documents only; no runtime behaviour change — the policy digest pins in `library/workflow_router/profile.py` and `tests/test_workflow_router.py` move with the reference they pin; no installer, publication pin or target-project write |
 | Language / return | Markdown; `ImplementationReturn` COMPLETED with the exact commit, the five document diffs and the pytest result of the document-pinning tests |
 
@@ -22,6 +22,9 @@ modify = skills/johnny-project-takeover/SKILL.md
 modify = skills/johnny-project-takeover/references/router-control.md
 modify = skills/johnny-project-takeover/references/adversarial-review.md
 modify = skills/johnny-project-takeover/references/codex-native-same-lifetime-delegation.md
+modify = skills/johnny-project-takeover/references/delivery-profile.md
+modify = skills/johnny-project-takeover/references/model-role-routing.md
+modify = modules/spec/review-assurance.md
 modify = AGENTS.md
 modify = library/workflow_router/profile.py
 modify = tests/test_workflow_router.py
@@ -56,7 +59,7 @@ revision-135 checklist stays on branch `codex/skill-improvement-checklist` where
 | D2 | `grep -c "狀態只存在三種檔案" Workflow.md` | 1; and the section-zero anchors `#workflow-router`, `#role-boundary` still exist |
 | D3 | `grep -c "Revision 04 R4-4" CodeReview.md` | 2 (the integration clause in section 2 and the integration sentence in section 5); the sentence "The reviewer alone owns the final review conclusion." is unchanged |
 | D4 | `grep -c "^## Revision 04" modules/spec/workflow-governance.md` | 1; R4-1 to R4-6 present |
-| D5 | `git diff --stat a1cb6c1..HEAD` | only the paths in this boundary block or in ticket 49's boundary block (the two tickets share this branch; ticket 49's review record and evidence directory are its); the policy digest pins for router-control.md move with the document under `CHG-20261103-043` |
+| D5 | `git diff --name-only a1cb6c1..HEAD` | every path is in the boundary block of a ticket on this line (47, 48 or 49); the capture tags each path with its ticket; no path outside every boundary; the policy digest pins for router-control.md move with the document under `CHG-20261103-043` |
 | D6 | `pytest tests -q` full suite, raw output committed under `doc/reviews/workflow-governance/evidence/47/` | failure set equals the main baseline (environment failures only), listed by name in the receipt |
 | M1 | remove the exit-code sentence from Workflow.md section 0 | D2 still 1 but the reviewer must flag the contract loss; recorded as a review check, not a script |
 
@@ -112,3 +115,20 @@ The revision02 initial review (record: `doc/reviews/workflow-governance/47-gates
 | R49-06 (from ticket 49) | OUT_OF_SCOPE_HARDENING | Host absolute paths removed from this ticket's Workspace row and from the review record; raw logs are committed under evidence instead of referenced on a host. |
 | D5 wording (control plane, before the revision03 review) | TICKET_DEFECT | D5 said "only the paths in the boundary block"; since ticket 49 shares the branch, its review record and evidence directory also appear in `a1cb6c1..HEAD`. D5 now names both boundary blocks. |
 | N49-05 (from ticket 49 revision02 review) | OUT_OF_SCOPE_HARDENING | Raw pytest captures under `evidence/47/` carry the checkout and interpreter paths. Carried to the wave-2 evidence-gate ticket as a rule: the capture step strips the checkout root and the interpreter root before a capture is committed. Existing captures stay as recorded. |
+
+## Re-plan to closure revision04 (after the revision03 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision03 initial review". R3-01 and R3-04 are `TICKET_DEFECT`; the closure is rebuilt here, in its own commit, before any content or evidence commit of revision04. Boundary widened to `delivery-profile.md`, `model-role-routing.md` and `modules/spec/review-assurance.md`; D5 re-frozen as the union of the boundaries of every ticket on this line; the Workspace row states where the evidence runs.
+
+| Finding | Class | Disposition in revision04 |
+| --- | --- | --- |
+| R3-01 | TICKET_DEFECT | Boundary widened. delivery-profile.md and model-role-routing.md say the reviewer owns the conclusion and the integration script runs integration (R4-4); the review-assurance SPEC gets an amendment row: ARA-01 reads "review conclusion" and integration by script under `CHG-20261103-043`. REQ Scope lists the three files. |
+| R3-02 | IMPLEMENTATION_DEFECT | codex-native reference: the reviewer owns waiting, receipt of the typed result, review and reverse mutation; integration is the script's. |
+| R3-03 | IMPLEMENTATION_DEFECT | router-control.md: the receipt-bound bridge is available for a cross-lifetime handoff until wave 3, not mandatory. Workflow.md section 0, AGENTS.md and R4-1 say the same thing in the same words: a pending dispatch is the ticket's state row plus the digest of its dispatch file; the queue holds integration candidates only. |
+| R3-04 | TICKET_DEFECT | D5 frozen here, before delivery, as the union of the boundaries on this line. |
+| R3-05 | IMPLEMENTATION_DEFECT | R4-7: an entry with the `clears` field set to the red entry's key is the one exemption admitted while the block holds; `reason` carries bounce codes only. |
+| R3-06 | TICKET_DEFECT (wave 2) | R4-7 defines the review-record block the integration script reads: the last fenced `review-verdict` block whose `candidate` equals the queue candidate; `reviewer` is a seat identity string, not a role label. Records on this line add the block when the wave-2 script lands. |
+| R3-07 | OUT_OF_SCOPE_HARDENING | Carried to the wave-2 contract gate: the integrator rule is pinned in every reference that states it, not only in CodeReview.md. |
+| R3-08 | EVIDENCE_DEFECT | Workspace row corrected: evidence runs in the control plane's checkout; the reviewer's fresh-clone run is the independent reproduction. |
+| R3-09 | OUT_OF_SCOPE_HARDENING | Already routed (N49-05 row above). |
+| F-05 | REQUIREMENT_CHANGED (recorded) | Unchanged: owner confirmation pending; gates integration onto `main`. |

@@ -221,3 +221,82 @@ Not verified: whether the owner has confirmed the F-05 decision; Markdown render
 | F-07 mutation | executor reworded to "the versioned reviewer seat, who runs the merge by hand" → `1 failed, 7 passed, 72 subtests passed in 0.10s` (`test_tara1b` red); restored; raw `evidence/47/rev03-F07-mutation.txt` |
 | Policy pin | router-control.md digest moved to `rev-8d6082758541d385` in profile.py and test_workflow_router.py |
 | Deviations | the D6 failures are the environment and publication-pin set already recorded for this environment; one ACR test varies between runs and is listed by name above when it differs |
+
+## Revision03 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `34997e8f` (evidence commit); content commit `fb55623f`; re-plan commit `3ffe1b12` |
+| Baseline | `a1cb6c1` (main) |
+| Reviewer | independent `ticket-review` seat; authored nothing in this ticket |
+| Clones | fresh `--no-hardlinks` clones of the candidate and of main, `core.autocrlf=false`, index rebuilt to LF |
+| Summary | Every executable cell is green and the failure sets on the candidate and on main are identical. Two things block approval: three live references still give the integration role to the reviewer, against CodeReview.md and R4-4; and router-control.md disagrees with Workflow.md section 0 and AGENTS.md on the cross-lifetime dispatch path. Workflow.md:85 sends any agent that meets either conflict to `HALT / ROUTE_REFERENCE_INVALID`. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| D1 | PASS | Candidate `3 failed, 121 passed, 564 subtests`; main `3 failed, 120 passed, 563 subtests`; identical failure-name sets (two temporal DLL tests blocked by application control policy, `test_the_pinned_sha_exists`); no SUBFAILED lines. |
+| D2 | PASS | `狀態只存在三種檔案` count 1 (Workflow.md:81); `id="workflow-router"` 1; `id="role-boundary"` 1. |
+| D3 | PASS | `Revision 04 R4-4` count 2 (CodeReview.md:50, :97); the reviewer sentence once at :49, unchanged from main. |
+| D4 | PASS | `^## Revision 04` 1; `### R4-1`..`R4-7` at spec:162, 167, 180, 185, 189, 193, 199. |
+| D5 | PASS | 36 paths (22 A, 14 M), all covered by the union of the ticket 47 and ticket 49 `modify`/`create` entries; 0 uncovered; 0 under forbid paths. Caveat: the D5 Expected text was changed inside the evidence commit (R3-04). |
+| D6 | PASS | Candidate `10 failed, 1919 passed, 31 skipped, 3950 subtests`, exit 1; main `10 failed, 1918 passed, 31 skipped, 3949 subtests`, exit 1; the two 10-name sets identical and identical to the receipt raw. Composition: 2 ACR, guarded-integration profile, pinned sha, 3 publication-pin, refusal enum audit, 2 temporal DLL. The +1 pass is `test_tara1b`. |
+| M1 | PASS (check performed) | Exit-code bullet removed as a disposable edit: D2 stays 1, the exit-code phrase drops to 0, the doc suites still give only the 3 environment failures, so only a reader notices the loss. Restored; porcelain empty. |
+| Observable behavior | PARTIAL | Workflow.md section 0 and CodeReview.md:49-51 read as the ticket states. Three references CodeReview.md indexes still name the reviewer as integrator (R3-01, R3-02). |
+
+### Re-plan rows
+
+| Row | Status | Evidence |
+| --- | --- | --- |
+| R2-01 | CLOSED | D2 = 1 and D3 = 2 on the delivered text; text not reverted. |
+| R2-02 | CLOSED | Results for D1–D6, M1 and F-07; all 8 `rev03-*.txt` captures headed with cell, candidate `fb55623f…`, command. One statement is false (R3-04). |
+| R2-03 | CLOSED | AGENTS.md:20-22 matches Workflow.md:81 and R4-1. Remaining conflict with router-control.md:108 filed as R3-03. |
+| R2-04 | CLOSED | Profile row and REQ effect boundary state the pin exception; the `library/` diff is exactly the 2 pin constants. |
+| R2-05 | PARTIAL | router-control.md:15 lists the three terminal states; lock reclaim and `pages.json` defined at spec:201; the clearing rule cannot be satisfied as written (R3-05). |
+| F-03 residual | CLOSED | spec:201 reads `review_candidate` and `reviewer` from the record; `REVIEW_MISMATCH` defined; Workflow.md:82 agrees. Record format unspecified (R3-06). |
+| F-07 residual | CLOSED | MUT-A (executor reworded to a reviewer seat running the merge by hand): `test_tara1b` FAILED, `1 failed, 7 passed`, exit 1; restored. Counter-mutations through other doors stay green (R3-07). |
+| F-05 | OPEN (recorded, non-blocking for this review) | REQ row and spec signature row say owner confirmation is pending and gates integration onto `main`. |
+| R49-06 | CLOSED | No drive-letter path in tickets 47, 48, the README or the 47 review record. Committed captures still carry host paths (R3-09). |
+| D5 wording | PARTIAL | The union wording matches the branch; the Expected change was made in evidence commit `34997e8f`, after content commit `fb55623f`, with no new closure revision (R3-04). |
+| Router-control digest pin | CLOSED | `policy_digest(router-control.md)` = `rev-8d6082758541d385`, equal at all six pin sites; PolicyPinTests 7 passed; test_control_plane_mutation.py 54 passed. |
+| Profile / Workspace rows | CLOSED | Workspace row has no host path; Profile row states the pin exception. |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| R3-01 | `TICKET_DEFECT` | High (blocking) | references/delivery-profile.md:75-76; references/model-role-routing.md:24; modules/spec/review-assurance.md:68 (ARA-01) | Unchanged from main and still say the reviewer integrates: "The reviewer retains the final review conclusion and integration"; `SUPERVISOR_REVIEWER` owns "… independent review, correction routing and guarded integration"; ARA-01 requires CodeReview.md to state "the reviewer alone owns review conclusion and integration". All three compete with CodeReview.md:49-51, R4-4 and Workflow.md:279. CodeReview.md §2 indexes both references; REQ-20261103-043 says it amends `CHG-20260827-042` (the review-assurance CHG), yet that SPEC has no revision. Revision02 claimed to widen the closure to "every file that states who integrates", but these paths are outside both boundary blocks. Under Workflow.md:85 this is `HALT / ROUTE_REFERENCE_INVALID`. Widen the boundary or cut a reconciliation ticket. | `grep -rniE integrat skills/` filtered; main shows the same lines; `git diff a1cb6c1..34997e8f --stat` on the three files is empty |
+| R3-02 | `IMPLEMENTATION_DEFECT` | Medium (blocking) | references/codex-native-same-lifetime-delegation.md:22-23 | In the boundary and edited in this ticket, yet still says the reviewer "remains responsible for waiting, receiving the typed result, review, reverse mutation and integration gates": assumes a fixed integrator, against R4-4, SKILL.md:28-30 and router-control.md:101-102. | read file |
+| R3-03 | `IMPLEMENTATION_DEFECT` | Medium (blocking) | router-control.md:108 vs Workflow.md:81, AGENTS.md:22; spec:201 | router-control.md:108: "The receipt-bound bridge remains mandatory for a cross-lifetime handoff"; Workflow.md:81 and AGENTS.md:22: usable but no longer the default, the default is the queue file. Competing rules on authoritative dispatch state. Also, the R4-7 queue entry needs `candidate` (full sha) and a review record and has no owner, worktree, branch or baseline fields, so a pending implementation dispatch cannot be a queue row; the stated "default" path cannot be implemented as specified. | read the three files and spec:201 |
+| R3-04 | `TICKET_DEFECT` | Medium | ticket 47 D5 Expected and its "D5 wording" row; review record ImplementationReturn "Candidate" row | `git diff fb55623..34997e8f` changes the frozen D5 Expected and adds the "D5 wording" row inside the receipt commit, after the content commit, while the closure is still labelled revision03; the original D5 is red on the candidate, so the cell was re-frozen after delivery. The receipt also says the commit "adds only evidence files … and this record" while it also changes ticket 47 and the ticket 49 review record. Same shape as ticket 49's R49-02. | `git diff --name-only fb55623..34997e8f` (14 paths, including the ticket) |
+| R3-05 | `IMPLEMENTATION_DEFECT` | Low (blocks the wave-2 merge-queue ticket) | spec:201 | `LANDED_CI_RED` "blocks further landings until cleared" while clearing needs "a later entry whose `reason` names the red entry lands": the fix entry cannot land while landings are blocked; no exemption stated: a deadlock. `reason` is overloaded with bounce codes. | read R4-7 |
+| R3-06 | `TICKET_DEFECT` | Low (wave 2) | spec:201 | The integration script must read `review_candidate`, `reviewer` and the `APPROVED` verdict from the review record, but no record schema is defined; the repository's records append several reviews to one file with different candidates and verdicts, so which section is read is unspecified; `reviewer` is a role label, not an identity `submitter != reviewer` can compare. | read the record and R4-7 |
+| R3-07 | `OUT_OF_SCOPE_HARDENING` | Low | tests/test_adversarial_review_policy.py | Counter-mutations through other doors stay green: MUT-B rewrote CodeReview.md:49-51 so the reviewer "runs every merge personally" and quoted the pinned phrase as a "retired draft line" (`8 passed`); MUT-C reverted adversarial-review.md:30-32 to "alone owns the final review conclusion and integration." (`8 passed`; D1 files and control_plane_mutation only the 3 environment failures). The integrator rule is pinned in CodeReview.md only, as a literal phrase. | mutations restored, porcelain empty |
+| R3-08 | `EVIDENCE_DEFECT` | Low | evidence/47/rev03-D6-full.txt:47, :90, :207 | The D6 capture shows the worktree path of the primary checkout: the receipt's full suite ran in the primary working checkout, not in the disposable clone the Workspace row names, and the capture does not prove the tree state at `fb55623`. The reviewer's run in a disposable clone reproduces the same 10 names. | read capture |
+| R3-09 | `OUT_OF_SCOPE_HARDENING` | Low | evidence/47/rev03-D1.txt, rev03-D6-full.txt, rev03-F07-mutation.txt | Committed captures carry host absolute paths (venv, user-profile checkout, temp). Sits awkwardly with the R49-06 disposition and Workflow.md:81; no cell catches it. | drive-letter grep over `evidence/47/*.txt` |
+
+Added-line scan of `a1cb6c1..34997e8f`, excluding evidence: no external target-project name; no host absolute path; no vendor or model literal in live role rows (hits are branch identifiers, the `codex-native` file name and quoted historical findings); no chat tone or unverifiable narrative.
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1–3 | fresh LF clones of the candidate and main (system `core.autocrlf=true` overridden locally; index rebuilt) | 0 |
+| 4–5 | D6 candidate, then main, `pytest tests -q -p no:cacheprovider` | 1 / 1 (10 failed each) |
+| 6–7 | D1 candidate / main (4 files) | 1 / 1 (3 failed each) |
+| 8 | `diff` of FAILED-name sets: D6 cand vs main, D1 cand vs main, D6 cand vs receipt raw | 0 / 0 / 0 |
+| 9 | `pytest tests/test_control_plane_mutation.py -k PolicyPinTests`; full file | 0 (7 passed); 0 (54 passed) |
+| 10 | `policy_digest(router-control.md)`; `git grep 8d6082758541d385 -- library tests` | 0 (6 pin sites) |
+| 11–12 | D2 / D3 / D4 greps; D5 union check | 0 |
+| 13 | M1 disposable edit + greps + doc suites, restore | 3 environment failures only; porcelain empty |
+| 14–15 | MUT-A / MUT-B / MUT-C, restore after each; MUT-C with D1 files + control_plane_mutation | 1 / 0 / 0; 1 (3 environment failures only) |
+| 16 | `git diff --name-only fb55623..34997e8f`; `git log a1cb6c1..34997e8f` | 0 (14 paths incl. ticket 47; 10 commits) |
+| 17 | added-line scan; evidence host-path grep | 0 |
+| 18 | `grep -rniE integrat skills/`; reads of AGENTS, Workflow §0/§5/§7, CodeReview, spec R4, SKILL.md, router-control, adversarial-review, codex-native, delivery-profile, model-role-routing, implementation-authority, review-assurance spec | 0 |
+
+Raw logs: retained by the reviewer seat on its host (D6 candidate and main, D1 candidate and main, policy pins, control-plane mutation, mutations, D5, boundary, added-line scan, failure-name sets); not committed.
+
+Not verified: whether the owner has confirmed the F-05 descriptor decision outside the repository; external target-project names other than the one this seat knows (the dispatch denylist was not supplied); Markdown rendering in a real renderer; ticket 49 cells.
