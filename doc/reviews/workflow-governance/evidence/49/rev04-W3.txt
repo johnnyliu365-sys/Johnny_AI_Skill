@@ -1,0 +1,5 @@
+cell: W3
+candidate: b927e48de565613307b1cba3da059f43050917b8
+command: git grep -nE '(^|[^A-Za-z])[A-Z]:[/\\]' -- modules/spec/workflow-governance.md doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md modules/tickets/workflow-governance/48-port-gate-scripts.md modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md modules/tickets/workflow-governance/README.md doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md doc/reviews/workflow-governance/evidence/49
+---
+exit=1

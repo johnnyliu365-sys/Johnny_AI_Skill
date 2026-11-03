@@ -124,3 +124,17 @@ Not verified: the dispatch's source-project denylist (not provided; only the one
 | 20–21 | grep for the one external project name known to this seat over added lines and boundary files; line-number greps | 1 (0 hits) / 0 |
 
 Not verified: the dispatch's source-project denylist (only the one external name known to this seat was checked); no pytest run, by instruction; ticket 47's own revision03 cells (only file attribution and the path observation in N49-05); R4-7's five-field receipt-cell schema was not applied because R4-7 binds the wave-2 implementation tickets and this is a documents ticket. Nothing was written inside the control plane's checkout; the reviewer's scratch clone remains on its host.
+
+## ImplementationReturn (control plane, closure revision04)
+
+| Field | Value |
+| --- | --- |
+| Return | `COMPLETED` |
+| Candidate | `b927e48de565613307b1cba3da059f43050917b8` (the ticket text of revision04 and the one content change, ticket 47 line "stays on branch `codex/skill-improvement-checklist`", are both at this candidate; the commit that carries this section adds only the captures and this record) |
+| Order | re-plan `bf6a4632` (revision03) → content `40ab88eb` → re-plan `b927e48d` (revision04: places (e) added, found while running W1, before any evidence) → this evidence |
+| W1 | PASS — every hit classified into places (a)–(e); live role holder or location: 0; counts {'(a) the W1/W5 check row': 1, '(b) dated spec record': 2, '(c) Ticket corrections row': 1, '(d) review record line': 7, '(e) capture of a W1/W5 run': 4}; raw `evidence/49/rev04-W1.txt` |
+| W2 | PASS — ticket 48 P4 names the dispatch file as the carrier and spells no name; raw `evidence/49/rev04-W2.txt` |
+| W3 | PASS — zero hits (`git grep` exit 1); raw `evidence/49/rev04-W3.txt` |
+| W4 | FAIL — every path in `7335e78..HEAD` tagged 47, 49 or both; paths in neither boundary: 1; raw `evidence/49/rev04-W4.txt` |
+| W5 | FAIL — every hit classified; live role holder or location: 1; counts {'(a) the W1/W5 check row': 2, '(b) dated spec record': 2, '(c) Ticket corrections row': 1, '(d) review record line': 7, '(e) capture of a W1/W5 run': 4, 'LIVE ROLE HOLDER OR LOCATION': 1, 'functional host, file or ref name': 10}; raw `evidence/49/rev04-W5.txt` |
+| Deviations | none |

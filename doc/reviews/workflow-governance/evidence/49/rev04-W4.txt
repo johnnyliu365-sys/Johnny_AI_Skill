@@ -1,0 +1,33 @@
+cell: W4
+candidate: b927e48de565613307b1cba3da059f43050917b8
+command: git diff --name-only 7335e78..HEAD (each path tagged with the ticket boundary it belongs to)
+---
+[47] AGENTS.md
+[both] doc/requirements/active/2026/workflow-governance/REQ-20261103-043.md
+[47] doc/reviews/workflow-governance/47-gates-first-governance-rewrite-code-review.md
+[NEITHER] doc/reviews/workflow-governance/48-port-gate-scripts-code-review.md
+[49] doc/reviews/workflow-governance/49-wording-drift-and-vendor-names-code-review.md
+[47] doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-cand.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev02-review-pytest-full-main.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D1.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D2.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D3.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D4.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D5.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-D6-full.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-F07-mutation.txt
+[47] doc/reviews/workflow-governance/evidence/47/rev03-M1.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev02-W1.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev02-W2.txt
+[49] doc/reviews/workflow-governance/evidence/49/rev02-W3.txt
+[47] library/workflow_router/profile.py
+[both] modules/spec/workflow-governance.md
+[both] modules/tickets/workflow-governance/47-gates-first-governance-rewrite.md
+[both] modules/tickets/workflow-governance/48-port-gate-scripts.md
+[both] modules/tickets/workflow-governance/49-wording-drift-and-vendor-names.md
+[both] modules/tickets/workflow-governance/README.md
+[47] skills/johnny-project-takeover/references/router-control.md
+[47] tests/test_adversarial_review_policy.py
+[47] tests/test_workflow_router.py
+--- paths in neither boundary: 1
+exit=1
