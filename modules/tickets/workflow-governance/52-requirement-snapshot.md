@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision03 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S52-07 TICKET_DEFECT; correction 1 dispatched to the same seat） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 initial review: S52-12 TICKET_DEFECT; correction 2 dispatched to the same seat） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/52-requirement-snapshot` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/52-requirement-snapshot-review` |
@@ -52,7 +52,9 @@ Exit 2 when the file system cannot serve the run (root not writable, input unrea
 
 ### Defect codes (`take` refuses with exit 1 and writes nothing; `verify` reports)
 
-`ROW_FIELD_MISSING`, `ROW_FIELD_TYPE` (a field of the wrong type, an unexpected field, a blank or whitespace-only `requirement_id`, a string that breaks the text-value rule below), `DUPLICATE_REQUIREMENT`, `STATUS_UNKNOWN`, `SOURCE_REF_ABSOLUTE` (a `source_ref` that is empty, starts with `/`, `\` or `~`, carries a drive letter, or has a `..` segment; a URL with a scheme is allowed), `DIGEST_FORMAT`, `SNAPSHOT_DIGEST_MISMATCH` (a stored version whose `source_sha256` does not match its rows: reported by `verify`, and by `take` or `diff` whenever they read that version; exit 1), `NAME_INVALID` (a source name with a path separator, `..`, characters outside `[A-Za-z0-9._-]`, a trailing dot, a Windows reserved device name, or a case variant of an existing source; applied by `take`, `verify` and `diff` alike).
+`ROW_FIELD_MISSING`, `ROW_FIELD_TYPE` (a field of the wrong type, an unexpected field, a blank or whitespace-only `requirement_id`, a string that breaks the text-value rule below), `DUPLICATE_REQUIREMENT`, `STATUS_UNKNOWN`, `SOURCE_REF_ABSOLUTE` (a `source_ref` that is empty, starts with `/`, `\` or `~`, carries a drive letter, or has a `..` segment; a URL with a scheme is allowed), `DIGEST_FORMAT`, `SNAPSHOT_DIGEST_MISMATCH` (a stored version whose `source_sha256` does not match its rows: reported by `verify`, and by `take` or `diff` whenever they read that version; exit 1), `NAME_INVALID` (a source name with a path separator, `..`, characters outside `[A-Za-z0-9._-]`, a trailing dot, a Windows reserved device name, or a case variant of an existing source). `take` and `diff` apply every name rule, the case-variant rule included, because they know the root; `verify` takes a single file and applies the name rules to the file's `source` value, not the case-variant rule and not a comparison with the directory the file sits in.
+
+JSON input: a repeated key in an object (a row or the top level) is `ROW_FIELD_TYPE`; version numbers in file names and arguments are ASCII digits only; a top-level `source` or `source_sha256` that breaks the text-value rule is `ROW_FIELD_TYPE` as well as its format code, as for row fields.
 
 `requirement_id`: printable characters only (letters, digits, `._:-/`), 1 to 128 characters; anything else is `ROW_FIELD_TYPE`.
 
@@ -132,3 +134,14 @@ Review record: `doc/reviews/workflow-governance/52-requirement-snapshot-code-rev
 | S52-05 | IMPLEMENTATION_DEFECT | README and docstring match the codes above |
 | S52-06 | OUT_OF_SCOPE_HARDENING (taken now) | `diff` applies the case-collision rule |
 | S52-07 | TICKET_DEFECT | the codes, `source_ref`, `requirement_id`, damaged-version and version-uniqueness rules above |
+
+## Re-plan to closure revision03 (after the revision02 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision02 initial review". S52-12 is a `TICKET_DEFECT`: the closure is rebuilt here before correction 2. Behaviour stays; the ticket now says what `verify` checks, and three cheap hardening items are taken.
+
+| Finding | Class | Disposition in revision03 |
+| --- | --- | --- |
+| S52-10 | EVIDENCE_DEFECT | tests pairing a newline with an otherwise invalid `source_ref` and with an otherwise invalid source name, each asserting one line |
+| S52-11 | IMPLEMENTATION_DEFECT | docstring matches the README and the code |
+| S52-12 | TICKET_DEFECT | `verify` applies the name rules only, as above |
+| S52-13, S52-14, S52-15 | OUT_OF_SCOPE_HARDENING (taken now) | top-level text rule, ASCII digits, repeated keys, as above, one test each |

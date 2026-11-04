@@ -64,3 +64,54 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/52-rev01-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision02 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `3c485efc65ba861a2dc6a716897e3c055d7397b1` (`3c485efc` README fix → `21ac4fda` correction → `dbd74358`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree |
+| Summary | Every closure cell behaves correctly. Two reviewer counter-mutations turned nothing red (S52-10) and the docstring disagrees with the README and the code on what `verify` checks (S52-11); neither fix changes behaviour. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 93 passed, 238 subtests; mypy --strict clean |
+| take / verify / diff; every code; text values; id character set; source_ref; damaged versions; diff case collision; exit codes | PASS | as specified in revision02 |
+| Version uniqueness | PASS | 60 real two-process races with different dates: no duplicate, loser exits 2 naming the claim, nothing left behind; injected interleavings and stale claims as specified |
+| Seat design choices | AGREE | any claim blocks take; text-rule violation reported alongside a format code; `file:` stays SOURCE_REF_ABSOLUTE |
+| Changed assertion and 29 new tests | PASS | |
+| Reverse mutations | PARTIAL | 10 of 10 receipt mutations red; 27 of 30 reviewer counter-mutations red; C24 and C25 green (S52-10); C07 green but caught by the narrower id rule |
+| Receipt / boundary / identity / payload / F1 | PASS | checker 0 defects; fourth digest recomputed; 8 base failures only |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S52-01, S52-02, S52-03, S52-04, S52-06, S52-07 | CLOSED |
+| S52-05 | PARTIALLY CLOSED (S52-11) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S52-10 | EVIDENCE_DEFECT | Low (blocking: a zero-red counter-mutation is a finding) | `requirement_snapshot.py:304`, `:220`; tests | One-line output is not tested where a raw value is echoed in a detail: dropping `!r` from the SOURCE_REF_ABSOLUTE or NAME_INVALID detail leaves every test green. The code is correct. | C24, C25 green |
+| S52-11 | IMPLEMENTATION_DEFECT | Low | `requirement_snapshot.py:47-49` vs README `:147-148` and `run_verify` | The docstring says the case-variant rule is applied by take, verify and diff alike; README and code apply only the name rules in verify. | probe |
+| S52-12 | TICKET_DEFECT | Low (non-blocking for this candidate) | ticket 52 NAME_INVALID | The ticket applies the case-variant rule to verify, which has no root, and does not say whether verify checks the file's `source` against its directory. | probe |
+| S52-13 | OUT_OF_SCOPE_HARDENING | Low | `requirement_snapshot.py:406-418` | a top-level `source` or `source_sha256` breaking the text rule gets only NAME_INVALID or DIGEST_FORMAT, not also ROW_FIELD_TYPE | probe |
+| S52-14 | OUT_OF_SCOPE_HARDENING | Low | `requirement_snapshot.py:82-83, 86` | `\d` without `re.ASCII` matches Unicode digits in version file names | probe |
+| S52-15 | OUT_OF_SCOPE_HARDENING | Low | `requirement_snapshot.py:368-374` | a repeated JSON key silently keeps the last value | probe |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: the POSIX publish branch; an ACL-unwritable root; a case-sensitive file system; whether the four sequential race outcomes overlapped.
+
+```review-verdict
+candidate: 3c485efc65ba861a2dc6a716897e3c055d7397b1
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/52-rev02-initial
+reviewed_at: 2026-11-04
+```
