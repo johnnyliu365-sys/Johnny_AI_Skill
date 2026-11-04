@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用（Revision 04 does not seal a new Context） |
-| Agent Context binding | ticket revision02 / receipt under `doc/reviews/workflow-governance/evidence/51/` / owner implementation seat / worktree `.worktrees/51-evidence-gate` / branch `cp/wave2-51-evidence-gate` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision03 / receipt under `doc/reviews/workflow-governance/evidence/51/` / owner implementation seat / worktree `.worktrees/51-evidence-gate` / branch `cp/wave2-51-evidence-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S51-02, S51-07 TICKET_DEFECT; correction 1 dispatched to the same seat） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S51-10; implementation 3 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/51-evidence-gate` |
 | 審閱者 | `ticket-review` seat, its own worktree `.worktrees/51-evidence-gate-review` |
@@ -84,7 +84,12 @@ A run cell is a `## <name>` section with the lines `cell: <name>`, `candidate: <
 | `FIELD_REPEATED` | a run cell holds a second `cell:`, `candidate:`, `tool_digest:`, `capture:` or `exit:` line, or a second fence |
 | `CELL_NAME_MISMATCH` | a run cell's `cell:` value differs from its `## ` heading name |
 
-A capture path that escapes the evidence root (absolute path, `..` segments after normalisation, a drive letter, a link or junction resolving outside it) is `CAPTURE_MISSING`, never read. A `tool_digest` path is checked for form before git is asked: a path that is absolute, has a drive letter, has a `..` segment, starts with `:` (pathspec magic) or is empty is `TOOL_DIGEST_STALE` (a receipt red), never a tool fault; a well-formed path is read from the repository root (`git show <candidate>:<path>`), so `--repo` may name any directory inside the repository.
+A capture path that escapes the evidence root (absolute path, `..` segments after normalisation, a drive letter, a link or junction resolving outside it) is `CAPTURE_MISSING`, never read. A `tool_digest` path is judged in two steps, and neither step can turn a receipt red into a tool fault (revision03):
+
+1. Canonical form. The path is non-empty, at most 1024 bytes in UTF-8, follows the text-value rule, uses `/` as its only separator, has no backslash, does not start with `/` or `:`, has no drive letter, and has no empty, `.` or `..` segment. Anything else is `TOOL_DIGEST_STALE` naming the line.
+2. One literal lookup. A canonical path is looked up exactly once, literally, from the repository root: `<candidate>:<path>` is written to the standard input of `git cat-file --batch-check` (and the content read through `git cat-file --batch`), never passed as a pathspec or on the command line. `missing`, or any object type other than `blob` (a tree, a gitlink, a symlink is a blob and is read as stored), is `TOOL_DIGEST_STALE`. Only git failing to start, exiting non-zero, or answering outside its documented format is exit 2.
+
+Existence and content come from the same lookup, so there is no path that one query accepts and another refuses. `--repo` may name any directory inside the repository; the root comes from `git rev-parse --show-toplevel`, or the directory itself for a bare repository.
 
 Relation to R4-7: a cell missing one of the five R4-7 fields is what R4-7 calls `NOT_RUN`; the gate reports it with the more specific code `CELL_FIELD_MISSING` and keeps `NOT_RUN` for a section without `cell:` and an absent required cell. R4-7's "repository-relative" capture path is the case where `--evidence-root` is the repository root; the gate accepts any evidence root so a seat can keep captures outside the tree until they are committed.
 
@@ -98,7 +103,7 @@ Every string read from an input is valid Unicode without lone surrogates and wit
 1. 正常行為：a receipt with two run cells and one statement section, every field correct → exit 0, `cells=2 defects=0`.
 2. 規則違反／輸入錯誤：one test per defect code above, each built from the good receipt by one change; a cell carrying two defects reports both.
 3. 外部失敗／fail-closed：`git show` failing for a listed tool (unknown candidate in the repository) → exit 2 with git's stderr; the receipt path is a directory or unreadable → exit 2; `--repo` not a repository → exit 2; no `--tool` or no `--candidate` → exit 3.
-4. 回歸保護：the six NF-16 escape shapes from the ticket 48 review (section without `cell:`, statement opt-out, missing `tool_digest:` label, missing capture reported as fault, mixed candidates, exit list contradicting the capture) each give exit 1 with the code above; a receipt written with CRLF line endings is read (the receipt's own line endings are normalised; captures are not); a receipt with a UTF-8 BOM is read; an outward directory junction under the evidence root is `CAPTURE_MISSING` (a test that needs no symlink privilege); `--repo` a subdirectory of the repository gives the same result as the root.
+4. 回歸保護：the six NF-16 escape shapes from the ticket 48 review (section without `cell:`, statement opt-out, missing `tool_digest:` label, missing capture reported as fault, mixed candidates, exit list contradicting the capture) each give exit 1 with the code above; a receipt written with CRLF line endings is read (the receipt's own line endings are normalised; captures are not); a receipt with a UTF-8 BOM is read; an outward directory junction under the evidence root is `CAPTURE_MISSING` (a test that needs no symlink privilege); `--repo` a subdirectory of the repository gives the same result as the root; each digest-path shape that is not canonical (backslash, `//`, `/./`, `.`, a trailing `/`, more than 1024 bytes, NUL, DEL, U+001F) is `TOOL_DIGEST_STALE` with exit 1, one test per shape; a gitlink and a tree at the candidate are `TOOL_DIGEST_STALE`; a receipt with a correct required line plus one non-canonical extra line exits 1; a lookup failure (git exiting non-zero, a missing object store) is exit 2, never `TOOL_DIGEST_STALE`; `CELL_NAME_MISMATCH` is case-sensitive and does not stop the cell's other checks; `DEL` and U+001F in a cell name are reds.
 
 ### 適用的缺陷類別
 
@@ -115,7 +120,7 @@ Every string read from an input is valid Unicode without lone surrogates and wit
 
 - `python -m pytest tests/test_gate_evidence.py -q` exit 0; `mypy --strict --python-version 3.11` on the script exit 0; stdlib only; no `Any`.
 - The gate run on its own receipt (the seat's `RETURN.md`) with `--tool skills/johnny-project-takeover/scripts/evidence_gate.py` exits 0; that run is recorded as cell `E1`, its capture produced by writing the gate's output and re-running to confirm byte identity (the self-reference note of ticket 48).
-- The gate run on the ticket 48 c10 receipt (`--evidence-root` its directory, the three wave-1 scripts as `--tool`, the c10 sha as candidate, the c10 clone as `--repo`): the exit and every code printed are recorded as cell `E2`; the result is an observation, not an assertion (that receipt was written under the ticket 48 format).
+- The gate run on the ticket 48 c10 receipt (`--evidence-root` its directory, the three wave-1 scripts as `--tool`, the c10 sha as candidate, the c10 clone as `--repo`): the exit and every code printed are recorded as cell `E2` in every receipt of this ticket, corrections included; the result is an observation, not an assertion (that receipt was written under the ticket 48 format).
 - **反向突變證據**：for each defect code, remove its check → the test of that code turns red → restore. Plus: block comparison after CRLF normalisation (must be red); exit list compared as a set instead of in order (red); capture path not confined to the root (red).
 - full suite: failure set a subset of the base names of the environment; zero new red.
 
@@ -145,3 +150,16 @@ Review record: `doc/reviews/workflow-governance/51-evidence-gate-code-review.md`
 | S51-08 | OUT_OF_SCOPE_HARDENING | not taken: only the script is required to pass `mypy --strict` |
 | S51-09 | accepted decisions | none |
 | text values | added for every wave-2 gate | the text-value rule above |
+
+## Re-plan to closure revision03 (after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision02 correction review". CodeReview §5: the closure revision used its one initial and one correction review, so the control plane rebuilds the design instead of a third correction. Root cause of S51-10: existence was decided by `git ls-tree`, whose pathspec normalises a path, and content by `git show`, which looks it up literally, so a path could pass one and fail the other. Revision03 replaces both with one canonical-form check and one literal lookup through standard input. Revision03 starts a new cadence: one initial review and one correction review.
+
+| Finding | Class | Disposition in revision03 |
+| --- | --- | --- |
+| S51-10 | IMPLEMENTATION_DEFECT | canonical form, then one literal lookup, as above; one test per shape |
+| S51-11 | EVIDENCE_DEFECT | NUL, DEL and U+001F tests at the boundaries |
+| S51-12 | EVIDENCE_DEFECT | case-sensitive name test; a mismatched cell still reports its other defects |
+| S51-13 | EVIDENCE_DEFECT | a lookup failure is exit 2, with a test |
+| S51-14 | EVIDENCE_DEFECT | `E2` in every receipt of this ticket |
+| S51-15 | OUT_OF_SCOPE_HARDENING | not taken: none is reachable as an unflagged contradiction of a run field |

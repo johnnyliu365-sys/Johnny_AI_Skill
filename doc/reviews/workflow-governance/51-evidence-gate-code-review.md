@@ -61,3 +61,66 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/51-rev01-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision02 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `4bcc2873a19ead243945d17c8392cfe2a6dbad18` on `cp/wave2-51-evidence-gate` (one additive commit on `7928d447`) |
+| Closure | ticket 51 closure revision02 (`fc83b087`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review CodeReview §5 allows |
+| Summary | Every revision02 cell reproduces and the seat's nine mutations are red. S51-01 is only partly closed: digest paths that pass the form check still reach `git show` and exit 2 (S51-10). Nine of 22 counter-mutations survive, four of them changing the exit code (S51-11 to S51-13). An implementation defect remains after the correction, so the ticket goes back to the control plane. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 123 passed, 1 skipped (symlink; the junction test ran), 54 subtests; mypy --strict clean on the script |
+| FIELD_REPEATED | PASS | one defect per repeated field, in field order |
+| CELL_NAME_MISMATCH | PASS, gap S51-12 | |
+| Digest-path form → TOOL_DIGEST_STALE | PARTIAL | absolute, drive, `..`, leading `:`, empty, blank, NUL → 1; backslash, `//`, `/./`, `.`, a gitlink, a 33000-character path → 2 (S51-10) |
+| Root-relative reads, subdirectory `--repo` | PASS | |
+| Whole `exit=N` lines; junction escape; BOM and CRLF | PASS | |
+| Text values | PASS for behaviour, gap S51-11 | every defect one line |
+| R4-2: no red exits 2 | FAIL | S51-10 |
+| R4-2: no fault exits 1 | PASS, gap S51-13 | |
+| Seat's nine mutations | PASS | 9 of 9 red |
+| Reviewer counter-mutations | FAIL | 22 run, 13 red, 9 survive |
+| Changed existing assertions; seat's choices | PASS; AGREE | |
+| Receipt | PASS, gap S51-14 | LF; blocks byte-identical; exit lists equal; digest recomputed; E2 missing |
+| E2 (reviewer rerun) | observation | `cells=7 defects=0`, as in revision01 |
+| Boundary | PASS | |
+| Full suite | PASS | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S51-01 | PARTIALLY CLOSED (S51-10) |
+| S51-02, S51-04, S51-05, S51-06, S51-07 | CLOSED |
+| S51-03 | CLOSED in behaviour (S51-12) |
+| S51-08 | not taken, as planned |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S51-10 | IMPLEMENTATION_DEFECT (R4-2; remainder of S51-01) | Medium | `evidence_gate.py:286-296`, `:277-281`, `:435-450` | existence is checked with `git ls-tree`, whose pathspec normalises `\`, `//`, `./` and `.` and lists gitlinks; the digest is read with `git show`, a literal lookup that refuses those paths, so a receipt red exits 2; a correct receipt plus one `tools\x.py` line exits 2 | nine probes → exit 2 |
+| S51-11 | EVIDENCE_DEFECT | Low | tests `:718`, `:725`; `evidence_gate.py:97`, `:439` | the digest-path control check, DEL and the U+001F boundary are unpinned | C01, C02, C03 survive and change the exit |
+| S51-12 | EVIDENCE_DEFECT | Low | tests `:559`; `evidence_gate.py:574` | case-insensitive names and a mismatch skipping the other checks survive | C04, C08 |
+| S51-13 | EVIDENCE_DEFECT (R4-2 fault side) | Low | `evidence_gate.py:291-292` | an `ls-tree` failure reported as absent survives, turning a fault into a red | C09 |
+| S51-14 | EVIDENCE_DEFECT | Info | the seat's receipt | E2 missing without a statement | reviewer rerun unchanged |
+| S51-15 | OUT_OF_SCOPE_HARDENING | Info | `evidence_gate.py:60, 355, 380` | parser leniencies (indented or capitalised second field line, label trailing text, C1 controls in names, `::$DATA`); none an unflagged contradiction of a run field | probes |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: Linux and case-sensitive file systems; a real missing git; the symlink branch (a junction was used); submodules with a working tree.
+
+```review-verdict
+candidate: 4bcc2873a19ead243945d17c8392cfe2a6dbad18
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/51-rev02-correction
+reviewed_at: 2026-11-04
+```
