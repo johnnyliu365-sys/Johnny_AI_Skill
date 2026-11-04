@@ -15,10 +15,17 @@ CELL_FIELD_MISSING, STATEMENT_HAS_RUN_FIELDS, DUPLICATE_CELL, CANDIDATE_MISMATCH
 TOOL_DIGEST_MISSING, TOOL_DIGEST_STALE, CAPTURE_MISSING, CAPTURE_CR, BLOCK_MISMATCH,
 EXIT_MISMATCH, FIELD_REPEATED, CELL_NAME_MISMATCH. The last line is `cells=N defects=M`.
 
-A `tool_digest` path is checked for form before git is asked (absolute, drive letter, `..`
-segment, leading `:`, empty or holding a control character: TOOL_DIGEST_STALE) and a
-well-formed path is read from the repository root, so `--repo` may be any directory inside
-the repository. Every string read from the receipt is valid Unicode without lone surrogates
+A `tool_digest` path is judged in two steps, and neither can turn a red into a tool fault.
+First its form: a canonical path is non-empty, at most 1024 bytes in UTF-8, holds no control
+character, uses only the forward slash as separator, does not start with a slash or a colon,
+has no drive letter and no empty, single-dot or double-dot segment; any other path is
+TOOL_DIGEST_STALE. Then one literal lookup from the repository root: the line
+`<candidate>:<path>` is written to the standard input of `git cat-file --batch-check` and,
+for a blob, of `git cat-file --batch`; the path is never passed to git as a pathspec or on its
+command line. A missing object or one that is not a blob (a tree, a submodule entry) is
+TOOL_DIGEST_STALE; git failing to start, exiting non-zero or answering outside its documented
+format is a tool fault. The root comes from the repository, so `--repo` may be any directory
+inside it. Every string read from the receipt is valid Unicode without lone surrogates
 and without control characters; one that is not is a red, never a fault. Every subject
 printed in a defect line is escaped, so one defect is always one line.
 
@@ -64,6 +71,10 @@ RECEIPT_SECTION = "(receipt)"
 BYTE_CODEC = "utf-8"
 BYTE_ERRORS = "surrogateescape"
 HORIZONTAL_SPACE = " 	"
+MAX_DIGEST_PATH_BYTES = 1024
+OBJECT_REPLY = re.compile(r"([0-9a-f]{40}|[0-9a-f]{64}) ([a-z]+)(?: ([0-9]+))?")
+OBJECT_NAME = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
+BLOB = "blob"
 REPEAT_ORDER = ("cell", "candidate", "tool_digest", "capture", "exit", "fence")
 
 
@@ -158,6 +169,32 @@ class GitResult:
 # ----------------------------------------------------------------------------- arguments
 
 
+def digest_path_problem(path: str) -> str | None:
+    """Why `path` is not a canonical repository-relative path, or None when it is canonical."""
+    if not path:
+        return "empty path"
+    if has_bad_text(path):
+        return "path holds a control character or a lone surrogate"
+    if len(path.encode(BYTE_CODEC)) > MAX_DIGEST_PATH_BYTES:
+        return f"path is longer than {MAX_DIGEST_PATH_BYTES} bytes"
+    if "\\" in path:
+        return "path holds a backslash"
+    if path.startswith("/"):
+        return "absolute path"
+    if DRIVE_PREFIX.match(path):
+        return "path has a drive letter"
+    if path.startswith(":"):
+        return "path starts with ':' (pathspec magic)"
+    for segment in path.split("/"):
+        if not segment:
+            return "path has an empty segment"
+        if segment == ".":
+            return "path has a '.' segment"
+        if segment == "..":
+            return "path has a '..' segment"
+    return None
+
+
 def parse_arguments(argv: Sequence[str]) -> Arguments:
     receipt: str | None = None
     repo: str | None = None
@@ -221,6 +258,10 @@ def parse_arguments(argv: Sequence[str]) -> Arguments:
     if any(has_bad_text(value) for value in [*tools, *require_cells]):
         raise UsageError("--tool and --require-cell must not hold control characters or lone surrogates")
     normalised_tools = unique([tool.strip().replace("\\", "/") for tool in tools])
+    for tool in normalised_tools:
+        problem = digest_path_problem(tool)
+        if problem is not None:
+            raise UsageError(f"--tool {printable(tool)}: {problem}")
     return Arguments(
         receipt=Path(receipt),
         repo=Path(repo),
@@ -244,16 +285,16 @@ def unique(items: Sequence[str]) -> list[str]:
 # ----------------------------------------------------------------------------- git
 
 
-def run_git(repo: Path, args: Sequence[str]) -> GitResult:
+def run_git(repo: Path, args: Sequence[str], stdin: bytes | None = None) -> GitResult:
     try:
-        done = subprocess.run(["git", "-C", str(repo), *args], capture_output=True)
+        done = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, input=stdin)
     except OSError as error:
         raise ToolFault(f"cannot start git: {error}") from error
     return GitResult(done.returncode, done.stdout, done.stderr.decode("utf-8", errors="replace").strip())
 
 
 class GitView:
-    """Reads blobs of one candidate commit and caches their sha256."""
+    """Reads blobs of one candidate commit by literal lookup and caches their sha256."""
 
     def __init__(self, repo: Path, candidate: str) -> None:
         self._repo = repo
@@ -266,7 +307,7 @@ class GitView:
             raise ToolFault(f"{self._repo} is not a usable git repository: {inside.stderr}")
         top = run_git(self._repo, ["rev-parse", "--show-toplevel"])
         if top.returncode == 0:
-            # paths of a digest line are root-relative, whichever directory --repo names
+            # the lookup is rooted at the repository top, whichever directory --repo names
             root = top.stdout.decode("utf-8", errors="replace").strip()
             if root:
                 self._repo = Path(root)
@@ -274,26 +315,56 @@ class GitView:
         if found.returncode != 0:
             raise ToolFault(f"git cannot resolve candidate {self._candidate}: {found.stderr}")
 
+    def _ask(self, mode: str, request: bytes) -> bytes:
+        """The standard output of `git cat-file <mode>` for one request line; any failure is a tool fault."""
+        asked = run_git(self._repo, ["cat-file", mode], request)
+        if asked.returncode != 0:
+            raise ToolFault(f"git cat-file {mode} exited {asked.returncode}: {asked.stderr}")
+        return asked.stdout
+
+    def _blob(self, path: str) -> bytes | None:
+        """The stored bytes of `<candidate>:<path>`; None when it is missing or not a blob."""
+        problem = digest_path_problem(path)
+        if problem is not None:  # a caller must have judged the form; git is never asked about this path
+            raise ToolFault(f"internal error: lookup of a non-canonical path {printable(path)}: {problem}")
+        name = f"{self._candidate}:{path}".encode(BYTE_CODEC)
+        request = name + b"\n"
+        reply = self._ask("--batch-check", request)
+        first, newline, rest = reply.partition(b"\n")
+        if not newline or rest:
+            raise ToolFault("git cat-file --batch-check answered outside its documented format")
+        subject, _, word = first.rpartition(b" ")
+        if word == b"missing" and (subject == name or OBJECT_NAME.fullmatch(subject.decode("ascii", errors="replace"))):
+            return None
+        checked = OBJECT_REPLY.fullmatch(first.decode("ascii", errors="replace"))
+        if checked is None:
+            raise ToolFault("git cat-file --batch-check answered outside its documented format")
+        if checked.group(2) != BLOB:  # a tree, a commit, or a submodule entry (which has no size)
+            return None
+        if checked.group(3) is None:
+            raise ToolFault("git cat-file --batch-check answered outside its documented format")
+        fetched = self._ask("--batch", request)
+        header, newline, body = fetched.partition(b"\n")
+        if not newline or header != first:
+            raise ToolFault("git cat-file --batch answered outside its documented format")
+        size = int(checked.group(3))
+        if len(body) != size + 1 or not body.endswith(b"\n"):
+            raise ToolFault("git cat-file --batch returned a body that does not match its size")
+        return body[:size]
+
     def required_digest(self, path: str) -> str:
-        """sha256 of `git show <candidate>:<path>`; a git failure is a tool fault."""
-        shown = run_git(self._repo, ["show", f"{self._candidate}:{path}"])
-        if shown.returncode != 0:
-            raise ToolFault(f"git show {self._candidate}:{path} failed: {shown.stderr}")
-        digest = hashlib.sha256(shown.stdout).hexdigest()
-        self._cache[path] = digest
+        """sha256 of a blob of the candidate; a path that is not a blob there is a tool fault."""
+        digest = self.digest_or_absent(path)
+        if digest is None:
+            raise ToolFault(f"tool path {printable(path)} is not a blob at candidate {self._candidate} (git cat-file)")
         return digest
 
     def digest_or_absent(self, path: str) -> str | None:
-        """Like required_digest, but a path missing from the candidate tree is None (a red)."""
-        if path in self._cache:
-            return self._cache[path]
-        listed = run_git(self._repo, ["ls-tree", "--name-only", self._candidate, "--", path])
-        if listed.returncode != 0:
-            raise ToolFault(f"git ls-tree {self._candidate} {path} failed: {listed.stderr}")
-        if not listed.stdout.strip():
-            self._cache[path] = None
-            return None
-        return self.required_digest(path)
+        """sha256 of the blob, or None when the path is missing or not a blob (a red, not a fault)."""
+        if path not in self._cache:
+            data = self._blob(path)
+            self._cache[path] = None if data is None else hashlib.sha256(data).hexdigest()
+        return self._cache[path]
 
 
 # ----------------------------------------------------------------------------- receipt parsing
@@ -432,24 +503,6 @@ def check_statement(section: Section, require_cells: Sequence[str]) -> list[Defe
     return defects
 
 
-def digest_path_problem(path: str) -> str | None:
-    """Why `path` is not a well-formed repository-relative path, or None when it is."""
-    if not path:
-        return "empty path"
-    if has_bad_text(path):
-        return "path holds a control character or a lone surrogate"
-    unified = path.replace("\\", "/")
-    if unified.startswith("/"):
-        return "absolute path"
-    if DRIVE_PREFIX.match(unified):
-        return "path has a drive letter"
-    if unified.startswith(":"):
-        return "path starts with ':' (pathspec magic)"
-    if ".." in unified.split("/"):
-        return "path has a '..' segment"
-    return None
-
-
 def check_digests(section: Section, args: Arguments, git: GitView) -> list[Defect]:
     defects: list[Defect] = []
     listed: dict[str, list[str]] = {}
@@ -480,7 +533,7 @@ def check_digests(section: Section, args: Arguments, git: GitView) -> list[Defec
                     Defect(
                         DefectCode.TOOL_DIGEST_STALE,
                         section.heading,
-                        f"{path} lists '{value}', git show {args.candidate} gives {expected}",
+                        f"{path} lists '{value}', the blob at {args.candidate} gives {expected}",
                     )
                 )
     return defects
@@ -625,10 +678,10 @@ def main(argv: Sequence[str]) -> int:
     try:
         return execute(args)
     except ToolFault as error:
-        print(f"tool fault: {error}", file=sys.stderr)
+        print(f"tool fault: {printable(str(error))}", file=sys.stderr)
         return EXIT_FAULT
     except Exception as error:  # an unexpected error is a tool fault, never a red
-        print(f"tool fault: unexpected {type(error).__name__}: {error}", file=sys.stderr)
+        print(f"tool fault: unexpected {type(error).__name__}: {printable(str(error))}", file=sys.stderr)
         return EXIT_FAULT
 
 

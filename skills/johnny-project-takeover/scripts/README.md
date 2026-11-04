@@ -102,7 +102,7 @@ root>` and `exit: <comma-separated exit codes in capture order>`, then the captu
 four-backtick fence. A section with `cell: STATEMENT` is informational and has no
 `capture:`, `exit:` or fence. `--candidate` is the full lower-case commit sha every cell must
 name; each `--tool` path must be listed in every run cell with the sha256 of
-`git show <candidate>:<path>` in `--repo`. `--evidence-root` defaults to the receipt's
+the blob at `<candidate>:<path>` in `--repo`. `--evidence-root` defaults to the receipt's
 directory. The receipt's own CRLF line endings are normalised; captures are not.
 
 Exit 0 prints `cells=N defects=0`. Exit 1 prints one line `<code> <section>: <detail>` per
@@ -116,14 +116,24 @@ capture byte for byte), `EXIT_MISMATCH` (the `exit:` list must equal the lines o
 that consist of `exit=N` alone, in order; `exit=N` inside a longer line does not count),
 `FIELD_REPEATED` (a run cell holds a second `cell:`, `candidate:`, `tool_digest:`, `capture:`
 or `exit:` line, or a second fence) and `CELL_NAME_MISMATCH` (the `cell:` value differs from
-the `## ` heading). A `tool_digest` path is checked for form before git is asked: an absolute
-path, a drive letter, a `..` segment, a leading `:` (pathspec magic), an empty path or a path
-with a control character is `TOOL_DIGEST_STALE`; a well-formed path is read from the
-repository root, so `--repo` may be any directory inside the repository. A string in the
+the `## ` heading). A `tool_digest` path is judged in two steps, and neither can turn a red into a tool fault.
+First its form: a canonical path is non-empty, at most 1024 bytes in UTF-8, holds no control
+character (U+0000 to U+001F, U+007F) or lone surrogate, uses only the forward slash as
+separator (no backslash), does not start with a slash or a colon, has no drive letter and no
+empty, `.` or `..` segment; any other path is `TOOL_DIGEST_STALE` and git is never asked about
+it. Then one literal lookup from the repository root: the line `<candidate>:<path>` is
+written to the standard input of `git cat-file --batch-check` (and, for a blob, of
+`git cat-file --batch`), never passed to git as a pathspec or on its command line, so
+existence and content come from the same lookup. A missing object, or one that is not a blob
+(a tree, a submodule entry), is `TOOL_DIGEST_STALE`; a symbolic link is a blob and is read as
+stored. The repository root is found from `--repo`, so it may be any directory inside the
+repository. A string in the
 receipt that holds a lone surrogate or a control character is a red (a capture reference is
 `CAPTURE_MISSING`, a section or cell name is `NOT_RUN`), never a fault, and every printed
 subject is escaped so one defect is always one line. Exit 2: the receipt or a capture cannot be read, the evidence root is
-not a directory, `git` cannot start, `--repo` is not a repository, the candidate or a
-`--tool` path cannot be read from it, or an unexpected error. Exit 3: a missing or unknown
-argument, no `--tool`, a blank `--tool` or `--require-cell`, a `--candidate` that is not a
+not a directory, `git` cannot start, `--repo` is not a repository, the candidate cannot be
+resolved, a `--tool` path is not a blob at it, `git cat-file` exits non-zero or answers outside
+its documented format (a failing lookup is never read as an absent path), or an unexpected
+error; the fault message is escaped to one line. Exit 3: a missing or unknown
+argument, no `--tool`, a blank `--tool` or `--require-cell`, a `--tool` path that is not canonical, a `--candidate` that is not a
 full 40-character lower-case sha. Output uses LF line endings.

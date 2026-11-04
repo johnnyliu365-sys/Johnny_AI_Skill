@@ -564,6 +564,28 @@ class RepeatedFieldAndNameTests(GateTestCase):
         out = self.fx.run()[1]
         self.assertIn("CELL_NAME_MISMATCH B: cell: line names 'A', the heading names 'B'\n", out)
 
+    def test_the_name_comparison_is_case_sensitive(self) -> None:
+        for heading, name in (("a", "A"), ("A", "a"), ("Cell", "cell")):
+            with self.subTest(heading=heading, name=name):
+                spec = self.fx.cell("A", heading=heading)
+                spec.name = name
+                self.assertEqual(self.red(spec.render()), ["CELL_NAME_MISMATCH"])
+
+    def test_a_mismatched_cell_still_reports_every_other_defect(self) -> None:
+        spec = self.fx.cell("A", exit_value="7", heading="B", candidate="1" * 40)
+        spec.digests = [f"{TOOL_PATH}={sha256(b'wrong')}"]
+        self.assertEqual(
+            self.red(spec.render()),
+            ["CELL_NAME_MISMATCH", "CANDIDATE_MISMATCH", "TOOL_DIGEST_STALE", "EXIT_MISMATCH"],
+        )
+
+    def test_a_mismatched_cell_is_still_checked_for_duplicates_and_capture(self) -> None:
+        first = self.fx.cell("A")
+        second = self.fx.cell("A", heading="B")
+        second.capture_file = "absent.txt"
+        codes = self.red(first.render(), second.render())
+        self.assertEqual(codes, ["CELL_NAME_MISMATCH", "DUPLICATE_CELL", "CAPTURE_MISSING"])
+
     def test_a_mismatched_cell_still_counts_as_the_named_cell(self) -> None:
         self.fx.write_receipt(self.fx.cell("A", heading="B").render())
         code, out, _ = self.fx.run(["--require-cell", "A"])
@@ -622,6 +644,292 @@ class DigestPathTests(GateTestCase):
         self.fx.write_receipt(*self.fx.good_parts())
         code, out, err = self.fx.run(repo=self.fx.repo / "tools")
         self.assertEqual((code, out, err), (0, "cells=2 defects=0\n", ""))
+
+
+class DigestLookupTests(GateTestCase):
+    """Canonical form first, then one literal lookup through the standard input of git cat-file."""
+
+    def add_entry(self, path: str, body: bytes | None = None, mode: str = "100644", object_id: str | None = None) -> str:
+        """Commit an index entry without touching the working tree; returns the new candidate."""
+        if object_id is None:
+            made = subprocess.run(
+                ["git", "-C", str(self.fx.repo), "hash-object", "-w", "--stdin"], input=body or b"", capture_output=True, check=True
+            )
+            object_id = made.stdout.decode("ascii").strip()
+        git(self.fx.repo, "update-index", "--add", "--cacheinfo", f"{mode},{object_id},{path}")
+        git(self.fx.repo, "commit", "-q", "-m", "entry")
+        self.fx.candidate = git(self.fx.repo, "rev-parse", "HEAD").strip()
+        return self.fx.candidate
+
+    def listed(self, extra_path: str, digest: str | None = None) -> tuple[int, list[str], str, str]:
+        value = digest if digest is not None else sha256(b"x")
+        spec = self.fx.cell("A", digests=self.fx.good_digests() + [f"{extra_path}={value}"])
+        self.fx.write_receipt(spec.render())
+        code, out, err = self.fx.run()
+        return code, self.fx.codes(out), out, err
+
+    def assert_stale_without_asking_git(self, extra_path: str) -> None:
+        asked: list[tuple[list[str], bytes | None]] = []
+        real = subprocess.run
+
+        def spy(command: list[str], *args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+            raw = kwargs.get("input")
+            asked.append((list(command), raw if isinstance(raw, bytes) else None))
+            return real(command, *args, **kwargs)
+
+        with mock.patch.object(evidence_gate.subprocess, "run", side_effect=spy):
+            code, codes, out, err = self.listed(extra_path)
+        self.assertEqual((code, codes, err), (1, ["TOOL_DIGEST_STALE"], ""), out)
+        request = (f"{self.fx.candidate}:{extra_path}" + chr(10)).encode("utf-8")
+        for command, raw in asked:
+            self.assertNotEqual(raw, request, "a non-canonical path reached git")
+            self.assertNotIn(extra_path, command)
+
+    # one test per shape that is not canonical
+    def test_backslash_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("tools\\second.py")
+
+    def test_empty_segment_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("tools//second.py")
+
+    def test_single_dot_segment_inside_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("tools/./second.py")
+
+    def test_the_path_dot_is_stale(self) -> None:
+        self.assert_stale_without_asking_git(".")
+
+    def test_a_leading_dot_segment_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("./tools/second.py")
+
+    def test_a_trailing_slash_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("tools/")
+
+    def test_more_than_1024_bytes_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("tools/" + "a" * (1025 - len("tools/")))
+
+    def test_the_limit_counts_bytes_not_characters(self) -> None:
+        wide = "tools/" + "\u00e9" * 510  # 510 characters, 1026 bytes
+        self.assertLess(len(wide), 1024)
+        self.assertEqual(len(wide.encode("utf-8")), 1026)
+        self.assert_stale_without_asking_git(wide)
+
+    def test_nul_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("tools/se\x00cond.py")
+
+    def test_del_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("tools/se\x7fcond.py")
+
+    def test_unit_separator_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("tools/se\x1fcond.py")
+
+    def test_a_leading_slash_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("/tools/second.py")
+
+    def test_a_drive_letter_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("C:/tools/second.py")
+
+    def test_a_leading_colon_is_stale(self) -> None:
+        self.assert_stale_without_asking_git(":/tools/second.py")
+
+    def test_a_parent_segment_is_stale(self) -> None:
+        self.assert_stale_without_asking_git("tools/../tools/second.py")
+
+    def test_each_refusal_names_its_own_reason(self) -> None:
+        for path, reason in (
+            ("", "empty path"), ("/tools/second.py", "absolute path"), ("tools//second.py", "empty segment"),
+            ("tools/./second.py", "'.' segment"), ("tools/../second.py", "'..' segment"), ("tools\\second.py", "backslash"),
+            ("C:/second.py", "drive letter"), (":/second.py", "pathspec magic"), ("tools/" + "a" * 1100, "longer than 1024"),
+            ("tools/se\x7fcond.py", "control character"),
+        ):
+            with self.subTest(path=path[:20]):
+                code, codes, out, err = self.listed(path)
+                self.assertEqual((code, codes, err), (1, ["TOOL_DIGEST_STALE"], ""), out)
+                self.assertIn(reason, out)
+
+    # the boundaries on the canonical side: these paths are looked up and found
+    def test_a_path_of_exactly_1024_bytes_is_looked_up(self) -> None:
+        path = "tools/" + "a" * (1024 - len("tools/"))
+        self.assertEqual(len(path.encode("utf-8")), 1024)
+        self.add_entry(path, b"long\n")
+        code, codes, out, _ = self.listed(path, sha256(b"long\n"))
+        self.assertEqual((code, codes), (0, []), out)
+
+    def test_a_space_a_tilde_and_a_caret_inside_a_name_are_canonical(self) -> None:
+        for name in ("tools/with space.py", "tools/a~b.py", "tools/a^b.py", "tools/a=b.py"):
+            with self.subTest(name=name):
+                body = name.encode("utf-8") + b"\n"
+                self.add_entry(name, body)
+                code, codes, out, err = self.listed(name, sha256(body))
+                self.assertEqual((code, codes, err), (0, [], ""), out)
+
+    def test_a_path_that_looks_like_revision_syntax_is_still_a_literal_name(self) -> None:
+        for name in (f"{TOOL_PATH}^{{blob}}", f"{TOOL_PATH}^{{}}", f"{TOOL_PATH}~1", f"{TOOL_PATH}^", f"{TOOL_PATH}@{{1}}"):
+            with self.subTest(name=name):
+                code, codes, out, err = self.listed(name, sha256(TOOL_BODY))
+                self.assertEqual((code, codes, err), (1, ["TOOL_DIGEST_STALE"], ""), out)
+
+    # what is found is judged by type
+    def test_a_tree_at_the_candidate_is_stale(self) -> None:
+        raw = subprocess.run(
+            ["git", "-C", str(self.fx.repo), "cat-file", "tree", f"{self.fx.candidate}:tools"], capture_output=True, check=True
+        ).stdout
+        code, codes, out, err = self.listed("tools", sha256(raw))  # the digest of the tree's own bytes is still no blob
+        self.assertEqual((code, codes, err), (1, ["TOOL_DIGEST_STALE"], ""), out)
+
+    def test_a_gitlink_at_the_candidate_is_stale(self) -> None:
+        raw = subprocess.run(
+            ["git", "-C", str(self.fx.repo), "cat-file", "commit", self.fx.candidate], capture_output=True, check=True
+        ).stdout
+        self.add_entry("tools/sub", mode="160000", object_id=self.fx.candidate)  # an object that exists, of type commit
+        code, codes, out, err = self.listed("tools/sub", sha256(raw))
+        self.assertEqual((code, codes, err), (1, ["TOOL_DIGEST_STALE"], ""), out)
+
+    def test_a_gitlink_to_an_absent_object_is_stale(self) -> None:
+        self.add_entry("tools/sub", mode="160000", object_id="1" * 40)
+        code, codes, out, err = self.listed("tools/sub", "1" * 40)
+        self.assertEqual((code, codes, err), (1, ["TOOL_DIGEST_STALE"], ""), out)
+
+    def test_a_symlink_is_a_blob_read_as_stored(self) -> None:
+        self.add_entry("tools/link", b"probe.py", mode="120000")
+        good = self.listed("tools/link", sha256(b"probe.py"))
+        self.assertEqual(good[:2], (0, []), good[2])
+        stale = self.listed("tools/link", sha256(TOOL_BODY))
+        self.assertEqual(stale[:2], (1, ["TOOL_DIGEST_STALE"]))
+
+    def test_a_missing_path_is_stale_not_a_fault(self) -> None:
+        code, codes, out, err = self.listed("tools/ghost.py")
+        self.assertEqual((code, codes, err), (1, ["TOOL_DIGEST_STALE"], ""), out)
+        self.assertIn("is not present at candidate", out)
+
+    def test_a_correct_required_line_plus_one_non_canonical_extra_line_is_red(self) -> None:
+        code, codes, out, err = self.listed("tools//second.py", sha256(OTHER_TOOL_BODY))
+        self.assertEqual((code, codes, err), (1, ["TOOL_DIGEST_STALE"], ""), out)
+
+    # the shape of the lookup itself
+    def setUp(self) -> None:
+        super().setUp()
+        self.addCleanup(self.release_lookup_patch)
+
+    def spy_on_git(self) -> list[tuple[list[str], bytes | None]]:
+        asked: list[tuple[list[str], bytes | None]] = []
+        real = subprocess.run
+
+        def spy(command: list[str], *args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+            raw = kwargs.get("input")
+            asked.append((list(command), raw if isinstance(raw, bytes) else None))
+            return real(command, *args, **kwargs)
+
+        patcher = mock.patch.object(evidence_gate.subprocess, "run", side_effect=spy)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return asked
+
+    def test_a_digest_path_is_only_ever_written_to_standard_input_of_cat_file(self) -> None:
+        asked = self.spy_on_git()
+        spec = self.fx.cell("A", digests=self.fx.good_digests() + [f"{OTHER_TOOL_PATH}={sha256(OTHER_TOOL_BODY)}"])
+        self.fx.write_receipt(spec.render())
+        self.assertEqual(self.fx.run()[0], 0)
+        self.assertTrue(asked)
+        for command, raw in asked:
+            self.assertEqual(command[:2], ["git", "-C"])
+            verb = command[3]
+            self.assertIn(verb, ("rev-parse", "cat-file"), command)
+            self.assertNotIn(verb, ("ls-tree", "show"))
+            for token in command:
+                self.assertNotIn("second.py", token)
+                self.assertNotIn("probe.py", token)
+            if verb == "cat-file":
+                self.assertIn(command[4:], (["--batch-check"], ["--batch"]))
+                self.assertIsNotNone(raw)
+
+    def test_each_path_is_looked_up_once_for_batch_check_and_once_for_content(self) -> None:
+        asked = self.spy_on_git()
+        extra = f"{OTHER_TOOL_PATH}={sha256(OTHER_TOOL_BODY)}"
+        first = self.fx.cell("A", digests=self.fx.good_digests() + [extra])
+        second = self.fx.cell("B", digests=self.fx.good_digests() + [extra])
+        self.fx.write_receipt(first.render(), second.render())
+        self.assertEqual(self.fx.run()[0], 0)
+        for path in (TOOL_PATH, OTHER_TOOL_PATH):
+            wanted = f"{self.fx.candidate}:{path}\n".encode("utf-8")
+            for mode in ("--batch-check", "--batch"):
+                count = sum(1 for command, raw in asked if command[3:5] == ["cat-file", mode] and raw == wanted)
+                self.assertEqual(count, 1, (path, mode))
+
+    def test_a_path_missing_at_the_candidate_never_asks_for_content(self) -> None:
+        asked = self.spy_on_git()
+        self.listed("tools/ghost.py")
+        wanted = f"{self.fx.candidate}:tools/ghost.py\n".encode("utf-8")
+        modes = [command[4] for command, raw in asked if command[3] == "cat-file" and raw == wanted]
+        self.assertEqual(modes, ["--batch-check"])
+
+    # a lookup failure is a fault, never a red
+    _lookup_patch: "mock._patch[mock.MagicMock] | None" = None
+
+    def release_lookup_patch(self) -> None:
+        if self._lookup_patch is not None:
+            self._lookup_patch.stop()
+            self._lookup_patch = None
+
+    def fail_lookup(self, mode: str, containing: bytes, returncode: int, stdout: bytes, stderr: bytes) -> None:
+        real = subprocess.run
+
+        def fake(command: list[str], *args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+            raw = kwargs.get("input")
+            if command[3:5] == ["cat-file", mode] and isinstance(raw, bytes) and containing in raw:
+                return subprocess.CompletedProcess(command, returncode, stdout, stderr)
+            return real(command, *args, **kwargs)
+
+        self.release_lookup_patch()
+        self._lookup_patch = mock.patch.object(evidence_gate.subprocess, "run", side_effect=fake)
+        self._lookup_patch.start()
+
+    def listed_extra_good(self) -> tuple[int, str, str]:
+        spec = self.fx.cell("A", digests=self.fx.good_digests() + [f"{OTHER_TOOL_PATH}={sha256(OTHER_TOOL_BODY)}"])
+        self.fx.write_receipt(spec.render())
+        return self.fx.run()
+
+    def test_batch_check_exiting_non_zero_is_exit_two_never_stale(self) -> None:
+        self.fail_lookup("--batch-check", b"second.py", 128, b"", b"fatal: boom\nsecond line")
+        code, out, err = self.listed_extra_good()
+        self.assertEqual((code, out), (2, ""))
+        self.assertTrue(err.startswith("tool fault:"))
+        self.assertIn("fatal: boom", err)
+        self.assertEqual(len(err.splitlines()), 1)  # git's two lines are printed as one
+
+    def test_a_failing_lookup_in_a_receipt_that_is_otherwise_red_is_still_exit_two(self) -> None:
+        self.fail_lookup("--batch-check", b"second.py", 1, b"", b"fatal: boom")
+        spec = self.fx.cell("A", exit_value="9", digests=self.fx.good_digests() + [f"{OTHER_TOOL_PATH}={sha256(OTHER_TOOL_BODY)}"])
+        self.fx.write_receipt(spec.render())
+        code, out, _ = self.fx.run()
+        self.assertEqual((code, out), (2, ""))
+
+    def test_batch_exiting_non_zero_is_exit_two(self) -> None:
+        self.fail_lookup("--batch", b"second.py", 128, b"", b"fatal: boom")
+        code, out, err = self.listed_extra_good()
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn("fatal: boom", err)
+
+    def test_an_answer_outside_the_documented_format_is_exit_two(self) -> None:
+        for answer in (b"", b"garbage\n", b"x blob 2\n", b"0" * 40 + b" blob\n", b"0" * 40 + b" blob 2\nextra\n"):
+            with self.subTest(answer=answer):
+                self.fail_lookup("--batch-check", b"second.py", 0, answer, b"")
+                code, out, err = self.listed_extra_good()
+                self.assertEqual((code, out), (2, ""), err)
+
+    def test_a_content_answer_that_does_not_match_its_header_is_exit_two(self) -> None:
+        for answer in (b"", b"0" * 40 + b" blob 5\nabc\n", b"nonsense\nabc\n"):
+            with self.subTest(answer=answer):
+                self.fail_lookup("--batch", b"second.py", 0, answer, b"")
+                code, out, err = self.listed_extra_good()
+                self.assertEqual((code, out), (2, ""), err)
+
+    def test_a_tool_argument_that_is_a_tree_or_absent_is_exit_two(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts())
+        for tool in ("tools", "tools/none.py"):
+            with self.subTest(tool=tool):
+                code, out, err = self.fx.run(tools=[tool])
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertIn("is not a blob", err)
 
 
 class ExitLineTests(GateTestCase):
@@ -732,6 +1040,21 @@ class TextValueTests(GateTestCase):
                 self.assertIn("NO_CELLS ", out)
                 self.assert_one_line_per_defect(out)
 
+    def test_del_and_the_unit_separator_in_a_cell_name_are_reds_and_a_space_is_not(self) -> None:
+        for control in ("\x7f", "\x1f", "\x00", "\x01"):
+            with self.subTest(control=repr(control)):
+                name = f"A{control}b"
+                spec = self.fx.cell("A", heading=name)
+                spec.name = name
+                code, out, err = self.run_bytes(spec.render().encode("utf-8"))
+                self.assertEqual((code, err), (1, ""))
+                self.assertIn("NOT_RUN ", out)
+                self.assertIn("NO_CELLS ", out)
+                self.assert_one_line_per_defect(out)
+        spaced = self.fx.cell("A b")
+        code, out, err = self.run_bytes(spaced.render().encode("utf-8"))
+        self.assertEqual((code, out, err), (0, "cells=1 defects=0\n", ""))
+
     def test_a_statement_heading_with_a_control_character_is_a_red(self) -> None:
         raw = ("## S\x02\ncell: STATEMENT\n\n" + self.fx.cell("A").render()).encode("utf-8")
         code, out, _ = self.run_bytes(raw)
@@ -828,7 +1151,7 @@ class FaultTests(GateTestCase):
     def test_tool_path_absent_from_the_candidate_is_a_fault(self) -> None:
         self.fx.write_receipt(*self.fx.good_parts())
         _, _, err = self.run_fault(tools=["tools/none.py"])
-        self.assertIn("git show", err)
+        self.assertIn("is not a blob", err)
 
     def test_receipt_is_a_directory(self) -> None:
         self.run_fault(receipt=self.fx.base)
@@ -942,6 +1265,17 @@ class UsageTests(GateTestCase):
         self.fx.write_receipt(*self.fx.good_parts())
         code, _, _ = self.fx.run(tools=[TOOL_PATH.replace("/", "\\")])
         self.assertEqual(code, 0)
+
+    def test_a_tool_path_that_is_not_canonical_is_a_usage_error(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts())
+        for bad in ("tools//probe.py", "tools/./probe.py", "./tools/probe.py", "tools/", "/tools/probe.py",
+                    "tools/../probe.py", ":x", "C:/probe.py", "tools/" + "a" * 1025):
+            with self.subTest(tool=bad[:40]):
+                argv = [str(self.fx.receipt), "--repo", str(self.fx.repo), "--candidate", self.fx.candidate, "--tool", bad]
+                code, out, err = self.usage(argv)
+                self.assertEqual((code, out), (3, ""))
+                self.assertTrue(err.startswith("usage:"))
+                self.assertEqual(len(err.splitlines()), 2)
 
     def test_duplicate_tool_and_require_cell_arguments_collapse(self) -> None:
         self.fx.write_receipt(*self.fx.good_parts())
