@@ -206,9 +206,9 @@ The eleven-stage sequence applies to `GREENFIELD`. `TAKEOVER` and `DELTA` enter 
 - Post-push readback: the integration script records the CI run result for the landed sha and, where a deploy target exists, the served fingerprint of at least one changed file; both go into the integration receipt before the entry is marked `LANDED`.
 - Exit mapping is the single table in R4-2; a gate that cannot start (missing interpreter, unreadable input directory) exits 2, never 1.
 
-### R4-8 Wave-2 contracts (PROPOSED 2026-11-04; binding only after the owner approves it)
+### R4-8 Wave-2 contracts (owner-approved 2026-11-04)
 
-R4-7 fixes the queue entry, the receipt cell, the snapshot and the contract-gate codes. This rule fixes what the wave-2 tickets still need and states where it amends R4-7. Until the owner approves R4-8 the tickets that depend on it are not dispatched.
+R4-7 fixes the queue entry, the receipt cell, the snapshot and the contract-gate codes. This rule fixes what the wave-2 tickets still need and states where it amends R4-7.
 
 - Integration script (`skills/johnny-project-takeover/scripts/integrate.py`), three subcommands, one configuration file `doc/handoffs/<year>/governance/integration.json` in the target project (path parameterised) naming the remote, the integration branch, the affected-spec command and the CI-status command as argument lists.
   - `submit` writes a `QUEUED` entry. It reads `review_candidate`, `verdict` and `reviewer` from the last `review-verdict` block of the record for that candidate, refuses a verdict other than `APPROVED`, refuses `submitter` = `reviewer` and refuses a key that already exists.
@@ -221,6 +221,7 @@ R4-7 fixes the queue entry, the receipt cell, the snapshot and the contract-gate
 - Preflight gate: the dispatch file carries `preflight:` items, each with `tool`, `start` (argument list), `probe` (argument list) and `expect` (a substring of the probe output). The gate runs each; a tool that cannot start or a probe that does not show `expect` is exit 2; all served is exit 0.
 - Tool-repair guard: the dispatch file carries `repair_allowlist:` paths. For a commit marked as a tool repair, any changed path outside the allowlist, or any change to a spec, a ledger, a product source or a gate script, is exit 1.
 - State-file templates under `template/`: the ticket state row (state, `dispatch=sha256:<hex>`, receipt path), the receipt with R4-7 cells, an empty queue file and `integration.json`.
+- Correction proposed by the control plane on 2026-11-04, before any implementation, awaiting owner confirmation: keeping the queue file on the integration branch makes every queue write (submit, bounce, readback) a commit that moves the tip, so a correct candidate based on the tip is bounced by an unrelated queue write. Proposed instead: the queue file lives on a dedicated queue branch (default `<branch>-queue`, parameterised); `land` pushes the integration branch and the queue branch together with `git push --atomic`, each with `--force-with-lease` on the sha it read, so the two compare-and-swaps of R4-7 hold in one push; `submit`, bounces and `readback` write only the queue branch. The lock row stays dropped.
 
 ### Revision Signatures (Revision 04)
 
@@ -229,3 +230,4 @@ R4-7 fixes the queue entry, the receipt cell, the snapshot and the contract-gate
 | 2026-11-03 | Control plane / `a1cb6c1` | Revision 04 drafted under the owner takeover instruction of 2026-11-03. |
 | 2026-11-03 | Control plane / `d581ebc` | R4-7 added; the live dispatch descriptor kept as a transitional path with the queue carrying single-consume and anti-replay. Decision taken by the control plane under the takeover authority; owner confirmation requested in the next owner reply. |
 | 2026-11-03 | Project owner / `3896c3c` | Confirmed the R4-1 / R4-7 decision: the live dispatch descriptor stays a transitional path until wave 3; the default dispatch is the ticket state row plus the dispatch-file digest; single-consume and anti-replay are carried by the merge queue at integration; the queue script is the first wave-2 ticket. |
+| 2026-11-04 | Project owner / `0dd0c78` | R4-8 approved ("核准"). The queue-branch correction above was found by the control plane after the approval and before implementation; it waits for the owner's confirmation. |
