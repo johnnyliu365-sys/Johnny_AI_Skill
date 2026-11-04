@@ -100,8 +100,8 @@ Keeps versioned requirement snapshots, one JSON file per source and version,
 `<root>/<source>/<date>-v<n>.json` (default root `doc/requirements/snapshots`). A file holds
 `source`, `taken_at`, `source_sha256` (sha256 of the canonical JSON of the rows: keys sorted,
 separators `,` and `:`, UTF-8, rows sorted by `requirement_id`; `taken_at` is not part of it)
-and `rows`. A row has `requirement_id` (unique; 1 to 128 characters from letters, digits and
-`._:-/`), `page_id`, `title`, `type`,
+and `rows`. A row has `requirement_id` (unique; 1 to 128 characters from letters, digits,
+dot, underscore, colon, hyphen and slash), `page_id`, `title`, `type`,
 `source_ref` (URL or repository-relative path, never a host absolute path), `source_sha256`
 (64 lower-case hex), `status` (`active` | `retired`) and `version` (integer >= 1). The file is
 written with LF and a final LF.
@@ -134,10 +134,10 @@ Defect codes, printed one per line as `<code> <requirement_id or field>: <detail
 
 - `ROW_FIELD_MISSING`.
 - `ROW_FIELD_TYPE`: a field of the wrong type, an unexpected field, a blank `requirement_id`, a
-  `requirement_id` that is not 1 to 128 characters from letters, digits and `._:-/`, a string that
+  `requirement_id` that is not 1 to 128 characters from letters, digits, dot, underscore, colon, hyphen and slash, a string that
   breaks the text-value rule, input that is not JSON or has no `rows` list.
 - `DUPLICATE_REQUIREMENT`, `STATUS_UNKNOWN`, `DIGEST_FORMAT`.
-- `SOURCE_REF_ABSOLUTE`: a `source_ref` that is empty, starts with `/`, a backslash or `~`, carries
+- `SOURCE_REF_ABSOLUTE`: a `source_ref` that is empty, starts with a slash, a backslash or `~`, carries
   a drive letter or `file:`, or has a `..` segment; a URL with a scheme is allowed.
 - `SNAPSHOT_DIGEST_MISMATCH`: a stored version whose `source_sha256` does not match its rows.
   `verify` reports it, and `take` and `diff` report it whenever they read that version (exit 1).
