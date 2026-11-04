@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision04 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 correction review `CONVERGENCE_REVIEW_REQUIRED`: S52-18 to S52-23; implementation 4 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 correction review `CONVERGENCE_REVIEW_REQUIRED`: S52-18 to S52-23; revision04 initial review CHANGES_REQUESTED (S52-24); correction 1 dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/52-requirement-snapshot` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/52-requirement-snapshot-review` |
@@ -169,3 +169,7 @@ Review record section "Revision03 correction review". CodeReview §5: revision03
 | S52-21 | IMPLEMENTATION_DEFECT | docstring matches the README on claim names and the over-long rule |
 | S52-22 | OUT_OF_SCOPE_HARDENING (taken now) | ASCII-only case comparison, with a test using the ligature and the Kelvin sign |
 | S52-23 | EVIDENCE_DEFECT | the receipt carries `P9` as above |
+
+### Correction 1 under revision04 (after the revision04 initial review `CHANGES_REQUESTED`)
+
+No ticket defect was found, so revision04 stands. One clarification of its first binding rule, in the same direction as ticket 53 revision03: a failure derived from the bytes of an input or a stored version (deep nesting that the JSON parser cannot follow, for example) is a red of that file with the code a non-JSON file gets, never a fault; this replaces the revision01 acceptance of deep nesting as a fault. Only an error no input can produce (a programming error) may still end the run at once with exit 2. S52-24: as above, one test per reachable case. S52-25, S52-26: the tests the review names. S52-27 (taken now): a take test that nothing is read under an invalid source name. The next review is the one correction review of revision04.

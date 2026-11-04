@@ -225,3 +225,57 @@ verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/52-rev03-correction
 reviewed_at: 2026-11-04
 ```
+
+## Revision04 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `7649f1b8682c2c18a40485c898ccb54e46f1f231` (`7649f1b8` → `bea0cf0c` → `ac95c321` → `3c485efc` → `21ac4fda` → `dbd74358`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision04 |
+| Read against | revision04 and its binding rules; R4-2 with the control plane's red-before-fault reading (awaiting owner confirmation); R4-5; R4-7 |
+| Summary | Revision04 closes S52-18, S52-19, S52-21, S52-22, S52-23 and S52-20 as dispositioned; every earlier item still holds. Blocking: JSON nested about 1000 levels deep raises `RecursionError`, which takes the unexpected-error path and drops a red already found (S52-24). Five counter-mutations stay green (S52-25, S52-26, S52-27). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 139 passed, 313 subtests; mypy --strict clean |
+| Red before fault: take, diff | PARTIAL | every combined red and fault exits 1 with the fault on stderr, except deep nesting (S52-24) |
+| Red before fault: verify | PASS | |
+| Check order | PASS | grammar, then names, then lookups |
+| Seat choices | AGREE, AGREE, DISAGREE | the third (an unexpected error drops reds) is reachable by input (S52-24) |
+| S52-21, S52-22 | PASS | docstring complete; ASCII-only collisions, and NTFS keeps the look-alikes distinct |
+| Regression | PASS | 101 of 102 probe cases; the failure is S52-24 |
+| Version claim under real races | PASS | 120 races, never a duplicate; a claimless mutant duplicated v2 in 20 of 20 |
+| Reverse mutations | seat 18 red; reviewer 22: 17 red, C02, C10, C12, C15, C17 green | |
+| Receipt / boundary | PASS | checker 0 defects with P9; digests recomputed; LF; additions-only tests; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S52-01 to S52-07, S52-10 to S52-19, S52-21 to S52-23 | CLOSED |
+| S52-20 | CLOSED as dispositioned; the rule is still broken through the unexpected-error path (S52-24) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S52-24 | IMPLEMENTATION_DEFECT | Low (blocking; changes an exit code) | `requirement_snapshot.py:372-376`, `:858-860`; README | a JSON input or stored version nested about 1000 levels deep raises `RecursionError`, which exits 2 at once and drops a red already found; the README says exit 2 only when no red was found | three probe cases |
+| S52-25 | EVIDENCE_DEFECT | Low (blocking; evidence gap) | tests; `requirement_snapshot.py:709-712, 813-815` | unpinned: an unreadable present version collected rather than raised; leading zeros in version arguments | C02, C15 green |
+| S52-26 | EVIDENCE_DEFECT | Low (blocking; evidence gap) | tests; `requirement_snapshot.py:103, 855-857` | one-line faults tested only for a newline through one path: NEL, U+2028, U+2029 and the top-level fault handler unpinned | C10, C17 green |
+| S52-27 | OUT_OF_SCOPE_HARDENING | Low (non-blocking; read confinement) | tests; `requirement_snapshot.py:655` | take not reading under an invalid source name is untested (diff's is tested) | C12 green |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: the POSIX publish branch; an ACL-unwritable root; a case-sensitive file system; non-ASCII folding on other file systems.
+
+```review-verdict
+candidate: 7649f1b8682c2c18a40485c898ccb54e46f1f231
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/52-rev04-initial
+reviewed_at: 2026-11-04
+```
