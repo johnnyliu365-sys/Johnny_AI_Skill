@@ -7,16 +7,28 @@ The guard lists every test function present in a spec file under `--specs` at `-
 and absent at `--candidate`, and requires a row for each of them in the map file read
 at `--candidate`.
 
-Spec file: a file named `test_*.py` below `--specs` (exact path-component prefix:
-a sibling directory whose name only begins like `specs` is not below it). Test: a function (sync or async) whose name starts
-with `test`, defined at module level or inside a class (nested classes included; also
-inside module-level or class-level `if`, `try`, `with`, `for`, `while` and `match`
-blocks, never inside another function). Test id: `<path>::<name>` or
-`<path>::<Class>::<name>` (`<path>::<Outer>::<Inner>::<name>` when nested). A test that
-moved to another file or was renamed is removed under its old id. Ids are compared
-exactly, never trimmed.
+`--repo` must be the top level of a git work tree: a plain directory, or a subdirectory
+of a work tree, is a tool fault. `--specs` must name a directory (a tree) at `--base`, at
+`--candidate`, or at both; a path that names no tree at either commit is a tool fault (a guard
+that checks nothing must not pass). A tree present at one commit only is read as empty at the
+other; a present tree holding no spec file is not a fault.
 
-Map file (UTF-8 JSON, read with `git show <candidate>:<map>`):
+Spec file: a regular file (git mode 100644 or 100755) named `test_*.py` below `--specs`
+(exact path-component prefix: a sibling directory whose name only begins like `specs` is not
+below it). A symbolic link (120000) or a submodule entry (160000) is not a spec file and is
+never parsed; a spec file that became a link at the candidate has all its tests removed.
+Paths from git are decoded as UTF-8 with surrogateescape, so a path that is not UTF-8 is
+still a test id (compared byte for byte, printed escaped), never a fault. Test: a function
+(sync or async) whose name starts with `test`, defined at module level or inside a class
+(nested classes included; also inside module-level or class-level `if`/`else`, `try`/`except`/
+`else`/`finally`, `with`, `for`, `while` and `match` blocks, never inside another function).
+Test id: `<path>::<name>` or `<path>::<Class>::<name>` (`<path>::<Outer>::<Inner>::<name>`
+when nested). A test that moved to another file or was renamed is removed under its old id.
+Ids are compared exactly, never trimmed. Specs are parsed with the grammar of the interpreter
+that runs the guard (Python 3.11); a spec using later syntax does not parse and is a tool fault.
+
+Map file (UTF-8 JSON, read as the blob at the candidate, found by `ls-tree` and read by
+`cat-file`; never the working tree):
 
     {"rows": [{"assertion": <id>, "disposition": "carried" | "dropped" | "escalated",
                "carried_to": <id or "">, "reason": <text or "">, "ticket": <text or "">}]}
@@ -31,18 +43,25 @@ Defect codes (exit 1):
                             is not JSON of the required shape
 
 A map file absent at the candidate while tests were removed is UNMAPPED_REMOVAL for each
-of them; absent while nothing was removed it is exit 0. Rows are shape-checked wherever
-they stand, but a row's disposition is judged only when its assertion is a removed id.
+of them; absent while nothing was removed it is exit 0. A map path that names a tree, a
+submodule entry or a link is MAP_ROW_INVALID for the map path. Rows are shape-checked
+wherever they stand, but a row's disposition is judged only when its assertion is a removed
+id. A row that is invalid, or whose assertion is duplicated, covers nothing. Every string of a
+row is valid Unicode without lone surrogates and without control characters (U+0000 to
+U+001F, U+007F); a string that breaks this makes its row MAP_ROW_INVALID, so a map cannot
+name a test whose path is not UTF-8.
 
 Output: one line per defect, then `removed=N defects=M`. Every id or text taken from the
 repository is printed JSON-quoted with ASCII escapes, so the console encoding never
-changes an exit code.
+changes an exit code. A defect or a fault is always one line: stderr messages are escaped
+the same way, and no argument or parser message is echoed unescaped.
 
 Exit codes: 0 pass, 1 contract red (defect lines on stdout), 2 tool fault (git cannot
-serve a repository, a commit, a tree or a blob; a spec does not parse at either commit;
-any unexpected error; message on stderr, never a traceback), 3 usage error (missing or
-unknown option, empty value, an absolute path or a `..` segment in `--map` or `--specs`,
-a revision that starts with `-`). A red is never reported as a tool fault and a tool
+serve a repository, a commit, a tree or a blob; `--repo` is not a work-tree top level;
+`--specs` names no tree at either commit; a spec does not parse at either commit; any
+unexpected error; message on stderr, never a traceback), 3 usage error (missing or
+unknown option, empty value, an argument holding a lone surrogate or a control character,
+an absolute path or a `..` segment in `--map` or `--specs`, a revision that starts with `-`). A red is never reported as a tool fault and a tool
 fault is never reported as a red.
 """
 from __future__ import annotations
@@ -51,6 +70,7 @@ import argparse
 import ast
 import io
 import json
+import os
 import re
 import subprocess
 import sys
@@ -71,6 +91,8 @@ TEST_PREFIX = "test"
 SPEC_FILE_PREFIX = b"test_"
 SPEC_FILE_SUFFIX = b".py"
 _DRIVE_PREFIX = re.compile(r"^[A-Za-z]:")
+_BAD_TEXT = re.compile("[\x00-\x1f\x7f\ud800-\udfff]")
+REGULAR_MODES = frozenset((b"100644", b"100755"))
 
 
 class ToolFault(Exception):
@@ -145,6 +167,11 @@ class TreeEntry:
     kind: bytes
     object_id: str
 
+    @property
+    def is_regular_file(self) -> bool:
+        """A regular blob: not a symbolic link (120000), not a submodule entry (160000)."""
+        return self.kind == b"blob" and self.mode in REGULAR_MODES
+
 
 @dataclass(frozen=True)
 class MapLoad:
@@ -161,7 +188,28 @@ class Report:
 
 
 def _quote(text: str) -> str:
-    return json.dumps(text, ensure_ascii=True)
+    """JSON string with ASCII escapes (DEL included): one line, whatever the text holds."""
+    return json.dumps(text, ensure_ascii=True).replace("\x7f", "\\u007f")
+
+
+def _escape_char(char: str) -> str:
+    number = ord(char)
+    if number < 0x100:
+        return f"\\x{number:02x}"
+    return f"\\u{number:04x}" if number < 0x10000 else f"\\U{number:08x}"
+
+
+def _oneline(text: str) -> str:
+    """Printable ASCII only: a message that repeats raw input stays on one line."""
+    return "".join(char if " " <= char <= "~" else _escape_char(char) for char in text)
+
+
+def _text_problem(text: str) -> str | None:
+    """Why `text` breaks the text-value rule, or None."""
+    found = _BAD_TEXT.search(text)
+    if found is None:
+        return None
+    return "a control character" if ord(found.group()) < 0x80 else "a lone surrogate"
 
 
 # --------------------------------------------------------------------------- git
@@ -178,6 +226,18 @@ def run_git(repo: str, args: Sequence[str]) -> bytes:
         message = done.stderr.decode("utf-8", errors="replace").strip()
         raise ToolFault(f"git {' '.join(args)} failed ({done.returncode}): {message}")
     return done.stdout
+
+
+def require_top_level(repo: str) -> None:
+    """`repo` must be the top level of a git work tree, not a directory inside one."""
+    out = run_git(repo, ["rev-parse", "--show-toplevel"])
+    top = out.decode("utf-8", errors="surrogateescape").rstrip("\r\n")
+    try:
+        same = os.path.samefile(top, repo)
+    except OSError as error:
+        raise ToolFault(f"cannot compare --repo {_quote(repo)} with the work-tree top level {_quote(top)}: {error}") from error
+    if not same:
+        raise ToolFault(f"--repo {_quote(repo)} is not the top level of a git work tree (the top level is {_quote(top)})")
 
 
 def resolve_commit(repo: str, revision: str) -> str:
@@ -238,7 +298,7 @@ def parse_tests(source: bytes, commit: str, path: str) -> tuple[tuple[tuple[str,
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            tree = ast.parse(source, filename=path)
+            tree = ast.parse(source, filename="<spec>")
     except (SyntaxError, ValueError, RecursionError, MemoryError) as error:
         raise ToolFault(f"spec does not parse at commit {commit}: {_quote(path)}: {type(error).__name__}: {error}") from error
     found: list[tuple[tuple[str, ...], str]] = []
@@ -251,6 +311,14 @@ def _is_spec_path(path: bytes, prefix: bytes) -> bool:
         return False
     name = path.rsplit(b"/", 1)[-1]
     return name.startswith(SPEC_FILE_PREFIX) and name.endswith(SPEC_FILE_SUFFIX)
+
+
+def has_tree(tree: Mapping[bytes, TreeEntry], directory: str) -> bool:
+    """Does `directory` (repository-relative, `/` separators, empty for the root) hold any entry?"""
+    if directory == "":
+        return True
+    head = directory.encode("utf-8") + b"/"
+    return any(path.startswith(head) for path in tree)
 
 
 def enumerate_tests(
@@ -269,12 +337,9 @@ def enumerate_tests(
     ids: dict[str, TestId] = {}
     for path_bytes in sorted(tree):
         entry = tree[path_bytes]
-        if entry.kind != b"blob" or not _is_spec_path(path_bytes, prefix):
+        if not entry.is_regular_file or not _is_spec_path(path_bytes, prefix):
             continue
-        try:
-            path = path_bytes.decode("utf-8")
-        except UnicodeDecodeError as error:
-            raise ToolFault(f"spec path is not UTF-8 at commit {commit}: {path_bytes!r}") from error
+        path = path_bytes.decode("utf-8", errors="surrogateescape")
         if entry.object_id not in parsed:
             parsed[entry.object_id] = parse_tests(read_blob(repo, entry.object_id), commit, path)
         for scope, name in parsed[entry.object_id]:
@@ -301,6 +366,9 @@ def _row_fields(index: int, raw: object) -> MapRow | Defect:
         value: object = raw[key]
         if not isinstance(value, str):
             return _invalid(subject, f"field {key} is not a string")
+        problem = _text_problem(value)
+        if problem is not None:
+            return _invalid(subject, f"field {key} holds {problem}")
         texts[key] = value
     assertion = texts["assertion"]
     if assertion.strip() == "":
@@ -383,22 +451,23 @@ def judge(removed: Sequence[TestId], candidate_ids: Mapping[str, TestId], load: 
 
 
 def check(args: CliArgs) -> Report:
-    run_git(args.repo, ["rev-parse", "--git-dir"])
+    require_top_level(args.repo)
     base = resolve_commit(args.repo, args.base)
     candidate = resolve_commit(args.repo, args.candidate)
     base_tree = read_tree(args.repo, base)
     candidate_tree = read_tree(args.repo, candidate)
+    if not (has_tree(base_tree, args.specs) or has_tree(candidate_tree, args.specs)):
+        raise ToolFault(f"--specs {_quote(args.specs)} names no tree at base {base} or at candidate {candidate}")
     parsed: dict[str, tuple[tuple[tuple[str, ...], str], ...]] = {}
     base_ids = enumerate_tests(args.repo, base, base_tree, args.specs, parsed)
     candidate_ids = enumerate_tests(args.repo, candidate, candidate_tree, args.specs, parsed)
     removed = sorted(base_ids[key] for key in base_ids if key not in candidate_ids)
     load: MapLoad | None = None
     entry = candidate_tree.get(args.map_path.encode("utf-8"))
-    if entry is not None:
-        if entry.kind == b"blob":
-            load = parse_map(args.map_path, read_blob(args.repo, entry.object_id))
-        else:
-            load = MapLoad((), (_invalid(args.map_path, "map path is not a file"),))
+    if entry is not None and entry.is_regular_file:
+        load = parse_map(args.map_path, read_blob(args.repo, entry.object_id))
+    elif entry is not None or has_tree(candidate_tree, args.map_path):
+        load = MapLoad((), (_invalid(args.map_path, "map path is not a file"),))
     return Report(len(removed), judge(removed, candidate_ids, load))
 
 
@@ -438,8 +507,12 @@ def parse_args(argv: Sequence[str]) -> CliArgs:
     for option in ("--repo", "--base", "--candidate", "--map", "--specs"):
         parser.add_argument(option, required=True, dest=option[2:])
     namespace = parser.parse_args(list(argv))
+    for option in ("--repo", "--base", "--candidate", "--map", "--specs"):
+        problem = _text_problem(getattr(namespace, option[2:]))
+        if problem is not None:
+            raise UsageError(f"{option} holds {problem}")
     repo: str = namespace.repo
-    if repo.strip() == "" or "\0" in repo:
+    if repo.strip() == "":
         raise UsageError("--repo must not be empty")
     return CliArgs(
         repo=repo,
@@ -462,16 +535,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         args = parse_args(arguments)
     except UsageError as error:
-        print(f"coverage_map: {error}", file=sys.stderr)
+        print(f"coverage_map: {_oneline(str(error))}", file=sys.stderr)
         print(USAGE, file=sys.stderr)
         return EXIT_USAGE
     try:
         report = check(args)
     except ToolFault as error:
-        print(f"coverage_map: tool fault: {error}", file=sys.stderr)
+        print(f"coverage_map: tool fault: {_oneline(str(error))}", file=sys.stderr)
         return EXIT_FAULT
     except Exception as error:  # noqa: BLE001 - an unexpected error is a tool fault, never a red
-        print(f"coverage_map: tool fault: unexpected {type(error).__name__}: {error}", file=sys.stderr)
+        detail = f"unexpected {type(error).__name__}: {error}"
+        print(f"coverage_map: tool fault: {_oneline(detail)}", file=sys.stderr)
         return EXIT_FAULT
     for defect in report.defects:
         print(defect.line())

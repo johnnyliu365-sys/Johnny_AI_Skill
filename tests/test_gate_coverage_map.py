@@ -13,6 +13,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import textwrap
 import unittest
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
@@ -39,7 +40,7 @@ CODES = (
 
 def git(repo: Path, *args: str) -> str:
     done = subprocess.run(
-        ["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", *args],
+        ["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "core.protectNTFS=false", *args],
         cwd=repo, capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     if done.returncode != 0:
@@ -47,8 +48,23 @@ def git(repo: Path, *args: str) -> str:
     return done.stdout
 
 
+def git_bytes(repo: Path, *args: str, data: bytes | None = None) -> bytes:
+    done = subprocess.run(
+        ["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "core.protectNTFS=false", *args],
+        cwd=repo, capture_output=True, input=data,
+    )
+    if done.returncode != 0:
+        raise AssertionError(f"git {' '.join(args)} failed: {done.stderr!r}")
+    return done.stdout
+
+
 class Repo:
-    """A temporary repository; each commit writes (or deletes) the given files."""
+    """A temporary repository; each commit writes (or deletes) the given files.
+
+    `raw` adds index entries no working-tree file backs: path bytes -> (mode, content). Mode
+    160000 takes a commit id as content; other modes take the blob bytes. `git add -A` drops
+    such entries on the next commit, so every commit names the raw entries it wants kept.
+    """
 
     def __init__(self) -> None:
         self.tmp = tempfile.TemporaryDirectory(prefix="covmap-")
@@ -68,7 +84,12 @@ class Repo:
 
             shutil.rmtree(self.dir, onerror=writable)
 
-    def commit(self, files: Mapping[str, str | None], newline: str = "\n") -> str:
+    def commit(
+        self,
+        files: Mapping[str, str | None],
+        newline: str = "\n",
+        raw: Mapping[bytes, tuple[str, bytes]] | None = None,
+    ) -> str:
         for name, body in files.items():
             target = self.dir / name
             if body is None:
@@ -78,6 +99,15 @@ class Repo:
             with open(target, "w", encoding="utf-8", newline=newline) as handle:
                 handle.write(body)
         git(self.dir, "add", "-A")
+        if raw:
+            records = b""
+            for path, (mode, content) in raw.items():
+                if mode == "160000":
+                    object_id = content.decode("ascii")
+                else:
+                    object_id = git_bytes(self.dir, "hash-object", "-w", "--stdin", data=content).decode("ascii").strip()
+                records += f"{mode} {object_id}\t".encode("ascii") + path + b"\0"
+            git_bytes(self.dir, "update-index", "-z", "--index-info", data=records)
         git(self.dir, "commit", "-q", "--allow-empty", "-m", "c")
         return git(self.dir, "rev-parse", "HEAD").strip()
 
@@ -232,7 +262,7 @@ class DefectCodeTests(GuardCase):
         self.assertEqual(run(self.repo, base, candidate).out, "removed=1 defects=0\n")
 
     def test_dropped_without_reason(self) -> None:
-        for reason in ("", " ", "\t\n", "\u3000"):
+        for reason in ("", " ", "\u3000"):
             with self.subTest(repr(reason)):
                 repo = Repo()
                 self.addCleanup(repo.close)
@@ -241,7 +271,7 @@ class DefectCodeTests(GuardCase):
                 self.assert_red(run(repo, base, candidate), "DROPPED_WITHOUT_REASON")
 
     def test_escalated_without_ticket(self) -> None:
-        for ticket in ("", " ", "\t\n", "\u3000"):
+        for ticket in ("", " ", "\u3000"):
             with self.subTest(repr(ticket)):
                 repo = Repo()
                 self.addCleanup(repo.close)
@@ -322,6 +352,65 @@ class DefectCodeTests(GuardCase):
         git(self.repo.dir, "commit", "-q", "-m", "m")
         head = git(self.repo.dir, "rev-parse", "HEAD").strip()
         self.assert_red(run(self.repo, base, head), "MAP_ROW_INVALID", "UNMAPPED_REMOVAL")
+
+    def test_a_shape_invalid_row_covers_nothing_and_the_removed_id_is_still_printed(self) -> None:
+        good = tid(SPEC_A, "test_two")
+        shapes: dict[str, object] = {
+            "unknown disposition": row(good, "kept"),
+            "missing field": {k: v for k, v in row(good, "dropped", reason="r").items() if k != "reason"},
+            "non-string field": {**row(good, "dropped", reason="r"), "ticket": 3},
+            "control character": row(good, "dropped", reason="line\nbreak"),
+            "padded assertion": row(" " + good, "dropped", reason="r"),
+        }
+        expected = "UNMAPPED_REMOVAL " + json.dumps(good) + " removed test has no map row"
+        for label, shape in shapes.items():
+            with self.subTest(label):
+                repo = Repo()
+                self.addCleanup(repo.close)
+                base = repo.commit({SPEC_A: functions("test_one", "test_two")})
+                candidate = repo.commit({SPEC_A: functions("test_one"), MAP: json.dumps({"rows": [shape]})})
+                result = run(repo, base, candidate)
+                self.assert_red(result, "MAP_ROW_INVALID", "UNMAPPED_REMOVAL")
+                self.assertIn(expected, result.lines)
+                self.assertEqual(self.summary(result), "removed=1 defects=2")
+
+    def test_a_string_with_a_control_character_or_lone_surrogate_makes_its_row_invalid(self) -> None:
+        good = tid(SPEC_A, "test_two")
+        for key in ("assertion", "disposition", "carried_to", "reason", "ticket"):
+            for label, value in {"newline": "a\nb", "nul": "a\x00b", "delete": "a\x7fb", "tab": "\t", "surrogate": "a\ud800b"}.items():
+                with self.subTest(key=key, value=label):
+                    repo = Repo()
+                    self.addCleanup(repo.close)
+                    base = repo.commit({SPEC_A: functions("test_one", "test_two")})
+                    shaped = {**row(good, "dropped", reason="r"), key: value}
+                    candidate = repo.commit({SPEC_A: functions("test_one"), MAP: json.dumps({"rows": [shaped]})})
+                    result = run(repo, base, candidate)
+                    self.assert_red(result, "MAP_ROW_INVALID", "UNMAPPED_REMOVAL")
+                    self.assertEqual(result.lines[0], "MAP_ROW_INVALID \"rows[0]\" field " + key + " holds " + ("a lone surrogate" if label == "surrogate" else "a control character"))
+
+    def test_a_map_path_that_is_not_a_regular_file_is_invalid_for_the_file(self) -> None:
+        kinds: dict[str, Callable[[str], tuple[Mapping[str, str | None], Mapping[bytes, tuple[str, bytes]] | None]]] = {
+            "tree": lambda seed: ({MAP + "/note.txt": "x\n"}, None),
+            "submodule": lambda seed: ({}, {MAP.encode(): ("160000", seed.encode("ascii"))}),
+            "link": lambda seed: ({}, {MAP.encode(): ("120000", map_text().encode())}),
+        }
+        for label, build in kinds.items():
+            with self.subTest(label):
+                repo = Repo()
+                self.addCleanup(repo.close)
+                seed = repo.commit({"x.txt": "1\n"})
+                base = repo.commit({SPEC_A: functions("test_one", "test_two")})
+                files, raw = build(seed)
+                candidate = repo.commit({SPEC_A: functions("test_one"), **files}, raw=raw)
+                result = run(repo, base, candidate)
+                self.assert_red(result, "MAP_ROW_INVALID", "UNMAPPED_REMOVAL")
+                self.assertEqual(result.lines[0], "MAP_ROW_INVALID " + json.dumps(MAP) + " map path is not a file")
+                self.assertEqual(self.summary(result), "removed=1 defects=2")
+
+    def test_a_map_path_that_is_a_tree_is_invalid_even_when_nothing_was_removed(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one")})
+        candidate = self.repo.commit({MAP + "/note.txt": "x\n"})
+        self.assert_red(run(self.repo, base, candidate), "MAP_ROW_INVALID")
 
     def test_empty_rows_and_empty_fields(self) -> None:
         self.assert_red(self.removal(map_text()), "UNMAPPED_REMOVAL")
@@ -451,6 +540,62 @@ class EnumerationTests(GuardCase):
         self.assertEqual(ids, [tid("specs/test_real.py", "test_d")])
 
 
+BLOCKS = {
+    "if": "if True:\n    def {name}():\n        pass\n",
+    "elif": "if False:\n    pass\nelif True:\n    def {name}():\n        pass\n",
+    "if_else": "if False:\n    pass\nelse:\n    def {name}():\n        pass\n",
+    "try": "try:\n    def {name}():\n        pass\nexcept ImportError:\n    pass\n",
+    "except": "try:\n    pass\nexcept ImportError:\n    def {name}():\n        pass\n",
+    "try_else": "try:\n    pass\nexcept ImportError:\n    pass\nelse:\n    def {name}():\n        pass\n",
+    "finally": "try:\n    pass\nfinally:\n    def {name}():\n        pass\n",
+    "except_star": "try:\n    pass\nexcept* ImportError:\n    def {name}():\n        pass\n",
+    "with": "with open(__file__):\n    def {name}():\n        pass\n",
+    "async_with": "async with open(__file__):\n    def {name}():\n        pass\n",
+    "for": "for _ in ():\n    def {name}():\n        pass\n",
+    "for_else": "for _ in ():\n    pass\nelse:\n    def {name}():\n        pass\n",
+    "async_for": "async for _ in ():\n    def {name}():\n        pass\n",
+    "while": "while False:\n    def {name}():\n        pass\n",
+    "while_else": "while False:\n    pass\nelse:\n    def {name}():\n        pass\n",
+    "match": "match 1:\n    case _:\n        def {name}():\n            pass\n",
+    "nested": "if True:\n    with open(__file__):\n        for _ in ():\n            def {name}():\n                pass\n",
+}
+
+
+class BlockKindTests(GuardCase):
+    def removed_ids(self, before: str) -> list[str]:
+        base = self.repo.commit({SPEC_A: before})
+        candidate = self.repo.commit({SPEC_A: "x = 1\n"})
+        result = run(self.repo, base, candidate)
+        self.assertEqual(result.code, 1, result.out + result.err)
+        return sorted(json.loads(line.split(" ", 2)[1]) for line in result.lines[:-1])
+
+    def test_tests_inside_every_block_kind_are_found_at_module_and_class_level(self) -> None:
+        names = {kind: "test_" + kind for kind in BLOCKS}
+        module = "".join(BLOCKS[kind].format(name=names[kind]) + "\n" for kind in BLOCKS)
+        klass = "class K:\n" + textwrap.indent(module, "    ")
+        expected = sorted([tid(SPEC_A, name) for name in names.values()] + [tid(SPEC_A, "K", name) for name in names.values()])
+        self.assertEqual(self.removed_ids(module + klass), expected)
+
+    def test_each_block_kind_is_found_on_its_own(self) -> None:
+        for kind, template in BLOCKS.items():
+            for where in ("module", "class"):
+                with self.subTest(kind, where=where):
+                    repo = Repo()
+                    self.addCleanup(repo.close)
+                    source = template.format(name="test_x")
+                    if where == "class":
+                        source = "class K:\n" + textwrap.indent(source, "    ")
+                    base = repo.commit({SPEC_A: source})
+                    candidate = repo.commit({SPEC_A: "x = 1\n"})
+                    result = run(repo, base, candidate)
+                    expected = tid(SPEC_A, "test_x") if where == "module" else tid(SPEC_A, "K", "test_x")
+                    self.assertEqual(result.lines[0].split(" ", 2)[1], json.dumps(expected), result.out + result.err)
+
+    def test_a_function_inside_a_block_inside_a_function_is_not_a_test(self) -> None:
+        source = "def test_outer():\n    if True:\n        def test_inner():\n            pass\n"
+        self.assertEqual(self.removed_ids(source), [tid(SPEC_A, "test_outer")])
+
+
 class SpecsPrefixTests(GuardCase):
     def scenario(self) -> tuple[str, str]:
         files = {
@@ -486,15 +631,41 @@ class SpecsPrefixTests(GuardCase):
     def test_dot_selects_the_whole_repository(self) -> None:
         self.assertEqual(len(self.removed_with(".")), 5)
 
-    def test_empty_or_missing_specs_directory_passes(self) -> None:
+    def test_a_specs_path_naming_no_tree_at_either_commit_is_a_fault(self) -> None:
         base, candidate = self.scenario()
-        for specs in ("nowhere", "specs/sub/none"):
+        for specs in ("nowhere", "specs/sub/none", "Specs", "specs/test_in.py", "specs/sub/test_deep.py"):
             with self.subTest(specs):
-                self.assertEqual(run(self.repo, base, candidate, specs=specs).out, "removed=0 defects=0\n")
+                result = run(self.repo, base, candidate, specs=specs)
+                self.assertEqual((result.code, result.out), (2, ""), result.err)
+                self.assertTrue(result.err.startswith("coverage_map: tool fault:"), result.err)
+                self.assertIn(json.dumps(specs), result.err)
+                self.assertIn(base, result.err)
+                self.assertIn(candidate, result.err)
+
+    def test_a_present_tree_holding_no_spec_file_passes(self) -> None:
+        base = self.repo.commit({"empty/README.txt": "x\n"})
+        candidate = self.repo.commit({"empty/NOTES.txt": "y\n"})
+        self.assertEqual(run(self.repo, base, candidate, specs="empty").out, "removed=0 defects=0\n")
+
+    def test_a_tree_present_at_one_commit_only_is_empty_at_the_other(self) -> None:
+        base = self.repo.commit({"x.txt": "1\n"})
+        candidate = self.repo.commit({SPEC_A: functions("test_one")})
+        self.assertEqual(run(self.repo, base, candidate).out, "removed=0 defects=0\n")
+        self.assertEqual(run(self.repo, candidate, base).out, "UNMAPPED_REMOVAL " + json.dumps(tid(SPEC_A, "test_one")) + " removed test has no map row\nremoved=1 defects=1\n")
+
+    def test_a_specs_path_naming_a_submodule_entry_is_a_fault(self) -> None:
+        seed = self.repo.commit({"x.txt": "1\n"})
+        raw = {b"vendored": ("160000", seed.encode("ascii"))}
+        base = self.repo.commit({SPEC_A: functions("test_one")}, raw=raw)
+        candidate = self.repo.commit({"y.txt": "2\n"}, raw=raw)
+        result = run(self.repo, base, candidate, specs="vendored")
+        self.assertEqual((result.code, result.out), (2, ""), result.err)
 
     def test_specs_path_with_pathspec_magic_is_literal(self) -> None:
         base, candidate = self.scenario()
-        self.assertEqual(run(self.repo, base, candidate, specs="spec*").out, "removed=0 defects=0\n")
+        result = run(self.repo, base, candidate, specs="spec*")
+        self.assertEqual((result.code, result.out), (2, ""), result.err)
+        self.assertIn(json.dumps("spec*"), result.err)
 
 
 class FaultTests(GuardCase):
@@ -523,6 +694,43 @@ class FaultTests(GuardCase):
             result = run_args(["--repo", plain, "--base", "HEAD", "--candidate", "HEAD", "--map", MAP, "--specs", SPECS])
         self.assert_fault(result)
         self.assertIn("fatal", result.err)
+
+    def test_a_plain_directory_inside_a_work_tree_exits_2(self) -> None:
+        self.two_commits()
+        plain = self.repo.dir / "plain"
+        plain.mkdir()
+        for label, directory in {"plain directory": plain, "directory holding tracked files": self.repo.dir / "gov"}.items():
+            with self.subTest(label):
+                result = run_args(["--repo", str(directory), "--base", "HEAD", "--candidate", "HEAD", "--map", MAP, "--specs", SPECS])
+                self.assert_fault(result)
+                self.assertIn("top level", result.err)
+
+    def test_the_top_level_may_be_spelled_in_other_ways(self) -> None:
+        base, candidate = self.two_commits()
+        (self.repo.dir / "gov").mkdir(exist_ok=True)
+        for label, spelling in {
+            "trailing separator": str(self.repo.dir) + os.sep,
+            "dot dot detour": str(self.repo.dir / "gov" / ".."),
+        }.items():
+            with self.subTest(label):
+                result = run_args(["--repo", spelling, "--base", base, "--candidate", candidate, "--map", MAP, "--specs", SPECS])
+                self.assertEqual((result.code, result.out), (0, "removed=1 defects=0\n"), result.err)
+
+    def test_a_fault_message_with_non_ascii_input_is_escaped_to_one_line(self) -> None:
+        self.two_commits()
+        result = run(self.repo, "caf\u00e9", "HEAD")
+        self.assert_fault(result)
+        self.assertTrue(result.err.isascii(), result.err)
+        self.assertEqual(result.err.count("\n"), 1, result.err)
+        self.assertIn("caf\\xe9", result.err)
+
+    def test_a_parse_fault_does_not_repeat_the_raw_path(self) -> None:
+        good = self.repo.commit({"specs/test_a\u00e9.py": functions("test_one")})
+        broken = self.repo.commit({"specs/test_a\u00e9.py": "def (:\n"})
+        result = run(self.repo, good, broken)
+        self.assert_fault(result)
+        self.assertTrue(result.err.isascii(), result.err)
+        self.assertEqual(result.err.count("\n"), 1, result.err)
 
     def test_repo_path_that_does_not_exist_exits_2(self) -> None:
         missing = str(self.repo.dir / "missing")
@@ -612,6 +820,70 @@ class FaultTests(GuardCase):
         self.assertIn("boom", result.err)
 
 
+class EntryKindTests(GuardCase):
+    """Links, submodules and paths git serves as bytes."""
+
+    def seed(self) -> str:
+        return self.repo.commit({"x.txt": "1\n"})
+
+    def test_a_submodule_entry_under_specs_is_not_a_spec_file(self) -> None:
+        raw = {b"specs/test_sub.py": ("160000", self.seed().encode("ascii"))}
+        base = self.repo.commit({SPEC_A: functions("test_one")}, raw=raw)
+        same = self.repo.commit({"y.txt": "2\n"}, raw=raw)
+        gone = self.repo.commit({"z.txt": "3\n"})
+        self.assertEqual(run(self.repo, base, same).out, "removed=0 defects=0\n")
+        self.assertEqual(run(self.repo, base, gone).out, "removed=0 defects=0\n")
+
+    def test_a_symlinked_spec_that_did_not_change_is_never_parsed(self) -> None:
+        raw = {SPEC_A.encode(): ("120000", b"def (:\n")}
+        base = self.repo.commit({"x.txt": "1\n"}, raw=raw)
+        candidate = self.repo.commit({"y.txt": "2\n"}, raw=raw)
+        self.assertEqual(run(self.repo, base, candidate).out, "removed=0 defects=0\n")
+
+    def test_a_spec_replaced_by_a_link_has_all_its_tests_removed(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        candidate = self.repo.commit({SPEC_A: None}, raw={SPEC_A.encode(): ("120000", b"def (:\n")})
+        result = run(self.repo, base, candidate)
+        self.assert_red(result, "UNMAPPED_REMOVAL", "UNMAPPED_REMOVAL")
+        self.assertEqual(self.summary(result), "removed=2 defects=2")
+
+    def test_an_executable_spec_is_a_spec_file(self) -> None:
+        base = self.repo.commit({"x.txt": "1\n"}, raw={SPEC_A.encode(): ("100755", functions("test_one").encode())})
+        candidate = self.repo.commit({"y.txt": "2\n"})
+        self.assert_red(run(self.repo, base, candidate), "UNMAPPED_REMOVAL")
+
+    def test_a_spec_path_that_is_not_utf8_is_a_test_id_not_a_fault(self) -> None:
+        path = b"specs/test_\xff.py"
+        test_id = "specs/test_\udcff.py::test_one"
+        raw = {path: ("100644", functions("test_one").encode())}
+        base = self.repo.commit({"x.txt": "1\n"}, raw=raw)
+        same = self.repo.commit({"y.txt": "2\n"}, raw=raw)
+        self.assertEqual(run(self.repo, base, same).out, "removed=0 defects=0\n")
+        gone = self.repo.commit({"z.txt": "3\n"})
+        result = run(self.repo, base, gone)
+        self.assert_red(result, "UNMAPPED_REMOVAL")
+        self.assertEqual(result.lines[0], "UNMAPPED_REMOVAL " + json.dumps(test_id) + " removed test has no map row")
+        self.assertTrue(result.out.isascii())
+        # a map cannot name it: its text breaks the text-value rule
+        mapped = self.repo.commit({MAP: map_text(row(test_id, "dropped", reason="r"))})
+        self.assert_red(run(self.repo, base, mapped), "MAP_ROW_INVALID", "UNMAPPED_REMOVAL")
+
+    def test_a_newline_in_a_spec_path_stays_on_one_line(self) -> None:
+        path = b"specs/test_a\nb.py"
+        quoted = json.dumps("specs/test_a\nb.py")
+        broken = self.repo.commit({"x.txt": "1\n"}, raw={path: ("100644", b"def (:\n")})
+        fixed = self.repo.commit({"y.txt": "2\n"}, raw={path: ("100644", functions("test_one").encode())})
+        gone = self.repo.commit({"z.txt": "3\n"})
+        fault = run(self.repo, fixed, broken)
+        self.assertEqual((fault.code, fault.out), (2, ""))
+        self.assertEqual(fault.err.count("\n"), 1, fault.err)
+        self.assertIn(quoted, fault.err)
+        red = run(self.repo, fixed, gone)
+        self.assertEqual(red.code, 1)
+        self.assertEqual(len(red.lines), 2, red.out)
+        self.assertIn(json.dumps("specs/test_a\nb.py::test_one"), red.lines[0])
+
+
 class UsageTests(GuardCase):
     def good(self, **override: str) -> list[str]:
         values = {"--repo": str(self.repo.dir), "--base": "HEAD", "--candidate": "HEAD", "--map": MAP, "--specs": SPECS}
@@ -672,6 +944,22 @@ class UsageTests(GuardCase):
     def test_revisions_starting_with_a_dash_are_refused(self) -> None:
         self.assert_usage(self.good(base="--output=x"))
         self.assert_usage(self.good(candidate="-1"))
+
+    def test_a_lone_surrogate_or_control_character_in_any_argument_exits_3(self) -> None:
+        for option in ("repo", "base", "candidate", "map", "specs"):
+            for value in ("a\ud800b", "a\x01b", "a\nb", "a\x7fb", "a\tb", "a\x00b"):
+                with self.subTest(option=option, value=value):
+                    result = run_args(self.good(**{option: value}))
+                    self.assertEqual((result.code, result.out), (3, ""), result.err)
+                    self.assertEqual(result.err.splitlines(), [f"coverage_map: --{option} holds " + ("a lone surrogate" if value == "a\ud800b" else "a control character"), cm.USAGE])
+
+    def test_an_unknown_argument_is_echoed_on_one_escaped_line(self) -> None:
+        result = run_args([*self.good(), "stray\nline\u00e9"])
+        self.assertEqual((result.code, result.out), (3, ""))
+        lines = result.err.splitlines()
+        self.assertEqual(len(lines), 2, result.err)
+        self.assertIn("stray\\x0aline\\xe9", lines[0])
+        self.assertTrue(result.err.isascii())
 
     def test_map_backslash_form_is_read_as_the_same_path(self) -> None:
         base = self.repo.commit({SPEC_A: functions("test_one", "test_two")})

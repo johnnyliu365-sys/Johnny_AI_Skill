@@ -96,32 +96,62 @@ cannot be written, or an unexpected error. Exit 3: bad option, missing mode, emp
 
 Checks that no test function leaves a spec file without a map row. It lists every test
 present in a spec file under `--specs` at `--base` and absent at `--candidate`, and requires
-each to have a row in the map file read at `--candidate` (`git show <candidate>:<map>`, never
-the working tree). A spec file is `test_*.py` below `--specs`, matched by path component
-(a sibling directory whose name only begins like `specs` is not below it). A test is a function, sync or async, whose name starts with
-`test`, at module level or inside a class (nested classes included); its id is
-`<path>::<name>`, `<path>::<Class>::<name>` or `<path>::<Outer>::<Inner>::<name>`. A test that
-moved to another file or was renamed is removed under its old id. Test enumeration uses the
-standard `ast` module on the blobs git serves at both commits.
+each to have a row in the map file at `--candidate`. The map is read as the blob of the
+candidate commit (git `ls-tree` finds the entry, `cat-file` reads it), never from the working
+tree.
+
+`--repo` must be the top level of a git work tree: a plain directory, or a subdirectory of a
+work tree, is exit 2. `--specs` must name a directory at `--base`, at `--candidate`, or at
+both; a path that names no directory at either commit (a typo, a file, a case variant) is
+exit 2 naming the path and both commits, because a guard that checks nothing must not pass.
+A directory present at one commit only is read as empty at the other, and a present
+directory that holds no spec file is exit 0.
+
+A spec file is a regular file (git mode 100644 or 100755) named `test_*.py` below `--specs`,
+matched by path component (a sibling directory whose name only begins like `specs` is not
+below it). A symbolic link or a submodule entry is not a spec file and is never parsed; a
+spec file that becomes a link at the candidate has all its tests removed. Paths from git are
+decoded as UTF-8 with surrogateescape, so a path that is not UTF-8 is still a test id,
+compared byte for byte and printed escaped, never a tool fault. A test is a function, sync or
+async, whose name starts with `test`, at module level or inside a class (nested classes
+included), also inside the `if`, `else`, `try`, `except`, `finally`, `with`, `for`, `while`
+and `match` blocks of those levels, never inside another function. Its id is `<path>::<name>`,
+`<path>::<Class>::<name>` or `<path>::<Outer>::<Inner>::<name>`. A test that moved to another
+file or was renamed is removed under its old id. Specs are parsed with the standard `ast`
+module and the grammar of the interpreter that runs the guard (Python 3.11); a spec written
+with later syntax does not parse and is exit 2.
 
 Map file, UTF-8 JSON:
 
     {"rows": [{"assertion": "<id>", "disposition": "carried" | "dropped" | "escalated",
                "carried_to": "<id or empty>", "reason": "<text or empty>", "ticket": "<text or empty>"}]}
 
+Every string in a row is valid Unicode without lone surrogates and without control
+characters (U+0000 to U+001F, U+007F); a row that breaks this is `MAP_ROW_INVALID`, so a map
+cannot name a test whose path is not UTF-8 and such a removal is `UNMAPPED_REMOVAL`.
+
 Defect codes (exit 1): `UNMAPPED_REMOVAL` (a removed id has no valid row; also every removed
 id when the map is absent at the candidate), `CARRIED_TARGET_MISSING` (`carried_to` empty or
 naming no test at the candidate), `DROPPED_WITHOUT_REASON` (`dropped` with an empty or
 whitespace-only `reason`), `ESCALATED_WITHOUT_TICKET` (`escalated` with an empty or
 whitespace-only `ticket`), `MAP_ROW_INVALID` (an unknown disposition, a missing or non-string
-field, an assertion that is empty or has surrounding whitespace, a duplicate assertion, or a
-map file that is not JSON of the required shape; a row that is invalid or duplicated covers
-nothing). A row's disposition is judged only when its assertion is a removed id.
+field, a string with a control character or lone surrogate, an assertion that is empty or has
+surrounding whitespace, or a duplicate assertion; a row that is invalid or duplicated covers
+nothing, so the removed id it names also gets `UNMAPPED_REMOVAL`). The subject of a
+`MAP_ROW_INVALID` line is `rows[N]` (the zero-based position of the row) for a row defect, or the map
+path for a defect of the file: a map file that is not UTF-8 JSON of the required shape, or a
+map path that names a directory, a submodule entry or a link. A map absent at the candidate is
+not itself a defect. A row's disposition is judged only when its assertion is a removed id;
+every row is shape-checked.
 
-Output is one line per defect (`CODE "<id>" <detail>`, ids JSON-quoted with ASCII escapes), then
-`removed=N defects=M`; exit 0 only when `defects=0`. Exit 2: `git` cannot be started, `--repo`
-is not a repository, a commit, tree or blob cannot be served (git's stderr is printed), a spec
-does not parse at either commit (the message names the commit and the path), or an unexpected
-error. Exit 3: a missing or unknown option, an empty value, an absolute `--map` or `--specs`,
-a `..` segment, or a revision that starts with `-`. `--specs` and `--map` accept forward or back
-slashes and a trailing slash; `--specs .` selects the whole repository.
+Output is one line per defect (`CODE "<subject>" <detail>`, subjects JSON-quoted with ASCII
+escapes), then `removed=N defects=M`; exit 0 only when `defects=0`. A defect or a fault is
+always one line: stderr messages are escaped to printable ASCII, so an argument, a path or a
+parser message that holds a newline is never echoed raw. Exit 2: `git` cannot be started,
+`--repo` is not a work-tree top level, a commit, tree or blob cannot be served (git's stderr
+is printed escaped), `--specs` names no directory at either commit, a spec does not parse at
+either commit (the message names the commit and the path), or an unexpected error. Exit 3: a
+missing or unknown option, an empty value, an argument that holds a lone surrogate or a
+control character, an absolute `--map` or `--specs`, a `..` segment, or a revision that
+starts with `-`. `--specs` and `--map` accept forward or back slashes and a trailing slash;
+`--specs .` selects the whole repository.
