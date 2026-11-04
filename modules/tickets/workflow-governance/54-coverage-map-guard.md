@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `.worktrees/54-coverage-map-guard-out/` / owner implementation seat / worktree `.worktrees/54-coverage-map-guard` / branch `cp/wave2-54-coverage-map-guard` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision03 / receipt under `.worktrees/54-coverage-map-guard-out/` / owner implementation seat / worktree `.worktrees/54-coverage-map-guard` / branch `cp/wave2-54-coverage-map-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S54-02, S54-06 TICKET_DEFECT; correction 1 dispatched to the same seat） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S54-09, S54-10; implementation 3 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/54-coverage-map-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/54-coverage-map-guard-review` |
@@ -138,3 +138,21 @@ Review record: `doc/reviews/workflow-governance/54-coverage-map-guard-code-revie
 | S54-06 | TICKET_DEFECT | links and submodules are not spec files |
 | S54-07 | EVIDENCE_DEFECT | tests for each block kind, the submodule skip, the submodule map path and the `UNMAPPED_REMOVAL` line of a shape-invalid row; README says how the map is read and that `MAP_ROW_INVALID` subjects are `rows[N]` or the map path |
 | S54-08 | OUT_OF_SCOPE_HARDENING | not taken: the guard parses with Python 3.11 and says so; a later grammar is a wave-3 candidate |
+
+## Re-plan to closure revision03 (after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision02 correction review". CodeReview §5: revision02 used its one initial and one correction review. Root cause of S54-09: whether a path names a tree was inferred from the file paths under it, so a tree with nothing in it looked absent. Revision03 asks git for tree entries directly. Revision03 starts a new cadence: one initial review and one correction review.
+
+### Rules added in revision03 (binding)
+
+- Trees are listed, not inferred: `ls-tree -r -t` (or an equivalent that reports tree entries) decides whether `--specs` and the map path name a tree. An empty tree object at `--specs` is a present, empty tree (exit 0 when nothing was removed); an empty tree object at the map path is `MAP_ROW_INVALID` for the map path, like any tree.
+- Every git child runs with the repository-selecting `GIT_*` variables removed (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`), as in tickets 53 and 56.
+- A repeated key in any object of the map file is `MAP_ROW_INVALID` (for the row, or for the file at the top level), as ticket 52 treats repeated keys.
+- Red before fault (the reading of R4-2 in ticket 52 revision04): the guard reports every red it can find and exits 1 if there is one, with a fault printed on stderr; it exits 2 only when it found no red.
+
+| Finding | Class | Disposition in revision03 |
+| --- | --- | --- |
+| S54-09 | IMPLEMENTATION_DEFECT | trees listed directly; tests with an empty tree object at `--specs` and at the map path |
+| S54-10 | EVIDENCE_DEFECT | tests for U+001F in a row field, a second `case` and a second `except` handler, and a `test_` function nested in a helper (not a test) |
+| S54-11 | OUT_OF_SCOPE_HARDENING (taken now) | `GIT_*` variables removed, with a test that sets `GIT_DIR` |
+| S54-12 | OUT_OF_SCOPE_HARDENING (taken now) | repeated keys are `MAP_ROW_INVALID`, with a row test and a top-level test |

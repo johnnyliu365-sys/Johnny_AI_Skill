@@ -66,3 +66,61 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/54-rev01-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision02 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `414822941e92f12cfa47323084ee735652747c83` (`41482294` correction 1 → `285e6df8` → `8c91e85d`, on `c0ab4a08`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review CodeReview §5 allows |
+| Exit mapping | reviewed as 0/1/2/3 with exit 2 for tool faults (R4-7); the R4-2 table row awaits the owner's correction and is not raised against this candidate |
+| Summary | S54-01 to S54-07 are closed: `--repo` top level, absent `--specs`, links and submodules, surrogate-escaped paths, the argument and row text rules and one-line stderr hold under probes, and the seat's 24 mutations are red. Open: an empty tree object is read as absent (S54-09); four counter-mutations stay green (S54-10). Both are Low and fail closed. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Identity / boundary / typing | PASS | three files; Johnny Liu; stdlib; trailer names the working model |
+| Ticket tests / mypy | PASS | 84 passed, 198 subtests; mypy --strict clean |
+| `--repo` | PASS | probes a1–a11 |
+| `--specs` | PASS with finding | an empty tree object exits 2 (S54-09) |
+| Links and submodules | PASS with finding | an empty tree object at the map path reads as absent (S54-09) |
+| Non-UTF-8 paths; argument text rule; one-line output | PASS | |
+| Block kinds | PASS with finding | second `except`, second `case`, helper nesting unpinned (S54-10) |
+| Map row text values | PASS with finding | U+001F boundary unpinned (S54-10) |
+| R4-2 | PASS with finding | S54-09 |
+| Seat mutations | PASS | 24 of 24 red |
+| Reviewer counter-mutations | FINDING | 27 run: 19 red; R11, R19, R20, R21 findings; R15, R23, R25, R26 not |
+| Receipt / README / payload | PASS | checker 0 defects; digests recomputed; LF |
+| Full suite | PASS | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S54-01, S54-03 to S54-06 | CLOSED |
+| S54-02 | CLOSED except the empty tree object (S54-09) |
+| S54-07 | CLOSED for the items named; same-family gaps in S54-10 |
+| S54-08 | not taken, confirmed in the README |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S54-09 | IMPLEMENTATION_DEFECT | Low | `coverage_map.py:253, 316-321, 459, 469`; test `:645` | trees are inferred from file paths (`ls-tree -r` without `-t`): an empty tree object at `--specs` exits 2 "names no tree", and at the map path reads as absent | probes b5, c8 |
+| S54-10 | EVIDENCE_DEFECT | Low | `coverage_map.py:94, 276-278, 288-289, 293-294`; tests | unpinned: U+001F in row fields; a second `case`; a second `except`; a `test_` function nested in a helper | R11, R19, R20, R21 green |
+| S54-11 | OUT_OF_SCOPE_HARDENING | Low | `coverage_map.py:220-222, 233` | git inherits `GIT_DIR`; inside a hook a plain directory is accepted as `--repo` | probe a8 |
+| S54-12 | OUT_OF_SCOPE_HARDENING | Low | `coverage_map.py:389` | a repeated JSON key keeps its last value | probes h1, h2 |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: a Linux or POSIX host; SHA-256 repositories; nested submodule checkouts; the seat's own mutation driver; fast-forward onto the wave-2 tip.
+
+```review-verdict
+candidate: 414822941e92f12cfa47323084ee735652747c83
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/54-rev02-correction
+reviewed_at: 2026-11-04
+```
