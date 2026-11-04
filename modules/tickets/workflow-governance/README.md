@@ -24,7 +24,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [53-contract-gate](53-contract-gate.md) | Every active requirement has a spec, every spec cites its source at the recorded digest, binds no retired requirement, has no literal expected value and names a mutation | `CONVERGENCE_HELD` (revision04, `2a710426`; awaiting the owner) | Wave 2; R4-2, R4-6, R4-7, R4-8 |
 | [54-coverage-map-guard](54-coverage-map-guard.md) | A test removed between two commits is carried, dropped with a reason or escalated in the coverage map, or the guard is red | `CONVERGENCE_HELD` (revision03, `763284bf`; awaiting the owner) | Wave 2; R4-2, R4-8 |
 | [55-preflight-gate](55-preflight-gate.md) | Every tool a dispatch names starts and serves before the first product edit, or the run stops as a tool fault | `REVIEW_APPROVED` (revision03, candidate `c7a04099`) | Wave 2; R4-2, R4-3, R4-8 |
-| [56-tool-repair-guard](56-tool-repair-guard.md) | A tool-repair commit touches only the declared allowlist and never a spec, ledger, product source or gate script | `CONVERGENCE_REPLANNED` (revision04; correction 1 returned, awaiting the correction review) | Wave 2; R4-3, R4-8 |
+| [56-tool-repair-guard](56-tool-repair-guard.md) | A tool-repair commit touches only the declared allowlist and never a spec, ledger, product source or gate script | `CONVERGENCE_REPLANNED` (revision05; implementation 5 dispatched) | Wave 2; R4-3, R4-8 |
 
 ## Shared baseline
 

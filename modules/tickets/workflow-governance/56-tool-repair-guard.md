@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision04 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision05 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04; revision04 initial review CHANGES_REQUESTED (S56-21 to S56-23); correction 1 dispatched） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 correction review `CONVERGENCE_REVIEW_REQUIRED`: S56-24 changes an exit code; implementation 5 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/56-tool-repair-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/56-tool-repair-guard-review` |
@@ -187,3 +187,19 @@ Review record section "Revision03 initial review". S56-16 is a `TICKET_DEFECT`: 
 ### Correction 1 under revision04 (after the revision04 initial review `CHANGES_REQUESTED`)
 
 No ticket defect was found, so revision04 stands. S56-21: tests that forge the first parent's root tree, a `skills/` subtree and the gate-directory subtree, each copying the repair's content, each a fault. S56-22: paths are judged level by level as the walk verifies each tree, so every red found at a verified level is reported beside a fault met deeper (red before fault). S56-23: an equivalent survivor is marked in the M1 capture itself, with its reason, and M2 records the failing test that shows the intended reason. The next review is the one correction review of revision04.
+
+## Re-plan to closure revision05 (after the revision04 correction review `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision04 correction review". The open blocking item changes an exit code (R4-2), so the ticket is re-planned rather than held. Root cause of S56-24: "level by level" was read as "stop after the level that met a fault"; the rule is about which objects are trusted, not about where the walk ends. Revision05 starts a new cadence: one initial review and one correction review.
+
+### Rules added in revision05 (binding)
+
+- The walk descends into every subtree whose own object verified, whatever faults were met at its siblings or elsewhere; it skips only what lies under an object that did not verify. Every red found from verified objects is reported beside every fault (red before fault), so the exit does not depend on where a forgery sits.
+- The paths of a tree that did not verify are never judged: no red, and no "unchanged", is ever derived from its entries. The per-tree fallback hashes each tree like the batched read.
+- Test classes are defined before the `unittest.main()` guard, so a direct run and pytest collect the same tests.
+
+| Finding | Class | Disposition in revision05 |
+| --- | --- | --- |
+| S56-24 | IMPLEMENTATION_DEFECT | the descent rule above; the two tests that pinned the stop are inverted; tests with a forged sibling on either side and a gate-script change under the verified sibling give exit 1 with `PROTECTED_PATH_TOUCHED` and the fault on stderr |
+| S56-25 | EVIDENCE_DEFECT | a test whose forged sibling holds an extra entry: no red from it, exit 2 when nothing else is red |
+| S56-26 | OUT_OF_SCOPE_HARDENING (taken now) | test classes before the guard |

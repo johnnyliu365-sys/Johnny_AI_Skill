@@ -211,3 +211,53 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/56-rev04-initial
 reviewed_at: 2026-11-05
 ```
+
+## Revision04 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `198398aba563b05c4fcd377ac77fbcba49448a04` (`198398ab` → `241b328a` → `f50d171c` → `8b084b50` → `02d40fd2`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review of revision04 |
+| Summary | S56-21 and S56-23 are closed; every forged object on either side at any depth (190-run sweep, packs, alternates, forged commits, SHA-256) ends in a fault or a red and never exits 0; history rewriting changes nothing; the own walk equals `git diff --no-renames` on 48 real commits. S56-22 is partly closed: after a level that met a fault the walk stops, so a red under a verified sibling of a forged tree is dropped and the exit is 2, gate-script changes included (S56-24); the per-tree fallback's hashing is unpinned (S56-25). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 220 passed, 225 subtests; mypy --strict clean |
+| Seat mutations and M2 | PASS | 16 of 17 red; V10 equivalent (agreed); V10b red for the intended reason |
+| Reviewer counter-mutations | FINDING | 6 run: C5, C7, C8, C12, C24 red; C16 green (S56-25) |
+| Forged objects; history rewriting; own walk | PASS | |
+| Level-by-level judging | FINDING | shallower and same-level reds kept; reds below a verified sibling of a forged tree dropped (S56-24) |
+| R4-2, streams, one line; regression S56-01 to S56-20 | PASS | |
+| Receipt / boundary | PASS | 0 defects; 24 digest lines recomputed; captures after the commit |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S56-01 to S56-07, S56-09 to S56-21, S56-23 | CLOSED |
+| S56-08 | control plane: correction proposed, awaiting the owner |
+| S56-22 | PARTLY OPEN (S56-24, S56-25) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S56-24 | IMPLEMENTATION_DEFECT | Low (blocking; changes an exit code; never a pass) | `repair_guard.py:667-668`; tests `:2584, :2593` | after a level that met a fault the walk reads no deeper, so a red under a verified sibling of a forged tree (a gate-script change under a verified `skills/` beside a forged `docs/`) is dropped and the exit is 2; two tests pin the stop | probes G1 to G1d; C12 turns exactly those tests red |
+| S56-25 | EVIDENCE_DEFECT | Low (blocking; exit code in the mutant) | `repair_guard.py:596`; `LevelJudgingTests` | the per-tree fallback can read trees unhashed with every test green; under it a forged sibling with an extra entry yields an invented red | C16 green; probe g9 |
+| S56-26 | OUT_OF_SCOPE_HARDENING | Low | tests `:2526, :2530` | `LevelJudgingTests` is defined after the `unittest.main()` guard, so a direct run skips it; pytest collects it | direct run |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: paths with a newline end to end; Linux and macOS; short-name and symlink aliases of the gate directory; SHA-1 collisions; very large commits.
+
+```review-verdict
+candidate: 198398aba563b05c4fcd377ac77fbcba49448a04
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/56-rev04-correction
+reviewed_at: 2026-11-05
+```
