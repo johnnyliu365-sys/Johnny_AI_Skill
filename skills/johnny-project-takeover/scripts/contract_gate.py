@@ -27,24 +27,37 @@ is a red of that spec. Only reading a file from disk and running git are faults.
 A declared source path must be canonical (not empty, at most 1024 bytes, no control
 character, only a forward slash as separator once backslashes are normalised and one
 leading dot-slash is dropped, no leading slash or colon, no drive letter, no empty, dot or
-dot-dot segment). A canonical path is looked up once, literally, as the blob at `HEAD` of
-`--repo` by writing the name to the standard input of `git cat-file`; it is never a
-pathspec and never on a command line, so the digest does not depend on the host's
-line-ending settings. Every git child ignores replace refs, never fetches lazily and runs
-without the variables that select a repository, a work tree or a configuration.
+dot-dot segment). `HEAD` is resolved once, at the start of the run, to a full commit id; every
+lookup of the run is a line on the standard input of one `git cat-file --batch` process, the
+commit's tree or an object id, so a declared source is never a pathspec, never an object name
+and never on a command line, a commit that lands during the run changes nothing in it, and the
+digest does not depend on the host's line-ending settings. The trees are walked from the root
+and the entry of a source is read from its parent tree: a path the tree does not name, or names
+as a directory, is SOURCE_MISSING; so is an entry that is a symbolic link or a submodule (a
+contract cites the content of a file, never a link). An object a tree names but the object store
+cannot serve (pruned, or missing from a partial clone; nothing is fetched) is a fault, never a
+red. Every git child ignores replace refs, never fetches lazily and runs without the variables
+that select a repository, a work tree or a configuration.
 
 Defect codes (exit 1, one line `<code> <spec or requirement>: <detail>` each, subject and
 detail escaped so that one defect is always one line):
   NO_SPEC_FOR_REQUIREMENT, SOURCE_MISSING, SOURCE_DIGEST_MISMATCH,
   RETIRED_REQUIREMENT_BOUND, LITERAL_EXPECTED, NO_MUTATION.
 
-Exit codes: 0 pass, 1 contract red, 2 tool fault (a file cannot be read, git cannot serve
-a query, `--repo` is not a work tree top level, or a source is a URL, which cannot be
-checked offline), 3 usage error (bad arguments, or the snapshot argument is not a
-snapshot). A red is never reported as a tool fault and a tool fault is never reported as a
-red. The summary line goes to stdout at exit 0 and to stderr at exit 1. The console encoding
-never changes an exit code: stdout and stderr keep the host encoding but escape what it
-cannot encode. Fault and usage messages are escaped to one line as well.
+Red before fault: the gate reports every red it can find and exits 1 if there is one, with each
+fault (SOURCE_UNSERVABLE for a URL source or an unservable object, TOOL_FAULT for the rest) on
+stderr on one line, then the summary. It exits 2 only when it found no red. A spec that cannot be
+read may declare any requirement, so no requirement is then called unbound. After git fails the
+lookups that remain are skipped (one fault line) and everything that needs none is still checked.
+
+Exit codes: 0 pass, 1 contract red, 2 tool fault and no red (a file cannot be read, git cannot
+serve a query, `--repo` is not a work tree top level, or a source is a URL, which cannot be
+checked offline), 3 usage error (bad arguments, or the snapshot argument is not a snapshot; the
+usage banner and one escaped error line are printed). A fault that leaves nothing to check (the
+snapshot, `--repo`, `--specs`) ends the run at once. A red is never reported as a tool fault and a
+tool fault is never reported as a red. The summary line goes to stdout at exit 0 and to stderr at
+exit 1. The console encoding never changes an exit code: stdout and stderr keep the host encoding
+but escape what it cannot encode. Fault and usage messages are escaped to one line as well.
 """
 from __future__ import annotations
 
@@ -57,10 +70,12 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import tokenize
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import IO, TypeVar
 
 USAGE = "usage: contract_gate.py --repo <dir> --snapshot <snapshot.json> --specs <dir>"
 
@@ -85,13 +100,15 @@ DIGEST = re.compile(r"^[0-9a-f]{64}$")
 DRIVE_PREFIX = re.compile(r"^[A-Za-z]:")
 LINE_BREAK = re.compile(r"\r\n|\r|\n")
 CONTROL_TEXT = re.compile("[\\x00-\\x1f\\x7f\\ud800-\\udfff]")
-OBJECT_ANSWER = re.compile(rb"([0-9a-f]{40}|[0-9a-f]{64}) (blob|tree|commit|tag) ([0-9]+)")
-SUBMODULE_ANSWER = re.compile(rb"([0-9a-f]{40}|[0-9a-f]{64}) submodule")
+OBJECT_ID = re.compile(rb"[0-9a-f]{40}|[0-9a-f]{64}")
+OBJECT_HEADER = re.compile(rb"([0-9a-f]{40}|[0-9a-f]{64}) (blob|tree|commit|tag) ([0-9]+)")
+TREE_MODE = re.compile(rb"[0-7]{1,7}")
 
 DETAIL_LIMIT = 120
 ANALYSIS_DEPTH = 64
 SOURCE_PATH_LIMIT = 1024
 GIT_TIMEOUT_SECONDS = 60
+DIGEST_BLOCK = 1 << 20
 # Variables that make git work on another repository, work tree or object store than the one
 # named by `--repo`; none of them reaches a git child.
 GIT_SELECTING_VARIABLES: tuple[str, ...] = (
@@ -206,6 +223,7 @@ class Report:
     requirements: int
     specs: int
     defects: tuple[Defect, ...]
+    faults: tuple[ToolFault, ...] = ()
 
 
 # --------------------------------------------------------------------------- input
@@ -378,21 +396,19 @@ def _git_environment() -> dict[str, str]:
     return environment
 
 
-def _git(repo: Path, args: Sequence[str], stdin: bytes | None = None) -> bytes:
+def _git_command(repo: Path, args: Sequence[str]) -> list[str]:
+    return ["git", "-C", str(repo), "--no-replace-objects", *args]
+
+
+def _git(repo: Path, args: Sequence[str]) -> bytes:
     """Run git in `repo`; any failure to serve the query is a tool fault.
 
-    `args` never holds a declared source: a source reaches git only through `stdin`.
+    `args` never holds a declared source: a source never reaches git at all, only object ids do.
     """
-    command = ["git", "-C", str(repo), "--no-replace-objects", *args]
     try:
-        if stdin is None:
-            done = subprocess.run(
-                command, stdin=subprocess.DEVNULL, capture_output=True, check=False, env=_git_environment(), timeout=GIT_TIMEOUT_SECONDS
-            )
-        else:
-            done = subprocess.run(
-                command, input=stdin, capture_output=True, check=False, env=_git_environment(), timeout=GIT_TIMEOUT_SECONDS
-            )
+        done = subprocess.run(
+            _git_command(repo, args), stdin=subprocess.DEVNULL, capture_output=True, check=False, env=_git_environment(), timeout=GIT_TIMEOUT_SECONDS
+        )
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
         raise ToolFault("TOOL_FAULT", f"cannot run git: {exc}") from exc
     if done.returncode != 0:
@@ -416,43 +432,281 @@ def require_work_tree_top_level(repo: Path) -> None:
         raise ToolFault("TOOL_FAULT", f"--repo {repo} is not the top level of its git work tree ({_quote(top)})")
 
 
-class HeadReader:
-    """Reads canonical repository paths as blobs at HEAD of one repository, by literal lookup."""
+def resolve_head(repo: Path) -> str:
+    """The full object id of the commit `HEAD` names, asked once per run."""
+    answer = _git(repo, ["rev-parse", "--verify", "--quiet", "HEAD^{commit}"])
+    lines = answer.split(b"\n")
+    if len(lines) != 2 or lines[1] != b"" or OBJECT_ID.fullmatch(lines[0]) is None:
+        raise ToolFault("TOOL_FAULT", "git rev-parse HEAD answered outside its format")
+    return lines[0].decode("ascii")
+
+
+@dataclass(frozen=True)
+class Header:
+    """The first line of a `git cat-file --batch` answer for an object that exists."""
+
+    oid: str
+    kind: str
+    size: int
+
+
+@dataclass(frozen=True)
+class TreeEntry:
+    mode: int
+    oid: str
+
+
+class UnservableSource(ToolFault):
+    """A tree names an object that the object store cannot serve (a fault, never a red)."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(SOURCE_UNSERVABLE, message)
+
+
+class StoreSkipped(Exception):
+    """The object store already failed in this run: no further lookup is made and no further fault is added."""
+
+
+T = TypeVar("T")
+
+
+class ObjectStore:
+    """One `git cat-file --batch` process for the whole run.
+
+    Every lookup is a line on its standard input: the full id of the commit followed by a tree
+    suffix, or a full object id. No declared source is ever written to it, so a source is never
+    a pathspec, never an object name and never on a command line.
+    """
 
     def __init__(self, repo: Path) -> None:
         self.repo = repo
-        self.head_checked = False
+        self.process: subprocess.Popen[bytes] | None = None
+        self.broken = False
 
-    def _check_head(self) -> None:
-        if not self.head_checked:
-            _git(self.repo, ["rev-parse", "--verify", "--quiet", "HEAD^{commit}"])
-            self.head_checked = True
+    def _start(self) -> subprocess.Popen[bytes]:
+        if self.process is None:
+            try:
+                self.process = subprocess.Popen(
+                    _git_command(self.repo, ["cat-file", "--batch"]),
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    env=_git_environment(),
+                )
+            except (OSError, ValueError, subprocess.SubprocessError) as exc:
+                raise self.fail(f"cannot run git: {exc}") from exc
+        return self.process
 
-    def read(self, path: str) -> tuple[bytes | None, str]:
-        """The blob at `HEAD:<path>`; the second item is the reason when there is none.
+    def fail(self, message: str) -> ToolFault:
+        """The store cannot be trusted any more: stop the process and say why, once."""
+        self.broken = True
+        process = self.process
+        detail = ""
+        if process is not None:
+            try:
+                process.kill()
+                if process.stderr is not None:
+                    detail = process.stderr.read().decode("utf-8", errors="replace").strip()
+            except (OSError, ValueError):
+                pass
+        return ToolFault("TOOL_FAULT", f"{message}: {detail}" if detail else message)
 
-        The name goes to the standard input of `git cat-file`, one line, as a literal object
-        name: it is never a pathspec and never on a command line.
+    def lookup(self, query: bytes, expect_oid: str | None, consume: Callable[[Header, IO[bytes]], T]) -> T | None:
+        """Ask for one object. None when git answers `missing` for exactly this query.
+
+        `consume` reads the body of an object that exists from the answer stream, which must
+        then end in one line feed. Any other answer (another object id than the one asked for,
+        an unknown shape, a body of another size, an early end of the output) is a tool fault
+        and the store is not used again.
         """
-        self._check_head()
-        name = f"HEAD:{path}".encode("utf-8")
-        query = name + b"\n"
-        answer = _git(self.repo, ["cat-file", "--batch-check"], query)
-        if answer == name + b" missing\n":
-            return None, "is not tracked at HEAD (names match exactly, including case)"
-        if answer.endswith(b"\n") and SUBMODULE_ANSWER.fullmatch(answer[:-1]) is not None:
-            return None, "is not a blob at HEAD (a submodule)"
-        matched = OBJECT_ANSWER.fullmatch(answer[:-1]) if answer.endswith(b"\n") else None
-        if matched is None:
-            raise ToolFault("TOOL_FAULT", f"git cat-file --batch-check answered outside its format for {_quote(path)}")
-        if matched.group(2) != b"blob":
-            return None, "is not a blob at HEAD"
-        content = _git(self.repo, ["cat-file", "--batch"], query)
-        header = matched.group(0) + b"\n"
-        size = int(matched.group(3))
-        if not content.startswith(header) or len(content) != len(header) + size + 1 or not content.endswith(b"\n"):
-            raise ToolFault("TOOL_FAULT", f"git cat-file --batch answered outside its format for {_quote(path)}")
-        return content[len(header) : len(header) + size], ""
+        if self.broken:
+            raise StoreSkipped
+        process = self._start()
+        stdin, stdout = process.stdin, process.stdout
+        if stdin is None or stdout is None:
+            raise self.fail("git cat-file has no standard streams")
+        timer = threading.Timer(GIT_TIMEOUT_SECONDS, process.kill)
+        timer.start()
+        try:
+            try:
+                stdin.write(query + b"\n")
+                stdin.flush()
+                line = stdout.readline()
+            except (OSError, ValueError) as exc:
+                raise self.fail(f"git cat-file could not be asked: {exc}") from exc
+            if not line.endswith(b"\n"):
+                raise self.fail("git cat-file ended before it answered")
+            if line == query + b" missing\n":
+                return None
+            matched = OBJECT_HEADER.fullmatch(line[:-1])
+            if matched is None or (expect_oid is not None and matched.group(1).decode("ascii") != expect_oid):
+                raise self.fail("git cat-file answered outside its format")
+            header = Header(matched.group(1).decode("ascii"), matched.group(2).decode("ascii"), int(matched.group(3)))
+            try:
+                result = consume(header, stdout)
+                ending = stdout.read(1)
+            except (OSError, ValueError) as exc:
+                raise self.fail(f"git cat-file could not be read: {exc}") from exc
+            if ending != b"\n":
+                raise self.fail("git cat-file answered a body of another size than its header says")
+            return result
+        finally:
+            timer.cancel()
+
+    def close(self) -> None:
+        """End the process; it never outlives the run."""
+        process, self.process = self.process, None
+        if process is None:
+            return
+        try:
+            if process.stdin is not None:
+                process.stdin.close()
+        except OSError:
+            pass
+        try:
+            process.wait(timeout=5)
+        except (OSError, subprocess.SubprocessError):
+            process.kill()
+            try:
+                process.wait(timeout=5)
+            except (OSError, subprocess.SubprocessError):
+                pass
+        for stream in (process.stdout, process.stderr):
+            try:
+                if stream is not None:
+                    stream.close()
+            except OSError:
+                pass
+
+
+def _read_exactly(stream: IO[bytes], size: int) -> bytes:
+    data = stream.read(size)
+    if len(data) != size:
+        raise ValueError("the answer ended inside the body")
+    return data
+
+
+def _digest_of(stream: IO[bytes], size: int) -> str:
+    """sha256 of the next `size` bytes of `stream`, read in blocks."""
+    digest = hashlib.sha256()
+    remaining = size
+    while remaining:
+        block = stream.read(min(remaining, DIGEST_BLOCK))
+        if not block:
+            raise ValueError("the answer ended inside the body")
+        digest.update(block)
+        remaining -= len(block)
+    return digest.hexdigest()
+
+
+def parse_tree(content: bytes, raw_size: int) -> dict[bytes, TreeEntry]:
+    """The entries of a raw tree object: an octal mode, a space, a name, a NUL and a raw object id, repeated."""
+    entries: dict[bytes, TreeEntry] = {}
+    position = 0
+    while position < len(content):
+        space = content.find(b" ", position)
+        nul = content.find(b"\0", space + 1) if space >= 0 else -1
+        end = nul + 1 + raw_size
+        mode_text = content[position:space] if space >= 0 else b""
+        name = content[space + 1 : nul] if nul >= 0 else b""
+        if nul < 0 or end > len(content) or TREE_MODE.fullmatch(mode_text) is None or not name or b"/" in name:
+            raise ToolFault("TOOL_FAULT", "git cat-file answered a tree outside its format")
+        if name in entries:
+            raise ToolFault("TOOL_FAULT", "git cat-file answered a tree that names one entry twice")
+        entries[name] = TreeEntry(int(mode_text, 8), content[nul + 1 : end].hex())
+        position = end
+    return entries
+
+
+def _kind_of(mode: int) -> str:
+    return {0o040000: "directory", 0o120000: "symbolic link", 0o160000: "submodule", 0o100000: "file"}.get(mode & 0o170000, "other")
+
+
+ABSENT = "is not tracked at HEAD (names match exactly, including case)"
+
+
+class HeadReader:
+    """Reads canonical repository paths of one commit of one repository, by walking its trees.
+
+    The commit is the one `HEAD` named at the start of the run; every lookup goes through one
+    object store. The tree entry of a source is read from its parent tree, so a symbolic link or a
+    submodule is told from a file by its mode, and an entry the store cannot serve is told from
+    one the tree does not name.
+    """
+
+    def __init__(self, repo: Path, head: str | None) -> None:
+        self.head = head
+        self.store = ObjectStore(repo)
+        self.trees: dict[str, dict[bytes, TreeEntry]] = {}
+        self.root: dict[bytes, TreeEntry] | None = None
+        self.raw_size = 0 if head is None else len(head) // 2
+        if head is None:
+            self.store.broken = True
+
+    def close(self) -> None:
+        self.store.close()
+
+    def _load_tree(self, query: bytes, expect_oid: str | None, unservable: str) -> tuple[str, dict[bytes, TreeEntry]]:
+        served = self.store.lookup(query, expect_oid, lambda header, stream: (header, _read_exactly(stream, header.size)))
+        if served is None:
+            raise UnservableSource(unservable)
+        header, content = served
+        if header.kind != "tree":
+            raise self.store.fail("git cat-file answered a tree lookup with another kind of object")
+        try:
+            return header.oid, parse_tree(content, self.raw_size)
+        except ToolFault as fault:
+            self.store.broken = True
+            raise fault
+
+    def _root_tree(self) -> dict[bytes, TreeEntry]:
+        if self.root is None:
+            if self.head is None:
+                raise StoreSkipped
+            _, entries = self._load_tree(f"{self.head}^{{tree}}".encode("ascii"), None, "the tree of HEAD cannot be served by the object store")
+            self.root = entries
+        return self.root
+
+    def _subtree(self, entry: TreeEntry) -> dict[bytes, TreeEntry]:
+        if entry.oid not in self.trees:
+            message = "a tree on the path is named by its parent tree but the object store cannot serve it"
+            _, self.trees[entry.oid] = self._load_tree(entry.oid.encode("ascii"), entry.oid, message)
+        return self.trees[entry.oid]
+
+    def read(self, path: str) -> tuple[str | None, str]:
+        """The sha256 of the content of the regular file at `<commit>:<path>`; the second item is the reason when there is none.
+
+        A tree that does not name the path, or names a link, a submodule or a directory in its
+        place, gives no digest and a reason (a red). An object that a tree names and the store
+        cannot serve raises `UnservableSource` (a fault).
+        """
+        names = [part.encode("utf-8") for part in path.split("/")]
+        tree = self._root_tree()
+        for name in names[:-1]:
+            entry = tree.get(name)
+            if entry is None:
+                return None, ABSENT
+            if _kind_of(entry.mode) != "directory":
+                return None, "is not tracked at HEAD (a directory on the path is not a directory)"
+            tree = self._subtree(entry)
+        entry = tree.get(names[-1])
+        if entry is None:
+            return None, ABSENT
+        kind = _kind_of(entry.mode)
+        if kind == "directory":
+            return None, "is not a blob at HEAD (a directory)"
+        if kind != "file":
+            return None, f"is not a regular file at HEAD ({kind})"
+        digest = self.store.lookup(entry.oid.encode("ascii"), entry.oid, self._blob_digest)
+        if digest is None:
+            raise UnservableSource("the source is named by its parent tree but the object store cannot serve it")
+        return digest, ""
+
+    @staticmethod
+    def _blob_digest(header: Header, stream: IO[bytes]) -> str:
+        if header.kind != "blob":
+            raise ValueError("a file entry is not a blob")
+        return _digest_of(stream, header.size)
 
 
 # ------------------------------------------------------------------ literal expected
@@ -571,8 +825,12 @@ def _is_link(entry: os.DirEntry[str]) -> bool:
     return tag in LINK_REPARSE_TAGS
 
 
-def discover_specs(specs_real: Path) -> list[Path]:
-    """Every regular file named `test_*.py` under `specs_real`; links and junctions are not followed."""
+def discover_specs(specs_real: Path, faults: list[ToolFault]) -> list[Path]:
+    """Every regular file named `test_*.py` under `specs_real`; links and junctions are not followed.
+
+    A directory that cannot be listed or an entry that cannot be inspected is a fault added to
+    `faults`; the walk goes on with everything else.
+    """
     found: list[Path] = []
     pending: list[Path] = [specs_real]
     while pending:
@@ -581,15 +839,17 @@ def discover_specs(specs_real: Path) -> list[Path]:
             with os.scandir(directory) as entries:
                 listing = sorted(entries, key=lambda entry: entry.name)
         except OSError as exc:
-            raise ToolFault("TOOL_FAULT", f"cannot list {directory}: {exc}") from exc
+            faults.append(ToolFault("TOOL_FAULT", f"cannot list {directory}: {exc}"))
+            continue
         for entry in listing:
-            if _is_link(entry):
-                continue
             try:
+                if _is_link(entry):
+                    continue
                 is_directory = entry.is_dir(follow_symlinks=False)
                 is_file = entry.is_file(follow_symlinks=False)
-            except OSError as exc:
-                raise ToolFault("TOOL_FAULT", f"cannot inspect {entry.path}: {exc}") from exc
+            except (OSError, ToolFault) as exc:
+                faults.append(ToolFault("TOOL_FAULT", f"cannot inspect {entry.path}: {exc}"))
+                continue
             if is_directory:
                 pending.append(Path(entry.path))
             elif is_file and fnmatch.fnmatchcase(entry.name, SPEC_PATTERN):
@@ -597,25 +857,38 @@ def discover_specs(specs_real: Path) -> list[Path]:
     return sorted(found, key=lambda path: path.relative_to(specs_real).as_posix())
 
 
-def check_spec(spec_path: Path, spec: str, reader: HeadReader, status: dict[str, str]) -> tuple[list[Defect], list[str]]:
-    data = _read_bytes(spec_path)
+@dataclass(frozen=True)
+class SpecResult:
+    defects: tuple[Defect, ...]
+    declared: tuple[str, ...]
+    faults: tuple[ToolFault, ...]
+
+
+def check_spec(spec: str, data: bytes, reader: HeadReader, status: dict[str, str]) -> SpecResult:
+    """Every red of one spec and every fault met while checking it; a fault never drops a red."""
     analysis = analyse_spec(spec, data)
     defects: list[Defect] = []
     declared: list[str] = []
+    faults: list[ToolFault] = []
     declaration = analysis.declaration
     if declaration is not None:
-        if declaration.url_sources:
-            number, value = declaration.url_sources[0]
-            raise ToolFault(SOURCE_UNSERVABLE, f"{spec}: line {number} source {_quote(value)} is a URL and cannot be verified offline")
+        for number, value in declaration.url_sources:
+            faults.append(ToolFault(SOURCE_UNSERVABLE, f"{spec}: line {number} source {_quote(value)} is a URL and cannot be verified offline"))
         defects.extend(declaration.malformed)
         for source in declaration.sources:
-            blob: bytes | None = None
+            digest: str | None = None
             reason = source.problem
             if source.canonical is not None:
-                blob, reason = reader.read(source.canonical)
-            if blob is None:
+                try:
+                    digest, reason = reader.read(source.canonical)
+                except StoreSkipped:
+                    continue
+                except ToolFault as fault:
+                    faults.append(ToolFault(fault.label, f"{spec}: line {source.line} source {_quote(source.declared)}: {fault.message}"))
+                    continue
+            if digest is None:
                 defects.append(Defect(SOURCE_MISSING, spec, f"line {source.line}: source {_quote(source.declared)} {reason}"))
-            elif hashlib.sha256(blob).hexdigest() != source.digest:
+            elif digest != source.digest:
                 defects.append(Defect(SOURCE_DIGEST_MISMATCH, spec, f"line {source.line}: source {_quote(source.declared)} does not match the declared digest"))
         for _, identifier in declaration.requirements:
             if identifier in declared:
@@ -627,15 +900,22 @@ def check_spec(spec_path: Path, spec: str, reader: HeadReader, status: dict[str,
             elif current == STATUS_RETIRED:
                 defects.append(Defect(RETIRED_REQUIREMENT_BOUND, spec, f"requirement {_quote(identifier)} is retired"))
         if declaration.requirements:
-            if not declaration.sources and not any(d.code == SOURCE_MISSING for d in declaration.malformed):
+            has_source = bool(declaration.sources or declaration.url_sources)
+            if not has_source and not any(d.code == SOURCE_MISSING for d in declaration.malformed):
                 defects.append(Defect(SOURCE_MISSING, spec, "the spec declares a requirement but no source"))
             if not declaration.mutation_lines:
                 defects.append(Defect(NO_MUTATION, spec, "the spec declares a requirement but no mutation"))
     defects.extend(analysis.literal_defects)
-    return defects, declared
+    return SpecResult(tuple(defects), tuple(declared), tuple(faults))
 
 
 def run(arguments: Arguments) -> Report:
+    """Find every red the run can find; faults are collected beside them (red before fault).
+
+    A fault that leaves nothing to check (`--repo`, the snapshot, `--specs`) is raised at once.
+    A fault met while checking (a spec that cannot be read, a URL source, a source the object
+    store cannot serve, git failing) is added to the report and the rest of the run goes on.
+    """
     repo_real = Path(os.path.realpath(arguments.repo))
     if not repo_real.is_dir():
         raise ToolFault("TOOL_FAULT", f"--repo {arguments.repo} is not a directory")
@@ -647,19 +927,43 @@ def run(arguments: Arguments) -> Report:
     if not specs_real.is_relative_to(repo_real):
         raise UsageError(f"--specs {arguments.specs} is not inside --repo {arguments.repo}")
     status = {item.requirement_id: item.status for item in requirements}
-    spec_paths = discover_specs(specs_real)
-    reader = HeadReader(repo_real)
+    faults: list[ToolFault] = []
+    spec_paths = discover_specs(specs_real, faults)
+    complete = not faults
+    head: str | None = None
+    try:
+        head = resolve_head(repo_real)
+    except ToolFault as fault:
+        faults.append(fault)
+    reader = HeadReader(repo_real, head)
     defects: list[Defect] = []
     declared: set[str] = set()
-    for spec_path in spec_paths:
-        spec = spec_path.relative_to(repo_real).as_posix()
-        found, identifiers = check_spec(spec_path, spec, reader, status)
-        defects.extend(found)
-        declared.update(identifiers)
-    for item in sorted(requirements, key=lambda entry: entry.requirement_id):
-        if item.status == STATUS_ACTIVE and item.requirement_id not in declared:
-            defects.append(Defect(NO_SPEC_FOR_REQUIREMENT, item.requirement_id, "no spec declares this active requirement"))
-    return Report(len(requirements), len(spec_paths), tuple(defects))
+    try:
+        for spec_path in spec_paths:
+            spec = spec_path.relative_to(repo_real).as_posix()
+            try:
+                data = _read_bytes(spec_path)
+            except ToolFault as fault:
+                faults.append(fault)
+                complete = False
+                continue
+            try:
+                result = check_spec(spec, data, reader, status)
+            except Exception as exc:  # outside a spec's bytes an unexpected error is a fault of the run, never a traceback
+                faults.append(ToolFault("TOOL_FAULT", f"unexpected {type(exc).__name__} while checking {spec}: {exc}"))
+                complete = False
+                continue
+            defects.extend(result.defects)
+            declared.update(result.declared)
+            faults.extend(result.faults)
+    finally:
+        reader.close()
+    if complete:
+        # A requirement is unbound only when every spec was read; a spec that could not be read may declare it.
+        for item in sorted(requirements, key=lambda entry: entry.requirement_id):
+            if item.status == STATUS_ACTIVE and item.requirement_id not in declared:
+                defects.append(Defect(NO_SPEC_FOR_REQUIREMENT, item.requirement_id, "no spec declares this active requirement"))
+    return Report(len(requirements), len(spec_paths), tuple(defects), tuple(faults))
 
 
 # ---------------------------------------------------------------------------- CLI
@@ -718,11 +1022,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"TOOL_FAULT unexpected {type(exc).__name__}: {escape_text(str(exc))}", file=sys.stderr)
         return 2
     summary = f"requirements={report.requirements} specs={report.specs} defects={len(report.defects)}"
+    for defect in report.defects:
+        print(defect.render())
+    for fault in report.faults:
+        print(f"{escape_text(fault.label)} {escape_text(fault.message)}", file=sys.stderr)
     if report.defects:
-        for defect in report.defects:
-            print(defect.render())
         print(summary, file=sys.stderr)
         return 1
+    if report.faults:
+        return 2
     print(summary)
     return 0
 

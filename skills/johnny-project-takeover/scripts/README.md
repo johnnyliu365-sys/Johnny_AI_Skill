@@ -136,37 +136,60 @@ A source is repository-relative and must be canonical: backslashes are read as s
 one leading dot-slash is dropped, after which the path is not empty, is at most 1024 bytes
 in UTF-8, holds no control character, has no leading slash or colon and no drive letter,
 and has no empty, dot or dot-dot segment. A path that is not canonical is `SOURCE_MISSING`
-naming the line. A canonical path is looked up once, literally, as the blob at `HEAD` of
-`--repo`: the name is written to the standard input of `git cat-file` (`--batch-check`, then
-`--batch` for the content). It is never a pathspec and never on a command line, so glob
-and pathspec-magic characters match only themselves and the digest is the same on every
-host whatever its line-ending settings. A name that git reports `missing`, or that is not a
-blob (a directory or a submodule), is `SOURCE_MISSING`; names match exactly, including
-case. A tracked symbolic link is a blob of its link text and is never followed.
+naming the line. `HEAD` is resolved once, at the start of the run, to a full commit id, and
+every lookup of the run is a line on the standard input of one `cat-file --batch` process
+that asks for that commit's tree or for an object id: a declared source is never a
+pathspec, never an object name and never on a command line, so glob and pathspec-magic
+characters match only themselves, the run reads one commit even if another lands while it
+runs, and the digest is the same on every host whatever its line-ending settings. The gate
+walks the trees from the root and reads the entry of a source from its parent tree. A tree
+that does not name the path, or names a directory in its place, makes it `SOURCE_MISSING`
+(names match exactly, including case); so does an entry that is a symbolic link or a
+submodule, because a contract cites the content of a file and a link can keep pointing at
+a path whose content changes ("not a regular file"). A file entry, executable or not, is
+digested over its blob. An object that a tree names and the object store cannot serve (a
+pruned blob or tree, a partial clone that is missing a blob; nothing is fetched) is not a
+red but a fault, reported as `SOURCE_UNSERVABLE` for a source and as a tool fault otherwise.
 
 Defects, one line `<code> <spec or requirement>: <detail>` each on stdout, the subject and
 the detail escaped so that a line break, a control character, U+2028 or a lone surrogate
 cannot split or forge a line:
 `NO_SPEC_FOR_REQUIREMENT` (an active requirement no spec declares), `SOURCE_MISSING`
-(a source that is not canonical or not a blob at `HEAD`, a declaration line that is
-unusable, or a spec that declares a requirement but no source), `SOURCE_DIGEST_MISMATCH`
-(sha256 of the blob differs), `RETIRED_REQUIREMENT_BOUND` (a spec declares a requirement
-that is retired or absent from the snapshot, or an empty `requirement:`), `LITERAL_EXPECTED`
-(an `assert` comparing with a number, string, bytes or a display of such constants, also
-inside `and`, `or`, `not`; `None`, `True` and `False` do not count; also a spec that does
-not parse or cannot be decoded, and an assertion the gate cannot analyse within its limits,
-such as a very deep nesting; the detail is the source text of the assertion, cut to 120
-characters) and `NO_MUTATION` (a spec that declares a requirement has no mutation, or an
-empty `mutation:`).
+(a source that is not canonical, not a regular file at `HEAD`, or not named by its parent
+tree, a declaration line that is unusable, or a spec that declares a requirement but no
+source), `SOURCE_DIGEST_MISMATCH` (sha256 of the blob differs), `RETIRED_REQUIREMENT_BOUND`
+(a spec declares a requirement that is retired or absent from the snapshot, or an empty
+`requirement:`), `LITERAL_EXPECTED` (an `assert` comparing with a number, string, bytes or
+a display of such constants, on either side of any comparison of a chain, also inside `and`,
+`or`, `not`; a signed number counts, a signed `True` does not; `None`, `True` and `False` do
+not count; also a spec that does not parse or cannot be decoded, and an assertion the gate
+cannot analyse within its limits, such as a very deep nesting; the detail is the source text
+of the assertion, cut to 120 characters) and `NO_MUTATION` (a spec that declares a
+requirement has no mutation, or an empty `mutation:`).
+
+The rule is red before fault. The gate reports every red it can find and exits 1 if there is one: the
+defect lines go to stdout, each fault goes to stderr on one line (`SOURCE_UNSERVABLE` for a
+URL source or a source the object store cannot serve, a tool fault line for the rest), and
+the summary comes last on stderr. A fault never drops a red and a red never hides a fault.
+It exits 2 only when it found no red, and it prints no summary then. A source that is a URL
+cannot be verified offline: it is a fault, and the rest of its spec is still checked. A
+spec that cannot be read is a fault; since it may declare any requirement, no requirement
+is then called unbound (`NO_SPEC_FOR_REQUIREMENT` is withheld). After a failure of git the
+remaining lookups are skipped, with one fault line, and everything that needs no lookup is
+still reported. A fault that leaves nothing to check ends the run at once with exit 2 and no summary: the
+snapshot cannot be read, `--specs` or `--repo` is not a directory, `--repo` is not the top
+level of a git work tree, or git cannot be run to ask that. Git failing to resolve `HEAD`
+(no commit) is collected like the others.
 
 Exit 0 prints `requirements=N specs=M defects=0` on stdout (N counts snapshot rows). Exit 1
-prints the defect lines on stdout and the same summary on stderr. Exit 2: the snapshot, a
-spec or a directory cannot be read, `--specs` or `--repo` is not a directory, `--repo` is
-not the top level of a git work tree, git cannot serve a source query (git missing, no
-commit at `HEAD`, a failure or an answer outside its format), a source is a URL
-(`SOURCE_UNSERVABLE`, a URL cannot be verified offline), or an unexpected error; a fault
-stops the run and no defect is printed. A red never exits 2 and a fault never exits 1.
-Exit 3: bad arguments, `--specs` outside `--repo`, or a snapshot argument that is not a
-snapshot (not JSON, a repeated key, no `rows`, a row whose `requirement_id` is outside the
-character set above or with a `status` other than `active` or `retired`, a repeated
-`requirement_id`). Fault and usage messages are escaped to one line as well.
+prints the defect lines on stdout, then each fault line and the same summary on stderr. Exit
+2 (no red found): the snapshot, a spec or a directory cannot be read, `--specs` or `--repo`
+is not a directory, `--repo` is not the top level of a git work tree, git cannot serve a
+query (git missing, no commit at `HEAD`, a failure, an answer outside its format, no answer
+within the time limit), a source is a URL or cannot be served, or an unexpected error. A red
+is never reported as a fault and a fault is never reported as a red. Exit 3: bad arguments,
+`--specs` outside `--repo`, or a snapshot argument that is not a snapshot (not JSON, a
+repeated key, no `rows`, a row whose `requirement_id` is outside the character set above or
+with a `status` other than `active` or `retired`, a repeated `requirement_id`); a usage error
+prints the usage banner and one escaped error line. Fault and usage messages are escaped to
+one line as well.

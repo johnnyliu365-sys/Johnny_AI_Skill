@@ -11,11 +11,16 @@ import io
 import json
 import os
 import shutil
+import re
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 import unittest
+from collections.abc import Callable
 from pathlib import Path
+from typing import IO
 from unittest import mock
 
 _SCRIPTS = Path(__file__).resolve().parents[1] / "skills" / "johnny-project-takeover" / "scripts"
@@ -89,27 +94,133 @@ def sha(data: bytes) -> str:
 
 
 class GitCall:
-    """One git child as the gate started it."""
+    """One git child as the gate started it; `queries` are the lines the gate wrote to its standard input."""
 
-    def __init__(self, command: list[str], stdin: bytes | None, env: dict[str, str] | None) -> None:
+    def __init__(self, command: list[str], env: dict[str, str] | None) -> None:
         self.command = command
-        self.stdin = stdin
         self.env = env
+        self.queries: list[bytes] = []
+
+
+HANG = b"<hang until killed>"
+
+
+class SpyStdin:
+    def __init__(self, process: "SpyProcess") -> None:
+        self.process = process
+
+    def write(self, data: bytes) -> int:
+        process = self.process
+        query = data[:-1] if data.endswith(b"\n") else data
+        process.call.queries.append(query)
+        if process.spy.on_query is not None:
+            process.spy.on_query(query)
+        reply = process.spy.replies(query) if process.spy.replies is not None else None
+        process.fake = reply is not None
+        process.hang = reply == HANG
+        if reply is not None:
+            process.pending.extend(b"" if reply == HANG else reply)
+            return len(data)
+        if process.real is not None and process.real.stdin is not None:
+            return process.real.stdin.write(data)
+        return len(data)
+
+    def flush(self) -> None:
+        if self.process.real is not None and self.process.real.stdin is not None:
+            self.process.real.stdin.flush()
+
+    def close(self) -> None:
+        if self.process.real is not None and self.process.real.stdin is not None:
+            self.process.real.stdin.close()
+
+
+class SpyStdout:
+    def __init__(self, process: "SpyProcess") -> None:
+        self.process = process
+
+    def readline(self) -> bytes:
+        process = self.process
+        if process.hang and not process.pending:
+            process.killed.wait(10)
+            return b""
+        if process.fake or process.real is None or process.real.stdout is None:
+            end = process.pending.find(b"\n")
+            size = len(process.pending) if end < 0 else end + 1
+            taken = bytes(process.pending[:size])
+            del process.pending[:size]
+            return taken
+        return process.real.stdout.readline()
+
+    def read(self, size: int = -1) -> bytes:
+        process = self.process
+        if process.fake or process.real is None or process.real.stdout is None:
+            count = len(process.pending) if size < 0 else min(size, len(process.pending))
+            taken = bytes(process.pending[:count])
+            del process.pending[:count]
+            return taken
+        return process.real.stdout.read(size)
+
+    def close(self) -> None:
+        if self.process.real is not None and self.process.real.stdout is not None:
+            self.process.real.stdout.close()
+
+
+class SpyProcess:
+    """Stands in for a `git cat-file --batch` child: the real one, or one that fails at once."""
+
+    def __init__(self, spy: "GitSpy", call: GitCall, real: "subprocess.Popen[bytes] | None", failure: bytes = b"") -> None:
+        self.spy = spy
+        self.call = call
+        self.real = real
+        self.pending = bytearray()
+        self.fake = real is None
+        self.hang = False
+        self.killed = threading.Event()
+        self.stdin = SpyStdin(self)
+        self.stdout = SpyStdout(self)
+        self.stderr: io.BytesIO | IO[bytes] | None = io.BytesIO(failure) if real is None else real.stderr
+        self.failed = real is None
+
+    def kill(self) -> None:
+        self.killed.set()
+        if self.real is not None:
+            self.real.kill()
+
+    def poll(self) -> int | None:
+        return 128 if self.real is None else self.real.poll()
+
+    def wait(self, timeout: float | None = None) -> int:
+        return 128 if self.real is None else self.real.wait(timeout)
 
 
 class GitSpy:
-    """Stands in for subprocess.run: records every git child, runs it for real unless told to fail or lie."""
+    """Stands in for subprocess.run and subprocess.Popen: records every git child, runs it for real unless told to fail or lie.
 
-    def __init__(self, fail_on: str | None = None, answers: dict[str, bytes] | None = None) -> None:
+    `replies(query)` may answer a line of the `cat-file --batch` standard input with bytes (or HANG)
+    instead of the real answer; `on_query(query)` is called before each line is answered.
+    """
+
+    def __init__(
+        self,
+        fail_on: str | None = None,
+        answers: dict[str, bytes] | None = None,
+        replies: Callable[[bytes], bytes | None] | None = None,
+        on_query: Callable[[bytes], None] | None = None,
+        fail_start: bool = False,
+    ) -> None:
         self.calls: list[GitCall] = []
+        self.processes: list[SpyProcess] = []
         self.fail_on = fail_on
         self.answers = answers or {}
+        self.replies = replies
+        self.on_query = on_query
+        self.fail_start = fail_start
         self.real = subprocess.run
+        self.real_popen = subprocess.Popen
 
-    def __call__(self, command: list[str], **kwargs: object) -> subprocess.CompletedProcess[bytes]:
-        stdin = kwargs.get("input")
+    def __call__(self, command: list[str], **kwargs: object) -> "subprocess.CompletedProcess[bytes]":
         env = kwargs.get("env")
-        self.calls.append(GitCall(list(command), stdin if isinstance(stdin, bytes) else None, env if isinstance(env, dict) else None))
+        self.calls.append(GitCall(list(command), env if isinstance(env, dict) else None))
         if self.fail_on is not None and self.fail_on in command:
             return subprocess.CompletedProcess(command, 128, b"", b"fatal: injected failure")
         for flag, answer in self.answers.items():
@@ -117,8 +228,32 @@ class GitSpy:
                 return subprocess.CompletedProcess(command, 0, answer, b"")
         return self.real(command, **kwargs)
 
+    def popen(self, command: list[str], **kwargs: object) -> object:
+        if "cat-file" not in command:
+            return self.real_popen(command, **kwargs)
+        env = kwargs.get("env")
+        call = GitCall(list(command), env if isinstance(env, dict) else None)
+        self.calls.append(call)
+        if self.fail_start:
+            raise OSError(2, "injected failure to start git")
+        if self.fail_on is not None and self.fail_on in command:
+            process = SpyProcess(self, call, None, b"fatal: injected failure")
+        else:
+            process = SpyProcess(self, call, self.real_popen(command, **kwargs))
+        self.processes.append(process)
+        return process
+
+    def patched(self) -> "contextlib.AbstractContextManager[object]":
+        return mock.patch.multiple(contract_gate.subprocess, run=self, Popen=self.popen)
+
     def lookups(self) -> list[GitCall]:
         return [call for call in self.calls if "cat-file" in call.command]
+
+    def queries(self) -> list[bytes]:
+        return [query for call in self.lookups() for query in call.queries]
+
+    def alive(self) -> list[SpyProcess]:
+        return [process for process in self.processes if process.poll() is None]
 
 
 def spec_body(*asserts: str) -> str:
@@ -198,6 +333,13 @@ class Case(unittest.TestCase):
     def assert_green(self) -> None:
         code, out, err = self.run_gate()
         self.assertEqual(code, 0, out + err)
+
+    def declare_many(self, *paths: str) -> list[str]:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_one.py", self.header(("R-1",), tuple(f"{path} sha256:{sha(SOURCE_BYTES)}" for path in paths)))
+        code, out, err = self.run_gate()
+        self.assertIn(code, (0, 1), out + err)
+        return [line for line in out.splitlines() if not line.startswith("requirements=")]
 
 
 class NormalBehaviour(Case):
@@ -433,6 +575,45 @@ class LiteralRule(Case):
             with self.subTest(expr):
                 self.assertEqual(self.literal_lines(f"    assert {expr}"), [])
 
+    def test_a_chained_comparison_is_literal_when_any_operand_of_it_is(self) -> None:
+        for expr in (
+            "value < expected_from_ledger < 3",
+            "value == expected_from_ledger == 'x'",
+            "value < other < 3 < more",
+            "value in expected_from_ledger == (1, 2)",
+            "value is expected_from_ledger != 5",
+            "value < expected_from_ledger <= other < 2.5",
+            "value < other < more < b'raw'",
+        ):
+            with self.subTest(expr):
+                self.assertEqual(len(self.literal_lines(f"    assert {expr}")), 1)
+        for expr in (
+            "value < expected_from_ledger < other",
+            "value == expected_from_ledger == other == None",
+            "value is expected_from_ledger is not None",
+            "value < other < more < expected_from_ledger",
+        ):
+            with self.subTest(expr):
+                self.assertEqual(self.literal_lines(f"    assert {expr}"), [])
+
+    def test_a_signed_boolean_or_none_is_not_a_signed_number(self) -> None:
+        for expr in (
+            "value == -True",
+            "value == +True",
+            "value == -False",
+            "-True == value",
+            "value in (-True, +False)",
+            "value == [-True]",
+            "value == (1, -True)",
+            "value == -None",
+            "value == -value",
+        ):
+            with self.subTest(expr):
+                self.assertEqual(self.literal_lines(f"    assert {expr}"), [])
+        for expr in ("value == -1", "value == +1", "value == -1.5", "value == -3j", "value in (-1, +2)", "value == -(1)"):
+            with self.subTest(expr):
+                self.assertEqual(len(self.literal_lines(f"    assert {expr}")), 1)
+
     def test_a_message_is_not_the_comparison(self) -> None:
         self.assertEqual(self.literal_lines("    assert value == expected_from_ledger, 'the value was 3'"), [])
 
@@ -629,22 +810,69 @@ class SnapshotAndFaults(Case):
         code, out, _ = self.run_gate(self.argv(self.repo))
         self.assertEqual((code, out.strip()), (0, "requirements=1 specs=1 defects=0"))
 
-    def test_a_url_source_is_exit_2_source_unservable_never_a_red(self) -> None:
-        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+    def test_a_url_source_alone_is_exit_2_source_unservable_never_a_red(self) -> None:
+        self.write_snapshot(("R-1", "active"))
         url = "https://example.invalid/page"
         self.write_spec("test_url.py", self.header(("R-1",), (f"{url} sha256:{sha(b'x')}",)))
         got, out, err = self.run_gate()
         self.assertEqual((got, out), (2, ""))
-        self.assertIn("SOURCE_UNSERVABLE", err)
-        self.assertIn("specs/test_url.py", err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertTrue(err.startswith("SOURCE_UNSERVABLE specs/test_url.py: line 2 source "), err)
+        self.assertNotIn("SOURCE_MISSING", err)
         self.assertNotIn("NO_SPEC_FOR_REQUIREMENT", err)
 
-    def test_a_fault_beats_a_red_found_elsewhere(self) -> None:
+    def test_a_red_found_elsewhere_is_printed_and_the_fault_stays_on_stderr(self) -> None:
         self.write_snapshot(("R-1", "active"))
         self.write_spec("test_a_red.py", self.header(("R-9",)))
         self.write_spec("test_b_url.py", self.header(("R-1",), ("http://example.invalid/x sha256:" + sha(b"x"),)))
-        got, out, _ = self.run_gate()
+        got, out, err = self.run_gate()
+        self.assertEqual(got, 1, err)
+        self.assertEqual(out, "RETIRED_REQUIREMENT_BOUND specs/test_a_red.py: requirement 'R-9' is absent from the snapshot\n")
+        lines = err.splitlines()
+        self.assertEqual(len(lines), 2, err)
+        self.assertTrue(lines[0].startswith("SOURCE_UNSERVABLE specs/test_b_url.py: line 2 source "), lines[0])
+        self.assertEqual(lines[1], "requirements=1 specs=2 defects=1")
+
+    def test_a_url_source_beside_a_literal_red_in_the_same_spec_reports_the_red(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        header = self.header(("R-1",), ("https://example.invalid/page sha256:" + sha(b"x"),))
+        self.write_spec("test_url.py", header, spec_body("    assert value == 3"))
+        got, out, err = self.run_gate()
+        self.assertEqual(got, 1, err)
+        self.assertEqual(len(out.splitlines()), 1, out)
+        self.assertTrue(out.startswith("LITERAL_EXPECTED specs/test_url.py: line "), out)
+        lines = err.splitlines()
+        self.assertEqual(len(lines), 2, err)
+        self.assertTrue(lines[0].startswith("SOURCE_UNSERVABLE specs/test_url.py: "), lines[0])
+        self.assertEqual(lines[1], "requirements=1 specs=1 defects=1")
+
+    def test_a_url_source_beside_an_unbound_requirement_reports_the_unbound_one(self) -> None:
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        self.write_spec("test_url.py", self.header(("R-1",), ("https://example.invalid/page sha256:" + sha(b"x"),)))
+        got, out, err = self.run_gate()
+        self.assertEqual(got, 1, err)
+        self.assertEqual(out, "NO_SPEC_FOR_REQUIREMENT R-2: no spec declares this active requirement\n")
+        self.assertTrue(err.startswith("SOURCE_UNSERVABLE specs/test_url.py: "), err)
+
+    def test_a_url_source_is_a_source_so_the_spec_is_not_also_missing_one(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_url.py", self.header(("R-1",), ("https://example.invalid/page sha256:" + sha(b"x"),)))
+        got, out, err = self.run_gate()
         self.assertEqual((got, out), (2, ""))
+        self.write_spec("test_url.py", self.header(("R-1",), ("https://example.invalid/page sha256:" + sha(b"x"),), ()))
+        got, out, err = self.run_gate()
+        self.assertEqual(got, 1, err)
+        self.assertEqual(out, "NO_MUTATION specs/test_url.py: the spec declares a requirement but no mutation\n")
+
+    def test_every_url_source_of_a_spec_is_its_own_fault_line(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        urls = tuple(f"https://example.invalid/{name} sha256:{sha(b'x')}" for name in ("one", "two"))
+        self.write_spec("test_url.py", self.header(("R-1",), urls))
+        got, out, err = self.run_gate()
+        self.assertEqual((got, out), (2, ""))
+        self.assertEqual(len(err.splitlines()), 2, err)
+        self.assertIn("line 2 ", err.splitlines()[0])
+        self.assertIn("line 3 ", err.splitlines()[1])
 
     def test_an_unreadable_spec_file_is_exit_2_naming_the_path(self) -> None:
         self.write_snapshot(("R-1", "active"))
@@ -707,9 +935,13 @@ class SnapshotAndFaults(Case):
         self.write_snapshot(("R-1", "active"))
         self.write_spec("test_one.py", "# requirement: R-1\n# mutation: m\n")
         spy = GitSpy()
-        with mock.patch.object(contract_gate.subprocess, "run", spy):
+        with spy.patched():
             self.assertEqual(self.codes(), ["SOURCE_MISSING"])
-        self.assertEqual([call.command[4:] for call in spy.calls], [["rev-parse", "--show-toplevel"]])
+        self.assertEqual(
+            [call.command[4:] for call in spy.calls],
+            [["rev-parse", "--show-toplevel"], ["rev-parse", "--verify", "--quiet", "HEAD^{commit}"]],
+        )
+        self.assertEqual(spy.processes, [])
 
     def test_an_unexpected_error_is_exit_2_without_a_traceback(self) -> None:
         self.write_snapshot()
@@ -803,6 +1035,44 @@ class Declarations(Case):
         )
         self.write_spec("test_one.py", header)
         self.assert_green()
+
+    UNICODE_SPACES = ("\x85", "\u00a0", "\u1680", "\u2000", "\u2003", "\u2028", "\u2029", "\u202f", "\u205f", "\u3000")
+
+    def test_unicode_whitespace_is_not_the_separator_between_a_source_path_and_its_digest(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        for char in self.UNICODE_SPACES:
+            with self.subTest(char=char):
+                self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/source.txt{char}sha256:{sha(SOURCE_BYTES)}",)))
+                lines = self.red_lines()
+                self.assertEqual(len(lines), 1, lines)
+                self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
+                self.assertIn("has no `sha256:` digest", lines[0])
+        for separator in (" ", "  ", "     "):
+            with self.subTest(separator=separator):
+                self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/source.txt{separator}sha256:{sha(SOURCE_BYTES)}",)))
+                self.assert_green()
+
+    def test_unicode_whitespace_does_not_make_a_declaration_key(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        for char in self.UNICODE_SPACES:
+            extra = (
+                f"#{char}requirement: R-9\n"
+                f"# requirement{char}: R-9\n"
+                f"#{char}source: contracts/nope.txt sha256:abc\n"
+                f"# source{char}: contracts/nope.txt sha256:abc\n"
+                f"#{char}mutation:\n"
+                f"# mutation{char}:\n"
+            )
+            with self.subTest(char=char):
+                self.write_spec("test_one.py", self.header(("R-1",)) + extra)
+                self.assert_green()
+
+    def test_a_mutation_line_whose_key_holds_a_unicode_space_is_not_a_mutation(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        for char in self.UNICODE_SPACES:
+            with self.subTest(char=char):
+                self.write_spec("test_one.py", self.header(("R-1",), mutations=()) + f"# mutation{char}: drop\n#{char}mutation: drop\n")
+                self.assertEqual(self.codes(), ["NO_MUTATION"])
 
     def test_empty_declaration_values_are_reported_with_the_code_of_their_clause(self) -> None:
         self.write_snapshot(("R-1", "active"))
@@ -959,23 +1229,6 @@ class SourcePaths(Case):
 
     def test_a_path_through_a_file_is_not_found(self) -> None:
         self.assert_missing("contracts/source.txt/inner")
-
-    def test_a_tracked_symbolic_link_is_a_blob_of_its_link_text_and_is_never_followed(self) -> None:
-        link_target = self.base / "outside.txt"
-        link_target.write_bytes(SOURCE_BYTES)
-        identifier = subprocess.run(
-            ["git", "-C", str(self.repo), "hash-object", "-w", "--stdin"],
-            input=str(link_target).encode("utf-8"),
-            capture_output=True,
-            env={**os.environ, **GIT_ENVIRONMENT},
-            check=True,
-        ).stdout.decode("ascii").strip()
-        git(self.repo, "update-index", "--add", "--cacheinfo", f"120000,{identifier},contracts/link.txt")
-        git(self.repo, "commit", "-q", "--no-verify", "-m", "link")
-        lines = self.declare("contracts/link.txt")
-        self.assertEqual(len(lines), 1, lines)
-        self.assertTrue(lines[0].startswith("SOURCE_DIGEST_MISMATCH specs/test_one.py: line 2"), lines[0])
-        self.assertEqual(self.declare("contracts/link.txt", sha(str(link_target).encode("utf-8"))), [])
 
     def test_a_directory_at_head_is_not_a_source(self) -> None:
         for path in ("contracts", "specs/.."):
@@ -1285,7 +1538,7 @@ class PerSpecGuard(Case):
             code, out, err = self.run_gate()
         self.assertEqual((code, out), (2, ""))
         self.assertIn("test_one.py", err)
-        with mock.patch.object(contract_gate.subprocess, "run", GitSpy(fail_on="rev-parse")):
+        with GitSpy(fail_on="rev-parse").patched():
             code, out, err = self.run_gate()
         self.assertEqual((code, out), (2, ""))
         self.assertIn("injected failure", err)
@@ -1294,17 +1547,10 @@ class PerSpecGuard(Case):
 class SourceLookup(Case):
     """A canonical source path is looked up once, literally, through the standard input of git."""
 
-    def declare_many(self, *paths: str) -> list[str]:
-        self.write_snapshot(("R-1", "active"))
-        self.write_spec("test_one.py", self.header(("R-1",), tuple(f"{path} sha256:{sha(SOURCE_BYTES)}" for path in paths)))
-        code, out, err = self.run_gate()
-        self.assertIn(code, (0, 1), out + err)
-        return [line for line in out.splitlines() if not line.startswith("requirements=")]
-
     def test_a_very_long_source_path_is_source_missing_without_any_lookup(self) -> None:
         spy = GitSpy()
         for length in (1500, 40000, 400000):
-            with self.subTest(length), mock.patch.object(contract_gate.subprocess, "run", spy):
+            with self.subTest(length), spy.patched():
                 lines = self.declare_many("a/" * (length // 2))
             self.assertEqual(len(lines), 1, lines[:2])
             self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0][:100])
@@ -1343,7 +1589,7 @@ class SourceLookup(Case):
         ):
             with self.subTest(path):
                 spy = GitSpy()
-                with mock.patch.object(contract_gate.subprocess, "run", spy):
+                with spy.patched():
                     lines = self.declare_many(path)
                 self.assertEqual(len(lines), 1, lines)
                 self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
@@ -1363,7 +1609,7 @@ class SourceLookup(Case):
         ):
             with self.subTest(path):
                 spy = GitSpy()
-                with mock.patch.object(contract_gate.subprocess, "run", spy):
+                with spy.patched():
                     lines = self.declare_many(path)
                 self.assertEqual(len(lines), 1, lines)
                 self.assertIn("not a relative repository path", lines[0])
@@ -1378,21 +1624,21 @@ class SourceLookup(Case):
         ):
             with self.subTest(path):
                 spy = GitSpy()
-                with mock.patch.object(contract_gate.subprocess, "run", spy):
+                with spy.patched():
                     lines = self.declare_many(path)
                 self.assertEqual(len(lines), 1, lines)
                 self.assertIn(reason, lines[0])
                 self.assertEqual(spy.lookups(), [])
 
-    def test_the_source_reaches_git_only_through_standard_input(self) -> None:
+    def test_no_source_reaches_git_on_a_command_line_or_as_a_name(self) -> None:
         self.commit_source("my docs/a b.txt", SOURCE_BYTES)
         spy = GitSpy()
-        with mock.patch.object(contract_gate.subprocess, "run", spy):
+        with spy.patched():
             self.assertEqual(self.declare_many("my docs/a b.txt"), [])
         lookups = spy.lookups()
-        self.assertEqual([call.command[4:] for call in lookups], [["cat-file", "--batch-check"], ["cat-file", "--batch"]])
-        for call in lookups:
-            self.assertEqual(call.stdin, b"HEAD:my docs/a b.txt\n")
+        self.assertEqual([call.command[4:] for call in lookups], [["cat-file", "--batch"]])
+        for query in spy.queries():
+            self.assertRegex(query.decode("ascii"), r"^[0-9a-f]{40}(\^\{tree\})?$")
         for call in spy.calls:
             self.assertEqual(call.command[:4], ["git", "-C", str(self.repo), "--no-replace-objects"])
             self.assertFalse(any("a b.txt" in argument or "my docs" in argument for argument in call.command[4:]), call.command)
@@ -1432,48 +1678,12 @@ class SourceLookup(Case):
     def test_git_failing_during_a_lookup_is_exit_2_and_never_source_missing(self) -> None:
         self.write_snapshot(("R-1", "active"))
         self.good_spec("test_one.py", "R-1")
-        for failing in ("cat-file", "--batch-check", "--batch", "--verify"):
-            with self.subTest(failing), mock.patch.object(contract_gate.subprocess, "run", GitSpy(fail_on=failing)):
+        for failing in ("cat-file", "--batch", "--verify"):
+            with self.subTest(failing), GitSpy(fail_on=failing).patched():
                 code, out, err = self.run_gate()
                 self.assertEqual((code, out), (2, ""))
                 self.assertIn("injected failure", err)
                 self.assertEqual(len(err.splitlines()), 1, err)
-
-    def test_git_answering_outside_its_format_is_exit_2_and_never_a_red(self) -> None:
-        self.write_snapshot(("R-1", "active"))
-        self.good_spec("test_one.py", "R-1")
-        name = b"HEAD:contracts/source.txt"
-        identifier = b"a" * 40
-        answers: dict[str, bytes] = {
-            "--batch-check": b"",
-            "--batch-check ": name + b" missing",
-            "--batch-check  ": name + b" ambiguous\n",
-            "--batch-check   ": identifier + b" blob\n",
-            "--batch-check    ": b"x blob 3\n",
-            "--batch-check     ": name + b" missing\nextra\n",
-            "--batch-check      ": identifier + b" blob 3\n" + identifier + b" blob 3\n",
-        }
-        for label, answer in answers.items():
-            with self.subTest(label, answer=answer):
-                with mock.patch.object(contract_gate.subprocess, "run", GitSpy(answers={"--batch-check": answer})):
-                    code, out, err = self.run_gate()
-                self.assertEqual((code, out), (2, ""), err)
-                self.assertIn("outside its format", err)
-
-    def test_a_batch_answer_that_does_not_match_the_check_is_exit_2(self) -> None:
-        self.write_snapshot(("R-1", "active"))
-        self.good_spec("test_one.py", "R-1")
-        wrong = (
-            b"",
-            b"short\n",
-            b"deadbeef blob 3\nabc\n",
-            b"a" * 40 + b" blob 3\nabc\n",
-        )
-        for answer in wrong:
-            with self.subTest(answer=answer), mock.patch.object(contract_gate.subprocess, "run", GitSpy(answers={"--batch": answer})):
-                code, out, err = self.run_gate()
-                self.assertEqual((code, out), (2, ""), err)
-                self.assertIn("outside its format", err)
 
     def test_a_tree_or_a_submodule_at_head_is_source_missing(self) -> None:
         lines = self.declare_many("contracts")
@@ -1495,6 +1705,648 @@ class SourceLookup(Case):
         self.commit_source("contracts/empty.bin", empty)
         self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/empty.bin sha256:{sha(empty)}",)))
         self.assert_green()
+
+
+def write_blob(repo: Path, data: bytes) -> str:
+    """Store `data` as a blob of `repo` and return its object id."""
+    return subprocess.run(
+        ["git", "-C", str(repo), "hash-object", "-w", "--stdin"],
+        input=data,
+        capture_output=True,
+        env={**os.environ, **GIT_ENVIRONMENT},
+        check=True,
+    ).stdout.decode("ascii").strip()
+
+
+def track_entry(repo: Path, name: str, data: bytes, mode: str = "100644") -> None:
+    """Put an entry with an explicit mode in the index, without a work tree file."""
+    git(repo, "update-index", "--add", "--cacheinfo", f"{mode},{write_blob(repo, data)},{name}")
+
+
+def remove_loose_object(repo: Path, oid: str) -> None:
+    """Prune one loose object from the store of `repo`."""
+    path = repo / ".git" / "objects" / oid[:2] / oid[2:]
+    os.chmod(path, 0o666)
+    path.unlink()
+    exists = subprocess.run(["git", "-C", str(repo), "cat-file", "-e", oid], capture_output=True, env={**os.environ, **GIT_ENVIRONMENT}, check=False)
+    assert exists.returncode != 0, "the object is still served"
+
+
+def raw_tree(*entries: tuple[str, str, bytes]) -> bytes:
+    """The raw content of a tree: (mode, name, 20 raw id bytes) entries."""
+    return b"".join(mode.encode("ascii") + b" " + name.encode("utf-8") + b"\0" + raw for mode, name, raw in entries)
+
+
+def object_answer(oid: str, kind: str, content: bytes, declared_size: int | None = None) -> bytes:
+    size = len(content) if declared_size is None else declared_size
+    return f"{oid} {kind} {size}\n".encode("ascii") + content + b"\n"
+
+
+class OneCommitPerRun(Case):
+    """HEAD is resolved once to a full id; every lookup of the run is a line on one `cat-file --batch` process."""
+
+    def test_head_is_resolved_once_and_every_lookup_goes_through_one_batch_process(self) -> None:
+        self.commit_source("contracts/second.txt", b"other")
+        self.commit_source("sub/deeper/third.txt", b"third")
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        first = f"contracts/source.txt sha256:{sha(SOURCE_BYTES)}"
+        second = f"contracts/second.txt sha256:{sha(b'other')}"
+        third = f"sub/deeper/third.txt sha256:{sha(b'third')}"
+        self.write_spec("test_a.py", self.header(("R-1",), (first, second)))
+        self.write_spec("test_b.py", self.header(("R-2",), (first, third)))
+        spy = GitSpy()
+        with spy.patched():
+            self.assert_green()
+        verbs = [call.command[4:] for call in spy.calls]
+        self.assertEqual(verbs.count(["rev-parse", "--verify", "--quiet", "HEAD^{commit}"]), 1, verbs)
+        self.assertEqual(verbs.count(["cat-file", "--batch"]), 1, verbs)
+        self.assertEqual(len(spy.lookups()), 1)
+        head = git(self.repo, "rev-parse", "HEAD").strip()
+        queries = spy.queries()
+        self.assertEqual(queries[0], f"{head}^{{tree}}".encode("ascii"))
+        for query in queries:
+            self.assertRegex(query.decode("ascii"), r"^[0-9a-f]{40}(\^\{tree\})?$")
+        self.assertFalse(any(b"HEAD" in query or b"source" in query for query in queries), queries)
+        self.assertEqual(spy.alive(), [])
+
+    def test_a_commit_that_lands_during_the_run_changes_nothing_in_it(self) -> None:
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        self.good_spec("test_a.py", "R-1")
+        self.good_spec("test_b.py", "R-2")
+        landed: list[bool] = []
+
+        def land(query: bytes) -> None:
+            if not landed:
+                landed.append(True)
+                self.commit_source("contracts/source.txt", b"landed during the run\n")
+
+        spy = GitSpy(on_query=land)
+        with spy.patched():
+            code, out, err = self.run_gate()
+        self.assertEqual(landed, [True])
+        self.assertEqual((code, out, err), (0, "requirements=2 specs=2 defects=0\n", ""))
+        self.assertEqual(self.codes(), ["SOURCE_DIGEST_MISMATCH", "SOURCE_DIGEST_MISMATCH"])
+
+    def test_head_is_not_asked_again_for_each_source(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        sources = tuple(f"contracts/source.txt sha256:{sha(SOURCE_BYTES)}" for _ in range(5))
+        self.write_spec("test_a.py", self.header(("R-1",), sources))
+        spy = GitSpy()
+        with spy.patched():
+            self.assert_green()
+        self.assertEqual(len([call for call in spy.calls if "rev-parse" in call.command]), 2)
+        self.assertEqual(len(spy.lookups()), 1)
+
+    def test_the_batch_process_never_outlives_the_run(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_a.py", "R-1")
+        green = GitSpy()
+        with green.patched():
+            self.assert_green()
+        self.assertEqual((len(green.processes), green.alive()), (1, []))
+        blob = git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip()
+        lying = GitSpy(replies=lambda query: b"garbage\n" if query == blob.encode("ascii") else None)
+        with lying.patched():
+            code, _, _ = self.run_gate()
+        self.assertEqual(code, 2)
+        self.assertEqual((len(lying.processes), lying.alive()), (1, []))
+        with mock.patch.object(contract_gate, "check_spec", side_effect=RuntimeError("boom")):
+            crashed = GitSpy()
+            with crashed.patched():
+                self.run_gate()
+        self.assertEqual(crashed.alive(), [])
+
+
+class TreeEntries(Case):
+    """A source's tree entry is read from its parent tree: links and submodules are not files, and a file is."""
+
+    def declare_exit(self, path: str, digest: str | None = None) -> tuple[int, list[str], str]:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_one.py", self.header(("R-1",), (f"{path} sha256:{digest or sha(SOURCE_BYTES)}",)))
+        code, out, err = self.run_gate()
+        return code, [line for line in out.splitlines() if not line.startswith("requirements=")], err
+
+    def assert_not_a_regular_file(self, path: str, what: str, digest: str | None = None) -> None:
+        code, lines, err = self.declare_exit(path, digest)
+        self.assertEqual(code, 1, err)
+        self.assertEqual(len(lines), 1, lines)
+        self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
+        self.assertIn(f"is not a regular file at HEAD ({what})", lines[0])
+        self.assertNotIn("TOOL_FAULT", err)
+
+    def test_a_tracked_symbolic_link_is_source_missing_whatever_digest_is_declared(self) -> None:
+        link_text = b"source.txt"
+        track_entry(self.repo, "contracts/link.txt", link_text, "120000")
+        git(self.repo, "commit", "-q", "--no-verify", "-m", "link")
+        for digest in (sha(SOURCE_BYTES), sha(link_text), "0" * 64):
+            with self.subTest(digest=digest[:8]):
+                self.assert_not_a_regular_file("contracts/link.txt", "symbolic link", digest)
+
+    def test_a_symbolic_link_source_never_stays_green_while_the_content_it_cites_changes(self) -> None:
+        track_entry(self.repo, "contracts/link.txt", b"source.txt", "120000")
+        git(self.repo, "commit", "-q", "--no-verify", "-m", "link")
+        before = self.declare_exit("contracts/link.txt")
+        self.assertEqual(before[0], 1)
+        changed = b"the target changed after the contract was written\n"
+        self.source.write_bytes(changed)
+        git(self.repo, "add", "contracts/source.txt")
+        git(self.repo, "commit", "-q", "--no-verify", "-m", "the target changes")
+        for digest in (sha(SOURCE_BYTES), sha(changed)):
+            with self.subTest(digest=digest[:8]):
+                after = self.declare_exit("contracts/link.txt", digest)
+                self.assertEqual(after[0], 1, after)
+                self.assertEqual(after[1], before[1])
+
+    def test_a_symbolic_link_in_the_middle_of_the_path_is_not_followed(self) -> None:
+        track_entry(self.repo, "shortcut", b"contracts", "120000")
+        git(self.repo, "commit", "-q", "--no-verify", "-m", "directory link")
+        code, lines, err = self.declare_exit("shortcut/source.txt")
+        self.assertEqual(code, 1, err)
+        self.assertEqual(len(lines), 1, lines)
+        self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
+        self.assertIn("is not tracked at HEAD", lines[0])
+
+    def test_a_submodule_entry_is_source_missing_not_a_fault(self) -> None:
+        git(self.repo, "update-index", "--add", "--cacheinfo", f"160000,{'b' * 40},modules/sub")
+        git(self.repo, "commit", "-q", "--no-verify", "-m", "gitlink")
+        self.assert_not_a_regular_file("modules/sub", "submodule")
+
+    def test_a_directory_is_not_a_blob(self) -> None:
+        self.commit_source("sub/x.txt", b"x")
+        for path in ("contracts", "sub"):
+            with self.subTest(path):
+                code, lines, err = self.declare_exit(path)
+                self.assertEqual(code, 1, err)
+                self.assertEqual(len(lines), 1, lines)
+                self.assertIn("is not a blob at HEAD (a directory)", lines[0])
+
+    def test_an_executable_file_is_a_regular_file(self) -> None:
+        track_entry(self.repo, "contracts/run.sh", b"#!/bin/sh\n", "100755")
+        git(self.repo, "commit", "-q", "--no-verify", "-m", "executable")
+        self.assertEqual(self.declare_exit("contracts/run.sh", sha(b"#!/bin/sh\n"))[:2], (0, []))
+
+    def test_a_path_through_a_file_or_a_missing_directory_is_not_tracked(self) -> None:
+        for path in ("contracts/source.txt/inner.txt", "nowhere/source.txt", "contracts/nowhere/source.txt"):
+            with self.subTest(path):
+                code, lines, err = self.declare_exit(path)
+                self.assertEqual(code, 1, err)
+                self.assertEqual(len(lines), 1, lines)
+                self.assertIn("is not tracked at HEAD", lines[0])
+
+    def test_a_file_in_a_deep_directory_resolves_and_a_sibling_name_does_not(self) -> None:
+        self.commit_source("a/b/c/d/e.txt", b"deep")
+        self.assertEqual(self.declare_exit("a/b/c/d/e.txt", sha(b"deep"))[:2], (0, []))
+        self.assertEqual(self.declare_exit("a/b/c/d/e.txtx", sha(b"deep"))[0], 1)
+        self.assertEqual(self.declare_exit("a/b/c/D/e.txt", sha(b"deep"))[0], 1)
+
+    def test_a_file_whose_name_is_a_prefix_of_another_is_told_apart(self) -> None:
+        self.commit_source("contracts/source.txt.bak", b"backup")
+        self.commit_source("contracts/source", b"short")
+        self.assertEqual(self.declare_exit("contracts/source", sha(b"short"))[:2], (0, []))
+        self.assertEqual(self.declare_exit("contracts/source.txt.bak", sha(b"backup"))[:2], (0, []))
+        self.assertEqual(self.declare_exit("contracts/source.txt", sha(SOURCE_BYTES))[:2], (0, []))
+
+    def test_non_ascii_names_resolve_by_their_utf_8_bytes(self) -> None:
+        git(self.repo, "config", "core.quotepath", "false")
+        self.commit_source("docs/中文/é.txt", b"text")
+        self.assertEqual(self.declare_exit("docs/中文/é.txt", sha(b"text"))[:2], (0, []))
+        self.assertEqual(self.declare_exit("docs/中文/e.txt", sha(b"text"))[0], 1)
+
+    def test_a_large_blob_is_digested_in_blocks(self) -> None:
+        data = bytes(range(256)) * 20000
+        self.commit_source("contracts/large.bin", data)
+        self.assertEqual(self.declare_exit("contracts/large.bin", sha(data))[:2], (0, []))
+        self.assertEqual(self.declare_exit("contracts/large.bin", sha(data[:-1]))[0], 1)
+
+
+class UnservableObjects(Case):
+    """An object a tree names but the store cannot serve is a fault; a name the tree does not hold is a red."""
+
+    def one_line_fault(self, err: str) -> str:
+        lines = err.splitlines()
+        self.assertEqual(len(lines), 1, err)
+        return lines[0]
+
+    def test_a_pruned_blob_is_exit_2_and_never_source_missing(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        remove_loose_object(self.repo, git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip())
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        fault = self.one_line_fault(err)
+        self.assertTrue(fault.startswith("SOURCE_UNSERVABLE specs/test_one.py: line 2 source 'contracts/source.txt': "), fault)
+        self.assertNotIn("SOURCE_MISSING", fault)
+
+    def test_a_pruned_tree_on_the_path_is_exit_2_and_never_source_missing(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        remove_loose_object(self.repo, git(self.repo, "rev-parse", "HEAD:contracts").strip())
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertTrue(self.one_line_fault(err).startswith("SOURCE_UNSERVABLE specs/test_one.py: line 2 source "), err)
+
+    def test_a_pruned_root_tree_is_exit_2(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        remove_loose_object(self.repo, git(self.repo, "rev-parse", "HEAD^{tree}").strip())
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn("SOURCE_UNSERVABLE", self.one_line_fault(err))
+
+    def test_a_name_the_tree_does_not_hold_stays_a_red_beside_a_pruned_one(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        remove_loose_object(self.repo, git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip())
+        gone = f"contracts/gone.txt sha256:{sha(b'x')}"
+        pruned = f"contracts/source.txt sha256:{sha(SOURCE_BYTES)}"
+        self.write_spec("test_one.py", self.header(("R-1",), (gone, pruned)))
+        code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertEqual(len(out.splitlines()), 1, out)
+        self.assertTrue(out.startswith("SOURCE_MISSING specs/test_one.py: line 2: "), out)
+        lines = err.splitlines()
+        self.assertEqual(len(lines), 2, err)
+        self.assertTrue(lines[0].startswith("SOURCE_UNSERVABLE specs/test_one.py: line 3 source "), lines[0])
+        self.assertEqual(lines[1], "requirements=1 specs=1 defects=1")
+
+    def test_a_pruned_blob_does_not_stop_the_other_sources_from_being_checked(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.commit_source("contracts/second.txt", b"other")
+        remove_loose_object(self.repo, git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip())
+        pruned = f"contracts/source.txt sha256:{sha(SOURCE_BYTES)}"
+        wrong = f"contracts/second.txt sha256:{sha(b'changed')}"
+        self.write_spec("test_one.py", self.header(("R-1",), (pruned, wrong)))
+        code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertTrue(out.startswith("SOURCE_DIGEST_MISMATCH specs/test_one.py: line 3: "), out)
+        self.assertIn("SOURCE_UNSERVABLE", err)
+
+    def test_a_blobless_clone_is_exit_2_for_a_blob_and_the_gate_never_fetches(self) -> None:
+        git(self.repo, "config", "uploadpack.allowFilter", "true")
+        git(self.repo, "config", "uploadpack.allowAnySHA1InWant", "true")
+        clone = self.base / "clone"
+        made = subprocess.run(
+            ["git", "clone", "-q", "--no-local", "--filter=blob:none", "--no-checkout", self.repo.as_uri(), str(clone)],
+            capture_output=True,
+            env={**os.environ, **GIT_ENVIRONMENT},
+            check=False,
+        )
+        if made.returncode != 0:
+            self.skipTest(f"this git cannot make a blobless clone: {made.stderr.decode('utf-8', errors='replace')}")
+        blob = git(clone, "rev-parse", "HEAD:contracts/source.txt").strip()
+        absent = subprocess.run(["git", "-C", str(clone), "-c", "fetch.negotiationAlgorithm=noop", "cat-file", "-e", blob], capture_output=True, env={**os.environ, **GIT_ENVIRONMENT, "GIT_NO_LAZY_FETCH": "1"}, check=False)
+        self.assertNotEqual(absent.returncode, 0, "the clone already holds the blob")
+        self.repo, self.specs = clone, clone / "specs"
+        self.specs.mkdir()
+        self.snapshot = self.base / "snapshot.json"
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertTrue(self.one_line_fault(err).startswith("SOURCE_UNSERVABLE specs/test_one.py: line 2 source "), err)
+        still_absent = subprocess.run(["git", "-C", str(clone), "cat-file", "-e", blob], capture_output=True, env={**os.environ, **GIT_ENVIRONMENT, "GIT_NO_LAZY_FETCH": "1"}, check=False)
+        self.assertNotEqual(still_absent.returncode, 0, "the gate fetched the blob")
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/gone.txt sha256:{sha(b'x')}",)))
+        code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertTrue(out.startswith("SOURCE_MISSING specs/test_one.py: line 2: "), out)
+
+
+class RedBeforeFault(Case):
+    """The gate reports every red it can find and exits 1 if there is one; each fault is one line on stderr."""
+
+    def lines_of(self, text: str) -> list[str]:
+        return text.splitlines()
+
+    def test_an_unreadable_spec_beside_a_red_reports_the_red(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_a_red.py", "", "assert value == 3\n")
+        locked = self.good_spec("test_locked.py", "R-1")
+        original = Path.read_bytes
+
+        def deny(path: Path) -> bytes:
+            if path.name == "test_locked.py":
+                raise PermissionError(13, "Permission denied", str(path))
+            return original(path)
+
+        with mock.patch.object(Path, "read_bytes", deny):
+            code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertEqual(len(self.lines_of(out)), 1, out)
+        self.assertTrue(out.startswith("LITERAL_EXPECTED specs/test_a_red.py: line "), out)
+        lines = self.lines_of(err)
+        self.assertEqual(len(lines), 2, err)
+        self.assertTrue(lines[0].startswith("TOOL_FAULT cannot read "), lines[0])
+        self.assertIn(locked.name, lines[0])
+        self.assertEqual(lines[1], "requirements=1 specs=2 defects=1")
+
+    def test_a_requirement_is_not_called_unbound_when_a_spec_could_not_be_read(self) -> None:
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        self.write_spec("test_a_red.py", "", "assert value == 3\n")
+        self.good_spec("test_locked.py", "R-1")
+        original = Path.read_bytes
+
+        def deny(path: Path) -> bytes:
+            if path.name == "test_locked.py":
+                raise PermissionError(13, "Permission denied", str(path))
+            return original(path)
+
+        with mock.patch.object(Path, "read_bytes", deny):
+            code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertNotIn("NO_SPEC_FOR_REQUIREMENT", out)
+        self.assertEqual(len(self.lines_of(out)), 1, out)
+
+    def test_a_git_fault_after_reds_exits_1_with_one_fault_line(self) -> None:
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        self.write_spec("test_a_red.py", "", "assert value == 3\n")
+        self.good_spec("test_b.py", "R-1")
+        self.write_spec("test_c.py", self.header(("R-2",)), spec_body("    assert value == 7"))
+        with GitSpy(fail_on="cat-file").patched():
+            code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        found = self.lines_of(out)
+        self.assertEqual(len(found), 2, out)
+        self.assertTrue(found[0].startswith("LITERAL_EXPECTED specs/test_a_red.py: "), found[0])
+        self.assertTrue(found[1].startswith("LITERAL_EXPECTED specs/test_c.py: "), found[1])
+        lines = self.lines_of(err)
+        self.assertEqual(len(lines), 2, err)
+        self.assertTrue(lines[0].startswith("TOOL_FAULT "), lines[0])
+        self.assertIn("injected failure", lines[0])
+        self.assertEqual(lines[1], "requirements=2 specs=3 defects=2")
+
+    def test_a_git_answer_outside_its_format_after_reds_exits_1(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_a_red.py", "", "assert value == 3\n")
+        self.good_spec("test_b.py", "R-1")
+        blob = git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip().encode("ascii")
+        spy = GitSpy(replies=lambda query: b"garbage\n" if query == blob else None)
+        with spy.patched():
+            code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertEqual(len(self.lines_of(out)), 1, out)
+        lines = self.lines_of(err)
+        self.assertEqual(len(lines), 2, err)
+        self.assertIn("outside its format", lines[0])
+
+    def test_a_repository_without_a_commit_still_reports_the_reds_that_need_no_git(self) -> None:
+        fresh = self.base / "fresh"
+        fresh.mkdir()
+        init_repo(fresh)
+        self.repo, self.specs = fresh, fresh / "specs"
+        self.specs.mkdir()
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_one.py", self.header(("R-1",), mutations=()), spec_body("    assert value == 3"))
+        code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertEqual(sorted(line.split(" ", 1)[0] for line in out.splitlines()), ["LITERAL_EXPECTED", "NO_MUTATION"])
+        lines = self.lines_of(err)
+        self.assertEqual(len(lines), 2, err)
+        self.assertTrue(lines[0].startswith("TOOL_FAULT "), lines[0])
+        self.assertEqual(lines[1], "requirements=1 specs=1 defects=2")
+
+    def test_a_fault_with_no_red_is_exit_2_and_prints_no_summary(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        with GitSpy(fail_on="cat-file").patched():
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(len(self.lines_of(err)), 1, err)
+        self.assertNotIn("requirements=", err)
+
+    def test_a_directory_that_cannot_be_listed_is_a_fault_beside_the_reds_of_the_others(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_a_red.py", "", "assert value == 3\n")
+        (self.specs / "locked").mkdir()
+        real = os.scandir
+
+        def scandir(path: str | os.PathLike[str]) -> object:
+            if Path(path).name == "locked":
+                raise PermissionError(13, "Permission denied", str(path))
+            return real(path)
+
+        with mock.patch.object(contract_gate.os, "scandir", scandir):
+            code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertEqual(len(self.lines_of(out)), 1, out)
+        self.assertNotIn("NO_SPEC_FOR_REQUIREMENT", out)
+        lines = self.lines_of(err)
+        self.assertEqual(len(lines), 2, err)
+        self.assertTrue(lines[0].startswith("TOOL_FAULT cannot list "), lines[0])
+
+    def test_faults_and_the_summary_are_each_one_escaped_line_in_discovery_order(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        urls = tuple(f"https://example.invalid/{name} forged sha256:{sha(b'x')}" for name in ("one", "two"))
+        self.write_spec("test_a.py", self.header(("R-1",), urls), spec_body("    assert value == 3"))
+        code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        lines = self.lines_of(err)
+        self.assertEqual(len(lines), 3, repr(err))
+        self.assertEqual(err.count("\n"), 3, repr(err))
+        self.assertIn("line 2 ", lines[0])
+        self.assertIn("line 3 ", lines[1])
+        self.assertIn("\\u2028", lines[0])
+        self.assertEqual(lines[2], "requirements=1 specs=1 defects=1")
+
+    def test_an_unexpected_error_while_checking_one_spec_is_a_fault_and_the_others_are_still_checked(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_a.py", "", "assert value == 3\n")
+        self.write_spec("test_b.py", "", "assert value == 4\n")
+        real = contract_gate.check_spec
+
+        def check(spec: str, data: bytes, reader: contract_gate.HeadReader, status: dict[str, str]) -> contract_gate.SpecResult:
+            if spec.endswith("test_a.py"):
+                raise RuntimeError("boom")
+            return real(spec, data, reader, status)
+
+        with mock.patch.object(contract_gate, "check_spec", check):
+            code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertTrue(out.startswith("LITERAL_EXPECTED specs/test_b.py: "), out)
+        self.assertIn("unexpected RuntimeError while checking specs/test_a.py: boom", err)
+        self.assertNotIn("Traceback", err)
+
+    def test_the_preconditions_stay_faults_at_once(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_a.py", "", "assert value == 3\n")
+        self.snapshot.unlink()
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_the_real_command_line_exits_1_with_the_red_and_the_fault(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_url.py", self.header(("R-1",), (f"https://example.invalid/x sha256:{sha(b'x')}",)), spec_body("    assert value == 3"))
+        done = subprocess.run([sys.executable, str(SCRIPT), *self.argv()], capture_output=True, text=True)
+        self.assertEqual(done.returncode, 1, done.stderr)
+        self.assertTrue(done.stdout.startswith("LITERAL_EXPECTED specs/test_url.py: line "), done.stdout)
+        self.assertTrue(done.stderr.startswith("SOURCE_UNSERVABLE specs/test_url.py: "), done.stderr)
+        self.assertNotIn("Traceback", done.stderr)
+
+
+class BatchAnswers(Case):
+    """Every answer of the batch process is checked; one that is not exactly what was asked for is a tool fault."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.blob = git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip()
+        self.head = git(self.repo, "rev-parse", "HEAD").strip()
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+
+    def answered(self, query_text: str, answer: bytes) -> tuple[int, str, str]:
+        spy = GitSpy(replies=lambda query: answer if query == query_text.encode("ascii") else None)
+        with spy.patched():
+            result = self.run_gate()
+        self.assertEqual(spy.alive(), [])
+        return result
+
+    def blob_answered(self, answer: bytes) -> tuple[int, str, str]:
+        return self.answered(self.blob, answer)
+
+    def test_a_missing_answer_for_a_named_blob_is_a_source_fault(self) -> None:
+        code, out, err = self.blob_answered(f"{self.blob} missing\n".encode("ascii"))
+        self.assertEqual((code, out), (2, ""))
+        self.assertTrue(err.startswith("SOURCE_UNSERVABLE specs/test_one.py: "), err)
+
+    def test_an_answer_that_is_not_exactly_missing_for_this_query_is_a_tool_fault(self) -> None:
+        blob = self.blob
+        other = "a" * 40
+        answers = {
+            "two spaces": f"{blob}  missing\n",
+            "extra word": f"{blob} missing extra\n",
+            "other name": f"{other} missing\n",
+            "upper case": f"{blob} Missing\n",
+            "ambiguous": f"{blob} ambiguous\n",
+            "no name": " missing\n",
+            "no space": f"{blob}missing\n",
+            "bare word": "missing\n",
+            "missing a name only at the end": f"x {blob} missing\n",
+        }
+        for label, answer in answers.items():
+            with self.subTest(label):
+                code, out, err = self.blob_answered(answer.encode("ascii"))
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertTrue(err.startswith("TOOL_FAULT "), err)
+                self.assertNotIn("SOURCE_UNSERVABLE", err)
+                self.assertNotIn("SOURCE_MISSING", err)
+                self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_an_answer_with_a_body_of_another_size_than_its_header_is_a_tool_fault(self) -> None:
+        blob = self.blob
+        answers = {
+            "a longer body": f"{blob} blob 3\nabcd\n".encode("ascii"),
+            "a shorter body": f"{blob} blob 10\nabc\n".encode("ascii"),
+            "no line feed after the body": f"{blob} blob 3\nabc".encode("ascii"),
+            "a wrong byte after the body": f"{blob} blob 3\nabcX".encode("ascii"),
+            "no body": f"{blob} blob 3\n".encode("ascii"),
+            "an empty body that is not empty": f"{blob} blob 0\nabc\n".encode("ascii"),
+        }
+        for label, answer in answers.items():
+            with self.subTest(label):
+                code, out, err = self.blob_answered(answer)
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertTrue(err.startswith("TOOL_FAULT "), err)
+                self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_an_answer_for_another_object_or_of_another_shape_is_a_tool_fault(self) -> None:
+        blob = self.blob
+        answers = {
+            "another object id": object_answer("a" * 40, "blob", b"abc"),
+            "a tree for a blob": object_answer(blob, "tree", b"abc"),
+            "a commit for a blob": object_answer(blob, "commit", b"abc"),
+            "an unknown type": f"{blob} thing 3\nabc\n".encode("ascii"),
+            "no size": f"{blob} blob\n".encode("ascii"),
+            "a negative size": f"{blob} blob -3\nabc\n".encode("ascii"),
+            "an id of the wrong length": object_answer("a" * 39, "blob", b"abc"),
+            "an upper case id": object_answer(blob.upper(), "blob", b"abc"),
+            "garbage": b"garbage\n",
+            "an empty line": b"\n",
+            "end of output": b"",
+            "no line feed": f"{blob} blob 3".encode("ascii"),
+        }
+        for label, answer in answers.items():
+            with self.subTest(label):
+                code, out, err = self.blob_answered(answer)
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertTrue(err.startswith("TOOL_FAULT "), err)
+                self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_a_tree_answer_outside_its_format_is_a_tool_fault(self) -> None:
+        query = f"{self.head}^{{tree}}"
+        oid = "b" * 40
+        raw = bytes(20)
+        answers = {
+            "a blob for a tree": object_answer(oid, "blob", b"abc"),
+            "a commit for a tree": object_answer(oid, "commit", b"abc"),
+            "a name twice": object_answer(oid, "tree", raw_tree(("100644", "a", raw), ("100644", "a", raw))),
+            "a mode that is not octal": object_answer(oid, "tree", raw_tree(("10x644", "a", raw))),
+            "an empty mode": object_answer(oid, "tree", raw_tree(("", "a", raw))),
+            "an empty name": object_answer(oid, "tree", raw_tree(("100644", "", raw))),
+            "a name with a slash": object_answer(oid, "tree", raw_tree(("100644", "a/b", raw))),
+            "an id cut short": object_answer(oid, "tree", raw_tree(("100644", "a", raw[:7]))),
+            "no terminator": object_answer(oid, "tree", b"100644 a"),
+            "a mode only": object_answer(oid, "tree", b"100644"),
+            "a trailing byte": object_answer(oid, "tree", raw_tree(("100644", "a", raw)) + b"x"),
+            "a body shorter than its header": object_answer(oid, "tree", b"", declared_size=40),
+        }
+        for label, answer in answers.items():
+            with self.subTest(label):
+                code, out, err = self.answered(query, answer)
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertTrue(err.startswith("TOOL_FAULT "), err)
+                self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_a_tree_that_names_nothing_the_spec_cites_makes_the_source_missing(self) -> None:
+        query = f"{self.head}^{{tree}}"
+        code, out, err = self.answered(query, object_answer("b" * 40, "tree", raw_tree(("100644", "other", bytes(20)))))
+        self.assertEqual(code, 1, err)
+        self.assertTrue(out.startswith("SOURCE_MISSING specs/test_one.py: line 2: "), out)
+        self.assertIn("is not tracked at HEAD", out)
+
+    def test_a_tree_entry_with_an_unusual_mode_is_not_a_regular_file(self) -> None:
+        query = f"{self.head}^{{tree}}"
+        entries = raw_tree(("100644", "contracts", bytes(20)))
+        code, out, err = self.answered(query, object_answer("b" * 40, "tree", entries))
+        self.assertEqual(code, 1, err)
+        self.assertTrue(out.startswith("SOURCE_MISSING specs/test_one.py: line 2: "), out)
+        self.assertIn("is not tracked at HEAD", out)
+
+    def test_head_answered_outside_its_format_is_a_fault(self) -> None:
+        for label, answer in {"not hex": b"zzzz\n", "short": b"abc123\n", "empty": b"", "two lines": b"a" * 40 + b"\n" + b"a" * 40 + b"\n", "no line feed": b"a" * 40}.items():
+            with self.subTest(label), GitSpy(answers={"HEAD^{commit}": answer}).patched():
+                code, out, err = self.run_gate()
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertIn("outside its format", err)
+
+    def test_a_batch_process_that_cannot_start_is_a_tool_fault(self) -> None:
+        with GitSpy(fail_start=True).patched():
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn("cannot run git", err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_a_batch_process_that_never_answers_is_stopped_and_is_a_tool_fault(self) -> None:
+        spy = GitSpy(replies=lambda query: HANG)
+        started = time.monotonic()
+        with mock.patch.object(contract_gate, "GIT_TIMEOUT_SECONDS", 0.5), spy.patched():
+            code, out, err = self.run_gate()
+        self.assertLess(time.monotonic() - started, 5.0, "the silent process was not stopped by the time limit")
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn("ended before it answered", err)
+        self.assertEqual(spy.alive(), [])
+
+    def test_a_failure_of_the_store_is_one_fault_for_every_source_and_spec(self) -> None:
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        self.commit_source("contracts/second.txt", b"other")
+        both = (f"contracts/source.txt sha256:{sha(SOURCE_BYTES)}", f"contracts/second.txt sha256:{sha(b'other')}")
+        self.write_spec("test_a.py", self.header(("R-1",), both))
+        self.write_spec("test_b.py", self.header(("R-2",), both))
+        spy = GitSpy(replies=lambda query: b"garbage\n")
+        with spy.patched():
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertEqual(len(spy.queries()), 1)
 
 
 class DeclarationText(Case):
@@ -1661,7 +2513,7 @@ class RepoTopLevel(Case):
         self.good_spec("test_one.py", "R-1")
         spy = GitSpy()
         polluted = {name: "x" for name in contract_gate.GIT_SELECTING_VARIABLES}
-        with mock.patch.dict(os.environ, polluted), mock.patch.object(contract_gate.subprocess, "run", spy):
+        with mock.patch.dict(os.environ, polluted), spy.patched():
             code, out, err = self.run_gate()
         self.assertEqual((code, out.strip(), err), (0, "requirements=1 specs=1 defects=0", ""))
         self.assertGreaterEqual(len(spy.calls), 1)
@@ -1693,9 +2545,9 @@ class RepoTopLevel(Case):
         self.write_snapshot(("R-1", "active"))
         self.good_spec("test_one.py", "R-1")
         spy = GitSpy()
-        with mock.patch.object(contract_gate.subprocess, "run", spy):
+        with spy.patched():
             self.assert_green()
-        self.assertGreaterEqual(len(spy.calls), 4)
+        self.assertGreaterEqual(len(spy.calls), 3)
         for call in spy.calls:
             self.assertIn("--no-replace-objects", call.command, call.command)
             self.assertEqual((call.env or {}).get("GIT_NO_REPLACE_OBJECTS"), "1", call.command)
@@ -1863,6 +2715,21 @@ class OneLineMessages(Case):
         self.assertEqual(err.count("\n"), 1, repr(err))
         self.assertTrue(err.startswith("LA\\nBEL\\u2028 msg\\r\\nCODE forged"), repr(err))
 
+    def test_a_collected_fault_with_a_hostile_label_and_message_is_one_line_beside_a_red(self) -> None:
+        fault = contract_gate.ToolFault("LA\nBEL ", "msg\r\nCODE forged\u0085\x1b\udc80")
+        red = contract_gate.Defect("NO_MUTATION", "specs/test_a.py", "detail")
+        for defects, expected in (((), 2), ((red,), 1)):
+            with self.subTest(expected=expected):
+                report = contract_gate.Report(1, 1, defects, (fault,))
+                with mock.patch.object(contract_gate, "run", return_value=report):
+                    code, out, err = self.run_gate()
+                self.assertEqual(code, expected)
+                lines = err.splitlines()
+                count = 1 if expected == 2 else 2
+                self.assertEqual(len(lines), count, repr(err))
+                self.assertEqual(err.count("\n"), count, repr(err))
+                self.assertTrue(lines[0].startswith("LA\\nBEL\\u2028 msg\\r\\nCODE forged"), repr(err))
+
     def test_an_unexpected_error_with_a_hostile_message_is_one_line(self) -> None:
         with mock.patch.object(contract_gate, "run", side_effect=RuntimeError("a\nb\u2028c\x1b")):
             code, out, err = self.run_gate()
@@ -1919,6 +2786,23 @@ class ReadmeNamesEveryScript(unittest.TestCase):
         self.assertEqual(sorted(self.NUMBER_WORDS.values()), list(range(2, 21)))
         self.assertEqual(self.NUMBER_WORDS["Nine"], 9)
         self.assertEqual(self.NUMBER_WORDS["Twenty"], 20)
+
+    def contract_gate_section(self) -> str:
+        return " ".join(self.readme.split("## contract_gate.py", 1)[1].split("\n## ", 1)[0].split())
+
+    def test_the_contract_gate_section_says_red_before_fault(self) -> None:
+        section = self.contract_gate_section()
+        for stale in ("a fault stops the run", "no defect is printed", "a fault never exits 1", "A tracked symbolic link is a blob of its link text"):
+            with self.subTest(stale):
+                self.assertNotIn(stale, section)
+        for phrase in ("red before fault", "resolved once", "symbolic link", "submodule", "one `cat-file --batch` process", "stderr"):
+            with self.subTest(phrase):
+                self.assertIn(phrase, section)
+
+    def test_the_contract_gate_section_describes_spaces_tabs_and_the_usage_line_as_the_code_does(self) -> None:
+        section = self.contract_gate_section()
+        self.assertIn("only the spaces and tabs around it are removed", section)
+        self.assertIn("usage banner and one escaped error line", section)
 
     def test_the_unexpected_error_rule_names_every_script(self) -> None:
         paragraphs = [text for text in self.introduction.split("\n\n") if "unexpected error" in text]
