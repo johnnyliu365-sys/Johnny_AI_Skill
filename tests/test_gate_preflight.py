@@ -15,6 +15,7 @@ import sys
 import tempfile
 import time
 import unittest
+from collections.abc import Callable
 from pathlib import Path
 from unittest import mock
 
@@ -1188,6 +1189,61 @@ class DriveRuleTests(Fixture):
             preflight.resolve_argv0("C:\\x\\tool.cmd", str(self.dir))
         self.assertIn("batch file", str(caught.exception))
 
+    # Revision03 correction 1 (S55-20): spellings with a forward slash, or a mix, that Windows counts as a share
+    # or as an extended-length drive; they are caught by the platform's own drive test, not by a letter and a colon.
+    FORWARD_RELATIVE_TO_A_DRIVE = (
+        "//server",
+        "//server/share",
+        "\\/server",
+        "/\\server",
+        "\\/server/share",
+        "/\\server\\share",
+        "//?/",
+        "//?/C:",
+        "//?/C:prog.exe",
+        "//./",
+        "//./C:",
+        "//./C:prog.exe",
+    )
+    FORWARD_ABSOLUTE = (
+        "//server/share/prog.exe",
+        "/\\server\\share\\prog.exe",
+        "\\/server/share/prog.exe",
+        "//?/C:/x/prog.exe",
+        "//./C:/x/prog.exe",
+        "//?/UNC/server/share/prog.exe",
+    )
+
+    @unittest.skipUnless(WINDOWS, "shares and extended-length drives are Windows spellings")
+    def test_forward_slash_shares_and_extended_length_spellings_without_a_root_are_refused(self) -> None:
+        for name in self.FORWARD_RELATIVE_TO_A_DRIVE:
+            with self.subTest(name=name):
+                with self.assertRaises(preflight.ArgvZeroError) as caught:
+                    preflight.resolve_argv0(name, str(self.dir))
+                self.assertIn("relative to a drive", str(caught.exception))
+                self.assertNotIn("not found in PATH", str(caught.exception))
+
+    @unittest.skipUnless(WINDOWS, "shares and extended-length drives are Windows spellings")
+    def test_a_forward_slash_share_without_a_root_is_unserved_and_nothing_is_launched(self) -> None:
+        for name in ("//server", "//server/share", "\\/server", "/\\server", "//?/C:", "//?/"):
+            for position in ("start", "probe"):
+                with self.subTest(name=name, position=position):
+                    argv = [name, "-c", "pass"]
+                    lines = item_lines("t", argv, say("x"), "x") if position == "start" else item_lines("t", say("s"), argv, "x")
+                    with mock.patch.object(preflight.subprocess, "Popen", wraps=subprocess.Popen) as launched:
+                        code, out, err = self.gate(dispatch_text(*lines))
+                    self.assertEqual((code, err), (2, ""))
+                    (line,) = out.splitlines()
+                    self.assertTrue(line.startswith(f"TOOL_UNSERVED t: {position} cannot be resolved"), line)
+                    self.assertIn("relative to a drive", line)
+                    self.assertEqual(len(launched.call_args_list), 0 if position == "start" else 1)
+
+    @unittest.skipUnless(WINDOWS, "shares and extended-length drives are Windows spellings")
+    def test_forward_slash_shares_and_extended_length_spellings_with_a_root_are_used_as_given(self) -> None:
+        for name in self.FORWARD_ABSOLUTE:
+            with self.subTest(name=name):
+                self.assertEqual(preflight.resolve_argv0(name, str(self.dir)), name)
+
     def test_names_without_a_drive_are_not_caught_by_the_drive_rule(self) -> None:
         for name in ("sub\\x.exe", "sub/x.exe", "./x.exe", "..\\x.exe"):
             with self.subTest(name=name):
@@ -1286,6 +1342,26 @@ class Argv0EnvironmentTests(Fixture):
                 self.assertIn("not found in PATH", self.not_found("tool", junk, None))
                 self.same(self.resolve("tool", junk + os.pathsep + str(bindir), None), exe)
 
+    def chdir(self, path: Path) -> None:
+        old = os.getcwd()
+        os.chdir(path)
+        self.addCleanup(os.chdir, old)
+
+    @unittest.skipUnless(WINDOWS, "a rooted entry without a drive exists on Windows only")
+    def test_a_rooted_path_entry_without_a_drive_is_not_searched(self) -> None:
+        bindir = self.dir / "bin"
+        exe = self.fake(bindir, "tool.exe")
+        rooted = os.path.splitdrive(str(bindir))[1]
+        self.assertTrue(rooted.startswith("\\"), rooted)
+        self.chdir(self.dir)  # the current drive is the drive of the temporary directory
+        self.assertTrue(os.path.isfile(rooted + "\\tool.exe"), "the rooted entry would find the program if it were searched")
+        self.same(self.resolve("tool", str(bindir), None), exe)
+        for entry in (rooted, rooted.replace("\\", "/"), f'"{rooted}"', f"  {rooted}  "):
+            with self.subTest(entry=entry):
+                self.assertIn("not found in PATH", self.not_found("tool", entry, None))
+        # a rooted entry does not hide a later entry that names its drive
+        self.same(self.resolve("tool", rooted + os.pathsep + str(bindir), None), exe)
+
     @unittest.skipIf(WINDOWS, "entries are used as they are off Windows")
     def test_a_path_entry_is_used_as_it_is_off_windows(self) -> None:
         bindir = self.dir / "bin"
@@ -1351,9 +1427,15 @@ class ChildCleanupTests(Fixture):
         script.write_text(HEARTBEAT_SCRIPT, encoding="utf-8")
         return script
 
-    def track(self, error: BaseException) -> tuple[list[subprocess.Popen[bytes]], list[int | None], contextlib.AbstractContextManager[object]]:
-        """Patch the launcher: the first child of the interpreter fails its first wait with `error`; the state of the
-        first child is recorded each time a later child of the interpreter is launched."""
+    def track(
+        self,
+        error: BaseException,
+        ready: Callable[[], None] | None = None,
+        at_next: Callable[[], None] | None = None,
+    ) -> tuple[list[subprocess.Popen[bytes]], list[int | None], contextlib.AbstractContextManager[object]]:
+        """Patch the launcher: the first child of the interpreter fails its first wait with `error` (after `ready`
+        returned); the state of the first child is recorded, and `at_next` is called, each time a later child of the
+        interpreter is launched."""
         real = subprocess.Popen
         launched: list[subprocess.Popen[bytes]] = []
         state_at_next_launch: list[int | None] = []
@@ -1364,6 +1446,8 @@ class ChildCleanupTests(Fixture):
             ours = isinstance(argv, list) and bool(argv) and argv[0] == PY
             if ours and launched:
                 state_at_next_launch.append(launched[0].poll())
+                if at_next is not None:
+                    at_next()
             process = real(*args, **kwargs)
             if ours:
                 launched.append(process)
@@ -1373,6 +1457,8 @@ class ChildCleanupTests(Fixture):
                     def wait(timeout: float | None = None) -> int:
                         if not raised:
                             raised.append(True)
+                            if ready is not None:
+                                ready()
                             raise error
                         return original(timeout=timeout)
 
@@ -1395,6 +1481,52 @@ class ChildCleanupTests(Fixture):
         first = size()
         time.sleep(0.8)
         self.assertEqual(first, size(), "the child is still running")
+
+    @staticmethod
+    def size(path: Path) -> int:
+        return path.stat().st_size if path.exists() else 0
+
+    def grow(self, *beats: Path) -> bool:
+        """True when every heartbeat file exists and is still growing (the process behind it is alive)."""
+        deadline = time.monotonic() + 30.0
+        while time.monotonic() < deadline:
+            if all(self.size(beat) > 0 for beat in beats):
+                break
+            time.sleep(0.05)
+        else:
+            return False
+        first = [self.size(beat) for beat in beats]
+        time.sleep(0.4)
+        return all(self.size(beat) > before for beat, before in zip(beats, first))
+
+    def still(self, *beats: Path) -> bool:
+        """True when no heartbeat file grows over half a second."""
+        first = [self.size(beat) for beat in beats]
+        time.sleep(0.5)
+        return first == [self.size(beat) for beat in beats]
+
+    def test_the_whole_tree_of_a_child_whose_serving_raised_is_dead_before_the_next_tool_starts(self) -> None:
+        """Revision03 correction 1 (S55-19): the child starts a child of its own; both are gone before the next tool."""
+        beat, grand = self.dir / "beat", self.dir / "grand"
+        block = [*item_lines("first", [PY, str(self.script()), str(beat), str(grand)], say("x"), "x"), *good_item("second")]
+        alive: list[bool] = []
+        quiet: list[bool] = []
+        launched, _, patched = self.track(
+            RuntimeError("boom"),
+            ready=lambda: alive.append(self.grow(beat, grand)),
+            at_next=lambda: quiet.append(self.still(beat, grand)),
+        )
+        with patched:
+            code, out, err = self.gate(dispatch_text(*block))
+        self.assertEqual((code, err), (2, ""))
+        self.assertEqual(out, "TOOL_UNSERVED first: unexpected error (RuntimeError: boom)\n")
+        self.assertEqual(alive, [True], "the child and its own child were both running when the error was raised")
+        self.assertEqual(len(launched), 3)
+        self.assertEqual(quiet, [True, True], "the child or its own child still ran when the next tool launched")
+        self.assertIsNotNone(launched[0].poll())
+        self.assertGreater(self.size(beat), 0)
+        self.assertGreater(self.size(grand), 0)
+        self.assertTrue(self.still(beat, grand), "the child or its own child is still running")
 
     def test_a_child_whose_serving_raised_is_dead_before_the_next_tool_starts(self) -> None:
         beat = self.dir / "beat"
@@ -1421,6 +1553,46 @@ class ChildCleanupTests(Fixture):
         self.assert_silent(beat)
 
 
+    # Revision03 correction 1 (S55-22): an interrupt after a child started kills its tree, and the run exits 2 with one line.
+    def test_an_interrupt_after_a_child_and_its_own_child_started_is_exit_two_with_one_line(self) -> None:
+        beat, grand = self.dir / "beat", self.dir / "grand"
+        block = [*item_lines("first", [PY, str(self.script()), str(beat), str(grand)], say("x"), "x"), *good_item("second")]
+        alive: list[bool] = []
+        launched, _, patched = self.track(KeyboardInterrupt(), ready=lambda: alive.append(self.grow(beat, grand)))
+        with patched:
+            code, out, err = self.gate(dispatch_text(*block))
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(err, "preflight.py: tool fault: interrupted\n")
+        self.assertEqual(len(err.splitlines()), 1)
+        self.assertEqual(alive, [True], "the child and its own child were both running when the interrupt came")
+        self.assertEqual(len(launched), 1, "no later command was launched")
+        self.assertIsNotNone(launched[0].poll())
+        self.assertGreater(self.size(beat), 0)
+        self.assertGreater(self.size(grand), 0)
+        self.assertTrue(self.still(beat, grand), "the child or its own child is still running")
+
+    def test_an_interrupt_before_any_child_started_is_also_exit_two_with_one_line(self) -> None:
+        self.write(dispatch_text(*good_item()))
+        with mock.patch.object(preflight, "parse_preflight", side_effect=KeyboardInterrupt()):
+            code, out, err = self.run_main(str(self.path))
+        self.assertEqual((code, out, err), (2, "", "preflight.py: tool fault: interrupted\n"))
+
+    def test_an_interrupt_on_the_command_line_is_exit_two_without_a_traceback(self) -> None:
+        self.write(dispatch_text(*good_item()))
+        driver = (
+            "import sys; sys.path.insert(0, sys.argv[1]); del sys.argv[1]; import preflight\n"
+            "def stop(item, cwd, timeout): raise KeyboardInterrupt()\n"
+            "preflight.check_item = stop\n"
+            "sys.exit(preflight.entry())\n"
+        )
+        done = subprocess.run(
+            [PY, "-c", driver, str(_SCRIPTS), str(self.path)], capture_output=True, timeout=120, stdin=subprocess.DEVNULL
+        )
+        self.assertEqual(done.returncode, 2, done.stderr)
+        self.assertEqual(done.stdout, b"")
+        self.assertEqual(done.stderr.replace(b"\r\n", b"\n"), b"preflight.py: tool fault: interrupted\n")
+
+
 class DeviceNameTests(Fixture):
     """Revision03 (S55-18): a device name as the dispatch path is exit 3, and nothing is opened."""
 
@@ -1429,6 +1601,7 @@ class DeviceNameTests(Fixture):
         "COM" + chr(0xB9), "LPT" + chr(0xB2), "con.txt", "CON.yaml", "CON ", "CON.", "nul.tar.gz", "con:stream",
         "dir\\CON", "dir/aux", "C:\\dir\\NUL", "C:CON", "sub/COM3/x.yaml", "..\\AUX", "x/aux /y.yaml",
         "\\\\.\\CON", "\\\\.\\pipe\\name", "//./COM1", "\\\\?\\CON",
+        "//./pipe/name", "\\\\./pipe\\name", "//.\\pipe\\name",
     )
     NOT_DEVICES = (
         "CONSOLE.yaml", "COM10", "COM", "CONIN", "AUXILIARY", "NULL", "PRNT", "LPT10", "dispatch.yaml", "x.con",
@@ -1481,6 +1654,90 @@ class DeviceNameTests(Fixture):
                 code, _, err = self.refuse(name)
                 self.assertEqual(code, 3)
                 self.assertIn("argument 1 holds", err)
+
+
+class NamespacePathTests(Fixture):
+    """Revision03 correction 1 (S55-21): the dispatch path is a plain path. A namespace or share spelling, or a path
+    naming the global root, is exit 3 and is never opened."""
+
+    NOT_PLAIN = (
+        # extended-length, in either slash direction and any mix
+        "\\\\?\\C:\\dir\\d.yaml", "//?/C:/dir/d.yaml", "\\/?/C:/dir/d.yaml", "/\\?\\C:\\dir\\d.yaml",
+        "\\\\?\\UNC\\server\\share\\d.yaml", "//?/UNC/server/share/d.yaml",
+        # the NT spelling
+        "\\??\\C:\\dir\\d.yaml", "/??/C:/dir/d.yaml", "\\/??\\C:\\d.yaml", "/\\??/C:/d.yaml",
+        # a single separator, a marker, a separator
+        "\\?\\C:\\d.yaml", "/?/C:/d.yaml", "\\.\\d.yaml", "/./d.yaml", "\\/.\\d.yaml",
+        # share paths, including loopback
+        "\\\\server\\share\\d.yaml", "//server/share/d.yaml", "\\/server/share/d.yaml", "/\\server\\share\\d.yaml",
+        "\\\\server", "//server", "\\\\127.0.0.1\\c$\\d.yaml", "//localhost/c$/d.yaml", "\\\\localhost\\pipe\\x",
+        # the global root, anywhere
+        "\\\\?\\GLOBALROOT\\Device\\x", "\\??\\GLOBALROOT\\Device\\x", "GLOBALROOT\\Device\\x", "globalroot/device/x",
+        "C:\\dir\\GlobalRoot\\x", "dir/GLOBALROOT.yaml", "dir/GLOBALROOT:s", "dir/GLOBALROOT /x", "dir/GlobalRoot./x",
+    )
+    PLAIN = (
+        "d.yaml", "GLOBALROOTS.yaml", "MYGLOBALROOT.yaml", "GLOBAL\\ROOT.yaml", "x.globalroot", "a//b.yaml",
+        "sub/./d.yaml", "sub\\.\\d.yaml", "..\\d.yaml", ".\\d.yaml", "x.d/d.yaml",
+    )
+    PLAIN_TEXT = (
+        "dispatch.yaml", "./d.yaml", ".\\d.yaml", "../d.yaml", "..\\d.yaml", "/tmp/d.yaml", "/d.yaml",
+        "C:\\dir\\d.yaml", "C:/dir/d.yaml", "C:d.yaml", "dir/sub/d.yaml", "a//b.yaml", "sub/./d.yaml", "GLOBAL/ROOT",
+        "GLOBALROOTS", "MYGLOBALROOT", "?x", "a/?/b", "a/./b",
+    )
+
+    def refuse(self, *args: str) -> tuple[int, str, str]:
+        with mock.patch("builtins.open", side_effect=AssertionError("a path in a namespace was opened")):
+            return self.run_main(*args)
+
+    def test_each_namespace_share_or_global_root_path_is_exit_three_and_is_not_opened(self) -> None:
+        for name in self.NOT_PLAIN:
+            with self.subTest(name=name):
+                code, out, err = self.refuse(name)
+                self.assertEqual((code, out), (3, ""), err)
+                self.assertTrue(err.startswith("usage:"))
+                self.assertEqual(len(err.splitlines()), 2)
+                self.assertIn("not a plain path", err)
+
+    def test_a_namespace_path_with_an_option_in_either_order_is_exit_three(self) -> None:
+        for args in (("//server/share/d.yaml", "--timeout", "5"), ("--timeout", "5", "\\\\?\\GLOBALROOT\\x")):
+            with self.subTest(args=args):
+                self.assertEqual(self.refuse(*args)[0], 3)
+
+    def test_the_check_is_text_only_and_sorts_the_lists(self) -> None:
+        probes = [mock.patch.object(os.path, attr, side_effect=AssertionError("the filesystem was probed")) for attr in ("exists", "isfile", "isdir", "lexists")]
+        with probes[0], probes[1], probes[2], probes[3]:
+            for name in self.NOT_PLAIN:
+                with self.subTest(name=name):
+                    self.assertTrue(preflight.names_a_namespace(name))
+            for name in self.PLAIN_TEXT:
+                with self.subTest(name=name):
+                    self.assertFalse(preflight.names_a_namespace(name))
+
+    def test_plain_paths_are_read_as_files(self) -> None:
+        for name in self.PLAIN:
+            with self.subTest(name=name):
+                code, out, err = self.run_main(str(self.dir) + os.sep + name)
+                self.assertEqual((code, out), (2, ""))
+                self.assertIn("cannot read", err)
+
+    def test_a_real_dispatch_file_in_a_plain_path_is_still_served(self) -> None:
+        self.assertEqual(self.gate(dispatch_text(*good_item()))[:2], (0, "tools=1 served=1\n"))
+
+    def test_the_character_rule_still_comes_first_and_the_exit_is_never_one(self) -> None:
+        for name in ("//server/a\n", "\\\\?\\GLOBALROOT\\b\x00", "/??/c\udc80", "//./x\t"):
+            with self.subTest(name=repr(name)):
+                code, _, err = self.refuse(name)
+                self.assertEqual(code, 3)
+                self.assertIn("argument 1 holds", err)
+
+    def test_a_namespace_path_on_the_command_line_is_exit_three_without_a_traceback(self) -> None:
+        for name in ("\\\\?\\GLOBALROOT\\Device\\x", "//server/share/d.yaml", "/??/C:/d.yaml"):
+            with self.subTest(name=name):
+                done = subprocess.run([PY, str(SCRIPT), name], capture_output=True, timeout=120, stdin=subprocess.DEVNULL)
+                self.assertEqual(done.returncode, 3, done.stderr)
+                self.assertEqual(done.stdout, b"")
+                self.assertNotIn(b"Traceback", done.stderr)
+                self.assertIn(b"not a plain path", done.stderr)
 
 
 if __name__ == "__main__":

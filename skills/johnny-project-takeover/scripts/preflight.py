@@ -38,17 +38,25 @@ A child that was started and whose serving then raised an unexpected error is ki
 together with the processes it started before the next tool runs. A dispatch path that
 names a device (a path component whose name, up to its first dot or colon and without
 trailing blanks, is a reserved device name, or a path in the device namespace) is a usage
-error and is never opened, whatever the platform.
+error and is never opened, whatever the platform. So is a dispatch path that is not a plain
+path: one that starts with two separators (a share path, or an extended-length or device
+spelling), or with a separator followed by a namespace marker (one or two question marks, or
+a single dot, then a separator), or that has the global root of the object manager as a
+component (compared as a device name is, up to the first dot or colon, in any letter case);
+both slash directions and any mix of them count, and nothing is opened to decide it.
+
+An interrupt after a child started kills that child with the processes it started, then ends
+the run as a tool fault: exit 2 with one line on standard error and no traceback.
 
 Output: `tools=N served=N` on exit 0; one `TOOL_UNSERVED <tool>: <cause>` line per
 failing tool on exit 2. Every printed subject is escaped to one line.
 
 Exit codes: 0 every tool served, 2 tool fault (a tool is unserved, or the dispatch file
-cannot be read, or an unexpected error, or standard output or standard error cannot be
+cannot be read, or an unexpected error, or an interrupt, or standard output or standard error cannot be
 written), 3 usage error (bad arguments, no `preflight:` block, a block that does not
 follow the grammar, an empty or blank `expect`, text that holds a lone surrogate or a
 control character, in the dispatch file or in an argument, a dispatch path that names a
-device). Preflight has no red: a
+device or is not a plain path). Preflight has no red: a
 contract red is exit 1 in the other gates and never occurs here.
 """
 from __future__ import annotations
@@ -89,6 +97,9 @@ DEVICE_NAMES = frozenset(
     + [f"{prefix}{digit}" for prefix in ("COM", "LPT") for digit in "0123456789" + SUPERSCRIPT_DIGITS]
 )
 DEVICE_NAMESPACE_PREFIXES = ("\\\\.\\", "//./", "\\\\./", "//.\\")
+# After every backslash is turned into a slash: two separators, or a separator with one of the namespace markers.
+NAMESPACE_ROOTS = ("//", "/?/", "/??/", "/./")
+GLOBAL_ROOT = "GLOBALROOT"
 DEFAULT_PATHEXT = ".COM;.EXE;.BAT;.CMD"
 
 EXIT_SERVED = 0
@@ -503,14 +514,31 @@ def _parse_timeout(text: str) -> float:
     return value
 
 
+def _component_stem(component: str) -> str:
+    """A path component up to its first dot or colon, without trailing blanks."""
+    return re.split(r"[.:]", component, maxsplit=1)[0].rstrip(" ")
+
+
 def names_a_device(path: str) -> bool:
     """True when `path` names a reserved device or lies in the device namespace; a pure text check, nothing is opened."""
     if path.startswith(DEVICE_NAMESPACE_PREFIXES):
         return True
     rest = path[2:] if DRIVE_LETTER.match(path) is not None else path
     for component in rest.replace("\\", "/").split("/"):
-        stem = re.split(r"[.:]", component, maxsplit=1)[0].rstrip(" ")
-        if stem.upper() in DEVICE_NAMES:
+        if _component_stem(component).upper() in DEVICE_NAMES:
+            return True
+    return False
+
+
+def names_a_namespace(path: str) -> bool:
+    """True when `path` is not a plain path: it starts with two separators (a share path, or an extended-length or
+    device spelling), with a separator and a namespace marker, or names the global root of the object manager;
+    either slash direction, any mix. A pure text check, nothing is opened."""
+    text = path.replace("\\", "/")
+    if text.startswith(NAMESPACE_ROOTS):
+        return True
+    for component in text.split("/"):
+        if _component_stem(component).upper() == GLOBAL_ROOT:
             return True
     return False
 
@@ -541,6 +569,8 @@ def _parse_arguments(args: Sequence[str]) -> tuple[str, float]:
         raise UsageError("exactly one dispatch file is required")
     if names_a_device(positional[0]):
         raise UsageError("the dispatch path names a device, not a file; it is not opened")
+    if names_a_namespace(positional[0]):
+        raise UsageError("the dispatch path is not a plain path (a share, namespace or global-root spelling); it is not opened")
     return positional[0], DEFAULT_TIMEOUT if timeout is None else timeout
 
 
@@ -590,6 +620,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     try:
         outcome = _gate(args)
+    except KeyboardInterrupt:
+        # A child that was started is already killed with its tree (run_command); the run ends as a tool fault.
+        outcome = EXIT_UNSERVED, "", "preflight.py: tool fault: interrupted\n"
     except Exception as exc:  # noqa: BLE001 - any unexpected error is a tool fault, never a red and never a traceback
         outcome = EXIT_UNSERVED, "", f"preflight.py: tool fault: {escape(type(exc).__name__)}: {escape(str(exc))}\n"
     return _emit(outcome)

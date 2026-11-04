@@ -135,14 +135,24 @@ quote or blank around a search-path entry is removed.
 
 A command whose run raised an unexpected error after its child had started kills that
 child, with the processes it started, before the next tool runs; an unexpected error
-anywhere else in the run is exit 2 with one line on standard error and no traceback.
+anywhere else in the run is exit 2 with one line on standard error and no traceback. An
+interrupt (the keyboard interrupt) after a child started kills that child and the processes
+it started in the same way, then ends the run with exit 2 and one line on standard error,
+no traceback.
+
+The dispatch path must be a plain path. A path is refused with exit 3, and never opened, when
+it starts with two separators (a share path, or an extended-length or device spelling), when
+it starts with a separator followed by one or two question marks and a separator, or by a
+single dot and a separator, or when any component of it is the global root of the object
+manager (compared up to its first dot or colon, in any letter case). Both slash directions
+and any mix of them count, on every platform; the decision is made from the text alone.
 
 Exit 0 prints `tools=N served=N`. Exit 2 prints one line `TOOL_UNSERVED <tool>: <cause>` per
 failing tool; the causes are `start cannot be launched`, `start cannot be resolved`,
 `start is refused` (a batch file), `start exited with code N`, `start timed out`, the same
 five for `probe`, `probe output does not contain the expected text`, and `unexpected error`
 (the exception type and its message, for that tool alone; the later tools are still tried).
-Exit 2 is also an unreadable dispatch file, or a standard output or standard error that
+Exit 2 is also an unreadable dispatch file, an interrupt, or a standard output or standard error that
 cannot be written (never another code, whatever the run would have returned). Exit 3: bad
 arguments, no `preflight:` block, a block that does not follow the grammar (a missing,
 repeated or unknown key, a key at the wrong indent, a value that is not one JSON value of
@@ -150,7 +160,8 @@ the right type, an empty argument array, an empty or blank `tool` or `expect`), 
 that is not UTF-8, a dispatch path that names a device (a reserved device name as any
 path component, with or without an extension, a colon part or trailing blanks, or a path
 in the device namespace; it is judged from the text alone, on every platform, and never
-opened), or a string that holds a lone surrogate or a control character. The
+opened), or a dispatch path that is not a plain path (above), or a string that holds a lone surrogate
+or a control character. The
 text rule applies to the arguments as well as to the file: the dispatch path and the
 `--timeout` value are checked before anything is read, and `--timeout` must match its
 whole text (digits with an optional fraction; no trailing newline, no surrounding space).
