@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision05 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 correction review `CONVERGENCE_REVIEW_REQUIRED`: S52-28 to S52-30, evidence only; implementation 5 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 correction review `CONVERGENCE_REVIEW_REQUIRED`: S52-28 to S52-30, evidence only; revision05 initial review CHANGES_REQUESTED (evidence only); correction 1 dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/52-requirement-snapshot` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/52-requirement-snapshot-review` |
@@ -190,3 +190,7 @@ Review record section "Revision04 correction review". CodeReview §5: revision04
 | S52-30 | EVIDENCE_DEFECT | an unchanged take leaves a CRLF stored version byte-identical |
 | S52-31 | OUT_OF_SCOPE_HARDENING (taken now) | every printed line escaped |
 | S52-32 | OUT_OF_SCOPE_HARDENING (taken now) | linear repeated-key collection, with a 40000-key test under a time bound |
+
+### Correction 1 under revision05 (after the revision05 initial review `CHANGES_REQUESTED`)
+
+No ticket defect was found, so revision05 stands; the blocking items are tests. S52-34: printed-line tests with ESC, TAB, NUL and DEL through the usage error and through a fault line. S52-35: an id present three times reports every pair; two case-variant collisions (a mocked listing) report both. S52-36: stray `-v<n>.json.bak` and `-v<n>.jsonx` files next to real versions change neither take nor diff. Taken now, S52-33: `NaN`, `Infinity` and `-Infinity` anywhere in a JSON file are `ROW_FIELD_TYPE`, as for other non-JSON input. The next review is the one correction review of revision05.

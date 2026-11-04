@@ -331,3 +331,56 @@ verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/52-rev04-correction
 reviewed_at: 2026-11-04
 ```
+
+## Revision05 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `83a47e64d3bc7710a2641cf4bd000aa2c0d8069b` (`83a47e64` → `09ef0dbc` → `7649f1b8` → `bea0cf0c` → `ac95c321` → `3c485efc` → `21ac4fda` → `dbd74358`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision05 |
+| Summary | The candidate behaves as the closure says: 239 of 239 probes pass, 160 real races give no duplicate, no input-derived failure exits 2. S52-28, S52-30, S52-32 closed. Nine counter-mutations stay green across three evidence gaps (S52-34, S52-35, S52-36); the code is correct in each. S52-33 is non-blocking hardening. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 206 passed, 467 subtests; mypy --strict clean |
+| S52-28, S52-30, S52-32 | PASS | deep objects, arrays and mixed 100000 deep; four CRLF stored forms byte-, tree- and mtime-stable; linear collection at 40000 keys in under 0.1 s |
+| S52-29 | PARTIAL | S52-35 |
+| S52-31 | PARTIAL | line breaks pinned on every printer; other control characters escaped but unpinned (S52-34) |
+| Seat choices | AGREE | both equivalent survivors; the time bound adequate |
+| Regression / check order / red before fault / damaged versions / case collisions | PASS | |
+| Version claim under real races | PASS | 160 races, no duplicate; a claimless control duplicated v2 in 12 of 60 |
+| Reverse mutations | PARTIAL | seat 26 red, 2 equivalent; reviewer 43: 31 red, 3 equivalent, 9 findings |
+| Receipt / boundary | PASS | checker 0 defects with P9; digests recomputed; LF; additions-only tests; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S52-01 to S52-28, S52-30, S52-32 | CLOSED |
+| S52-29 | PARTIALLY CLOSED (S52-35) |
+| S52-31 | CLOSED for line breaks; other control characters unpinned (S52-34) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S52-33 | OUT_OF_SCOPE_HARDENING | Low | `requirement_snapshot.py:412` | `NaN`, `Infinity`, `-Infinity` are accepted in an ignored top-level position of the take input | probes |
+| S52-34 | EVIDENCE_DEFECT | Low (evidence gap only) | `requirement_snapshot.py:115, 643-648`; tests `:1649` | escaping of ESC, TAB, NUL and DEL is unpinned; every printed-line test uses line breaks only | D01, D02b to D02e green |
+| S52-35 | EVIDENCE_DEFECT | Low (evidence gap only) | `requirement_snapshot.py:370-378, 623-627` | three copies of an id, and two case-variant collisions, each reporting every line, are unpinned | D11, D33 green |
+| S52-36 | EVIDENCE_DEFECT | Low (evidence gap only) | `requirement_snapshot.py:108, 508` | an exact version-file name is unpinned: a suffixed `.json.bak` would count as a version under `.match` | D25, D44 green |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: the POSIX publish branch; a case-sensitive file system; an ACL-unwritable root; non-Windows console encodings; the timing bound on another host.
+
+```review-verdict
+candidate: 83a47e64d3bc7710a2641cf4bd000aa2c0d8069b
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/52-rev05-initial
+reviewed_at: 2026-11-04
+```
