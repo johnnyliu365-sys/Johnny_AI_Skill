@@ -275,7 +275,7 @@ class DefectCodeTests(GateTestCase):
 
     def test_duplicate_cell(self) -> None:
         first = self.fx.cell("A")
-        second = self.fx.cell("A", heading="A again")
+        second = self.fx.cell("A")
         self.assertEqual(self.red(first.render(), second.render()), ["DUPLICATE_CELL"])
 
     def test_candidate_mismatch(self) -> None:
@@ -370,7 +370,7 @@ class DefectCodeTests(GateTestCase):
         self.assertTrue(out.endswith("cells=1 defects=2\n"))
 
     def test_defect_lines_are_code_section_detail(self) -> None:
-        self.fx.write_receipt(self.fx.cell("A", exit_value="1", heading="Heading A").render())
+        self.fx.write_receipt(self.fx.cell("Heading A", exit_value="1").render())
         out = self.fx.run()[1]
         first = out.splitlines()[0]
         self.assertTrue(first.startswith("EXIT_MISMATCH Heading A: "), first)
@@ -378,7 +378,7 @@ class DefectCodeTests(GateTestCase):
     def test_every_code_is_distinct_and_printed(self) -> None:
         values = [code.value for code in evidence_gate.DefectCode]
         self.assertEqual(len(values), len(set(values)))
-        self.assertEqual(len(values), 12)
+        self.assertEqual(len(values), 14)
 
 
 class EscapeShapeTests(GateTestCase):
@@ -395,7 +395,7 @@ class EscapeShapeTests(GateTestCase):
         self.assertEqual(codes, ["STATEMENT_HAS_RUN_FIELDS"] * 4 + ["NOT_RUN"])
 
     def test_lower_case_statement_is_a_run_cell_and_so_incomplete(self) -> None:
-        codes = self.red(self.fx.cell("A").render(), "## s\ncell: statement\n")
+        codes = self.red(self.fx.cell("A").render(), "## statement\ncell: statement\n")
         self.assertEqual(codes, ["CELL_FIELD_MISSING"] * 4)  # candidate, tool_digest:, capture, exit
 
     def test_missing_tool_digest_label_is_a_missing_field(self) -> None:
@@ -494,6 +494,286 @@ class CapturePathTests(GateTestCase):
         except (OSError, NotImplementedError):
             self.skipTest("symlinks are not available")
         self.assertEqual(self.capture_red("link.txt"), ["CAPTURE_MISSING"])
+
+    def test_directory_junction_pointing_outside_the_root_is_not_read(self) -> None:
+        if os.name != "nt":
+            self.skipTest("directory junctions exist on Windows only; the symlink test covers other hosts")
+        outside = self.fx.base / "outside_dir"
+        outside.mkdir()
+        (outside / "A.txt").write_bytes(b"A ran\nexit=0\n")
+        junction = self.fx.evidence / "jn"
+        made = subprocess.run(["cmd", "/c", "mklink", "/J", str(junction), str(outside)], capture_output=True)
+        self.assertEqual(made.returncode, 0, made.stdout + made.stderr)  # a junction needs no privilege
+        self.addCleanup(os.rmdir, junction)
+        self.assertTrue((junction / "A.txt").is_file())  # the target reads fine; only confinement can refuse it
+        self.assertEqual(self.capture_red("jn/A.txt"), ["CAPTURE_MISSING"])
+
+
+class RepeatedFieldAndNameTests(GateTestCase):
+    """A field given twice, a second fence, a heading that differs from the cell name."""
+
+    def run_text(self, text: str) -> tuple[int, str, str]:
+        self.fx.receipt.write_bytes(("# receipt\n\n" + text).encode("utf-8"))
+        return self.fx.run()
+
+    def with_extra_line(self, anchor: str, extra: str) -> str:
+        text = self.fx.cell("A").render()
+        self.assertEqual(text.count(anchor), 1)
+        return text.replace(anchor, anchor + "\n" + extra)
+
+    def test_a_second_single_value_field_is_field_repeated(self) -> None:
+        other = "1" * 40
+        for name, anchor, extra in (
+            ("cell", "cell: A", "cell: A"),
+            ("candidate", f"candidate: {self.fx.candidate}", f"candidate: {other}"),
+            ("capture", "capture: A.txt", "capture: A.txt"),
+            ("exit", "exit: 0", "exit: 1"),
+        ):
+            with self.subTest(field=name):
+                code, out, _ = self.run_text(self.with_extra_line(anchor, extra))
+                self.assertEqual(code, 1, out)
+                self.assertIn(f"FIELD_REPEATED A: {name}: given more than once\n", out)
+
+    def test_a_second_tool_digest_label_is_field_repeated(self) -> None:
+        text = self.fx.cell("A").render().replace("capture: A.txt", "tool_digest:\ncapture: A.txt")
+        code, out, _ = self.run_text(text)
+        self.assertEqual((code, self.fx.codes(out)), (1, ["FIELD_REPEATED"]))
+        self.assertIn("tool_digest: given more than once", out)
+
+    def test_a_second_fence_is_field_repeated(self) -> None:
+        text = self.fx.cell("A").render() + f"\n{FENCE}\nanother block\n{FENCE}\n"
+        code, out, _ = self.run_text(text)
+        self.assertEqual((code, self.fx.codes(out)), (1, ["FIELD_REPEATED"]))
+        self.assertIn("FIELD_REPEATED A: second fenced block\n", out)
+
+    def test_every_repeated_field_is_reported_once_each(self) -> None:
+        text = self.fx.cell("A").render().replace("exit: 0", "exit: 0\nexit: 0\nexit: 0\ncell: A")
+        code, out, _ = self.run_text(text)
+        self.assertEqual((code, self.fx.codes(out)), (1, ["FIELD_REPEATED", "FIELD_REPEATED"]))
+
+    def test_a_field_name_inside_the_fence_is_not_a_repeat(self) -> None:
+        spec = self.fx.cell("A", "cell: A\nexit: 0\nexit=0\n")
+        self.fx.write_receipt(spec.render())
+        self.assertEqual(self.fx.run()[0], 0)
+
+    def test_heading_different_from_the_cell_value_is_cell_name_mismatch(self) -> None:
+        self.assertEqual(self.red(self.fx.cell("A", heading="B").render()), ["CELL_NAME_MISMATCH"])
+
+    def test_cell_name_mismatch_line_names_both(self) -> None:
+        self.fx.write_receipt(self.fx.cell("A", heading="B").render())
+        out = self.fx.run()[1]
+        self.assertIn("CELL_NAME_MISMATCH B: cell: line names 'A', the heading names 'B'\n", out)
+
+    def test_a_mismatched_cell_still_counts_as_the_named_cell(self) -> None:
+        self.fx.write_receipt(self.fx.cell("A", heading="B").render())
+        code, out, _ = self.fx.run(["--require-cell", "A"])
+        self.assertEqual((code, self.fx.codes(out)), (1, ["CELL_NAME_MISMATCH"]))  # reported once, not as NOT_RUN
+
+
+class DigestPathTests(GateTestCase):
+    """A digest path of a bad form is a red; a well-formed one is read from the repository root."""
+
+    def digest_result(self, extra_path: str, digest: str | None = None, repo: Path | None = None) -> tuple[int, list[str], str]:
+        value = digest if digest is not None else sha256(b"x")
+        spec = self.fx.cell("A", digests=self.fx.good_digests() + [f"{extra_path}={value}"])
+        self.fx.write_receipt(spec.render())
+        code, out, err = self.fx.run(repo=repo)
+        self.assertEqual(err, "", err)
+        return code, self.fx.codes(out), out
+
+    def test_a_path_of_a_bad_form_is_tool_digest_stale_exit_one(self) -> None:
+        for bad in (
+            "../outside", "tools/../../outside", "tools/../tools/probe.py", "..\\outside",
+            "/abs/probe.py", "\\\\host\\share\\probe.py", "C:/probe.py", "C:probe.py", "c:\\probe.py",
+            ":(top)tools/probe.py", ":/tools/probe.py", ":x",
+        ):
+            with self.subTest(path=bad):
+                code, codes, _ = self.digest_result(bad)
+                self.assertEqual((code, codes), (1, ["TOOL_DIGEST_STALE"]))
+
+    def test_an_empty_path_is_tool_digest_stale(self) -> None:
+        code, codes, _ = self.digest_result("")
+        self.assertEqual((code, codes), (1, ["TOOL_DIGEST_STALE"]))
+
+    def test_a_well_formed_extra_path_with_its_digest_passes(self) -> None:
+        code, codes, out = self.digest_result(OTHER_TOOL_PATH, sha256(OTHER_TOOL_BODY))
+        self.assertEqual((code, codes), (0, []), out)
+
+    def test_a_well_formed_extra_path_absent_at_the_candidate_is_stale(self) -> None:
+        code, codes, _ = self.digest_result("tools/ghost.py")
+        self.assertEqual((code, codes), (1, ["TOOL_DIGEST_STALE"]))
+
+    def test_dots_inside_a_name_are_not_a_parent_segment(self) -> None:
+        self.fx.write_tool("tools/a..b.py", b"x\n")
+        self.fx.candidate = self.fx.commit("dotted name")
+        code, codes, out = self.digest_result("tools/a..b.py", sha256(b"x\n"))
+        self.assertEqual((code, codes), (0, []), out)
+
+    def test_repo_a_subdirectory_gives_the_same_result_as_the_root(self) -> None:
+        subdirectory = self.fx.repo / "tools"
+        good = self.digest_result(OTHER_TOOL_PATH, sha256(OTHER_TOOL_BODY), repo=subdirectory)
+        self.assertEqual(good[:2], (0, []), good[2])
+        ghost = self.digest_result("tools/ghost.py", repo=subdirectory)
+        self.assertEqual(ghost[:2], (1, ["TOOL_DIGEST_STALE"]))
+        bad = self.digest_result("../outside", repo=subdirectory)
+        self.assertEqual(bad[:2], (1, ["TOOL_DIGEST_STALE"]))
+
+    def test_repo_a_subdirectory_reads_the_tool_arguments_from_the_root_too(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts())
+        code, out, err = self.fx.run(repo=self.fx.repo / "tools")
+        self.assertEqual((code, out, err), (0, "cells=2 defects=0\n", ""))
+
+
+class ExitLineTests(GateTestCase):
+    def test_exit_equals_inside_a_longer_line_is_not_an_exit(self) -> None:
+        spec = self.fx.cell("A", "ran with exit=3 inside\nexit=0\n", exit_value="0")
+        self.fx.write_receipt(spec.render())
+        self.assertEqual(self.fx.run()[0], 0)
+
+    def test_a_capture_holding_exit_only_inside_longer_lines_has_no_exit(self) -> None:
+        for text in ("child exit=0\n", "exit=0 \n", " exit=0\n", "exit=0;\n", "# exit=0\n", "exit=\n", "exit=x\n"):
+            with self.subTest(text=text):
+                spec = self.fx.cell("A", text, exit_value="0")
+                self.assertEqual(self.red(spec.render()), ["EXIT_MISMATCH"])
+
+    def test_listing_the_embedded_exit_is_a_mismatch(self) -> None:
+        spec = self.fx.cell("A", "ran with exit=3 inside\nexit=0\n", exit_value="3,0")
+        self.assertEqual(self.red(spec.render()), ["EXIT_MISMATCH"])
+
+    def test_negative_and_multi_digit_exit_lines_count(self) -> None:
+        spec = self.fx.cell("A", "exit=-1\nexit=255\n", exit_value="-1,255")
+        self.fx.write_receipt(spec.render())
+        self.assertEqual(self.fx.run()[0], 0)
+
+
+class ReceiptEncodingTests(GateTestCase):
+    def test_a_utf8_bom_before_the_first_heading_is_read(self) -> None:
+        self.fx.receipt.write_bytes(b"\xef\xbb\xbf" + self.fx.cell("A").render().encode("utf-8"))
+        code, out, _ = self.fx.run()
+        self.assertEqual((code, out), (0, "cells=1 defects=0\n"))
+
+    def test_a_bom_with_crlf_line_endings_is_read(self) -> None:
+        text = self.fx.cell("A").render().replace("\n", "\r\n")
+        self.fx.receipt.write_bytes(b"\xef\xbb\xbf" + text.encode("utf-8"))
+        code, out, _ = self.fx.run()
+        self.assertEqual((code, out), (0, "cells=1 defects=0\n"))
+
+
+class TextValueTests(GateTestCase):
+    """Lone surrogates and control characters in receipt fields are reds; every printed subject is one line."""
+
+    def run_bytes(self, raw: bytes, extra: Sequence[str] = ()) -> tuple[int, str, str]:
+        self.fx.receipt.write_bytes(raw)
+        return self.fx.run(extra)
+
+    def assert_one_line_per_defect(self, out: str) -> None:
+        lines = out.split("\n")
+        self.assertEqual(lines[-1], "")
+        self.assertEqual(len(out.splitlines()), len(lines) - 1, repr(out))  # no hidden line separator
+        for line in out.splitlines()[:-1]:
+            self.assertRegex(line, r"^[A-Z_]+ ")
+        self.assertRegex(out.splitlines()[-1], r"^cells=\d+ defects=\d+$")
+
+    def test_invalid_utf8_in_a_capture_reference_is_a_red(self) -> None:
+        raw = self.fx.cell("A").render().encode("utf-8").replace(b"capture: A.txt", b"capture: A\xff.txt")
+        code, out, err = self.run_bytes(raw)
+        self.assertEqual((code, err, self.fx.codes(out)), (1, "", ["CAPTURE_MISSING"]))
+        self.assertIn("\\udcff", out)
+        self.assert_one_line_per_defect(out)
+
+    def test_invalid_utf8_in_candidate_exit_and_digest_value_is_a_red(self) -> None:
+        text = self.fx.cell("A").render().encode("utf-8")
+        digest = sha256(TOOL_BODY).encode()
+        for old, new in (
+            (b"exit: 0", b"exit: 0\xff"),
+            (self.fx.candidate.encode(), self.fx.candidate.encode()[:-1] + b"\xfe"),
+            (digest, digest[:-1] + b"\xfe"),
+        ):
+            with self.subTest(old=old[:8]):
+                code, out, err = self.run_bytes(text.replace(old, new, 1))
+                self.assertEqual((code, err), (1, ""))
+                self.assert_one_line_per_defect(out)
+
+    def test_a_lone_surrogate_encoded_as_cesu_bytes_is_a_red(self) -> None:
+        raw = self.fx.cell("A").render().encode("utf-8").replace(b"capture: A.txt", b"capture: A\xed\xa0\x80.txt")
+        code, out, err = self.run_bytes(raw)
+        self.assertEqual((code, err, self.fx.codes(out)), (1, "", ["CAPTURE_MISSING"]))
+
+    def test_control_characters_in_a_capture_reference_are_never_read(self) -> None:
+        for control in ("\x00", "\x01", "\x1b", "\x7f", "\t"):
+            with self.subTest(control=repr(control)):
+                text = self.fx.cell("A").render().replace("capture: A.txt", f"capture: A{control}b.txt")
+                code, out, err = self.run_bytes(text.encode("utf-8"))
+                self.assertEqual((code, err, self.fx.codes(out)), (1, "", ["CAPTURE_MISSING"]))
+                self.assert_one_line_per_defect(out)
+
+    def test_a_trailing_control_character_is_not_stripped_away(self) -> None:
+        for field_line in ("capture: A.txt", "exit: 0", f"candidate: {self.fx.candidate}"):
+            with self.subTest(field=field_line):
+                text = self.fx.cell("A").render().replace(field_line, field_line + "\x1f")
+                code, out, err = self.run_bytes(text.encode("utf-8"))
+                self.assertEqual((code, err), (1, ""))
+                self.assert_one_line_per_defect(out)
+
+    def test_a_control_character_in_a_digest_path_is_a_stale_digest(self) -> None:
+        spec = self.fx.cell("A", digests=self.fx.good_digests() + [f"tools/se\x01cond.py={sha256(b'x')}"])
+        code, out, err = self.run_bytes(spec.render().encode("utf-8"))
+        self.assertEqual((code, err, self.fx.codes(out)), (1, "", ["TOOL_DIGEST_STALE"]))
+        self.assertIn("\\x01", out)
+        self.assert_one_line_per_defect(out)
+
+    def test_a_control_character_in_a_heading_or_cell_name_is_not_run(self) -> None:
+        text = self.fx.cell("A").render()
+        for variant in (text.replace("## A", "## A\x01").replace("cell: A", "cell: A\x01"), text.replace("## A", "## A\x0b")):
+            with self.subTest(variant=variant[:12]):
+                code, out, err = self.run_bytes(("## ok\ncell: STATEMENT\n" + variant).encode("utf-8"))
+                self.assertEqual((code, err), (1, ""))
+                self.assertIn("NOT_RUN ", out)
+                self.assertIn("NO_CELLS ", out)
+                self.assert_one_line_per_defect(out)
+
+    def test_a_statement_heading_with_a_control_character_is_a_red(self) -> None:
+        raw = ("## S\x02\ncell: STATEMENT\n\n" + self.fx.cell("A").render()).encode("utf-8")
+        code, out, _ = self.run_bytes(raw)
+        self.assertEqual((code, self.fx.codes(out)), (1, ["NOT_RUN"]))
+
+    def test_line_separators_in_a_printed_subject_cannot_forge_a_line(self) -> None:
+        forged = "B\u2028NO_CELLS x\u2029more\x85end"
+        text = self.fx.cell("A", heading=forged).render()
+        code, out, err = self.run_bytes(("# t\n\n" + text).encode("utf-8"))
+        self.assertEqual((code, err), (1, ""))
+        self.assertEqual(self.fx.codes(out), ["CELL_NAME_MISMATCH"])
+        self.assertEqual(len(out.splitlines()), 2, repr(out))
+        self.assertIn("\\u2028", out)
+        self.assertIn("\\x85", out)
+
+    def test_a_required_cell_name_is_printed_on_one_line_and_bad_ones_are_usage_errors(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts())
+        code, out, err = self.fx.run(["--require-cell", "Z\u2028NO_CELLS x"])
+        self.assertEqual((code, err), (1, ""))
+        self.assertEqual(len(out.splitlines()), 2, repr(out))
+        for bad in ("Z\nNO_CELLS x", "Z\udcff"):
+            with self.subTest(bad=bad):
+                code, _, err = self.fx.run(["--require-cell", bad])
+                self.assertEqual(code, 3, err)
+
+    def test_a_tool_argument_with_a_control_character_is_a_usage_error(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts())
+        code, out, err = self.fx.run(tools=[TOOL_PATH, "tools/a\x01b.py"])
+        self.assertEqual((code, out), (3, ""))
+        self.assertNotIn("\x01", err)
+
+    def test_a_candidate_value_is_printed_escaped(self) -> None:
+        text = self.fx.cell("A").render().replace(f"candidate: {self.fx.candidate}", "candidate: " + "\x07" * 40)
+        code, out, err = self.run_bytes(text.encode("utf-8"))
+        self.assertEqual((code, err), (1, ""))
+        self.assert_one_line_per_defect(out)
+        self.assertNotIn("\x07", out)
+
+    def test_a_capture_may_hold_control_characters_it_is_data_not_a_field(self) -> None:
+        spec = self.fx.cell("A", "esc \x1b[0m\x0c\nexit=0\n")
+        self.fx.write_receipt(spec.render())
+        self.assertEqual(self.fx.run()[0], 0)
 
 
 class EmptyAndTokenTests(GateTestCase):

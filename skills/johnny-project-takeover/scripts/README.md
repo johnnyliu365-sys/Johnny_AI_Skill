@@ -112,8 +112,17 @@ defect, then `cells=N defects=M`. Defect codes: `NO_CELLS`, `NOT_RUN` (a section
 `TOOL_DIGEST_STALE`, `CAPTURE_MISSING` (also a path that escapes the evidence root: an
 absolute path, a drive letter, `..` leaving the root, a trailing slash), `CAPTURE_CR`,
 `BLOCK_MISMATCH` (the lines between the fences joined with LF plus a final LF must equal the
-capture byte for byte) and `EXIT_MISMATCH` (the `exit:` list must equal the `exit=N` lines of
-the capture, in order). Exit 2: the receipt or a capture cannot be read, the evidence root is
+capture byte for byte), `EXIT_MISMATCH` (the `exit:` list must equal the lines of the capture
+that consist of `exit=N` alone, in order; `exit=N` inside a longer line does not count),
+`FIELD_REPEATED` (a run cell holds a second `cell:`, `candidate:`, `tool_digest:`, `capture:`
+or `exit:` line, or a second fence) and `CELL_NAME_MISMATCH` (the `cell:` value differs from
+the `## ` heading). A `tool_digest` path is checked for form before git is asked: an absolute
+path, a drive letter, a `..` segment, a leading `:` (pathspec magic), an empty path or a path
+with a control character is `TOOL_DIGEST_STALE`; a well-formed path is read from the
+repository root, so `--repo` may be any directory inside the repository. A string in the
+receipt that holds a lone surrogate or a control character is a red (a capture reference is
+`CAPTURE_MISSING`, a section or cell name is `NOT_RUN`), never a fault, and every printed
+subject is escaped so one defect is always one line. Exit 2: the receipt or a capture cannot be read, the evidence root is
 not a directory, `git` cannot start, `--repo` is not a repository, the candidate or a
 `--tool` path cannot be read from it, or an unexpected error. Exit 3: a missing or unknown
 argument, no `--tool`, a blank `--tool` or `--require-cell`, a `--candidate` that is not a
