@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision03 / receipt under `.worktrees/53-contract-gate-out/` / owner implementation seat / worktree `.worktrees/53-contract-gate` / branch `cp/wave2-53-contract-gate` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision04 / receipt under `.worktrees/53-contract-gate-out/` / owner implementation seat / worktree `.worktrees/53-contract-gate` / branch `cp/wave2-53-contract-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S53-08 to S53-13; implementation 3 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 initial review: S53-15 to S53-18 TICKET_DEFECT; correction 1 dispatched to the same seat） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/53-contract-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/53-contract-gate-review` |
@@ -97,7 +97,7 @@ Every string read from an input is valid Unicode without lone surrogates and wit
 1. 正常行為：a snapshot with two active requirements, two specs declaring them with correct sources and mutations and ledger-based asserts → exit 0.
 2. 規則違反／輸入錯誤：one test per defect code; a spec carrying several defects reports each; `assert x == expected_from_ledger` is not a literal; `assert x == 3`, `assert "a" == y`, `assert x in (1, 2)` are literal; `assert x is None` is not.
 3. 外部失敗／fail-closed：snapshot unreadable → 2; snapshot that is not an R4-7 snapshot (not JSON, no `rows`, a row without `requirement_id` or `status`) → 3 with the reason (the argument is not a snapshot); `--specs` not a directory → 2; URL source → 2 `SOURCE_UNSERVABLE`.
-4. 回歸保護：an assert behind 1500 `not` and an assert against a 4000-digit hex literal each give exit 1 with `LITERAL_EXPECTED`; a spec whose first source is correct and a later one is wrong reports the later one; `Test_x.py` is not collected; a newline, CR, U+2028 or NEL inside a snapshot id or any subject is escaped so one defect is one line; declarations after the first code line are ignored; a latin-1 and a cp950 spec with a PEP 263 declaration and a non-ASCII literal each give `LITERAL_EXPECTED` exit 1; a spec that cannot be decoded is a red; `ast.parse` raising `RecursionError` or `MemoryError` is a red; a 40000-character source path and a `:(glob)` source are `SOURCE_MISSING`; git failing during a lookup is exit 2, never `SOURCE_MISSING`; a control character, ESC or TAB inside or around a declaration value is a red with its key's code; `--repo` a subdirectory or a plain directory inside a work tree is exit 2; an inherited `GIT_DIR` does not change the result; a junction under `--specs` is not followed; a snapshot with a repeated key is exit 3; fault and usage messages print on one line; the scripts README test counts with number words up to twenty; Windows CRLF spec files read the same; a source path given with `./` or backslashes resolves the same, and one with `..` escaping the repository is `SOURCE_MISSING`.
+4. 回歸保護：an assert behind 1500 `not` and an assert against a 4000-digit hex literal each give exit 1 with `LITERAL_EXPECTED`; a spec whose first source is correct and a later one is wrong reports the later one; `Test_x.py` is not collected; a newline, CR, U+2028 or NEL inside a snapshot id or any subject is escaped so one defect is one line; declarations after the first code line are ignored; a latin-1 and a cp950 spec with a PEP 263 declaration and a non-ASCII literal each give `LITERAL_EXPECTED` exit 1; a spec that cannot be decoded is a red; `ast.parse` raising `RecursionError` or `MemoryError` is a red; a 40000-character source path and a `:(glob)` source are `SOURCE_MISSING`; git failing during a lookup is exit 2, never `SOURCE_MISSING`; a control character or ESC inside a declaration value, or one other than a space or a tab around it, is a red with its key's code (spaces and tabs around a value are removed); `--repo` a subdirectory or a plain directory inside a work tree is exit 2; an inherited `GIT_DIR` does not change the result; a junction under `--specs` is not followed; a snapshot with a repeated key is exit 3; every fault message prints on one line, and a usage error prints the fixed usage banner followed by one escaped error line; the scripts README test counts with number words up to twenty; Windows CRLF spec files read the same; a source path given with `./` or backslashes resolves the same, and one with `..` escaping the repository is `SOURCE_MISSING`.
 
 ### 適用的缺陷類別
 
@@ -158,3 +158,24 @@ Review record section "Revision02 correction review". CodeReview §5: the closur
 ### Disposition correction (revision03, during implementation 3)
 
 The ticket 51 revision03 review found that git follows replace refs in `cat-file` and `ls-tree`, so a blob read "at HEAD" or "at a commit" can be another object (S51-16), and that a lookup can fetch over the network in a partial clone. The same applies here. Added to this revision: Every git child runs with `--no-replace-objects` (and `GIT_NO_REPLACE_OBJECTS=1`), with `GIT_NO_LAZY_FETCH=1`, and with the repository-selecting `GIT_*` variables removed (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`, and the `GIT_CONFIG_*` variables); a replace ref never redirects a lookup and a lookup never fetches over the network. One test with `git replace` on a blob this gate reads. Nothing else changes.
+
+## Re-plan to closure revision04 (after the revision03 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision03 initial review". S53-15 to S53-18 are `TICKET_DEFECT`s; the closure is rebuilt here before correction 1. The revision03 design (per-spec guard, source decoding, canonical paths, one literal lookup, git environment) stands.
+
+### Rules added in revision04 (binding)
+
+- One commit per run: `HEAD` is resolved once to a full object id at the start, and every lookup of the run uses that id through one `cat-file --batch` process.
+- Entry mode and unservable objects: a source's tree entry is read from its parent tree (`<commit>:<parent>`) through the same standard input. A source whose entry is a symbolic link (mode `120000`) or a gitlink is `SOURCE_MISSING` ("not a regular file"): a contract cites file content, never a link. An entry the parent tree names but the store cannot serve is a fault; a path the parent tree does not name is `SOURCE_MISSING`.
+- Red before fault (the reading of R4-2 applied in tickets 51, 52, 54 and 56, awaiting owner confirmation): the gate reports every red it can find and exits 1 if there is one, with each fault, `SOURCE_UNSERVABLE` included, printed on stderr on one line; it exits 2 only when it found no red. The test that pinned the opposite is inverted.
+- Wording, as TDD 4 now says: spaces and tabs around a declaration value are removed; a usage error prints the banner and one escaped error line.
+
+| Finding | Class | Disposition in revision04 |
+| --- | --- | --- |
+| S53-15 | TICKET_DEFECT | absent and unservable told apart through the parent tree; tests with a pruned blob and a blobless clone give exit 2 |
+| S53-16 | TICKET_DEFECT | symbolic-link and gitlink sources are `SOURCE_MISSING`, with a test that changes the target |
+| S53-17 | TICKET_DEFECT | red before fault, with a URL source beside a literal red, an unreadable spec beside a red, and a git fault after reds |
+| S53-18 | TICKET_DEFECT | the wording above |
+| S53-19 | EVIDENCE_DEFECT | removal mutants for all six codes in M1 |
+| S53-20 | EVIDENCE_DEFECT | tests for a chained comparison with a literal beyond the first comparator, Unicode whitespace as the separator and in the key, the `--batch` size check, an inexact `missing` answer, and `-True` |
+| S53-21 | OUT_OF_SCOPE_HARDENING (taken now) | one commit per run, as above |

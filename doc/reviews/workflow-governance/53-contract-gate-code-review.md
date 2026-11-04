@@ -120,3 +120,61 @@ verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/53-rev02-correction
 reviewed_at: 2026-11-04
 ```
+
+## Revision03 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `4252fda6fce6dd6facc9d180e423f94cae224b52` (`4252fda6` implementation 3 → `09af7a1f` → `5ea02c13` → `fd456159`, on `c0ab4a08`) |
+| Closure | revision03 with the git-environment disposition correction |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision03 |
+| Summary | The revision03 design holds: every failure derived from a spec's bytes is a red, source paths are canonical and looked up literally through standard input, replace refs, grafts, scrubbed variables and lazy fetch cannot change the blob read, S53-08 to S53-14 are closed, the seat's 39 mutants are red without `-x`. No implementation defect. Blocking evidence: six counter-mutations survive (S53-20) and the receipt lacks two required removal mutants (S53-19). Ticket defects: an unservable blob reported as a red (S53-15), a tracked symlink source that lets cited content drift (S53-16, safety), one fault hiding every red (S53-17), two wording conflicts (S53-18). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 160 passed, 1 skipped (no file-symlink privilege), 458 subtests; mypy --strict clean |
+| Per-spec guard | PASS | 23 hostile specs (encodings, PEP 263, deep nesting, huge literals, parser and analyser exceptions) all exit 1 |
+| Source paths and literal lookup | PASS | 31 path shapes resolve only to themselves or are refused before any lookup |
+| Git environment | PASS | replaced commits, configuration that turns replace refs back on, grafts, scrubbed variables, a planted `git.exe` |
+| `--repo` top level; snapshot; links | PASS | junction not walked; file symlinks untested on this host |
+| R4-2 and one line | PASS for single-cause runs | combined red and fault: S53-17 |
+| Seat choices | judged | symlink as link text opens S53-16; dot segments agreed; `-x` acceptable after a full rerun; mid-work rule accepted |
+| Reverse mutations | FAIL | seat 39 of 39 red; reviewer 52: 44 red, 2 equivalent, 6 findings (S53-20) |
+| Receipt | PARTIAL | checker 0 defects; digests recomputed; LF; two removal mutants missing (S53-19) |
+| Boundary | PASS | three files; Johnny Liu; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S53-01 to S53-06, S53-08, S53-09, S53-11 to S53-14 | CLOSED |
+| S53-07 | not taken; no regression |
+| S53-10 | CLOSED for values; key pattern and separator unpinned (S53-20) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S53-15 | TICKET_DEFECT | Medium (changes an exit code; fails closed) | ticket "Source bytes"; `contract_gate.py:376-377, 441-442` | an object HEAD names but the store cannot serve answers `missing` and is reported as `SOURCE_MISSING`, a fault reported as a red; with `GIT_NO_LAZY_FETCH=1` every non-local blob of a blobless clone does this | probes: pruned blob, blobless clone |
+| S53-16 | TICKET_DEFECT | Medium (safety: a contract stays green while its cited content changes) | ticket "Source bytes"; `contract_gate.py:448-455`; test `:963` | a tracked symlink source is digested as its link text; after the target changes and is committed the gate still exits 0 | probes H1, H2 |
+| S53-17 | TICKET_DEFECT | Medium (changes an exit code; hides reds, never passes) | `contract_gate.py:601, 607-609, 714-716`; test `:642` | one fault (a URL source, an unreadable spec, a git fault) drops every red and exits 2 | probes E1 to E4 |
+| S53-18 | TICKET_DEFECT | Low (wording) | ticket TDD 4 and "Declaration values"; tests `:1532, :1822` | TDD 4 says a TAB around a value is a red while "Declaration values" removes it; TDD 4 says usage prints one line while the candidate prints a banner and one line | probes |
+| S53-19 | EVIDENCE_DEFECT | Low (evidence gap only) | receipt M1 | removal mutants for `SOURCE_MISSING` and `RETIRED_REQUIREMENT_BOUND` missing; the tests pin them | reviewer R23 to R26 red |
+| S53-20 | EVIDENCE_DEFECT | Low (R51 safety-adjacent; others evidence) | `contract_gate.py:81, 83, 441, 453, 464, 497` | unpinned: chained comparisons beyond the first comparator; Unicode whitespace as the path-digest separator and in the key pattern; the `--batch` size check; `missing` as an exact answer; `-True` as a signed number | R51, R09, R10, R15, R16, R21 green |
+| S53-21 | OUT_OF_SCOPE_HARDENING | Low | `contract_gate.py:426-455` | HEAD is resolved again per lookup in two processes per source, so a commit landing mid-run can mix trees | read |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: a real file symlink under `--specs`; POSIX behaviour; a hanging git; HEAD moving mid-run.
+
+```review-verdict
+candidate: 4252fda6fce6dd6facc9d180e423f94cae224b52
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/53-rev03-initial
+reviewed_at: 2026-11-04
+```
