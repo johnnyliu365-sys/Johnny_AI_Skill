@@ -206,6 +206,22 @@ The eleven-stage sequence applies to `GREENFIELD`. `TAKEOVER` and `DELTA` enter 
 - Post-push readback: the integration script records the CI run result for the landed sha and, where a deploy target exists, the served fingerprint of at least one changed file; both go into the integration receipt before the entry is marked `LANDED`.
 - Exit mapping is the single table in R4-2; a gate that cannot start (missing interpreter, unreadable input directory) exits 2, never 1.
 
+### R4-8 Wave-2 contracts (PROPOSED 2026-11-04; binding only after the owner approves it)
+
+R4-7 fixes the queue entry, the receipt cell, the snapshot and the contract-gate codes. This rule fixes what the wave-2 tickets still need and states where it amends R4-7. Until the owner approves R4-8 the tickets that depend on it are not dispatched.
+
+- Integration script (`skills/johnny-project-takeover/scripts/integrate.py`), three subcommands, one configuration file `doc/handoffs/<year>/governance/integration.json` in the target project (path parameterised) naming the remote, the integration branch, the affected-spec command and the CI-status command as argument lists.
+  - `submit` writes a `QUEUED` entry. It reads `review_candidate`, `verdict` and `reviewer` from the last `review-verdict` block of the record for that candidate, refuses a verdict other than `APPROVED`, refuses `submitter` = `reviewer` and refuses a key that already exists.
+  - `land` takes the oldest admissible `QUEUED` entry, fast-forwards a disposable checkout of the current remote tip onto the candidate, runs the affected specs and the CI invariant classes, appends one commit that records the entry's new state in the queue file, and pushes candidate plus that commit in one push with `--force-with-lease` on the tip it read.
+  - `readback` asks the CI-status command about every entry in `LANDED_PENDING_CI` and moves it to `LANDED` (green) or `LANDED_CI_RED` (red); pending leaves it unchanged.
+- Amendments to R4-7. The queue file lives on the integration branch itself, so the compare-and-swap on the remote tip is also the compare-and-swap on the queue file; a lost race is `BOUNCED` with `TIP_MOVED` and the submitter resubmits a rebased candidate under a new key. The lock row of R4-7 is dropped: the remote compare-and-swap is the mutual exclusion. A new state `LANDED_PENDING_CI` (pushed, CI result not yet read) blocks further landings exactly as `LANDED_CI_RED` does, and is not terminal.
+- Exit codes of the integration script: 0 landed, or nothing to do; 1 an entry bounced or a precondition is red; 2 git, the remote or a configured command cannot serve the run; 3 usage.
+- Contract gate: a target-project spec declares, in its first comment block, `requirement: <id>`, one or more `source: <repository-relative path or URL> sha256:<hex>`, and `mutation: <name>`. For Python specs (`test_*.py`) an `assert` that compares a value with a literal constant is `LITERAL_EXPECTED`; expected values are read from a ledger. Other languages are out of scope for wave 2.
+- Coverage-map guard: `doc/handoffs/<year>/governance/coverage-map.json` holds rows `assertion` (spec path plus test name), `disposition` (`carried` | `dropped` | `escalated`), `carried_to`, `reason`, `ticket`. Between a base and a candidate, every test function removed from a spec file must have a row; `dropped` needs a reason and `escalated` a ticket. Missing row or field is exit 1.
+- Preflight gate: the dispatch file carries `preflight:` items, each with `tool`, `start` (argument list), `probe` (argument list) and `expect` (a substring of the probe output). The gate runs each; a tool that cannot start or a probe that does not show `expect` is exit 2; all served is exit 0.
+- Tool-repair guard: the dispatch file carries `repair_allowlist:` paths. For a commit marked as a tool repair, any changed path outside the allowlist, or any change to a spec, a ledger, a product source or a gate script, is exit 1.
+- State-file templates under `template/`: the ticket state row (state, `dispatch=sha256:<hex>`, receipt path), the receipt with R4-7 cells, an empty queue file and `integration.json`.
+
 ### Revision Signatures (Revision 04)
 
 | Date | AI / baseline SHA | Summary |
