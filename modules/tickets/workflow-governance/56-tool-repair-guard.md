@@ -56,6 +56,10 @@ Each is one line at column 0 whose value is one JSON array of strings. An entry 
 | `PROTECTED_PATH_TOUCHED` | a changed path is covered by a `protected_paths` entry or by the gate-script directory, even if it is also in the allowlist |
 | `REPAIR_NOT_SINGLE_PARENT` | the repair commit is a merge or a root commit (a repair is one ordinary commit) |
 
+### Text values (all wave-2 gates; added after the ticket 52 review)
+
+Every string read from an input is valid Unicode without lone surrogates and without control characters (U+0000–U+001F, U+007F) unless a field explicitly allows them; a string that breaks this is a red of the input (exit 1), never a tool fault. Every subject printed in a defect line is printed in a form that cannot span two lines or forge another line (Python `repr` or an equivalent escape), so one defect is always one line.
+
 ## 實作範圍、依賴與 ticket elements
 
 ### 角色指派（必填）

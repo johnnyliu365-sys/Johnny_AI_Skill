@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED` |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S52-07 TICKET_DEFECT; correction 1 dispatched to the same seat） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/52-requirement-snapshot` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/52-requirement-snapshot-review` |
@@ -52,7 +52,18 @@ Exit 2 when the file system cannot serve the run (root not writable, input unrea
 
 ### Defect codes (`take` refuses with exit 1 and writes nothing; `verify` reports)
 
-`ROW_FIELD_MISSING`, `ROW_FIELD_TYPE`, `DUPLICATE_REQUIREMENT`, `STATUS_UNKNOWN`, `SOURCE_REF_ABSOLUTE`, `DIGEST_FORMAT`, `SNAPSHOT_DIGEST_MISMATCH` (verify only), `NAME_INVALID` (a source name with a path separator, `..`, or characters outside `[A-Za-z0-9._-]`).
+`ROW_FIELD_MISSING`, `ROW_FIELD_TYPE` (a field of the wrong type, an unexpected field, a blank or whitespace-only `requirement_id`, a string that breaks the text-value rule below), `DUPLICATE_REQUIREMENT`, `STATUS_UNKNOWN`, `SOURCE_REF_ABSOLUTE` (a `source_ref` that is empty, starts with `/`, `\` or `~`, carries a drive letter, or has a `..` segment; a URL with a scheme is allowed), `DIGEST_FORMAT`, `SNAPSHOT_DIGEST_MISMATCH` (a stored version whose `source_sha256` does not match its rows: reported by `verify`, and by `take` or `diff` whenever they read that version; exit 1), `NAME_INVALID` (a source name with a path separator, `..`, characters outside `[A-Za-z0-9._-]`, a trailing dot, a Windows reserved device name, or a case variant of an existing source; applied by `take`, `verify` and `diff` alike).
+
+`requirement_id`: printable characters only (letters, digits, `._:-/`), 1 to 128 characters; anything else is `ROW_FIELD_TYPE`.
+
+### Version uniqueness
+
+A version number is unique per source whatever the date. `take` claims the number before it publishes: it creates `<root>/<source>/.v<n>.claim` exclusively, re-scans the published files, and if any published file already carries version `n` or higher it removes its claim and exits 2 (another writer won); otherwise it publishes `<date>-v<n>.json` exclusively and removes the claim. A claim it cannot create (another writer holds it) is exit 2. A claim left behind by a crash makes later `take` runs exit 2 naming the claim file, which the owner removes. Claim files are never committed: the scripts README tells target projects to ignore `.v*.claim`.
+
+### Text values (all wave-2 gates; added after the ticket 52 review)
+
+Every string read from an input is valid Unicode without lone surrogates and without control characters (U+0000–U+001F, U+007F) unless a field explicitly allows them; a string that breaks this is a red of the input (exit 1), never a tool fault. Every subject printed in a defect line is printed in a form that cannot span two lines or forge another line (Python `repr` or an equivalent escape), so one defect is always one line.
+
 
 ## 實作範圍、依賴與 ticket elements
 
@@ -77,8 +88,8 @@ Exit 2 when the file system cannot serve the run (root not writable, input unrea
 
 1. 正常行為：`take` twice with different rows → `v1` then `v2`; with equal rows the second run writes nothing and prints `unchanged`; `diff v1 v2` lists the changes; `verify` exits 0 on both files.
 2. 規則違反／輸入錯誤：one test per defect code; `take` with a defect writes no file and leaves earlier versions byte-identical.
-3. 外部失敗／fail-closed：root not writable → exit 2; input unreadable → exit 2; input that is not JSON, or JSON without a `rows` list → exit 1 `ROW_FIELD_TYPE` (a red of the input); an existing target file at write time (a race) → exit 2, never overwritten (exclusive create).
-4. 回歸保護：the canonical digest does not depend on input key order, row order or the input file's line endings; `taken_at` is not part of `source_sha256`.
+3. 外部失敗／fail-closed：two concurrent `take` runs on one source with different dates: exactly one publishes `vN`, the other exits 2 and publishes nothing (a real two-process test plus an injected interleaving); a stale claim exits 2 naming it; root not writable → exit 2; input unreadable → exit 2; input that is not JSON, or JSON without a `rows` list → exit 1 `ROW_FIELD_TYPE` (a red of the input); an existing target file at write time (a race) → exit 2, never overwritten (exclusive create).
+4. 回歸保護：with v1 and v3 published the next `take` writes v4 (highest + 1, not count + 1); a lone surrogate and a newline inside an id are reds printed on one line; the canonical digest does not depend on input key order, row order or the input file's line endings; `taken_at` is not part of `source_sha256`.
 
 ### 適用的缺陷類別
 
@@ -107,3 +118,17 @@ Exit 2 when the file system cannot serve the run (root not writable, input unrea
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Re-plan to closure revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
+
+Review record: `doc/reviews/workflow-governance/52-requirement-snapshot-code-review.md`. S52-07 is a `TICKET_DEFECT`; the closure is rebuilt here before correction 1. The seat's choices for the open cases are adopted where they fit R4-2 and written into the defect codes above; version uniqueness and the text-value rule are new.
+
+| Finding | Class | Disposition in revision02 |
+| --- | --- | --- |
+| S52-01 | IMPLEMENTATION_DEFECT | text-value rule: a lone surrogate is `ROW_FIELD_TYPE` exit 1 in `take` and `verify` |
+| S52-02 | IMPLEMENTATION_DEFECT | `requirement_id` character set; every printed subject escaped, one defect per line |
+| S52-03 | IMPLEMENTATION_DEFECT | version claim file, re-scan after claiming, exit 2 for the loser |
+| S52-04 | EVIDENCE_DEFECT | the v1/v3 gap test |
+| S52-05 | IMPLEMENTATION_DEFECT | README and docstring match the codes above |
+| S52-06 | OUT_OF_SCOPE_HARDENING (taken now) | `diff` applies the case-collision rule |
+| S52-07 | TICKET_DEFECT | the codes, `source_ref`, `requirement_id`, damaged-version and version-uniqueness rules above |

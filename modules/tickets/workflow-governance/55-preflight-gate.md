@@ -55,6 +55,10 @@ preflight:
 
 `start` cannot be launched (not found, not executable); `start` exits non-zero; `start` or `probe` exceeds the timeout (the process is killed); `probe` exits non-zero; `probe` output (stdout and stderr, decoded with replacement) does not contain `expect`. Every tool is tried; all failures are reported, not only the first.
 
+### Text values (all wave-2 gates; added after the ticket 52 review)
+
+Every string read from an input is valid Unicode without lone surrogates and without control characters (U+0000–U+001F, U+007F) unless a field explicitly allows them; a string that breaks this is a red of the input (exit 1), never a tool fault. Every subject printed in a defect line is printed in a form that cannot span two lines or forge another line (Python `repr` or an equivalent escape), so one defect is always one line.
+
 ## 實作範圍、依賴與 ticket elements
 
 ### 角色指派（必填）
