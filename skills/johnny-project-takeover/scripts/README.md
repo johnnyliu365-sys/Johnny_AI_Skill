@@ -171,4 +171,10 @@ Defect codes, printed one per line as `<code> <requirement_id or field>: <detail
 A red exits 1 and `take` then writes nothing. Exit 2, only when no red was found: the root cannot be created or written, the
 input or a snapshot cannot be read, a requested version does not exist, a version exists twice, a
 claim file exists or a version was published by another writer while `take` was working, a target
-appeared while writing, or an unexpected error. Exit 3: bad arguments.
+appeared while writing, or a programming error no input can produce. Exit 3: bad arguments.
+
+Errors that may still end the run at once with exit 2: a file system error, a missing or duplicated
+version, a lost version race or a stale claim, and a programming error that no input can produce.
+A failure derived from the bytes of an input or of a stored version, nesting too deep for the JSON
+parser included, is never one of them: it is a red of that file, `ROW_FIELD_TYPE`, with the code a
+non-JSON file gets.

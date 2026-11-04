@@ -60,8 +60,13 @@ does not exist (exit 2 unless a red was found), never a raw exception text; a to
 row fields.
 
 Exit codes: 0 pass, 1 contract red (named defect codes), 2 tool fault (the file system cannot
-serve the run, a version file is missing, a lost version race or a stale claim, any unexpected
-error), 3 usage error.
+serve the run, a version file is missing, a lost version race or a stale claim, a programming error
+no input can produce), 3 usage error.
+Errors that may still end the run at once with exit 2: a file system error, a missing or duplicated
+version, a lost version race or a stale claim, and a programming error that no input can produce.
+A failure derived from the bytes of an input or of a stored version, nesting too deep for the JSON
+parser included, is never one of them: it is a red of that file, ROW_FIELD_TYPE, with the code a
+non-JSON file gets.
 Red before fault: a command checks everything it can before it decides the exit. If it found any
 red it prints every red on stdout and exits 1; a fault met on the way is printed on stderr, on one
 line, and does not change the exit. It exits 2 only when it found no red and a fault stopped it.
@@ -401,6 +406,10 @@ def _decode_json(data: bytes, subject: str) -> tuple[object | None, list[Defect]
         value: object = json.loads(text, object_pairs_hook=collect)
     except (UnicodeDecodeError, ValueError):
         return None, [Defect(DefectCode.ROW_FIELD_TYPE, subject, "not valid UTF-8 JSON")]
+    except RecursionError:
+        # Nesting the JSON parser cannot follow is a property of the bytes, so it is a red of the file
+        # with the code a non-JSON file gets, never a fault.
+        return None, [Defect(DefectCode.ROW_FIELD_TYPE, subject, "not valid UTF-8 JSON: nested too deeply to read")]
     if repeated:
         return None, [
             Defect(DefectCode.ROW_FIELD_TYPE, subject, f"key {key!r} is repeated in an object") for key in repeated
@@ -622,7 +631,10 @@ def _print_defects(defects: Sequence[Defect]) -> None:
 
 def _one_line(text: str) -> str:
     """A message on one line: every control or line-break character is shown as an escape."""
-    return LINE_BREAK_PATTERN.sub(lambda found: f"\\x{ord(found.group(0)):02x}", text)
+    return LINE_BREAK_PATTERN.sub(
+        lambda found: f"\\x{ord(found.group(0)):02x}" if ord(found.group(0)) < 0x100 else f"\\u{ord(found.group(0)):04x}",
+        text,
+    )
 
 
 def _finish(reds: Sequence[Defect], faults: Sequence[ToolFault]) -> int:
@@ -853,7 +865,11 @@ def _harden_streams() -> None:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Run the command; every unexpected error is a tool fault (exit 2), never a red (exit 1)."""
+    """Run the command; a programming error no input can produce is a tool fault (exit 2), never a red (exit 1).
+
+    A failure derived from the bytes of an input or a stored version is a red of that file and never
+    reaches this handler.
+    """
     _harden_streams()
     args = list(sys.argv[1:] if argv is None else argv)
     try:

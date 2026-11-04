@@ -1645,5 +1645,349 @@ class DocumentedRuleTests(SnapshotCase):
         self.assertIn("Exit 2, only when no red was found", readme)
 
 
+DEEP = 20000
+LINE_BREAKS = ("\n", "\r", "\x0b", "\x0c", "\x1c", "\x1d", "\x1e", "\x85", " ", " ")
+
+
+def codes_of(out: str) -> list[str]:
+    return [match.group(1) for line in out.splitlines() if (match := DEFECT_LINE.match(line))]
+
+
+class InputDerivedFailureTests(SnapshotCase):
+    """A failure derived from the bytes of an input or a stored version is a red, deep nesting included."""
+
+    def deep_rows_input(self) -> Path:
+        return self.env.write_raw_input(('{"rows":' + "[" * DEEP + "]" * DEEP + "}").encode("utf-8"))
+
+    def deep_bytes(self) -> bytes:
+        return ("[" * DEEP + "]" * DEEP).encode("utf-8")
+
+    def non_json_code(self) -> str:
+        code, out, err = self.env.main(
+            "take", "--source", "plain", "--input", str(self.env.write_raw_input(b"not json")),
+            "--root", str(self.env.root),
+        )
+        self.assertEqual((code, err), (1, ""), out)
+        return codes_of(out)[0]
+
+    def take_with(self, source: str, path: Path) -> tuple[int, str, str]:
+        return self.env.main("take", "--source", source, "--input", str(path), "--root", str(self.env.root), "--taken-at", T2)
+
+    def test_a_deep_input_is_a_red_with_the_code_a_non_json_file_gets(self) -> None:
+        for path in (self.deep_rows_input(), self.env.write_raw_input(self.deep_bytes())):
+            with self.subTest(path=path.name):
+                code, out, err = self.take_with("src", path)
+                self.assertEqual((code, err), (1, ""), out)
+                self.assertEqual(codes_of(out), [self.non_json_code()], out)
+                self.assertEqual(len(out.splitlines()), 1, out)
+                self.assertEqual(self.env.tree(), {})
+
+    def test_take_with_an_invalid_name_and_a_deep_input_prints_both_reds(self) -> None:
+        code, out, err = self.take_with("bad name", self.deep_rows_input())
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(sorted(codes_of(out)), sorted(["NAME_INVALID", self.non_json_code()]), out)
+        self.assertEqual(self.env.tree(), {})
+
+    def test_take_with_a_deep_latest_version_and_an_input_red_prints_both_reds(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        latest = self.env.snapshot("src", "2026-11-04-v1.json")
+        latest.write_bytes(self.deep_bytes())
+        before = self.env.tree()
+        code, out, err = self.env.take([make_row("r2", status="x")], taken_at=T2)
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(sorted(codes_of(out)), sorted([self.non_json_code(), "STATUS_UNKNOWN"]), out)
+        self.assertEqual(self.env.tree(), before)
+        code, out, err = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(codes_of(out), [self.non_json_code()], out)
+        self.assertEqual(self.env.tree(), before)
+
+    def test_take_with_a_deep_latest_version_and_a_deep_input_prints_both_reds(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.snapshot("src", "2026-11-04-v1.json").write_bytes(self.deep_bytes())
+        code, out, err = self.take_with("src", self.deep_rows_input())
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(codes_of(out), [self.non_json_code()] * 2, out)
+
+    def test_diff_with_a_damaged_v2_and_a_deep_v3_prints_both_reds(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+        self.env.take([make_row("r3")], taken_at="2026-11-06T00:00:00Z")
+        second = self.env.snapshot("src", "2026-11-05-v2.json")
+        second.write_text(second.read_text(encoding="utf-8").replace("title of", "tampered"), encoding="utf-8", newline="\n")
+        self.env.snapshot("src", "2026-11-06-v3.json").write_bytes(self.deep_bytes())
+        code, out, err = self.env.main("diff", "--source", "src", "2", "3", "--root", str(self.env.root))
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(sorted(codes_of(out)), sorted(["SNAPSHOT_DIGEST_MISMATCH", self.non_json_code()]), out)
+        code, out, err = self.env.main("diff", "--source", "src", "1", "3", "--root", str(self.env.root))
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(codes_of(out), [self.non_json_code()], out)
+
+    def test_verify_of_a_deep_file_is_the_same_red(self) -> None:
+        path = self.env.write_raw_input(self.deep_bytes())
+        code, out, err = self.env.main("verify", str(path))
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(codes_of(out), [self.non_json_code()], out)
+
+    def test_a_deep_input_is_a_red_as_a_real_command_under_the_default_recursion_limit(self) -> None:
+        path = self.deep_rows_input()
+        done = subprocess.run(
+            [sys.executable, str(SCRIPT), "take", "--source", "src", "--input", str(path), "--root", str(self.env.root)],
+            capture_output=True, text=True, encoding="utf-8", env={**os.environ, "PYTHONUTF8": "1"},
+        )
+        self.assertEqual((done.returncode, done.stderr), (1, ""), done.stdout)
+        self.assertEqual(codes_of(done.stdout), [self.non_json_code()])
+
+    def test_a_programming_error_is_still_exit_2_at_once(self) -> None:
+        with mock.patch.object(requirement_snapshot, "parse_input", side_effect=RuntimeError("boom")):
+            code, out, err = self.env.take([make_row("r1")])
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn("RuntimeError", err)
+
+
+class UnreadableVersionTests(SnapshotCase):
+    """An unreadable present version is collected as a fault; a red found on the way still decides exit 1."""
+
+    def make_unreadable(self, name: str) -> None:
+        path = self.env.snapshot("src", name)
+        path.unlink()
+        path.mkdir()
+
+    def triple(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+        self.env.take([make_row("r3")], taken_at="2026-11-06T00:00:00Z")
+
+    def diff(self, first: str, second: str) -> tuple[int, str, str]:
+        return self.env.main("diff", "--source", "src", first, second, "--root", str(self.env.root))
+
+    def test_diff_with_an_unreadable_v2_and_a_damaged_v3_is_exit_1_with_the_fault_on_stderr(self) -> None:
+        self.triple()
+        third = self.env.snapshot("src", "2026-11-06-v3.json")
+        third.write_text(third.read_text(encoding="utf-8").replace("title of", "tampered"), encoding="utf-8", newline="\n")
+        self.make_unreadable("2026-11-05-v2.json")
+        for first, second in (("2", "3"), ("3", "2")):
+            with self.subTest(first=first, second=second):
+                code, out, err = self.diff(first, second)
+                self.assertEqual(code, 1, out + err)
+                self.assertEqual(codes_of(out), ["SNAPSHOT_DIGEST_MISMATCH"], out)
+                self.assertEqual(len(err.splitlines()), 1, err)
+                self.assertIn("cannot read", err)
+                self.assertIn("v2.json", err)
+
+    def test_diff_with_an_unreadable_version_alone_is_exit_2_on_one_line(self) -> None:
+        self.triple()
+        self.make_unreadable("2026-11-05-v2.json")
+        code, out, err = self.diff("1", "2")
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("cannot read", err)
+        code, out, err = self.diff("1", "3")
+        self.assertEqual((code, err), (0, ""), out)
+
+    def test_take_with_an_unreadable_latest_version_and_an_input_red_is_exit_1(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.make_unreadable("2026-11-04-v1.json")
+        code, out, err = self.env.take([make_row("r2", status="x")], taken_at=T2)
+        self.assertEqual(code, 1, out + err)
+        self.assertEqual(codes_of(out), ["STATUS_UNKNOWN"], out)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("cannot read", err)
+        code, out, err = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json"])
+
+
+class VersionArgumentZeroTests(SnapshotCase):
+    """Leading zeros in a version argument name the same version without them."""
+
+    def diff(self, first: str, second: str) -> tuple[int, str, str]:
+        return self.env.main("diff", "--source", "src", first, second, "--root", str(self.env.root))
+
+    def test_leading_zeros_name_the_same_versions(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+        plain = self.diff("1", "2")
+        self.assertEqual(plain, (0, "added r2\nremoved r1\n", ""))
+        for first, second in (("01", "002"), ("v01", "v0002"), ("0001", "v2"), ("v1", "00000000000000000002")):
+            with self.subTest(first=first, second=second):
+                self.assertEqual(self.diff(first, second), plain)
+
+    def test_a_long_run_of_leading_zeros_is_not_an_over_long_version(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        for text in ("0" * 300 + "1", "v" + "0" * 5000 + "1"):
+            with self.subTest(length=len(text)):
+                self.assertEqual(self.diff(text, "1"), (0, "", ""))
+
+    def test_a_version_of_only_zeros_is_a_usage_error(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        for text in ("0", "00", "v000", "0" * 5000):
+            with self.subTest(length=len(text)):
+                code, out, err = self.diff("1", text)
+                self.assertEqual((code, out), (3, ""), err)
+                code, out, err = self.diff(text, "1")
+                self.assertEqual((code, out), (3, ""), err)
+
+    def test_a_leading_zero_version_still_reports_a_missing_version_as_exit_2(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        code, out, err = self.diff("1", "009")
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertIn("version 9 does not exist", err)
+
+
+class OneLineFaultTests(SnapshotCase):
+    """Every fault is one line whatever line break its message names, also through the top-level handler."""
+
+    def assert_one_line(self, err: str, char: str) -> None:
+        self.assertEqual(len(err.splitlines()), 1, repr(err))
+        self.assertNotIn(char, err.removesuffix("\r\n").removesuffix("\n"))
+        self.assertTrue(err.startswith("requirement_snapshot.py: tool fault: "), err)
+
+    def test_the_helper_shows_every_line_break_as_an_escape(self) -> None:
+        for char in LINE_BREAKS:
+            with self.subTest(char=ord(char)):
+                shown_text = requirement_snapshot._one_line(f"a{char}b")
+                self.assertEqual(len(shown_text.splitlines()), 1, repr(shown_text))
+                self.assertNotIn(char, shown_text)
+                self.assertTrue(shown_text.startswith("a") and shown_text.endswith("b"))
+        self.assertEqual(requirement_snapshot._one_line("a b"), "a\\u2028b")
+        self.assertEqual(requirement_snapshot._one_line("a\x85b"), "a\\x85b")
+
+    def test_a_take_fault_naming_a_path_with_a_line_break_is_one_line(self) -> None:
+        for char in LINE_BREAKS:
+            with self.subTest(char=ord(char)):
+                odd = self.env.dir / f"a{char}b.json"
+                code, out, err = self.env.main("take", "--source", "src", "--input", str(odd), "--root", str(self.env.root))
+                self.assertEqual((code, out), (2, ""), err)
+                self.assert_one_line(err, char)
+                code, out, err = self.env.main("take", "--source", "..", "--input", str(odd), "--root", str(self.env.root))
+                self.assertEqual(code, 1, out + err)
+                self.assert_one_line(err, char)
+
+    def test_a_diff_fault_naming_a_path_with_a_line_break_is_one_line(self) -> None:
+        for char in LINE_BREAKS:
+            with self.subTest(char=ord(char)):
+                code, out, err = self.env.main(
+                    "diff", "--source", "src", "1", "1", "--root", str(self.env.dir / f"a{char}b"),
+                )
+                self.assertEqual((code, out), (2, ""), err)
+                self.assert_one_line(err, char)
+
+    def test_the_top_level_handler_prints_a_tool_fault_on_one_line(self) -> None:
+        for char in LINE_BREAKS:
+            with self.subTest(char=ord(char)):
+                code, out, err = self.env.main("verify", str(self.env.dir / f"a{char}b.json"))
+                self.assertEqual((code, out), (2, ""), err)
+                self.assert_one_line(err, char)
+                with mock.patch.object(
+                    requirement_snapshot, "_dispatch", side_effect=requirement_snapshot.ToolFault(f"x{char}y"),
+                ):
+                    code, out, err = self.env.main("verify", "ignored")
+                self.assertEqual((code, out), (2, ""), err)
+                self.assert_one_line(err, char)
+
+    def test_the_top_level_handler_prints_an_unexpected_error_on_one_line(self) -> None:
+        for char in LINE_BREAKS:
+            with self.subTest(char=ord(char)):
+                with mock.patch.object(requirement_snapshot, "_dispatch", side_effect=RuntimeError(f"x{char}y")):
+                    code, out, err = self.env.main("verify", "ignored")
+                self.assertEqual((code, out), (2, ""), err)
+                self.assert_one_line(err, char)
+                self.assertIn("RuntimeError", err)
+
+
+class NothingReadUnderAnInvalidNameTests(SnapshotCase):
+    """Under an invalid or colliding source name the source directory is never listed or read."""
+
+    def run_recorded(self, *args: str) -> tuple[tuple[int, str, str], list[Path], int, int]:
+        with (
+            mock.patch.object(requirement_snapshot, "read_file", wraps=requirement_snapshot.read_file) as reads,
+            mock.patch.object(requirement_snapshot, "list_versions", wraps=requirement_snapshot.list_versions) as lists,
+            mock.patch.object(requirement_snapshot, "_case_collisions", wraps=requirement_snapshot._case_collisions) as scans,
+        ):
+            result = self.env.main(*args)
+        return result, [call.args[0] for call in reads.call_args_list], lists.call_count, scans.call_count
+
+    def stored(self, name: str) -> None:
+        directory = self.env.root / name
+        directory.mkdir(parents=True)
+        self.env.take([make_row("r1")], source="seed", taken_at=T1)
+        (directory / "2026-11-04-v1.json").write_bytes(self.env.snapshot("seed", "2026-11-04-v1.json").read_bytes())
+
+    def test_take_with_an_invalid_name_reads_only_the_input(self) -> None:
+        self.stored("bad name")
+        path = self.env.write_input([make_row("r2")])
+        before = self.env.tree()
+        result, reads, lists, scans = self.run_recorded(
+            "take", "--source", "bad name", "--input", str(path), "--root", str(self.env.root), "--taken-at", T2,
+        )
+        self.assertEqual(result[0], 1, result)
+        self.assertIn("NAME_INVALID", result[1])
+        self.assertEqual(reads, [path])
+        self.assertEqual((lists, scans), (0, 0))
+        self.assertEqual(self.env.tree(), before)
+
+    def test_take_with_an_invalid_name_and_a_bad_input_reads_only_the_input(self) -> None:
+        self.stored("..x.")
+        path = self.env.write_input([make_row("r2", status="x")])
+        result, reads, lists, scans = self.run_recorded(
+            "take", "--source", "..x.", "--input", str(path), "--root", str(self.env.root), "--taken-at", T2,
+        )
+        self.assertEqual(result[0], 1, result)
+        self.assertEqual(sorted(codes_of(result[1])), ["NAME_INVALID", "STATUS_UNKNOWN"])
+        self.assertEqual(reads, [path])
+        self.assertEqual((lists, scans), (0, 0))
+
+    def test_take_with_a_case_variant_does_not_list_or_read_the_colliding_directory(self) -> None:
+        self.env.take([make_row("r1")], source="Source", taken_at=T1)
+        path = self.env.write_input([make_row("r2")])
+        before = self.env.tree()
+        result, reads, lists, scans = self.run_recorded(
+            "take", "--source", "source", "--input", str(path), "--root", str(self.env.root), "--taken-at", T2,
+        )
+        self.assertEqual(result[0], 1, result)
+        self.assertIn("NAME_INVALID", result[1])
+        self.assertEqual(reads, [path])
+        self.assertEqual((lists, scans), (0, 1))
+        self.assertEqual(self.env.tree(), before)
+
+    def test_diff_with_an_invalid_name_reads_nothing(self) -> None:
+        self.stored("bad name")
+        result, reads, lists, scans = self.run_recorded(
+            "diff", "--source", "bad name", "1", "1", "--root", str(self.env.root),
+        )
+        self.assertEqual(result[0], 1, result)
+        self.assertIn("NAME_INVALID", result[1])
+        self.assertEqual((reads, lists, scans), ([], 0, 0))
+
+    def test_diff_with_a_case_variant_reads_nothing(self) -> None:
+        self.env.take([make_row("r1")], source="Source", taken_at=T1)
+        result, reads, lists, scans = self.run_recorded(
+            "diff", "--source", "source", "1", "1", "--root", str(self.env.root),
+        )
+        self.assertEqual(result[0], 1, result)
+        self.assertEqual((reads, lists, scans), ([], 0, 1))
+
+
+class InputDerivedDocumentationTests(SnapshotCase):
+    def test_the_docstring_and_the_readme_say_which_errors_may_still_end_the_run_at_once(self) -> None:
+        doc = " ".join((requirement_snapshot.__doc__ or "").split())
+        readme = " ".join((_SCRIPTS / "README.md").read_text(encoding="utf-8").split())
+        for text in (doc, readme):
+            self.assertIn(
+                "Errors that may still end the run at once with exit 2: a file system error, a missing or duplicated "
+                "version, a lost version race or a stale claim, and a programming error that no input can produce.",
+                text,
+            )
+            self.assertIn(
+                "A failure derived from the bytes of an input or of a stored version, nesting too deep for the JSON "
+                "parser included, is never one of them",
+                text,
+            )
+            self.assertIn("with the code a non-JSON file gets", text)
+            self.assertNotIn("any unexpected error", text)
+
+
 if __name__ == "__main__":
     unittest.main()
