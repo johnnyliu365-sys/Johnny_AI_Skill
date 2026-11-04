@@ -98,7 +98,7 @@ Checks that no test function leaves a spec file without a map row. It lists ever
 present in a spec file under `--specs` at `--base` and absent at `--candidate`, and requires
 each to have a row in the map file read at `--candidate` (`git show <candidate>:<map>`, never
 the working tree). A spec file is `test_*.py` below `--specs`, matched by path component
-(`specs2/` is not below `specs`). A test is a function, sync or async, whose name starts with
+(a sibling directory whose name only begins like `specs` is not below it). A test is a function, sync or async, whose name starts with
 `test`, at module level or inside a class (nested classes included); its id is
 `<path>::<name>`, `<path>::<Class>::<name>` or `<path>::<Outer>::<Inner>::<name>`. A test that
 moved to another file or was renamed is removed under its old id. Test enumeration uses the
@@ -123,5 +123,5 @@ Output is one line per defect (`CODE "<id>" <detail>`, ids JSON-quoted with ASCI
 is not a repository, a commit, tree or blob cannot be served (git's stderr is printed), a spec
 does not parse at either commit (the message names the commit and the path), or an unexpected
 error. Exit 3: a missing or unknown option, an empty value, an absolute `--map` or `--specs`,
-a `..` segment, or a revision that starts with `-`. `--specs` and `--map` accept `/` or `\`
-separators and a trailing slash; `--specs .` selects the whole repository.
+a `..` segment, or a revision that starts with `-`. `--specs` and `--map` accept forward or back
+slashes and a trailing slash; `--specs .` selects the whole repository.

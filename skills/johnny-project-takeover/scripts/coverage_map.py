@@ -8,7 +8,7 @@ and absent at `--candidate`, and requires a row for each of them in the map file
 at `--candidate`.
 
 Spec file: a file named `test_*.py` below `--specs` (exact path-component prefix:
-`specs2/x` is not below `specs`). Test: a function (sync or async) whose name starts
+a sibling directory whose name only begins like `specs` is not below it). Test: a function (sync or async) whose name starts
 with `test`, defined at module level or inside a class (nested classes included; also
 inside module-level or class-level `if`, `try`, `with`, `for`, `while` and `match`
 blocks, never inside another function). Test id: `<path>::<name>` or
