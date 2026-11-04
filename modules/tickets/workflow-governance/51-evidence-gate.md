@@ -76,7 +76,7 @@ A run cell is a `## <name>` section with the lines `cell: <name>`, `candidate: <
 | `DUPLICATE_CELL` | two run cells share a name |
 | `CANDIDATE_MISMATCH` | a cell's `candidate` differs from `--candidate` |
 | `TOOL_DIGEST_MISSING` | a `--tool` path has no `tool_digest` line in a cell |
-| `TOOL_DIGEST_STALE` | a listed digest differs from sha256 of `git show <candidate>:<path>` |
+| `TOOL_DIGEST_STALE` | a listed digest differs from sha256 of the blob found by the literal lookup of `<candidate>:<path>` (revision03) |
 | `CAPTURE_MISSING` | the capture file does not exist under the evidence root |
 | `CAPTURE_CR` | the capture holds a CR byte |
 | `BLOCK_MISMATCH` | the fenced block differs from the capture byte for byte (block = the lines between the fences joined with LF plus a final LF) |
@@ -102,7 +102,7 @@ Every string read from an input is valid Unicode without lone surrogates and wit
 
 1. 正常行為：a receipt with two run cells and one statement section, every field correct → exit 0, `cells=2 defects=0`.
 2. 規則違反／輸入錯誤：one test per defect code above, each built from the good receipt by one change; a cell carrying two defects reports both.
-3. 外部失敗／fail-closed：`git show` failing for a listed tool (unknown candidate in the repository) → exit 2 with git's stderr; the receipt path is a directory or unreadable → exit 2; `--repo` not a repository → exit 2; no `--tool` or no `--candidate` → exit 3.
+3. 外部失敗／fail-closed：the literal lookup failing for a listed tool (git cannot run, or the candidate is unknown in the repository) → exit 2 with git's stderr; the receipt path is a directory or unreadable → exit 2; `--repo` not a repository → exit 2; no `--tool` or no `--candidate` → exit 3.
 4. 回歸保護：the six NF-16 escape shapes from the ticket 48 review (section without `cell:`, statement opt-out, missing `tool_digest:` label, missing capture reported as fault, mixed candidates, exit list contradicting the capture) each give exit 1 with the code above; a receipt written with CRLF line endings is read (the receipt's own line endings are normalised; captures are not); a receipt with a UTF-8 BOM is read; an outward directory junction under the evidence root is `CAPTURE_MISSING` (a test that needs no symlink privilege); `--repo` a subdirectory of the repository gives the same result as the root; each digest-path shape that is not canonical (backslash, `//`, `/./`, `.`, a trailing `/`, more than 1024 bytes, NUL, DEL, U+001F) is `TOOL_DIGEST_STALE` with exit 1, one test per shape; a gitlink and a tree at the candidate are `TOOL_DIGEST_STALE`; a receipt with a correct required line plus one non-canonical extra line exits 1; a lookup failure (git exiting non-zero, a missing object store) is exit 2, never `TOOL_DIGEST_STALE`; `CELL_NAME_MISMATCH` is case-sensitive and does not stop the cell's other checks; `DEL` and U+001F in a cell name are reds.
 
 ### 適用的缺陷類別
@@ -163,3 +163,7 @@ Review record section "Revision02 correction review". CodeReview §5: the closur
 | S51-13 | EVIDENCE_DEFECT | a lookup failure is exit 2, with a test |
 | S51-14 | EVIDENCE_DEFECT | `E2` in every receipt of this ticket |
 | S51-15 | OUT_OF_SCOPE_HARDENING | not taken: none is reachable as an unflagged contradiction of a run field |
+
+### Disposition correction (revision03, before the initial review)
+
+The defect-code table and TDD 3 still named `git show` after the revision03 paragraph replaced it with the literal `cat-file` lookup. Both lines now name the lookup; the implementation seat had followed the revision03 paragraph and recorded the conflict. Nothing else changes.
