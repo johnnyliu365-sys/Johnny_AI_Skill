@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用（Revision 04 does not seal a new Context） |
-| Agent Context binding | ticket revision03 / receipt under `doc/reviews/workflow-governance/evidence/51/` / owner implementation seat / worktree `.worktrees/51-evidence-gate` / branch `cp/wave2-51-evidence-gate` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision04 / receipt under `doc/reviews/workflow-governance/evidence/51/` / owner implementation seat / worktree `.worktrees/51-evidence-gate` / branch `cp/wave2-51-evidence-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S51-10; implementation 3 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 initial review: S51-17, S51-18 TICKET_DEFECT; correction 1 dispatched to the same seat） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/51-evidence-gate` |
 | 審閱者 | `ticket-review` seat, its own worktree `.worktrees/51-evidence-gate-review` |
@@ -167,3 +167,22 @@ Review record section "Revision02 correction review". CodeReview §5: the closur
 ### Disposition correction (revision03, before the initial review)
 
 The defect-code table and TDD 3 still named `git show` after the revision03 paragraph replaced it with the literal `cat-file` lookup. Both lines now name the lookup; the implementation seat had followed the revision03 paragraph and recorded the conflict. Nothing else changes.
+
+## Re-plan to closure revision04 (after the revision03 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision03 initial review". S51-17 and S51-18 are `TICKET_DEFECT`s; the closure is rebuilt here before correction 1. The revision03 design (canonical form, one literal lookup) stands.
+
+### Rules added in revision04 (binding)
+
+- Git environment: Every git child runs with `--no-replace-objects` (and `GIT_NO_REPLACE_OBJECTS=1`), with `GIT_NO_LAZY_FETCH=1`, and with the repository-selecting `GIT_*` variables removed (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`, and the `GIT_CONFIG_*` variables); a replace ref never redirects a lookup and a lookup never fetches over the network. `git` itself is resolved from the `PATH` entries only, never from the current directory.
+- A `missing` answer is told apart from an unservable object: when `--batch-check` answers `missing`, the gate reads the parent tree `<candidate>:<parent>` through the same standard input (`--batch`); if that tree names the entry, the object store cannot serve it and that is a fault; if it does not, the path is absent and that is `TOOL_DIGEST_STALE`.
+- Red before fault (the reading of R4-2 in ticket 52 revision04, awaiting owner confirmation): the gate reports every red it can find and exits 1 if there is one, with each fault printed on stderr on one line; it exits 2 only when it found no red. The two tests that pinned the opposite change accordingly.
+
+| Finding | Class | Disposition in revision04 |
+| --- | --- | --- |
+| S51-16 | IMPLEMENTATION_DEFECT | replace refs ignored, with tests that replace a blob and a commit |
+| S51-17 | TICKET_DEFECT | absent and unservable told apart through the parent tree; a test with a pruned loose blob gives exit 2 |
+| S51-18 | TICKET_DEFECT | red before fault |
+| S51-19 | EVIDENCE_DEFECT | tests for a repeated digest path with a contradicting second value, a missing path holding a space, and a `missing` answer with a wrong subject |
+| S51-20 | OUT_OF_SCOPE_HARDENING (taken now) | the git environment rule above, with a `GIT_DIR` test |
+| S51-21 | OUT_OF_SCOPE_HARDENING | not taken: harmless survivors |

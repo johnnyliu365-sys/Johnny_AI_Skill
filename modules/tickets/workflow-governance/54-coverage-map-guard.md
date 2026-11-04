@@ -156,3 +156,7 @@ Review record section "Revision02 correction review". CodeReview §5: revision02
 | S54-10 | EVIDENCE_DEFECT | tests for U+001F in a row field, a second `case` and a second `except` handler, and a `test_` function nested in a helper (not a test) |
 | S54-11 | OUT_OF_SCOPE_HARDENING (taken now) | `GIT_*` variables removed, with a test that sets `GIT_DIR` |
 | S54-12 | OUT_OF_SCOPE_HARDENING (taken now) | repeated keys are `MAP_ROW_INVALID`, with a row test and a top-level test |
+
+### Disposition correction (revision03, during implementation 3)
+
+The ticket 51 revision03 review found that git follows replace refs in `cat-file` and `ls-tree`, so a blob read "at HEAD" or "at a commit" can be another object (S51-16), and that a lookup can fetch over the network in a partial clone. The same applies here. Added to this revision: Every git child runs with `--no-replace-objects` (and `GIT_NO_REPLACE_OBJECTS=1`), with `GIT_NO_LAZY_FETCH=1`, and with the repository-selecting `GIT_*` variables removed (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`, and the `GIT_CONFIG_*` variables); a replace ref never redirects a lookup and a lookup never fetches over the network. One test with `git replace` on a blob this gate reads. Nothing else changes.

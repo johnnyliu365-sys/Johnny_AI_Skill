@@ -124,3 +124,61 @@ verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/51-rev02-correction
 reviewed_at: 2026-11-04
 ```
+
+## Revision03 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `b08ad4566560e55027e387e981af3cbceec13f76` on `cp/wave2-51-evidence-gate` (one additive commit on `4bcc2873`) |
+| Closure | revision03 (`3c86f748`) with the disposition correction `1109f0a8` |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision03 |
+| Summary | The revision03 design holds: every non-canonical shape is `TOOL_DIGEST_STALE` without asking git, the only lookup goes through `cat-file` standard input, no S51-10 shape exits 2, the seat's 27 mutations are red, S51-10 to S51-14 are closed. Open: replace refs redirect the lookup (S51-16). Two ticket gaps (S51-17, S51-18). Nine of 36 counter-mutations survive, two of them changing an exit code (S51-19). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 162 passed, 1 skipped, 99 subtests; mypy --strict clean |
+| Canonical form | PASS | 22 shapes exit 1 with git not asked |
+| One literal lookup | PASS | only `rev-parse` and `cat-file` run; the path goes to standard input only |
+| Missing / tree / gitlink / symlink | PASS, gap S51-17 | a blob the tree names but the store lacks is a red |
+| Replace refs | FAIL | with `refs/replace/<blob>` set, the true digest exits 1 and the replacement digest exits 0 (S51-16) |
+| R4-2 | PASS, gaps S51-17, S51-18, S51-19 | |
+| One line per subject | PASS | stdout and stderr |
+| Seat mutations; regression mutations | PASS | 27 of 27; 20 of 20 |
+| Reviewer counter-mutations | FAIL | 16 new doors, 9 survive |
+| Receipt; candidate gate on its receipt; E2 | PASS | LF; blocks byte-identical; digest recomputed; `cells=6 defects=0`; E2 unchanged |
+| Boundary | PASS | three files; Johnny Liu; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S51-01, S51-03, S51-10 to S51-14 | CLOSED |
+| S51-02, S51-04 to S51-07 | remain CLOSED |
+| S51-08, S51-15 | not taken, as planned |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S51-16 | IMPLEMENTATION_DEFECT | Medium (changes exit codes; breaks the digest-to-candidate binding) | `evidence_gate.py:288-293, 304-353` | git honours `refs/replace/*` in `rev-parse` and `cat-file`, so the lookup returns the replacement object; every worktree shares the refs | probe with and without `GIT_NO_REPLACE_OBJECTS=1` |
+| S51-17 | TICKET_DEFECT | Low (changes an exit code) | `evidence_gate.py:337-338`; revision03 paragraph | a blob the tree names but the store cannot serve answers `missing` and becomes a red, while git cannot serve the check | probes: loose blob removed → 1; store removed → 2 |
+| S51-18 | TICKET_DEFECT | Low | tests; `evidence_gate.py:656-669` | a red plus a fault exits 2 with no red printed, against the red-before-fault reading applied in ticket 52 revision04 | probe |
+| S51-19 | EVIDENCE_DEFECT | Low (current code correct) | tests `DigestLookupTests`; `evidence_gate.py:336-352, 524-538` | unpinned doors: first value only of a repeated digest path; a missing path holding a space; a `missing` answer with any subject | r01, r02, r05 survive; r03, r04, r16 overlap-masked |
+| S51-20 | OUT_OF_SCOPE_HARDENING | Info / Low | `evidence_gate.py:288-293` | `GIT_DIR` and other variables are inherited; a partial clone may fetch over the network; `git` may resolve from the current directory on Windows | probe |
+| S51-21 | OUT_OF_SCOPE_HARDENING | Info | `evidence_gate.py:308-313, 344, 511` | harmless survivors r07, r11, r14 | mutations |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: Linux and case-sensitive file systems; a real partial clone; a replaced candidate commit (only a replaced blob was built); a real missing git; the symlink branch.
+
+```review-verdict
+candidate: b08ad4566560e55027e387e981af3cbceec13f76
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/51-rev03-initial
+reviewed_at: 2026-11-04
+```

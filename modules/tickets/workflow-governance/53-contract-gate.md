@@ -154,3 +154,7 @@ Review record section "Revision02 correction review". CodeReview §5: the closur
 | S53-12 | EVIDENCE_DEFECT | tests for a pathspec-magic source, parser exceptions and a lookup failure |
 | S53-13 | TICKET_DEFECT | `--repo` is the work-tree top level; repository-selecting `GIT_*` variables removed; `SOURCE_MISSING` and row 4 text corrected |
 | S53-14 | OUT_OF_SCOPE_HARDENING (taken now) | repeated snapshot keys exit 3; links and junctions under `--specs` not followed; tests for one-line fault and usage messages |
+
+### Disposition correction (revision03, during implementation 3)
+
+The ticket 51 revision03 review found that git follows replace refs in `cat-file` and `ls-tree`, so a blob read "at HEAD" or "at a commit" can be another object (S51-16), and that a lookup can fetch over the network in a partial clone. The same applies here. Added to this revision: Every git child runs with `--no-replace-objects` (and `GIT_NO_REPLACE_OBJECTS=1`), with `GIT_NO_LAZY_FETCH=1`, and with the repository-selecting `GIT_*` variables removed (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`, and the `GIT_CONFIG_*` variables); a replace ref never redirects a lookup and a lookup never fetches over the network. One test with `git replace` on a blob this gate reads. Nothing else changes.
