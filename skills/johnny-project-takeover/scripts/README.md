@@ -89,3 +89,41 @@ commit (`SHALLOW_HISTORY`), `git` cannot be started, not inside a git repository
 is missing or not a directory, an environment git query fails as above, the `--json` path
 cannot be written, or an unexpected error. Exit 3: bad option, missing mode, empty
 `--sealed-state`, an index argument that is not a file, or an index file that is not UTF-8.
+
+## contract_gate.py
+
+    python contract_gate.py --repo DIR --snapshot FILE --specs DIR
+
+Checks that every requirement has a spec and every spec is bound and honest. The
+snapshot is a requirement snapshot file (a JSON object with a `rows` list whose rows
+carry `requirement_id` and `status`, `active` or `retired`). The specs are every file
+named `test_*.py` under `--specs`, a directory inside `--repo`. A spec declares its
+contract in its first comment block, the leading run of lines that start with `#`
+(it ends at the first line that does not):
+
+    # requirement: <id>                          one or more, compared exactly
+    # source: <repository path> sha256:<hex>    one or more, 64 lower-case hex
+    # mutation: <name>                           one or more
+
+Defects, one line `<code> <spec or requirement>: <detail>` each on stdout:
+`NO_SPEC_FOR_REQUIREMENT` (an active requirement no spec declares), `SOURCE_MISSING`
+(a source that does not exist, escapes the repository, is not a regular file, or whose
+declaration line is unusable; a spec that declares a requirement but no source),
+`SOURCE_DIGEST_MISMATCH` (sha256 of the file bytes differs), `RETIRED_REQUIREMENT_BOUND`
+(a spec declares a requirement that is retired or absent from the snapshot),
+`LITERAL_EXPECTED` (an `assert` comparing with a number, string, bytes or a display of
+such constants, also inside `and`, `or`, `not`; `None`, `True` and `False` do not count;
+also a spec that does not parse, or a header with an unknown declaration key) and
+`NO_MUTATION` (a spec that declares a requirement has no mutation). A source path is
+repository-relative: `./` and backslashes are normalised, every part must match the
+directory entry exactly (a case variant is a miss), and `..` may not leave the
+repository. The digest is over the bytes in the working tree.
+
+Exit 0 prints `requirements=N specs=M defects=0` (N counts snapshot rows). Exit 1 prints
+the defect lines on stdout and the same summary on stderr. Exit 2: the snapshot, a spec,
+a source or a directory cannot be read, `--specs` or `--repo` is not a directory, a
+source is a URL (`SOURCE_UNSERVABLE`, a URL cannot be verified offline), or an
+unexpected error; a fault stops the run and no defect is printed. Exit 3: bad
+arguments, `--specs` outside `--repo`, or a snapshot argument that is not a snapshot
+(not JSON, no `rows`, a row without a non-empty `requirement_id` or with a `status` other
+than `active` or `retired`, a repeated `requirement_id`).
