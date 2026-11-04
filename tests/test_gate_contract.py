@@ -18,6 +18,7 @@ import tempfile
 import threading
 import time
 import unittest
+import zlib
 from collections.abc import Callable
 from pathlib import Path
 from typing import IO
@@ -414,6 +415,20 @@ class DefectCodes(Case):
         lines = self.red_lines()
         self.assertEqual(len(lines), 1)
         self.assertTrue(lines[0].startswith("SOURCE_DIGEST_MISMATCH specs/test_one.py: "), lines[0])
+
+    def test_a_digest_equal_but_for_late_characters_is_a_mismatch(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        real = sha(SOURCE_BYTES)
+        for position in (8, 9, 31, 32, 62, 63):
+            other = "0" if real[position] != "0" else "1"
+            declared = real[:position] + other + real[position + 1 :]
+            with self.subTest(position=position):
+                self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/source.txt sha256:{declared}",)))
+                lines = self.red_lines()
+                self.assertEqual(len(lines), 1, lines)
+                self.assertTrue(lines[0].startswith("SOURCE_DIGEST_MISMATCH specs/test_one.py: line 2: "), lines[0])
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/source.txt sha256:{real}",)))
+        self.assert_green()
 
     def test_digest_is_taken_over_the_blob_at_head_without_line_ending_changes(self) -> None:
         self.write_snapshot(("R-1", "active"))
@@ -821,6 +836,18 @@ class SnapshotAndFaults(Case):
         self.assertNotIn("SOURCE_MISSING", err)
         self.assertNotIn("NO_SPEC_FOR_REQUIREMENT", err)
 
+    def test_every_url_scheme_is_a_url_source_and_never_a_red(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        for url in ("file:///etc/hosts", "file://host/share/x", "ftp://example.invalid/x", "s3://bucket/key", "ssh://git@example.invalid/x", "git+https://example.invalid/x"):
+            for suffix in (f" sha256:{sha(b'x')}", ""):
+                with self.subTest(url=url, digest=bool(suffix)):
+                    self.write_spec("test_url.py", self.header(("R-1",), (f"{url}{suffix}",)))
+                    got, out, err = self.run_gate()
+                    self.assertEqual((got, out), (2, ""), err)
+                    self.assertEqual(len(err.splitlines()), 1, err)
+                    self.assertTrue(err.startswith("SOURCE_UNSERVABLE specs/test_url.py: line 2 source "), err)
+                    self.assertNotIn("SOURCE_MISSING", err)
+
     def test_a_red_found_elsewhere_is_printed_and_the_fault_stays_on_stderr(self) -> None:
         self.write_snapshot(("R-1", "active"))
         self.write_spec("test_a_red.py", self.header(("R-9",)))
@@ -919,6 +946,20 @@ class SnapshotAndFaults(Case):
         got, out, err = self.run_gate()
         self.assertEqual((got, out), (2, ""))
         self.assertIn("TOOL_FAULT", err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("HEAD does not name a commit", err)
+        self.assertNotRegex(err.strip(), r": $")
+
+    def test_a_git_failure_that_says_nothing_still_names_a_cause(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        silent = subprocess.CompletedProcess([], 128, b"", b"")
+        with mock.patch.object(contract_gate.subprocess, "run", return_value=silent):
+            got, out, err = self.run_gate()
+        self.assertEqual((got, out), (2, ""))
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertNotRegex(err.strip(), r": $")
+        self.assertIn("git printed no message", err)
 
     def test_a_directory_that_is_not_a_repository_is_exit_2(self) -> None:
         plain = self.base / "plain"
@@ -1638,7 +1679,7 @@ class SourceLookup(Case):
         lookups = spy.lookups()
         self.assertEqual([call.command[4:] for call in lookups], [["cat-file", "--batch"]])
         for query in spy.queries():
-            self.assertRegex(query.decode("ascii"), r"^[0-9a-f]{40}(\^\{tree\})?$")
+            self.assertRegex(query.decode("ascii"), r"^[0-9a-f]{40}$")
         for call in spy.calls:
             self.assertEqual(call.command[:4], ["git", "-C", str(self.repo), "--no-replace-objects"])
             self.assertFalse(any("a b.txt" in argument or "my docs" in argument for argument in call.command[4:]), call.command)
@@ -1737,6 +1778,43 @@ def raw_tree(*entries: tuple[str, str, bytes]) -> bytes:
     return b"".join(mode.encode("ascii") + b" " + name.encode("utf-8") + b"\0" + raw for mode, name, raw in entries)
 
 
+def git_raw(repo: Path, *args: str, data: bytes | None = None) -> bytes:
+    """The raw standard output of git in `repo`, with a clean configuration; a failure fails the fixture."""
+    done = subprocess.run(["git", "-C", str(repo), *args], input=data, capture_output=True, env={**os.environ, **GIT_ENVIRONMENT}, check=False)
+    if done.returncode != 0:
+        raise AssertionError(f"git {args}: {done.stderr.decode('utf-8', errors='replace')}")
+    return done.stdout
+
+
+def store_object(repo: Path, kind: str, body: bytes) -> str:
+    """Store `body` as an object of `kind` exactly as given (no check of its shape) and return its id."""
+    return git_raw(repo, "hash-object", "-w", "--literally", "-t", kind, "--stdin", data=body).decode("ascii").strip()
+
+
+def point_head_at_commit(repo: Path, body: bytes) -> str:
+    """Make the current branch name a commit with exactly this body; returns its id."""
+    oid = store_object(repo, "commit", body)
+    git(repo, "update-ref", "HEAD", oid)
+    return oid
+
+
+def point_head_at_tree(repo: Path, tree_body: bytes) -> str:
+    """Make the current branch name a commit whose root tree has exactly this body (well formed or not)."""
+    tree = store_object(repo, "tree", tree_body)
+    stamp = "author A <a@example.invalid> 0 +0000\ncommitter A <a@example.invalid> 0 +0000\n\nmessage\n"
+    return point_head_at_commit(repo, f"tree {tree}\n{stamp}".encode("ascii"))
+
+
+def forge_loose_object(repo: Path, oid: str, kind: str, body: bytes) -> None:
+    """Overwrite the loose object `oid` with other content, as a writer of the shared store could."""
+    path = repo / ".git" / "objects" / oid[:2] / oid[2:]
+    assert path.is_file(), "the object is not a loose object"
+    os.chmod(path, 0o666)
+    path.write_bytes(zlib.compress(f"{kind} {len(body)}".encode("ascii") + b"\0" + body))
+    served = git_raw(repo, "cat-file", kind, oid)
+    assert served == body, "the forged content is not what the store serves"
+
+
 def object_answer(oid: str, kind: str, content: bytes, declared_size: int | None = None) -> bytes:
     size = len(content) if declared_size is None else declared_size
     return f"{oid} {kind} {size}\n".encode("ascii") + content + b"\n"
@@ -1763,9 +1841,9 @@ class OneCommitPerRun(Case):
         self.assertEqual(len(spy.lookups()), 1)
         head = git(self.repo, "rev-parse", "HEAD").strip()
         queries = spy.queries()
-        self.assertEqual(queries[0], f"{head}^{{tree}}".encode("ascii"))
+        self.assertEqual(queries[:2], [head.encode("ascii"), git(self.repo, "rev-parse", "HEAD^{tree}").strip().encode("ascii")])
         for query in queries:
-            self.assertRegex(query.decode("ascii"), r"^[0-9a-f]{40}(\^\{tree\})?$")
+            self.assertRegex(query.decode("ascii"), r"^[0-9a-f]{40}$")
         self.assertFalse(any(b"HEAD" in query or b"source" in query for query in queries), queries)
         self.assertEqual(spy.alive(), [])
 
@@ -1865,6 +1943,20 @@ class TreeEntries(Case):
         self.assertEqual(len(lines), 1, lines)
         self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
         self.assertIn("is not tracked at HEAD", lines[0])
+
+    def test_a_gitlink_in_the_middle_of_the_path_is_not_descended(self) -> None:
+        contracts_tree = git(self.repo, "rev-parse", "HEAD:contracts").strip()
+        for label, pointer in (("an id that names no object", "b" * 40), ("the id of a real tree holding the source", contracts_tree)):
+            with self.subTest(label):
+                git(self.repo, "update-index", "--add", "--cacheinfo", f"160000,{pointer},modules/sub")
+                git(self.repo, "commit", "-q", "--no-verify", "--allow-empty", "-m", f"gitlink at {pointer[:4]}")
+                code, lines, err = self.declare_exit("modules/sub/source.txt")
+                self.assertEqual(code, 1, err)
+                self.assertEqual(len(lines), 1, lines)
+                self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
+                self.assertIn("a directory on the path is not a directory", lines[0])
+                self.assertNotIn("SOURCE_UNSERVABLE", err)
+                self.assertNotIn("TOOL_FAULT", err)
 
     def test_a_submodule_entry_is_source_missing_not_a_fault(self) -> None:
         git(self.repo, "update-index", "--add", "--cacheinfo", f"160000,{'b' * 40},modules/sub")
@@ -2165,6 +2257,24 @@ class RedBeforeFault(Case):
         self.assertIn("unexpected RuntimeError while checking specs/test_a.py: boom", err)
         self.assertNotIn("Traceback", err)
 
+    def test_an_unexpected_error_withholds_the_unbound_requirements(self) -> None:
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        self.good_spec("test_a.py", "R-1")
+        self.good_spec("test_b.py", "R-2")
+        real = contract_gate.check_spec
+
+        def check(spec: str, data: bytes, reader: contract_gate.HeadReader, status: dict[str, str]) -> contract_gate.SpecResult:
+            if spec.endswith("test_a.py"):
+                raise RuntimeError("boom")
+            return real(spec, data, reader, status)
+
+        with mock.patch.object(contract_gate, "check_spec", check):
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(self.lines_of(err)), 1, err)
+        self.assertIn("unexpected RuntimeError while checking specs/test_a.py: boom", err)
+        self.assertNotIn("NO_SPEC_FOR_REQUIREMENT", out + err)
+
     def test_the_preconditions_stay_faults_at_once(self) -> None:
         self.write_snapshot(("R-1", "active"))
         self.write_spec("test_a.py", "", "assert value == 3\n")
@@ -2272,41 +2382,97 @@ class BatchAnswers(Case):
                 self.assertEqual(len(err.splitlines()), 1, err)
 
     def test_a_tree_answer_outside_its_format_is_a_tool_fault(self) -> None:
-        query = f"{self.head}^{{tree}}"
-        oid = "b" * 40
         raw = bytes(20)
-        answers = {
-            "a blob for a tree": object_answer(oid, "blob", b"abc"),
-            "a commit for a tree": object_answer(oid, "commit", b"abc"),
-            "a name twice": object_answer(oid, "tree", raw_tree(("100644", "a", raw), ("100644", "a", raw))),
-            "a mode that is not octal": object_answer(oid, "tree", raw_tree(("10x644", "a", raw))),
-            "an empty mode": object_answer(oid, "tree", raw_tree(("", "a", raw))),
-            "an empty name": object_answer(oid, "tree", raw_tree(("100644", "", raw))),
-            "a name with a slash": object_answer(oid, "tree", raw_tree(("100644", "a/b", raw))),
-            "an id cut short": object_answer(oid, "tree", raw_tree(("100644", "a", raw[:7]))),
-            "no terminator": object_answer(oid, "tree", b"100644 a"),
-            "a mode only": object_answer(oid, "tree", b"100644"),
-            "a trailing byte": object_answer(oid, "tree", raw_tree(("100644", "a", raw)) + b"x"),
-            "a body shorter than its header": object_answer(oid, "tree", b"", declared_size=40),
+        bodies = {
+            "a name twice": raw_tree(("100644", "a", raw), ("100644", "a", raw)),
+            "a mode that is not octal": raw_tree(("10x644", "a", raw)),
+            "an empty mode": raw_tree(("", "a", raw)),
+            "an empty name": raw_tree(("100644", "", raw)),
+            "a name with a slash": raw_tree(("100644", "a/b", raw)),
+            "an id cut short": raw_tree(("100644", "a", raw[:7])),
+            "no terminator": b"100644 a",
+            "a mode only": b"100644",
+            "a trailing byte": raw_tree(("100644", "a", raw)) + b"x",
         }
-        for label, answer in answers.items():
+        for label, body in bodies.items():
             with self.subTest(label):
-                code, out, err = self.answered(query, answer)
+                point_head_at_tree(self.repo, body)
+                code, out, err = self.run_gate()
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertTrue(err.startswith("TOOL_FAULT "), err)
+                self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_a_root_that_is_not_a_tree_or_a_commit_without_a_tree_line_is_a_tool_fault(self) -> None:
+        stamp = "author A <a@example.invalid> 0 +0000\ncommitter A <a@example.invalid> 0 +0000\n\nmessage\n"
+        commits = {
+            "a blob named as the root tree": f"tree {self.blob}\n{stamp}",
+            "a commit named as the root tree": f"tree {self.head}\n{stamp}",
+            "no tree line": f"parent {self.head}\n{stamp}",
+            "a tree id cut short": f"tree {self.blob[:39]}\n{stamp}",
+            "a tree id in capitals": f"tree {self.blob.upper()}\n{stamp}",
+        }
+        for label, text in commits.items():
+            with self.subTest(label):
+                # git itself refuses to name such a commit by a ref, so the gate is told its id directly
+                oid = store_object(self.repo, "commit", text.encode("ascii"))
+                with mock.patch.object(contract_gate, "resolve_head", return_value=oid):
+                    code, out, err = self.run_gate()
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertTrue(err.startswith("TOOL_FAULT "), err)
+                self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_a_tree_outside_its_format_stops_the_store_for_every_later_source_and_spec(self) -> None:
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        both = (f"contracts/source.txt sha256:{sha(SOURCE_BYTES)}", f"contracts/source.txt sha256:{sha(b'other')}")
+        self.write_spec("test_a.py", self.header(("R-1",), both))
+        self.write_spec("test_b.py", self.header(("R-2",), both))
+        point_head_at_tree(self.repo, raw_tree(("100644", "a", bytes(20)), ("100644", "a", bytes(20))))
+        head = git(self.repo, "rev-parse", "HEAD").strip()
+        spy = GitSpy()
+        with spy.patched():
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("names one entry twice", err)
+        self.assertEqual(spy.queries(), [head.encode("ascii"), git(self.repo, "rev-parse", "HEAD^{tree}").strip().encode("ascii")])
+
+    def test_a_blob_whose_content_reads_as_a_tree_is_not_accepted_as_a_subtree(self) -> None:
+        disguised = write_blob(self.repo, raw_tree(("100644", "source.txt", bytes.fromhex(self.blob))))
+        point_head_at_tree(self.repo, raw_tree(("40000", "contracts", bytes.fromhex(disguised))))
+        queries: list[bytes] = []
+        spy = GitSpy(on_query=queries.append)
+        with spy.patched():
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertTrue(err.startswith("TOOL_FAULT "), err)
+        self.assertIn("another kind of object", err)
+        self.assertIn(disguised, err)
+        self.assertNotIn(self.blob.encode("ascii"), queries)
+
+    def test_an_answer_that_names_another_object_than_the_one_asked_for_is_a_tool_fault_even_with_the_right_body(self) -> None:
+        other = "a" * 40
+        subtree = git(self.repo, "rev-parse", "HEAD:contracts").strip()
+        root = git(self.repo, "rev-parse", "HEAD^{tree}").strip()
+        for label, asked in (("blob", self.blob), ("subtree", subtree), ("root tree", root), ("commit", self.head)):
+            with self.subTest(label):
+                kind = git(self.repo, "cat-file", "-t", asked).strip()
+                body = git_raw(self.repo, "cat-file", kind, asked)
+                code, out, err = self.answered(asked, object_answer(other, kind, body))
                 self.assertEqual((code, out), (2, ""), err)
                 self.assertTrue(err.startswith("TOOL_FAULT "), err)
                 self.assertEqual(len(err.splitlines()), 1, err)
 
     def test_a_tree_that_names_nothing_the_spec_cites_makes_the_source_missing(self) -> None:
-        query = f"{self.head}^{{tree}}"
-        code, out, err = self.answered(query, object_answer("b" * 40, "tree", raw_tree(("100644", "other", bytes(20)))))
+        point_head_at_tree(self.repo, raw_tree(("100644", "other", bytes(20))))
+        code, out, err = self.run_gate()
         self.assertEqual(code, 1, err)
         self.assertTrue(out.startswith("SOURCE_MISSING specs/test_one.py: line 2: "), out)
         self.assertIn("is not tracked at HEAD", out)
 
     def test_a_tree_entry_with_an_unusual_mode_is_not_a_regular_file(self) -> None:
-        query = f"{self.head}^{{tree}}"
-        entries = raw_tree(("100644", "contracts", bytes(20)))
-        code, out, err = self.answered(query, object_answer("b" * 40, "tree", entries))
+        point_head_at_tree(self.repo, raw_tree(("100644", "contracts", bytes(20))))
+        code, out, err = self.run_gate()
         self.assertEqual(code, 1, err)
         self.assertTrue(out.startswith("SOURCE_MISSING specs/test_one.py: line 2: "), out)
         self.assertIn("is not tracked at HEAD", out)
@@ -2347,6 +2513,198 @@ class BatchAnswers(Case):
         self.assertEqual((code, out), (2, ""))
         self.assertEqual(len(err.splitlines()), 1, err)
         self.assertEqual(len(spy.queries()), 1)
+
+
+FORGED = b"forged content that nobody committed\n"
+
+
+class ForgedObjects(Case):
+    """Every object the gate reads is hashed by the gate against the id it asked for (S53-28)."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.write_snapshot(("R-1", "active"))
+        self.blob = git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip()
+        self.subtree = git(self.repo, "rev-parse", "HEAD:contracts").strip()
+        self.root = git(self.repo, "rev-parse", "HEAD^{tree}").strip()
+        self.head = git(self.repo, "rev-parse", "HEAD").strip()
+
+    def declare(self, data: bytes) -> None:
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/source.txt sha256:{sha(data)}",)))
+
+    def assert_forgery_is_a_fault(self, oid: str, data: bytes) -> str:
+        self.declare(data)
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertTrue(err.startswith("TOOL_FAULT "), err)
+        self.assertIn(oid, err)
+        self.assertIn("does not hash to its id", err)
+        self.assertNotIn("SOURCE_", err)
+        return err
+
+    def test_a_forged_loose_blob_is_a_fault_naming_its_id_whatever_digest_is_declared(self) -> None:
+        self.declare(SOURCE_BYTES)
+        self.assert_green()
+        forge_loose_object(self.repo, self.blob, "blob", FORGED)
+        for data in (FORGED, SOURCE_BYTES):
+            with self.subTest(declared=sha(data)[:8]):
+                self.assert_forgery_is_a_fault(self.blob, data)
+
+    def test_a_forged_loose_subtree_is_a_fault_naming_its_id(self) -> None:
+        forged_blob = write_blob(self.repo, FORGED)
+        forge_loose_object(self.repo, self.subtree, "tree", raw_tree(("100644", "source.txt", bytes.fromhex(forged_blob))))
+        self.assert_forgery_is_a_fault(self.subtree, FORGED)
+
+    def test_a_forged_loose_root_tree_is_a_fault_naming_its_id(self) -> None:
+        forge_loose_object(self.repo, self.root, "tree", raw_tree(("40000", "contracts", bytes.fromhex(self.subtree)), ("100644", "extra.txt", bytes.fromhex(self.blob))))
+        self.assert_forgery_is_a_fault(self.root, SOURCE_BYTES)
+
+    def test_a_forged_loose_commit_is_a_fault_naming_its_id(self) -> None:
+        stamp = "author A <a@example.invalid> 0 +0000\ncommitter A <a@example.invalid> 0 +0000\n\nforged\n"
+        forge_loose_object(self.repo, self.head, "commit", f"tree {self.root}\n{stamp}".encode("ascii"))
+        self.declare(SOURCE_BYTES)
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertTrue(err.startswith("TOOL_FAULT "), err)
+        self.assertIn(self.head, err)
+
+    def test_a_commit_answer_that_does_not_hash_to_the_id_asked_for_is_a_fault_naming_it(self) -> None:
+        forged_blob = write_blob(self.repo, FORGED)
+        other_subtree = store_object(self.repo, "tree", raw_tree(("100644", "source.txt", bytes.fromhex(forged_blob))))
+        other_root = store_object(self.repo, "tree", raw_tree(("40000", "contracts", bytes.fromhex(other_subtree))))
+        stamp = "author A <a@example.invalid> 0 +0000\ncommitter A <a@example.invalid> 0 +0000\n\nforged\n"
+        answer = object_answer(self.head, "commit", f"tree {other_root}\n{stamp}".encode("ascii"))
+        self.declare(FORGED)
+        spy = GitSpy(replies=lambda query: answer if query == self.head.encode("ascii") else None)
+        with spy.patched():
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertTrue(err.startswith("TOOL_FAULT "), err)
+        self.assertIn(self.head, err)
+        self.assertIn("does not hash to its id", err)
+        self.assertEqual(spy.queries(), [self.head.encode("ascii")])
+
+    def test_a_forgery_beside_a_red_exits_1_with_the_fault_and_never_passes(self) -> None:
+        forge_loose_object(self.repo, self.blob, "blob", FORGED)
+        self.write_spec("test_a_red.py", "", "assert value == 3\n")
+        self.declare(FORGED)
+        code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertTrue(out.startswith("LITERAL_EXPECTED specs/test_a_red.py: "), out)
+        lines = err.splitlines()
+        self.assertEqual(len(lines), 2, err)
+        self.assertIn(self.blob, lines[0])
+        self.assertIn("does not hash to its id", lines[0])
+
+    def test_the_store_is_not_used_again_after_a_forgery(self) -> None:
+        self.commit_source("contracts/second.txt", b"other")
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        blob = git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip()
+        forge_loose_object(self.repo, blob, "blob", FORGED)
+        both = (f"contracts/source.txt sha256:{sha(FORGED)}", f"contracts/second.txt sha256:{sha(b'other')}")
+        self.write_spec("test_a.py", self.header(("R-1",), both))
+        self.write_spec("test_b.py", self.header(("R-2",), both))
+        spy = GitSpy()
+        with spy.patched():
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertEqual(spy.queries()[-1], blob.encode("ascii"))
+        self.assertEqual(spy.alive(), [])
+
+    def test_an_honest_store_is_never_called_forged(self) -> None:
+        data = bytes(range(256)) * 5000
+        self.commit_source("contracts/large.bin", data)
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/large.bin sha256:{sha(data)}", f"contracts/source.txt sha256:{sha(SOURCE_BYTES)}")))
+        self.assert_green()
+
+    def test_the_hash_is_the_one_git_gives_an_object(self) -> None:
+        for kind, body in (("blob", b""), ("blob", FORGED), ("tree", raw_tree(("100644", "a", bytes(20)))), ("commit", b"tree x\n\nm\n")):
+            with self.subTest(kind=kind, size=len(body)):
+                oid = store_object(self.repo, kind, body)
+                hasher = contract_gate.object_hasher(oid, kind, len(body))
+                hasher.update(body)
+                self.assertEqual(hasher.hexdigest(), oid)
+
+    def test_an_id_of_another_width_than_the_two_hashes_is_refused(self) -> None:
+        for width in (0, 39, 41, 63, 65):
+            with self.subTest(width=width), self.assertRaises(contract_gate.ToolFault):
+                contract_gate.object_hasher("a" * width, "blob", 0)
+
+
+class Sha256Repository(Case):
+    """A repository whose object ids are SHA-256: ids are 64 digits wide and trees hold 32-byte raw ids."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        repo = self.base / "repo256"
+        repo.mkdir()
+        empty_template = self.base / "empty-template-256"
+        empty_template.mkdir()
+        made = subprocess.run(
+            ["git", "-C", str(self.base), "init", "-q", "--object-format=sha256", f"--template={empty_template}", str(repo)],
+            capture_output=True,
+            env={**os.environ, **GIT_ENVIRONMENT},
+            check=False,
+        )
+        if made.returncode != 0:
+            self.skipTest(f"this git cannot make a SHA-256 repository: {made.stderr.decode('utf-8', errors='replace')}")
+        for key, value in (("core.autocrlf", "false"), ("core.safecrlf", "false"), ("commit.gpgsign", "false")):
+            git(repo, "config", key, value)
+        (repo / "contracts").mkdir()
+        (repo / "contracts" / "source.txt").write_bytes(SOURCE_BYTES)
+        (repo / "specs").mkdir()
+        commit_all(repo)
+        self.repo, self.specs = repo, repo / "specs"
+        self.write_snapshot(("R-1", "active"))
+        self.head = git(repo, "rev-parse", "HEAD").strip()
+        self.assertEqual(len(self.head), 64)
+
+    def test_a_source_in_a_sha_256_repository_is_read_and_digested(self) -> None:
+        self.good_spec("test_one.py", "R-1")
+        self.assert_green()
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/source.txt sha256:{sha(b'changed')}",)))
+        self.assertEqual(self.codes(), ["SOURCE_DIGEST_MISMATCH"])
+
+    def test_every_query_is_a_64_digit_id_and_the_walk_goes_down_a_directory(self) -> None:
+        self.commit_source("contracts/deeper/third.txt", b"third")
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/deeper/third.txt sha256:{sha(b'third')}",)))
+        spy = GitSpy()
+        with spy.patched():
+            self.assert_green()
+        self.assertEqual(len(spy.queries()), 5)
+        for query in spy.queries():
+            self.assertRegex(query.decode("ascii"), r"^[0-9a-f]{64}$")
+
+    def test_a_link_and_a_submodule_and_a_missing_name_are_told_apart(self) -> None:
+        track_entry(self.repo, "contracts/link.txt", b"source.txt", "120000")
+        git(self.repo, "update-index", "--add", "--cacheinfo", f"160000,{'b' * 64},modules/sub")
+        git(self.repo, "commit", "-q", "--no-verify", "-m", "link and gitlink")
+        for path, reason in (("contracts/link.txt", "symbolic link"), ("modules/sub", "submodule"), ("contracts/nope.txt", "is not tracked")):
+            with self.subTest(path):
+                self.write_spec("test_one.py", self.header(("R-1",), (f"{path} sha256:{sha(SOURCE_BYTES)}",)))
+                lines = self.red_lines()
+                self.assertEqual(len(lines), 1, lines)
+                self.assertIn(reason, lines[0])
+
+    def test_a_forged_blob_in_a_sha_256_repository_is_a_fault_naming_its_id(self) -> None:
+        blob = git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip()
+        forge_loose_object(self.repo, blob, "blob", FORGED)
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/source.txt sha256:{sha(FORGED)}",)))
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertIn(blob, err)
+        self.assertIn("does not hash to its id", err)
+
+    def test_a_pruned_blob_in_a_sha_256_repository_is_unservable(self) -> None:
+        self.good_spec("test_one.py", "R-1")
+        remove_loose_object(self.repo, git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip())
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertTrue(err.startswith("SOURCE_UNSERVABLE "), err)
 
 
 class DeclarationText(Case):
@@ -2798,6 +3156,21 @@ class ReadmeNamesEveryScript(unittest.TestCase):
         for phrase in ("red before fault", "resolved once", "symbolic link", "submodule", "one `cat-file --batch` process", "stderr"):
             with self.subTest(phrase):
                 self.assertIn(phrase, section)
+
+    def test_the_contract_gate_section_says_every_object_is_hashed_by_the_gate(self) -> None:
+        section = self.contract_gate_section()
+        for phrase in (
+            "Every object the gate reads is hashed by the gate against the id it asked for",
+            "SHA-1 or SHA-256 chosen by the width of the id",
+            "naming the id",
+            "walks the trees from the root by object id",
+            "HEAD does not name a commit",
+        ):
+            with self.subTest(phrase):
+                self.assertIn(phrase, section)
+        self.assertNotIn("asks for that commit's tree", section)
+        docstring = contract_gate.__doc__ or ""
+        self.assertIn("Every object the gate reads is hashed by the gate against the id it asked for", " ".join(docstring.split()))
 
     def test_the_contract_gate_section_describes_spaces_tabs_and_the_usage_line_as_the_code_does(self) -> None:
         section = self.contract_gate_section()

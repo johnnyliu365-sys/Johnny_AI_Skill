@@ -138,11 +138,12 @@ in UTF-8, holds no control character, has no leading slash or colon and no drive
 and has no empty, dot or dot-dot segment. A path that is not canonical is `SOURCE_MISSING`
 naming the line. `HEAD` is resolved once, at the start of the run, to a full commit id, and
 every lookup of the run is a line on the standard input of one `cat-file --batch` process
-that asks for that commit's tree or for an object id: a declared source is never a
+that asks for a full object id: a declared source is never a
 pathspec, never an object name and never on a command line, so glob and pathspec-magic
 characters match only themselves, the run reads one commit even if another lands while it
 runs, and the digest is the same on every host whatever its line-ending settings. The gate
-walks the trees from the root and reads the entry of a source from its parent tree. A tree
+reads the commit, takes the root tree from its `tree` line, walks the trees from the root by
+object id and reads the entry of a source from its parent tree. A tree
 that does not name the path, or names a directory in its place, makes it `SOURCE_MISSING`
 (names match exactly, including case); so does an entry that is a symbolic link or a
 submodule, because a contract cites the content of a file and a link can keep pointing at
@@ -150,6 +151,13 @@ a path whose content changes ("not a regular file"). A file entry, executable or
 digested over its blob. An object that a tree names and the object store cannot serve (a
 pruned blob or tree, a partial clone that is missing a blob; nothing is fetched) is not a
 red but a fault, reported as `SOURCE_UNSERVABLE` for a source and as a tool fault otherwise.
+
+Every object the gate reads is hashed by the gate against the id it asked for: the header
+`<type> <size>`, a NUL byte and the body, with SHA-1 or SHA-256 chosen by the width of the id.
+An object that does not hash to its id (a forged or damaged loose object, an object served
+through alternates) is a tool fault naming the id: it is never a red and never a pass, and
+the object store is not used again in the run. A repository whose ids are SHA-256 is read the
+same way.
 
 Defects, one line `<code> <spec or requirement>: <detail>` each on stdout, the subject and
 the detail escaped so that a line break, a control character, U+2028 or a lone surrogate
@@ -179,7 +187,8 @@ remaining lookups are skipped, with one fault line, and everything that needs no
 still reported. A fault that leaves nothing to check ends the run at once with exit 2 and no summary: the
 snapshot cannot be read, `--specs` or `--repo` is not a directory, `--repo` is not the top
 level of a git work tree, or git cannot be run to ask that. Git failing to resolve `HEAD`
-(no commit) is collected like the others.
+(no commit) is collected like the others, and its fault names the cause (`HEAD does not name
+a commit`).
 
 Exit 0 prints `requirements=N specs=M defects=0` on stdout (N counts snapshot rows). Exit 1
 prints the defect lines on stdout, then each fault line and the same summary on stderr. Exit

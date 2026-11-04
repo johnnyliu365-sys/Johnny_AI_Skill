@@ -28,16 +28,22 @@ A declared source path must be canonical (not empty, at most 1024 bytes, no cont
 character, only a forward slash as separator once backslashes are normalised and one
 leading dot-slash is dropped, no leading slash or colon, no drive letter, no empty, dot or
 dot-dot segment). `HEAD` is resolved once, at the start of the run, to a full commit id; every
-lookup of the run is a line on the standard input of one `git cat-file --batch` process, the
-commit's tree or an object id, so a declared source is never a pathspec, never an object name
-and never on a command line, a commit that lands during the run changes nothing in it, and the
-digest does not depend on the host's line-ending settings. The trees are walked from the root
-and the entry of a source is read from its parent tree: a path the tree does not name, or names
-as a directory, is SOURCE_MISSING; so is an entry that is a symbolic link or a submodule (a
-contract cites the content of a file, never a link). An object a tree names but the object store
-cannot serve (pruned, or missing from a partial clone; nothing is fetched) is a fault, never a
-red. Every git child ignores replace refs, never fetches lazily and runs without the variables
-that select a repository, a work tree or a configuration.
+lookup of the run is a line on the standard input of one `git cat-file --batch` process, a full
+object id, so a declared source is never a pathspec, never an object name and never on a command
+line, a commit that lands during the run changes nothing in it, and the digest does not depend
+on the host's line-ending settings. The commit is read, its `tree` line names the root tree, and
+the trees are walked from the root by object id; the entry of a source is read from its parent
+tree: a path the tree does not name, or names as a directory, is SOURCE_MISSING; so is an entry
+that is a symbolic link or a submodule (a contract cites the content of a file, never a link).
+An object a tree names but the object store cannot serve (pruned, or missing from a partial
+clone; nothing is fetched) is a fault, never a red.
+
+Every object the gate reads is hashed by the gate against the id it asked for: the header
+`<type> <size>`, a NUL byte and the body, with SHA-1 or SHA-256 chosen by the width of the id.
+An object that does not hash to its id (a forged or damaged loose object, an object served
+through alternates) is a fault naming the id, never a red and never a pass, and the object store
+is not used again in the run. Every git child ignores replace refs, never fetches lazily and
+runs without the variables that select a repository, a work tree or a configuration.
 
 Defect codes (exit 1, one line `<code> <spec or requirement>: <detail>` each, subject and
 detail escaped so that one defect is always one line):
@@ -75,7 +81,7 @@ import tokenize
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import IO, TypeVar
+from typing import Protocol, TypeVar
 
 USAGE = "usage: contract_gate.py --repo <dir> --snapshot <snapshot.json> --specs <dir>"
 
@@ -400,10 +406,11 @@ def _git_command(repo: Path, args: Sequence[str]) -> list[str]:
     return ["git", "-C", str(repo), "--no-replace-objects", *args]
 
 
-def _git(repo: Path, args: Sequence[str]) -> bytes:
+def _git(repo: Path, args: Sequence[str], silent_failure: str = "git printed no message") -> bytes:
     """Run git in `repo`; any failure to serve the query is a tool fault.
 
     `args` never holds a declared source: a source never reaches git at all, only object ids do.
+    `silent_failure` is the cause named when git fails and says nothing.
     """
     try:
         done = subprocess.run(
@@ -412,7 +419,7 @@ def _git(repo: Path, args: Sequence[str]) -> bytes:
     except (OSError, ValueError, subprocess.SubprocessError) as exc:
         raise ToolFault("TOOL_FAULT", f"cannot run git: {exc}") from exc
     if done.returncode != 0:
-        message = done.stderr.decode("utf-8", errors="replace").strip()
+        message = done.stderr.decode("utf-8", errors="replace").strip() or silent_failure
         raise ToolFault("TOOL_FAULT", f"git {args[0]} failed (exit {done.returncode}): {message}")
     return done.stdout
 
@@ -434,7 +441,7 @@ def require_work_tree_top_level(repo: Path) -> None:
 
 def resolve_head(repo: Path) -> str:
     """The full object id of the commit `HEAD` names, asked once per run."""
-    answer = _git(repo, ["rev-parse", "--verify", "--quiet", "HEAD^{commit}"])
+    answer = _git(repo, ["rev-parse", "--verify", "--quiet", "HEAD^{commit}"], "HEAD does not name a commit (the repository has no commit)")
     lines = answer.split(b"\n")
     if len(lines) != 2 or lines[1] != b"" or OBJECT_ID.fullmatch(lines[0]) is None:
         raise ToolFault("TOOL_FAULT", "git rev-parse HEAD answered outside its format")
@@ -470,12 +477,55 @@ class StoreSkipped(Exception):
 T = TypeVar("T")
 
 
+class Body(Protocol):
+    """The body of an object answered by the store, read in order."""
+
+    def read(self, size: int = -1, /) -> bytes: ...
+
+
+class Hasher(Protocol):
+    """What the hash of an object offers (SHA-1 or SHA-256 from hashlib)."""
+
+    def update(self, data: bytes, /) -> None: ...
+
+    def hexdigest(self) -> str: ...
+
+
+def object_hasher(oid: str, kind: str, size: int) -> Hasher:
+    """A hash that has taken the header git hashes first: `<type> <size>` and a NUL byte.
+
+    SHA-1 or SHA-256 is chosen by the width of the id; any other width is a fault.
+    """
+    hasher: Hasher
+    if len(oid) == 40:
+        hasher = hashlib.sha1(usedforsecurity=False)
+    elif len(oid) == 64:
+        hasher = hashlib.sha256()
+    else:
+        raise ToolFault("TOOL_FAULT", f"an object id of {len(oid)} digits is neither SHA-1 nor SHA-256")
+    hasher.update(f"{kind} {size}".encode("ascii") + b"\0")
+    return hasher
+
+
+class HashedBody:
+    """The body of one answer: every byte read through it is also fed to the hash of the object."""
+
+    def __init__(self, stream: Body, hasher: Hasher) -> None:
+        self.stream = stream
+        self.hasher = hasher
+
+    def read(self, size: int = -1, /) -> bytes:
+        data = self.stream.read(size)
+        self.hasher.update(data)
+        return data
+
+
 class ObjectStore:
     """One `git cat-file --batch` process for the whole run.
 
-    Every lookup is a line on its standard input: the full id of the commit followed by a tree
-    suffix, or a full object id. No declared source is ever written to it, so a source is never
-    a pathspec, never an object name and never on a command line.
+    Every lookup is a line on its standard input: a full object id. No declared source is ever
+    written to it, so a source is never a pathspec, never an object name and never on a command
+    line. Every object that comes back is hashed here against the id that was asked for.
     """
 
     def __init__(self, repo: Path) -> None:
@@ -511,14 +561,17 @@ class ObjectStore:
                 pass
         return ToolFault("TOOL_FAULT", f"{message}: {detail}" if detail else message)
 
-    def lookup(self, query: bytes, expect_oid: str | None, consume: Callable[[Header, IO[bytes]], T]) -> T | None:
-        """Ask for one object. None when git answers `missing` for exactly this query.
+    def lookup(self, oid: str, consume: Callable[[Header, Body], T]) -> T | None:
+        """Ask for the object `oid`. None when git answers `missing` for exactly this id.
 
         `consume` reads the body of an object that exists from the answer stream, which must
-        then end in one line feed. Any other answer (another object id than the one asked for,
-        an unknown shape, a body of another size, an early end of the output) is a tool fault
-        and the store is not used again.
+        then end in one line feed. The gate hashes what it read (`<type> <size>`, a NUL byte
+        and the body) and the result must be `oid`. Any other answer (another object id than the
+        one asked for, an unknown shape, a body of another size, an early end of the output, a
+        body that does not hash to the id) is a tool fault naming what went wrong, and the store
+        is not used again.
         """
+        query = oid.encode("ascii")
         if self.broken:
             raise StoreSkipped
         process = self._start()
@@ -539,16 +592,19 @@ class ObjectStore:
             if line == query + b" missing\n":
                 return None
             matched = OBJECT_HEADER.fullmatch(line[:-1])
-            if matched is None or (expect_oid is not None and matched.group(1).decode("ascii") != expect_oid):
+            if matched is None or matched.group(1).decode("ascii") != oid:
                 raise self.fail("git cat-file answered outside its format")
             header = Header(matched.group(1).decode("ascii"), matched.group(2).decode("ascii"), int(matched.group(3)))
             try:
-                result = consume(header, stdout)
+                hasher = object_hasher(oid, header.kind, header.size)
+                result = consume(header, HashedBody(stdout, hasher))
                 ending = stdout.read(1)
             except (OSError, ValueError) as exc:
                 raise self.fail(f"git cat-file could not be read: {exc}") from exc
             if ending != b"\n":
                 raise self.fail("git cat-file answered a body of another size than its header says")
+            if hasher.hexdigest() != oid:
+                raise self.fail(f"the object {oid} does not hash to its id: the store served forged or damaged content")
             return result
         finally:
             timer.cancel()
@@ -579,14 +635,14 @@ class ObjectStore:
                 pass
 
 
-def _read_exactly(stream: IO[bytes], size: int) -> bytes:
+def _read_exactly(stream: Body, size: int) -> bytes:
     data = stream.read(size)
     if len(data) != size:
         raise ValueError("the answer ended inside the body")
     return data
 
 
-def _digest_of(stream: IO[bytes], size: int) -> str:
+def _digest_of(stream: Body, size: int) -> str:
     """sha256 of the next `size` bytes of `stream`, read in blocks."""
     digest = hashlib.sha256()
     remaining = size
@@ -646,31 +702,44 @@ class HeadReader:
     def close(self) -> None:
         self.store.close()
 
-    def _load_tree(self, query: bytes, expect_oid: str | None, unservable: str) -> tuple[str, dict[bytes, TreeEntry]]:
-        served = self.store.lookup(query, expect_oid, lambda header, stream: (header, _read_exactly(stream, header.size)))
+    def _load_tree(self, oid: str, unservable: str) -> dict[bytes, TreeEntry]:
+        served = self.store.lookup(oid, lambda header, stream: (header, _read_exactly(stream, header.size)))
         if served is None:
             raise UnservableSource(unservable)
         header, content = served
         if header.kind != "tree":
-            raise self.store.fail("git cat-file answered a tree lookup with another kind of object")
+            raise self.store.fail(f"git cat-file answered a tree lookup for {oid} with another kind of object")
         try:
-            return header.oid, parse_tree(content, self.raw_size)
+            return parse_tree(content, self.raw_size)
         except ToolFault as fault:
             self.store.broken = True
             raise fault
+
+    def _root_tree_id(self, head: str) -> str:
+        """The `tree` line of the commit `head`, read raw and hashed like every object."""
+        served = self.store.lookup(head, lambda header, stream: (header, _read_exactly(stream, header.size)))
+        if served is None:
+            raise UnservableSource("the commit of HEAD cannot be served by the object store")
+        header, content = served
+        if header.kind != "commit":
+            raise self.store.fail(f"git cat-file answered a commit lookup for {head} with another kind of object")
+        line = content.split(b"\n", 1)[0]
+        if not line.startswith(b"tree ") or OBJECT_ID.fullmatch(line[5:]) is None or len(line) - 5 != len(head):
+            self.store.broken = True
+            raise ToolFault("TOOL_FAULT", f"the commit {head} has no readable tree line")
+        return line[5:].decode("ascii")
 
     def _root_tree(self) -> dict[bytes, TreeEntry]:
         if self.root is None:
             if self.head is None:
                 raise StoreSkipped
-            _, entries = self._load_tree(f"{self.head}^{{tree}}".encode("ascii"), None, "the tree of HEAD cannot be served by the object store")
-            self.root = entries
+            self.root = self._load_tree(self._root_tree_id(self.head), "the tree of HEAD cannot be served by the object store")
         return self.root
 
     def _subtree(self, entry: TreeEntry) -> dict[bytes, TreeEntry]:
         if entry.oid not in self.trees:
             message = "a tree on the path is named by its parent tree but the object store cannot serve it"
-            _, self.trees[entry.oid] = self._load_tree(entry.oid.encode("ascii"), entry.oid, message)
+            self.trees[entry.oid] = self._load_tree(entry.oid, message)
         return self.trees[entry.oid]
 
     def read(self, path: str) -> tuple[str | None, str]:
@@ -697,13 +766,13 @@ class HeadReader:
             return None, "is not a blob at HEAD (a directory)"
         if kind != "file":
             return None, f"is not a regular file at HEAD ({kind})"
-        digest = self.store.lookup(entry.oid.encode("ascii"), entry.oid, self._blob_digest)
+        digest = self.store.lookup(entry.oid, self._blob_digest)
         if digest is None:
             raise UnservableSource("the source is named by its parent tree but the object store cannot serve it")
         return digest, ""
 
     @staticmethod
-    def _blob_digest(header: Header, stream: IO[bytes]) -> str:
+    def _blob_digest(header: Header, stream: Body) -> str:
         if header.kind != "blob":
             raise ValueError("a file entry is not a blob")
         return _digest_of(stream, header.size)
