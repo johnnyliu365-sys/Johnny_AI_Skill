@@ -1332,5 +1332,318 @@ class AsciiVersionTests(SnapshotCase):
         self.assertIn("does not exist", err)
 
 
+class RedBeforeFaultTests(SnapshotCase):
+    """A command checks everything it can: any red is exit 1 with every red on stdout, a fault only on stderr."""
+
+    def diff(self, source: str, first: str, second: str) -> tuple[int, str, str]:
+        return self.env.main("diff", "--source", source, first, second, "--root", str(self.env.root))
+
+    def damage(self, name: str) -> None:
+        path = self.env.snapshot("src", name)
+        path.write_text(path.read_text(encoding="utf-8").replace("title of", "tampered"), encoding="utf-8", newline="\n")
+
+    def stored_pair(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+
+    def assert_fault_lines(self, err: str, count: int) -> None:
+        lines = err.splitlines()
+        self.assertEqual(len(lines), count, err)
+        for line in lines:
+            self.assertTrue(line.startswith("requirement_snapshot.py: tool fault: "), err)
+
+    def test_an_invalid_source_name_with_an_over_long_version_is_a_red_in_either_position(self) -> None:
+        for source in ("..", "a/b", "con", "bad name"):
+            for first, second in (("9" * 300, "1"), ("1", "9" * 300), ("v" + "9" * 5000, "1"), ("1", "9" * 4301)):
+                with self.subTest(source=source, length=len(first) + len(second)):
+                    code, out, err = self.diff(source, first, second)
+                    self.assertEqual(code, 1, out + err)
+                    self.assertIn("NAME_INVALID", out)
+                    self.assert_fault_lines(err, 1)
+                    self.assertIn("requested version does not exist", err)
+
+    def test_a_case_variant_source_with_an_over_long_version_is_a_red(self) -> None:
+        self.env.take([make_row("r1")], source="Source", taken_at=T1)
+        for first, second in (("9" * 300, "1"), ("1", "9" * 300)):
+            code, out, err = self.diff("source", first, second)
+            self.assertEqual(code, 1, out + err)
+            self.assertIn("NAME_INVALID", out)
+            self.assert_fault_lines(err, 1)
+
+    def test_an_over_long_version_alone_is_exit_2_in_either_position(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        for first, second in (("9" * 300, "1"), ("1", "9" * 300), ("1", "v" + "9" * 5000), ("0" * 5000 + "9" * 300, "1")):
+            with self.subTest(length=len(first) + len(second)):
+                code, out, err = self.diff("src", first, second)
+                self.assertEqual((code, out), (2, ""), err)
+                self.assert_fault_lines(err, 1)
+                self.assertIn("requested version does not exist", err)
+                for raw in ("ValueError", "Traceback", "invalid literal", "Exceeds the limit"):
+                    self.assertNotIn(raw, err)
+
+    def test_an_over_long_version_in_the_second_position_does_not_print_a_raw_exception(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        for second in ("9" * 256, "1" * 4301, "v" + "7" * 5000):
+            with self.subTest(length=len(second)):
+                code, out, err = self.diff("src", "1", second)
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertIn("requested version does not exist", err)
+                self.assertNotIn("ValueError", err)
+        code, out, err = self.diff("src", "1", "9" * 255)
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertIn("does not exist", err)
+
+    def test_two_over_long_versions_are_two_fault_lines_and_exit_2(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        code, out, err = self.diff("src", "9" * 300, "8" * 300)
+        self.assertEqual((code, out), (2, ""), err)
+        self.assert_fault_lines(err, 2)
+        code, out, err = self.diff("src", "9" * 300, "9" * 300)
+        self.assertEqual((code, out), (2, ""), err)
+        self.assert_fault_lines(err, 1)
+
+    def test_a_damaged_v2_with_a_missing_v9_is_exit_1_with_the_missing_version_on_stderr(self) -> None:
+        self.stored_pair()
+        self.damage("2026-11-05-v2.json")
+        for first, second in (("2", "9"), ("9", "2"), ("1", "2")):
+            with self.subTest(first=first, second=second):
+                code, out, err = self.diff("src", first, second)
+                self.assertEqual(code, 1, out + err)
+                self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+        code, out, err = self.diff("src", "2", "9")
+        self.assertEqual(code, 1)
+        self.assertEqual([line.split(" ", 1)[0] for line in out.splitlines()], ["SNAPSHOT_DIGEST_MISMATCH"])
+        self.assert_fault_lines(err, 1)
+        self.assertIn("version 9 does not exist", err)
+
+    def test_a_missing_version_alone_stays_exit_2_and_a_damaged_one_alone_exit_1(self) -> None:
+        self.stored_pair()
+        code, out, err = self.diff("src", "1", "9")
+        self.assertEqual((code, out), (2, ""), err)
+        self.assert_fault_lines(err, 1)
+        self.damage("2026-11-05-v2.json")
+        code, out, err = self.diff("src", "1", "2")
+        self.assertEqual((code, err), (1, ""), out)
+
+    def test_a_damaged_version_and_an_over_long_version_is_exit_1(self) -> None:
+        self.stored_pair()
+        self.damage("2026-11-05-v2.json")
+        for first, second in (("2", "9" * 300), ("9" * 300, "2")):
+            code, out, err = self.diff("src", first, second)
+            self.assertEqual(code, 1, out + err)
+            self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+            self.assert_fault_lines(err, 1)
+
+    def test_one_damaged_version_named_twice_is_one_red(self) -> None:
+        self.stored_pair()
+        self.damage("2026-11-05-v2.json")
+        code, out, err = self.diff("src", "2", "v2")
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(len(out.splitlines()), 1, out)
+
+    def test_two_damaged_versions_are_both_reported(self) -> None:
+        self.stored_pair()
+        self.damage("2026-11-04-v1.json")
+        self.damage("2026-11-05-v2.json")
+        code, out, err = self.diff("src", "1", "2")
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(len(out.splitlines()), 2, out)
+
+    def test_a_version_that_exists_twice_with_a_damaged_other_is_exit_1(self) -> None:
+        self.stored_pair()
+        twin = self.env.snapshot("src", "2026-11-09-v1.json")
+        twin.write_bytes(self.env.snapshot("src", "2026-11-04-v1.json").read_bytes())
+        self.damage("2026-11-05-v2.json")
+        code, out, err = self.diff("src", "1", "2")
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+        self.assert_fault_lines(err, 1)
+        self.assertIn("exists more than once", err)
+
+    def test_take_with_an_invalid_name_and_an_unreadable_input_is_exit_1(self) -> None:
+        missing = self.env.dir / "absent.json"
+        code, out, err = self.env.main("take", "--source", "..", "--input", str(missing), "--root", str(self.env.root))
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("NAME_INVALID", out)
+        self.assert_fault_lines(err, 1)
+
+    def test_take_prints_the_name_red_and_the_input_reds_together(self) -> None:
+        code, out, err = self.env.take([make_row("r1", status="x")], source="bad name")
+        self.assertEqual((code, err), (1, ""), out)
+        codes = [match.group(1) for line in out.splitlines() if (match := DEFECT_LINE.match(line))]
+        self.assertEqual(sorted(codes), ["NAME_INVALID", "STATUS_UNKNOWN"])
+
+    def test_take_with_a_damaged_latest_version_and_a_bad_input_prints_both_reds(self) -> None:
+        self.stored_pair()
+        self.damage("2026-11-05-v2.json")
+        before = self.env.tree()
+        code, out, err = self.env.take([make_row("r3", status="x")], taken_at="2026-11-06T00:00:00Z")
+        self.assertEqual((code, err), (1, ""), out)
+        codes = [match.group(1) for line in out.splitlines() if (match := DEFECT_LINE.match(line))]
+        self.assertEqual(sorted(codes), ["SNAPSHOT_DIGEST_MISMATCH", "STATUS_UNKNOWN"])
+        self.assertEqual(self.env.tree(), before)
+
+    def test_take_with_a_damaged_latest_version_and_an_unreadable_input_is_exit_1(self) -> None:
+        self.stored_pair()
+        self.damage("2026-11-05-v2.json")
+        missing = self.env.dir / "absent.json"
+        code, out, err = self.env.main(
+            "take", "--source", "src", "--input", str(missing), "--root", str(self.env.root),
+            "--taken-at", "2026-11-06T00:00:00Z",
+        )
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+        self.assert_fault_lines(err, 1)
+        self.assertIn("cannot read", err)
+
+    def test_take_with_a_case_variant_and_an_unreadable_input_is_exit_1(self) -> None:
+        self.env.take([make_row("r1")], source="Source", taken_at=T1)
+        missing = self.env.dir / "absent.json"
+        code, out, err = self.env.main(
+            "take", "--source", "source", "--input", str(missing), "--root", str(self.env.root),
+        )
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("NAME_INVALID", out)
+        self.assert_fault_lines(err, 1)
+
+    def test_take_with_two_files_for_one_version_and_a_bad_input_is_exit_1(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        twin = self.env.snapshot("src", "2026-11-09-v1.json")
+        twin.write_bytes(self.env.snapshot("src", "2026-11-04-v1.json").read_bytes())
+        code, out, err = self.env.take([make_row("r2", status="x")], taken_at=T2)
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("STATUS_UNKNOWN", out)
+        self.assert_fault_lines(err, 1)
+        self.assertIn("exists more than once", err)
+
+    def test_take_faults_without_a_red_stay_exit_2_on_one_line(self) -> None:
+        missing = self.env.dir / "absent.json"
+        code, out, err = self.env.main("take", "--source", "src", "--input", str(missing), "--root", str(self.env.root))
+        self.assertEqual((code, out), (2, ""), err)
+        self.assert_fault_lines(err, 1)
+
+    def test_a_fault_message_naming_a_path_with_a_line_break_stays_on_one_line(self) -> None:
+        odd = self.env.dir / "a\nb\rc.json"
+        code, out, err = self.env.main("take", "--source", "src", "--input", str(odd), "--root", str(self.env.root))
+        self.assertEqual((code, out), (2, ""), err)
+        self.assert_fault_lines(err, 1)
+        code, out, err = self.env.main("take", "--source", "..", "--input", str(odd), "--root", str(self.env.root))
+        self.assertEqual(code, 1, out + err)
+        self.assert_fault_lines(err, 1)
+
+    def test_verify_prints_every_red_and_nothing_on_stderr(self) -> None:
+        self.stored_pair()
+        self.damage("2026-11-05-v2.json")
+        code, out, err = self.env.main("verify", str(self.env.snapshot("src", "2026-11-05-v2.json")))
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+        code, out, err = self.env.main("verify", str(self.env.dir / "absent.json"))
+        self.assertEqual((code, out), (2, ""), err)
+        self.assert_fault_lines(err, 1)
+
+    def test_the_check_order_puts_the_argument_grammar_before_the_name_rules(self) -> None:
+        code, out, err = self.env.main("diff", "--source", "..", "x", "1", "--root", str(self.env.root))
+        self.assertEqual((code, out), (3, ""), err)
+        code, out, err = self.env.main("diff", "--source", "..", "1", "0", "--root", str(self.env.root))
+        self.assertEqual((code, out), (3, ""), err)
+        rows = self.env.write_input([make_row("r1")])
+        code, out, err = self.env.main(
+            "take", "--source", "..", "--input", str(rows), "--root", str(self.env.root), "--taken-at", "not a time",
+        )
+        self.assertEqual((code, out), (3, ""), err)
+
+    def test_the_check_order_puts_the_name_rules_before_the_version_lookups(self) -> None:
+        code, out, err = self.diff("..", "1", "2")
+        self.assertEqual(code, 1, out + err)
+        self.assertEqual(err, "")
+
+
+class AsciiCaseCollisionTests(SnapshotCase):
+    LIGATURE = "ﬁ"
+    KELVIN = "K"
+
+    def make_directory(self, name: str) -> None:
+        (self.env.root / name).mkdir(parents=True)
+        self.assertIn(name, [entry.name for entry in self.env.root.iterdir()])
+
+    def test_a_ligature_directory_never_collides_with_an_ascii_source(self) -> None:
+        self.make_directory(self.LIGATURE)
+        code, out, err = self.env.take([make_row("r1")], source="fi")
+        self.assertEqual(code, 0, out + err)
+        code, out, err = self.env.take([make_row("r2")], source="fi", taken_at=T2)
+        self.assertEqual(code, 0, out + err)
+        code, out, err = self.env.main("diff", "--source", "fi", "1", "2", "--root", str(self.env.root))
+        self.assertEqual((code, out), (0, "added r2\nremoved r1\n"), err)
+
+    def test_a_kelvin_sign_directory_never_collides_with_an_ascii_source(self) -> None:
+        self.make_directory(self.KELVIN)
+        code, out, err = self.env.take([make_row("r1")], source="k")
+        self.assertEqual(code, 0, out + err)
+        code, out, err = self.env.main("diff", "--source", "k", "1", "1", "--root", str(self.env.root))
+        self.assertEqual((code, out), (0, ""), err)
+        self.assertEqual(sorted(entry.name for entry in self.env.root.iterdir()), sorted(["k", self.KELVIN]))
+        code, out, err = self.env.take([make_row("r2")], source="K", taken_at=T2)
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("NAME_INVALID", out)
+
+    def test_an_ascii_case_variant_still_collides_in_take_and_diff(self) -> None:
+        self.env.take([make_row("r1")], source="Fi", taken_at=T1)
+        self.env.take([make_row("r2")], source="Fi", taken_at=T2)
+        self.make_directory(self.LIGATURE)
+        code, out, err = self.env.take([make_row("r3")], source="fI", taken_at=T2)
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("NAME_INVALID", out)
+        code, out, err = self.env.main("diff", "--source", "fI", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("NAME_INVALID", out)
+
+    def test_the_collision_rule_is_ascii_only_in_the_helper(self) -> None:
+        self.make_directory(self.LIGATURE)
+        self.make_directory("Fi")
+        self.make_directory("K")
+        found = requirement_snapshot._case_collisions(self.env.root, "fi")
+        self.assertEqual(len(found), 1)
+        self.assertIn("'Fi'", found[0].detail)
+        self.assertNotIn(self.LIGATURE, found[0].detail)
+        self.assertEqual(len(requirement_snapshot._case_collisions(self.env.root, "k")), 1)
+
+
+class DocumentedRuleTests(SnapshotCase):
+    def texts(self) -> tuple[str, str]:
+        doc = " ".join((requirement_snapshot.__doc__ or "").split())
+        readme = " ".join((_SCRIPTS / "README.md").read_text(encoding="utf-8").split())
+        return doc, readme
+
+    def test_the_docstring_and_the_readme_state_the_claim_name_and_over_long_rules(self) -> None:
+        doc, readme = self.texts()
+        for text in (doc.lower(), readme.lower()):
+            self.assertIn("claim file names and arguments are ascii digits only", text)
+            self.assertIn("a version argument with more digits than a file name can hold names no stored version", text)
+            self.assertIn("reports that the requested version does not exist", text)
+
+    def test_the_docstring_and_the_readme_state_red_before_fault_and_the_check_order(self) -> None:
+        doc, readme = self.texts()
+        for text in (doc, readme):
+            self.assertIn("a command checks everything it can before it decides the exit", text)
+            self.assertIn("prints every red on stdout and exits 1", text)
+            self.assertIn("a fault met on the way is printed on stderr, on one line, and does not change the exit", text)
+            self.assertIn("exits 2 only when it found no red and a fault stopped it", text)
+            self.assertIn("argument grammar (exit 3), then the name rules on", text)
+            self.assertIn("an over-long version argument in either position is a version that does not exist", text)
+
+    def test_the_docstring_and_the_readme_state_the_ascii_only_case_rule(self) -> None:
+        doc, readme = self.texts()
+        for text in (doc, readme):
+            self.assertIn(
+                "collides with the source name only when the entry is ASCII and equal to the name ignoring ASCII letter case",
+                text,
+            )
+            self.assertIn("a non-ASCII entry never collides", text)
+
+    def test_the_readme_states_that_exit_2_needs_the_absence_of_a_red(self) -> None:
+        _, readme = self.texts()
+        self.assertIn("Exit 2, only when no red was found", readme)
+
+
 if __name__ == "__main__":
     unittest.main()

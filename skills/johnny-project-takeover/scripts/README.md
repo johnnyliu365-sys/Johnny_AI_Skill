@@ -136,7 +136,16 @@ fields.
 JSON input: a repeated key in an object (a row or the top level) is `ROW_FIELD_TYPE`. Version
 numbers in file names, claim file names and arguments are ASCII digits only. A version argument
 with more digits than a file name can hold names no stored version: `diff` reports that the
-requested version does not exist (exit 2), never a raw exception text.
+requested version does not exist (exit 2 unless a red was found), never a raw exception text.
+
+Red before fault: a command checks everything it can before it decides the exit. If it found any
+red it prints every red on stdout and exits 1; a fault met on the way is printed on stderr, on one
+line, and does not change the exit. It exits 2 only when it found no red and a fault stopped it.
+So `diff` of a damaged version and a missing version prints the digest mismatch and exits 1, with
+the missing version on stderr. The same holds for `take` and `verify`. Check order in `take` and
+`diff`: argument grammar (exit 3), then the name rules on `--source`, then version lookups (an
+over-long version argument in either position is a version that does not exist), then reading and
+checking the stored files.
 
 Defect codes, printed one per line as `<code> <requirement_id or field>: <detail>`:
 
@@ -152,12 +161,14 @@ Defect codes, printed one per line as `<code> <requirement_id or field>: <detail
 - `NAME_INVALID`: a source name with a path separator, `..`, a character outside
   `[A-Za-z0-9._-]`, a trailing dot, a Windows reserved device name (`CON`, `PRN`, `AUX`, `NUL`,
   `COM1` to `COM9`, `LPT1` to `LPT9`, with or without an extension), or a case variant of an
-  existing source directory. `take` and `diff` apply every name rule, the case-variant rule
+  existing source directory: an existing entry collides with the source name only when the entry is
+  ASCII and equal to the name ignoring ASCII letter case, and a non-ASCII entry never collides (the
+  file system keeps it distinct). `take` and `diff` apply every name rule, the case-variant rule
   included, because they know the root. `verify` takes a single file and applies the name rules to
   the file's `source` value only: not the case-variant rule, and no comparison with the directory
   the file sits in.
 
-A red exits 1 and `take` then writes nothing. Exit 2: the root cannot be created or written, the
+A red exits 1 and `take` then writes nothing. Exit 2, only when no red was found: the root cannot be created or written, the
 input or a snapshot cannot be read, a requested version does not exist, a version exists twice, a
 claim file exists or a version was published by another writer while `take` was working, a target
 appeared while writing, or an unexpected error. Exit 3: bad arguments.

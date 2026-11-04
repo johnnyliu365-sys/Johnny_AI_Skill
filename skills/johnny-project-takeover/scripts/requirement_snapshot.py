@@ -46,18 +46,29 @@ URL with a scheme is allowed); DIGEST_FORMAT; SNAPSHOT_DIGEST_MISMATCH (a stored
 source_sha256 does not match its rows: reported by verify, and by take or diff whenever they read
 that version); NAME_INVALID (a source name with a path separator, `..`, characters outside
 [A-Za-z0-9._-], a trailing dot, a Windows reserved device name, or a case variant of an existing
-source). take and diff apply every name rule, the case-variant rule included, because they know
-the root; verify takes a single file and applies the name rules to the file's `source` value only,
-not the case-variant rule and not a comparison with the directory the file sits in.
+source: an existing directory entry collides with the source name only when the entry is ASCII and
+equal to the name ignoring ASCII letter case, and a non-ASCII entry never collides). take and diff
+apply every name rule, the case-variant rule included, because they know the root; verify takes a
+single file and applies the name rules to the file's `source` value only, not the case-variant rule
+and not a comparison with the directory the file sits in.
 
 JSON input: a repeated key in an object (a row or the top level) is ROW_FIELD_TYPE; version numbers
-in file names and arguments are ASCII digits only; a top-level `source` or `source_sha256` that
-breaks the text-value rule is ROW_FIELD_TYPE as well as its format code, as for row fields.
+in file names, claim file names and arguments are ASCII digits only; a version argument with more
+digits than a file name can hold names no stored version: diff reports that the requested version
+does not exist (exit 2 unless a red was found), never a raw exception text; a top-level `source` or
+`source_sha256` that breaks the text-value rule is ROW_FIELD_TYPE as well as its format code, as for
+row fields.
 
 Exit codes: 0 pass, 1 contract red (named defect codes), 2 tool fault (the file system cannot
 serve the run, a version file is missing, a lost version race or a stale claim, any unexpected
 error), 3 usage error.
+Red before fault: a command checks everything it can before it decides the exit. If it found any
+red it prints every red on stdout and exits 1; a fault met on the way is printed on stderr, on one
+line, and does not change the exit. It exits 2 only when it found no red and a fault stopped it.
 A red is never reported as a tool fault and a tool fault is never reported as a red.
+Check order in take and diff: argument grammar (exit 3), then the name rules on --source, then
+version lookups (an over-long version argument in either position is a version that does not exist),
+then reading and checking the stored files.
 """
 from __future__ import annotations
 
@@ -92,6 +103,7 @@ MAX_VERSION_DIGITS = 255
 ID_PATTERN = re.compile(r"[A-Za-z0-9._:/-]{1,128}")
 SUBJECT_PATTERN = re.compile(r"[A-Za-z0-9._:/\[\]-]{1,128}")
 CLAIM_PATTERN = re.compile(r"\.v[0-9]+\.claim")
+LINE_BREAK_PATTERN = re.compile(r"[\x00-\x1f\x7f\x85\u2028\u2029]")
 URL_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9+.-]+://")
 DRIVE_PATTERN = re.compile(r"[A-Za-z]:")
 RESERVED_DEVICE_NAMES = frozenset(
@@ -583,6 +595,10 @@ def _release_claim(claim: Path, published: bool) -> None:
 
 
 def _case_collisions(root: Path, source: str) -> list[Defect]:
+    """Existing entries that are ASCII and equal the (ASCII) source name ignoring ASCII case.
+
+    A non-ASCII entry never collides: the file system keeps it distinct from any ASCII name.
+    """
     try:
         entries = os.listdir(root)
     except FileNotFoundError:
@@ -592,7 +608,7 @@ def _case_collisions(root: Path, source: str) -> list[Defect]:
     return [
         Defect(DefectCode.NAME_INVALID, "source", f"{source!r} collides with the existing directory {entry!r}")
         for entry in entries
-        if entry != source and entry.casefold() == source.casefold()
+        if entry != source and entry.isascii() and entry.lower() == source.lower()
     ]
 
 
@@ -604,11 +620,21 @@ def _print_defects(defects: Sequence[Defect]) -> None:
         print(defect.render())
 
 
+def _one_line(text: str) -> str:
+    """A message on one line: every control or line-break character is shown as an escape."""
+    return LINE_BREAK_PATTERN.sub(lambda found: f"\\x{ord(found.group(0)):02x}", text)
+
+
+def _finish(reds: Sequence[Defect], faults: Sequence[ToolFault]) -> int:
+    """Red before fault: every red on stdout, every fault on stderr (one line each); a red decides exit 1."""
+    _print_defects(reds)
+    for fault in faults:
+        print(f"requirement_snapshot.py: tool fault: {_one_line(str(fault))}", file=sys.stderr)
+    return 1 if reds else 2
+
+
 def run_take(source: str, input_path: Path, root: Path, taken_at: str | None) -> int:
-    defects = name_defects(source)
-    if defects:
-        _print_defects(defects)
-        return 1
+    """Check everything the run can check, then decide: any red is exit 1, else any fault is exit 2."""
     if taken_at is None:
         moment = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     else:
@@ -616,25 +642,35 @@ def run_take(source: str, input_path: Path, root: Path, taken_at: str | None) ->
         if parsed is None:
             raise UsageError(f"--taken-at {taken_at!r} is not an ISO-8601 UTC instant")
         moment = parsed
-    rows, defects = parse_input(read_file(input_path))
-    if defects:
-        _print_defects(defects)
-        return 1
-    digest = rows_digest(rows)
-    defects = _case_collisions(root, source)
-    if defects:
-        _print_defects(defects)
-        return 1
+    name_reds = name_defects(source)
+    reds: list[Defect] = list(name_reds)
+    faults: list[ToolFault] = []
+    rows: list[Row] = []
+    try:
+        rows, input_reds = parse_input(read_file(input_path))
+        reds.extend(input_reds)
+    except ToolFault as exc:
+        faults.append(exc)
     directory = root / source
-    latest = _latest(list_versions(directory))
-    if latest is not None:
-        previous, defects = parse_snapshot(read_file(latest.path))
-        if previous is None:
-            _print_defects(defects)
-            return 1
-        if previous.source_sha256 == digest:
-            print(f"{latest.path} unchanged")
-            return 0
+    latest: VersionFile | None = None
+    previous: Snapshot | None = None
+    if not name_reds:
+        try:
+            collisions = _case_collisions(root, source)
+            reds.extend(collisions)
+            if not collisions:
+                latest = _latest(list_versions(directory))
+                if latest is not None:
+                    previous, stored_reds = parse_snapshot(read_file(latest.path))
+                    reds.extend(stored_reds)
+        except ToolFault as exc:
+            faults.append(exc)
+    if reds or faults:
+        return _finish(reds, faults)
+    digest = rows_digest(rows)
+    if latest is not None and previous is not None and previous.source_sha256 == digest:
+        print(f"{latest.path} unchanged")
+        return 0
     number = 1 if latest is None else latest.version + 1
     target = directory / f"{moment[:10]}-v{number}.json"
     try:
@@ -664,30 +700,60 @@ def run_verify(path: Path) -> int:
     return 0
 
 
-def _load_version(directory: Path, number: int) -> tuple[Snapshot | None, list[Defect]]:
-    matching = [item for item in list_versions(directory) if item.version == number]
-    if not matching:
-        raise ToolFault(f"version {number} does not exist in {directory}")
-    if len(matching) > 1:
-        raise ToolFault(f"version {number} exists more than once in {directory}")
-    return parse_snapshot(read_file(matching[0].path))
+def _too_long(digits: str) -> ToolFault:
+    return ToolFault(
+        f"the requested version does not exist: a version argument of {len(digits)} digits "
+        "is longer than any stored file name allows"
+    )
 
 
-def run_diff(source: str, first: int, second: int, root: Path) -> int:
-    defects = name_defects(source)
-    if defects:
-        _print_defects(defects)
-        return 1
-    defects = _case_collisions(root, source)
-    if defects:
-        _print_defects(defects)
-        return 1
-    directory = root / source
-    older, older_defects = _load_version(directory, first)
-    newer, newer_defects = _load_version(directory, second)
-    if older is None or newer is None:
-        _print_defects([*older_defects, *newer_defects])
-        return 1
+def _read_versions(
+    directory: Path, wanted: Sequence[str], reds: list[Defect], faults: list[ToolFault],
+) -> dict[int, Snapshot]:
+    """Read each wanted version once; a missing or unreadable one is a fault, a damaged one is a red."""
+    loaded: dict[int, Snapshot] = {}
+    versions = list_versions(directory)
+    for digits in wanted:
+        if len(digits) > MAX_VERSION_DIGITS:
+            continue
+        number = int(digits)
+        matching = [item for item in versions if item.version == number]
+        if not matching:
+            faults.append(ToolFault(f"version {number} does not exist in {directory}"))
+        elif len(matching) > 1:
+            faults.append(ToolFault(f"version {number} exists more than once in {directory}"))
+        else:
+            try:
+                snapshot, stored_reds = parse_snapshot(read_file(matching[0].path))
+            except ToolFault as exc:
+                faults.append(exc)
+                continue
+            reds.extend(stored_reds)
+            if snapshot is not None:
+                loaded[number] = snapshot
+    return loaded
+
+
+def run_diff(source: str, first: str, second: str, root: Path) -> int:
+    """`first` and `second` are version digits without leading zeros; red before fault as in take."""
+    name_reds = name_defects(source)
+    reds: list[Defect] = list(name_reds)
+    faults: list[ToolFault] = []
+    wanted = list(dict.fromkeys((first, second)))
+    faults.extend(_too_long(digits) for digits in wanted if len(digits) > MAX_VERSION_DIGITS)
+    loaded: dict[int, Snapshot] = {}
+    if not name_reds:
+        try:
+            collisions = _case_collisions(root, source)
+            reds.extend(collisions)
+            if not collisions:
+                loaded = _read_versions(root / source, wanted, reds, faults)
+        except ToolFault as exc:
+            faults.append(exc)
+    if reds or faults:
+        return _finish(reds, faults)
+    older = loaded[int(first)]
+    newer = loaded[int(second)]
     before = {row.requirement_id: row for row in older.rows}
     after = {row.requirement_id: row for row in newer.rows}
     for identifier in sorted(after.keys() - before.keys()):
@@ -733,16 +799,9 @@ def _version_digits(text: str) -> str:
     return digits
 
 
-def _version_numbers(first: str, second: str) -> tuple[int, int]:
-    """Both arguments are checked as arguments first; one too long to name a stored version does not exist."""
-    digits = (_version_digits(first), _version_digits(second))
-    for item in digits:
-        if len(item) > MAX_VERSION_DIGITS:
-            raise ToolFault(
-                f"the requested version does not exist: a version argument of {len(item)} digits "
-                "is longer than any stored file name allows"
-            )
-    return int(digits[0]), int(digits[1])
+def _version_arguments(first: str, second: str) -> tuple[str, str]:
+    """Both arguments are checked as arguments here (exit 3); the digits are looked up later."""
+    return _version_digits(first), _version_digits(second)
 
 
 def _dispatch(args: Sequence[str]) -> int:
@@ -778,7 +837,7 @@ def _dispatch(args: Sequence[str]) -> int:
             raise UsageError("--source is required")
         if len(positional) != 2:
             raise UsageError("diff takes exactly two versions")
-        first, second = _version_numbers(positional[0], positional[1])
+        first, second = _version_arguments(positional[0], positional[1])
         return run_diff(options["--source"], first, second, Path(options.get("--root", DEFAULT_ROOT)))
     raise UsageError(f"unknown command {command}")
 
@@ -804,10 +863,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"requirement_snapshot.py: error: {exc}", file=sys.stderr)
         return 3
     except ToolFault as exc:
-        print(f"requirement_snapshot.py: tool fault: {exc}", file=sys.stderr)
+        print(f"requirement_snapshot.py: tool fault: {_one_line(str(exc))}", file=sys.stderr)
         return 2
     except Exception as exc:  # noqa: BLE001 - an uncaught error must never reach the caller as exit 1
-        print(f"requirement_snapshot.py: tool fault: {type(exc).__name__}: {exc}", file=sys.stderr)
+        print(f"requirement_snapshot.py: tool fault: {type(exc).__name__}: {_one_line(str(exc))}", file=sys.stderr)
         return 2
 
 
