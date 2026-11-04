@@ -279,3 +279,55 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/52-rev04-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision04 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `09ef0dbc5dd686ad1308bbafd72e27b2f4d286a2` (`09ef0dbc` correction 1 → `7649f1b8` → `bea0cf0c` → `ac95c321` → `3c485efc` → `21ac4fda` → `dbd74358`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review CodeReview §5 allows for revision04 |
+| Summary | Correction 1 closes S52-24 to S52-27 in behaviour: every input-derived failure probed (231 combinations) is a red and none drops a red already found; every earlier item holds. Three counter-mutations stay green (S52-28, S52-29, S52-30): evidence gaps only, no exit-code change and no safety or confinement break on the candidate. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 165 passed, 377 subtests; mypy --strict clean |
+| Input-derived failures | PASS in behaviour | 33 byte shapes × 7 ways, 231 of 231 exit 1 with every earlier red kept; object nesting untested (S52-28) |
+| Red before fault | PASS | 16 combinations exit 1 with the fault on one stderr line; alone each exits 2 |
+| S52-25, S52-26, S52-27 | PASS | twelve line-break characters through every fault path; nothing read under an invalid or colliding name |
+| Regression | PASS | 80 of 82 probes; the two misses were the probe expecting LF from native Windows stdout |
+| Version claim under real races | PASS | 60 races, never a duplicate; a claimless mutant duplicated v2 in 18 of 20 |
+| Reverse mutations | PARTIAL | seat 21 red; reviewer 33: 22 red, 5 equivalent, 6 findings |
+| Receipt / boundary / documentation | PASS | checker 0 defects with P9; digests recomputed; LF; additions-only tests; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S52-01 to S52-07, S52-10 to S52-23, S52-25 to S52-27 | CLOSED |
+| S52-24 | CLOSED in behaviour; tests nest arrays only (S52-28) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S52-28 | EVIDENCE_DEFECT | Low (evidence gap only) | tests `:1648-1664`; `requirement_snapshot.py:409-412` | deep nesting tested with arrays only; a mutant re-raising for objects stays green and then drops `NAME_INVALID` | X4, C24 green |
+| S52-29 | EVIDENCE_DEFECT | Low (evidence gap only) | `requirement_snapshot.py:290-295, 438-443`; tests | "every red" unpinned for a second defect with the same code and subject | C21, X5, X6 green |
+| S52-30 | EVIDENCE_DEFECT | Low (evidence gap only) | `requirement_snapshot.py:683-685`; tests | the unchanged path is pinned only against canonical stored files; a mutant rewriting a CRLF stored version stays green | X3 green |
+| S52-31 | OUT_OF_SCOPE_HARDENING | Low | `requirement_snapshot.py:795-799, 854, 684, 702` | the usage line and the success lines print raw argument and path text | 24 probe cases |
+| S52-32 | OUT_OF_SCOPE_HARDENING | Low | `requirement_snapshot.py:396-401` | repeated-key collection is quadratic | timing probe |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: the POSIX publish branch; a case-sensitive file system; an ACL-unwritable root; memory exhaustion; non-Windows console encodings.
+
+```review-verdict
+candidate: 09ef0dbc5dd686ad1308bbafd72e27b2f4d286a2
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/52-rev04-correction
+reviewed_at: 2026-11-04
+```

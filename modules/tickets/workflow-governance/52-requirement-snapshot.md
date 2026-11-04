@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision04 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision05 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 correction review `CONVERGENCE_REVIEW_REQUIRED`: S52-18 to S52-23; revision04 initial review CHANGES_REQUESTED (S52-24); correction 1 dispatched） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 correction review `CONVERGENCE_REVIEW_REQUIRED`: S52-28 to S52-30, evidence only; implementation 5 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/52-requirement-snapshot` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/52-requirement-snapshot-review` |
@@ -173,3 +173,20 @@ Review record section "Revision03 correction review". CodeReview §5: revision03
 ### Correction 1 under revision04 (after the revision04 initial review `CHANGES_REQUESTED`)
 
 No ticket defect was found, so revision04 stands. One clarification of its first binding rule, in the same direction as ticket 53 revision03: a failure derived from the bytes of an input or a stored version (deep nesting that the JSON parser cannot follow, for example) is a red of that file with the code a non-JSON file gets, never a fault; this replaces the revision01 acceptance of deep nesting as a fault. Only an error no input can produce (a programming error) may still end the run at once with exit 2. S52-24: as above, one test per reachable case. S52-25, S52-26: the tests the review names. S52-27 (taken now): a take test that nothing is read under an invalid source name. The next review is the one correction review of revision04.
+
+## Re-plan to closure revision05 (after the revision04 correction review `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision04 correction review". CodeReview §5: revision04 used its one initial and one correction review. The candidate behaves as the closure says; the open findings are tests that do not pin it. Revision05 keeps every rule and adds the tests and two small output rules. It starts a new cadence: one initial review and one correction review.
+
+### Rules added in revision05 (binding)
+
+- Every line the tool prints, the usage line and the success and `unchanged` lines included, is escaped to one line like defect and fault lines.
+- Repeated-key collection is linear in the number of keys.
+
+| Finding | Class | Disposition in revision05 |
+| --- | --- | --- |
+| S52-28 | EVIDENCE_DEFECT | deep object nesting tested in take, verify and diff |
+| S52-29 | EVIDENCE_DEFECT | tests with two defects of the same code and subject, in a row and at the top level |
+| S52-30 | EVIDENCE_DEFECT | an unchanged take leaves a CRLF stored version byte-identical |
+| S52-31 | OUT_OF_SCOPE_HARDENING (taken now) | every printed line escaped |
+| S52-32 | OUT_OF_SCOPE_HARDENING (taken now) | linear repeated-key collection, with a 40000-key test under a time bound |
