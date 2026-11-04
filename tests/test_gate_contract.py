@@ -636,7 +636,15 @@ class SourcePaths(Case):
                 self.assertEqual(self.declare(path), [])
 
     def test_dot_dot_escaping_the_repository_is_source_missing(self) -> None:
-        for path in ("../repo/contracts/source.txt", "../source.txt", "contracts/../../x", "..\\repo\\contracts\\source.txt"):
+        for path in (
+            "../repo/contracts/source.txt",
+            "../contracts/source.txt",
+            "..\\contracts\\source.txt",
+            "../source.txt",
+            "contracts/../../x",
+            "contracts/../../contracts/source.txt",
+            "..\\repo\\contracts\\source.txt",
+        ):
             with self.subTest(path):
                 self.assert_missing(path)
 
@@ -687,6 +695,19 @@ class SourcePaths(Case):
         except (OSError, NotImplementedError):
             self.skipTest("symbolic links are not available")
         self.assert_missing("contracts/link.txt")
+
+    def test_a_real_path_outside_the_repository_is_refused_component_wise(self) -> None:
+        outside = Path(self.base / "repo-evil" / "source.txt")
+        outside.parent.mkdir()
+        outside.write_bytes(SOURCE_BYTES)
+        repo_real = Path(self.repo)
+        for landing in (outside, self.base / "repo2" / "source.txt"):
+            with self.subTest(str(landing)):
+                with mock.patch.object(contract_gate.os.path, "realpath", return_value=str(landing)):
+                    resolved, reason = contract_gate.resolve_source(repo_real, "contracts/source.txt")
+                self.assertEqual((resolved, reason), (None, "escapes the repository"))
+        resolved, reason = contract_gate.resolve_source(repo_real, "contracts/source.txt")
+        self.assertEqual((resolved, reason), (self.source, ""))
 
     def test_a_source_in_a_subdirectory_with_spaces_resolves(self) -> None:
         spaced = self.repo / "my docs" / "a b.txt"
