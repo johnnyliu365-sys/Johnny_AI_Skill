@@ -117,7 +117,11 @@ and case-sensitively). Every tool is tried and every failing tool is reported; t
 2 when any tool failed, whichever tool came last.
 
 The gate resolves the program name itself, the same way on every platform, before it
-launches anything. An absolute name is used as given. A relative name that contains a
+launches anything. A name that carries a drive (a letter and a colon at its start, or the
+extended-length or share prefix) must be absolute, and this is checked first, before every
+other rule: a name that is relative to a drive, with or without a separator after the
+colon, is refused with the cause `cannot be resolved` and is never joined to the dispatch
+directory. An absolute name is used as given. A relative name that contains a
 path separator (a slash or a backslash) is joined to the dispatch file's directory, so
 it never depends on the directory the gate was started from. A bare name is looked up in
 the entries of the search path only (with the executable extensions of the platform on
@@ -125,8 +129,13 @@ Windows), never in the current directory or the dispatch directory; an empty or 
 entry is skipped. A program whose resolved name ends in the extension of a batch file
 (either of the two that Windows runs through its command interpreter, in any letter case)
 is refused, because that interpreter reads the arguments as commands; name the interpreter
-or the executable instead. On Windows a name that carries a drive but no root is not
-resolved.
+or the executable instead. On Windows the executable extensions come from the environment
+list of extensions (the default list when it is missing or empty), in its order, and a
+quote or blank around a search-path entry is removed.
+
+A command whose run raised an unexpected error after its child had started kills that
+child, with the processes it started, before the next tool runs; an unexpected error
+anywhere else in the run is exit 2 with one line on standard error and no traceback.
 
 Exit 0 prints `tools=N served=N`. Exit 2 prints one line `TOOL_UNSERVED <tool>: <cause>` per
 failing tool; the causes are `start cannot be launched`, `start cannot be resolved`,
@@ -138,7 +147,10 @@ cannot be written (never another code, whatever the run would have returned). Ex
 arguments, no `preflight:` block, a block that does not follow the grammar (a missing,
 repeated or unknown key, a key at the wrong indent, a value that is not one JSON value of
 the right type, an empty argument array, an empty or blank `tool` or `expect`), a file
-that is not UTF-8, or a string that holds a lone surrogate or a control character. The
+that is not UTF-8, a dispatch path that names a device (a reserved device name as any
+path component, with or without an extension, a colon part or trailing blanks, or a path
+in the device namespace; it is judged from the text alone, on every platform, and never
+opened), or a string that holds a lone surrogate or a control character. The
 text rule applies to the arguments as well as to the file: the dispatch path and the
 `--timeout` value are checked before anything is read, and `--timeout` must match its
 whole text (digits with an optional fraction; no trailing newline, no surrounding space).

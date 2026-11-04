@@ -1118,5 +1118,370 @@ class ShellTests(Fixture):
         self.assertEqual([call.kwargs.get("shell") for call in launched.call_args_list], [False, False])
 
 
+class DriveRuleTests(Fixture):
+    """Revision03 (S55-13): a name that carries a drive must be absolute, and this is checked before every other rule."""
+
+    RELATIVE_TO_A_DRIVE = (
+        "Z:prog.exe",
+        "Z:sub\\prog.exe",
+        "Z:sub/prog.exe",
+        "C:sub\\prog.exe",
+        "c:prog",
+        "C:",
+        "Z:sub\\tool.cmd",
+        "C:tool.BAT",
+        "\\\\?\\C:prog.exe",
+        "\\\\server",
+    )
+
+    def fake(self, directory: Path, name: str) -> Path:
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / name
+        path.write_bytes(b"")
+        path.chmod(0o755)
+        return path
+
+    def test_every_name_relative_to_a_drive_is_refused_with_the_drive_cause(self) -> None:
+        for name in self.RELATIVE_TO_A_DRIVE:
+            with self.subTest(name=name):
+                with self.assertRaises(preflight.ArgvZeroError) as caught:
+                    preflight.resolve_argv0(name, str(self.dir))
+                self.assertIn("relative to a drive", str(caught.exception))
+                self.assertNotIn("batch file", str(caught.exception))
+                self.assertNotIn("not found in PATH", str(caught.exception))
+
+    def test_a_name_relative_to_a_drive_is_unserved_and_nothing_is_launched(self) -> None:
+        for name in self.RELATIVE_TO_A_DRIVE:
+            for position in ("start", "probe"):
+                with self.subTest(name=name, position=position):
+                    argv = [name, "-c", "pass"]
+                    lines = item_lines("t", argv, say("x"), "x") if position == "start" else item_lines("t", say("s"), argv, "x")
+                    with mock.patch.object(preflight.subprocess, "Popen", wraps=subprocess.Popen) as launched:
+                        code, out, err = self.gate(dispatch_text(*lines))
+                    self.assertEqual((code, err), (2, ""))
+                    (line,) = out.splitlines()
+                    self.assertTrue(line.startswith(f"TOOL_UNSERVED t: {position} cannot be resolved"), line)
+                    self.assertIn("relative to a drive", line)
+                    self.assertEqual(len(launched.call_args_list), 0 if position == "start" else 1)
+
+    @unittest.skipUnless(WINDOWS, "a drive-relative name next to the dispatch directory needs a drive")
+    def test_a_drive_relative_name_on_the_dispatch_drive_is_not_joined_to_the_dispatch_directory(self) -> None:
+        drive = os.path.splitdrive(str(self.dir))[0]
+        decoy = self.fake(self.dir / "sub", "prog.exe")
+        self.fake(self.dir, "prog.exe")
+        self.assertTrue(decoy.is_file())
+        for spelling in (drive + "sub\\prog.exe", drive + "sub/prog.exe", drive + "prog.exe"):
+            with self.subTest(spelling=spelling):
+                with self.assertRaises(preflight.ArgvZeroError) as caught:
+                    preflight.resolve_argv0(spelling, str(self.dir))
+                self.assertIn("relative to a drive", str(caught.exception))
+
+    @unittest.skipUnless(WINDOWS, "absolute names with a drive exist on Windows only")
+    def test_absolute_names_with_a_drive_are_still_used_as_given(self) -> None:
+        for name in ("C:\\x\\y.exe", "C:/x/y.exe", "c:\\x\\y.exe", "\\\\?\\C:\\x\\y.exe", "\\\\server\\share\\y.exe"):
+            with self.subTest(name=name):
+                self.assertEqual(preflight.resolve_argv0(name, str(self.dir)), name)
+
+    @unittest.skipUnless(WINDOWS, "absolute names with a drive exist on Windows only")
+    def test_an_absolute_batch_file_with_a_drive_is_still_a_batch_refusal(self) -> None:
+        with self.assertRaises(preflight.ArgvZeroError) as caught:
+            preflight.resolve_argv0("C:\\x\\tool.cmd", str(self.dir))
+        self.assertIn("batch file", str(caught.exception))
+
+    def test_names_without_a_drive_are_not_caught_by_the_drive_rule(self) -> None:
+        for name in ("sub\\x.exe", "sub/x.exe", "./x.exe", "..\\x.exe"):
+            with self.subTest(name=name):
+                resolved = preflight.resolve_argv0(name, str(self.dir))
+                self.assertTrue(os.path.isabs(resolved))
+
+
+class Argv0EnvironmentTests(Fixture):
+    """Revision03 (S55-15, S55-16): PATHEXT from the environment, and quotes and blanks around a PATH entry."""
+
+    def fake(self, directory: Path, name: str) -> Path:
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / name
+        path.write_bytes(b"")
+        path.chmod(0o755)
+        return path
+
+    def resolve(self, name: str, path_value: str, pathext: str | None) -> str:
+        with mock.patch.dict(os.environ, {"PATH": path_value}):
+            if pathext is None:
+                os.environ.pop("PATHEXT", None)
+            else:
+                os.environ["PATHEXT"] = pathext
+            return preflight.resolve_argv0(name, str(self.dir))
+
+    def not_found(self, name: str, path_value: str, pathext: str | None) -> str:
+        with self.assertRaises(preflight.ArgvZeroError) as caught:
+            self.resolve(name, path_value, pathext)
+        return str(caught.exception)
+
+    def same(self, left: str, right: Path) -> None:
+        self.assertEqual(os.path.normcase(left), os.path.normcase(str(right)))
+
+    @unittest.skipUnless(WINDOWS, "PATHEXT decides bare names on Windows only")
+    def test_a_non_default_pathext_decides_which_bare_names_resolve(self) -> None:
+        bindir = self.dir / "bin"
+        only_foo = self.fake(bindir, "alpha.foo")
+        self.fake(bindir, "beta.exe")
+        self.same(self.resolve("alpha", str(bindir), ".FOO"), only_foo)
+        self.assertIn("not found in PATH", self.not_found("alpha", str(bindir), PATHEXT_DEFAULT))
+        self.assertIn("not found in PATH", self.not_found("beta", str(bindir), ".FOO"))
+
+    @unittest.skipUnless(WINDOWS, "PATHEXT decides bare names on Windows only")
+    def test_the_order_of_pathext_decides_between_two_matches(self) -> None:
+        bindir = self.dir / "bin"
+        foo = self.fake(bindir, "tool.foo")
+        exe = self.fake(bindir, "tool.exe")
+        self.same(self.resolve("tool", str(bindir), ".FOO;.EXE"), foo)
+        self.same(self.resolve("tool", str(bindir), ".EXE;.FOO"), exe)
+
+    @unittest.skipUnless(WINDOWS, "PATHEXT decides bare names on Windows only")
+    def test_pathext_is_read_without_regard_to_letter_case_and_empty_items(self) -> None:
+        bindir = self.dir / "bin"
+        foo = self.fake(bindir, "tool.foo")
+        for pathext in (".foo", ".Foo", ";.FOO", ".FOO;", ";;.FOO;;"):
+            with self.subTest(pathext=pathext):
+                self.same(self.resolve("tool", str(bindir), pathext), foo)
+
+    @unittest.skipUnless(WINDOWS, "PATHEXT decides bare names on Windows only")
+    def test_a_missing_or_empty_pathext_means_the_default_list(self) -> None:
+        bindir = self.dir / "bin"
+        exe = self.fake(bindir, "tool.exe")
+        for pathext in (None, "", ";", ";;"):
+            with self.subTest(pathext=pathext):
+                self.same(self.resolve("tool", str(bindir), pathext), exe)
+
+    @unittest.skipUnless(WINDOWS, "PATHEXT decides bare names on Windows only")
+    def test_a_bare_name_that_already_ends_in_a_listed_extension_gets_no_second_one(self) -> None:
+        bindir = self.dir / "bin"
+        foo = self.fake(bindir, "tool.foo")
+        self.same(self.resolve("tool.foo", str(bindir), ".FOO"), foo)
+        self.same(self.resolve("TOOL.FOO", str(bindir), ".foo"), foo)
+
+    @unittest.skipIf(WINDOWS, "PATHEXT is ignored off Windows")
+    def test_pathext_is_ignored_off_windows(self) -> None:
+        bindir = self.dir / "bin"
+        plain = self.fake(bindir, "tool")
+        self.fake(bindir, "other.foo")
+        self.assertEqual(self.resolve("tool", str(bindir), ".FOO"), str(plain))
+        self.assertIn("not found in PATH", self.not_found("other", str(bindir), ".FOO"))
+
+    @unittest.skipUnless(WINDOWS, "quotes and blanks around a PATH entry are removed on Windows only")
+    def test_quotes_and_blanks_around_a_path_entry_are_removed(self) -> None:
+        bindir = self.dir / "bin"
+        exe = self.fake(bindir, "tool.exe")
+        for entry in (f'"{bindir}"', f"  {bindir}  ", f' "{bindir}" ', f"\t{bindir}\t", f'\t"{bindir}"\t', f'"{bindir}'):
+            with self.subTest(entry=entry):
+                self.same(self.resolve("tool", entry, None), exe)
+
+    @unittest.skipUnless(WINDOWS, "quotes and blanks around a PATH entry are removed on Windows only")
+    def test_an_entry_that_is_only_quotes_or_blanks_is_skipped(self) -> None:
+        bindir = self.dir / "bin"
+        exe = self.fake(bindir, "tool.exe")
+        for junk in ('""', '"   "', "   ", "\t", '" "'):
+            with self.subTest(junk=junk):
+                self.assertIn("not found in PATH", self.not_found("tool", junk, None))
+                self.same(self.resolve("tool", junk + os.pathsep + str(bindir), None), exe)
+
+    @unittest.skipIf(WINDOWS, "entries are used as they are off Windows")
+    def test_a_path_entry_is_used_as_it_is_off_windows(self) -> None:
+        bindir = self.dir / "bin"
+        plain = self.fake(bindir, "tool")
+        self.assertEqual(self.resolve("tool", str(bindir), None), str(plain))
+        for entry in (f'"{bindir}"', f"  {bindir}  "):
+            with self.subTest(entry=entry):
+                self.assertIn("not found in PATH", self.not_found("tool", entry, None))
+
+
+class RunLevelErrorTests(Fixture):
+    """Revision03 (S55-14): an unexpected error outside the tool loop is exit 2 with one stderr line and no traceback."""
+
+    def assert_one_fault_line(self, code: int, out: str, err: str, kind: str, shown: str) -> None:
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(err, f"preflight.py: tool fault: {kind}: {shown}\n")
+        self.assertEqual(len(err.splitlines()), 1)
+        self.assertNotIn("Traceback", err)
+
+    def test_an_unexpected_error_while_parsing_is_exit_two_one_line(self) -> None:
+        self.write(dispatch_text(*good_item()))
+        with mock.patch.object(preflight, "parse_preflight", side_effect=RuntimeError("boom")):
+            code, out, err = self.run_main(str(self.path))
+        self.assert_one_fault_line(code, out, err, "RuntimeError", "boom")
+
+    def test_an_unexpected_error_before_the_file_is_read_is_exit_two_one_line(self) -> None:
+        self.write(dispatch_text(*good_item()))
+        with mock.patch.object(preflight, "_parse_arguments", side_effect=OSError("disk")):
+            code, out, err = self.run_main(str(self.path))
+        self.assert_one_fault_line(code, out, err, "OSError", "disk")
+
+    def test_the_text_of_the_error_is_one_escaped_line(self) -> None:
+        self.write(dispatch_text(*good_item()))
+        text = f"a\nTOOL_UNSERVED forged: x{LINE_SEPARATOR}b{NEXT_LINE}c\\d"
+        with mock.patch.object(preflight, "parse_preflight", side_effect=ValueError(text)):
+            code, out, err = self.run_main(str(self.path))
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(len(err.splitlines()), 1)
+        self.assertEqual(len(err.split("\n")), 2)
+        for shown in ("\\x0a", "\\u2028", "\\x85", "\\\\d"):
+            self.assertIn(shown, err)
+
+    def test_the_run_level_error_is_exit_two_without_a_traceback_on_the_command_line(self) -> None:
+        self.write(dispatch_text(*good_item()))
+        driver = (
+            "import sys; sys.path.insert(0, sys.argv[1]); del sys.argv[1]; import preflight\n"
+            "def boom(text): raise RuntimeError('boom')\n"
+            "preflight.parse_preflight = boom\n"
+            "sys.exit(preflight.entry())\n"
+        )
+        done = subprocess.run(
+            [PY, "-c", driver, str(_SCRIPTS), str(self.path)], capture_output=True, timeout=120, stdin=subprocess.DEVNULL
+        )
+        self.assertEqual(done.returncode, 2, done.stderr)
+        self.assertNotIn(b"Traceback", done.stderr)
+
+
+class ChildCleanupTests(Fixture):
+    """Revision03 (S55-17): a child whose serving raised is killed before the next tool runs."""
+
+    def script(self) -> Path:
+        script = self.dir / "heartbeat.py"
+        script.write_text(HEARTBEAT_SCRIPT, encoding="utf-8")
+        return script
+
+    def track(self, error: BaseException) -> tuple[list[subprocess.Popen[bytes]], list[int | None], contextlib.AbstractContextManager[object]]:
+        """Patch the launcher: the first child of the interpreter fails its first wait with `error`; the state of the
+        first child is recorded each time a later child of the interpreter is launched."""
+        real = subprocess.Popen
+        launched: list[subprocess.Popen[bytes]] = []
+        state_at_next_launch: list[int | None] = []
+        raised: list[bool] = []
+
+        def launch(*args: object, **kwargs: object) -> subprocess.Popen[bytes]:
+            argv = args[0] if args else kwargs.get("args")
+            ours = isinstance(argv, list) and bool(argv) and argv[0] == PY
+            if ours and launched:
+                state_at_next_launch.append(launched[0].poll())
+            process = real(*args, **kwargs)
+            if ours:
+                launched.append(process)
+                if len(launched) == 1:
+                    original = process.wait
+
+                    def wait(timeout: float | None = None) -> int:
+                        if not raised:
+                            raised.append(True)
+                            raise error
+                        return original(timeout=timeout)
+
+                    setattr(process, "wait", wait)
+            return process
+
+        self.addCleanup(self.reap, launched)
+        return launched, state_at_next_launch, mock.patch.object(preflight.subprocess, "Popen", side_effect=launch)
+
+    def reap(self, launched: list[subprocess.Popen[bytes]]) -> None:
+        for process in launched:
+            if process.poll() is None:
+                preflight._kill_tree(process)
+
+    def assert_silent(self, beat: Path) -> None:
+        def size() -> int:
+            return beat.stat().st_size if beat.exists() else 0
+
+        time.sleep(0.8)
+        first = size()
+        time.sleep(0.8)
+        self.assertEqual(first, size(), "the child is still running")
+
+    def test_a_child_whose_serving_raised_is_dead_before_the_next_tool_starts(self) -> None:
+        beat = self.dir / "beat"
+        block = [*item_lines("first", [PY, str(self.script()), str(beat)], say("x"), "x"), *good_item("second")]
+        launched, at_next_launch, patched = self.track(RuntimeError("boom"))
+        with patched:
+            code, out, err = self.gate(dispatch_text(*block))
+        self.assertEqual((code, err), (2, ""))
+        self.assertEqual(out, "TOOL_UNSERVED first: unexpected error (RuntimeError: boom)\n")
+        self.assertEqual(len(launched), 3)
+        self.assertEqual(len(at_next_launch), 2)
+        self.assertIsNotNone(at_next_launch[0], "the first child was still running when the next tool launched")
+        self.assertIsNotNone(launched[0].poll())
+        self.assert_silent(beat)
+
+    def test_an_interrupt_after_the_child_started_also_kills_it(self) -> None:
+        beat = self.dir / "beat"
+        launched, _, patched = self.track(KeyboardInterrupt())
+        with patched:
+            with self.assertRaises(KeyboardInterrupt):
+                preflight.run_command([PY, str(self.script()), str(beat)], str(self.dir), 30.0)
+        self.assertEqual(len(launched), 1)
+        self.assertIsNotNone(launched[0].poll())
+        self.assert_silent(beat)
+
+
+class DeviceNameTests(Fixture):
+    """Revision03 (S55-18): a device name as the dispatch path is exit 3, and nothing is opened."""
+
+    DEVICES = (
+        "CON", "CONIN$", "AUX", "COM1", "con", "Aux", "NUL", "PRN", "LPT1", "COM9", "COM0", "CONOUT$", "CLOCK$",
+        "COM" + chr(0xB9), "LPT" + chr(0xB2), "con.txt", "CON.yaml", "CON ", "CON.", "nul.tar.gz", "con:stream",
+        "dir\\CON", "dir/aux", "C:\\dir\\NUL", "C:CON", "sub/COM3/x.yaml", "..\\AUX", "x/aux /y.yaml",
+        "\\\\.\\CON", "\\\\.\\pipe\\name", "//./COM1", "\\\\?\\CON",
+    )
+    NOT_DEVICES = (
+        "CONSOLE.yaml", "COM10", "COM", "CONIN", "AUXILIARY", "NULL", "PRNT", "LPT10", "dispatch.yaml", "x.con",
+        "con_1", "ccon", "COMA", "dir.con/x.yaml",
+    )
+
+    def refuse(self, *args: str) -> tuple[int, str, str]:
+        with mock.patch("builtins.open", side_effect=AssertionError("a device was opened")):
+            return self.run_main(*args)
+
+    def test_each_device_name_is_exit_three_and_is_not_opened(self) -> None:
+        for name in self.DEVICES:
+            with self.subTest(name=name):
+                code, out, err = self.refuse(name)
+                self.assertEqual((code, out), (3, ""), err)
+                self.assertIn("names a device", err)
+                self.assertEqual(len(err.splitlines()), 2)
+                self.assertTrue(err.startswith("usage:"))
+
+    def test_the_named_cases_of_the_ticket(self) -> None:
+        for name in ("CON", "CONIN$", "AUX", "COM1"):
+            with self.subTest(name=name):
+                self.assertEqual(self.refuse(name)[0], 3)
+
+    def test_a_device_name_with_an_option_in_either_order_is_exit_three(self) -> None:
+        for args in (("CON", "--timeout", "5"), ("--timeout", "5", "CON")):
+            with self.subTest(args=args):
+                self.assertEqual(self.refuse(*args)[0], 3)
+
+    def test_names_that_only_look_like_a_device_are_read_as_files(self) -> None:
+        for name in self.NOT_DEVICES:
+            with self.subTest(name=name):
+                code, out, err = self.run_main(str(self.dir / name))
+                self.assertEqual((code, out), (2, ""))
+                self.assertIn("cannot read", err)
+
+    def test_the_check_is_text_only_and_sorts_the_two_lists(self) -> None:
+        probes = [mock.patch.object(os.path, attr, side_effect=AssertionError("the filesystem was probed")) for attr in ("exists", "isfile", "isdir", "lexists")]
+        with probes[0], probes[1], probes[2], probes[3]:
+            for name in self.DEVICES:
+                with self.subTest(name=name):
+                    self.assertTrue(preflight.names_a_device(name))
+            for name in self.NOT_DEVICES:
+                with self.subTest(name=name):
+                    self.assertFalse(preflight.names_a_device(name))
+
+    def test_the_character_rule_still_comes_first_and_the_exit_is_never_one(self) -> None:
+        for name in ("CON/a\n", "AUX/b\x00", "COM1/c\udc80", "x/CON\t"):
+            with self.subTest(name=repr(name)):
+                code, _, err = self.refuse(name)
+                self.assertEqual(code, 3)
+                self.assertIn("argument 1 holds", err)
+
+
 if __name__ == "__main__":
     unittest.main()

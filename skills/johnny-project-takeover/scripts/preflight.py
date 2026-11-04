@@ -22,7 +22,10 @@ processes it started. A tool is served when `start` exits 0 and `probe` exits 0 
 exactly and case-sensitively). Every tool is tried; each failing tool is reported, not
 only the first, and the exit is 2 when any tool failed, whichever tool came last.
 
-The gate resolves each program name itself, the same way on every platform: an absolute
+The gate resolves each program name itself, the same way on every platform: a name that
+carries a drive (a letter and a colon at its start, or the extended-length or share
+prefix) must be absolute, and this is checked first, before every other rule, so a name
+that is relative to a drive is refused and never joined to anything; an absolute
 name is used as given; a relative name that contains a path separator (slash or
 backslash) is joined to the dispatch file's directory; a bare name is looked up in the
 search-path entries only (with the executable extensions of the platform on Windows),
@@ -31,6 +34,12 @@ ends in the extension of a batch file (any letter case) is refused, because Wind
 it through the command interpreter, which reads its arguments as commands. Name the
 interpreter or the executable instead.
 
+A child that was started and whose serving then raised an unexpected error is killed
+together with the processes it started before the next tool runs. A dispatch path that
+names a device (a path component whose name, up to its first dot or colon and without
+trailing blanks, is a reserved device name, or a path in the device namespace) is a usage
+error and is never opened, whatever the platform.
+
 Output: `tools=N served=N` on exit 0; one `TOOL_UNSERVED <tool>: <cause>` line per
 failing tool on exit 2. Every printed subject is escaped to one line.
 
@@ -38,7 +47,8 @@ Exit codes: 0 every tool served, 2 tool fault (a tool is unserved, or the dispat
 cannot be read, or an unexpected error, or standard output or standard error cannot be
 written), 3 usage error (bad arguments, no `preflight:` block, a block that does not
 follow the grammar, an empty or blank `expect`, text that holds a lone surrogate or a
-control character, in the dispatch file or in an argument). Preflight has no red: a
+control character, in the dispatch file or in an argument, a dispatch path that names a
+device). Preflight has no red: a
 contract red is exit 1 in the other gates and never occurs here.
 """
 from __future__ import annotations
@@ -72,6 +82,13 @@ LIST_KEYS = ("start", "probe")
 ALL_KEYS = ("tool", "start", "probe", "expect")
 TIMEOUT_TEXT = re.compile(r"[0-9]+(?:\.[0-9]*)?|\.[0-9]+")
 BATCH_SUFFIXES = (".bat", ".cmd")
+DRIVE_LETTER = re.compile(r"[A-Za-z]:")
+SUPERSCRIPT_DIGITS = chr(0xB9) + chr(0xB2) + chr(0xB3)
+DEVICE_NAMES = frozenset(
+    ["CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$", "CLOCK$"]
+    + [f"{prefix}{digit}" for prefix in ("COM", "LPT") for digit in "0123456789" + SUPERSCRIPT_DIGITS]
+)
+DEVICE_NAMESPACE_PREFIXES = ("\\\\.\\", "//./", "\\\\./", "//.\\")
 DEFAULT_PATHEXT = ".COM;.EXE;.BAT;.CMD"
 
 EXIT_SERVED = 0
@@ -293,7 +310,17 @@ def _fully_absolute(path: str) -> bool:
     """Absolute on every platform; on Windows a drive (or share) is part of it, a rooted name alone is not."""
     if not os.path.isabs(path):
         return False
-    return sys.platform != "win32" or os.path.splitdrive(path)[0] != ""
+    if sys.platform != "win32":
+        return True
+    drive, rest = os.path.splitdrive(path)
+    return drive != "" and rest[:1] in ("\\", "/")
+
+
+def _names_a_drive(name: str) -> bool:
+    """A letter and a colon at the start, the extended-length or share prefix, or (on Windows) any drive the platform sees."""
+    if DRIVE_LETTER.match(name) is not None or name.startswith("\\\\"):
+        return True
+    return sys.platform == "win32" and os.path.splitdrive(name)[0] != ""
 
 
 def _search_directories() -> list[str]:
@@ -326,13 +353,13 @@ def _is_program_file(path: str) -> bool:
 
 def resolve_argv0(argv0: str, base: str) -> str:
     """Turn `argv0` into the absolute program path the gate launches; raise ArgvZeroError when it must not run."""
+    if _names_a_drive(argv0) and not _fully_absolute(argv0):
+        raise ArgvZeroError(f'cannot be resolved (the name "{escape(argv0)}" is relative to a drive)')
     if "/" in argv0 or "\\" in argv0:
         if _fully_absolute(argv0):
             program = argv0
         else:
             program = os.path.abspath(os.path.join(base, argv0))
-    elif sys.platform == "win32" and os.path.splitdrive(argv0)[0]:
-        raise ArgvZeroError(f'cannot be resolved (the name "{escape(argv0)}" is relative to a drive)')
     else:
         found: str | None = None
         for directory in _search_directories():
@@ -377,12 +404,18 @@ def run_command(argv: Sequence[str], cwd: str, timeout: float) -> CommandResult:
         timed_out = False
         exit_code: int | None = None
         try:
-            exit_code = process.wait(timeout=timeout)
-        except subprocess.TimeoutExpired:
-            timed_out = True
-            _kill_tree(process)
-        sink.seek(0)
-        output = sink.read().decode("utf-8", errors="replace")
+            try:
+                exit_code = process.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                timed_out = True
+                _kill_tree(process)
+            sink.seek(0)
+            output = sink.read().decode("utf-8", errors="replace")
+        except BaseException:
+            # Whatever went wrong after the child started, it must not outlive this call (revision03).
+            if process.poll() is None:
+                _kill_tree(process)
+            raise
     return CommandResult(None, timed_out, exit_code, output)
 
 
@@ -470,6 +503,18 @@ def _parse_timeout(text: str) -> float:
     return value
 
 
+def names_a_device(path: str) -> bool:
+    """True when `path` names a reserved device or lies in the device namespace; a pure text check, nothing is opened."""
+    if path.startswith(DEVICE_NAMESPACE_PREFIXES):
+        return True
+    rest = path[2:] if DRIVE_LETTER.match(path) is not None else path
+    for component in rest.replace("\\", "/").split("/"):
+        stem = re.split(r"[.:]", component, maxsplit=1)[0].rstrip(" ")
+        if stem.upper() in DEVICE_NAMES:
+            return True
+    return False
+
+
 def _parse_arguments(args: Sequence[str]) -> tuple[str, float]:
     for number, arg in enumerate(args, start=1):
         bad = _bad_character(arg)
@@ -494,6 +539,8 @@ def _parse_arguments(args: Sequence[str]) -> tuple[str, float]:
         index += 1
     if len(positional) != 1:
         raise UsageError("exactly one dispatch file is required")
+    if names_a_device(positional[0]):
+        raise UsageError("the dispatch path names a device, not a file; it is not opened")
     return positional[0], DEFAULT_TIMEOUT if timeout is None else timeout
 
 
