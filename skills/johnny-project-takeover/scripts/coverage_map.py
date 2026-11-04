@@ -11,7 +11,9 @@ at `--candidate`.
 of a work tree, is a tool fault. `--specs` must name a directory (a tree) at `--base`, at
 `--candidate`, or at both; a path that names no tree at either commit is a tool fault (a guard
 that checks nothing must not pass). A tree present at one commit only is read as empty at the
-other; a present tree holding no spec file is not a fault.
+other; a present tree holding no spec file is not a fault. Trees are listed, not inferred: git
+reports the tree entries themselves, so an empty tree object at `--specs` is a present, empty
+tree (exit 0 when nothing was removed).
 
 Spec file: a regular file (git mode 100644 or 100755) named `test_*.py` below `--specs`
 (exact path-component prefix: a sibling directory whose name only begins like `specs` is not
@@ -44,7 +46,10 @@ Defect codes (exit 1):
 
 A map file absent at the candidate while tests were removed is UNMAPPED_REMOVAL for each
 of them; absent while nothing was removed it is exit 0. A map path that names a tree, a
-submodule entry or a link is MAP_ROW_INVALID for the map path. Rows are shape-checked
+submodule entry or a link (an empty tree object included) is MAP_ROW_INVALID for the map path.
+A key given twice in any object of the map file is MAP_ROW_INVALID: for the row (subject
+`rows[N]`) when a row holds it, for the file when the top level or anything beside `rows`
+does; a row that repeats a key covers nothing. Rows are shape-checked
 wherever they stand, but a row's disposition is judged only when its assertion is a removed
 id. A row that is invalid, or whose assertion is duplicated, covers nothing. Every string of a
 row is valid Unicode without lone surrogates and without control characters (U+0000 to
@@ -59,10 +64,20 @@ the same way, and no argument or parser message is echoed unescaped.
 Exit codes: 0 pass, 1 contract red (defect lines on stdout), 2 tool fault (git cannot
 serve a repository, a commit, a tree or a blob; `--repo` is not a work-tree top level;
 `--specs` names no tree at either commit; a spec does not parse at either commit; any
-unexpected error; message on stderr, never a traceback), 3 usage error (missing or
-unknown option, empty value, an argument holding a lone surrogate or a control character,
-an absolute path or a `..` segment in `--map` or `--specs`, a revision that starts with `-`). A red is never reported as a tool fault and a tool
-fault is never reported as a red.
+unexpected error; one message per fault on stderr, never a traceback), 3 usage error (missing
+or unknown option, empty value, an argument holding a lone surrogate or a control character,
+an absolute path or a `..` segment in `--map` or `--specs`, a revision that starts with `-`).
+Red before fault: the guard reports every red it can find and exits 1 when there is one, with
+each fault it met printed on stderr; it exits 2 only when it found no red. A spec file that
+cannot be read at either commit is judged by nothing (its tests are neither removed nor known
+at the candidate, and a `carried_to` naming it is not judged), so a fault never invents a red.
+A red is never reported as a tool fault when it was found, and a tool fault is never reported
+as a red.
+
+Every git child runs without the variables that select another repository (the git
+directory, work tree, index file, object directory, alternate object directories, namespace,
+ceiling directories, common directory and prefix), so a hook that exports them cannot point
+the guard at another repository or make a plain directory pass as `--repo`.
 """
 from __future__ import annotations
 
@@ -93,6 +108,21 @@ SPEC_FILE_SUFFIX = b".py"
 _DRIVE_PREFIX = re.compile(r"^[A-Za-z]:")
 _BAD_TEXT = re.compile("[\x00-\x1f\x7f\ud800-\udfff]")
 REGULAR_MODES = frozenset((b"100644", b"100755"))
+# Names that make git work on another repository, work tree or object store than the one
+# named by `--repo`; none of them reaches a git child.
+GIT_SELECTING_VARIABLES = frozenset(
+    (
+        "GIT_DIR",
+        "GIT_WORK_TREE",
+        "GIT_INDEX_FILE",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_NAMESPACE",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_COMMON_DIR",
+        "GIT_PREFIX",
+    )
+)
 
 
 class ToolFault(Exception):
@@ -185,6 +215,7 @@ class MapLoad:
 class Report:
     removed: int
     defects: tuple[Defect, ...]
+    faults: tuple[str, ...] = ()
 
 
 def _quote(text: str) -> str:
@@ -215,11 +246,16 @@ def _text_problem(text: str) -> str | None:
 # --------------------------------------------------------------------------- git
 
 
+def git_environment() -> dict[str, str]:
+    """The environment of a git child: the inherited one without the repository-selecting names."""
+    return {name: value for name, value in os.environ.items() if name.upper() not in GIT_SELECTING_VARIABLES}
+
+
 def run_git(repo: str, args: Sequence[str]) -> bytes:
     """Run one git query in `repo`; any failure is a tool fault carrying git's stderr."""
     command = ["git", "-C", repo, *args]
     try:
-        done = subprocess.run(command, capture_output=True, stdin=subprocess.DEVNULL, check=False)
+        done = subprocess.run(command, capture_output=True, stdin=subprocess.DEVNULL, check=False, env=git_environment())
     except OSError as error:
         raise ToolFault(f"cannot run git: {error}") from error
     if done.returncode != 0:
@@ -249,8 +285,8 @@ def resolve_commit(repo: str, revision: str) -> str:
 
 
 def read_tree(repo: str, commit: str) -> dict[bytes, TreeEntry]:
-    """Every file of the commit: path bytes -> mode, type and object id."""
-    out = run_git(repo, ["ls-tree", "-r", "-z", "--full-tree", commit])
+    """Every entry of the commit, tree entries included: path bytes -> mode, type and object id."""
+    out = run_git(repo, ["ls-tree", "-r", "-t", "-z", "--full-tree", commit])
     entries: dict[bytes, TreeEntry] = {}
     for record in out.split(b"\0"):
         if not record:
@@ -314,38 +350,106 @@ def _is_spec_path(path: bytes, prefix: bytes) -> bool:
 
 
 def has_tree(tree: Mapping[bytes, TreeEntry], directory: str) -> bool:
-    """Does `directory` (repository-relative, `/` separators, empty for the root) hold any entry?"""
+    """Is `directory` (repository-relative, `/` separators, empty for the root) a tree entry?
+
+    Trees are listed by git, not inferred from the files below them, so an empty tree
+    object is a present, empty tree.
+    """
     if directory == "":
         return True
-    head = directory.encode("utf-8") + b"/"
-    return any(path.startswith(head) for path in tree)
+    entry = tree.get(directory.encode("utf-8"))
+    return entry is not None and entry.kind == b"tree"
 
 
-def enumerate_tests(
+@dataclass(frozen=True)
+class Side:
+    """One commit of the comparison: its id and every entry of its tree."""
+
+    commit: str
+    tree: dict[bytes, TreeEntry]
+
+
+@dataclass(frozen=True)
+class SpecScan:
+    """What the spec files say: the removed tests, and the candidate paths that could not be read."""
+
+    removed: tuple[TestId, ...]
+    candidate_ids: dict[str, TestId]
+    unknown_paths: frozenset[str]
+
+
+ParsedTests = tuple[tuple[tuple[str, ...], str], ...]
+
+
+def _fault_text(error: Exception) -> str:
+    return str(error) if isinstance(error, ToolFault) else f"unexpected {type(error).__name__}: {error}"
+
+
+def open_side(repo: str, revision: str, faults: list[str]) -> Side | None:
+    """Resolve and list one commit; a failure is noted as a fault and the side is unknown."""
+    try:
+        commit = resolve_commit(repo, revision)
+        return Side(commit, read_tree(repo, commit))
+    except Exception as error:  # noqa: BLE001 - noted as a fault, so that a red found elsewhere still reports
+        faults.append(_fault_text(error))
+        return None
+
+
+def _spec_files(tree: Mapping[bytes, TreeEntry], prefix: bytes) -> dict[bytes, TreeEntry]:
+    return {path: entry for path, entry in tree.items() if entry.is_regular_file and _is_spec_path(path, prefix)}
+
+
+def _tests_of(
     repo: str,
     commit: str,
-    tree: Mapping[bytes, TreeEntry],
-    specs: str,
-    parsed: dict[str, tuple[tuple[tuple[str, ...], str], ...]],
-) -> dict[str, TestId]:
-    """Every test of every spec file under `specs` at `commit`, keyed by id text.
-
-    `parsed` caches the parse of a blob by object id, so a file identical at both commits
-    is read once.
-    """
-    prefix = specs.encode("utf-8")
-    ids: dict[str, TestId] = {}
-    for path_bytes in sorted(tree):
-        entry = tree[path_bytes]
-        if not entry.is_regular_file or not _is_spec_path(path_bytes, prefix):
-            continue
-        path = path_bytes.decode("utf-8", errors="surrogateescape")
+    entry: TreeEntry | None,
+    path: str,
+    parsed: dict[str, ParsedTests],
+    faults: list[str],
+) -> ParsedTests | None:
+    """The tests of one spec file (none when it is absent), or None when it cannot be read."""
+    if entry is None:
+        return ()
+    try:
         if entry.object_id not in parsed:
             parsed[entry.object_id] = parse_tests(read_blob(repo, entry.object_id), commit, path)
-        for scope, name in parsed[entry.object_id]:
+        return parsed[entry.object_id]
+    except Exception as error:  # noqa: BLE001 - noted as a fault, so that a red found elsewhere still reports
+        faults.append(_fault_text(error))
+        return None
+
+
+def scan_specs(repo: str, base: Side | None, candidate: Side, specs: str, faults: list[str]) -> SpecScan:
+    """Every test removed between the sides, file by file.
+
+    A file that cannot be read at either side is noted as a fault and judged by nothing: its
+    tests are neither removed nor known at the candidate.
+    """
+    prefix = specs.encode("utf-8")
+    base_files = _spec_files(base.tree, prefix) if base is not None else {}
+    candidate_files = _spec_files(candidate.tree, prefix)
+    parsed: dict[str, ParsedTests] = {}
+    removed: dict[str, TestId] = {}
+    candidate_ids: dict[str, TestId] = {}
+    unknown: set[str] = set()
+    for path_bytes in sorted(set(base_files) | set(candidate_files)):
+        path = path_bytes.decode("utf-8", errors="surrogateescape")
+        base_tests: ParsedTests | None = ()
+        if base is not None:
+            base_tests = _tests_of(repo, base.commit, base_files.get(path_bytes), path, parsed, faults)
+        candidate_tests = _tests_of(repo, candidate.commit, candidate_files.get(path_bytes), path, parsed, faults)
+        if candidate_tests is None:
+            unknown.add(path)
+            continue
+        here = {TestId(path, scope, name).text: TestId(path, scope, name) for scope, name in candidate_tests}
+        candidate_ids.update(here)
+        if base is None or base_tests is None:
+            continue
+        for scope, name in base_tests:
             test = TestId(path, scope, name)
-            ids[test.text] = test
-    return ids
+            if test.text not in here:
+                removed[test.text] = test
+    return SpecScan(tuple(sorted(removed.values())), candidate_ids, frozenset(unknown))
 
 
 # -------------------------------------------------------------------------- map
@@ -355,10 +459,42 @@ def _invalid(subject: str, detail: str) -> Defect:
     return Defect(DefectCode.MAP_ROW_INVALID, subject, detail)
 
 
+class _Object(dict[str, object]):
+    """A JSON object that remembers the first key it was given twice."""
+
+    repeated: str | None = None
+
+
+def _object(pairs: list[tuple[str, object]]) -> _Object:
+    result = _Object()
+    for key, value in pairs:
+        if key in result and result.repeated is None:
+            result.repeated = key
+        result[key] = value
+    return result
+
+
+def _repeated_key(value: object) -> str | None:
+    """The first key given twice in `value` or in any object below it (iterative, so depth is no limit)."""
+    pending: list[object] = [value]
+    while pending:
+        item = pending.pop()
+        if isinstance(item, _Object) and item.repeated is not None:
+            return item.repeated
+        if isinstance(item, dict):
+            pending.extend(item.values())
+        elif isinstance(item, list):
+            pending.extend(item)
+    return None
+
+
 def _row_fields(index: int, raw: object) -> MapRow | Defect:
     subject = f"rows[{index}]"
     if not isinstance(raw, dict):
         return _invalid(subject, "row is not an object")
+    repeated = _repeated_key(raw)
+    if repeated is not None:
+        return _invalid(subject, f"row repeats key {_quote(repeated)}")
     texts: dict[str, str] = {}
     for key in ("assertion", "disposition", "carried_to", "reason", "ticket"):
         if key not in raw:
@@ -386,11 +522,16 @@ def parse_map(map_path: str, source: bytes) -> MapLoad:
     """Validate the map file at the boundary into typed rows; shape defects ride along."""
     try:
         text = source.decode("utf-8")
-        document: object = json.loads(text)
+        document: object = json.loads(text, object_pairs_hook=_object)
     except (UnicodeDecodeError, ValueError, RecursionError):
         return MapLoad((), (_invalid(map_path, "map file is not UTF-8 JSON"),))
     if not isinstance(document, dict):
         return MapLoad((), (_invalid(map_path, "map file is not a JSON object"),))
+    outside = document.repeated if isinstance(document, _Object) else None
+    if outside is None:
+        outside = _repeated_key([value for key, value in document.items() if key != "rows"])
+    if outside is not None:
+        return MapLoad((), (_invalid(map_path, f"map file repeats key {_quote(outside)}"),))
     if "rows" not in document:
         return MapLoad((), (_invalid(map_path, "map file has no rows field"),))
     raw_rows: object = document["rows"]
@@ -428,7 +569,17 @@ def _row_number(subject: str) -> int:
 # --------------------------------------------------------------------- the guard
 
 
-def judge(removed: Sequence[TestId], candidate_ids: Mapping[str, TestId], load: MapLoad | None) -> tuple[Defect, ...]:
+def _names_unknown_path(test_id: str, unknown_paths: frozenset[str]) -> bool:
+    """Does the id name a test in a spec file that could not be read at the candidate?"""
+    return any(test_id.startswith(path + "::") for path in unknown_paths)
+
+
+def judge(
+    removed: Sequence[TestId],
+    candidate_ids: Mapping[str, TestId],
+    load: MapLoad | None,
+    unknown_paths: frozenset[str] = frozenset(),
+) -> tuple[Defect, ...]:
     defects: list[Defect] = list(load.defects) if load is not None else []
     rows: dict[str, MapRow] = {row.assertion: row for row in load.rows} if load is not None else {}
     for test in removed:
@@ -438,7 +589,7 @@ def judge(removed: Sequence[TestId], candidate_ids: Mapping[str, TestId], load: 
         elif row.disposition is Disposition.CARRIED:
             if row.carried_to == "":
                 defects.append(Defect(DefectCode.CARRIED_TARGET_MISSING, test.text, "carried_to is empty"))
-            elif row.carried_to not in candidate_ids:
+            elif row.carried_to not in candidate_ids and not _names_unknown_path(row.carried_to, unknown_paths):
                 defects.append(
                     Defect(DefectCode.CARRIED_TARGET_MISSING, test.text, f"carried_to {_quote(row.carried_to)} names no test at the candidate")
                 )
@@ -451,24 +602,36 @@ def judge(removed: Sequence[TestId], candidate_ids: Mapping[str, TestId], load: 
 
 
 def check(args: CliArgs) -> Report:
+    """Find every red it can; a fault met on the way is noted, never a reason to drop a red."""
     require_top_level(args.repo)
-    base = resolve_commit(args.repo, args.base)
-    candidate = resolve_commit(args.repo, args.candidate)
-    base_tree = read_tree(args.repo, base)
-    candidate_tree = read_tree(args.repo, candidate)
-    if not (has_tree(base_tree, args.specs) or has_tree(candidate_tree, args.specs)):
-        raise ToolFault(f"--specs {_quote(args.specs)} names no tree at base {base} or at candidate {candidate}")
-    parsed: dict[str, tuple[tuple[tuple[str, ...], str], ...]] = {}
-    base_ids = enumerate_tests(args.repo, base, base_tree, args.specs, parsed)
-    candidate_ids = enumerate_tests(args.repo, candidate, candidate_tree, args.specs, parsed)
-    removed = sorted(base_ids[key] for key in base_ids if key not in candidate_ids)
+    faults: list[str] = []
+    base = open_side(args.repo, args.base, faults)
+    candidate = open_side(args.repo, args.candidate, faults)
+    if base is not None and candidate is not None:
+        if not (has_tree(base.tree, args.specs) or has_tree(candidate.tree, args.specs)):
+            faults.append(f"--specs {_quote(args.specs)} names no tree at base {base.commit} or at candidate {candidate.commit}")
+    if candidate is None:
+        return Report(0, (), tuple(faults))
+    scan = scan_specs(args.repo, base, candidate, args.specs, faults)
     load: MapLoad | None = None
-    entry = candidate_tree.get(args.map_path.encode("utf-8"))
+    readable = True
+    entry = candidate.tree.get(args.map_path.encode("utf-8"))
     if entry is not None and entry.is_regular_file:
-        load = parse_map(args.map_path, read_blob(args.repo, entry.object_id))
-    elif entry is not None or has_tree(candidate_tree, args.map_path):
+        try:
+            load = parse_map(args.map_path, read_blob(args.repo, entry.object_id))
+        except Exception as error:  # noqa: BLE001 - noted as a fault, so that a red found elsewhere still reports
+            faults.append(_fault_text(error))
+            readable = False
+    elif entry is not None:
         load = MapLoad((), (_invalid(args.map_path, "map path is not a file"),))
-    return Report(len(removed), judge(removed, candidate_ids, load))
+    if not readable:
+        return Report(len(scan.removed), (), tuple(faults))
+    try:
+        defects = judge(scan.removed, scan.candidate_ids, load, scan.unknown_paths)
+    except Exception as error:  # noqa: BLE001 - noted as a fault
+        faults.append(_fault_text(error))
+        defects = ()
+    return Report(len(scan.removed), defects, tuple(faults))
 
 
 # -------------------------------------------------------------------- the CLI
@@ -547,10 +710,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         detail = f"unexpected {type(error).__name__}: {error}"
         print(f"coverage_map: tool fault: {_oneline(detail)}", file=sys.stderr)
         return EXIT_FAULT
-    for defect in report.defects:
-        print(defect.line())
-    print(f"removed={report.removed} defects={len(report.defects)}")
-    return EXIT_RED if report.defects else EXIT_PASS
+    if report.defects or not report.faults:
+        for defect in report.defects:
+            print(defect.line())
+        print(f"removed={report.removed} defects={len(report.defects)}")
+    for fault in report.faults:
+        print(f"coverage_map: tool fault: {_oneline(fault)}", file=sys.stderr)
+    if report.defects:
+        return EXIT_RED
+    return EXIT_FAULT if report.faults else EXIT_PASS
 
 
 if __name__ == "__main__":

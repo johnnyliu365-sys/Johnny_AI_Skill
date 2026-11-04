@@ -7,7 +7,8 @@ Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, 
 usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
 `receipt_fence_check.py`, `index_pins.py` and `coverage_map.py` an unexpected error is
 also a tool fault (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
-never reported as a tool fault and a tool fault is never reported as a red. The console
+never reported as a tool fault and a tool fault is never reported as a red; `coverage_map.py`
+reports every red it can find even when a fault was met on the way (see below). The console
 encoding never changes an exit code: each script keeps the encoding the host chose for
 stdout and stderr but escapes any character it cannot encode as a backslash sequence, so a red whose
 text holds such a character still exits `1` under a cp950 console.
@@ -103,9 +104,11 @@ tree.
 `--repo` must be the top level of a git work tree: a plain directory, or a subdirectory of a
 work tree, is exit 2. `--specs` must name a directory at `--base`, at `--candidate`, or at
 both; a path that names no directory at either commit (a typo, a file, a case variant) is
-exit 2 naming the path and both commits, because a guard that checks nothing must not pass.
+a fault naming the path and both commits, because a guard that checks nothing must not pass.
 A directory present at one commit only is read as empty at the other, and a present
-directory that holds no spec file is exit 0.
+directory that holds no spec file is exit 0. Directories are listed, not inferred from the
+files below them: git is asked for the tree entries themselves, so an empty tree object at
+`--specs` is a present, empty directory.
 
 A spec file is a regular file (git mode 100644 or 100755) named `test_*.py` below `--specs`,
 matched by path component (a sibling directory whose name only begins like `specs` is not
@@ -140,17 +143,26 @@ surrounding whitespace, or a duplicate assertion; a row that is invalid or dupli
 nothing, so the removed id it names also gets `UNMAPPED_REMOVAL`). The subject of a
 `MAP_ROW_INVALID` line is `rows[N]` (the zero-based position of the row) for a row defect, or the map
 path for a defect of the file: a map file that is not UTF-8 JSON of the required shape, or a
-map path that names a directory, a submodule entry or a link. A map absent at the candidate is
+map path that names a directory (an empty tree object included), a submodule entry or a link. A
+key given twice in any object of the map file is `MAP_ROW_INVALID` as well: for the row
+(`rows[N]`, which then covers nothing) when a row holds it, for the map path when the top level
+or anything beside `rows` does. A map absent at the candidate is
 not itself a defect. A row's disposition is judged only when its assertion is a removed id;
 every row is shape-checked.
 
 Output is one line per defect (`CODE "<subject>" <detail>`, subjects JSON-quoted with ASCII
 escapes), then `removed=N defects=M`; exit 0 only when `defects=0`. A defect or a fault is
 always one line: stderr messages are escaped to printable ASCII, so an argument, a path or a
-parser message that holds a newline is never echoed raw. Exit 2: `git` cannot be started,
-`--repo` is not a work-tree top level, a commit, tree or blob cannot be served (git's stderr
-is printed escaped), `--specs` names no directory at either commit, a spec does not parse at
-either commit (the message names the commit and the path), or an unexpected error. Exit 3: a
+parser message that holds a newline is never echoed raw. Exit 2, only when no red was found:
+`git` cannot be started, `--repo` is not a work-tree top level, a commit, tree or blob cannot
+be served (git's stderr is printed escaped), `--specs` names no directory at either commit, a
+spec does not parse at either commit (the message names the commit and the path), or an
+unexpected error. Red before fault: the guard reports every red it can find and exits 1 when
+there is one, printing each fault it met on stderr, one line each; a spec file it cannot read
+is judged by nothing, so a fault never invents a red. Every git child runs without the
+variables that select another repository (git directory, work tree, index file, object
+directory, alternate object directories, namespace, ceiling directories, common directory,
+prefix), so an exporting hook cannot point the guard elsewhere. Exit 3: a
 missing or unknown option, an empty value, an argument that holds a lone surrogate or a
 control character, an absolute `--map` or `--specs`, a `..` segment, or a revision that
 starts with `-`. `--specs` and `--map` accept forward or back slashes and a trailing slash;
