@@ -1,0 +1,739 @@
+"""Behavioural tests for the requirement_snapshot script (exit codes 0/1/2/3).
+
+Every fixture is built in a temporary directory; every expected digest is computed here from the
+format definition (sorted keys, `,` and `:` separators, UTF-8, rows sorted by requirement id).
+"""
+from __future__ import annotations
+
+import contextlib
+import copy
+import hashlib
+import io
+import json
+import re
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+_SCRIPTS = Path(__file__).resolve().parents[1] / "skills" / "johnny-project-takeover" / "scripts"
+sys.path.insert(0, str(_SCRIPTS))
+import requirement_snapshot  # noqa: E402
+
+SCRIPT = _SCRIPTS / "requirement_snapshot.py"
+T1 = "2026-11-04T10:00:00Z"
+T2 = "2026-11-05T11:30:00Z"
+HEX_A = "a" * 64
+HEX_B = "b" * 64
+DEFECT_LINE = re.compile(r"^([A-Z_]+) (\S.*?): (.+)$")
+
+Row = dict[str, object]
+
+
+def make_row(identifier: str, **overrides: object) -> Row:
+    row: Row = {
+        "requirement_id": identifier,
+        "page_id": "page-1",
+        "title": f"title of {identifier}",
+        "type": "feature",
+        "source_ref": "docs/spec.md",
+        "source_sha256": HEX_A,
+        "status": "active",
+        "version": 1,
+    }
+    row.update(overrides)
+    return row
+
+
+def without(row: Row, field: str) -> Row:
+    clone = copy.deepcopy(row)
+    del clone[field]
+    return clone
+
+
+def expected_digest(rows: list[Row]) -> str:
+    ordered = sorted(rows, key=lambda row: str(row["requirement_id"]))
+    text = json.dumps(ordered, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+class Env:
+    """A temporary directory holding the snapshot root and the input files."""
+
+    def __init__(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory(prefix="reqsnap-")
+        self.dir = Path(self.tmp.name)
+        self.root = self.dir / "snapshots"
+        self.count = 0
+
+    def close(self) -> None:
+        self.tmp.cleanup()
+
+    def write_input(self, rows: object, newline: str = "\n") -> Path:
+        self.count += 1
+        path = self.dir / f"rows{self.count}.json"
+        text = json.dumps({"rows": rows}, indent=2).replace("\n", newline)
+        with open(path, "w", encoding="utf-8", newline="") as handle:
+            handle.write(text)
+        return path
+
+    def write_raw_input(self, data: bytes) -> Path:
+        self.count += 1
+        path = self.dir / f"raw{self.count}.json"
+        path.write_bytes(data)
+        return path
+
+    def main(self, *args: str) -> tuple[int, str, str]:
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = requirement_snapshot.main(list(args))
+        return code, out.getvalue(), err.getvalue()
+
+    def take(self, rows: object, source: str = "src", taken_at: str = T1) -> tuple[int, str, str]:
+        return self.main(
+            "take", "--source", source, "--input", str(self.write_input(rows)),
+            "--root", str(self.root), "--taken-at", taken_at,
+        )
+
+    def files(self, source: str = "src") -> list[str]:
+        directory = self.root / source
+        return sorted(entry.name for entry in directory.iterdir()) if directory.is_dir() else []
+
+    def snapshot(self, source: str, name: str) -> Path:
+        return self.root / source / name
+
+    def tree(self) -> dict[str, bytes]:
+        if not self.root.exists():
+            return {}
+        return {
+            str(path.relative_to(self.root)): path.read_bytes()
+            for path in sorted(self.root.rglob("*")) if path.is_file()
+        }
+
+
+class SnapshotCase(unittest.TestCase):
+    def setUp(self) -> None:
+        self.env = Env()
+        self.addCleanup(self.env.close)
+
+    def assert_red(self, rows: object, code: str, source: str = "src") -> str:
+        """take refuses with exit 1 naming the code and leaves the store byte-identical."""
+        before = self.env.tree()
+        exit_code, out, err = self.env.take(rows, source=source, taken_at=T2)
+        self.assertEqual(exit_code, 1, out + err)
+        self.assertIn(code, [match.group(1) for line in out.splitlines() if (match := DEFECT_LINE.match(line))], out)
+        self.assertEqual(self.env.tree(), before)
+        return out
+
+
+class NormalBehaviourTests(SnapshotCase):
+    def test_take_twice_gives_v1_then_v2_and_prints_the_path(self) -> None:
+        code, out, _ = self.env.take([make_row("r1")], taken_at=T1)
+        self.assertEqual(code, 0, out)
+        self.assertEqual(Path(out.strip()), self.env.snapshot("src", "2026-11-04-v1.json"))
+        code, out, _ = self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        self.assertEqual(code, 0, out)
+        self.assertEqual(Path(out.strip()), self.env.snapshot("src", "2026-11-05-v2.json"))
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json", "2026-11-05-v2.json"])
+
+    def test_equal_rows_write_nothing_and_print_unchanged(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        before = self.env.tree()
+        code, out, _ = self.env.take([make_row("r1")], taken_at=T2)
+        self.assertEqual(code, 0)
+        self.assertTrue(out.strip().endswith(" unchanged"), out)
+        self.assertEqual(Path(out.strip().removesuffix(" unchanged")), self.env.snapshot("src", "2026-11-04-v1.json"))
+        self.assertEqual(self.env.tree(), before)
+
+    def test_only_the_latest_version_decides_unchanged(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r1", title="edited")], taken_at=T2)
+        code, out, _ = self.env.take([make_row("r1")], taken_at="2026-11-06T00:00:00Z")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json", "2026-11-05-v2.json", "2026-11-06-v3.json"])
+
+    def test_diff_lists_added_removed_and_changed_ids(self) -> None:
+        self.env.take([make_row("keep"), make_row("gone"), make_row("edit")], taken_at=T1)
+        self.env.take([make_row("keep"), make_row("new"), make_row("edit", status="retired")], taken_at=T2)
+        code, out, _ = self.env.main("diff", "--source", "src", "v1", "v2", "--root", str(self.env.root))
+        self.assertEqual(code, 0)
+        self.assertEqual(out.splitlines(), ["added new", "removed gone", "changed edit"])
+        code, out, _ = self.env.main("diff", "--source", "src", "2", "1", "--root", str(self.env.root))
+        self.assertEqual(code, 0)
+        self.assertEqual(out.splitlines(), ["added gone", "removed new", "changed edit"])
+
+    def test_diff_of_identical_versions_prints_nothing(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        code, out, _ = self.env.main("diff", "--source", "src", "v1", "v1", "--root", str(self.env.root))
+        self.assertEqual((code, out), (0, ""))
+
+    def test_verify_passes_on_every_version(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        for name in self.env.files():
+            code, out, err = self.env.main("verify", str(self.env.snapshot("src", name)))
+            self.assertEqual(code, 0, out + err)
+
+    def test_an_empty_rows_list_is_a_valid_version(self) -> None:
+        code, out, _ = self.env.take([], taken_at=T1)
+        self.assertEqual(code, 0, out)
+        path = self.env.snapshot("src", "2026-11-04-v1.json")
+        self.assertEqual(self.env.main("verify", str(path))[0], 0)
+        self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["source_sha256"], expected_digest([]))
+
+    def test_the_file_is_lf_with_a_final_lf_and_holds_the_four_fields(self) -> None:
+        self.env.take([make_row("b", title="標題"), make_row("a")], taken_at=T1)
+        raw = self.env.snapshot("src", "2026-11-04-v1.json").read_bytes()
+        self.assertNotIn(b"\r", raw)
+        self.assertTrue(raw.endswith(b"}\n") and not raw.endswith(b"\n\n"))
+        document = json.loads(raw.decode("utf-8"))
+        self.assertEqual(list(document), ["source", "taken_at", "source_sha256", "rows"])
+        self.assertEqual((document["source"], document["taken_at"]), ("src", T1))
+        self.assertEqual([row["requirement_id"] for row in document["rows"]], ["a", "b"])
+        self.assertIn("標題", raw.decode("utf-8"))
+
+    def test_the_default_root_is_doc_requirements_snapshots_under_the_working_directory(self) -> None:
+        self.assertEqual(requirement_snapshot.DEFAULT_ROOT, "doc/requirements/snapshots")
+        source = self.env.write_input([make_row("r1")])
+        with contextlib.chdir(self.env.dir):
+            code, out, err = self.env.main("take", "--source", "src", "--input", str(source), "--taken-at", T1)
+        self.assertEqual(code, 0, out + err)
+        self.assertTrue((self.env.dir / "doc" / "requirements" / "snapshots" / "src" / "2026-11-04-v1.json").is_file())
+
+    def test_the_default_taken_at_is_now_in_utc(self) -> None:
+        code, out, err = self.env.main(
+            "take", "--source", "src", "--input", str(self.env.write_input([])), "--root", str(self.env.root))
+        self.assertEqual(code, 0, out + err)
+        document = json.loads(Path(out.strip()).read_text(encoding="utf-8"))
+        self.assertRegex(document["taken_at"], r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+
+
+class DigestRegressionTests(SnapshotCase):
+    def test_the_digest_is_the_canonical_json_sha256(self) -> None:
+        rows = [make_row("b", title="標題"), make_row("a")]
+        self.env.take(rows, taken_at=T1)
+        document = json.loads(self.env.snapshot("src", "2026-11-04-v1.json").read_text(encoding="utf-8"))
+        self.assertEqual(document["source_sha256"], expected_digest(rows))
+
+    def test_the_digest_matches_a_literal_canonical_text(self) -> None:
+        row = make_row("a", title="t")
+        literal = (
+            '[{"page_id":"page-1","requirement_id":"a","source_ref":"docs/spec.md","source_sha256":"' + HEX_A
+            + '","status":"active","title":"t","type":"feature","version":1}]'
+        )
+        self.env.take([row], taken_at=T1)
+        document = json.loads(self.env.snapshot("src", "2026-11-04-v1.json").read_text(encoding="utf-8"))
+        self.assertEqual(document["source_sha256"], hashlib.sha256(literal.encode("utf-8")).hexdigest())
+
+    def test_the_digest_does_not_depend_on_input_key_order_row_order_or_line_endings(self) -> None:
+        rows = [make_row("a"), make_row("b", title="x")]
+        reordered = [dict(reversed(list(row.items()))) for row in reversed(rows)]
+        digests: list[str] = []
+        for index, (variant, newline) in enumerate(((rows, "\n"), (reordered, "\n"), (rows, "\r\n"), (reordered, "\r\n"))):
+            root = self.env.dir / f"root{index}"
+            path = self.env.write_input(variant, newline=newline)
+            code, out, err = self.env.main(
+                "take", "--source", "src", "--input", str(path), "--root", str(root), "--taken-at", T1)
+            self.assertEqual(code, 0, out + err)
+            raw = (root / "src" / "2026-11-04-v1.json").read_bytes()
+            digests.append(json.loads(raw.decode("utf-8"))["source_sha256"])
+        self.assertEqual(set(digests), {expected_digest(rows)})
+
+    def test_taken_at_is_not_part_of_the_digest(self) -> None:
+        self.env.take([make_row("a")], taken_at=T1, source="one")
+        self.env.take([make_row("a")], taken_at=T2, source="two")
+        first = json.loads(self.env.snapshot("one", "2026-11-04-v1.json").read_text(encoding="utf-8"))
+        second = json.loads(self.env.snapshot("two", "2026-11-05-v1.json").read_text(encoding="utf-8"))
+        self.assertEqual(first["source_sha256"], second["source_sha256"])
+        self.assertEqual(first["source_sha256"], expected_digest([make_row("a")]))
+
+    def test_a_different_taken_at_with_equal_rows_is_unchanged(self) -> None:
+        self.env.take([make_row("a")], taken_at=T1)
+        code, out, _ = self.env.take([make_row("a")], taken_at="2030-01-01T00:00:00Z")
+        self.assertEqual(code, 0)
+        self.assertIn("unchanged", out)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json"])
+
+
+class RowDefectTests(SnapshotCase):
+    def test_row_field_missing_for_every_field(self) -> None:
+        for field in requirement_snapshot.ROW_FIELDS:
+            with self.subTest(field=field):
+                self.assert_red([without(make_row("r1"), field)], "ROW_FIELD_MISSING")
+
+    def test_row_field_type_for_null_and_wrong_types(self) -> None:
+        cases: list[tuple[str, object]] = [
+            ("page_id", None), ("title", None), ("type", 3), ("source_ref", None), ("source_sha256", None),
+            ("status", None), ("status", 1), ("version", None), ("version", "1"), ("version", 1.5),
+            ("version", True), ("version", 0), ("version", -2), ("requirement_id", None), ("requirement_id", 7),
+        ]
+        for field, value in cases:
+            with self.subTest(field=field, value=value):
+                self.assert_red([make_row("r1", **{field: value})], "ROW_FIELD_TYPE")
+
+    def test_an_empty_or_blank_requirement_id_is_a_type_defect(self) -> None:
+        for value in ("", " ", "\t \n"):
+            with self.subTest(value=value):
+                self.assert_red([make_row("r1", requirement_id=value)], "ROW_FIELD_TYPE")
+
+    def test_an_unexpected_row_field_is_a_type_defect(self) -> None:
+        self.assert_red([make_row("r1", extra="x")], "ROW_FIELD_TYPE")
+
+    def test_a_row_that_is_not_an_object_is_a_type_defect(self) -> None:
+        self.assert_red(["r1"], "ROW_FIELD_TYPE")
+        self.assert_red([[1, 2]], "ROW_FIELD_TYPE")
+
+    def test_duplicate_requirement(self) -> None:
+        out = self.assert_red([make_row("r1"), make_row("r2"), make_row("r1", title="again")], "DUPLICATE_REQUIREMENT")
+        self.assertIn("DUPLICATE_REQUIREMENT r1:", out)
+
+    def test_status_unknown(self) -> None:
+        for value in ("ACTIVE", "done", "", "retired "):
+            with self.subTest(value=value):
+                self.assert_red([make_row("r1", status=value)], "STATUS_UNKNOWN")
+
+    def test_both_status_values_are_accepted(self) -> None:
+        code, out, _ = self.env.take([make_row("r1", status="active"), make_row("r2", status="retired")])
+        self.assertEqual(code, 0, out)
+
+    def test_source_ref_absolute(self) -> None:
+        for value in ("/etc/spec.md", "\\srv\\share\\spec.md", "\\\\srv\\share", "C:\\x\\spec.md", "c:/x/spec.md",
+                      "C:spec.md", "file:///x/spec.md", "FILE:///x"):
+            with self.subTest(value=value):
+                self.assert_red([make_row("r1", source_ref=value)], "SOURCE_REF_ABSOLUTE")
+
+    def test_urls_and_relative_paths_are_accepted_as_source_ref(self) -> None:
+        rows = [
+            make_row("r1", source_ref="https://example.invalid/spec#a:b"),
+            make_row("r2", source_ref="doc/spec.md"),
+            make_row("r3", source_ref="spec.md"),
+            make_row("r4", source_ref="b/c"),
+        ]
+        code, out, _ = self.env.take(rows)
+        self.assertEqual(code, 0, out)
+
+    def test_digest_format(self) -> None:
+        for value in (HEX_A[:63], HEX_A + "a", HEX_A.upper(), "g" + HEX_A[1:], "", " " + HEX_A[1:], HEX_A + "\n"):
+            with self.subTest(value=value):
+                self.assert_red([make_row("r1", source_sha256=value)], "DIGEST_FORMAT")
+
+    def test_a_valid_digest_is_accepted(self) -> None:
+        code, out, _ = self.env.take([make_row("r1", source_sha256="0123456789abcdef" * 4)])
+        self.assertEqual(code, 0, out)
+
+    def test_every_defect_is_listed_once_per_line(self) -> None:
+        rows = [make_row("r1", status="x", source_sha256="zz"), make_row("r1")]
+        _, out, _ = self.env.take(rows)
+        codes = [match.group(1) for line in out.splitlines() if (match := DEFECT_LINE.match(line))]
+        self.assertEqual(sorted(codes), ["DIGEST_FORMAT", "DUPLICATE_REQUIREMENT", "STATUS_UNKNOWN"])
+        self.assertEqual(len(out.splitlines()), 3)
+
+    def test_the_defect_codes_are_distinct_and_printed_with_subject_and_detail(self) -> None:
+        values = [code.value for code in requirement_snapshot.DefectCode]
+        self.assertEqual(len(values), len(set(values)))
+        self.assertEqual(
+            set(values),
+            {"ROW_FIELD_MISSING", "ROW_FIELD_TYPE", "DUPLICATE_REQUIREMENT", "STATUS_UNKNOWN",
+             "SOURCE_REF_ABSOLUTE", "DIGEST_FORMAT", "SNAPSHOT_DIGEST_MISMATCH", "NAME_INVALID"},
+        )
+        _, out, _ = self.env.take([make_row("r1", status="x")])
+        match = DEFECT_LINE.match(out.strip())
+        self.assertIsNotNone(match, out)
+        assert match is not None
+        self.assertEqual((match.group(1), match.group(2)), ("STATUS_UNKNOWN", "r1"))
+
+    def test_a_defect_refusal_leaves_earlier_versions_byte_identical(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        before = self.env.tree()
+        code, _, _ = self.env.take([make_row("r1", status="x")], taken_at=T2)
+        self.assertEqual(code, 1)
+        self.assertEqual(self.env.tree(), before)
+
+
+class InputShapeTests(SnapshotCase):
+    def test_input_that_is_not_json_is_a_red(self) -> None:
+        for data in (b"not json", b"", b"\xff\xfe\x00", b"{'rows': []}"):
+            with self.subTest(data=data):
+                before = self.env.tree()
+                code, out, err = self.env.main(
+                    "take", "--source", "src", "--input", str(self.env.write_raw_input(data)),
+                    "--root", str(self.env.root), "--taken-at", T1)
+                self.assertEqual(code, 1, err)
+                self.assertIn("ROW_FIELD_TYPE", out)
+                self.assertEqual(self.env.tree(), before)
+
+    def test_json_without_a_rows_list_is_a_red(self) -> None:
+        for data in (b"{}", b'{"rows": null}', b'{"rows": {}}', b'{"rows": "x"}', b"[]", b"[{}]", b"3", b"null",
+                     b'{"other": []}'):
+            with self.subTest(data=data):
+                before = self.env.tree()
+                code, out, err = self.env.main(
+                    "take", "--source", "src", "--input", str(self.env.write_raw_input(data)),
+                    "--root", str(self.env.root), "--taken-at", T1)
+                self.assertEqual(code, 1, err)
+                self.assertIn("ROW_FIELD_TYPE", out)
+                self.assertEqual(self.env.tree(), before)
+
+
+class SourceNameTests(SnapshotCase):
+    def test_name_invalid_for_unsafe_names(self) -> None:
+        for name in ("..", ".", "a/b", "a\\b", "/abs", "C:\\abs", "C:abs", "", "a.", "a b", "ä", "a:b", "a*", "con",
+                     "NUL.txt", "../x", "x/..", "a\n"):
+            with self.subTest(name=name):
+                before = self.env.tree()
+                code, out, err = self.env.main(
+                    "take", "--source", name, "--input", str(self.env.write_input([make_row("r1")])),
+                    "--root", str(self.env.root), "--taken-at", T1)
+                self.assertEqual(code, 1, err)
+                self.assertIn("NAME_INVALID", out)
+                self.assertEqual(self.env.tree(), before)
+                self.assertFalse(self.env.root.exists() and any(self.env.root.iterdir()))
+
+    def test_a_refused_name_never_writes_outside_the_root(self) -> None:
+        self.env.main("take", "--source", "../escape", "--input", str(self.env.write_input([])),
+                      "--root", str(self.env.root), "--taken-at", T1)
+        self.assertFalse((self.env.dir / "escape").exists())
+
+    def test_safe_names_are_accepted(self) -> None:
+        for name in ("src", "a.b", "a-b_c", "A1", ".hidden", "v1.2"):
+            with self.subTest(name=name):
+                code, out, _ = self.env.take([make_row("r1")], source=name)
+                self.assertEqual(code, 0, out)
+
+    def test_a_case_variant_of_an_existing_source_is_refused_as_the_same_directory(self) -> None:
+        self.env.take([make_row("r1")], source="Source")
+        before = self.env.tree()
+        code, out, _ = self.env.take([make_row("r2")], source="source", taken_at=T2)
+        self.assertEqual(code, 1)
+        self.assertIn("NAME_INVALID", out)
+        self.assertEqual(self.env.tree(), before)
+        code, out, _ = self.env.take([make_row("r3")], source="Source", taken_at=T2)
+        self.assertEqual(code, 0, out)
+
+    def test_diff_refuses_an_invalid_name_as_a_red(self) -> None:
+        code, out, _ = self.env.main("diff", "--source", "..", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 1)
+        self.assertIn("NAME_INVALID", out)
+
+
+class VerifyTests(SnapshotCase):
+    def written(self, rows: list[Row] | None = None) -> tuple[Path, dict[str, object]]:
+        self.env.take([make_row("r1")] if rows is None else rows, taken_at=T1)
+        path = self.env.snapshot("src", "2026-11-04-v1.json")
+        return path, json.loads(path.read_text(encoding="utf-8"))
+
+    def rewrite(self, path: Path, document: object) -> None:
+        path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+    def verify(self, path: Path) -> tuple[int, str]:
+        code, out, err = self.env.main("verify", str(path))
+        return code, out + err
+
+    def test_an_edited_row_is_a_snapshot_digest_mismatch(self) -> None:
+        path, document = self.written()
+        rows = document["rows"]
+        assert isinstance(rows, list)
+        rows[0]["title"] = "edited by hand"
+        self.rewrite(path, document)
+        code, out = self.verify(path)
+        self.assertEqual(code, 1, out)
+        self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+
+    def test_a_recorded_digest_of_the_right_format_but_wrong_value_is_a_mismatch(self) -> None:
+        path, document = self.written()
+        document["source_sha256"] = HEX_B
+        self.rewrite(path, document)
+        code, out = self.verify(path)
+        self.assertEqual(code, 1, out)
+        self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+
+    def test_a_top_level_digest_of_the_wrong_format(self) -> None:
+        path, document = self.written()
+        for value in (HEX_A[:63], HEX_A + "a", HEX_A.upper()):
+            with self.subTest(value=value):
+                document["source_sha256"] = value
+                self.rewrite(path, document)
+                code, out = self.verify(path)
+                self.assertEqual(code, 1, out)
+                self.assertIn("DIGEST_FORMAT", out)
+
+    def test_row_defects_are_reported_by_verify(self) -> None:
+        for mutate, code_name in (
+            (lambda rows: rows[0].pop("title"), "ROW_FIELD_MISSING"),
+            (lambda rows: rows[0].update(title=None), "ROW_FIELD_TYPE"),
+            (lambda rows: rows[0].update(status="x"), "STATUS_UNKNOWN"),
+            (lambda rows: rows[0].update(source_ref="/abs"), "SOURCE_REF_ABSOLUTE"),
+            (lambda rows: rows[0].update(source_sha256="ZZ"), "DIGEST_FORMAT"),
+            (lambda rows: rows.append(copy.deepcopy(rows[0])), "DUPLICATE_REQUIREMENT"),
+        ):
+            with self.subTest(code=code_name):
+                path, document = self.written()
+                rows = document["rows"]
+                assert isinstance(rows, list)
+                mutate(rows)
+                self.rewrite(path, document)
+                code, out = self.verify(path)
+                self.assertEqual(code, 1, out)
+                self.assertIn(code_name, out)
+                path.unlink()
+
+    def test_top_level_shape_defects(self) -> None:
+        path, document = self.written()
+        for name in ("source", "taken_at", "source_sha256", "rows"):
+            with self.subTest(missing=name):
+                clone = {key: value for key, value in document.items() if key != name}
+                self.rewrite(path, clone)
+                code, out = self.verify(path)
+                self.assertEqual(code, 1, out)
+                self.assertIn("ROW_FIELD_MISSING", out)
+        for patch in ({"taken_at": "yesterday"}, {"taken_at": "2026-11-04T10:00:00+02:00"}, {"taken_at": 5},
+                      {"rows": {}}, {"extra": 1}):
+            with self.subTest(patch=patch):
+                self.rewrite(path, {**document, **patch})
+                code, out = self.verify(path)
+                self.assertEqual(code, 1, out)
+                self.assertIn("ROW_FIELD_TYPE", out)
+
+    def test_an_invalid_source_name_inside_the_file_is_name_invalid(self) -> None:
+        path, document = self.written()
+        document["source"] = "../x"
+        self.rewrite(path, document)
+        code, out = self.verify(path)
+        self.assertEqual(code, 1, out)
+        self.assertIn("NAME_INVALID", out)
+
+    def test_a_file_that_is_not_json_is_a_red(self) -> None:
+        path = self.env.dir / "bad.json"
+        for data in (b"", b"nope", b"\xff\xfe", b"[]"):
+            path.write_bytes(data)
+            code, out = self.verify(path)
+            self.assertEqual(code, 1, out)
+            self.assertIn("ROW_FIELD_TYPE", out)
+
+    def test_a_crlf_copy_of_a_good_snapshot_still_verifies(self) -> None:
+        path, _ = self.written()
+        path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+        self.assertEqual(self.verify(path)[0], 0)
+
+    def test_a_file_that_cannot_be_read_is_a_tool_fault(self) -> None:
+        code, out = self.verify(self.env.dir / "absent.json")
+        self.assertEqual(code, 2, out)
+        self.assertEqual(self.verify(self.env.dir)[0], 2)
+
+
+class FaultTests(SnapshotCase):
+    def test_a_root_that_cannot_be_created_is_exit_2(self) -> None:
+        blocker = self.env.dir / "blocker"
+        blocker.write_text("a file, not a directory", encoding="utf-8")
+        code, out, err = self.env.main(
+            "take", "--source", "src", "--input", str(self.env.write_input([make_row("r1")])),
+            "--root", str(blocker), "--taken-at", T1)
+        self.assertEqual(code, 2, out)
+        self.assertEqual(out, "")
+        self.assertIn("tool fault", err)
+
+    def test_a_source_directory_that_is_a_file_is_exit_2(self) -> None:
+        self.env.root.mkdir()
+        (self.env.root / "src").write_text("a file", encoding="utf-8")
+        code, _, _ = self.env.take([make_row("r1")])
+        self.assertEqual(code, 2)
+
+    def test_an_unreadable_input_is_exit_2(self) -> None:
+        for path in (self.env.dir / "absent.json", self.env.dir):
+            with self.subTest(path=path):
+                code, out, err = self.env.main(
+                    "take", "--source", "src", "--input", str(path), "--root", str(self.env.root), "--taken-at", T1)
+                self.assertEqual(code, 2, out)
+                self.assertEqual(out, "")
+                self.assertEqual(self.env.tree(), {})
+
+    def test_an_existing_target_at_write_time_is_exit_2_and_never_overwritten(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        target = self.env.snapshot("src", "2026-11-04-v1.json")
+        before = target.read_bytes()
+        # A stale view of the store: the version listing does not show the file that already exists.
+        with mock.patch.object(requirement_snapshot, "list_versions", return_value=[]):
+            code, out, err = self.env.take([make_row("r2")], taken_at=T1)
+        self.assertEqual(code, 2, out + err)
+        self.assertEqual(out, "")
+        self.assertEqual(target.read_bytes(), before)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json"])
+
+    def test_a_version_that_appears_while_writing_is_exit_2(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        real = requirement_snapshot.list_versions
+        calls: list[int] = []
+
+        def stale_first(directory: Path) -> list[requirement_snapshot.VersionFile]:
+            calls.append(1)
+            return [] if len(calls) == 1 else real(directory)
+
+        with mock.patch.object(requirement_snapshot, "list_versions", side_effect=stale_first):
+            code, _, _ = self.env.take([make_row("r2")], taken_at="2030-01-01T00:00:00Z")
+        self.assertEqual(code, 2)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json"])
+
+    def test_a_colliding_temporary_name_is_not_overwritten(self) -> None:
+        directory = self.env.root / "src"
+        directory.mkdir(parents=True)
+        temporary = directory / ".2026-11-04-v1.json.fixed.tmp"
+        temporary.write_bytes(b"sentinel")
+        with mock.patch.object(requirement_snapshot.secrets, "token_hex", return_value="fixed"):
+            code, _, _ = self.env.take([make_row("r1")], taken_at=T1)
+        self.assertEqual(code, 2)
+        self.assertEqual(temporary.read_bytes(), b"sentinel")
+        self.assertFalse((directory / "2026-11-04-v1.json").exists())
+
+    def test_a_write_failure_mid_file_leaves_no_partial_file_and_exit_2(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        before = self.env.tree()
+
+        def half_then_fail(descriptor: int, data: bytes) -> None:
+            import os
+            os.write(descriptor, data[: len(data) // 2])
+            raise OSError("disk full")
+
+        with mock.patch.object(requirement_snapshot, "_write_all", side_effect=half_then_fail):
+            code, out, err = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual(code, 2, out)
+        self.assertIn("disk full", err)
+        self.assertEqual(self.env.tree(), before)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json"])
+
+    def test_a_failing_publish_removes_the_temporary_file(self) -> None:
+        with mock.patch.object(requirement_snapshot, "_publish_exclusive", side_effect=OSError("denied")):
+            code, _, _ = self.env.take([make_row("r1")], taken_at=T1)
+        self.assertEqual(code, 2)
+        self.assertEqual(self.env.files(), [])
+
+    def test_an_unexpected_error_is_exit_2_never_1(self) -> None:
+        with mock.patch.object(requirement_snapshot, "rows_digest", side_effect=RuntimeError("boom")):
+            code, out, err = self.env.take([make_row("r1")])
+        self.assertEqual(code, 2, out)
+        self.assertIn("RuntimeError", err)
+
+    def test_diff_of_a_missing_version_is_exit_2(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        code, out, _ = self.env.main("diff", "--source", "src", "1", "9", "--root", str(self.env.root))
+        self.assertEqual((code, out), (2, ""))
+        code, _, _ = self.env.main("diff", "--source", "none", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 2)
+
+    def test_two_files_for_one_version_are_exit_2(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        twin = self.env.snapshot("src", "2026-11-09-v1.json")
+        twin.write_bytes(self.env.snapshot("src", "2026-11-04-v1.json").read_bytes())
+        code, _, _ = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual(code, 2)
+        code, _, _ = self.env.main("diff", "--source", "src", "1", "1", "--root", str(self.env.root))
+        self.assertEqual(code, 2)
+
+    def test_a_damaged_latest_version_refuses_take_with_exit_1(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        latest = self.env.snapshot("src", "2026-11-04-v1.json")
+        latest.write_text(latest.read_text(encoding="utf-8").replace("title of r1", "tampered"), encoding="utf-8", newline="\n")
+        before = self.env.tree()
+        code, out, _ = self.env.take([make_row("r1", title="next")], taken_at=T2)
+        self.assertEqual(code, 1)
+        self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+        self.assertEqual(self.env.tree(), before)
+
+    def test_diff_of_a_damaged_version_is_exit_1(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+        latest = self.env.snapshot("src", "2026-11-05-v2.json")
+        latest.write_text(latest.read_text(encoding="utf-8").replace("title of r2", "tampered"), encoding="utf-8", newline="\n")
+        code, out, _ = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 1)
+        self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+
+    def test_a_red_is_never_exit_2_and_a_fault_is_never_exit_1(self) -> None:
+        red, _, _ = self.env.take([make_row("r1", status="x")])
+        fault, _, _ = self.env.main("verify", str(self.env.dir / "absent.json"))
+        self.assertEqual((red, fault), (1, 2))
+
+
+class UsageTests(SnapshotCase):
+    def test_bad_arguments_are_exit_3_with_a_usage_line(self) -> None:
+        good = str(self.env.write_input([]))
+        cases = [
+            (),
+            ("bogus",),
+            ("take",),
+            ("take", "--source", "s"),
+            ("take", "--input", good),
+            ("take", "--source", "s", "--input", good, "--taken-at", "yesterday"),
+            ("take", "--source", "s", "--input", good, "--taken-at", "2026-11-04T10:00:00"),
+            ("take", "--source", "s", "--input", good, "--taken-at", "2026-11-04"),
+            ("take", "--source", "s", "--input", good, "--taken-at", "2026-11-04T10:00:00+02:00"),
+            ("take", "--source", "s", "--input", good, "--unknown", "x"),
+            ("take", "--source", "s", "--source", "t", "--input", good),
+            ("take", "--source", "s", "--input"),
+            ("take", "--source", "s", "--input", good, "extra"),
+            ("verify",),
+            ("verify", "a.json", "b.json"),
+            ("verify", "--root"),
+            ("diff",),
+            ("diff", "--source", "s"),
+            ("diff", "--source", "s", "v1"),
+            ("diff", "--source", "s", "v1", "v2", "v3"),
+            ("diff", "--source", "s", "vx", "v2"),
+            ("diff", "--source", "s", "v0", "v2"),
+            ("diff", "v1", "v2"),
+            ("diff", "--source", "s", "v1", "v2", "--bogus", "x"),
+        ]
+        for args in cases:
+            with self.subTest(args=args):
+                code, out, err = self.env.main(*args)
+                self.assertEqual(code, 3, out + err)
+                self.assertEqual(out, "")
+                self.assertTrue(err.startswith("usage:"), err)
+
+    def test_a_taken_at_with_a_zero_offset_or_fraction_is_accepted_and_normalised(self) -> None:
+        for given in ("2026-11-04T10:00:00+00:00", "2026-11-04T10:00:00.250Z"):
+            with self.subTest(given=given):
+                root = self.env.dir / f"root-{len(given)}"
+                code, out, err = self.env.main(
+                    "take", "--source", "s", "--input", str(self.env.write_input([])), "--root", str(root),
+                    "--taken-at", given)
+                self.assertEqual(code, 0, out + err)
+                document = json.loads(Path(out.strip()).read_text(encoding="utf-8"))
+                self.assertEqual(document["taken_at"], "2026-11-04T10:00:00Z")
+
+
+class ProcessTests(SnapshotCase):
+    def run_cli(self, *args: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [sys.executable, "-I", "-X", "utf8", str(SCRIPT), *args],
+            capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=self.env.dir,
+        )
+
+    def test_the_script_runs_as_a_command_with_the_documented_exit_codes(self) -> None:
+        good = self.env.write_input([make_row("r1")])
+        bad = self.env.write_input([make_row("r1", status="x")])
+        root = str(self.env.root)
+        done = self.run_cli("take", "--source", "s", "--input", str(good), "--root", root, "--taken-at", T1)
+        self.assertEqual(done.returncode, 0, done.stderr)
+        path = done.stdout.strip()
+        self.assertEqual(self.run_cli("verify", path).returncode, 0)
+        refused = self.run_cli("take", "--source", "s", "--input", str(bad), "--root", root)
+        self.assertEqual((refused.returncode, refused.stdout.split()[0]), (1, "STATUS_UNKNOWN"))
+        self.assertEqual(self.run_cli("verify", str(self.env.dir / "absent.json")).returncode, 2)
+        self.assertEqual(self.run_cli("nonsense").returncode, 3)
+
+    def test_a_defect_line_with_an_unencodable_character_still_exits_1_under_cp950(self) -> None:
+        rows = [make_row("\u0e01", status="x")]
+        path = self.env.write_input(rows)
+        done = subprocess.run(
+            [sys.executable, "-I", str(SCRIPT), "take", "--source", "s", "--input", str(path),
+             "--root", str(self.env.root)],
+            capture_output=True, env={"PYTHONIOENCODING": "cp950", "SYSTEMROOT": "C:\\Windows"}, cwd=self.env.dir,
+        )
+        self.assertEqual(done.returncode, 1, done.stderr)
+        self.assertIn(b"STATUS_UNKNOWN", done.stdout)
+
+
+if __name__ == "__main__":
+    unittest.main()

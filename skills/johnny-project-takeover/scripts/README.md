@@ -1,6 +1,6 @@
 # Gate scripts
 
-Three stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
+Four stand-alone Python 3.11 scripts that decide a workflow transition or keep a versioned record mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
@@ -89,3 +89,37 @@ commit (`SHALLOW_HISTORY`), `git` cannot be started, not inside a git repository
 is missing or not a directory, an environment git query fails as above, the `--json` path
 cannot be written, or an unexpected error. Exit 3: bad option, missing mode, empty
 `--sealed-state`, an index argument that is not a file, or an index file that is not UTF-8.
+
+## requirement_snapshot.py
+
+    python requirement_snapshot.py take --source NAME --input ROWS.json [--root DIR] [--taken-at ISO-8601-UTC]
+    python requirement_snapshot.py verify SNAPSHOT.json
+    python requirement_snapshot.py diff --source NAME VA VB [--root DIR]
+
+Keeps versioned requirement snapshots, one JSON file per source and version,
+`<root>/<source>/<date>-v<n>.json` (default root `doc/requirements/snapshots`). A file holds
+`source`, `taken_at`, `source_sha256` (sha256 of the canonical JSON of the rows: keys sorted,
+separators `,` and `:`, UTF-8, rows sorted by `requirement_id`; `taken_at` is not part of it)
+and `rows`. A row has `requirement_id` (non-empty, unique), `page_id`, `title`, `type`,
+`source_ref` (URL or repository-relative path, never a host absolute path), `source_sha256`
+(64 lower-case hex), `status` (`active` | `retired`) and `version` (integer >= 1). The file is
+written with LF and a final LF.
+
+- `take` reads `{"rows": [...]}` and writes the next version; when the rows equal the latest
+  version's rows it writes nothing and prints `<path> unchanged`. A snapshot file is never
+  overwritten or edited: it is written to a temporary name in its own directory and then created
+  exclusively under its final name, so a write failure leaves no partial file and a race exits 2.
+  `--taken-at` must be a UTC instant; it defaults to now.
+- `verify` checks the shape of one file and that `source_sha256` matches its rows.
+- `diff` prints `added`, `removed` and `changed` requirement ids, one per line, from version `VA`
+  to version `VB` (`v1` or `1`); exit 0.
+
+Defect codes, printed one per line as `<code> <requirement_id or field>: <detail>`:
+`ROW_FIELD_MISSING`, `ROW_FIELD_TYPE` (also input that is not JSON or has no `rows` list, a blank
+`requirement_id` and an unexpected field), `DUPLICATE_REQUIREMENT`, `STATUS_UNKNOWN`,
+`SOURCE_REF_ABSOLUTE`, `DIGEST_FORMAT`, `SNAPSHOT_DIGEST_MISMATCH` (`verify` and a damaged latest
+version only) and `NAME_INVALID` (a source name with a path separator, `..`, a trailing dot or a
+character outside `[A-Za-z0-9._-]`, or one that differs only by case from an existing source
+directory). A red exits 1 and `take` then writes nothing. Exit 2: the root cannot be created or
+written, the input or a snapshot cannot be read, a requested version does not exist, a version
+exists twice, a target appeared while writing, or an unexpected error. Exit 3: bad arguments.
