@@ -11,25 +11,46 @@ A snapshot is one JSON file per source and version, `<root>/<source>/<date>-v<n>
 
     {"source": <name>, "taken_at": <ISO-8601 UTC>, "source_sha256": <sha256>, "rows": [...]}
 
-A row has `requirement_id` (non-empty, unique in the file), `page_id`, `title`, `type`,
+A row has `requirement_id` (unique in the file; 1 to 128 characters from letters, digits and
+`._:-/`), `page_id`, `title`, `type`,
 `source_ref` (a URL or a repository-relative path, never a host absolute path),
 `source_sha256` (64 lower-case hex), `status` (`active` | `retired`) and `version`
 (integer >= 1). The snapshot `source_sha256` is the sha256 of the canonical JSON of the
 rows: keys sorted, separators `,` and `:`, UTF-8, rows sorted by `requirement_id`;
 `taken_at` is not part of it. The file is written with LF and a final LF.
 
-`take` writes the next version, or writes nothing and prints `<path> unchanged` when the rows
-equal the latest version's rows. A snapshot file is never overwritten or edited: it is written
-to a temporary name in its own directory and then created exclusively under its final name.
+`take` writes the next version (the highest published version plus one, whatever the date), or
+writes nothing and prints `<path> unchanged` when the rows equal the latest version's rows. A
+snapshot file is never overwritten or edited: it is written to a temporary name in its own
+directory and then created exclusively under its final name.
+
+A version number is unique per source. Before it publishes, `take` claims the number by creating
+`<root>/<source>/.v<n>.claim` exclusively, re-scans the published files, and if a published file
+already carries version `n` or higher it removes its claim and exits 2 (another writer won).
+A claim it cannot create, and a claim file left behind by a crash, are exit 2 naming the claim
+file; the owner removes a stale claim by hand. Claim files are never committed: ignore `.v*.claim`.
+
+Every string read from an input is valid Unicode without lone surrogates and without control
+characters (U+0000 to U+001F, U+007F); a string that breaks this is a red of the input
+(ROW_FIELD_TYPE, exit 1), never a tool fault. Every subject printed in a defect line is printed
+as its escaped form (Python `repr`) unless it is plain, so one defect is always one line.
 
 `diff` prints `added`, `removed` and `changed` requirement ids, one per line.
 
 Defect codes (exit 1, one line `<code> <requirement_id or field>: <detail>` each):
-ROW_FIELD_MISSING, ROW_FIELD_TYPE, DUPLICATE_REQUIREMENT, STATUS_UNKNOWN,
-SOURCE_REF_ABSOLUTE, DIGEST_FORMAT, SNAPSHOT_DIGEST_MISMATCH (verify only), NAME_INVALID.
+ROW_FIELD_MISSING; ROW_FIELD_TYPE (a field of the wrong type, an unexpected field, a blank or
+disallowed requirement_id, a string that breaks the text-value rule, input that is not JSON or has
+no rows list); DUPLICATE_REQUIREMENT; STATUS_UNKNOWN; SOURCE_REF_ABSOLUTE (a source_ref that is
+empty, starts with `/`, a backslash or `~`, carries a drive letter or `file:`, or has a `..` segment; a
+URL with a scheme is allowed); DIGEST_FORMAT; SNAPSHOT_DIGEST_MISMATCH (a stored version whose
+source_sha256 does not match its rows: reported by verify, and by take or diff whenever they read
+that version); NAME_INVALID (a source name with a path separator, `..`, characters outside
+[A-Za-z0-9._-], a trailing dot, a Windows reserved device name, or a case variant of an existing
+source; applied by take, verify and diff alike).
 
 Exit codes: 0 pass, 1 contract red (named defect codes), 2 tool fault (the file system cannot
-serve the run, a version file is missing, a write race, any unexpected error), 3 usage error.
+serve the run, a version file is missing, a lost version race or a stale claim, any unexpected
+error), 3 usage error.
 A red is never reported as a tool fault and a tool fault is never reported as a red.
 """
 from __future__ import annotations
@@ -60,6 +81,9 @@ NAME_PATTERN = re.compile(r"[A-Za-z0-9._-]+")
 DIGEST_PATTERN = re.compile(r"[0-9a-f]{64}")
 VERSION_FILE_PATTERN = re.compile(r"(\d{4}-\d{2}-\d{2})-v(\d+)\.json")
 VERSION_ARG_PATTERN = re.compile(r"v?(\d+)")
+ID_PATTERN = re.compile(r"[A-Za-z0-9._:/-]{1,128}")
+SUBJECT_PATTERN = re.compile(r"[A-Za-z0-9._:/\[\]-]{1,128}")
+CLAIM_PATTERN = re.compile(r"\.v\d+\.claim")
 URL_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9+.-]+://")
 DRIVE_PATTERN = re.compile(r"[A-Za-z]:")
 RESERVED_DEVICE_NAMES = frozenset(
@@ -91,6 +115,11 @@ class Status(StrEnum):
     RETIRED = "retired"
 
 
+def shown(text: str) -> str:
+    """A subject as it is printed: plain text stays as it is, anything else is escaped (one line)."""
+    return text if SUBJECT_PATTERN.fullmatch(text) is not None else repr(text)
+
+
 @dataclass(frozen=True)
 class Defect:
     code: DefectCode
@@ -98,7 +127,7 @@ class Defect:
     detail: str
 
     def render(self) -> str:
-        return f"{self.code.value} {self.subject}: {self.detail}"
+        return f"{self.code.value} {shown(self.subject)}: {self.detail}"
 
 
 @dataclass(frozen=True)
@@ -191,14 +220,32 @@ def name_defects(name: str, subject: str = "source") -> list[Defect]:
     return [Defect(DefectCode.NAME_INVALID, subject, f"{name!r} {problem}") for problem in problems]
 
 
-def is_absolute_ref(ref: str) -> bool:
-    if ref.startswith(("/", "\\")):
-        return True
+def source_ref_problem(ref: str) -> str | None:
+    """Why a source_ref is not a URL or a repository-relative path; None when it is one."""
+    if ref == "":
+        return "is empty"
+    if ref.startswith(("/", "\\", "~")):
+        return "is a host absolute path"
     if ref.lower().startswith("file:"):
-        return True
+        return "is a host absolute path"
     if URL_PATTERN.match(ref) is not None:
-        return False
-    return DRIVE_PATTERN.match(ref) is not None
+        return None
+    if DRIVE_PATTERN.match(ref) is not None:
+        return "is a host absolute path"
+    if ".." in re.split(r"[/\\]", ref):
+        return "has a .. segment"
+    return None
+
+
+def text_problem(value: str) -> str | None:
+    """The text-value rule: no lone surrogate and no control character in any input string."""
+    for character in value:
+        code = ord(character)
+        if 0xD800 <= code <= 0xDFFF:
+            return "holds a lone surrogate"
+        if code < 0x20 or code == 0x7F:
+            return "holds a control character"
+    return None
 
 
 def _is_plain_int(value: object) -> bool:
@@ -217,7 +264,7 @@ def _field_defects(raw: dict[str, object], index: int) -> tuple[Row | None, list
     defects: list[Defect] = []
     for name in raw:
         if name not in ROW_FIELDS:
-            defects.append(Defect(DefectCode.ROW_FIELD_TYPE, subject, f"unexpected field {name}"))
+            defects.append(Defect(DefectCode.ROW_FIELD_TYPE, subject, f"unexpected field {name!r}"))
     for name in ROW_FIELDS:
         if name not in raw:
             defects.append(Defect(DefectCode.ROW_FIELD_MISSING, subject, f"field {name} is missing"))
@@ -227,19 +274,34 @@ def _field_defects(raw: dict[str, object], index: int) -> tuple[Row | None, list
     def text(name: str) -> str | None:
         value = raw[name]
         if isinstance(value, str):
+            problem = text_problem(value)
+            if problem is not None and name != "requirement_id":
+                defects.append(Defect(DefectCode.ROW_FIELD_TYPE, subject, f"field {name} {problem}"))
             return value
         defects.append(Defect(DefectCode.ROW_FIELD_TYPE, subject, f"field {name} must be a string"))
         return None
 
     requirement_id = text("requirement_id")
-    if requirement_id is not None and not requirement_id.strip():
-        defects.append(Defect(DefectCode.ROW_FIELD_TYPE, subject, "field requirement_id must not be empty"))
+    if requirement_id is not None:
+        if not requirement_id.strip():
+            defects.append(Defect(DefectCode.ROW_FIELD_TYPE, subject, "field requirement_id must not be empty"))
+        else:
+            id_problem = text_problem(requirement_id)
+            if id_problem is not None:
+                defects.append(Defect(DefectCode.ROW_FIELD_TYPE, subject, f"field requirement_id {id_problem}"))
+            elif ID_PATTERN.fullmatch(requirement_id) is None:
+                defects.append(Defect(
+                    DefectCode.ROW_FIELD_TYPE, subject,
+                    "field requirement_id must be 1 to 128 characters from letters, digits and ._:-/",
+                ))
     page_id = text("page_id")
     title = text("title")
     kind = text("type")
     source_ref = text("source_ref")
-    if source_ref is not None and is_absolute_ref(source_ref):
-        defects.append(Defect(DefectCode.SOURCE_REF_ABSOLUTE, subject, f"source_ref {source_ref!r} is a host absolute path"))
+    if source_ref is not None:
+        ref_problem = source_ref_problem(source_ref)
+        if ref_problem is not None:
+            defects.append(Defect(DefectCode.SOURCE_REF_ABSOLUTE, subject, f"source_ref {source_ref!r} {ref_problem}"))
     digest = text("source_sha256")
     if digest is not None and DIGEST_PATTERN.fullmatch(digest) is None:
         defects.append(Defect(DefectCode.DIGEST_FORMAT, subject, "source_sha256 must be 64 lower-case hex characters"))
@@ -447,6 +509,51 @@ def write_exclusive(target: Path, data: bytes) -> None:
                 pass
 
 
+def _claim_version(directory: Path, number: int) -> Path:
+    """Claim a version number: refuse while any claim file exists, then create ours exclusively."""
+    try:
+        entries = sorted(os.listdir(directory))
+    except OSError as exc:
+        raise ToolFault(f"cannot list {directory}: {exc}") from exc
+    for entry in entries:
+        if CLAIM_PATTERN.fullmatch(entry) is not None:
+            raise ToolFault(
+                f"claim file {directory / entry} exists: another writer holds it, or a crashed run left it "
+                "(the owner removes a stale claim by hand)"
+            )
+    claim = directory / f".v{number}.claim"
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0)
+    try:
+        descriptor = os.open(claim, flags, 0o644)
+    except FileExistsError as exc:
+        raise ToolFault(f"claim file {claim} exists: another writer holds it") from exc
+    except OSError as exc:
+        raise ToolFault(f"cannot create claim file {claim}: {exc}") from exc
+    try:
+        _write_all(descriptor, f"{os.getpid()}\n".encode("ascii"))
+    except OSError as exc:
+        os.close(descriptor)
+        _remove_claim(claim)
+        raise ToolFault(f"cannot write claim file {claim}: {exc}") from exc
+    os.close(descriptor)
+    return claim
+
+
+def _remove_claim(claim: Path) -> bool:
+    try:
+        os.unlink(claim)
+    except FileNotFoundError:
+        return True
+    except OSError:
+        return False
+    return True
+
+
+def _release_claim(claim: Path, published: bool) -> None:
+    if not _remove_claim(claim) and published:
+        raise ToolFault(f"the version was published but the claim file {claim} could not be removed; remove it by hand")
+
+
 def _case_collisions(root: Path, source: str) -> list[Defect]:
     try:
         entries = os.listdir(root)
@@ -506,10 +613,16 @@ def run_take(source: str, input_path: Path, root: Path, taken_at: str | None) ->
         directory.mkdir(parents=True, exist_ok=True)
     except OSError as exc:
         raise ToolFault(f"cannot create {directory}: {exc}") from exc
-    newest = _latest(list_versions(directory))
-    if newest is not None and newest.version >= number:
-        raise ToolFault(f"version {newest.version} appeared while writing; take again")
-    write_exclusive(target, snapshot_bytes(Snapshot(source, moment, digest, tuple(rows))))
+    claim = _claim_version(directory, number)
+    published = False
+    try:
+        newest = _latest(list_versions(directory))
+        if newest is not None and newest.version >= number:
+            raise ToolFault(f"version {newest.version} was published by another writer; take again")
+        write_exclusive(target, snapshot_bytes(Snapshot(source, moment, digest, tuple(rows))))
+        published = True
+    finally:
+        _release_claim(claim, published)
     print(target)
     return 0
 
@@ -537,6 +650,10 @@ def run_diff(source: str, first: int, second: int, root: Path) -> int:
     if defects:
         _print_defects(defects)
         return 1
+    defects = _case_collisions(root, source)
+    if defects:
+        _print_defects(defects)
+        return 1
     directory = root / source
     older, older_defects = _load_version(directory, first)
     newer, newer_defects = _load_version(directory, second)
@@ -546,12 +663,12 @@ def run_diff(source: str, first: int, second: int, root: Path) -> int:
     before = {row.requirement_id: row for row in older.rows}
     after = {row.requirement_id: row for row in newer.rows}
     for identifier in sorted(after.keys() - before.keys()):
-        print(f"added {identifier}")
+        print(f"added {shown(identifier)}")
     for identifier in sorted(before.keys() - after.keys()):
-        print(f"removed {identifier}")
+        print(f"removed {shown(identifier)}")
     for identifier in sorted(before.keys() & after.keys()):
         if before[identifier] != after[identifier]:
-            print(f"changed {identifier}")
+            print(f"changed {shown(identifier)}")
     return 0
 
 

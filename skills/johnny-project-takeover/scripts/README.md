@@ -100,12 +100,14 @@ Keeps versioned requirement snapshots, one JSON file per source and version,
 `<root>/<source>/<date>-v<n>.json` (default root `doc/requirements/snapshots`). A file holds
 `source`, `taken_at`, `source_sha256` (sha256 of the canonical JSON of the rows: keys sorted,
 separators `,` and `:`, UTF-8, rows sorted by `requirement_id`; `taken_at` is not part of it)
-and `rows`. A row has `requirement_id` (non-empty, unique), `page_id`, `title`, `type`,
+and `rows`. A row has `requirement_id` (unique; 1 to 128 characters from letters, digits and
+`._:-/`), `page_id`, `title`, `type`,
 `source_ref` (URL or repository-relative path, never a host absolute path), `source_sha256`
 (64 lower-case hex), `status` (`active` | `retired`) and `version` (integer >= 1). The file is
 written with LF and a final LF.
 
-- `take` reads `{"rows": [...]}` and writes the next version; when the rows equal the latest
+- `take` reads `{"rows": [...]}` and writes the next version (the highest published version plus
+  one, whatever the date); when the rows equal the latest
   version's rows it writes nothing and prints `<path> unchanged`. A snapshot file is never
   overwritten or edited: it is written to a temporary name in its own directory and then created
   exclusively under its final name, so a write failure leaves no partial file and a race exits 2.
@@ -114,12 +116,38 @@ written with LF and a final LF.
 - `diff` prints `added`, `removed` and `changed` requirement ids, one per line, from version `VA`
   to version `VB` (`v1` or `1`); exit 0.
 
+Version numbers and claim files: a version number is unique per source whatever the date. Before it
+publishes, `take` claims the number by creating `<root>/<source>/.v<n>.claim` exclusively,
+re-scans the published files, and if a published file already carries version `n` or higher it
+removes its claim and exits 2 (another writer won); otherwise it publishes `<date>-v<n>.json`
+exclusively and removes the claim. A claim it cannot create, and any claim file left behind by a
+crash, are exit 2 naming the claim file; the owner removes a stale claim by hand once no `take`
+runs. **Target projects must ignore `.v*.claim` (for example in `.gitignore`); claim files are
+never committed.**
+
+Text values: every string read from an input is valid Unicode without lone surrogates and without
+control characters (U+0000 to U+001F, U+007F). A string that breaks this is a red of the input
+(`ROW_FIELD_TYPE`, exit 1), never a tool fault. Every subject printed in a defect line, and every
+id printed by `diff`, is escaped (Python `repr`) unless it is plain, so one defect is one line.
+
 Defect codes, printed one per line as `<code> <requirement_id or field>: <detail>`:
-`ROW_FIELD_MISSING`, `ROW_FIELD_TYPE` (also input that is not JSON or has no `rows` list, a blank
-`requirement_id` and an unexpected field), `DUPLICATE_REQUIREMENT`, `STATUS_UNKNOWN`,
-`SOURCE_REF_ABSOLUTE`, `DIGEST_FORMAT`, `SNAPSHOT_DIGEST_MISMATCH` (`verify` and a damaged latest
-version only) and `NAME_INVALID` (a source name with a path separator, `..`, a trailing dot or a
-character outside `[A-Za-z0-9._-]`, or one that differs only by case from an existing source
-directory). A red exits 1 and `take` then writes nothing. Exit 2: the root cannot be created or
-written, the input or a snapshot cannot be read, a requested version does not exist, a version
-exists twice, a target appeared while writing, or an unexpected error. Exit 3: bad arguments.
+
+- `ROW_FIELD_MISSING`.
+- `ROW_FIELD_TYPE`: a field of the wrong type, an unexpected field, a blank `requirement_id`, a
+  `requirement_id` that is not 1 to 128 characters from letters, digits and `._:-/`, a string that
+  breaks the text-value rule, input that is not JSON or has no `rows` list.
+- `DUPLICATE_REQUIREMENT`, `STATUS_UNKNOWN`, `DIGEST_FORMAT`.
+- `SOURCE_REF_ABSOLUTE`: a `source_ref` that is empty, starts with `/`, a backslash or `~`, carries
+  a drive letter or `file:`, or has a `..` segment; a URL with a scheme is allowed.
+- `SNAPSHOT_DIGEST_MISMATCH`: a stored version whose `source_sha256` does not match its rows.
+  `verify` reports it, and `take` and `diff` report it whenever they read that version (exit 1).
+- `NAME_INVALID`: a source name with a path separator, `..`, a character outside
+  `[A-Za-z0-9._-]`, a trailing dot, a Windows reserved device name (`CON`, `PRN`, `AUX`, `NUL`,
+  `COM1` to `COM9`, `LPT1` to `LPT9`, with or without an extension), or a case variant of an
+  existing source directory. `take`, `verify` and `diff` apply the name rules alike; `take` and
+  `diff` also apply the case-variant rule.
+
+A red exits 1 and `take` then writes nothing. Exit 2: the root cannot be created or written, the
+input or a snapshot cannot be read, a requested version does not exist, a version exists twice, a
+claim file exists or a version was published by another writer while `take` was working, a target
+appeared while writing, or an unexpected error. Exit 3: bad arguments.

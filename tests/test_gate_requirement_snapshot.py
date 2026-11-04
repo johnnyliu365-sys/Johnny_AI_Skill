@@ -10,12 +10,15 @@ import copy
 import hashlib
 import io
 import json
+import os
 import re
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
+from typing import cast
 from unittest import mock
 
 _SCRIPTS = Path(__file__).resolve().parents[1] / "skills" / "johnny-project-takeover" / "scripts"
@@ -45,6 +48,10 @@ def make_row(identifier: str, **overrides: object) -> Row:
     }
     row.update(overrides)
     return row
+
+
+def rows_of(document: dict[str, object]) -> list[dict[str, object]]:
+    return cast("list[dict[str, object]]", document["rows"])
 
 
 def without(row: Row, field: str) -> Row:
@@ -724,7 +731,7 @@ class ProcessTests(SnapshotCase):
         self.assertEqual(self.run_cli("nonsense").returncode, 3)
 
     def test_a_defect_line_with_an_unencodable_character_still_exits_1_under_cp950(self) -> None:
-        rows = [make_row("\u0e01", status="x")]
+        rows = [make_row("r1", status="\u0e01")]
         path = self.env.write_input(rows)
         done = subprocess.run(
             [sys.executable, "-I", str(SCRIPT), "take", "--source", "s", "--input", str(path),
@@ -733,6 +740,368 @@ class ProcessTests(SnapshotCase):
         )
         self.assertEqual(done.returncode, 1, done.stderr)
         self.assertIn(b"STATUS_UNKNOWN", done.stdout)
+
+    def test_a_lone_surrogate_exits_1_as_a_command_in_take_and_verify(self) -> None:
+        path = self.env.write_input([make_row("r1", title="a\ud800b")])
+        taken = self.run_cli("take", "--source", "s", "--input", str(path), "--root", str(self.env.root))
+        self.assertEqual((taken.returncode, taken.stdout.split()[0]), (1, "ROW_FIELD_TYPE"), taken.stderr)
+        self.assertFalse(self.env.root.exists() and any(self.env.root.rglob("*")))
+        good = self.run_cli(
+            "take", "--source", "s", "--input", str(self.env.write_input([make_row("r1")])),
+            "--root", str(self.env.root), "--taken-at", T1)
+        stored = Path(good.stdout.strip())
+        document: dict[str, object] = json.loads(stored.read_text(encoding="utf-8"))
+        rows_of(document)[0]["title"] = "a\ud800b"
+        stored.write_text(json.dumps(document), encoding="ascii", newline="\n")
+        verified = self.run_cli("verify", str(stored))
+        self.assertEqual((verified.returncode, verified.stdout.split()[0]), (1, "ROW_FIELD_TYPE"), verified.stderr)
+
+
+TEXT_FIELDS = ("requirement_id", "page_id", "title", "type", "source_ref", "source_sha256", "status")
+
+
+class TextValueTests(SnapshotCase):
+    def lines(self, out: str) -> list[str]:
+        return out.splitlines()
+
+    def test_a_lone_surrogate_in_any_text_field_is_a_red_exit_1_never_a_fault(self) -> None:
+        for field in TEXT_FIELDS:
+            for value in ("a\ud800b", "\udc80", "x\udfff"):
+                with self.subTest(field=field, value=value):
+                    out = self.assert_red([make_row("r1", **{field: value})], "ROW_FIELD_TYPE")
+                    for line in self.lines(out):
+                        self.assertIsNotNone(DEFECT_LINE.match(line), line)
+                    self.assertTrue(all(ord(character) < 0xD800 for character in out), "an escaped form is printed")
+
+    def test_a_control_character_in_any_text_field_is_a_red(self) -> None:
+        for field in TEXT_FIELDS:
+            for value in ("a\nb", "a\tb", "a\x00b", "a\x1fb", "a\x7fb", "a\rb", "\n"):
+                with self.subTest(field=field, value=value):
+                    out = self.assert_red([make_row("r1", **{field: value})], "ROW_FIELD_TYPE")
+                    for line in self.lines(out):
+                        self.assertIsNotNone(DEFECT_LINE.match(line), line)
+
+    def test_one_text_defect_is_one_line(self) -> None:
+        _, out, _ = self.env.take([make_row("r1", title="two\nlines\nCODE forged: line")])
+        self.assertEqual(len(self.lines(out)), 1, out)
+        self.assertTrue(out.startswith("ROW_FIELD_TYPE r1: "), out)
+
+    def test_a_surrogate_pair_and_ordinary_unicode_are_accepted(self) -> None:
+        rows = [make_row("r1", title="\U0001F600 emoji and 標題"), make_row("r2", title="😀")]
+        code, out, err = self.env.take(rows)
+        self.assertEqual(code, 0, out + err)
+        document = json.loads(self.env.snapshot("src", "2026-11-04-v1.json").read_text(encoding="utf-8"))
+        self.assertEqual(document["source_sha256"], expected_digest(rows))
+
+    def test_verify_reports_a_lone_surrogate_in_a_stored_file_as_a_red(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        path = self.env.snapshot("src", "2026-11-04-v1.json")
+        base: dict[str, object] = json.loads(path.read_text(encoding="utf-8"))
+        cases: list[tuple[str, dict[str, object]]] = []
+        for field in TEXT_FIELDS:
+            document = copy.deepcopy(base)
+            rows_of(document)[0][field] = "a\ud800"
+            cases.append((f"row {field}", document))
+        document = copy.deepcopy(base)
+        document["source"] = "a\ud800"
+        cases.append(("source", document))
+        document = copy.deepcopy(base)
+        document["taken_at"] = "\ud800"
+        cases.append(("taken_at", document))
+        document = copy.deepcopy(base)
+        rows_of(document)[0]["x\ud800"] = 1
+        cases.append(("row key", document))
+        document = copy.deepcopy(base)
+        document["x\ud800"] = 1
+        cases.append(("top key", document))
+        for label, document in cases:
+            with self.subTest(case=label):
+                path.write_text(json.dumps(document, indent=2) + "\n", encoding="ascii", newline="\n")
+                code, out, err = self.env.main("verify", str(path))
+                self.assertEqual(code, 1, out + err)
+                for line in self.lines(out):
+                    self.assertIsNotNone(DEFECT_LINE.match(line), line)
+
+    def test_a_lone_surrogate_in_a_stored_version_makes_take_and_diff_exit_1(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+        path = self.env.snapshot("src", "2026-11-05-v2.json")
+        document: dict[str, object] = json.loads(path.read_text(encoding="utf-8"))
+        rows_of(document)[0]["title"] = "a\ud800"
+        path.write_text(json.dumps(document, indent=2) + "\n", encoding="ascii", newline="\n")
+        code, out, err = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 1, out + err)
+        code, out, err = self.env.take([make_row("r3")], taken_at="2026-11-06T00:00:00Z")
+        self.assertEqual(code, 1, out + err)
+
+
+class RequirementIdTests(SnapshotCase):
+    def test_the_allowed_characters_and_lengths_are_accepted(self) -> None:
+        rows = [make_row(value) for value in ("REQ-001", "a.b_c:d/e-f", "x", "9", "a" * 128)]
+        code, out, err = self.env.take(rows)
+        self.assertEqual(code, 0, out + err)
+
+    def test_anything_else_is_a_type_defect(self) -> None:
+        for value in ("a" * 129, "a b", "é", "a#b", "a\\b", "a;b", "a,b", "a(b)", "標題", "a b", "a b", " r1", "r1 "):
+            with self.subTest(value=value):
+                self.assert_red([make_row(value)], "ROW_FIELD_TYPE")
+
+    def test_an_id_with_a_newline_is_one_defect_on_one_line(self) -> None:
+        _, out, _ = self.env.take([make_row("r1\nadded forged", title="t")])
+        lines = out.splitlines()
+        self.assertEqual(len(lines), 1, out)
+        match = DEFECT_LINE.match(lines[0])
+        self.assertIsNotNone(match, out)
+        assert match is not None
+        self.assertEqual(match.group(1), "ROW_FIELD_TYPE")
+        self.assertEqual(match.group(2), repr("r1\nadded forged"))
+
+    def test_a_plain_id_is_printed_as_it_is_and_an_odd_one_escaped(self) -> None:
+        _, out, _ = self.env.take([make_row("ok-1", status="x"), make_row("a b", status="x")])
+        subjects = [match.group(2) for line in out.splitlines() if (match := DEFECT_LINE.match(line))]
+        self.assertEqual(subjects, ["ok-1", "'a b'", "'a b'"])
+        self.assertEqual(len(out.splitlines()), 3)
+
+    def test_a_duplicate_odd_id_is_still_one_line_each(self) -> None:
+        _, out, _ = self.env.take([make_row("a\nb", title="t"), make_row("a\nb", title="t")])
+        self.assertTrue(all(DEFECT_LINE.match(line) for line in out.splitlines()), out)
+        self.assertIn("DUPLICATE_REQUIREMENT", out)
+
+    def test_an_unexpected_field_name_is_escaped_on_one_line(self) -> None:
+        _, out, _ = self.env.take([make_row("r1", **{"x\ny": 1})])
+        self.assertEqual(len(out.splitlines()), 1, out)
+        self.assertTrue(DEFECT_LINE.match(out.strip()), out)
+
+    def test_diff_never_prints_a_forged_line_for_a_hand_edited_id(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+        path = self.env.snapshot("src", "2026-11-05-v2.json")
+        document: dict[str, object] = json.loads(path.read_text(encoding="utf-8"))
+        rows_of(document)[0]["requirement_id"] = "r2\nadded forged"
+        path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8", newline="\n")
+        code, out, _ = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 1)
+        self.assertFalse(any(line.startswith(("added", "removed", "changed")) for line in out.splitlines()), out)
+        self.assertTrue(all(DEFECT_LINE.match(line) for line in out.splitlines()), out)
+
+    def test_diff_prints_one_id_per_line(self) -> None:
+        ids = [f"r{number}" for number in range(5)]
+        self.env.take([make_row("base")], taken_at=T1)
+        self.env.take([make_row("base"), *[make_row(identifier) for identifier in ids]], taken_at=T2)
+        code, out, _ = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 0)
+        self.assertEqual(out.splitlines(), [f"added {identifier}" for identifier in ids])
+
+
+class SourceRefTests(SnapshotCase):
+    def test_empty_tilde_and_dot_dot_references_are_refused(self) -> None:
+        for value in ("", "~", "~/x", "..", "../x", "a/../b", "a\\..\\b", "x/..", "../../..", "\\x", "/x"):
+            with self.subTest(value=value):
+                self.assert_red([make_row("r1", source_ref=value)], "SOURCE_REF_ABSOLUTE")
+
+    def test_relative_paths_and_urls_with_dots_in_names_are_accepted(self) -> None:
+        rows = [
+            make_row("r1", source_ref="docs/a..b.md"),
+            make_row("r2", source_ref="docs/.hidden/x"),
+            make_row("r3", source_ref="./docs/x.md"),
+            make_row("r4", source_ref="https://example.invalid/a/../b"),
+            make_row("r5", source_ref="a~b"),
+        ]
+        code, out, err = self.env.take(rows)
+        self.assertEqual(code, 0, out + err)
+
+
+class DamagedVersionTests(SnapshotCase):
+    def damage(self, name: str) -> None:
+        path = self.env.snapshot("src", name)
+        path.write_text(path.read_text(encoding="utf-8").replace("title of", "tampered"), encoding="utf-8", newline="\n")
+
+    def test_take_and_diff_report_a_damaged_version_whenever_they_read_it(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+        self.damage("2026-11-04-v1.json")
+        code, out, _ = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 1)
+        self.assertIn("SNAPSHOT_DIGEST_MISMATCH", out)
+        # take reads only the latest version, which is intact
+        code, out, _ = self.env.take([make_row("r3")], taken_at="2026-11-06T00:00:00Z")
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.env.main("verify", str(self.env.snapshot("src", "2026-11-04-v1.json")))[0], 1)
+
+
+class CaseCollisionTests(SnapshotCase):
+    def test_diff_refuses_a_case_variant_of_an_existing_source(self) -> None:
+        self.env.take([make_row("r1")], source="Source", taken_at=T1)
+        self.env.take([make_row("r2")], source="Source", taken_at=T2)
+        code, out, _ = self.env.main("diff", "--source", "source", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 1)
+        self.assertIn("NAME_INVALID", out)
+        self.assertNotIn("added", out)
+        code, out, _ = self.env.main("diff", "--source", "Source", "1", "2", "--root", str(self.env.root))
+        self.assertEqual((code, out), (0, "added r2\nremoved r1\n"))
+
+
+RACE_RUNNER = """
+import os, sys, time
+sys.path.insert(0, sys.argv[1])
+import requirement_snapshot
+ready, go = sys.argv[2], sys.argv[3]
+open(ready, "w").close()
+while not os.path.exists(go):
+    time.sleep(0.0005)
+sys.exit(requirement_snapshot.main(sys.argv[4:]))
+"""
+
+
+class VersionClaimTests(SnapshotCase):
+    def versions(self) -> list[int]:
+        found = [requirement_snapshot.VERSION_FILE_PATTERN.fullmatch(name) for name in self.env.files()]
+        return sorted(int(match.group(2)) for match in found if match is not None)
+
+    def test_a_published_take_leaves_no_claim_or_temporary_file(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json", "2026-11-05-v2.json"])
+
+    def test_a_stale_claim_is_exit_2_naming_the_claim_file_and_publishes_nothing(self) -> None:
+        directory = self.env.root / "src"
+        directory.mkdir(parents=True)
+        (directory / ".v1.claim").write_bytes(b"left by a crash")
+        code, out, err = self.env.take([make_row("r1")], taken_at=T1)
+        self.assertEqual(code, 2, out)
+        self.assertEqual(out, "")
+        self.assertIn(".v1.claim", err)
+        self.assertEqual(self.env.files(), [".v1.claim"])
+        self.assertEqual((directory / ".v1.claim").read_bytes(), b"left by a crash")
+
+    def test_a_stale_claim_of_any_number_blocks_later_takes(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        (self.env.root / "src" / ".v7.claim").write_bytes(b"")
+        before = self.env.tree()
+        code, out, err = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn(".v7.claim", err)
+        self.assertEqual(self.env.tree(), before)
+
+    def test_removing_the_stale_claim_lets_take_continue(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        claim = self.env.root / "src" / ".v2.claim"
+        claim.write_bytes(b"")
+        self.assertEqual(self.env.take([make_row("r2")], taken_at=T2)[0], 2)
+        claim.unlink()
+        self.assertEqual(self.env.take([make_row("r2")], taken_at=T2)[0], 0)
+        self.assertEqual(self.versions(), [1, 2])
+
+    def test_a_claim_held_by_a_writer_that_started_after_our_scan_is_exit_2(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        real = requirement_snapshot.list_versions
+        calls: list[int] = []
+
+        def scan_then_competitor_claims(directory: Path) -> list[requirement_snapshot.VersionFile]:
+            calls.append(1)
+            result = real(directory)
+            if len(calls) == 1:
+                (directory / ".v2.claim").write_bytes(b"competitor")
+            return result
+
+        with mock.patch.object(requirement_snapshot, "list_versions", side_effect=scan_then_competitor_claims):
+            code, out, err = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn(".v2.claim", err)
+        self.assertEqual(self.env.files(), [".v2.claim", "2026-11-04-v1.json"])
+        self.assertEqual((self.env.root / "src" / ".v2.claim").read_bytes(), b"competitor")
+
+    def test_a_version_published_between_our_scan_and_our_claim_loses_with_exit_2(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        real = requirement_snapshot.list_versions
+        calls: list[int] = []
+        competitor = "2026-12-01-v2.json"
+
+        def scan_then_competitor_publishes(directory: Path) -> list[requirement_snapshot.VersionFile]:
+            calls.append(1)
+            result = real(directory)
+            if len(calls) == 1:
+                other = Env()
+                try:
+                    other.take([make_row("other")], taken_at="2026-12-01T00:00:00Z")
+                    (directory / competitor).write_bytes(other.snapshot("src", "2026-12-01-v1.json").read_bytes())
+                finally:
+                    other.close()
+            return result
+
+        with mock.patch.object(requirement_snapshot, "list_versions", side_effect=scan_then_competitor_publishes):
+            code, out, err = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn("another writer", err)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json", competitor])
+        self.assertEqual(self.versions(), [1, 2])
+
+    def test_a_claim_that_cannot_be_removed_after_publishing_is_exit_2_naming_it(self) -> None:
+        with mock.patch.object(requirement_snapshot, "_remove_claim", return_value=False):
+            code, out, err = self.env.take([make_row("r1")], taken_at=T1)
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn(".v1.claim", err)
+        self.assertEqual(self.env.files(), [".v1.claim", "2026-11-04-v1.json"])
+
+    def test_the_next_version_is_the_highest_plus_one_not_the_count_plus_one(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        other = Env()
+        self.addCleanup(other.close)
+        other.take([make_row("r3")], taken_at="2026-11-06T00:00:00Z")
+        (self.env.root / "src" / "2026-11-06-v3.json").write_bytes(
+            other.snapshot("src", "2026-11-06-v1.json").read_bytes())
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json", "2026-11-06-v3.json"])
+        code, out, err = self.env.take([make_row("r4")], taken_at="2026-11-07T00:00:00Z")
+        self.assertEqual(code, 0, out + err)
+        self.assertEqual(Path(out.strip()), self.env.snapshot("src", "2026-11-07-v4.json"))
+        self.assertEqual(self.versions(), [1, 3, 4])
+
+    def test_a_single_old_version_numbered_above_one_continues_from_it(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        (self.env.root / "src" / "2026-11-04-v1.json").rename(self.env.root / "src" / "2026-11-04-v5.json")
+        code, out, err = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual(code, 0, out + err)
+        self.assertEqual(self.versions(), [5, 6])
+
+    def test_two_real_processes_with_different_dates_never_publish_one_version_twice(self) -> None:
+        runner = self.env.dir / "race_runner.py"
+        runner.write_text(RACE_RUNNER, encoding="utf-8", newline="\n")
+        trials = int(os.environ.get("REQSNAP_RACE_TRIALS", "5"))
+        outcomes: dict[tuple[int, int], int] = {}
+        for trial in range(trials):
+            root = self.env.dir / f"race{trial}"
+            base = self.env.write_input([make_row("base")])
+            self.assertEqual(self.env.main(
+                "take", "--source", "src", "--input", str(base), "--root", str(root), "--taken-at", T1)[0], 0)
+            go = self.env.dir / f"go{trial}"
+            procs: list[subprocess.Popen[str]] = []
+            for number, date in enumerate(("2026-11-05T00:00:00Z", "2026-11-06T00:00:00Z")):
+                rows = self.env.write_input([make_row("base"), make_row(f"writer{number}")])
+                procs.append(subprocess.Popen(
+                    [sys.executable, "-X", "utf8", str(runner), str(_SCRIPTS), str(self.env.dir / f"ready{trial}-{number}"),
+                     str(go), "take", "--source", "src", "--input", str(rows), "--root", str(root), "--taken-at", date],
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding="utf-8", cwd=self.env.dir))
+            deadline = time.monotonic() + 60
+            while not all((self.env.dir / f"ready{trial}-{number}").exists() for number in (0, 1)):
+                self.assertLess(time.monotonic(), deadline, "the writers did not start")
+                time.sleep(0.01)
+            go.write_text("", encoding="utf-8")
+            results = [(proc.wait(timeout=60), proc.stdout.read() if proc.stdout else "") for proc in procs]
+            exits = tuple(sorted(code for code, _ in results))
+            outcomes[exits] = outcomes.get(exits, 0) + 1
+            names = sorted(entry.name for entry in (root / "src").iterdir())
+            numbers = [
+                int(match.group(2)) for name in names
+                if (match := requirement_snapshot.VERSION_FILE_PATTERN.fullmatch(name)) is not None
+            ]
+            with self.subTest(trial=trial, exits=exits, names=names):
+                self.assertEqual(len(numbers), len(set(numbers)), "one version number published twice")
+                self.assertEqual(len(names), len(numbers), f"claim or temporary file left behind: {names}")
+                self.assertTrue(all(code in (0, 2) for code in exits), exits)
+                self.assertEqual(sum(1 for code in exits if code == 0), len(numbers) - 1)
+                self.assertGreaterEqual(exits.count(0), 1)
+                self.assertEqual(sorted(numbers), list(range(1, len(numbers) + 1)))
+        self.assertEqual(sum(outcomes.values()), trials)
 
 
 if __name__ == "__main__":
