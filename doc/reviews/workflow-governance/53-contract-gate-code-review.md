@@ -231,3 +231,56 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/53-rev04-initial
 reviewed_at: 2026-11-05
 ```
+
+## Revision04 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `2a71042675baaa97a87654a01767c7602b819660` (`2a710426` correction 2 → `ebbb4947` → `4252fda6` → `09af7a1f` → `5ea02c13` → `fd456159`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review of revision04 |
+| Summary | S53-28 holds on real git: forged loose, packed and alternates blobs, forged trees at every depth, forged commits with and without a commit-graph, wrong types, truncated objects and a SHA-256 repository are all faults. S53-22 to S53-27 and S53-29 are closed; the regression pass and R4-2 hold. No implementation defect. One blocking evidence defect: the width of the hash comparison is unpinned (S53-30, safety-adjacent). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 237 passed, 1 skipped, 616 subtests; mypy --strict clean |
+| S53-28 object hashing | PASS in behaviour; evidence S53-30 | 21 real-git forgery probes |
+| S53-22 to S53-27, S53-29 | PASS | probes |
+| Regression; R4-2 and one line | PASS | |
+| Seat choices | AGREE | root tree from the hashed commit; H7 equivalent; K65 adapted |
+| Reverse mutations | FAIL | seat 18 red, H7 equivalent; reviewer 23: earlier K-mutants red, R7 and R8 equivalent, R1 and R1b green (S53-30) |
+| Receipt / boundary | PASS | 0 defects; digests recomputed; LF; three files |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S53-01 to S53-27, S53-29 | CLOSED (S53-07 not taken) |
+| S53-28 | CLOSED in behaviour; comparison width unpinned (S53-30) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S53-30 | EVIDENCE_DEFECT | Low, safety-adjacent (a regression would let a forged object pass) | `contract_gate.py:606`; tests `ForgedObjects` | no test pins the full width of the object-hash comparison; every forgery differs early | R1, R1b green |
+| S53-31 | OUT_OF_SCOPE_HARDENING | Info | `contract_gate.py:777` | a blob forged as another kind is reported without its id | probe |
+| S53-32 | OUT_OF_SCOPE_HARDENING | Low (theoretical; seat-writable store) | `contract_gate.py:501` | `hashlib.sha1` has no collision detection, unlike git's SHA-1DC | read |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: a race between `rev-parse` and `cat-file`; an actual SHA-1 collision; POSIX behaviour; a real file symlink under `--specs`; a hanging git.
+
+```review-verdict
+candidate: 2a71042675baaa97a87654a01767c7602b819660
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/53-rev04-correction
+reviewed_at: 2026-11-05
+```
+
+### Control-plane disposition (2026-11-05): held for the owner
+
+The only blocking item, S53-30, is one test (an answer whose body hash differs from the id only in its last digit) on a candidate whose hashing held against every real forgery. S53-32 belongs to the R4-4 trust-boundary proposal. The control plane does not open revision05. Under the proposed convergence rule this candidate would be approvable with S53-30 taken as the one test in the next change (it is safety-adjacent) and S53-31, S53-32 carried.

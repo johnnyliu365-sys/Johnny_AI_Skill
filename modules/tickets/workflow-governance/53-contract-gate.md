@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision04 / receipt under `.worktrees/53-contract-gate-out/` / owner implementation seat / worktree `.worktrees/53-contract-gate` / branch `cp/wave2-53-contract-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04; revision04 initial review CHANGES_REQUESTED (evidence, S53-28 hardening); correction 2 dispatched） |
+| 狀態 | `CONVERGENCE_HELD`（revision04 correction review `CONVERGENCE_REVIEW_REQUIRED` on `2a710426`: S53-30 evidence only; held for the owner's convergence-rule and R4-4 decisions） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/53-contract-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/53-contract-gate-review` |
