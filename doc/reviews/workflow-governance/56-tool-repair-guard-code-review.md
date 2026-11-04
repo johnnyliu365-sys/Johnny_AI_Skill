@@ -47,3 +47,59 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/56-rev01-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision02 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `8b084b506957c668f86d57932d1669aa8cc1bc18` on `cp/wave2-56-tool-repair-guard` (correction 1 on `02d40fd2`) |
+| Ticket | closure revision02 (blob `d26b19ad` on the wave-2 branch) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review CodeReview §5 allows |
+| Summary | S56-01 to S56-05 are closed under probes; tests, mypy, the receipt and the full suite pass. Blocking: a repository-local graft file or `GIT_GRAFT_FILE` re-parents the repair commit, and a commit that changes the gate scripts then exits 0 (S56-09, a live bypass); the replace-ref fix is pinned on the diff call only (S56-10). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 118 passed, 100 subtests; mypy --strict clean |
+| Seat mutations | PASS | 25 of 25 red; M2 confirmed equivalent; per-code mutations rerun by the reviewer at the candidate, all red |
+| Reviewer counter-mutations | FINDING | 9 run: 2 red, 7 green (S56-10, S56-11, S56-12, S56-13) |
+| S56-01 by probe | PASS | a pointer change counts under every tracked, repository, global, system and environment configuration tried, and in a bare repository |
+| Replace refs and environment | PASS except grafts | replace refs on the commit, parent and tree all red; fourteen `GIT_*` variables change nothing; shallow boundaries exit 2; grafts exit 0 (S56-09) |
+| S56-02, S56-03, S56-04, S56-05 | PASS | including a full upcase-table check that protection never narrows |
+| Seat choices | 2 agree, 2 partly disagree | S56-12, S56-13, S56-14 |
+| Receipt / boundary | PASS | checker 0 defects; digests recomputed; LF; the M1 capture was edited after the run (S56-14) |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S56-01 to S56-04, S56-07 | CLOSED |
+| S56-05 | CLOSED for the named cases (S56-12) |
+| S56-06 | PARTLY OPEN (S56-09, S56-10) |
+| S56-08 | control plane: correction proposed, awaiting the owner |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S56-09 | IMPLEMENTATION_DEFECT | High (blocking; lets a forbidden change pass) | `repair_guard.py:388` | `--no-replace-objects` does not switch off grafts: a graft line or `GIT_GRAFT_FILE` re-parents the repair onto a twin with the same tree, so a gate-script change gives `paths=0`, exit 0; also from the common directory of a linked worktree, for a grafted merge and for a grafted root | probes |
+| S56-10 | EVIDENCE_DEFECT | Medium (blocking; safety unpinned) | `repair_guard.py:344`; tests | the parent query can drop `--no-replace-objects` with every test green; under that mutant a replacement passes a forbidden change | CM1 green |
+| S56-11 | EVIDENCE_DEFECT | Low | `repair_guard.py:111, 179, 279, 370-371` | unpinned: `GIT_COMMON_DIR` scrub, bare-repository acceptance, a line ending in two carriage returns, one ASCII table letter | CM2, CM3, CM4, CM7 green |
+| S56-12 | TICKET_DEFECT | Low (changes an exit code) | `repair_guard.py:504-508` | with a red and a dead stderr, the reds are delivered on stdout but the exit is 2; the ticket gives no precedence | probe; CM5 green |
+| S56-13 | TICKET_DEFECT | Low | `repair_guard.py:305-306, 487` | with a text-defective dispatch, a gate-script change is not reported although that rule needs no entry | probe; CM6 green |
+| S56-14 | EVIDENCE_DEFECT | Low | receipt M1 | the M1 capture was edited after the run to remove an equivalent survivor; the per-code mutations were not rerun at the candidate | comparison; reviewer rerun |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: paths with a newline end to end; Linux and macOS; short-name and trailing-dot aliases of the gate directory; very large commits; a full suite with no concurrent pytest.
+
+```review-verdict
+candidate: 8b084b506957c668f86d57932d1669aa8cc1bc18
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/56-rev02-correction
+reviewed_at: 2026-11-04
+```

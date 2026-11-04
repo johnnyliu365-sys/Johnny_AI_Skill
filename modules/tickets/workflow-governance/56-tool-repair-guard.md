@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision03 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S56-07, S56-08 TICKET_DEFECT; correction 1 dispatched to the same seat） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S56-09 to S56-14; implementation 3 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/56-tool-repair-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/56-tool-repair-guard-review` |
@@ -140,3 +140,24 @@ Review record: `doc/reviews/workflow-governance/56-tool-repair-guard-code-review
 | S56-06 | EVIDENCE_DEFECT | tests for replace refs, the scrubbed variables, the gate directory case variant, multi-line git errors and the SHA-256 empty tree |
 | S56-07 | TICKET_DEFECT | `TEXT_VALUE_INVALID` named; red before fault; git output read as input |
 | S56-08 | TICKET_DEFECT | why `protected_paths` is required stated; an R4-8 correction proposed |
+
+## Re-plan to closure revision03 (after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision02 correction review". CodeReview §5: revision02 used its one initial and one correction review. Root cause of S56-09 and S56-10: the guard asked git for the repair commit's parents and for a commit-to-commit diff, and git answers both through history rewriting (grafts, replace refs, shallow files) that a repository can carry. Revision03 reads the history it needs from raw objects and diffs trees. Revision03 starts a new cadence: one initial review and one correction review.
+
+### Rules added in revision03 (binding)
+
+- History from raw objects: the guard reads the repair commit as a raw object (`git --no-replace-objects cat-file --batch`, the name on standard input), takes its `tree` line and its `parent` lines from that object, reads the first parent the same way for its tree, and diffs the two tree ids (`git diff-tree` or `git diff` on tree ids, with the submodule, external-diff and text-conversion rules of revision02). Grafts (`info/grafts`, `GIT_GRAFT_FILE`), replace refs and shallow files therefore cannot change the parents or the trees compared. A merge is recognised from its parent lines; a root commit is diffed against the empty tree of the repository's object format. A first parent whose object the store cannot serve is a fault.
+- Environment: in addition to the revision02 list, `GIT_COMMON_DIR`, `GIT_GRAFT_FILE`, `GIT_SHALLOW_FILE`, `GIT_REPLACE_REF_BASE` and the `GIT_CONFIG_*` variables are removed from every git child, and `GIT_NO_REPLACE_OBJECTS=1` and `GIT_NO_LAZY_FETCH=1` are set.
+- Streams: an output stream that cannot be written decides the exit only when the reds could not be delivered. If every red line was written to stdout and only stderr fails, the exit is 1 (red before fault); if stdout fails, the exit is 2.
+- Text-defective dispatch: entries of a block that holds a text defect are not used, but every rule that needs no entry still applies, so a change under the gate-script directory is reported as `PROTECTED_PATH_TOUCHED` next to `TEXT_VALUE_INVALID`.
+- Evidence: a mutation that survives as equivalent stays in the M1 capture, marked equivalent with the reason; a capture is never edited after the run. The per-code mutations of the completion definition are run at every candidate.
+
+| Finding | Class | Disposition in revision03 |
+| --- | --- | --- |
+| S56-09 | IMPLEMENTATION_DEFECT | history from raw objects; tests with a graft file in the repository, in the common directory of a linked worktree and through `GIT_GRAFT_FILE`, for a single-parent, a merge and a root commit |
+| S56-10 | EVIDENCE_DEFECT | a test whose replacement commit has a parent with the repair's tree |
+| S56-11 | EVIDENCE_DEFECT | tests for `GIT_COMMON_DIR`, a bare repository verdict, a block line ending in two carriage returns, and an upper-case `Z` in an allowlist entry |
+| S56-12 | TICKET_DEFECT | the stream rule above |
+| S56-13 | TICKET_DEFECT | the text-defective dispatch rule above |
+| S56-14 | EVIDENCE_DEFECT | the evidence rule above |
