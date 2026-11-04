@@ -133,7 +133,8 @@ A raw value echoed in a defect detail is escaped the same way. A top-level `sour
 `source_sha256` that breaks the rule is `ROW_FIELD_TYPE` as well as its format code, as for row
 fields.
 
-JSON input: a repeated key in an object (a row or the top level) is `ROW_FIELD_TYPE`. Version
+JSON input: a repeated key in an object (a row or the top level) is `ROW_FIELD_TYPE`, and so are the
+non-JSON constants `NaN`, `Infinity` and `-Infinity` anywhere in a file, as for other non-JSON input. Version
 numbers in file names, claim file names and arguments are ASCII digits only. A version argument
 with more digits than a file name can hold names no stored version: `diff` reports that the
 requested version does not exist (exit 2 unless a red was found), never a raw exception text.

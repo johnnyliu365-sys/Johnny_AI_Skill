@@ -2353,5 +2353,347 @@ class PrintedLineDocumentationTests(SnapshotCase):
             self.assertIn("Repeated-key collection is linear in the number of keys.", text)
 
 
+
+CONTROLS = ("\x1b", "\t", "\x00", "\x7f")
+
+
+class ControlCharacterLineTests(SnapshotCase):
+    """ESC, TAB, NUL and DEL are shown as escapes in every printed line, not only the line breaks."""
+
+    def test_the_helper_shows_each_control_character_as_its_escape(self) -> None:
+        expected = {"\x1b": "\\x1b", "\t": "\\x09", "\x00": "\\x00", "\x7f": "\\x7f"}
+        for char, escape in expected.items():
+            with self.subTest(char=ord(char)):
+                self.assertEqual(requirement_snapshot._one_line(f"a{char}b"), f"a{escape}b")
+                self.assertEqual(escape_of(char), escape)
+
+    def test_the_usage_error_shows_each_control_character_as_an_escape(self) -> None:
+        usage = requirement_snapshot.USAGE.splitlines()
+        for char in CONTROLS:
+            cases = (
+                (("take", f"--bogus{char}x"), f"unknown option --bogus{escape_of(char)}x"),
+                ((f"frobnicate{char}x",), f"unknown command frobnicate{escape_of(char)}x"),
+                (("take", f"stray{char}x"), f"unexpected argument stray{escape_of(char)}x"),
+                (("diff", "--source", "s", "1", "2", f"--bad{char}x", "v"), f"unknown option --bad{escape_of(char)}x"),
+            )
+            for args, message in cases:
+                with self.subTest(char=ord(char), args=args):
+                    code, out, err = self.env.main(*args)
+                    self.assertEqual((code, out), (3, ""), err)
+                    self.assertNotIn(char, err)
+                    self.assertEqual(err.splitlines(), [*usage, f"requirement_snapshot.py: error: {message}"], repr(err))
+
+    def test_a_real_command_shows_a_control_character_in_an_argument_as_an_escape(self) -> None:
+        for char in ("\x1b", "\t", "\x7f"):
+            with self.subTest(char=ord(char)):
+                done = subprocess.run(
+                    [sys.executable, str(SCRIPT), "take", f"--bogus{char}x"],
+                    capture_output=True, text=True, encoding="utf-8", env={**os.environ, "PYTHONUTF8": "1"},
+                )
+                self.assertEqual((done.returncode, done.stdout), (3, ""))
+                self.assertNotIn(char, done.stderr)
+                self.assertEqual(
+                    done.stderr.splitlines()[-1], f"requirement_snapshot.py: error: unknown option --bogus{escape_of(char)}x",
+                )
+
+    def test_a_fault_line_shows_each_control_character_as_an_escape(self) -> None:
+        for char in CONTROLS:
+            with self.subTest(char=ord(char)):
+                fault = requirement_snapshot.ToolFault(f"cannot read a{char}b")
+                expected = f"requirement_snapshot.py: tool fault: cannot read a{escape_of(char)}b\n"
+                with mock.patch.object(requirement_snapshot, "read_file", side_effect=fault):
+                    code, out, err = self.env.take([make_row("r1")])
+                    self.assertEqual((code, out, err), (2, "", expected))
+                    code, out, err = self.env.take([make_row("r1")], source="..")
+                    self.assertEqual(code, 1, out + err)
+                    self.assertEqual(err, expected)
+                    code, out, err = self.env.main("verify", "ignored")
+                    self.assertEqual((code, out, err), (2, "", expected))
+                with mock.patch.object(
+                    requirement_snapshot, "_dispatch", side_effect=requirement_snapshot.ToolFault(f"x{char}y"),
+                ):
+                    code, out, err = self.env.main("verify", "ignored")
+                self.assertEqual((code, out), (2, ""))
+                self.assertEqual(err, f"requirement_snapshot.py: tool fault: x{escape_of(char)}y\n")
+                with mock.patch.object(requirement_snapshot, "_dispatch", side_effect=RuntimeError(f"x{char}y")):
+                    code, out, err = self.env.main("verify", "ignored")
+                self.assertEqual((code, out), (2, ""))
+                self.assertEqual(err, f"requirement_snapshot.py: tool fault: RuntimeError: x{escape_of(char)}y\n")
+
+    def test_a_fault_naming_a_path_with_a_control_character_is_one_escaped_line(self) -> None:
+        for char in ("\x1b", "\t", "\x7f"):
+            with self.subTest(char=ord(char)):
+                code, out, err = self.env.main("verify", str(self.env.dir / f"a{char}b.json"))
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertEqual(len(err.splitlines()), 1, repr(err))
+                self.assertNotIn(char, err)
+                self.assertIn(f"a{escape_of(char)}b.json", err)
+
+    def test_a_defect_line_shows_each_control_character_as_an_escape(self) -> None:
+        defect = requirement_snapshot.Defect
+        for char in CONTROLS:
+            with self.subTest(char=ord(char)):
+                made = defect(requirement_snapshot.DefectCode.ROW_FIELD_TYPE, f"s{char}t", f"d{char}e")
+                with mock.patch.object(requirement_snapshot, "parse_input", return_value=([], [made])):
+                    code, out, err = self.env.take([make_row("r1")])
+                self.assertEqual((code, err), (1, ""))
+                self.assertNotIn(char, out)
+                self.assertEqual(len(out.splitlines()), 1, repr(out))
+                self.assertTrue(out.endswith(f"d{escape_of(char)}e\n"), repr(out))
+                path = self.env.write_raw_input(b"{}")
+                with mock.patch.object(requirement_snapshot, "parse_snapshot", return_value=(None, [made])):
+                    code, out, err = self.env.main("verify", str(path))
+                self.assertEqual((code, err), (1, ""))
+                self.assertNotIn(char, out)
+                self.assertEqual(len(out.splitlines()), 1, repr(out))
+                self.assertTrue(out.endswith(f"d{escape_of(char)}e\n"), repr(out))
+
+    def test_a_diff_line_shows_each_control_character_as_an_escape(self) -> None:
+        self.env.take([make_row("r1"), make_row("r3")], taken_at=T1)
+        self.env.take([make_row("r2"), make_row("r3", title="other")], taken_at=T2)
+        for char in CONTROLS:
+            with self.subTest(char=ord(char)):
+                with mock.patch.object(requirement_snapshot, "shown", side_effect=lambda text, c=char: f"{text}{c}"):
+                    code, out, err = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+                self.assertEqual((code, err), (0, ""))
+                self.assertEqual(
+                    out.splitlines(),
+                    [f"added r2{escape_of(char)}", f"removed r1{escape_of(char)}", f"changed r3{escape_of(char)}"],
+                    repr(out),
+                )
+
+    def test_the_success_and_unchanged_lines_show_a_control_character_in_the_root_as_an_escape(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        data = self.env.snapshot("src", "2026-11-04-v1.json").read_bytes()
+        store = PrintedLineTests.patched_store
+        for char in CONTROLS:
+            with self.subTest(char=ord(char)):
+                root = self.env.dir / f"a{char}b"
+                with store(cast("PrintedLineTests", self), {}):
+                    code, out, err = self.env.main(
+                        "take", "--source", "src", "--input", str(self.env.write_input([make_row("r1")])),
+                        "--root", str(root), "--taken-at", T2,
+                    )
+                self.assertEqual((code, err), (0, ""))
+                self.assertEqual(out, str(root / "src" / "2026-11-05-v1.json").replace(char, escape_of(char)) + "\n")
+                stored_path = root / "src" / "2026-11-04-v1.json"
+                with store(cast("PrintedLineTests", self), {stored_path: data}):
+                    code, out, err = self.env.main(
+                        "take", "--source", "src", "--input", str(self.env.write_input([make_row("r1")])),
+                        "--root", str(root), "--taken-at", T2,
+                    )
+                self.assertEqual((code, err), (0, ""))
+                self.assertEqual(out, str(stored_path).replace(char, escape_of(char)) + " unchanged\n")
+
+
+class EveryDuplicateTests(SnapshotCase):
+    """Every repeated id and every case-variant collision is reported, one line each."""
+
+    @staticmethod
+    def pair(identifier: str, first: int, second: int) -> str:
+        return f"DUPLICATE_REQUIREMENT {identifier}: appears at rows[{first}] and rows[{second}]"
+
+    def test_an_id_present_three_times_reports_every_pair(self) -> None:
+        code, out, err = self.env.take([make_row("r1"), make_row("r1"), make_row("r1")])
+        self.assertEqual((code, err), (1, ""))
+        self.assertEqual(out.splitlines(), [self.pair("r1", 0, 1), self.pair("r1", 0, 2)])
+        self.assertEqual(self.env.tree(), {})
+
+    def test_an_id_present_four_times_reports_three_pairs(self) -> None:
+        code, out, err = self.env.take([make_row("r1")] * 4)
+        self.assertEqual((code, err), (1, ""))
+        self.assertEqual(out.splitlines(), [self.pair("r1", 0, 1), self.pair("r1", 0, 2), self.pair("r1", 0, 3)])
+
+    def test_two_ids_each_present_three_times_report_every_pair_of_both(self) -> None:
+        rows = [make_row(name) for name in ("r1", "r2", "r1", "r2", "r1", "r2")]
+        code, out, err = self.env.take(rows)
+        self.assertEqual((code, err), (1, ""))
+        self.assertEqual(
+            out.splitlines(),
+            [self.pair("r1", 0, 2), self.pair("r2", 1, 3), self.pair("r1", 0, 4), self.pair("r2", 1, 5)],
+        )
+
+    def test_verify_reports_every_pair_of_an_id_present_three_times(self) -> None:
+        rows = [make_row("r1"), make_row("r1"), make_row("r1")]
+        document = {"source": "src", "taken_at": T1, "source_sha256": HEX_A, "rows": rows}
+        path = self.env.write_raw_input(json.dumps(document).encode("utf-8"))
+        code, out, err = self.env.main("verify", str(path))
+        self.assertEqual((code, err), (1, ""))
+        self.assertEqual(out.splitlines(), [self.pair("r1", 0, 1), self.pair("r1", 0, 2)])
+
+    def listing(self, names: list[str]) -> "contextlib.AbstractContextManager[mock.MagicMock]":
+        """The root lists these names; every other directory is listed for real."""
+        real = os.listdir
+        root = self.env.root
+
+        def fake(path: object = ".") -> list[str]:
+            return list(names) if Path(str(path)) == root else real(cast("str", path))
+
+        return mock.patch.object(requirement_snapshot.os, "listdir", side_effect=fake)
+
+    COLLISIONS = [
+        "NAME_INVALID source: 'src' collides with the existing directory 'Src'",
+        "NAME_INVALID source: 'src' collides with the existing directory 'SRC'",
+    ]
+    LISTING = ["Src", "other", "SRC", "src", "é"]
+
+    def test_two_case_variant_collisions_are_both_reported(self) -> None:
+        with self.listing(self.LISTING):
+            found = requirement_snapshot._case_collisions(self.env.root, "src")
+        self.assertEqual([defect.render() for defect in found], self.COLLISIONS)
+
+    def test_take_reports_both_case_variant_collisions(self) -> None:
+        with self.listing(self.LISTING):
+            code, out, err = self.env.take([make_row("r1")])
+        self.assertEqual((code, err), (1, ""))
+        self.assertEqual(out.splitlines(), self.COLLISIONS)
+        self.assertEqual(self.env.tree(), {})
+
+    def test_diff_reports_both_case_variant_collisions(self) -> None:
+        with self.listing(self.LISTING):
+            code, out, err = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+        self.assertEqual((code, err), (1, ""))
+        self.assertEqual(out.splitlines(), self.COLLISIONS)
+
+    def test_three_case_variant_collisions_are_all_reported(self) -> None:
+        with self.listing(["sRc", "Src", "SRC", "src"]):
+            found = requirement_snapshot._case_collisions(self.env.root, "src")
+        self.assertEqual([defect.detail for defect in found], [
+            "'src' collides with the existing directory 'sRc'",
+            "'src' collides with the existing directory 'Src'",
+            "'src' collides with the existing directory 'SRC'",
+        ])
+
+
+class ExactVersionFileNameTests(SnapshotCase):
+    """A version file is named exactly <date>-v<n>.json: a suffix or a prefix makes it another file."""
+
+    STRAYS = (
+        "2026-11-04-v1.json.bak", "2026-11-04-v1.jsonx", "2026-11-05-v2.json.bak", "2026-11-06-v9.jsonx",
+        "x2026-11-04-v1.json", "2026-11-04-v1.json~",
+    )
+
+    def plant(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        data = self.env.snapshot("src", "2026-11-04-v1.json").read_bytes()
+        for name in self.STRAYS:
+            self.env.snapshot("src", name).write_bytes(data)
+
+    def test_the_listing_holds_the_real_versions_only(self) -> None:
+        self.plant()
+        self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        found = requirement_snapshot.list_versions(self.env.root / "src")
+        self.assertEqual(
+            [(item.version, item.path.name) for item in found], [(1, "2026-11-04-v1.json"), (2, "2026-11-05-v2.json")],
+        )
+
+    def test_stray_files_do_not_change_an_unchanged_take(self) -> None:
+        self.plant()
+        before = self.env.tree()
+        code, out, err = self.env.take([make_row("r1")], taken_at=T2)
+        self.assertEqual((code, err), (0, ""))
+        self.assertEqual(out, str(self.env.snapshot("src", "2026-11-04-v1.json")) + " unchanged\n")
+        self.assertEqual(self.env.tree(), before)
+
+    def test_stray_files_do_not_change_the_next_version_of_take(self) -> None:
+        self.plant()
+        code, out, err = self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        self.assertEqual((code, err), (0, ""))
+        self.assertEqual(out, str(self.env.snapshot("src", "2026-11-05-v2.json")) + "\n")
+        self.assertEqual(self.env.files(), sorted(["2026-11-04-v1.json", "2026-11-05-v2.json", *self.STRAYS]))
+
+    def test_stray_files_do_not_change_diff(self) -> None:
+        self.plant()
+        self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        code, out, err = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+        self.assertEqual((code, out, err), (0, "added r2\n", ""))
+        code, out, err = self.env.main("diff", "--source", "src", "v1", "v1", "--root", str(self.env.root))
+        self.assertEqual((code, out, err), (0, "", ""))
+        code, out, err = self.env.main("diff", "--source", "src", "1", "9", "--root", str(self.env.root))
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertIn("version 9 does not exist", err)
+
+
+class NonJsonConstantTests(SnapshotCase):
+    """NaN, Infinity and -Infinity are not JSON: anywhere in a file they are ROW_FIELD_TYPE."""
+
+    CONSTANTS = ("NaN", "Infinity", "-Infinity")
+
+    def row_text(self, **overrides: str) -> str:
+        fields = {
+            "requirement_id": '"r1"', "page_id": '"p"', "title": '"t"', "type": '"f"', "source_ref": '"a/b"',
+            "source_sha256": f'"{HEX_A}"', "status": '"active"', "version": "1",
+        }
+        fields.update(overrides)
+        return "{" + ", ".join(f'"{name}": {value}' for name, value in fields.items()) + "}"
+
+    def positions(self, constant: str) -> dict[str, str]:
+        return {
+            "ignored top-level key": '{"rows": [], "extra": ' + constant + "}",
+            "row version": '{"rows": [' + self.row_text(version=constant) + "]}",
+            "row title": '{"rows": [' + self.row_text(title=constant) + "]}",
+            "inside an array": '{"rows": [], "extra": [1, ' + constant + "]}",
+            "inside a nested object": '{"rows": [], "extra": {"a": {"b": ' + constant + "}}}",
+            "the rows value": '{"rows": ' + constant + "}",
+            "the whole file": constant,
+            "in a row array field": '{"rows": [' + self.row_text(title="[" + constant + "]") + "]}",
+        }
+
+    def test_take_refuses_each_constant_in_each_position(self) -> None:
+        for constant in self.CONSTANTS:
+            for label, text in self.positions(constant).items():
+                with self.subTest(constant=constant, position=label):
+                    path = self.env.write_raw_input(text.encode("utf-8"))
+                    code, out, err = self.env.main(
+                        "take", "--source", "src", "--input", str(path), "--root", str(self.env.root), "--taken-at", T1,
+                    )
+                    self.assertEqual((code, err), (1, ""))
+                    self.assertEqual(out.splitlines(), ["ROW_FIELD_TYPE input: not valid UTF-8 JSON"])
+                    self.assertEqual(self.env.tree(), {})
+
+    def test_verify_refuses_each_constant_in_a_snapshot_file(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        good = self.env.snapshot("src", "2026-11-04-v1.json").read_text(encoding="utf-8")
+        for constant in self.CONSTANTS:
+            for label, text in (
+                ("version", good.replace('"version": 1', f'"version": {constant}')),
+                ("extra key", good.rstrip().removesuffix("}") + f', "extra": {constant}}}'),
+            ):
+                with self.subTest(constant=constant, position=label):
+                    self.assertNotEqual(text, good)
+                    path = self.env.write_raw_input(text.encode("utf-8"))
+                    code, out, err = self.env.main("verify", str(path))
+                    self.assertEqual((code, err), (1, ""))
+                    self.assertEqual(out.splitlines(), ["ROW_FIELD_TYPE snapshot: not valid UTF-8 JSON"])
+
+    def test_take_and_diff_refuse_a_stored_version_that_holds_a_constant(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        stored = self.env.snapshot("src", "2026-11-05-v2.json")
+        good = stored.read_text(encoding="utf-8")
+        for constant in self.CONSTANTS:
+            with self.subTest(constant=constant):
+                text = good.replace('"version": 1', f'"version": {constant}', 1)
+                self.assertNotEqual(text, good)
+                stored.write_text(text, encoding="utf-8", newline="\n")
+                before = self.env.tree()
+                code, out, err = self.env.take([make_row("r3")], taken_at="2026-11-06T00:00:00Z")
+                self.assertEqual((code, err), (1, ""))
+                self.assertEqual(out.splitlines(), ["ROW_FIELD_TYPE snapshot: not valid UTF-8 JSON"])
+                code, out, err = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+                self.assertEqual((code, err), (1, ""))
+                self.assertEqual(out.splitlines(), ["ROW_FIELD_TYPE snapshot: not valid UTF-8 JSON"])
+                self.assertEqual(self.env.tree(), before)
+
+    def test_the_words_inside_a_string_are_still_text(self) -> None:
+        code, out, err = self.env.take([make_row("r1", title="NaN Infinity -Infinity", page_id="NaN")])
+        self.assertEqual(code, 0, out + err)
+        path = self.env.write_raw_input(b'{"rows": [], "extra": "NaN", "other": ["Infinity", "-Infinity"]}')
+        code, out, err = self.env.main(
+            "take", "--source", "other", "--input", str(path), "--root", str(self.env.root), "--taken-at", T1,
+        )
+        self.assertEqual(code, 0, out + err)
+
+
 if __name__ == "__main__":
     unittest.main()

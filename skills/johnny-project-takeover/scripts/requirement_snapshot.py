@@ -56,7 +56,8 @@ apply every name rule, the case-variant rule included, because they know the roo
 single file and applies the name rules to the file's `source` value only, not the case-variant rule
 and not a comparison with the directory the file sits in.
 
-JSON input: a repeated key in an object (a row or the top level) is ROW_FIELD_TYPE; version numbers
+JSON input: a repeated key in an object (a row or the top level) is ROW_FIELD_TYPE, and so are the
+non-JSON constants NaN, Infinity and -Infinity anywhere in a file, as for other non-JSON input; version numbers
 in file names, claim file names and arguments are ASCII digits only; a version argument with more
 digits than a file name can hold names no stored version: diff reports that the requested version
 does not exist (exit 2 unless a red was found), never a raw exception text; a top-level `source` or
@@ -394,6 +395,11 @@ def parse_taken_at(text: str) -> str | None:
     return moment.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def _refuse_constant(name: str) -> object:
+    """NaN, Infinity and -Infinity are not JSON: the file is not valid JSON, as for any other non-JSON input."""
+    raise ValueError(f"{name} is not a JSON value")
+
+
 def _decode_json(data: bytes, subject: str) -> tuple[object | None, list[Defect]]:
     repeated: list[str] = []
     named: set[str] = set()
@@ -409,7 +415,7 @@ def _decode_json(data: bytes, subject: str) -> tuple[object | None, list[Defect]
 
     try:
         text = data.decode("utf-8-sig")
-        value: object = json.loads(text, object_pairs_hook=collect)
+        value: object = json.loads(text, object_pairs_hook=collect, parse_constant=_refuse_constant)
     except (UnicodeDecodeError, ValueError):
         return None, [Defect(DefectCode.ROW_FIELD_TYPE, subject, "not valid UTF-8 JSON")]
     except RecursionError:
