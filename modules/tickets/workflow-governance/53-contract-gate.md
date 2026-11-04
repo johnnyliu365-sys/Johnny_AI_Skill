@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/53-contract-gate-out/` / owner implementation seat / worktree `.worktrees/53-contract-gate` / branch `cp/wave2-53-contract-gate` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/53-contract-gate-out/` / owner implementation seat / worktree `.worktrees/53-contract-gate` / branch `cp/wave2-53-contract-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED` |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S53-05, S53-06 TICKET_DEFECT; correction 1 dispatched to the same seat） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/53-contract-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/53-contract-gate-review` |
@@ -44,7 +44,11 @@ Exit 0 with `requirements=N specs=M defects=0`; exit 1 with one line `<code> <sp
 ### What the gate reads
 
 - The snapshot: an R4-7 snapshot file (ticket 52's format). Requirements with `status` `active` must each be declared by at least one spec; `retired` ones must be declared by none.
-- Specs: every file named `test_*.py` under `--specs`. Each spec's first comment block (the leading run of lines starting with `#`, before any code) holds declarations, one per line: `# requirement: <id>` (one or more), `# source: <repository-relative path> sha256:<64 hex>` (one or more), `# mutation: <name>` (one or more).
+- Specs: every file named `test_*.py` (case-sensitive) under `--specs`. Each spec's first comment block (the leading run of lines starting with `#`, before any code) holds declarations, one per line: `# requirement: <id>` (one or more), `# source: <repository-relative path> sha256:<64 hex>` (one or more), `# mutation: <name>` (one or more). Only these three lower-case keys are declarations; every other comment line, including `# SPDX-License-Identifier: …` or `# Requirement: …`, is free text and ignored.
+- Source bytes: a declared source is read as the blob at `HEAD` of `--repo` (`git show HEAD:<path>`), so the digest is the same on every host whatever its line-ending settings; a source that is not tracked at `HEAD` is `SOURCE_MISSING`; git failing to serve the query is exit 2.
+- Empty and missing values: an empty `requirement:` value is `RETIRED_REQUIREMENT_BOUND` (bound to no requirement of the snapshot); a spec that declares a requirement and no `source:` line is `SOURCE_MISSING`; an empty `mutation:` value is `NO_MUTATION`.
+- Snapshot ids are compared exactly, never stripped; a snapshot whose `requirement_id` values break the ticket 52 character set is not an R4-7 snapshot (exit 3).
+- Output streams: defect lines go to stdout, one per line; the summary line goes to stdout at exit 0 and to stderr at exit 1.
 - A `source:` that is a URL (contains `://`) cannot be verified offline in wave 2: exit 2 with `SOURCE_UNSERVABLE`, never a red.
 
 ### Defect codes (R4-7; exit 1)
@@ -58,7 +62,12 @@ Exit 0 with `requirements=N specs=M defects=0`; exit 1 with one line `<code> <sp
 | `LITERAL_EXPECTED` | an `assert` whose test is a comparison with a literal constant on either side: a number, a string, bytes, or a list, tuple, set or dict display made only of such constants. `None`, `True` and `False` do not count |
 | `NO_MUTATION` | a spec that declares a requirement has no `mutation:` line |
 
-A spec with a malformed declaration line (unknown key, missing digest, digest not 64 lower-case hex) is reported with the code of the clause it fails (`SOURCE_MISSING` for an unusable source line, `NO_MUTATION` for an empty mutation name) and the detail names the line.
+A `source:` line with a missing digest or a digest that is not 64 lower-case hex is `SOURCE_MISSING` naming the line. An assertion the gate cannot analyse within its limits (nesting deeper than its recursion budget, a literal too large to render) is `LITERAL_EXPECTED` with a detail saying so: an unverifiable contract is not honest, and the run never exits 2 because of it. Literal details are rendered from the source text, truncated to 120 characters.
+
+### Text values (all wave-2 gates; added after the ticket 52 review)
+
+Every string read from an input is valid Unicode without lone surrogates and without control characters (U+0000–U+001F, U+007F) unless a field explicitly allows them; a string that breaks this is a red of the input (exit 1), never a tool fault. Every subject printed in a defect line is printed in a form that cannot span two lines or forge another line (Python `repr` or an equivalent escape), so one defect is always one line.
+
 
 ## 實作範圍、依賴與 ticket elements
 
@@ -84,7 +93,7 @@ A spec with a malformed declaration line (unknown key, missing digest, digest no
 1. 正常行為：a snapshot with two active requirements, two specs declaring them with correct sources and mutations and ledger-based asserts → exit 0.
 2. 規則違反／輸入錯誤：one test per defect code; a spec carrying several defects reports each; `assert x == expected_from_ledger` is not a literal; `assert x == 3`, `assert "a" == y`, `assert x in (1, 2)` are literal; `assert x is None` is not.
 3. 外部失敗／fail-closed：snapshot unreadable → 2; snapshot that is not an R4-7 snapshot (not JSON, no `rows`, a row without `requirement_id` or `status`) → 3 with the reason (the argument is not a snapshot); `--specs` not a directory → 2; URL source → 2 `SOURCE_UNSERVABLE`.
-4. 回歸保護：declarations after the first code line are ignored; Windows CRLF spec files read the same; a source path given with `./` or backslashes resolves the same, and one with `..` escaping the repository is `SOURCE_MISSING`.
+4. 回歸保護：an assert behind 1500 `not` and an assert against a 4000-digit hex literal each give exit 1 with `LITERAL_EXPECTED`; a spec whose first source is correct and a later one is wrong reports the later one; `Test_x.py` is not collected; a newline, CR, U+2028 or NEL inside a snapshot id or any subject is escaped so one defect is one line; declarations after the first code line are ignored; Windows CRLF spec files read the same; a source path given with `./` or backslashes resolves the same, and one with `..` escaping the repository is `SOURCE_MISSING`.
 
 ### 適用的缺陷類別
 
@@ -113,3 +122,17 @@ A spec with a malformed declaration line (unknown key, missing digest, digest no
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Re-plan to closure revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
+
+Review record: `doc/reviews/workflow-governance/53-contract-gate-code-review.md`. S53-05 and S53-06 are `TICKET_DEFECT`s; the closure is rebuilt here before correction 1.
+
+| Finding | Class | Disposition in revision02 |
+| --- | --- | --- |
+| S53-01 | IMPLEMENTATION_DEFECT | an assertion the gate cannot analyse is `LITERAL_EXPECTED`; details rendered from source text, truncated |
+| S53-02 | IMPLEMENTATION_DEFECT | text-value rule: every subject escaped to one line |
+| S53-03 | EVIDENCE_DEFECT | multi-source and case-sensitive name tests |
+| S53-04 | IMPLEMENTATION_DEFECT | README introduction and unexpected-error rule name every script present |
+| S53-05 | TICKET_DEFECT | declaration keys, empty values, missing source, snapshot ids and output streams as above |
+| S53-06 | TICKET_DEFECT | source bytes read as the blob at `HEAD`; git failures exit 2 |
+| S53-07 | OUT_OF_SCOPE_HARDENING | not taken: the literal rule stays syntactic (R4-8); deeper analysis is a wave-3 candidate |
