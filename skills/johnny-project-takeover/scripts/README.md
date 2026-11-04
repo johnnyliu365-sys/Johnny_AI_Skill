@@ -129,6 +129,12 @@ Text values: every string read from an input is valid Unicode without lone surro
 control characters (U+0000 to U+001F, U+007F). A string that breaks this is a red of the input
 (`ROW_FIELD_TYPE`, exit 1), never a tool fault. Every subject printed in a defect line, and every
 id printed by `diff`, is escaped (Python `repr`) unless it is plain, so one defect is one line.
+A raw value echoed in a defect detail is escaped the same way. A top-level `source` or
+`source_sha256` that breaks the rule is `ROW_FIELD_TYPE` as well as its format code, as for row
+fields.
+
+JSON input: a repeated key in an object (a row or the top level) is `ROW_FIELD_TYPE`. Version
+numbers in file names and arguments are ASCII digits only.
 
 Defect codes, printed one per line as `<code> <requirement_id or field>: <detail>`:
 
@@ -144,8 +150,10 @@ Defect codes, printed one per line as `<code> <requirement_id or field>: <detail
 - `NAME_INVALID`: a source name with a path separator, `..`, a character outside
   `[A-Za-z0-9._-]`, a trailing dot, a Windows reserved device name (`CON`, `PRN`, `AUX`, `NUL`,
   `COM1` to `COM9`, `LPT1` to `LPT9`, with or without an extension), or a case variant of an
-  existing source directory. `take`, `verify` and `diff` apply the name rules alike; `take` and
-  `diff` also apply the case-variant rule.
+  existing source directory. `take` and `diff` apply every name rule, the case-variant rule
+  included, because they know the root. `verify` takes a single file and applies the name rules to
+  the file's `source` value only: not the case-variant rule, and no comparison with the directory
+  the file sits in.
 
 A red exits 1 and `take` then writes nothing. Exit 2: the root cannot be created or written, the
 input or a snapshot cannot be read, a requested version does not exist, a version exists twice, a

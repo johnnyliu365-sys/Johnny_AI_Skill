@@ -46,7 +46,13 @@ URL with a scheme is allowed); DIGEST_FORMAT; SNAPSHOT_DIGEST_MISMATCH (a stored
 source_sha256 does not match its rows: reported by verify, and by take or diff whenever they read
 that version); NAME_INVALID (a source name with a path separator, `..`, characters outside
 [A-Za-z0-9._-], a trailing dot, a Windows reserved device name, or a case variant of an existing
-source; applied by take, verify and diff alike).
+source). take and diff apply every name rule, the case-variant rule included, because they know
+the root; verify takes a single file and applies the name rules to the file's `source` value only,
+not the case-variant rule and not a comparison with the directory the file sits in.
+
+JSON input: a repeated key in an object (a row or the top level) is ROW_FIELD_TYPE; version numbers
+in file names and arguments are ASCII digits only; a top-level `source` or `source_sha256` that
+breaks the text-value rule is ROW_FIELD_TYPE as well as its format code, as for row fields.
 
 Exit codes: 0 pass, 1 contract red (named defect codes), 2 tool fault (the file system cannot
 serve the run, a version file is missing, a lost version race or a stale claim, any unexpected
@@ -79,8 +85,8 @@ DEFAULT_ROOT = "doc/requirements/snapshots"
 
 NAME_PATTERN = re.compile(r"[A-Za-z0-9._-]+")
 DIGEST_PATTERN = re.compile(r"[0-9a-f]{64}")
-VERSION_FILE_PATTERN = re.compile(r"(\d{4}-\d{2}-\d{2})-v(\d+)\.json")
-VERSION_ARG_PATTERN = re.compile(r"v?(\d+)")
+VERSION_FILE_PATTERN = re.compile(r"([0-9]{4}-[0-9]{2}-[0-9]{2})-v([0-9]+)\.json")
+VERSION_ARG_PATTERN = re.compile(r"v?([0-9]+)")
 ID_PATTERN = re.compile(r"[A-Za-z0-9._:/-]{1,128}")
 SUBJECT_PATTERN = re.compile(r"[A-Za-z0-9._:/\[\]-]{1,128}")
 CLAIM_PATTERN = re.compile(r"\.v\d+\.claim")
@@ -366,11 +372,25 @@ def parse_taken_at(text: str) -> str | None:
 
 
 def _decode_json(data: bytes, subject: str) -> tuple[object | None, list[Defect]]:
+    repeated: list[str] = []
+
+    def collect(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        found: dict[str, object] = {}
+        for key, item in pairs:
+            if key in found and key not in repeated:
+                repeated.append(key)
+            found[key] = item
+        return found
+
     try:
         text = data.decode("utf-8-sig")
-        value: object = json.loads(text)
+        value: object = json.loads(text, object_pairs_hook=collect)
     except (UnicodeDecodeError, ValueError):
         return None, [Defect(DefectCode.ROW_FIELD_TYPE, subject, "not valid UTF-8 JSON")]
+    if repeated:
+        return None, [
+            Defect(DefectCode.ROW_FIELD_TYPE, subject, f"key {key!r} is repeated in an object") for key in repeated
+        ]
     return value, []
 
 
@@ -407,6 +427,9 @@ def parse_snapshot(data: bytes) -> tuple[Snapshot | None, list[Defect]]:
         defects.append(Defect(DefectCode.ROW_FIELD_TYPE, "source", "field source must be a string"))
     else:
         defects.extend(name_defects(source))
+        source_problem = text_problem(source)
+        if source_problem is not None:
+            defects.append(Defect(DefectCode.ROW_FIELD_TYPE, "source", f"field source {source_problem}"))
     if not isinstance(taken_at, str) or parse_taken_at(taken_at) is None:
         defects.append(Defect(DefectCode.ROW_FIELD_TYPE, "taken_at", "field taken_at must be an ISO-8601 UTC instant"))
     digest_ok = False
@@ -414,6 +437,9 @@ def parse_snapshot(data: bytes) -> tuple[Snapshot | None, list[Defect]]:
         defects.append(Defect(DefectCode.ROW_FIELD_TYPE, "source_sha256", "field source_sha256 must be a string"))
     elif DIGEST_PATTERN.fullmatch(stored_digest) is None:
         defects.append(Defect(DefectCode.DIGEST_FORMAT, "source_sha256", "must be 64 lower-case hex characters"))
+        digest_problem = text_problem(stored_digest)
+        if digest_problem is not None:
+            defects.append(Defect(DefectCode.ROW_FIELD_TYPE, "source_sha256", f"field source_sha256 {digest_problem}"))
     else:
         digest_ok = True
     rows, row_defects = parse_rows(top["rows"])

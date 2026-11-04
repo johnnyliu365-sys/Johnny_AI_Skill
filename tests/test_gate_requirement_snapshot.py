@@ -1104,5 +1104,201 @@ class VersionClaimTests(SnapshotCase):
         self.assertEqual(sum(outcomes.values()), trials)
 
 
+class EchoedDetailTests(SnapshotCase):
+    """A raw value echoed in a defect detail is escaped, so one defect is one line."""
+
+    def codes(self, out: str) -> list[str]:
+        matches = [DEFECT_LINE.match(line) for line in out.splitlines()]
+        self.assertTrue(all(match is not None for match in matches), out)
+        return [match.group(1) for match in matches if match is not None]
+
+    def test_a_newline_in_an_otherwise_invalid_source_ref_keeps_its_defect_on_one_line(self) -> None:
+        for value in ("/abs\nROW_FIELD_MISSING r1: forged", "../x\nforged", "~\nforged", "C:\\x\nforged"):
+            with self.subTest(value=value):
+                _, out, _ = self.env.take([make_row("r1", source_ref=value)])
+                codes = self.codes(out)
+                self.assertEqual(sorted(codes), ["ROW_FIELD_TYPE", "SOURCE_REF_ABSOLUTE"], out)
+                self.assertEqual(len(out.splitlines()), 2, out)
+                ref_line = next(line for line in out.splitlines() if line.startswith("SOURCE_REF_ABSOLUTE "))
+                self.assertIn(repr(value), ref_line)
+
+    def test_a_newline_in_an_otherwise_invalid_source_name_keeps_its_defect_on_one_line(self) -> None:
+        for name in ("../x\nforged", "a b\nNAME_INVALID source: forged", "con\nx"):
+            with self.subTest(name=name):
+                _, out, _ = self.env.take([make_row("r1")], source=name)
+                self.assertEqual(self.codes(out), ["NAME_INVALID"], out)
+                self.assertEqual(len(out.splitlines()), 1, out)
+                self.assertIn(repr(name), out)
+                code, out, _ = self.env.main("diff", "--source", name, "1", "2", "--root", str(self.env.root))
+                self.assertEqual(code, 1, out)
+                self.assertEqual(self.codes(out), ["NAME_INVALID"], out)
+                self.assertEqual(len(out.splitlines()), 1, out)
+
+
+class TopLevelTextTests(SnapshotCase):
+    def stored(self, **patch: object) -> tuple[int, str]:
+        if not self.env.files():
+            self.env.take([make_row("r1")], taken_at=T1)
+        path = self.env.snapshot("src", "2026-11-04-v1.json")
+        document: dict[str, object] = json.loads(path.read_text(encoding="utf-8"))
+        document.update(patch)
+        path.write_text(json.dumps(document, indent=2) + "\n", encoding="ascii", newline="\n")
+        code, out, err = self.env.main("verify", str(path))
+        return code, out + err
+
+    def test_a_top_level_source_that_breaks_the_text_rule_is_also_row_field_type(self) -> None:
+        for value in ("a\nb", "a\tb", "a\x00b", "a\x7fb", "a\ud800", "\udfff"):
+            with self.subTest(value=value):
+                code, out = self.stored(source=value)
+                self.assertEqual(code, 1, out)
+                lines = out.splitlines()
+                self.assertTrue(all(DEFECT_LINE.match(line) for line in lines), out)
+                self.assertEqual(
+                    sorted(line.split(" ", 1)[0] for line in lines), ["NAME_INVALID", "ROW_FIELD_TYPE"], out)
+                type_line = next(line for line in lines if line.startswith("ROW_FIELD_TYPE "))
+                self.assertTrue(type_line.startswith("ROW_FIELD_TYPE source: field source holds a "), type_line)
+
+    def test_a_top_level_source_sha256_that_breaks_the_text_rule_is_also_row_field_type(self) -> None:
+        for value in ("a\nb", HEX_A + "\n", "x\x00", "a\ud800", "\x7f"):
+            with self.subTest(value=value):
+                code, out = self.stored(source_sha256=value)
+                self.assertEqual(code, 1, out)
+                lines = out.splitlines()
+                self.assertTrue(all(DEFECT_LINE.match(line) for line in lines), out)
+                self.assertEqual(
+                    sorted(line.split(" ", 1)[0] for line in lines), ["DIGEST_FORMAT", "ROW_FIELD_TYPE"], out)
+                type_line = next(line for line in lines if line.startswith("ROW_FIELD_TYPE "))
+                self.assertTrue(
+                    type_line.startswith("ROW_FIELD_TYPE source_sha256: field source_sha256 holds a "), type_line)
+
+    def test_a_clean_top_level_value_with_a_wrong_format_adds_no_text_defect(self) -> None:
+        code, out = self.stored(source_sha256="ABC")
+        self.assertEqual(code, 1, out)
+        self.assertEqual([line.split(" ", 1)[0] for line in out.splitlines()], ["DIGEST_FORMAT"], out)
+        code, out = self.stored(source_sha256=expected_digest([make_row("r1")]), source="a b")
+        self.assertEqual(code, 1, out)
+        self.assertEqual([line.split(" ", 1)[0] for line in out.splitlines()], ["NAME_INVALID"], out)
+
+
+class VerifyScopeTests(SnapshotCase):
+    def test_verify_applies_the_name_rules_to_the_files_source_only(self) -> None:
+        self.env.take([make_row("r1")], source="Source", taken_at=T1)
+        self.env.take([make_row("r1")], source="other", taken_at=T1)
+        path = self.env.snapshot("other", "2026-11-04-v1.json")
+        document: dict[str, object] = json.loads(path.read_text(encoding="utf-8"))
+        for value in ("source", "Source", "SOURCE", "other"):
+            with self.subTest(source=value):
+                document["source"] = value
+                path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8", newline="\n")
+                code, out, err = self.env.main("verify", str(path))
+                self.assertEqual(code, 0, out + err)
+        document["source"] = "con"
+        path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8", newline="\n")
+        code, out, err = self.env.main("verify", str(path))
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("NAME_INVALID", out)
+
+    def test_the_docstring_and_the_readme_state_the_same_scope(self) -> None:
+        doc = " ".join((requirement_snapshot.__doc__ or "").split())
+        readme = " ".join((_SCRIPTS / "README.md").read_text(encoding="utf-8").split())
+        self.assertNotIn("applied by take, verify and diff alike", doc)
+        self.assertIn("verify takes a single file and applies the name rules to the file's `source` value only", doc)
+        self.assertIn("`verify` takes a single file and applies the name rules to the file's `source` value only", readme)
+
+
+class JsonInputTests(SnapshotCase):
+    ROW_HEAD = (
+        '{"requirement_id": "r1", "page_id": "p", "title": "t", "type": "f", "source_ref": "a/b", '
+        f'"source_sha256": "{HEX_A}", "status": "active"'
+    )
+
+    def raw_take(self, text: str) -> tuple[int, str, str]:
+        path = self.env.write_raw_input(text.encode("utf-8"))
+        return self.env.main(
+            "take", "--source", "src", "--input", str(path), "--root", str(self.env.root), "--taken-at", T1)
+
+    def test_a_repeated_key_in_a_row_or_the_top_level_is_a_type_defect_in_take(self) -> None:
+        cases = {
+            "row": '{"rows": [' + self.ROW_HEAD + ', "version": 1, "title": "again"}]}',
+            "top": '{"rows": [' + self.ROW_HEAD + ', "version": 1}], "rows": []}',
+            "nested": '{"rows": [' + self.ROW_HEAD + ', "version": {"a": 1, "a": 2}}]}',
+            "empty rows twice": '{"rows": [], "rows": []}',
+        }
+        for label, text in cases.items():
+            with self.subTest(case=label):
+                before = self.env.tree()
+                code, out, err = self.raw_take(text)
+                self.assertEqual(code, 1, out + err)
+                lines = out.splitlines()
+                self.assertTrue(all(DEFECT_LINE.match(line) for line in lines), out)
+                self.assertEqual({line.split(" ", 1)[0] for line in lines}, {"ROW_FIELD_TYPE"}, out)
+                self.assertIn("repeated", out)
+                self.assertEqual(self.env.tree(), before)
+
+    def test_every_repeated_key_gets_one_line_and_a_repeated_odd_key_is_escaped(self) -> None:
+        code, out, err = self.raw_take('{"rows": [], "rows": [], "x\\ny": 1, "x\\ny": 2, "x\\ny": 3}')
+        self.assertEqual(code, 1, out + err)
+        self.assertEqual(len(out.splitlines()), 2, out)
+        self.assertIn(repr("x\ny"), out)
+
+    def test_a_repeated_key_in_a_stored_file_is_a_type_defect_in_verify_take_and_diff(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r2")], taken_at=T2)
+        path = self.env.snapshot("src", "2026-11-05-v2.json")
+        original = path.read_text(encoding="utf-8")
+        damaged = original.replace('"source": "src",', '"source": "src",\n  "source": "src",', 1)
+        self.assertNotEqual(damaged, original)
+        path.write_text(damaged, encoding="utf-8", newline="\n")
+        code, out, err = self.env.main("verify", str(path))
+        self.assertEqual(code, 1, out + err)
+        self.assertEqual([line.split(" ", 1)[0] for line in out.splitlines()], ["ROW_FIELD_TYPE"], out)
+        code, out, err = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+        self.assertEqual(code, 1, out + err)
+        code, out, err = self.env.take([make_row("r3")], taken_at="2026-11-06T00:00:00Z")
+        self.assertEqual(code, 1, out + err)
+        path.write_text(original.replace('"rows": [', '"rows": [], "rows": [', 1), encoding="utf-8", newline="\n")
+        code, out, err = self.env.main("verify", str(path))
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("ROW_FIELD_TYPE", out)
+
+    def test_distinct_keys_are_accepted(self) -> None:
+        code, out, err = self.env.take([make_row("r1"), make_row("r2")])
+        self.assertEqual(code, 0, out + err)
+
+
+class AsciiVersionTests(SnapshotCase):
+    UNICODE_DIGITS = ("\uff11", "\u0663", "\u0e51", "\u00b2")
+
+    def test_the_file_name_pattern_matches_ascii_digits_only(self) -> None:
+        pattern = requirement_snapshot.VERSION_FILE_PATTERN
+        self.assertIsNotNone(pattern.fullmatch("2026-11-04-v12.json"))
+        for digit in self.UNICODE_DIGITS:
+            with self.subTest(digit=digit):
+                self.assertIsNone(pattern.fullmatch(f"2026-11-04-v{digit}.json"))
+                self.assertIsNone(pattern.fullmatch(f"202{digit}-11-04-v1.json"))
+                self.assertIsNone(pattern.fullmatch(f"2026-1{digit}-04-v1.json"))
+
+    def test_a_file_with_unicode_digits_is_not_a_version_file(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        directory = self.env.root / "src"
+        stray = directory / "2026-11-05-v\uff12.json"
+        stray.write_bytes((directory / "2026-11-04-v1.json").read_bytes())
+        code, out, err = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual(code, 0, out + err)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json", "2026-11-05-v2.json", "2026-11-05-v\uff12.json"])
+        self.assertTrue(out.strip().endswith("2026-11-05-v2.json"), out)
+
+    def test_a_version_argument_with_unicode_digits_is_a_usage_error(self) -> None:
+        for digit in self.UNICODE_DIGITS:
+            for text in (digit, f"v{digit}", f"1{digit}"):
+                with self.subTest(text=text):
+                    code, out, err = self.env.main("diff", "--source", "src", text, "1", "--root", str(self.env.root))
+                    self.assertEqual(code, 3, out + err)
+                    self.assertTrue(err.startswith("usage:"), err)
+        self.env.take([make_row("r1")], taken_at=T1)
+        code, out, err = self.env.main("diff", "--source", "src", "v1", "1", "--root", str(self.env.root))
+        self.assertEqual(code, 0, out + err)
+
+
 if __name__ == "__main__":
     unittest.main()
