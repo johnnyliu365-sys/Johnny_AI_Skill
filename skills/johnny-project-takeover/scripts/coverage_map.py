@@ -77,7 +77,10 @@ as a red.
 Every git child runs without the variables that select another repository (the git
 directory, work tree, index file, object directory, alternate object directories, namespace,
 ceiling directories, common directory and prefix), so a hook that exports them cannot point
-the guard at another repository or make a plain directory pass as `--repo`.
+the guard at another repository or make a plain directory pass as `--repo`. They also run
+without the `GIT_CONFIG_*` variables, with `--no-replace-objects` and `GIT_NO_REPLACE_OBJECTS=1`
+(a replace ref never redirects a lookup, so a blob read at a commit is the blob the commit
+holds) and with `GIT_NO_LAZY_FETCH=1` (a lookup never fetches over the network).
 """
 from __future__ import annotations
 
@@ -110,6 +113,7 @@ _BAD_TEXT = re.compile("[\x00-\x1f\x7f\ud800-\udfff]")
 REGULAR_MODES = frozenset((b"100644", b"100755"))
 # Names that make git work on another repository, work tree or object store than the one
 # named by `--repo`; none of them reaches a git child.
+GIT_CONFIG_PREFIX = "GIT_CONFIG_"
 GIT_SELECTING_VARIABLES = frozenset(
     (
         "GIT_DIR",
@@ -247,13 +251,22 @@ def _text_problem(text: str) -> str | None:
 
 
 def git_environment() -> dict[str, str]:
-    """The environment of a git child: the inherited one without the repository-selecting names."""
-    return {name: value for name, value in os.environ.items() if name.upper() not in GIT_SELECTING_VARIABLES}
+    """The environment of a git child: the inherited one without the repository-selecting names and the `GIT_CONFIG_*` names, replace refs and lazy fetch off."""
+    environment = {
+        name: value
+        for name, value in os.environ.items()
+        if name.upper() not in GIT_SELECTING_VARIABLES
+        and not name.upper().startswith(GIT_CONFIG_PREFIX)
+        and name.upper() not in ("GIT_NO_REPLACE_OBJECTS", "GIT_NO_LAZY_FETCH")
+    }
+    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+    environment["GIT_NO_LAZY_FETCH"] = "1"
+    return environment
 
 
 def run_git(repo: str, args: Sequence[str]) -> bytes:
     """Run one git query in `repo`; any failure is a tool fault carrying git's stderr."""
-    command = ["git", "-C", repo, *args]
+    command = ["git", "-C", repo, "--no-replace-objects", *args]
     try:
         done = subprocess.run(command, capture_output=True, stdin=subprocess.DEVNULL, check=False, env=git_environment())
     except OSError as error:

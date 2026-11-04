@@ -1278,6 +1278,60 @@ class GitEnvironmentTests(GuardCase):
     def test_the_selecting_names_cover_the_ticket_list(self) -> None:
         self.assertGreaterEqual(set(cm.GIT_SELECTING_VARIABLES), set(HOSTILE_NAMES))
 
+    def replace_blob(self, commit: str, path: str, body: str) -> str:
+        """Make git serve `body` in place of the blob `path` holds at `commit`; returns what plain git now reads there."""
+        old = git(self.repo.dir, "rev-parse", f"{commit}:{path}").strip()
+        new = git_bytes(self.repo.dir, "hash-object", "-w", "--stdin", data=body.encode("utf-8")).decode("ascii").strip()
+        git(self.repo.dir, "replace", "-f", old, new)
+        return git(self.repo.dir, "show", f"{commit}:{path}")
+
+    def test_a_replace_ref_on_a_spec_blob_does_not_change_what_the_guard_reads(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        candidate = self.repo.commit({SPEC_A: functions("test_one")})
+        baseline = run(self.repo, base, candidate)
+        self.assertEqual((baseline.code, baseline.defect_codes()), (1, ["UNMAPPED_REMOVAL"]), baseline.out)
+        self.assertEqual(self.replace_blob(base, SPEC_A, functions("test_one")), functions("test_one"))
+        self.assertEqual(run(self.repo, base, candidate), baseline)
+
+    def test_a_replace_ref_on_the_map_blob_does_not_change_what_the_guard_reads(self) -> None:
+        base, candidate = self.two_commits()
+        baseline = run(self.repo, base, candidate)
+        self.assertEqual((baseline.code, baseline.out, baseline.err), (0, "removed=1 defects=0\n", ""))
+        self.assertEqual(self.replace_blob(candidate, MAP, map_text()), map_text())
+        self.assertEqual(run(self.repo, base, candidate), baseline)
+
+    def test_a_git_config_variable_is_not_given_to_git_and_replace_and_lazy_fetch_are_off(self) -> None:
+        base, candidate = self.two_commits()
+        baseline = run(self.repo, base, candidate)
+        bad_config = self.repo.dir.parent / (self.repo.dir.name + "-bad.cfg")
+        bad_config.write_text("[broken\n", encoding="utf-8")
+        self.addCleanup(bad_config.unlink)
+        hostile = {"GIT_CONFIG_COUNT": "1"}, {"GIT_CONFIG_GLOBAL": str(bad_config)}
+        for extra in hostile:
+            with self.subTest(sorted(extra)), mock.patch.dict(os.environ, extra):
+                broken = subprocess.run(["git", "-C", str(self.repo.dir), "rev-parse", "HEAD"], capture_output=True)
+                self.assertNotEqual(broken.returncode, 0, "the variable must break a plain git call for this test to mean anything")
+                self.assertEqual(run(self.repo, base, candidate), baseline)
+        real = subprocess.run
+        calls: list[tuple[object, object]] = []
+
+        def spy(*args: object, **kwargs: object) -> object:
+            calls.append((args[0] if args else None, kwargs.get("env")))
+            return real(*args, **kwargs)
+
+        polluted = {"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_GLOBAL": str(bad_config), "GIT_NO_REPLACE_OBJECTS": "0", "GIT_NO_LAZY_FETCH": "0"}
+        with mock.patch.dict(os.environ, polluted), mock.patch.object(cm.subprocess, "run", spy):
+            self.assertEqual(run(self.repo, base, candidate), baseline)
+        self.assertGreaterEqual(len(calls), 6)
+        for command, environment in calls:
+            self.assertIsInstance(command, list)
+            self.assertIsInstance(environment, dict)
+            arguments = command if isinstance(command, list) else []
+            variables = environment if isinstance(environment, dict) else {}
+            self.assertEqual(arguments[:4], ["git", "-C", str(self.repo.dir), "--no-replace-objects"])
+            self.assertEqual([name for name in variables if name.upper().startswith("GIT_CONFIG_")], [])
+            self.assertEqual((variables.get("GIT_NO_REPLACE_OBJECTS"), variables.get("GIT_NO_LAZY_FETCH")), ("1", "1"))
+
 
 class CommandLineTests(GuardCase):
     def invoke(self, argv: Sequence[str], encoding: str | None = None) -> subprocess.CompletedProcess[bytes]:

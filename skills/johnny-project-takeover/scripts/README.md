@@ -162,7 +162,10 @@ there is one, printing each fault it met on stderr, one line each; a spec file i
 is judged by nothing, so a fault never invents a red. Every git child runs without the
 variables that select another repository (git directory, work tree, index file, object
 directory, alternate object directories, namespace, ceiling directories, common directory,
-prefix), so an exporting hook cannot point the guard elsewhere. Exit 3: a
+prefix) and without the `GIT_CONFIG_*` variables, so an exporting hook cannot point the guard
+elsewhere; it also runs with `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1` and
+`GIT_NO_LAZY_FETCH=1`, so a replace ref never changes the blob read at a commit and a lookup
+never fetches over the network. Exit 3: a
 missing or unknown option, an empty value, an argument that holds a lone surrogate or a
 control character, an absolute `--map` or `--specs`, a `..` segment, or a revision that
 starts with `-`. `--specs` and `--map` accept forward or back slashes and a trailing slash;
