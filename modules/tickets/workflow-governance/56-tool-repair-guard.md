@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision03 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision04 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S56-09 to S56-14; implementation 3 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 initial review: S56-16 TICKET_DEFECT; implementation 4 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/56-tool-repair-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/56-tool-repair-guard-review` |
@@ -161,3 +161,25 @@ Review record section "Revision02 correction review". CodeReview §5: revision02
 | S56-12 | TICKET_DEFECT | the stream rule above |
 | S56-13 | TICKET_DEFECT | the text-defective dispatch rule above |
 | S56-14 | EVIDENCE_DEFECT | the evidence rule above |
+
+## Re-plan to closure revision04 (after the revision03 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision03 initial review". S56-16 is a `TICKET_DEFECT`: revision03 prescribed a git tree diff without saying which objects the guard may trust, and git verifies neither raw objects nor subtrees. The guard now trusts no object it has not hashed itself. Revision04 starts a new cadence: one initial review and one correction review.
+
+### Rules added in revision04 (binding)
+
+- Verified objects only: every object the guard uses (the repair commit, its first parent, both root trees and every subtree it descends into) is read raw through `git --no-replace-objects cat-file --batch` on standard input and hashed by the guard itself (`<type> <size>\0<body>`, SHA-1 or SHA-256 by the width of the repository's object ids). An object whose hash differs from the id it was asked for, or whose type is not the one expected, is a fault naming the id; a missing object is a fault.
+- The guard's own tree walk replaces `git diff`: it compares the two root trees entry by entry, descends only into subtrees whose ids differ, and reports every path whose entry differs in id or mode, or exists on one side only. Gitlinks (mode `160000`) compare by id and are never descended. Both sides of a rename are therefore changed paths, as before. No git diff machinery, configuration, attribute or commit-graph can change the result.
+- Text-defective dispatch: only the block that holds a text defect loses its entries; the other block's entries are still used.
+- A UTF-8 BOM at the start of the dispatch file is removed before parsing, as in the other gates.
+- Evidence: cells run after the commit, at the candidate; each cell's capture starts with the sha256 of the script it ran.
+- Trust boundary: the guard's verdict holds for the objects it verified. Which object store the guard runs on (for example an integration clone fetched with `transfer.fsckObjects`) is proposed to the owner as a correction of R4-4; this ticket does not depend on it.
+
+| Finding | Class | Disposition in revision04 |
+| --- | --- | --- |
+| S56-15 | IMPLEMENTATION_DEFECT | every object hashed by the guard; tests with a forged loose base commit and one served through alternates |
+| S56-16 | TICKET_DEFECT | the guard's own verified tree walk; a test with a forged repair subtree |
+| S56-17 | EVIDENCE_DEFECT | a test that builds a commit-graph giving the repair the base tree |
+| S56-18 | IMPLEMENTATION_DEFECT | only the defective block loses its entries; one test per side |
+| S56-19 | EVIDENCE_DEFECT | tests for a lone surrogate at the top of the range and for a leading BOM |
+| S56-20 | EVIDENCE_DEFECT | the evidence rule above |

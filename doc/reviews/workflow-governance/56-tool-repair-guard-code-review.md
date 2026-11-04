@@ -103,3 +103,60 @@ verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/56-rev02-correction
 reviewed_at: 2026-11-04
 ```
+
+## Revision03 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `f50d171ce615bedc7e6e34620da92bfebb61faf7` (`f50d171c` → `8b084b50` → `02d40fd2`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision03 |
+| Summary | Grafts in the repository, the common directory and `GIT_GRAFT_FILE`, replace refs on commits, parents and trees, shallow files and commit-graph files no longer re-parent the repair or change the trees compared; tests, mypy, the receipt and the full suite pass. Blocking: the object store is trusted without hash checks, so a forged first-parent commit (loose or through alternates) or a forged subtree of the repair tree lets a gate-script change exit 0 (S56-15, S56-16). The R4 survivor is not equivalent (S56-17). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 163 passed, 157 subtests; mypy --strict clean |
+| Seat mutations | PASS with one disagreement | 63 of 66 red; C9 and P2 equivalent; R4 not (S56-17); per-code mutations 9 of 9 red at the candidate |
+| Reviewer counter-mutations | FINDING | 17 run: 13 red, K9 equivalent, K13 overlap-masked, K3 and K17 findings (S56-19) |
+| History rewriting by probe | FINDING | every graft, replace, shallow and commit-graph shape is red; forged loose or alternates base commit and forged repair subtree exit 0 (S56-15, S56-16) |
+| R4-2, red before fault, streams | PASS | |
+| One line per subject; regression S56-01 to S56-08 | PASS | |
+| Seat choices | 2 agree, 1 partly disagrees | S56-18 |
+| Receipt | PASS with evidence gap | captures predate the candidate commit (S56-20) |
+| Boundary | PASS | |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S56-01 to S56-07, S56-10 to S56-12 | CLOSED |
+| S56-08 | control plane: correction proposed, awaiting the owner |
+| S56-09 | PARTLY OPEN (forged objects: S56-15, S56-16) |
+| S56-13 | PARTLY OPEN (S56-18) |
+| S56-14 | PARTLY OPEN (S56-17, S56-20) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S56-15 | IMPLEMENTATION_DEFECT | High (blocking; lets a forbidden change pass) | `repair_guard.py:453-467, 492` | the raw commit body is never checked against its object id, and git does not check it; a forged loose or alternates base commit whose tree line names the repair's tree gives `paths=0`, exit 0 for a gate-script change | probes |
+| S56-16 | TICKET_DEFECT | High (blocking; lets a forbidden change pass) | `repair_guard.py:495`; revision03 history rule | `git diff` on two tree ids checks only the top-level trees; a forged subtree of the repair tree hides the gate change; the ticket does not say which object store the guard may trust | probes |
+| S56-17 | EVIDENCE_DEFECT | Medium (blocking; safety unpinned) | `repair_guard.py:495`; receipt M1 R4 | R4 is not equivalent: with a commit-graph giving the repair the base tree, a commit-to-commit diff is empty; no test builds a commit-graph | probe on mutant and candidate |
+| S56-18 | IMPLEMENTATION_DEFECT | Low (reds missing from the report; exit unchanged) | `repair_guard.py:337, 343, 586` | a text defect in one block also drops the clean block's entries | probes |
+| S56-19 | EVIDENCE_DEFECT | Low (exit code in mutants) | `repair_guard.py:232, 576` | the lone-surrogate bound and the BOM rule are unpinned; the BOM rule is not stated in the ticket | K3, K17 green |
+| S56-20 | EVIDENCE_DEFECT | Low | receipt P1, T1, M1 | the captures were complete before the candidate commit existed and record no digest of the file run | file times; reviewer rerun matches |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: paths with a newline end to end; Linux and macOS; short-name and trailing-dot aliases; SHA-1 collision objects; pack-level forgery; very large commits.
+
+```review-verdict
+candidate: f50d171ce615bedc7e6e34620da92bfebb61faf7
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/56-rev03-initial
+reviewed_at: 2026-11-05
+```
