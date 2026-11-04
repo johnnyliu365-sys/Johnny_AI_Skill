@@ -1,12 +1,12 @@
 # Gate scripts
 
-Three stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
+Four stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
 usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
-`receipt_fence_check.py` and `index_pins.py` an unexpected error is also a tool fault
-(`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
+`receipt_fence_check.py`, `index_pins.py` and `coverage_map.py` an unexpected error is
+also a tool fault (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red. The console
 encoding never changes an exit code: each script keeps the encoding the host chose for
 stdout and stderr but escapes any character it cannot encode as a backslash sequence, so a red whose
@@ -89,3 +89,39 @@ commit (`SHALLOW_HISTORY`), `git` cannot be started, not inside a git repository
 is missing or not a directory, an environment git query fails as above, the `--json` path
 cannot be written, or an unexpected error. Exit 3: bad option, missing mode, empty
 `--sealed-state`, an index argument that is not a file, or an index file that is not UTF-8.
+
+## coverage_map.py
+
+    python coverage_map.py --repo DIR --base COMMIT --candidate COMMIT --map PATH --specs DIR
+
+Checks that no test function leaves a spec file without a map row. It lists every test
+present in a spec file under `--specs` at `--base` and absent at `--candidate`, and requires
+each to have a row in the map file read at `--candidate` (`git show <candidate>:<map>`, never
+the working tree). A spec file is `test_*.py` below `--specs`, matched by path component
+(`specs2/` is not below `specs`). A test is a function, sync or async, whose name starts with
+`test`, at module level or inside a class (nested classes included); its id is
+`<path>::<name>`, `<path>::<Class>::<name>` or `<path>::<Outer>::<Inner>::<name>`. A test that
+moved to another file or was renamed is removed under its old id. Test enumeration uses the
+standard `ast` module on the blobs git serves at both commits.
+
+Map file, UTF-8 JSON:
+
+    {"rows": [{"assertion": "<id>", "disposition": "carried" | "dropped" | "escalated",
+               "carried_to": "<id or empty>", "reason": "<text or empty>", "ticket": "<text or empty>"}]}
+
+Defect codes (exit 1): `UNMAPPED_REMOVAL` (a removed id has no valid row; also every removed
+id when the map is absent at the candidate), `CARRIED_TARGET_MISSING` (`carried_to` empty or
+naming no test at the candidate), `DROPPED_WITHOUT_REASON` (`dropped` with an empty or
+whitespace-only `reason`), `ESCALATED_WITHOUT_TICKET` (`escalated` with an empty or
+whitespace-only `ticket`), `MAP_ROW_INVALID` (an unknown disposition, a missing or non-string
+field, an assertion that is empty or has surrounding whitespace, a duplicate assertion, or a
+map file that is not JSON of the required shape; a row that is invalid or duplicated covers
+nothing). A row's disposition is judged only when its assertion is a removed id.
+
+Output is one line per defect (`CODE "<id>" <detail>`, ids JSON-quoted with ASCII escapes), then
+`removed=N defects=M`; exit 0 only when `defects=0`. Exit 2: `git` cannot be started, `--repo`
+is not a repository, a commit, tree or blob cannot be served (git's stderr is printed), a spec
+does not parse at either commit (the message names the commit and the path), or an unexpected
+error. Exit 3: a missing or unknown option, an empty value, an absolute `--map` or `--specs`,
+a `..` segment, or a revision that starts with `-`. `--specs` and `--map` accept `/` or `\`
+separators and a trailing slash; `--specs .` selects the whole repository.
