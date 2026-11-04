@@ -24,14 +24,24 @@ TOOL_DIGEST_STALE. Then one literal lookup from the repository root: the line
 for a blob, of `git cat-file --batch`; the path is never passed to git as a pathspec or on its
 command line. A missing object or one that is not a blob (a tree, a submodule entry) is
 TOOL_DIGEST_STALE; git failing to start, exiting non-zero or answering outside its documented
-format is a tool fault. The root comes from the repository, so `--repo` may be any directory
-inside it. Every string read from the receipt is valid Unicode without lone surrogates
+format is a tool fault. A `missing` answer is told apart from an unservable object: the parent
+tree is read through the same standard input, and an entry that tree names as a blob but the
+object store cannot serve is a tool fault, not an absent path. The root comes from the
+repository, so `--repo` may be any directory inside it.
+
+Every git child runs with `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1` and
+`GIT_NO_LAZY_FETCH=1`, with the repository-selecting `GIT_*` and the `GIT_CONFIG_*` variables
+removed from its environment, and is started from the `PATH` entries that are absolute
+directories only, never from the current directory: a replace ref never redirects a lookup and
+a lookup never fetches. Every string read from the receipt is valid Unicode without lone surrogates
 and without control characters; one that is not is a red, never a fault. Every subject
 printed in a defect line is escaped, so one defect is always one line.
 
 Exit codes: 0 pass, 1 contract red, 2 tool fault (git or the file system cannot serve the
-check), 3 usage error. A red is never reported as a tool fault and a tool fault is never
-reported as a red. Standard library only. Output uses LF and escapes what the console
+check), 3 usage error. Red before fault: the gate reports every red it can find and exits 1 if
+there is one, with each fault on standard error on one line; it exits 2 only when it found no
+red. A red is never reported as a tool fault and a tool fault is never reported as a red.
+Standard library only. Output uses LF and escapes what the console
 cannot encode, so the console encoding never changes an exit code.
 """
 from __future__ import annotations
@@ -43,7 +53,7 @@ import posixpath
 import re
 import subprocess
 import sys
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -76,6 +86,31 @@ OBJECT_REPLY = re.compile(r"([0-9a-f]{40}|[0-9a-f]{64}) ([a-z]+)(?: ([0-9]+))?")
 OBJECT_NAME = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
 BLOB = "blob"
 REPEAT_ORDER = ("cell", "candidate", "tool_digest", "capture", "exit", "fence")
+NO_REPLACE_FLAG = "--no-replace-objects"
+GIT_FIXED_ENVIRONMENT = {"GIT_NO_REPLACE_OBJECTS": "1", "GIT_NO_LAZY_FETCH": "1"}
+GIT_REMOVED_VARIABLES = frozenset(
+    {
+        "GIT_DIR",
+        "GIT_WORK_TREE",
+        "GIT_INDEX_FILE",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_NAMESPACE",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_COMMON_DIR",
+        "GIT_PREFIX",
+        "GIT_QUARANTINE_PATH",
+        "GIT_REPLACE_REF_BASE",
+        "GIT_GRAFT_FILE",
+        "GIT_SHALLOW_FILE",
+    }
+)
+GIT_CONFIG_PREFIX = "GIT_CONFIG"
+TREE = "tree"
+SUBMODULE = "submodule"
+TREE_MODE = "40000"
+GITLINK_MODE = "160000"
+BLOB_MODES = frozenset({"100644", "100755", "120000"})
 
 
 class ToolFault(Exception):
@@ -164,6 +199,27 @@ class GitResult:
     returncode: int
     stdout: bytes
     stderr: str
+
+
+@dataclass
+class Report:
+    """What one run found: the reds, the faults (each once), and the run cells counted so far."""
+
+    cells: int = 0
+    defects: list[Defect] = field(default_factory=list)
+    faults: list[str] = field(default_factory=list)
+
+    def fault(self, message: str) -> None:
+        if message not in self.faults:
+            self.faults.append(message)
+
+
+@dataclass(frozen=True)
+class TreeRead:
+    """One object read by name: its type, and for a tree the mode of each entry by name."""
+
+    kind: str
+    entries: dict[bytes, str]
 
 
 # ----------------------------------------------------------------------------- arguments
@@ -285,12 +341,71 @@ def unique(items: Sequence[str]) -> list[str]:
 # ----------------------------------------------------------------------------- git
 
 
+def git_environment(source: Mapping[str, str]) -> dict[str, str]:
+    """`source` for a git child: the repository-selecting and config variables removed, replace refs
+    and lazy fetching switched off."""
+    kept = {
+        key: value
+        for key, value in source.items()
+        if key.upper() not in GIT_REMOVED_VARIABLES
+        and key.upper() not in GIT_FIXED_ENVIRONMENT
+        and not key.upper().startswith(GIT_CONFIG_PREFIX)
+    }
+    kept.update(GIT_FIXED_ENVIRONMENT)
+    return kept
+
+
+def git_executable(path_value: str | None) -> str:
+    """The first git executable in an absolute directory of `path_value`; the current directory is never searched."""
+    names = ("git.exe", "git.com") if os.name == "nt" else ("git",)
+    for entry in (path_value or "").split(os.pathsep):
+        folder = entry.strip('"')
+        if not folder or not Path(folder).is_absolute():
+            continue
+        for name in names:
+            candidate = os.path.join(folder, name)
+            if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+                return candidate
+    raise ToolFault("cannot start git: no executable named git in an absolute PATH entry")
+
+
 def run_git(repo: Path, args: Sequence[str], stdin: bytes | None = None) -> GitResult:
     try:
-        done = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, input=stdin)
+        executable = git_executable(os.environ.get("PATH"))
+        done = subprocess.run(
+            [executable, "-C", str(repo), NO_REPLACE_FLAG, *args],
+            capture_output=True,
+            input=stdin,
+            env=git_environment(os.environ),
+        )
     except OSError as error:
         raise ToolFault(f"cannot start git: {error}") from error
     return GitResult(done.returncode, done.stdout, done.stderr.decode("utf-8", errors="replace").strip())
+
+
+def parse_tree(body: bytes, raw_width: int) -> dict[bytes, str]:
+    """Mode of each entry by name in the stored bytes of a tree whose object names are `raw_width` bytes."""
+    entries: dict[bytes, str] = {}
+    position = 0
+    while position < len(body):
+        space = body.find(b" ", position)
+        nul = body.find(b"\0", space + 1) if space >= 0 else -1
+        if space < 0 or nul < 0 or nul + 1 + raw_width > len(body):
+            raise ToolFault("git cat-file --batch returned a tree outside its documented format")
+        name = body[space + 1 : nul]
+        if name in entries:
+            raise ToolFault("git cat-file --batch returned a tree that names an entry twice")
+        entries[name] = body[position:space].decode("ascii", errors="replace")
+        position = nul + 1 + raw_width
+    return entries
+
+
+def is_missing_answer(header: bytes, name: bytes) -> bool:
+    """True when `header` is `<name> missing` or `<object name> missing` for exactly this request."""
+    subject, _, word = header.rpartition(b" ")
+    return word == b"missing" and (
+        subject == name or OBJECT_NAME.fullmatch(subject.decode("ascii", errors="replace")) is not None
+    )
 
 
 class GitView:
@@ -300,6 +415,13 @@ class GitView:
         self._repo = repo
         self._candidate = candidate
         self._cache: dict[str, str | None] = {}
+        self._faults: dict[str, ToolFault] = {}
+        self._trees: dict[str, TreeRead | None] = {}
+        self._unusable: ToolFault | None = None
+
+    def mark_unusable(self, fault: ToolFault) -> None:
+        """Every later lookup raises `fault` without starting git."""
+        self._unusable = fault
 
     def verify(self) -> None:
         inside = run_git(self._repo, ["rev-parse", "--git-dir"])
@@ -317,13 +439,18 @@ class GitView:
 
     def _ask(self, mode: str, request: bytes) -> bytes:
         """The standard output of `git cat-file <mode>` for one request line; any failure is a tool fault."""
+        if self._unusable is not None:
+            raise self._unusable
         asked = run_git(self._repo, ["cat-file", mode], request)
         if asked.returncode != 0:
             raise ToolFault(f"git cat-file {mode} exited {asked.returncode}: {asked.stderr}")
         return asked.stdout
 
     def _blob(self, path: str) -> bytes | None:
-        """The stored bytes of `<candidate>:<path>`; None when it is missing or not a blob."""
+        """The stored bytes of `<candidate>:<path>`; None when it is absent or not a blob.
+
+        An object that the candidate's own tree names as a blob but the object store cannot serve is a tool fault.
+        """
         problem = digest_path_problem(path)
         if problem is not None:  # a caller must have judged the form; git is never asked about this path
             raise ToolFault(f"internal error: lookup of a non-canonical path {printable(path)}: {problem}")
@@ -333,8 +460,8 @@ class GitView:
         first, newline, rest = reply.partition(b"\n")
         if not newline or rest:
             raise ToolFault("git cat-file --batch-check answered outside its documented format")
-        subject, _, word = first.rpartition(b" ")
-        if word == b"missing" and (subject == name or OBJECT_NAME.fullmatch(subject.decode("ascii", errors="replace"))):
+        if is_missing_answer(first, name):
+            self._settle_missing(path, final=True)
             return None
         checked = OBJECT_REPLY.fullmatch(first.decode("ascii", errors="replace"))
         if checked is None:
@@ -352,6 +479,64 @@ class GitView:
             raise ToolFault("git cat-file --batch returned a body that does not match its size")
         return body[:size]
 
+    def _read_tree(self, folder: str) -> TreeRead | None:
+        """The object `<candidate>:<folder>` read through standard input (the root tree for an empty folder)."""
+        if folder not in self._trees:
+            name = f"{self._candidate}:{folder}".encode(BYTE_CODEC)
+            fetched = self._ask("--batch", name + b"\n")
+            header, newline, body = fetched.partition(b"\n")
+            if not newline:
+                raise ToolFault("git cat-file --batch answered outside its documented format")
+            if is_missing_answer(header, name):
+                if body:
+                    raise ToolFault("git cat-file --batch answered outside its documented format")
+                self._trees[folder] = None
+            else:
+                matched = OBJECT_REPLY.fullmatch(header.decode("ascii", errors="replace"))
+                if matched is None:
+                    raise ToolFault("git cat-file --batch answered outside its documented format")
+                if matched.group(3) is None:  # a submodule entry whose object is absent has no size and no body
+                    if matched.group(2) != SUBMODULE or body:
+                        raise ToolFault("git cat-file --batch answered outside its documented format")
+                    self._trees[folder] = TreeRead(SUBMODULE, {})
+                    return self._trees[folder]
+                size = int(matched.group(3))
+                if len(body) != size + 1 or not body.endswith(b"\n"):
+                    raise ToolFault("git cat-file --batch returned a body that does not match its size")
+                kind = matched.group(2)
+                entries = parse_tree(body[:size], len(matched.group(1)) // 2) if kind == TREE else {}
+                self._trees[folder] = TreeRead(kind, entries)
+        return self._trees[folder]
+
+    def _settle_missing(self, path: str, final: bool) -> None:
+        """`path` was answered `missing`: return when it is absent or names no blob, raise when its tree names it.
+
+        The parent tree decides. An entry that tree names as a blob (or, for a directory that has to be
+        entered, as a tree) is an object the store cannot serve: a tool fault. A submodule entry is no blob.
+        """
+        folder, _, leaf = path.rpartition("/")
+        parent = self._read_tree(folder)
+        if parent is None:
+            if not folder:
+                raise ToolFault(f"the root tree of candidate {self._candidate} cannot be served by the object store")
+            self._settle_missing(folder, final=False)  # the parent is absent, or named by its own parent and unservable
+            return
+        if parent.kind != TREE:
+            return  # the parent is a file or a submodule entry, so nothing lies below it
+        mode = parent.entries.get(leaf.encode(BYTE_CODEC))
+        if mode is None or mode == GITLINK_MODE:
+            return
+        if mode == TREE_MODE and final:
+            return  # a directory is no blob
+        if mode in BLOB_MODES and not final:
+            return  # a file has nothing below it
+        if mode == TREE_MODE or mode in BLOB_MODES:
+            raise ToolFault(
+                f"git cannot serve {printable(path)} at candidate {self._candidate}: "
+                "its tree names the entry but the object store does not hold it"
+            )
+        raise ToolFault(f"the tree of {printable(folder or '.')} names {printable(path)} with the unknown mode {mode}")
+
     def required_digest(self, path: str) -> str:
         """sha256 of a blob of the candidate; a path that is not a blob there is a tool fault."""
         digest = self.digest_or_absent(path)
@@ -360,9 +545,15 @@ class GitView:
         return digest
 
     def digest_or_absent(self, path: str) -> str | None:
-        """sha256 of the blob, or None when the path is missing or not a blob (a red, not a fault)."""
+        """sha256 of the blob, or None when the path is absent or not a blob (a red, not a fault)."""
+        if path in self._faults:
+            raise self._faults[path]
         if path not in self._cache:
-            data = self._blob(path)
+            try:
+                data = self._blob(path)
+            except ToolFault as error:
+                self._faults[path] = error
+                raise
             self._cache[path] = None if data is None else hashlib.sha256(data).hexdigest()
         return self._cache[path]
 
@@ -503,7 +694,7 @@ def check_statement(section: Section, require_cells: Sequence[str]) -> list[Defe
     return defects
 
 
-def check_digests(section: Section, args: Arguments, git: GitView) -> list[Defect]:
+def check_digests(section: Section, args: Arguments, git: GitView, report: Report) -> list[Defect]:
     defects: list[Defect] = []
     listed: dict[str, list[str]] = {}
     for line in section.digest_lines:
@@ -522,7 +713,11 @@ def check_digests(section: Section, args: Arguments, git: GitView) -> list[Defec
         if tool not in listed:
             defects.append(Defect(DefectCode.TOOL_DIGEST_MISSING, section.heading, tool))
     for path, values in listed.items():
-        expected = git.digest_or_absent(path)
+        try:
+            expected = git.digest_or_absent(path)
+        except ToolFault as error:  # git cannot serve this line: a fault, and the line is not judged
+            report.fault(str(error))
+            continue
         for value in values:
             if expected is None:
                 defects.append(
@@ -539,14 +734,18 @@ def check_digests(section: Section, args: Arguments, git: GitView) -> list[Defec
     return defects
 
 
-def check_capture(section: Section, evidence_root: Path) -> list[Defect]:
+def check_capture(section: Section, evidence_root: Path, report: Report) -> list[Defect]:
     defects: list[Defect] = []
     raw = section.fields.get("capture", "")
     target = resolve_capture(evidence_root, raw)
     if target is None or not target.is_file():
         defects.append(Defect(DefectCode.CAPTURE_MISSING, section.heading, f"'{raw}' is not a file under the evidence root"))
         return defects
-    data = read_bytes(target)
+    try:
+        data = read_bytes(target)
+    except ToolFault as error:  # the capture exists but cannot be read: a fault, and the cell's capture is not judged
+        report.fault(str(error))
+        return defects
     if CR in data:
         defects.append(Defect(DefectCode.CAPTURE_CR, section.heading, f"'{raw}' holds {data.count(CR)} CR bytes"))
     if section.fence_count == 0 or not section.block_closed:
@@ -577,7 +776,9 @@ def check_capture(section: Section, evidence_root: Path) -> list[Defect]:
     return defects
 
 
-def check_run_cell(section: Section, args: Arguments, git: GitView, evidence_root: Path) -> list[Defect]:
+def check_run_cell(
+    section: Section, args: Arguments, git: GitView, evidence_root: Path | None, report: Report
+) -> list[Defect]:
     defects: list[Defect] = []
     for name in REPEAT_ORDER:
         if name in section.repeated:
@@ -593,20 +794,20 @@ def check_run_cell(section: Section, args: Arguments, git: GitView, evidence_roo
     if not section.has_digest_label:
         defects.append(Defect(DefectCode.CELL_FIELD_MISSING, section.heading, "tool_digest:"))
     else:
-        defects.extend(check_digests(section, args, git))
+        defects.extend(check_digests(section, args, git, report))
     if not section.fields.get("capture"):
         defects.append(Defect(DefectCode.CELL_FIELD_MISSING, section.heading, "capture"))
     if not section.fields.get("exit"):
         defects.append(Defect(DefectCode.CELL_FIELD_MISSING, section.heading, "exit"))
-    if section.fields.get("capture"):
-        defects.extend(check_capture(section, evidence_root))
+    if section.fields.get("capture") and evidence_root is not None:
+        defects.extend(check_capture(section, evidence_root, report))
     return defects
 
 
-def check_receipt(text: str, args: Arguments, git: GitView, evidence_root: Path) -> tuple[int, list[Defect]]:
-    defects: list[Defect] = []
+def check_receipt(text: str, args: Arguments, git: GitView, evidence_root: Path | None, report: Report) -> None:
+    """Judge every section; the reds and the run-cell count go into `report` as they are found."""
+    defects = report.defects
     run_names: dict[str, str] = {}
-    cells = 0
     for section in parse_sections(text):
         value = section.cell_value
         if has_bad_text(section.heading) or (value is not None and has_bad_text(value)):
@@ -623,7 +824,7 @@ def check_receipt(text: str, args: Arguments, git: GitView, evidence_root: Path)
         if not value:
             defects.append(Defect(DefectCode.NOT_RUN, section.heading, "cell: line names no cell"))
             continue
-        cells += 1
+        report.cells += 1
         if value != section.heading:
             defects.append(
                 Defect(DefectCode.CELL_NAME_MISMATCH, section.heading, f"cell: line names '{value}', the heading names '{section.heading}'")
@@ -634,13 +835,12 @@ def check_receipt(text: str, args: Arguments, git: GitView, evidence_root: Path)
             )
         else:
             run_names[value] = section.heading
-        defects.extend(check_run_cell(section, args, git, evidence_root))
-    if cells == 0:
+        defects.extend(check_run_cell(section, args, git, evidence_root, report))
+    if report.cells == 0:
         defects.append(Defect(DefectCode.NO_CELLS, RECEIPT_SECTION, "the receipt holds no run cell"))
     for name in args.require_cells:
         if name not in run_names:
             defects.append(Defect(DefectCode.NOT_RUN, name, "required cell has no run cell"))
-    return cells, defects
 
 
 # ----------------------------------------------------------------------------- entry points
@@ -653,20 +853,47 @@ def read_receipt(path: Path) -> bytes:
         raise ToolFault(f"cannot read receipt {path}: {error}") from error
 
 
+def conclude(report: Report) -> int:
+    """Print the outcome: every red on standard output, every fault on standard error, red before fault."""
+    if report.defects:
+        for defect in report.defects:
+            print(defect.render())
+        print(f"cells={report.cells} defects={len(report.defects)}")
+    for message in report.faults:
+        print(f"tool fault: {printable(message)}", file=sys.stderr)
+    if report.defects:
+        return EXIT_RED
+    if report.faults:
+        return EXIT_FAULT
+    print(f"cells={report.cells} defects=0")
+    return EXIT_PASS
+
+
 def execute(args: Arguments) -> int:
-    raw = read_receipt(args.receipt)
-    evidence_root = args.evidence_root if args.evidence_root is not None else args.receipt.resolve().parent
-    if not evidence_root.is_dir():
-        raise ToolFault(f"evidence root {evidence_root} is not a readable directory")
+    raw = read_receipt(args.receipt)  # without the receipt no red can be found at all
+    report = Report()
+    evidence_root: Path | None = args.evidence_root if args.evidence_root is not None else args.receipt.resolve().parent
+    if evidence_root is not None and not evidence_root.is_dir():
+        report.fault(f"evidence root {evidence_root} is not a readable directory")
+        evidence_root = None  # the captures cannot be judged; every other check still runs
     git = GitView(args.repo, args.candidate)
-    git.verify()
+    try:
+        git.verify()
+    except ToolFault as error:  # git cannot serve any lookup; the checks that need none still run
+        git.mark_unusable(error)
+        report.fault(str(error))
     for tool in args.tools:
-        git.required_digest(tool)
-    cells, defects = check_receipt(decode_receipt(raw), args, git, evidence_root)
-    for defect in defects:
-        print(defect.render())
-    print(f"cells={cells} defects={len(defects)}")
-    return EXIT_PASS if not defects else EXIT_RED
+        try:
+            git.required_digest(tool)
+        except ToolFault as error:
+            report.fault(str(error))
+    try:
+        check_receipt(decode_receipt(raw), args, git, evidence_root, report)
+    except ToolFault as error:
+        report.fault(str(error))
+    except Exception as error:  # an unexpected error is a tool fault, never a red; the reds found so far stand
+        report.fault(f"unexpected {type(error).__name__}: {error}")
+    return conclude(report)
 
 
 def main(argv: Sequence[str]) -> int:

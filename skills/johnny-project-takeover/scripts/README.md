@@ -106,7 +106,9 @@ the blob at `<candidate>:<path>` in `--repo`. `--evidence-root` defaults to the 
 directory. The receipt's own CRLF line endings are normalised; captures are not.
 
 Exit 0 prints `cells=N defects=0`. Exit 1 prints one line `<code> <section>: <detail>` per
-defect, then `cells=N defects=M`. Defect codes: `NO_CELLS`, `NOT_RUN` (a section without a
+defect, then `cells=N defects=M`; a tool fault met on the way is printed on standard error, one
+line each, beside the reds (red before fault: the gate reports every red it can find and exits `2`
+only when it found none). Defect codes: `NO_CELLS`, `NOT_RUN` (a section without a
 `cell:` line, or a `--require-cell` name with no run cell), `CELL_FIELD_MISSING`,
 `STATEMENT_HAS_RUN_FIELDS`, `DUPLICATE_CELL`, `CANDIDATE_MISMATCH`, `TOOL_DIGEST_MISSING`,
 `TOOL_DIGEST_STALE`, `CAPTURE_MISSING` (also a path that escapes the evidence root: an
@@ -126,14 +128,22 @@ written to the standard input of `git cat-file --batch-check` (and, for a blob, 
 `git cat-file --batch`), never passed to git as a pathspec or on its command line, so
 existence and content come from the same lookup. A missing object, or one that is not a blob
 (a tree, a submodule entry), is `TOOL_DIGEST_STALE`; a symbolic link is a blob and is read as
-stored. The repository root is found from `--repo`, so it may be any directory inside the
+stored. A `missing` answer is told apart from an object the store cannot serve: the parent tree
+is read through the same standard input, and an entry that tree names as a blob is a tool fault
+(`2` when no red was found), while a path the tree does not name is `TOOL_DIGEST_STALE`. Every
+git child runs with `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1` and `GIT_NO_LAZY_FETCH=1`,
+with the repository-selecting `GIT_*` variables and the `GIT_CONFIG_*` variables removed, so a
+replace ref never redirects a lookup and a lookup never fetches; `git` is started from the `PATH`
+entries that are absolute directories, never from the current directory. The repository root is found from `--repo`, so it may be any directory inside the
 repository. A string in the
 receipt that holds a lone surrogate or a control character is a red (a capture reference is
 `CAPTURE_MISSING`, a section or cell name is `NOT_RUN`), never a fault, and every printed
-subject is escaped so one defect is always one line. Exit 2: the receipt or a capture cannot be read, the evidence root is
+subject is escaped so one defect is always one line. Exit 2 (no red found): the receipt or a capture cannot be read, the evidence root is
 not a directory, `git` cannot start, `--repo` is not a repository, the candidate cannot be
-resolved, a `--tool` path is not a blob at it, `git cat-file` exits non-zero or answers outside
-its documented format (a failing lookup is never read as an absent path), or an unexpected
-error; the fault message is escaped to one line. Exit 3: a missing or unknown
+resolved, a `--tool` path is not a blob at it, a blob the candidate names is missing from the
+object store, `git cat-file` exits non-zero or answers outside its documented format (a failing
+lookup is never read as an absent path), or an unexpected error; each fault message is escaped
+to one line. A receipt that cannot be read ends the run at once, because no red can be found
+without it. Exit 3: a missing or unknown
 argument, no `--tool`, a blank `--tool` or `--require-cell`, a `--tool` path that is not canonical, a `--candidate` that is not a
 full 40-character lower-case sha. Output uses LF line endings.
