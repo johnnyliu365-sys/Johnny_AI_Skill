@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision05 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 correction review `CONVERGENCE_REVIEW_REQUIRED`: S52-28 to S52-30, evidence only; revision05 initial review CHANGES_REQUESTED (evidence only); correction 1 dispatched） |
+| 狀態 | `CONVERGENCE_HELD`（revision05 correction review `CONVERGENCE_REVIEW_REQUIRED`, evidence only, on `91beb02d`; held for the owner's convergence-rule decision; see the review record） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/52-requirement-snapshot` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/52-requirement-snapshot-review` |

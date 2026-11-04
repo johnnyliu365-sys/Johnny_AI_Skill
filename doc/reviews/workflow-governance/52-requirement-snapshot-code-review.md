@@ -384,3 +384,59 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/52-rev05-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision05 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `91beb02d58592eec106bfdee583e93be90d2e663` (`91beb02d` correction 1 → `83a47e64` → `09ef0dbc` → `7649f1b8` → `bea0cf0c` → `ac95c321` → `3c485efc` → `21ac4fda` → `dbd74358`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review CodeReview §5 allows for revision05 |
+| Summary | Correction 1 closes S52-33, S52-34 and S52-35. The candidate behaves as the closure says: 89 of 89 probes pass, 60 real races give no duplicate, every input-derived failure is a red. Seven counter-mutations stay green across four evidence gaps (S52-37 to S52-40); no exit code changes on the candidate and no safety or confinement property breaks. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 230 passed, 542 subtests; mypy --strict clean |
+| S52-33 | PASS | `NaN`, `Infinity`, `-Infinity` are reds in every position probed |
+| S52-34 | PASS for ESC, TAB, NUL, DEL | the range end U+001F unpinned (S52-40) |
+| S52-35 | PASS | every pair of every duplicate reported |
+| S52-36 | PARTIAL | in-name shapes unpinned (S52-38) |
+| Regression; version claim under real races | PASS | 60 races, no duplicate |
+| Reverse mutations | PARTIAL | seat 23 red; reviewer 31: 24 red, 7 green, none equivalent |
+| Receipt / boundary | PASS | checker 0 defects with P9; digests recomputed; LF; additions-only tests |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S52-01 to S52-35 | CLOSED (S52-34 for the four named characters) |
+| S52-36 | PARTIALLY CLOSED (S52-38) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S52-37 | EVIDENCE_DEFECT | Low (evidence gap only) | `requirement_snapshot.py:684`; tests | "equal rows write nothing" pinned only when the latest version is v1 | K50 green |
+| S52-38 | EVIDENCE_DEFECT | Low (evidence gap only) | `requirement_snapshot.py:108`; tests | the exact version-file name pinned against suffix and prefix strays only (unescaped dot, loose date, case) | K30, K31, K32 green |
+| S52-39 | EVIDENCE_DEFECT | Low (evidence gap only) | `requirement_snapshot.py:569` | the exact claim-file name unpinned | K33, K34 green |
+| S52-40 | EVIDENCE_DEFECT | Low (evidence gap only) | `requirement_snapshot.py:115`; tests | the escape of U+001F unpinned | K13 green |
+| S52-41 | OUT_OF_SCOPE_HARDENING | Low | `requirement_snapshot.py:115, 641` | C1 controls other than NEL print raw from a root path; outside the ticket's control-character range | probe |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: the POSIX publish branch; a case-sensitive file system; an ACL-unwritable root; non-Windows console encodings; the timing bound on another host.
+
+```review-verdict
+candidate: 91beb02d58592eec106bfdee583e93be90d2e663
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/52-rev05-correction
+reviewed_at: 2026-11-05
+```
+
+### Control-plane disposition (2026-11-05): held for the owner
+
+Nine reviews of this ticket; the last three found the candidate behaviourally correct and only tests that do not pin it (S52-28 to S52-30, S52-34 to S52-36, now S52-37 to S52-40). Under CodeReview §5 as written, the next step is closure revision06 for four more tests, and the pattern shows the next correction review will find further unpinned spellings. The control plane does not open revision06. The ticket is held until the owner decides the convergence rule proposed on 2026-11-04 (blocking: R4-2 exit misclassification, safety or confinement, P0; carried to a hardening ticket: evidence-only gaps on a behaviourally correct candidate). Under the proposed rule this candidate would be approvable with S52-37 to S52-41 carried; under the current rule revision06 opens on the owner's word.
