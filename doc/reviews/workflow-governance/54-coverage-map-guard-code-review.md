@@ -124,3 +124,55 @@ verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/54-rev02-correction
 reviewed_at: 2026-11-04
 ```
+
+## Revision03 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `b111300eb02d541244b24123aff9ebc102e389a8` (`b111300e` pre-review addition → `f308f400` implementation 3 → `41482294` → `285e6df8` → `8c91e85d`, on `c0ab4a08`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision03 |
+| Exit mapping | 0/1/2/3 with exit 2 for faults (R4-7); red before fault reviewed as binding; the R4-2 table row awaits the owner |
+| Summary | S54-09 to S54-12 are closed; the git-environment rule holds under probes (replace refs on blobs, trees and commits, `core.useReplaceRefs`, `GIT_CONFIG_PARAMETERS`, partial clone, scrubbed variables); the regression pass is clean; every seat mutation is red. Open, evidence only: five red-before-fault edges (S54-13) and the `GIT_CONFIG_*` prefix (S54-14). Hardening: grafts move a relative `--base` (S54-15). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Identity / boundary / payload | PASS | three files per commit; Johnny Liu; trailer names the working model |
+| Ticket tests / mypy | PASS | 113 passed, 238 subtests; mypy --strict clean |
+| S54-09, S54-11, S54-12 | PASS | empty tree objects at `--specs` and at the map path; scrubbed variables; repeated keys in every position |
+| Git-environment rule | PASS with findings | S54-14, S54-15 |
+| Red before fault | PASS with finding | S54-13 |
+| One line per subject; regression S54-01 to S54-08 | PASS | |
+| Seat mutations | PASS | 25 of 25 and 6 of 6 red; seven re-expressed at the candidate, all red |
+| Reviewer counter-mutations | FINDING | 16 run: 10 red, X5 to X10 green |
+| Receipts / README | PASS | both receipts 0 defects; digests recomputed per commit; LF; P9 present |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S54-01 to S54-07, S54-09 to S54-12 | CLOSED |
+| S54-08 | not taken, confirmed in the README |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S54-13 | EVIDENCE_DEFECT | Low (exit code in mutants; not safety) | `coverage_map.py:587, 406, 430, 635, 457-460`; tests `:917-987` | five red-before-fault edges unpinned: the `::` separator in the unknown-path match; a non-`ToolFault` error in three stages losing reds; a spec whose base blob cannot be read inventing `CARRIED_TARGET_MISSING` | X5 to X8, X10 green |
+| S54-14 | EVIDENCE_DEFECT | Low | `coverage_map.py:259`; test `:1303` | the `GIT_CONFIG_*` removal is pinned for two names only | X9 green |
+| S54-15 | OUT_OF_SCOPE_HARDENING | Low (safety: a removed test can escape with a relative revision and a local graft) | `coverage_map.py:292-296, 269` | `--no-replace-objects` does not disable grafts; with `info/grafts` or `GIT_GRAFT_FILE`, `--base main^` resolves to the grafted parent and a real removal gives `removed=0` | probes |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: a Linux or POSIX host; SHA-256 repositories; lazy fetch over a network protocol; git older than 2.44; commit-graph content; the seat's own mutation drivers; fast-forward onto the wave-2 tip.
+
+```review-verdict
+candidate: b111300eb02d541244b24123aff9ebc102e389a8
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/54-rev03-initial
+reviewed_at: 2026-11-04
+```

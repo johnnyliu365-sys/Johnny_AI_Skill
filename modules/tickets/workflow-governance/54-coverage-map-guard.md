@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision03 / receipt under `.worktrees/54-coverage-map-guard-out/` / owner implementation seat / worktree `.worktrees/54-coverage-map-guard` / branch `cp/wave2-54-coverage-map-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S54-09, S54-10; implementation 3 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S54-09, S54-10; revision03 initial review CHANGES_REQUESTED (evidence only); correction 1 dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/54-coverage-map-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/54-coverage-map-guard-review` |
@@ -160,3 +160,7 @@ Review record section "Revision02 correction review". CodeReview §5: revision02
 ### Disposition correction (revision03, during implementation 3)
 
 The ticket 51 revision03 review found that git follows replace refs in `cat-file` and `ls-tree`, so a blob read "at HEAD" or "at a commit" can be another object (S51-16), and that a lookup can fetch over the network in a partial clone. The same applies here. Added to this revision: Every git child runs with `--no-replace-objects` (and `GIT_NO_REPLACE_OBJECTS=1`), with `GIT_NO_LAZY_FETCH=1`, and with the repository-selecting `GIT_*` variables removed (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`, and the `GIT_CONFIG_*` variables); a replace ref never redirects a lookup and a lookup never fetches over the network. One test with `git replace` on a blob this gate reads. Nothing else changes.
+
+### Correction 1 under revision03 (after the revision03 initial review `CHANGES_REQUESTED`)
+
+No ticket defect was found, so revision03 stands; the blocking items are tests. S54-13: one test per red-before-fault edge the review names (the `::` separator in the unknown-path match; a non-tool-fault error in opening a side, in listing tests and in reading the map, each keeping the reds found so far; a spec whose base blob cannot be read never inventing `CARRIED_TARGET_MISSING`). S54-14: a test that sets the whole `GIT_CONFIG_*` family. Taken now, S54-15: every git child also runs with `GIT_GRAFT_FILE` pointing at a path that does not exist, after any inherited value is dropped, so grafts cannot move a relative revision; a test with `info/grafts` and one with an inherited `GIT_GRAFT_FILE`, each with `--base main^`. The next review is the one correction review of revision03.
