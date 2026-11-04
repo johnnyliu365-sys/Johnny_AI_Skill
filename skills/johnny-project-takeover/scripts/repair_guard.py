@@ -15,16 +15,28 @@ The guard also always protects the directory this script lives in (the gate scri
 whether or not `protected_paths` names it. An empty allowlist makes every change an outside
 change; an empty protected list leaves only the gate scripts protected.
 
-The changed paths of the repair commit are read from `git diff --name-status -M -z`
-against its first parent, with quoting off. Added, modified, deleted, type-changed and
-renamed paths all count, and a rename counts on both its old and its new side. A root
-commit is compared against the empty tree, which is asked from git for the object format
-of the repository and never written down here. Submodule pointers (gitlinks) always
-count: the diff runs with submodule ignoring switched off both in the configuration and on
-the command line, so neither the ignore setting of a tracked submodule list nor a
-repository setting can hide a moved pointer; external diff drivers and text conversion are
-off. Replace refs are ignored, and the environment variables that select a repository are
-removed from every git child.
+History is read from raw objects, never from git's answer about ancestry. The repair
+commit is resolved to its object id, then read as a raw commit object through
+`git cat-file --batch` (the id on standard input, replace refs off): its `tree` line and
+its `parent` lines come from that object, and its first parent is read the same way for
+its tree. The changed paths are those of `git diff --name-status -M -z` between the two
+tree ids, with quoting off, so a graft file (in the repository, in the common directory of
+a linked work tree, or named by the environment), a replace ref or a shallow file cannot
+change which parent or which trees are compared. A merge is recognised from its parent
+lines; a root commit is compared against the empty tree, which is asked from git for the
+object format of the repository and never written down here; a first parent the object
+store cannot serve is a fault. Added, modified, deleted, type-changed and renamed paths
+all count, and a rename counts on both its old and its new side. Submodule pointers
+(gitlinks) always count: the diff runs with submodule ignoring switched off both in the
+configuration and on the command line, so neither the ignore setting of a tracked
+submodule list nor a repository setting can hide a moved pointer; external diff drivers
+and text conversion are off. The revision given to `--repair` names a commit by id or by
+reference; a name that uses an ancestry or path operator is a usage error, because git
+would answer it through the history that grafts rewrite.
+
+Every git child runs with the environment variables that select a repository, a graft
+file, a shallow file, a replace ref base or a configuration removed, and with replace
+objects and lazy fetching switched off.
 
 Matching is by path segment, never by character prefix: the directory entry `d/` covers
 `d/x` and does not cover `d2/x` or a path named exactly `d`. Entries are compared exactly;
@@ -48,8 +60,10 @@ Every printed subject is escaped with Python `repr`, so one defect is always one
 exit 0 the only output is `paths=N defects=0`, where N counts the distinct changed paths.
 
 A dispatch that holds a text defect is a red by itself and its entries cannot be trusted,
-so the changed paths are then checked for text values only, not against the entries; git is
-still asked, so the single-parent red and any fault are reported too.
+so no entry is used: the allowlist and the protected entries are not judged. Every rule
+that needs no entry still applies: the text values of the changed paths, the single-parent
+rule and the protection of the gate scripts, so a change to a gate script is reported next
+to the text red. git is still asked, so any fault is reported too.
 
 The dispatch file is decoded as UTF-8 with surrogate escapes, so no byte sequence makes it
 unreadable. An undecodable byte or a raw control character on a block line (inside or
@@ -67,8 +81,10 @@ output and a usage error (exit 3) in an argument.
 
 Red before fault: the guard reports every red it can find and exits 1 when there is one,
 with the fault printed on standard error. It exits 2 only when it found no red. The one
-exception is output that cannot be written: then no verdict can be delivered and the exit
-is 2 whatever was found.
+exception is standard output that cannot be written: then no verdict can be delivered and
+the exit is 2 whatever was found. A standard error that cannot be written decides the exit
+only when there is nothing else to deliver: when every red line reached standard output
+the exit is still 1.
 """
 from __future__ import annotations
 
@@ -104,7 +120,8 @@ GIT_TIMEOUT_SECONDS = 300.0
 DIFF_OPTIONS = ("-c", "diff.ignoreSubmodules=none")
 DIFF_FLAGS = ("--name-status", "-M", "-z", "--ignore-submodules=none", "--no-ext-diff", "--no-textconv")
 DRIVE_PREFIX = re.compile(r"^[A-Za-z]:")
-# Environment variables that would point git at some other repository than --repo.
+# Environment variables that would point git at some other repository than --repo, or at
+# other history, objects or settings than the repository itself holds.
 GIT_SELECTORS = (
     "GIT_DIR",
     "GIT_WORK_TREE",
@@ -116,7 +133,18 @@ GIT_SELECTORS = (
     "GIT_PREFIX",
     "GIT_CEILING_DIRECTORIES",
     "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+    "GIT_GRAFT_FILE",
+    "GIT_SHALLOW_FILE",
+    "GIT_REPLACE_REF_BASE",
+    "GIT_CONFIG",
 )
+# Every variable whose name starts with this prefix is removed (the configuration ones).
+GIT_SCRUBBED_PREFIX = "GIT_CONFIG_"
+# Variables every git child gets: replace objects off, no lazy fetch from a remote.
+GIT_FORCED = (("GIT_NO_REPLACE_OBJECTS", "1"), ("GIT_NO_LAZY_FETCH", "1"))
+OBJECT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})")
+# A revision that goes through ancestry or a path: git answers these through rewritten history.
+ANCESTRY_MARKS = ("^", "~", ":", "@{")
 
 
 class UsageError(Exception):
@@ -167,6 +195,14 @@ class Arguments:
     repo: str
     repair: str
     dispatch: str
+
+
+@dataclass(frozen=True)
+class RawCommit:
+    """The tree and the parents a raw commit object names; nothing git infers."""
+
+    tree: str
+    parents: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -292,19 +328,19 @@ def check_paths(
 ) -> list[Defect]:
     """Defects of the changed `paths` against the rules; the gate directory is always protected.
 
-    With `judge_rules` False only the text values of the paths are checked: the rules came
-    from a dispatch that already holds a text defect, so an entry may be missing from them
-    and neither an outside path nor a protected one can be judged fairly.
+    With `judge_rules` False the rules came from a dispatch that already holds a text
+    defect, so no entry is used: neither an outside path nor a path under a protected
+    entry can be judged fairly. What needs no entry still applies: the text values of the
+    paths and the protection of the gate directory.
     """
-    guarded = (*protected, PathRule(GATE_DIRECTORY, True))
+    gate = PathRule(GATE_DIRECTORY, True)
+    guarded = (*protected, gate) if judge_rules else (gate,)
     defects: list[Defect] = []
     for path in paths:
         problem = bad_character(path)
         if problem is not None:
             defects.append(Defect(TEXT_VALUE_INVALID, quote(path), f"a changed path holds {problem}"))
-        if not judge_rules:
-            continue
-        if not any(rule.covers(path, case_insensitive, False) for rule in allowlist):
+        if judge_rules and not any(rule.covers(path, case_insensitive, False) for rule in allowlist):
             defects.append(Defect(OUTSIDE_ALLOWLIST, quote(path), ""))
         hit = next((rule for rule in guarded if rule.covers(path, case_insensitive, True)), None)
         if hit is not None:
@@ -333,9 +369,14 @@ def parse_name_status(data: bytes) -> list[str]:
 
 
 def _git_environment() -> dict[str, str]:
-    environment = dict(os.environ)
-    for name in GIT_SELECTORS:
-        environment.pop(name, None)
+    """The environment of a git child: nothing that selects other history or settings."""
+    removed = frozenset(GIT_SELECTORS)
+    environment = {
+        name: value
+        for name, value in os.environ.items()
+        if name.upper() not in removed and not name.upper().startswith(GIT_SCRUBBED_PREFIX)
+    }
+    environment.update(GIT_FORCED)
     return environment
 
 
@@ -378,24 +419,80 @@ def require_repository_top(repo: str) -> None:
         raise ToolFault(f"{quote(repo)} is not the top level of a repository (it is inside {quote(top)})")
 
 
+def _object_id(text: str, what: str) -> str:
+    if OBJECT_ID.fullmatch(text) is None:
+        raise ToolFault(f"git gave {what} that is not an object id: {quote(text)}")
+    return text
+
+
+def parse_commit(oid: str, body: bytes) -> RawCommit:
+    """The tree and the parents of a raw commit object, read as git itself reads them.
+
+    The header lines are the ones before the first blank line: `tree` comes first and the
+    `parent` lines follow it directly; every other header is not read.
+    """
+    lines = body.split(b"\n\n", 1)[0].split(b"\n")
+    width = len(oid)
+
+    def field(line: bytes, key: bytes) -> str:
+        value = line[len(key):].decode("ascii", errors="replace")
+        if not line.startswith(key) or len(value) != width or OBJECT_ID.fullmatch(value) is None:
+            shown = quote(line.decode("utf-8", errors="replace"))
+            raise ToolFault(f"the commit {quote(oid)} has a header line that cannot be read: {shown}")
+        return value
+
+    tree = field(lines[0], b"tree ")
+    parents: list[str] = []
+    for line in lines[1:]:
+        if not line.startswith(b"parent "):
+            break
+        parents.append(field(line, b"parent "))
+    return RawCommit(tree=tree, parents=tuple(parents))
+
+
+def read_commit(repo: str, oid: str) -> RawCommit:
+    """Read the commit object `oid` raw from the object store (replace refs off)."""
+    data = run_git(repo, ["cat-file", "--batch"], stdin=(oid + "\n").encode("ascii"))
+    end = data.find(b"\n")
+    header = data[:end].decode("ascii", errors="replace").split(" ") if end >= 0 else []
+    if len(header) == 2 and header[0] == oid and header[1] == "missing":
+        raise ToolFault(f"the object {quote(oid)} cannot be read from the object store{_shallow_hint(repo)}")
+    if len(header) != 3 or header[0] != oid or header[1] != "commit" or not header[2].isdigit():
+        shown = data[: max(end, 0)].decode("utf-8", errors="replace")
+        raise ToolFault(f"git printed an object header that is not that of the commit {quote(oid)}: {quote(shown)}")
+    size = int(header[2])
+    body = data[end + 1:end + 1 + size]
+    if len(body) != size or data[end + 1 + size:] != b"\n":
+        raise ToolFault(f"git printed a body of the commit {quote(oid)} that is not {size} bytes")
+    return parse_commit(oid, body)
+
+
+def _shallow_hint(repo: str) -> str:
+    """A reason to add to a missing object: a shallow repository lacks the parents of its boundary."""
+    try:
+        shallow = _git_text(repo, ["rev-parse", "--is-shallow-repository"]) == "true"
+    except ToolFault:
+        return ""
+    return " (the repository is shallow)" if shallow else ""
+
+
 def changed_paths(repo: str, commit: str, reds: list[Defect]) -> list[str]:
     """The changed paths of `commit` against its first parent.
 
-    A merge or a root commit adds its red to `reds` before git is asked for the paths, so
-    the red stands even when that question fails.
+    The parents and the trees come from the raw commit objects, so no graft, replace ref
+    or shallow file can change them. A merge or a root commit adds its red to `reds`
+    before the first parent is read, so the red stands even when that read fails.
     """
-    sha = _git_text(repo, ["rev-parse", "--verify", f"{commit}^{{commit}}"])
-    parents = _git_text(repo, ["rev-list", "--parents", "-n", "1", sha]).split()[1:]
-    if not parents and _git_text(repo, ["rev-parse", "--is-shallow-repository"]) == "true":
-        raise ToolFault("the repository is shallow: a root commit cannot be told from the shallow boundary")
-    if len(parents) != 1:
-        kind = "a root commit" if not parents else f"a merge commit with {len(parents)} parents"
+    sha = _object_id(_git_text(repo, ["rev-parse", "--verify", f"{commit}^{{commit}}"]), "the commit id")
+    repair = read_commit(repo, sha)
+    if len(repair.parents) != 1:
+        kind = "a root commit" if not repair.parents else f"a merge commit with {len(repair.parents)} parents"
         reds.append(Defect(REPAIR_NOT_SINGLE_PARENT, quote(commit), f"the repair is {kind}"))
-    if parents:
-        base = parents[0]
+    if repair.parents:
+        base = read_commit(repo, repair.parents[0]).tree
     else:
         base = _git_text_stdin(repo, ["hash-object", "-t", "tree", "--stdin"])
-    data = run_git(repo, ["diff", *DIFF_FLAGS, base, sha], options=DIFF_OPTIONS)
+    data = run_git(repo, ["diff", *DIFF_FLAGS, base, repair.tree], options=DIFF_OPTIONS)
     return parse_name_status(data)
 
 
@@ -459,6 +556,8 @@ def parse_arguments(args: Sequence[str]) -> Arguments:
             raise UsageError(f"the value of {arg} must not be empty")
         if arg == "--repair" and value.startswith("-"):
             raise UsageError(f"the value of --repair must be a commit, got {quote(value)}")
+        if arg == "--repair" and any(mark in value for mark in ANCESTRY_MARKS):
+            raise UsageError(f"the value of --repair must name a commit by id or reference, got {quote(value)}")
         given[arg] = value
         index += 2
     for name in names:
@@ -504,7 +603,11 @@ def run(arguments: Arguments) -> int:
     if reds:
         _emit(sys.stdout, "".join(defect.line() + "\n" for defect in reds))
         if fault is not None:
-            _emit(sys.stderr, f"repair_guard.py: tool fault: {fault}\n")
+            # Every red reached standard output; a standard error that fails now loses only the fault.
+            try:
+                _emit(sys.stderr, f"repair_guard.py: tool fault: {fault}\n")
+            except OutputFault:
+                pass
         return EXIT_RED
     if fault is not None:
         _emit(sys.stderr, f"repair_guard.py: tool fault: {fault}\n")

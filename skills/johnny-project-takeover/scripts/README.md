@@ -102,12 +102,22 @@ carries two lines that start at column 0, each holding one JSON array of strings
 
 An entry ending in a slash covers that directory and everything under it, by whole path
 segment; any other entry is one exact path. The directory this script lives in (the gate
-scripts) is always protected, whether or not `protected_paths` names it. The changed paths
-are read from `git diff --name-status -M -z` against the first parent, with quoting off, so
-added, modified, deleted and renamed paths all count and a rename counts on both sides; a
-root commit is compared against the empty tree, which is asked from git for the object
-format of the repository and never written down in the script. Entries are never decoded or
-normalised.
+scripts) is always protected, whether or not `protected_paths` names it.
+
+History comes from raw objects. The guard resolves the repair commit to its object id and
+reads it as a raw commit object (`git cat-file --batch`, the id on standard input, replace
+refs off); its tree and its parents are the ones that object names, and its first parent is
+read the same way for its tree. The changed paths are those of `git diff --name-status -M
+-z` between the two tree ids, with quoting off, so added, modified, deleted and renamed
+paths all count and a rename counts on both sides. A graft file (in the repository, in the
+common directory of a linked work tree, or named by the environment), a replace ref or a
+shallow file therefore cannot change which parent or which trees are compared. A merge is
+recognised from its parent lines; a root commit is compared against the empty tree, which
+is asked from git for the object format of the repository and never written down in the
+script; a first parent the object store cannot serve is a fault. The revision given to
+`--repair` names a commit by id or by reference; a name with an ancestry or path operator
+(a caret, a tilde, a colon or an at-brace) is a usage error, because git answers those
+through the history that grafts rewrite. Entries are never decoded or normalised.
 
 What counts, whatever the repository says:
 
@@ -115,9 +125,12 @@ What counts, whatever the repository says:
   configuration and on the command line, so neither the ignore setting of a tracked
   submodule list nor a repository setting can hide it. External diff drivers and text
   conversion are off.
-- Replace refs are ignored, and the environment variables that select a repository (the
-  git directory, the work tree, the index file, the object directory, the alternate object
-  directories, the namespace and the ceiling directories) are removed from every git child.
+- Replace refs are ignored. The environment variables that select a repository, history
+  or settings (the git directory, the common directory, the work tree, the index file, the
+  object directory, the alternate object directories, the namespace, the ceiling
+  directories, the graft file, the shallow file, the replace ref base and every
+  configuration variable) are removed from every git child, which runs with replace objects
+  and lazy fetching switched off.
 
 Case on Windows is compared in the direction that fails closed. An allowlist entry covers a
 path when the two are equal ignoring ASCII case only; a non-ASCII character must match
@@ -130,9 +143,11 @@ Elsewhere case matters.
 The dispatch file is read as UTF-8 with surrogate escapes. An undecodable byte or a raw
 control character on a block line, inside or outside a JSON string, is a
 `TEXT_VALUE_INVALID` red. The same on any other line is ignored. A block line that is not
-one JSON array of strings for any other reason is a usage error. When the dispatch holds a
-text defect its entries cannot be trusted, so the changed paths are checked for text
-values only and not against the entries.
+one JSON array of strings for any other reason is a usage error. A line ending in two
+carriage returns holds a raw control character and is a text red. When the dispatch holds
+a text defect its entries cannot be trusted, so no entry is used (the allowlist and the
+protected entries are not judged); every rule that needs no entry still applies, so a
+change to a gate script is reported as `PROTECTED_PATH_TOUCHED` next to the text red.
 
 Output: one line per defect, `CODE 'subject'` with the subject escaped by Python `repr`
 so a defect is always one line; on exit 0 only `paths=N defects=0`.
@@ -149,9 +164,11 @@ so a defect is always one line; on exit 0 only `paths=N defects=0`.
 Red before fault: the guard reports every red it can find and exits 1 when there is one,
 with any fault printed on one line on standard error; it exits 2 only when it found no red.
 Exit 2: git cannot serve the check (unknown commit, `--repo` not a repository or not its
-top level, a shallow boundary commit, git missing), the dispatch file is unreadable, an
-unexpected error, or standard output or standard error cannot be written (then no verdict
-can be delivered, so this wins over a red). git's message is printed on one line. Exit 3:
+top level, a first parent the object store lacks as in a shallow clone, git missing), the
+dispatch file is unreadable, an unexpected error, or standard output cannot be written
+(then no verdict can be delivered, so this wins over a red), or standard error cannot be
+written when there is no red. When every red reached standard output and only standard
+error fails, the exit stays 1. git's message is printed on one line. Exit 3:
 bad arguments (a control character or a lone surrogate in an argument is one of them), a
 dispatch file that lacks either line or repeats one, a value that is not one JSON array of
 strings (`null` included), or an entry that is empty, absolute, uses a backslash or holds
