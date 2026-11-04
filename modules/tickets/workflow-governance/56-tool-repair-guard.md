@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED` |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S56-07, S56-08 TICKET_DEFECT; correction 1 dispatched to the same seat） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/56-tool-repair-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/56-tool-repair-guard-review` |
@@ -55,6 +55,18 @@ Each is one line at column 0 whose value is one JSON array of strings. An entry 
 | `OUTSIDE_ALLOWLIST` | a path changed by the repair commit (against its first parent; added, modified, deleted or renamed, both sides of a rename) is covered by no `repair_allowlist` entry |
 | `PROTECTED_PATH_TOUCHED` | a changed path is covered by a `protected_paths` entry or by the gate-script directory, even if it is also in the allowlist |
 | `REPAIR_NOT_SINGLE_PARENT` | the repair commit is a merge or a root commit (a repair is one ordinary commit) |
+| `TEXT_VALUE_INVALID` | a string the gate reads (a block entry, or a path git reports) breaks the text-value rule; the subject is printed escaped |
+
+### What counts and how it is compared (revision02)
+
+- Every changed path counts, submodule pointers (gitlinks) included, whatever the repository says about ignoring submodules: the diff runs with `-c diff.ignoreSubmodules=none` and `--ignore-submodules=none`, and with external diff drivers and text conversion off. A tracked `.gitmodules` with `ignore = all` and a repository setting `diff.ignoreSubmodules=all` change nothing.
+- Replace refs are ignored (`--no-replace-objects`), and the repository-selecting `GIT_*` variables (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`) are removed from every git child.
+- The empty tree for a root commit is asked from git for the repository's object format, never hard-coded.
+- Case on Windows, fail-closed in both directions: an allowlist entry covers a path when they are equal ignoring ASCII case only (non-ASCII characters compared exactly, so the allowlist never widens beyond what the file system treats as one name); a protected entry and the gate-script directory cover a path when they are equal under full Unicode case folding (so protection never narrows). Elsewhere comparison is exact.
+- The dispatch file is decoded as UTF-8 with surrogate escapes: an undecodable byte or a raw control character on a block line (inside or outside a JSON string) is `TEXT_VALUE_INVALID` (exit 1); the same on a line the gate does not read is ignored. A block line that is not one JSON array of strings for another reason is exit 3.
+- Red before fault (the reading of R4-2 in ticket 52 revision04): the gate reports every red it can find and exits 1 if there is one, with a fault printed on stderr; it exits 2 only when it found no red.
+- A stdout or stderr that cannot be written ends the run with exit 2.
+- Why `protected_paths` is required although R4-8 names only `repair_allowlist`: the spec, ledger and product paths of a target project are not known to the guard, so the dispatch declares them; the guard adds the gate-script directory itself. A correction of R4-8 saying so is proposed to the owner.
 
 ### Text values (all wave-2 gates; added after the ticket 52 review)
 
@@ -84,7 +96,7 @@ Every string read from an input is valid Unicode without lone surrogates and wit
 1. 正常行為：a temporary repository with a repair commit that changes only an allowlisted tool file → exit 0.
 2. 規則違反／輸入錯誤：one test per defect code; a rename from an allowlisted path to a protected one reports `PROTECTED_PATH_TOUCHED`; a deletion outside the allowlist reports `OUTSIDE_ALLOWLIST`; a dispatch without either block → 3.
 3. 外部失敗／fail-closed：unknown commit → exit 2 with git's stderr; `--repo` not a repository → 2; dispatch unreadable → 2.
-4. 回歸保護：a non-ASCII path is matched correctly (no quoted path); directory entries match by path segment (`tools/` does not cover `tools2/x`); a path equal to a directory entry without the slash is not covered by it.
+4. 回歸保護：a gitlink bump outside the allowlist is red with `.gitmodules` `ignore = all` and with `diff.ignoreSubmodules=all`; a replace ref that hides a protected change does not hide it; `GIT_OBJECT_DIRECTORY` and `GIT_WORK_TREE` set in the environment change nothing; a Windows case variant of the gate-script directory is protected; allowlist `strasse/` does not cover `straße/a.py` and `kit/` does not cover a Kelvin-sign path, while protected `Straße/` covers `strasse/x`; a raw control character inside a JSON string on a block line is exit 1; an undecodable byte on a block line is exit 1 and on another line is ignored; a multi-line git error prints on one line; a root commit in a SHA-256 repository (skipped with a stated reason only if this git cannot create one); a closed stdout is exit 2; a non-ASCII path is matched correctly (no quoted path); directory entries match by path segment (`tools/` does not cover `tools2/x`); a path equal to a directory entry without the slash is not covered by it.
 
 ### 適用的缺陷類別
 
@@ -113,3 +125,18 @@ Every string read from an input is valid Unicode without lone surrogates and wit
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Re-plan to closure revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
+
+Review record: `doc/reviews/workflow-governance/56-tool-repair-guard-code-review.md`. S56-07 and S56-08 are `TICKET_DEFECT`s; the closure is rebuilt here before correction 1.
+
+| Finding | Class | Disposition in revision02 |
+| --- | --- | --- |
+| S56-01 | IMPLEMENTATION_DEFECT | submodule pointers always count, as above |
+| S56-02 | IMPLEMENTATION_DEFECT | raw control characters on a block line are `TEXT_VALUE_INVALID` |
+| S56-03 | IMPLEMENTATION_DEFECT | dispatch decoded with surrogate escapes; bad bytes matter on block lines only |
+| S56-04 | IMPLEMENTATION_DEFECT | ASCII case for the allowlist, full folding for protection |
+| S56-05 | IMPLEMENTATION_DEFECT | an unwritable stdout or stderr is exit 2 |
+| S56-06 | EVIDENCE_DEFECT | tests for replace refs, the scrubbed variables, the gate directory case variant, multi-line git errors and the SHA-256 empty tree |
+| S56-07 | TICKET_DEFECT | `TEXT_VALUE_INVALID` named; red before fault; git output read as input |
+| S56-08 | TICKET_DEFECT | why `protected_paths` is required stated; an R4-8 correction proposed |
