@@ -1,10 +1,11 @@
 # Gate scripts
 
-Three stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
+Four stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
-usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
+usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`).
+`preflight.py` has no red (`0`, `2`, `3`). In
 `receipt_fence_check.py` and `index_pins.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red. The console
@@ -89,3 +90,38 @@ commit (`SHALLOW_HISTORY`), `git` cannot be started, not inside a git repository
 is missing or not a directory, an environment git query fails as above, the `--json` path
 cannot be written, or an unexpected error. Exit 3: bad option, missing mode, empty
 `--sealed-state`, an index argument that is not a file, or an index file that is not UTF-8.
+
+## preflight.py
+
+    python preflight.py <dispatch-file> [--timeout SECONDS]
+
+Checks that every tool a dispatch names starts and serves before any product edit. The
+dispatch file carries one `preflight:` block: the key starts at column 0 and the block
+ends at the next line that starts at column 0. Each item is four lines, and every value is
+one JSON value on its own line (a JSON string for `tool` and `expect`, a JSON array of
+strings for `start` and `probe`):
+
+    preflight:
+      - tool: "<name>"
+        start: ["<argv0>", "<arg>", ...]
+        probe: ["<argv0>", "<arg>", ...]
+        expect: "<substring>"
+
+`start` runs to completion first, `probe` runs after it. Both run without a shell, with an
+empty stdin and the dispatch file's directory as working directory, each bounded by
+`--timeout` (default 120 seconds, above 0 and at most 86400); a command that exceeds it is
+killed together with the processes it started. Tools that start and exit are supported;
+long-running servers are not. A tool is served when `start` exits 0 and `probe` exits 0
+with `expect` in its output (stdout and stderr, decoded with replacement, compared exactly
+and case-sensitively). Every tool is tried and every failing tool is reported.
+
+Exit 0 prints `tools=N served=N`. Exit 2 prints one line `TOOL_UNSERVED <tool>: <cause>` per
+failing tool; the causes are `start cannot be launched`, `start exited with code N`,
+`start timed out`, `probe cannot be launched`, `probe exited with code N`, `probe timed
+out` and `probe output does not contain the expected text`. Exit 2 is also an unreadable
+dispatch file or an unexpected error. Exit 3: bad arguments, no `preflight:` block, a block
+that does not follow the grammar (a missing, repeated or unknown key, a key at the wrong
+indent, a value that is not one JSON value of the right type, an empty argument array, an
+empty `tool` or `expect`), a file that is not UTF-8, or a string that holds a lone
+surrogate or a control character. Every printed subject is escaped so one defect is one
+line.
