@@ -1299,6 +1299,38 @@ class AsciiVersionTests(SnapshotCase):
         code, out, err = self.env.main("diff", "--source", "src", "v1", "1", "--root", str(self.env.root))
         self.assertEqual(code, 0, out + err)
 
+    def test_a_claim_file_named_with_a_non_ascii_digit_does_not_block_take(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        directory = self.env.root / "src"
+        for digit in self.UNICODE_DIGITS:
+            with self.subTest(digit=digit):
+                self.assertIsNone(requirement_snapshot.CLAIM_PATTERN.fullmatch(f".v{digit}.claim"))
+        stray = directory / ".v２.claim"
+        stray.write_bytes(b"not a claim")
+        code, out, err = self.env.take([make_row("r2")], taken_at=T2)
+        self.assertEqual(code, 0, out + err)
+        self.assertEqual(
+            self.env.files(), [".v２.claim", "2026-11-04-v1.json", "2026-11-05-v2.json"])
+        self.assertIsNotNone(requirement_snapshot.CLAIM_PATTERN.fullmatch(".v12.claim"))
+
+    def test_a_version_argument_too_long_to_name_a_stored_version_does_not_exist(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        for text in ("1" * 4301, "v" + "9" * 5000, "0" * 5000 + "1" + "0" * 300):
+            with self.subTest(length=len(text)):
+                code, out, err = self.env.main("diff", "--source", "src", text, "1", "--root", str(self.env.root))
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertIn("requested version does not exist", err)
+                self.assertEqual(len(err.strip().splitlines()), 1, err)
+                for raw in ("ValueError", "Traceback", "invalid literal", "Exceeds the limit"):
+                    self.assertNotIn(raw, err)
+        code, out, err = self.env.main("diff", "--source", "src", "1", "0", "--root", str(self.env.root))
+        self.assertEqual(code, 3, out + err)
+        code, out, err = self.env.main("diff", "--source", "src", "9" * 5000, "x", "--root", str(self.env.root))
+        self.assertEqual(code, 3, out + err)
+        code, out, err = self.env.main("diff", "--source", "src", "1" * 255, "1", "--root", str(self.env.root))
+        self.assertEqual(code, 2, out + err)
+        self.assertIn("does not exist", err)
+
 
 if __name__ == "__main__":
     unittest.main()

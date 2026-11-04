@@ -134,7 +134,9 @@ A raw value echoed in a defect detail is escaped the same way. A top-level `sour
 fields.
 
 JSON input: a repeated key in an object (a row or the top level) is `ROW_FIELD_TYPE`. Version
-numbers in file names and arguments are ASCII digits only.
+numbers in file names, claim file names and arguments are ASCII digits only. A version argument
+with more digits than a file name can hold names no stored version: `diff` reports that the
+requested version does not exist (exit 2), never a raw exception text.
 
 Defect codes, printed one per line as `<code> <requirement_id or field>: <detail>`:
 

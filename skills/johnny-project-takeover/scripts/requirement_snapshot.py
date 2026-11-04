@@ -87,9 +87,11 @@ NAME_PATTERN = re.compile(r"[A-Za-z0-9._-]+")
 DIGEST_PATTERN = re.compile(r"[0-9a-f]{64}")
 VERSION_FILE_PATTERN = re.compile(r"([0-9]{4}-[0-9]{2}-[0-9]{2})-v([0-9]+)\.json")
 VERSION_ARG_PATTERN = re.compile(r"v?([0-9]+)")
+# A stored version is named in a file name, which no file system lets run past 255 characters.
+MAX_VERSION_DIGITS = 255
 ID_PATTERN = re.compile(r"[A-Za-z0-9._:/-]{1,128}")
 SUBJECT_PATTERN = re.compile(r"[A-Za-z0-9._:/\[\]-]{1,128}")
-CLAIM_PATTERN = re.compile(r"\.v\d+\.claim")
+CLAIM_PATTERN = re.compile(r"\.v[0-9]+\.claim")
 URL_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9+.-]+://")
 DRIVE_PATTERN = re.compile(r"[A-Za-z]:")
 RESERVED_DEVICE_NAMES = frozenset(
@@ -722,11 +724,25 @@ def _options(args: Sequence[str], allowed: Sequence[str]) -> dict[str, str]:
     return found
 
 
-def _version_number(text: str) -> int:
+def _version_digits(text: str) -> str:
+    """Validate a version argument and return its digits without leading zeros."""
     matched = VERSION_ARG_PATTERN.fullmatch(text)
-    if matched is None or int(matched.group(1)) < 1:
+    digits = "" if matched is None else matched.group(1).lstrip("0")
+    if not digits:
         raise UsageError(f"{text!r} is not a version (v<n> or <n>, n >= 1)")
-    return int(matched.group(1))
+    return digits
+
+
+def _version_numbers(first: str, second: str) -> tuple[int, int]:
+    """Both arguments are checked as arguments first; one too long to name a stored version does not exist."""
+    digits = (_version_digits(first), _version_digits(second))
+    for item in digits:
+        if len(item) > MAX_VERSION_DIGITS:
+            raise ToolFault(
+                f"the requested version does not exist: a version argument of {len(item)} digits "
+                "is longer than any stored file name allows"
+            )
+    return int(digits[0]), int(digits[1])
 
 
 def _dispatch(args: Sequence[str]) -> int:
@@ -762,10 +778,8 @@ def _dispatch(args: Sequence[str]) -> int:
             raise UsageError("--source is required")
         if len(positional) != 2:
             raise UsageError("diff takes exactly two versions")
-        return run_diff(
-            options["--source"], _version_number(positional[0]), _version_number(positional[1]),
-            Path(options.get("--root", DEFAULT_ROOT)),
-        )
+        first, second = _version_numbers(positional[0], positional[1])
+        return run_diff(options["--source"], first, second, Path(options.get("--root", DEFAULT_ROOT)))
     raise UsageError(f"unknown command {command}")
 
 
