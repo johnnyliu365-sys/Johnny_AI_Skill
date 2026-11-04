@@ -113,15 +113,33 @@ empty stdin and the dispatch file's directory as working directory, each bounded
 killed together with the processes it started. Tools that start and exit are supported;
 long-running servers are not. A tool is served when `start` exits 0 and `probe` exits 0
 with `expect` in its output (stdout and stderr, decoded with replacement, compared exactly
-and case-sensitively). Every tool is tried and every failing tool is reported.
+and case-sensitively). Every tool is tried and every failing tool is reported; the exit is
+2 when any tool failed, whichever tool came last.
+
+The gate resolves the program name itself, the same way on every platform, before it
+launches anything. An absolute name is used as given. A relative name that contains a
+path separator (a slash or a backslash) is joined to the dispatch file's directory, so
+it never depends on the directory the gate was started from. A bare name is looked up in
+the entries of the search path only (with the executable extensions of the platform on
+Windows), never in the current directory or the dispatch directory; an empty or relative
+entry is skipped. A program whose resolved name ends in the extension of a batch file
+(either of the two that Windows runs through its command interpreter, in any letter case)
+is refused, because that interpreter reads the arguments as commands; name the interpreter
+or the executable instead. On Windows a name that carries a drive but no root is not
+resolved.
 
 Exit 0 prints `tools=N served=N`. Exit 2 prints one line `TOOL_UNSERVED <tool>: <cause>` per
-failing tool; the causes are `start cannot be launched`, `start exited with code N`,
-`start timed out`, `probe cannot be launched`, `probe exited with code N`, `probe timed
-out` and `probe output does not contain the expected text`. Exit 2 is also an unreadable
-dispatch file or an unexpected error. Exit 3: bad arguments, no `preflight:` block, a block
-that does not follow the grammar (a missing, repeated or unknown key, a key at the wrong
-indent, a value that is not one JSON value of the right type, an empty argument array, an
-empty `tool` or `expect`), a file that is not UTF-8, or a string that holds a lone
-surrogate or a control character. Every printed subject is escaped so one defect is one
-line.
+failing tool; the causes are `start cannot be launched`, `start cannot be resolved`,
+`start is refused` (a batch file), `start exited with code N`, `start timed out`, the same
+five for `probe`, `probe output does not contain the expected text`, and `unexpected error`
+(the exception type and its message, for that tool alone; the later tools are still tried).
+Exit 2 is also an unreadable dispatch file, or a standard output or standard error that
+cannot be written (never another code, whatever the run would have returned). Exit 3: bad
+arguments, no `preflight:` block, a block that does not follow the grammar (a missing,
+repeated or unknown key, a key at the wrong indent, a value that is not one JSON value of
+the right type, an empty argument array, an empty or blank `tool` or `expect`), a file
+that is not UTF-8, or a string that holds a lone surrogate or a control character. The
+text rule applies to the arguments as well as to the file: the dispatch path and the
+`--timeout` value are checked before anything is read, and `--timeout` must match its
+whole text (digits with an optional fraction; no trailing newline, no surrounding space).
+Every printed subject is escaped so one defect is one line.

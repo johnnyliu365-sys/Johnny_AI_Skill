@@ -20,31 +20,42 @@ the dispatch file's directory as working directory and an empty stdin, each boun
 processes it started. A tool is served when `start` exits 0 and `probe` exits 0 with
 `expect` somewhere in its output (stdout and stderr, decoded with replacement, compared
 exactly and case-sensitively). Every tool is tried; each failing tool is reported, not
-only the first.
+only the first, and the exit is 2 when any tool failed, whichever tool came last.
+
+The gate resolves each program name itself, the same way on every platform: an absolute
+name is used as given; a relative name that contains a path separator (slash or
+backslash) is joined to the dispatch file's directory; a bare name is looked up in the
+search-path entries only (with the executable extensions of the platform on Windows),
+never in the current directory or the dispatch directory. A program whose resolved name
+ends in the extension of a batch file (any letter case) is refused, because Windows runs
+it through the command interpreter, which reads its arguments as commands. Name the
+interpreter or the executable instead.
 
 Output: `tools=N served=N` on exit 0; one `TOOL_UNSERVED <tool>: <cause>` line per
 failing tool on exit 2. Every printed subject is escaped to one line.
 
 Exit codes: 0 every tool served, 2 tool fault (a tool is unserved, or the dispatch file
-cannot be read, or an unexpected error), 3 usage error (bad arguments, no `preflight:`
-block, a block that does not follow the grammar, an empty `expect`, text that holds a
-lone surrogate or a control character). Preflight has no red: a contract red is exit 1 in
-the other gates and never occurs here.
+cannot be read, or an unexpected error, or standard output or standard error cannot be
+written), 3 usage error (bad arguments, no `preflight:` block, a block that does not
+follow the grammar, an empty or blank `expect`, text that holds a lone surrogate or a
+control character, in the dispatch file or in an argument). Preflight has no red: a
+contract red is exit 1 in the other gates and never occurs here.
 """
 from __future__ import annotations
 
+import ctypes
 import io
 import json
 import math
 import os
 import re
-import shutil
 import signal
 import subprocess
 import sys
 import tempfile
 from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import TextIO
 
 USAGE = "usage: preflight.py <dispatch-file> [--timeout SECONDS]"
 
@@ -52,13 +63,16 @@ DEFAULT_TIMEOUT = 120.0
 MAX_TIMEOUT = 86400.0
 REAP_SECONDS = 30.0
 EXPECT_SHOWN = 80
+ERROR_SHOWN = 200
 
 BLOCK_KEY = "preflight:"
 ITEM_LINE = re.compile(r"^  - tool:(?: +(.*))?$")
 KEY_LINE = re.compile(r"^    ([^\s:]+):(?: +(.*))?$")
 LIST_KEYS = ("start", "probe")
 ALL_KEYS = ("tool", "start", "probe", "expect")
-TIMEOUT_TEXT = re.compile(r"^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$")
+TIMEOUT_TEXT = re.compile(r"[0-9]+(?:\.[0-9]*)?|\.[0-9]+")
+BATCH_SUFFIXES = (".bat", ".cmd")
+DEFAULT_PATHEXT = ".COM;.EXE;.BAT;.CMD"
 
 EXIT_SERVED = 0
 EXIT_UNSERVED = 2
@@ -67,6 +81,10 @@ EXIT_USAGE = 3
 
 class UsageError(Exception):
     """The arguments or the dispatch block are wrong: exit 3."""
+
+
+class ArgvZeroError(Exception):
+    """The program name cannot be turned into a program the gate may run: the tool is unserved."""
 
 
 @dataclass(frozen=True)
@@ -84,6 +102,7 @@ class CommandResult:
     timed_out: bool
     exit_code: int | None
     output: str
+    refusal: str | None = None
 
 
 def escape(text: str) -> str:
@@ -159,9 +178,9 @@ def _finish(draft: _Draft) -> PreflightItem:
     if not tool.strip():
         raise UsageError(f"line {draft.values['tool'][0]}: tool must not be empty")
     expect = _checked_string(draft.values["expect"][1], draft.values["expect"][0], "expect")
-    if not expect:
+    if not expect.strip():
         raise UsageError(
-            f"line {draft.values['expect'][0]}: expect must not be empty (an empty expectation proves nothing)"
+            f"line {draft.values['expect'][0]}: expect must not be empty or blank (an empty expectation proves nothing)"
         )
     start = _checked_argv(draft.values["start"][1], draft.values["start"][0], "start")
     probe = _checked_argv(draft.values["probe"][1], draft.values["probe"][0], "probe")
@@ -223,21 +242,34 @@ def parse_preflight(text: str) -> list[PreflightItem]:
     return items
 
 
+def _system_taskkill() -> str | None:
+    """The absolute path of the system's taskkill program (Windows only), else None; it is never searched for."""
+    if sys.platform != "win32":
+        return None
+    buffer = ctypes.create_unicode_buffer(32768)
+    length = int(ctypes.windll.kernel32.GetSystemDirectoryW(buffer, len(buffer)))
+    if length <= 0 or length >= len(buffer):
+        return None
+    path = os.path.join(buffer.value, "taskkill.exe")
+    return path if os.path.isabs(path) and os.path.isfile(path) else None
+
+
 def _kill_tree(process: subprocess.Popen[bytes]) -> None:
     """Kill the process and every process it started, then reap it."""
     if sys.platform == "win32":
-        taskkill = shutil.which("taskkill") or "taskkill"
-        try:
-            subprocess.run(
-                [taskkill, "/F", "/T", "/PID", str(process.pid)],
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                timeout=REAP_SECONDS,
-                check=False,
-            )
-        except (OSError, subprocess.SubprocessError):
-            pass
+        taskkill = _system_taskkill()
+        if taskkill is not None:
+            try:
+                subprocess.run(
+                    [taskkill, "/F", "/T", "/PID", str(process.pid)],
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    timeout=REAP_SECONDS,
+                    check=False,
+                )
+            except (OSError, subprocess.SubprocessError):
+                pass
     else:
         try:
             os.killpg(process.pid, signal.SIGKILL)
@@ -253,12 +285,85 @@ def _kill_tree(process: subprocess.Popen[bytes]) -> None:
         pass
 
 
+def _is_batch_file(path: str) -> bool:
+    return path.rstrip(" .").lower().endswith(BATCH_SUFFIXES)
+
+
+def _fully_absolute(path: str) -> bool:
+    """Absolute on every platform; on Windows a drive (or share) is part of it, a rooted name alone is not."""
+    if not os.path.isabs(path):
+        return False
+    return sys.platform != "win32" or os.path.splitdrive(path)[0] != ""
+
+
+def _search_directories() -> list[str]:
+    """The PATH entries that name a directory without the help of the current directory."""
+    directories: list[str] = []
+    for entry in os.environ.get("PATH", "").split(os.pathsep):
+        if sys.platform == "win32":
+            entry = entry.strip().strip('"')
+        if entry and _fully_absolute(entry):
+            directories.append(entry)
+    return directories
+
+
+def _candidate_names(name: str) -> list[str]:
+    if sys.platform != "win32":
+        return [name]
+    extensions = [ext.lower() for ext in os.environ.get("PATHEXT", DEFAULT_PATHEXT).split(";") if ext]
+    if not extensions:
+        extensions = [ext.lower() for ext in DEFAULT_PATHEXT.split(";")]
+    if name.lower().endswith(tuple(extensions)):
+        return [name]
+    return [name + ext for ext in extensions]
+
+
+def _is_program_file(path: str) -> bool:
+    if not os.path.isfile(path):
+        return False
+    return sys.platform == "win32" or os.access(path, os.X_OK)
+
+
+def resolve_argv0(argv0: str, base: str) -> str:
+    """Turn `argv0` into the absolute program path the gate launches; raise ArgvZeroError when it must not run."""
+    if "/" in argv0 or "\\" in argv0:
+        if _fully_absolute(argv0):
+            program = argv0
+        else:
+            program = os.path.abspath(os.path.join(base, argv0))
+    elif sys.platform == "win32" and os.path.splitdrive(argv0)[0]:
+        raise ArgvZeroError(f'cannot be resolved (the name "{escape(argv0)}" is relative to a drive)')
+    else:
+        found: str | None = None
+        for directory in _search_directories():
+            for candidate in _candidate_names(argv0):
+                path = os.path.join(directory, candidate)
+                if _is_program_file(path):
+                    found = path
+                    break
+            if found is not None:
+                break
+        if found is None:
+            raise ArgvZeroError(f'cannot be resolved (the name "{escape(argv0)}" is not found in PATH)')
+        program = found
+    if _is_batch_file(program):
+        raise ArgvZeroError(
+            f'is refused ("{escape(argv0)}" is a batch file that Windows runs through the command interpreter; '
+            "name the interpreter or the executable instead)"
+        )
+    return program
+
+
 def run_command(argv: Sequence[str], cwd: str, timeout: float) -> CommandResult:
     """Run `argv` without a shell, empty stdin, output to a temporary file, bounded by `timeout`."""
+    try:
+        program = resolve_argv0(argv[0], cwd)
+    except ArgvZeroError as exc:
+        return CommandResult(None, False, None, "", str(exc))
     with tempfile.TemporaryFile() as sink:
         try:
             process = subprocess.Popen(
-                list(argv),
+                [program, *argv[1:]],
                 stdin=subprocess.DEVNULL,
                 stdout=sink,
                 stderr=subprocess.STDOUT,
@@ -287,6 +392,8 @@ def _timeout_text(timeout: float) -> str:
 
 def _failure(label: str, result: CommandResult, timeout: float) -> str | None:
     """The cause when `result` of the command `label` is not a clean exit, else None."""
+    if result.refusal is not None:
+        return f"{label} {result.refusal}"
     if result.launch_error is not None:
         return f"{label} cannot be launched ({escape(result.launch_error)})"
     if result.timed_out:
@@ -322,15 +429,40 @@ def _harden_streams() -> None:
                 pass
 
 
-def _usage_error(message: str | None = None) -> int:
-    print(USAGE, file=sys.stderr)
+Outcome = tuple[int, str, str]
+
+
+def _usage(message: str | None = None) -> Outcome:
+    err = USAGE + "\n"
     if message:
-        print(f"preflight.py: error: {message}", file=sys.stderr)
-    return EXIT_USAGE
+        err += f"preflight.py: error: {message}\n"
+    return EXIT_USAGE, "", err
+
+
+def _write(stream: TextIO | None, text: str) -> bool:
+    """Write and flush `text`; False when the stream is missing, closed or broken."""
+    if not text:
+        return True
+    if stream is None:
+        return False
+    try:
+        stream.write(text)
+        stream.flush()
+    except (OSError, ValueError):
+        return False
+    return True
+
+
+def _emit(outcome: Outcome) -> int:
+    """Print the outcome; a standard output or error that cannot be written makes the exit 2."""
+    code, out, err = outcome
+    out_ok = _write(sys.stdout, out)
+    err_ok = _write(sys.stderr, err)
+    return code if out_ok and err_ok else EXIT_UNSERVED
 
 
 def _parse_timeout(text: str) -> float:
-    if TIMEOUT_TEXT.match(text) is None:
+    if TIMEOUT_TEXT.fullmatch(text) is None:
         raise UsageError(f"--timeout needs a positive number of seconds, got {escape(text)}")
     value = float(text)
     if not math.isfinite(value) or value <= 0 or value > MAX_TIMEOUT:
@@ -339,6 +471,10 @@ def _parse_timeout(text: str) -> float:
 
 
 def _parse_arguments(args: Sequence[str]) -> tuple[str, float]:
+    for number, arg in enumerate(args, start=1):
+        bad = _bad_character(arg)
+        if bad is not None:
+            raise UsageError(f"argument {number} holds {bad}")
     timeout: float | None = None
     positional: list[str] = []
     index = 0
@@ -361,44 +497,75 @@ def _parse_arguments(args: Sequence[str]) -> tuple[str, float]:
     return positional[0], DEFAULT_TIMEOUT if timeout is None else timeout
 
 
+def _serve(item: PreflightItem, cwd: str, timeout: float) -> str | None:
+    """check_item, with an unexpected error turned into the cause of this tool alone."""
+    try:
+        return check_item(item, cwd, timeout)
+    except Exception as exc:  # noqa: BLE001 - one tool's unexpected error never ends the run
+        shown = str(exc)
+        if len(shown) > ERROR_SHOWN:
+            shown = shown[:ERROR_SHOWN] + "..."
+        return f"unexpected error ({escape(type(exc).__name__)}: {escape(shown)})"
+
+
+def _gate(args: Sequence[str]) -> Outcome:
+    try:
+        path, timeout = _parse_arguments(args)
+    except UsageError as exc:
+        return _usage(str(exc))
+    try:
+        with open(path, "rb") as handle:
+            raw = handle.read()
+    except (OSError, ValueError) as exc:
+        reason = exc.strerror if isinstance(exc, OSError) and exc.strerror else type(exc).__name__
+        return EXIT_UNSERVED, "", f"preflight.py: tool fault: cannot read {escape(path)}: {escape(reason)}\n"
+    try:
+        text = raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        return _usage(f"{escape(path)} is not UTF-8 text")
+    try:
+        items = parse_preflight(text)
+    except UsageError as exc:
+        return _usage(str(exc))
+    cwd = os.path.dirname(os.path.abspath(path))
+    lines: list[str] = []
+    for item in items:
+        cause = _serve(item, cwd, timeout)
+        if cause is not None:
+            lines.append(f"TOOL_UNSERVED {escape(item.tool)}: {cause}\n")
+    if lines:
+        return EXIT_UNSERVED, "".join(lines), ""
+    return EXIT_SERVED, f"tools={len(items)} served={len(items)}\n", ""
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     _harden_streams()
     args = list(sys.argv[1:] if argv is None else argv)
     try:
-        path, timeout = _parse_arguments(args)
-    except UsageError as exc:
-        return _usage_error(str(exc))
-    try:
-        with open(path, "rb") as handle:
-            raw = handle.read()
-    except OSError as exc:
-        print(f"preflight.py: tool fault: cannot read {escape(path)}: {escape(exc.strerror or type(exc).__name__)}", file=sys.stderr)
-        return EXIT_UNSERVED
-    try:
-        text = raw.decode("utf-8-sig")
-    except UnicodeDecodeError:
-        return _usage_error(f"{escape(path)} is not UTF-8 text")
-    try:
-        items = parse_preflight(text)
-    except UsageError as exc:
-        return _usage_error(str(exc))
-    try:
-        cwd = os.path.dirname(os.path.abspath(path))
-        failures: list[str] = []
-        for item in items:
-            cause = check_item(item, cwd, timeout)
-            if cause is not None:
-                failures.append(f"TOOL_UNSERVED {escape(item.tool)}: {cause}")
+        outcome = _gate(args)
     except Exception as exc:  # noqa: BLE001 - any unexpected error is a tool fault, never a red and never a traceback
-        print(f"preflight.py: tool fault: {escape(type(exc).__name__)}: {escape(str(exc))}", file=sys.stderr)
-        return EXIT_UNSERVED
-    if failures:
-        for line in failures:
-            print(line)
-        return EXIT_UNSERVED
-    print(f"tools={len(items)} served={len(items)}")
-    return EXIT_SERVED
+        outcome = EXIT_UNSERVED, "", f"preflight.py: tool fault: {escape(type(exc).__name__)}: {escape(str(exc))}\n"
+    return _emit(outcome)
+
+
+def _settle(name: str) -> None:
+    """Flush a standard stream; one that cannot be flushed is replaced so the interpreter's own flush at exit stays silent."""
+    stream = getattr(sys, name)
+    if stream is None:
+        return
+    try:
+        stream.flush()
+    except (OSError, ValueError):
+        setattr(sys, name, open(os.devnull, "w", encoding="utf-8"))
+
+
+def entry() -> int:
+    """The command-line entry: main, then a last flush that cannot turn the exit into 120."""
+    code = main()
+    _settle("stdout")
+    _settle("stderr")
+    return code
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(entry())
