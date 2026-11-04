@@ -2748,6 +2748,27 @@ class LevelJudgingTests(ObjectFixture):
         self.assertIn(forged, str(caught.exception))
         self.assertEqual(sorted(handed), ["README.md", "deep/one/two/three.py", "src/x.py", "tools/a.py"])
 
+    def several_siblings(self, forge_repair_side: bool) -> None:
+        files = ("docs/d.py", "a/x/one.py", "b/y/two.py", "c/z/three.py", "tools/t.py")
+        self.base(*files)
+        parent = git(self.repo, "rev-parse", "HEAD")
+        for rel in files:
+            self.write(rel, "fixed\n")
+        sha = self.commit("repair")
+        forged = self.forge(sha, parent, "docs") if forge_repair_side else self.forge(parent, sha, "docs")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(
+            (result.code, result.lines), (1, self.outside("a/x/one.py", "b/y/two.py", "c/z/three.py")), result.err
+        )
+        self.assertIn(forged, result.err)
+
+    def test_a_fault_does_not_stop_the_walk_below_any_of_several_verified_siblings_of_a_forged_repair_tree(self) -> None:
+        self.several_siblings(True)
+
+    def test_a_fault_does_not_stop_the_walk_below_any_of_several_verified_siblings_of_a_forged_first_parent_tree(self) -> None:
+        self.several_siblings(False)
+
     def extra_entry(self, commit: str, depth: str) -> str:
         """Overwrite the tree of `commit` at `depth` with itself plus one entry; return its id."""
         victim = git(self.repo, "rev-parse", f"{commit}:{depth}")
