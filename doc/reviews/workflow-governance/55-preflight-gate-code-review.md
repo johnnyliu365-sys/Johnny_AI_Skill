@@ -68,3 +68,58 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/55-rev01-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision02 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `ced8bd1fb38ebb2c89f6a51140001df340f37904` on `cp/wave2-55-preflight-gate` (parent `eb9014cc`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review CodeReview §5 allows |
+| Reviewed against | closure revision02 with both disposition corrections; R4-2, R4-3, R4-7, R4-8 |
+| Summary | Batch files are refused in every spelling, relative names join the dispatch directory, bare names come from PATH only, the planted taskkill is not used, any failure gives exit 2, the argument text rule holds, unwritable streams give exit 2, every subject prints on one line; the seat's 31 mutations are red and the receipt verifies. Open: a drive-relative argv0 with a separator is neither joined nor refused (S55-13); two new rules can be removed with every test green (S55-14, S55-15). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 117 passed, 204 subtests; mypy --strict clean |
+| Launching argv0 | FAIL | `Z:sub\prog.exe` resolves to `Z:\sub\prog.exe` (S55-13); every other spelling as specified |
+| Batch refusal; planted taskkill | PASS | six letter cases, trailing space and dot, PATHEXT lookup, short names and `\\?\` forms refused; planted taskkill variants not run |
+| R4-2 never 1 | PASS for behaviour | 400 fuzzed dispatch files exit 3, 2 or 0 only; S55-14 |
+| Any failure → 2; per-tool unexpected error; unwritable streams; usage and grammar → 3; argument text rule; one line per subject | PASS | |
+| STATEMENT choices | AGREE 18 of 19 | item 7 partly contradicted by the code (S55-13) |
+| Reverse mutations | seat 31 of 31 red; reviewer 18, 3 survive | K1, K2, K3 |
+| Receipt / boundary | PASS | checker 0 defects; digests recomputed; LF; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names; an unlocked full suite from another agent overlapped and is recorded |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S55-01, S55-02, S55-03, S55-05 to S55-10, S55-12 | CLOSED |
+| S55-04 | PARTIALLY CLOSED (S55-13, S55-15) |
+| S55-11 | not taken, as disposed |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S55-13 | IMPLEMENTATION_DEFECT | Low | `preflight.py:329-335` | the separator branch runs before the drive-relative check, so `Z:sub\prog.exe` becomes `Z:\sub\prog.exe`, neither joined nor refused; on another drive the result depends on the gate's per-drive directory | probe; nothing pins the current behaviour |
+| S55-14 | EVIDENCE_DEFECT | Low | `preflight.py:544-547`; tests | the run-level unexpected-error handler is unpinned since its only test moved to the per-tool path | K1 green |
+| S55-15 | EVIDENCE_DEFECT | Low | `preflight.py:313`; tests | PATHEXT from the environment is unpinned | K2 green |
+| S55-16 | OUT_OF_SCOPE_HARDENING | Info | `preflight.py:303-304` | stripping quotes and blanks around a PATH entry has no test | K3 green |
+| S55-17 | OUT_OF_SCOPE_HARDENING | Low | `preflight.py:363-386, 500-508` | after an unexpected error once a child started, the child keeps running alongside the next tools | in-process probe |
+| S55-18 | OUT_OF_SCOPE_HARDENING | Low | `preflight.py:516-518` | dispatch path `CON` or `CONIN$` blocks on console input | probe |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: POSIX behaviour; S55-13 on a real second drive; a real disk-full error; a link from a non-batch name to a batch file.
+
+```review-verdict
+candidate: ced8bd1fb38ebb2c89f6a51140001df340f37904
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/55-rev02-correction
+reviewed_at: 2026-11-04
+```

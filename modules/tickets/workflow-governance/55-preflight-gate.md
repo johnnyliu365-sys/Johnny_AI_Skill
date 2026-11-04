@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `.worktrees/55-preflight-gate-out/` / owner implementation seat / worktree `.worktrees/55-preflight-gate` / branch `cp/wave2-55-preflight-gate` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision03 / receipt under `.worktrees/55-preflight-gate-out/` / owner implementation seat / worktree `.worktrees/55-preflight-gate` / branch `cp/wave2-55-preflight-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S55-03, S55-04 TICKET_DEFECT; correction 1 returned `ced8bd1f`, awaiting the correction review） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S55-13 to S55-15; implementation 3 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/55-preflight-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/55-preflight-gate-review` |
@@ -55,6 +55,7 @@ preflight:
 
 The gate resolves `argv0` to an absolute program path itself, the same way on every platform, before it launches anything:
 
+- an `argv0` that names a drive (a letter and a colon at its start, or a `\\?\` or UNC prefix) must be absolute; a drive-relative name such as `Z:prog.exe` or `Z:sub\prog.exe` is refused as `TOOL_UNSERVED` ("cannot be resolved"), and this check runs before every other rule (revision03);
 - an absolute `argv0` is used as given;
 - a relative `argv0` that contains a path separator (`/` or `\`) is joined to the dispatch file's directory;
 - a bare name is looked up in the `PATH` entries only (on Windows with the `PATHEXT` extensions), never in the current directory or the dispatch directory;
@@ -94,7 +95,7 @@ Every string read from an input is valid Unicode without lone surrogates and wit
 1. 正常行為：two items whose `start` and `probe` are the venv python printing a known string → exit 0.
 2. 規則違反／輸入錯誤：no block, an item missing a key, a value that is not JSON, `start` not an array of strings, an empty array, a key at the wrong indent, an unknown key → each exit 3 naming the line.
 3. 外部失敗／fail-closed：each cause above in its own test, including a timeout test with a short `--timeout` (the child is killed and no process is left running); two failing tools → two lines.
-4. 回歸保護：an unserved tool followed by a served one → exit 2; an argument `a&b` and an argument `x|y`, without spaces, echoed back literally; a `.cmd` and a `.BAT` argv0 refused; a relative argv0 with a separator runs the dispatch-directory copy even when the gate runs from another directory; a bare name is not found in the current directory; a path argument with LF, TAB, ESC or a lone surrogate → 3; `--timeout "5
+4. 回歸保護：`Z:sub\prog.exe`, `Z:sub/prog.exe` and `C:sub\prog.exe` are refused; a PATHEXT set to a non-default list changes which bare names resolve; quotes and blanks around a PATH entry are removed; an unexpected error outside the tool loop is exit 2 with one stderr line and no traceback; an unexpected error after a child started kills that child before the next tool runs; the dispatch path `CON`, `CONIN$`, `AUX` or `COM1` is exit 3 without opening it; an unserved tool followed by a served one → exit 2; an argument `a&b` and an argument `x|y`, without spaces, echoed back literally; a `.cmd` and a `.BAT` argv0 refused; a relative argv0 with a separator runs the dispatch-directory copy even when the gate runs from another directory; a bare name is not found in the current directory; a path argument with LF, TAB, ESC or a lone surrogate → 3; `--timeout "5
 "` → 3; U+001F in a value → 3; a tab-only line inside the block → 3; the default timeout is 120 seconds; a path with a newline in a read diagnostic prints on one line; a closed stdout → 2; an unexpected error in the first tool still tries the second; the gate never runs a command through a shell; output with invalid UTF-8 is matched after replacement decoding; CRLF dispatch files parse the same.
 
 ### 適用的缺陷類別
@@ -151,3 +152,16 @@ Review record: `doc/reviews/workflow-governance/55-preflight-gate-code-review.md
 ### Disposition correction (revision02, before the correction review)
 
 TDD 4 asks both that a path argument holding LF is exit 3 and that a path with a newline prints on one line in a read diagnostic; the first rule makes the second unreachable. The read-diagnostic case is pinned instead with characters the argument rule admits (U+2028, NEL, a backslash), as the seat chose and recorded. Nothing else changes.
+
+## Re-plan to closure revision03 (after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision02 correction review". CodeReview §5: the closure revision used its one initial and one correction review. Root cause of S55-13: the argv0 rules were an ordered list without a rule for names that carry a drive, so the separator rule caught a drive-relative name first. Revision03 puts the drive rule first. Revision03 starts a new cadence: one initial review and one correction review.
+
+| Finding | Class | Disposition in revision03 |
+| --- | --- | --- |
+| S55-13 | IMPLEMENTATION_DEFECT | a name that carries a drive must be absolute; checked first |
+| S55-14 | EVIDENCE_DEFECT | a test for the run-level handler next to the per-tool one |
+| S55-15 | EVIDENCE_DEFECT | a test with a non-default PATHEXT |
+| S55-16 | OUT_OF_SCOPE_HARDENING (taken now) | a test for quotes and blanks around a PATH entry |
+| S55-17 | OUT_OF_SCOPE_HARDENING (taken now) | a child whose serving raised is killed before the next tool |
+| S55-18 | OUT_OF_SCOPE_HARDENING (taken now) | Windows device names as the dispatch path are exit 3 before any open |
