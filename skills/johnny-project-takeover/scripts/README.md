@@ -1,6 +1,6 @@
 # Gate scripts
 
-Three stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
+Stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
@@ -89,3 +89,41 @@ commit (`SHALLOW_HISTORY`), `git` cannot be started, not inside a git repository
 is missing or not a directory, an environment git query fails as above, the `--json` path
 cannot be written, or an unexpected error. Exit 3: bad option, missing mode, empty
 `--sealed-state`, an index argument that is not a file, or an index file that is not UTF-8.
+
+## repair_guard.py
+
+    python repair_guard.py --repo <dir> --repair <commit> --dispatch <dispatch-file>
+
+Checks that a tool-repair commit stays inside what its dispatch allows. The dispatch
+carries two lines that start at column 0, each holding one JSON array of strings:
+
+    repair_allowlist: ["<repository-relative path or directory/>", ...]
+    protected_paths: ["<repository-relative path or directory/>", ...]
+
+An entry ending in a slash covers that directory and everything under it, by whole path
+segment; any other entry is one exact path. The directory this script lives in (the gate
+scripts) is always protected, whether or not `protected_paths` names it. The changed paths
+are read from `git diff --name-status -M -z` against the first parent, with quoting off, so
+added, modified, deleted and renamed paths all count and a rename counts on both sides; a
+root commit is compared against the empty tree. On Windows paths and entries are compared
+case-insensitively; elsewhere case matters. Entries are never decoded or normalised.
+
+Output: one line per defect, `CODE 'subject'` with the subject escaped by Python `repr`
+so a defect is always one line; on exit 0 only `paths=N defects=0`.
+
+- `OUTSIDE_ALLOWLIST`: a changed path is covered by no allowlist entry.
+- `PROTECTED_PATH_TOUCHED`: a changed path is covered by a protected entry or by the gate
+  scripts, even when the allowlist also covers it. A path that is both outside the allowlist
+  and protected is reported under both codes.
+- `REPAIR_NOT_SINGLE_PARENT`: the repair commit is a merge or a root commit.
+- `TEXT_VALUE_INVALID`: a string read from the dispatch file or from git (an entry, a
+  block line, a changed path) holds a lone surrogate or a control character.
+
+Exit 1: at least one defect. Exit 2: git cannot serve the check (unknown commit, `--repo`
+not a repository or not its top level, a shallow boundary commit, git missing), the dispatch
+file is unreadable, or an unexpected error; git's message is printed on one line. Exit 3: bad
+arguments (a control character or a lone surrogate in an argument is one of them), a dispatch
+file that is not UTF-8, lacks either line or repeats one, a value that is not one JSON array
+of strings (`null` included), or an entry that is empty, absolute, uses a backslash or holds
+an empty, `.` or `..` segment. A text defect inside a file or in git output is exit 1, and a
+usage error in the same dispatch outranks it.
