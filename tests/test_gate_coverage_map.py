@@ -1040,6 +1040,95 @@ class FaultTests(GuardCase):
         self.assert_fault(result)
         self.assertIn("boom", result.err)
 
+    def test_a_carried_target_is_in_an_unreadable_spec_only_by_its_exact_path_and_separator(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        unreadable = "specs/test_b.py"
+        for target, judged in {
+            tid(unreadable, "test_two"): False,
+            tid(unreadable, "Inner", "test_two"): False,
+            unreadable: True,
+            unreadable + ".bak::test_two": True,
+            unreadable + "x::test_two": True,
+            unreadable + ":test_two": True,
+            unreadable[:-1] + "::test_two": True,
+        }.items():
+            with self.subTest(target=target):
+                carried = map_text(row(tid(SPEC_A, "test_two"), "carried", target))
+                candidate = self.repo.commit({SPEC_A: functions("test_one"), unreadable: "def (:\n", MAP: carried})
+                result = run(self.repo, base, candidate)
+                if judged:
+                    self.assert_red_with_faults(result, 1, "CARRIED_TARGET_MISSING")
+                else:
+                    self.assert_fault(result)
+
+    def test_a_red_is_reported_when_opening_a_side_fails_with_an_error_that_is_not_a_tool_fault(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one")})
+        candidate = self.repo.commit({MAP: "{nope"})
+        base_id = git(self.repo.dir, "rev-parse", base).strip()
+        real = cm.read_tree
+
+        def failing(repo: str, commit: str) -> dict[bytes, cm.TreeEntry]:
+            if commit == base_id:
+                raise RuntimeError("listing blew up")
+            return real(repo, commit)
+
+        with mock.patch.object(cm, "read_tree", failing):
+            result = run(self.repo, base, candidate)
+        self.assert_red_with_faults(result, 1, "MAP_ROW_INVALID")
+        self.assertIn("unexpected RuntimeError: listing blew up", result.err)
+
+    def test_a_red_is_reported_when_listing_the_tests_of_a_spec_fails_with_an_error_that_is_not_a_tool_fault(self) -> None:
+        other = "specs/test_b.py"
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two"), other: functions("test_b1")})
+        candidate = self.repo.commit({SPEC_A: functions("test_one"), other: functions("test_b1", "test_b2")})
+        real = cm.parse_tests
+
+        def failing(source: bytes, commit: str, path: str) -> cm.ParsedTests:
+            if path == other:
+                raise RuntimeError("parsing blew up")
+            return real(source, commit, path)
+
+        with mock.patch.object(cm, "parse_tests", failing):
+            result = run(self.repo, base, candidate)
+        self.assert_red_with_faults(result, 2, "UNMAPPED_REMOVAL")
+        self.assertEqual(result.err.count("unexpected RuntimeError: parsing blew up"), 2, result.err)
+        self.assertEqual(self.summary(result), "removed=1 defects=1")
+
+    def test_every_fault_met_is_kept_when_reading_the_map_fails_with_an_error_that_is_not_a_tool_fault(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        candidate = self.repo.commit({SPEC_A: functions("test_one"), "specs/test_b.py": "def (:\n", MAP: map_text()})
+        map_blob = git(self.repo.dir, "rev-parse", f"{candidate}:{MAP}").strip()
+        real = cm.read_blob
+
+        def failing(repo: str, object_id: str) -> bytes:
+            if object_id == map_blob:
+                raise RuntimeError("map read blew up")
+            return real(repo, object_id)
+
+        with mock.patch.object(cm, "read_blob", failing):
+            result = run(self.repo, base, candidate)
+        self.assert_fault(result)
+        lines = result.err.splitlines()
+        self.assertEqual(len(lines), 2, result.err)
+        self.assertIn(json.dumps("specs/test_b.py"), lines[0])
+        self.assertIn("unexpected RuntimeError: map read blew up", lines[1])
+
+    def test_a_spec_whose_base_blob_cannot_be_read_never_invents_a_missing_carried_target(self) -> None:
+        other = "specs/test_b.py"
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two", "test_three"), other: functions("test_b1")})
+        carried = map_text(row(tid(SPEC_A, "test_two"), "carried", tid(other, "test_b2")))
+        candidate = self.repo.commit({SPEC_A: functions("test_one"), other: functions("test_b1", "test_b2"), MAP: carried})
+        blob = git(self.repo.dir, "rev-parse", f"{base}:{other}").strip()
+        loose = self.repo.dir / ".git" / "objects" / blob[:2] / blob[2:]
+        os.chmod(loose, stat.S_IWRITE)
+        loose.unlink()
+        result = run(self.repo, base, candidate)
+        self.assert_red_with_faults(result, 1, "UNMAPPED_REMOVAL")
+        self.assertIn(json.dumps(tid(SPEC_A, "test_three")), result.lines[0])
+        self.assertIn("cat-file", result.err)
+        self.assertNotIn("unexpected", result.err)
+        self.assertEqual(self.summary(result), "removed=2 defects=1")
+
 
 class EntryKindTests(GuardCase):
     """Links, submodules and paths git serves as bytes."""
@@ -1331,6 +1420,105 @@ class GitEnvironmentTests(GuardCase):
             self.assertEqual(arguments[:4], ["git", "-C", str(self.repo.dir), "--no-replace-objects"])
             self.assertEqual([name for name in variables if name.upper().startswith("GIT_CONFIG_")], [])
             self.assertEqual((variables.get("GIT_NO_REPLACE_OBJECTS"), variables.get("GIT_NO_LAZY_FETCH")), ("1", "1"))
+
+    def test_the_whole_git_config_family_is_dropped_and_none_of_it_reaches_a_git_child(self) -> None:
+        base, candidate = self.two_commits()
+        baseline = run(self.repo, base, candidate)
+        bad_config = self.repo.dir.parent / (self.repo.dir.name + "-family.cfg")
+        bad_config.write_text("[broken\n", encoding="utf-8")
+        self.addCleanup(bad_config.unlink)
+        family = {
+            "GIT_CONFIG_SYSTEM": str(bad_config),
+            "GIT_CONFIG_GLOBAL": str(bad_config),
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_PARAMETERS": "'bogus",
+            "GIT_CONFIG_COUNT": "2",
+            "GIT_CONFIG_KEY_0": "include.path",
+            "GIT_CONFIG_VALUE_0": str(bad_config),
+            "GIT_CONFIG_KEY_1": "core.bare",
+            "GIT_CONFIG_VALUE_1": "true",
+        }
+        breaking = (
+            {"GIT_CONFIG_SYSTEM": family["GIT_CONFIG_SYSTEM"]},
+            {"GIT_CONFIG_GLOBAL": family["GIT_CONFIG_GLOBAL"]},
+            {"GIT_CONFIG_PARAMETERS": family["GIT_CONFIG_PARAMETERS"]},
+            {key: family[key] for key in ("GIT_CONFIG_COUNT", "GIT_CONFIG_KEY_0", "GIT_CONFIG_VALUE_0", "GIT_CONFIG_KEY_1", "GIT_CONFIG_VALUE_1")},
+        )
+        for extra in breaking:
+            with self.subTest(sorted(extra)), mock.patch.dict(os.environ, extra):
+                plain = subprocess.run(["git", "-C", str(self.repo.dir), "rev-parse", "HEAD"], capture_output=True)
+                self.assertNotEqual(plain.returncode, 0, "the variable must break a plain git call for this test to mean anything")
+                self.assertEqual(run(self.repo, base, candidate), baseline)
+        real = subprocess.run
+        environments: list[object] = []
+
+        def spy(*args: object, **kwargs: object) -> object:
+            environments.append(kwargs.get("env"))
+            return real(*args, **kwargs)
+
+        with mock.patch.dict(os.environ, family), mock.patch.object(cm.subprocess, "run", spy):
+            self.assertEqual(run(self.repo, base, candidate), baseline)
+        self.assertGreaterEqual(len(environments), 6)
+        for environment in environments:
+            self.assertIsInstance(environment, dict)
+            names = {name.upper() for name in (environment if isinstance(environment, dict) else {})}
+            self.assertEqual(names & {name.upper() for name in family}, set())
+            self.assertEqual([name for name in names if name.startswith("GIT_CONFIG")], [])
+
+    def removal_with_a_grafted_parent(self) -> tuple[str, str]:
+        """main^ is the commit holding two tests; a graft would make it a commit holding one. Returns (that commit, the graft line)."""
+        parent = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        tip = self.repo.commit({SPEC_A: functions("test_one")})
+        decoy = self.repo.commit_tree({SPEC_A: functions("test_one").encode("utf-8")}, parent=parent)
+        return decoy, f"{tip} {decoy}\n"
+
+    def run_relative(self) -> Result:
+        return run(self.repo, "main^", "main")
+
+    def test_a_graft_in_the_repository_does_not_move_a_relative_revision(self) -> None:
+        decoy, line = self.removal_with_a_grafted_parent()
+        baseline = self.run_relative()
+        self.assertEqual((baseline.code, baseline.defect_codes(), self.summary(baseline)), (1, ["UNMAPPED_REMOVAL"], "removed=1 defects=1"), baseline.out)
+        (self.repo.dir / ".git" / "info").mkdir(exist_ok=True)
+        (self.repo.dir / ".git" / "info" / "grafts").write_text(line, encoding="ascii")
+        self.assertEqual(git(self.repo.dir, "rev-parse", "main^").strip(), decoy, "the graft must move main^ for this test to mean anything")
+        self.assertEqual(self.run_relative(), baseline)
+
+    def test_an_inherited_graft_file_does_not_move_a_relative_revision(self) -> None:
+        decoy, line = self.removal_with_a_grafted_parent()
+        baseline = self.run_relative()
+        self.assertEqual((baseline.code, baseline.defect_codes()), (1, ["UNMAPPED_REMOVAL"]), baseline.out)
+        graft_file = self.repo.dir.parent / (self.repo.dir.name + "-inherited.grafts")
+        graft_file.write_text(line, encoding="ascii")
+        self.addCleanup(graft_file.unlink)
+        with mock.patch.dict(os.environ, {"GIT_GRAFT_FILE": str(graft_file)}):
+            moved = subprocess.run(["git", "-C", str(self.repo.dir), "rev-parse", "main^"], capture_output=True, text=True)
+            self.assertEqual(moved.stdout.strip(), decoy, "the graft must move main^ for this test to mean anything")
+            self.assertEqual(self.run_relative(), baseline)
+
+    def test_every_git_child_runs_with_a_graft_file_that_does_not_exist(self) -> None:
+        base, candidate = self.two_commits()
+        inherited = self.repo.dir.parent / (self.repo.dir.name + "-inherited-too.grafts")
+        inherited.write_text("", encoding="ascii")
+        self.addCleanup(inherited.unlink)
+        real = subprocess.run
+        environments: list[object] = []
+
+        def spy(*args: object, **kwargs: object) -> object:
+            environments.append(kwargs.get("env"))
+            return real(*args, **kwargs)
+
+        with mock.patch.dict(os.environ, {"GIT_GRAFT_FILE": str(inherited)}), mock.patch.object(cm.subprocess, "run", spy):
+            result = run(self.repo, base, candidate)
+        self.assertEqual((result.code, result.out, result.err), (0, "removed=1 defects=0\n", ""))
+        self.assertGreaterEqual(len(environments), 6)
+        for environment in environments:
+            self.assertIsInstance(environment, dict)
+            variables = environment if isinstance(environment, dict) else {}
+            given = [value for name, value in variables.items() if name.upper() == "GIT_GRAFT_FILE"]
+            self.assertEqual(len(given), 1, variables)
+            self.assertNotEqual(given[0], str(inherited))
+            self.assertFalse(os.path.lexists(given[0]), given[0])
 
 
 class CommandLineTests(GuardCase):

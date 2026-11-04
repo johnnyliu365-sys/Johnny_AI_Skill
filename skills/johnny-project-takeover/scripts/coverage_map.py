@@ -80,7 +80,10 @@ ceiling directories, common directory and prefix), so a hook that exports them c
 the guard at another repository or make a plain directory pass as `--repo`. They also run
 without the `GIT_CONFIG_*` variables, with `--no-replace-objects` and `GIT_NO_REPLACE_OBJECTS=1`
 (a replace ref never redirects a lookup, so a blob read at a commit is the blob the commit
-holds) and with `GIT_NO_LAZY_FETCH=1` (a lookup never fetches over the network).
+holds) and with `GIT_NO_LAZY_FETCH=1` (a lookup never fetches over the network). `GIT_GRAFT_FILE`
+names a path that does not exist (any inherited value is dropped first), so neither
+`info/grafts` nor an inherited graft file moves a parent: a relative revision such as `main^`
+means what the commit objects say.
 """
 from __future__ import annotations
 
@@ -92,6 +95,8 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
+import uuid
 import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -127,6 +132,7 @@ GIT_SELECTING_VARIABLES = frozenset(
         "GIT_PREFIX",
     )
 )
+GIT_GRAFT_VARIABLE = "GIT_GRAFT_FILE"
 
 
 class ToolFault(Exception):
@@ -251,17 +257,26 @@ def _text_problem(text: str) -> str | None:
 
 
 def git_environment() -> dict[str, str]:
-    """The environment of a git child: the inherited one without the repository-selecting names and the `GIT_CONFIG_*` names, replace refs and lazy fetch off."""
+    """The environment of a git child: the inherited one without the repository-selecting names and the `GIT_CONFIG_*` names, replace refs and lazy fetch off, grafts pointed at a path that does not exist."""
     environment = {
         name: value
         for name, value in os.environ.items()
         if name.upper() not in GIT_SELECTING_VARIABLES
         and not name.upper().startswith(GIT_CONFIG_PREFIX)
-        and name.upper() not in ("GIT_NO_REPLACE_OBJECTS", "GIT_NO_LAZY_FETCH")
+        and name.upper() not in ("GIT_NO_REPLACE_OBJECTS", "GIT_NO_LAZY_FETCH", GIT_GRAFT_VARIABLE)
     }
     environment["GIT_NO_REPLACE_OBJECTS"] = "1"
     environment["GIT_NO_LAZY_FETCH"] = "1"
+    environment[GIT_GRAFT_VARIABLE] = _absent_path()
     return environment
+
+
+def _absent_path() -> str:
+    """A path that names nothing: git reads no grafts from it, and neither `info/grafts` nor an inherited graft file is read."""
+    path = os.path.join(tempfile.gettempdir(), f"coverage-map-no-graft-file-{uuid.uuid4().hex}")
+    if os.path.lexists(path):
+        raise ToolFault("cannot choose a graft file path that does not exist")
+    return path
 
 
 def run_git(repo: str, args: Sequence[str]) -> bytes:
