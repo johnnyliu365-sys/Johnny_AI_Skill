@@ -61,3 +61,62 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/53-rev01-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision02 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `09af7a1f4fbd82fa4a619e6f0d3ab4d6e636d950` on `cp/wave2-53-contract-gate` (`09af7a1f` correction 1 → `5ea02c13` → `fd456159`, on `c0ab4a08`) |
+| Closure | revision02 |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review CodeReview §5 allows |
+| Summary | The six revision01 doors are closed, but the S53-01 family stays open: a spec with a PEP 263 coding declaration (S53-08) and an over-long source path (S53-09) still turn a red into exit 2. The text-value rule is not applied to declaration values (S53-10); a README test fails once a ninth script exists (S53-11); three counter-mutations survive (S53-12). Implementation and evidence defects remain after the correction, so the ticket goes to convergence. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 102 passed, 149 subtests; mypy --strict clean |
+| Six R4-7 codes; declaration keys; blobs at HEAD; untracked source; git failure → 2; empty values; snapshot ids; output streams | PASS | including autocrlf with a CRLF working copy |
+| Unanalysable assert → LITERAL_EXPECTED | PARTIAL | deep nesting, huge literals, long chains → 1; a PEP 263 spec → 2 (S53-08) |
+| R4-2 | FAIL | S53-08, S53-09 |
+| Text values; one line per subject | PARTIAL | every subject escaped; declaration values not checked (S53-10) |
+| S53-07 not taken | PASS | no regression |
+| Reverse mutations | FAIL | seat's 17 red; reviewer's 40: 31 red, 4 equivalent, 5 findings (S53-12, S53-14) |
+| Receipt / boundary / payload | PASS | checker 0 defects; four digests recomputed; LF |
+| Full suite | NOT RUN by the reviewer | host never quiet for 30 minutes; the seat's F1 shows 8 base failures |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S53-01 | CLOSED for the reported doors; the family stays open through S53-08, S53-09 |
+| S53-02, S53-03 | CLOSED |
+| S53-04 | CLOSED for the current tree (S53-11) |
+| S53-05 | CLOSED except the text rule on declaration values (S53-10) |
+| S53-06 | CLOSED as written; `--repo` identity undefined (S53-13) |
+| S53-07 | not taken; no regression |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S53-08 | IMPLEMENTATION_DEFECT | Medium (blocking) | `contract_gate.py:369-375, 386, 400, 532-534` | `ast.parse` honours a PEP 263 coding declaration but the detail text is decoded as UTF-8 with replacement; the segment is cut at offsets of the other decoding and raises `UnicodeDecodeError` outside the analysis guard: a latin-1 or cp950 spec with a non-ASCII literal exits 2 | probes A11–A13 |
+| S53-09 | IMPLEMENTATION_DEFECT | Low (blocking) | `contract_gate.py:254-281, 296-297, 306` | a declared source path has no length bound and goes to git on the command line; 40000 characters give `WinError 206`, exit 2 | probes E1–E4 |
+| S53-10 | IMPLEMENTATION_DEFECT | Low (blocking) | `contract_gate.py:214-232, 422` | declaration values are not checked against the text-value rule; `strip()` removes control characters and NEL, so `R-1` followed by U+001C binds `R-1` | probes B1–B5, B25 |
+| S53-11 | IMPLEMENTATION_DEFECT | Low | tests `:1043-1059` | the README count test knows number words only up to eight; with the wave-2 scripts the directory holds nine | disposable copy: `None != 9` |
+| S53-12 | EVIDENCE_DEFECT | Low | `contract_gate.py:287, 381, 313-314`; tests | unpinned: literal pathspecs, the parser exception set, an unreadable `ls-tree` entry read as untracked | R09, R26, R37 survive |
+| S53-13 | TICKET_DEFECT | Low (non-blocking for this candidate) | ticket 53 source bytes, defect table, row 4 | `--repo` identity undefined (subdirectory, plain directory, inherited `GIT_DIR`); `SOURCE_MISSING` still says working tree; row 4 says stripped and never stripped | probes C8, C9, G2 |
+| S53-14 | OUT_OF_SCOPE_HARDENING | Low | `contract_gate.py:170, 412, 527-533` | a repeated snapshot key is read last-wins; a junction under `--specs` is walked; fault and usage escaping unpinned | probes D10, D11, H1; R19, R20 survive |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: the full suite on this candidate; POSIX behaviour; a hanging git; an unreadable file under a real ACL.
+
+```review-verdict
+candidate: 09af7a1f4fbd82fa4a619e6f0d3ab4d6e636d950
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/53-rev02-correction
+reviewed_at: 2026-11-04
+```
