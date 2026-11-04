@@ -89,12 +89,12 @@ an empty, `.` or `..` segment). A text-value defect is a red (exit 1) in a file 
 output and a usage error (exit 3) in an argument.
 
 Red before fault: the guard reports every red it can find and exits 1 when there is one,
-with the fault printed on standard error. It exits 2 only when it found no red. The paths
-are judged level by level while the tree walk goes down: as soon as the trees of a level
-have been verified, the paths they give are judged, before any deeper tree is read. A red
-at a level that did verify is therefore reported beside a fault met deeper (or beside a
-tree of the same level that did not verify), and a path of a tree that did not verify is
-never judged. The one
+with the fault printed on standard error. It exits 2 only when it found no red. The tree
+walk descends into every subtree whose own object verified, whatever fault was met at its
+siblings or elsewhere, and skips only what lies under an object that did not verify; the
+paths of such an object are never judged (no red and no "unchanged" is derived from its
+entries). Every red found from verified objects is therefore reported beside every fault,
+a change to a gate script included, wherever the forged object sits. The one
 exception is standard output that cannot be written: then no verdict can be delivered and
 the exit is 2 whatever was found. A standard error that cannot be written decides the exit
 only when there is nothing else to deliver: when every red line reached standard output
@@ -613,12 +613,15 @@ def diff_trees(
 
     `on_level` is called with the new paths of a level as soon as the trees that give them
     are verified, before any deeper tree is read, so a verdict on those paths does not wait
-    for the rest of the walk. A tree that does not verify or cannot be parsed stops the walk
-    after its level has been handed over: the paths of the trees of that level that did
-    verify are handed over too, and the first fault is raised.
+    for the rest of the walk. The walk descends into every subtree whose own object verified,
+    whatever fault was met at its siblings or elsewhere; it skips only what lies under an
+    object that did not verify or cannot be parsed, and the paths of such an object are never
+    derived from its entries. The first fault is raised when the walk has ended, after every
+    path found from verified objects has been handed over.
     """
     paths: list[str] = []
     seen: set[str] = set()
+    pending: ToolFault | None = None
     level: list[tuple[str, str | None, str | None]] = [("", left, right)]
     while level:
         needed = [oid for _, old_id, new_id in level for oid in (old_id, new_id) if oid is not None]
@@ -665,8 +668,10 @@ def diff_trees(
         if on_level is not None and fresh:
             on_level(fresh)
         if fault is not None:
-            raise fault
+            pending = pending or fault
         level = following
+    if pending is not None:
+        raise pending
     return sorted(paths, key=_byte_key)
 
 
@@ -772,8 +777,8 @@ def read_dispatch(path: str) -> str:
 def inspect_repair(arguments: Arguments, rules: DispatchRules, reds: list[Defect]) -> int:
     """Check the repair commit; every red found is added to `reds` before any fault is raised.
 
-    The paths are judged level by level as the walk verifies each tree, so a red at a level
-    that did verify stands beside a fault met deeper. The reds of the paths are added in the
+    The paths are judged level by level as the walk verifies each tree, so a red found from
+    verified objects stands beside a fault met anywhere else in the walk. The reds of the paths are added in the
     byte order of the paths, whichever level they were found at. Returns the number of
     distinct changed paths.
     """

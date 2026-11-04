@@ -2523,12 +2523,8 @@ class SurrogateAndBomTests(Fixture):
         self.assertEqual((result.code, self.defect_codes(result)), (1, [repair_guard.OUTSIDE_ALLOWLIST]))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class LevelJudgingTests(ObjectFixture):
-    """S56-22: paths are judged level by level as each tree is verified (red before fault)."""
+    """S56-22 and S56-24: every red found from a verified tree is reported beside every fault."""
 
     LAYOUT = ("README.md", "src/x.py", "docs/d.py", "tools/a.py", "deep/one/two/three.py")
 
@@ -2586,7 +2582,9 @@ class LevelJudgingTests(ObjectFixture):
         forged = self.forge(sha, parent, "docs")
         self.set_dispatch(["tools/"], [])
         result = self.run_guard(sha)
-        self.assertEqual((result.code, result.lines), (1, self.outside("README.md", "src/x.py")), result.err)
+        self.assertEqual(
+            (result.code, result.lines), (1, self.outside("README.md", "deep/one/two/three.py", "src/x.py")), result.err
+        )
         self.assertIn(forged, result.err)
         self.assertNotIn("docs", result.out)
 
@@ -2595,8 +2593,11 @@ class LevelJudgingTests(ObjectFixture):
         forged = self.forge(parent, sha, "src")
         self.set_dispatch(["tools/"], [])
         result = self.run_guard(sha)
-        self.assertEqual((result.code, result.lines), (1, self.outside("README.md", "docs/d.py")), result.err)
+        self.assertEqual(
+            (result.code, result.lines), (1, self.outside("README.md", "deep/one/two/three.py", "docs/d.py")), result.err
+        )
         self.assertIn(forged, result.err)
+        self.assertNotIn("src", result.out)
 
     def test_a_forged_root_tree_leaves_nothing_to_judge_and_is_exit_two(self) -> None:
         parent, sha = self.layout_change()
@@ -2673,3 +2674,151 @@ class LevelJudgingTests(ObjectFixture):
             self.outside("README.md", "deep/one/two/three.py", "docs/d.py", "src/x.py", "tools/a.py"),
         )
         self.assertEqual(result.err, "")
+
+    GATE_LAYOUT = ("docs/d.py", GATE_FILE, "skills/other/z.py", "tools/a.py")
+
+    def gate_change(self) -> tuple[str, str]:
+        """(first parent, repair): the repair changes every file of GATE_LAYOUT, a gate script among them."""
+        self.base(*self.GATE_LAYOUT)
+        parent = git(self.repo, "rev-parse", "HEAD")
+        for rel in self.GATE_LAYOUT:
+            self.write(rel, "fixed\n")
+        return parent, self.commit("repair")
+
+    def protected_gate(self, result: Result) -> None:
+        self.assertEqual(result.code, 1, result.err)
+        self.assertEqual(self.defect_codes(result), [repair_guard.PROTECTED_PATH_TOUCHED], result.out)
+        self.assertIn(repr(GATE_FILE), result.lines[0])
+        self.assertEqual(result.err.count("\n"), 1, result.err)
+        self.assertIn("hash", result.err)
+
+    def test_a_gate_script_change_under_a_verified_sibling_of_a_forged_repair_tree_is_exit_one(self) -> None:
+        parent, sha = self.gate_change()
+        forged = self.forge(sha, parent, "docs")
+        self.set_dispatch(["docs/", "tools/", GATE_DIR + "/", "skills/other/"], [])
+        result = self.run_guard(sha)
+        self.protected_gate(result)
+        self.assertIn(forged, result.err)
+
+    def test_a_gate_script_change_under_a_verified_sibling_of_a_forged_first_parent_tree_is_exit_one(self) -> None:
+        parent, sha = self.gate_change()
+        forged = self.forge(parent, sha, "docs")
+        self.set_dispatch(["docs/", "tools/", GATE_DIR + "/", "skills/other/"], [])
+        result = self.run_guard(sha)
+        self.protected_gate(result)
+        self.assertIn(forged, result.err)
+
+    def test_a_gate_script_change_beside_a_forged_tree_one_level_below_the_root_is_exit_one(self) -> None:
+        parent, sha = self.gate_change()
+        forged = self.forge(sha, parent, "skills/other")
+        self.set_dispatch(["docs/", "tools/", GATE_DIR + "/", "skills/other/"], [])
+        result = self.run_guard(sha)
+        self.protected_gate(result)
+        self.assertIn(forged, result.err)
+        self.assertNotIn("other", result.out)
+
+    def test_a_gate_script_change_beside_a_forged_first_parent_tree_one_level_below_the_root_is_exit_one(self) -> None:
+        parent, sha = self.gate_change()
+        forged = self.forge(parent, sha, "skills/other")
+        self.set_dispatch(["docs/", "tools/", GATE_DIR + "/", "skills/other/"], [])
+        result = self.run_guard(sha)
+        self.protected_gate(result)
+        self.assertIn(forged, result.err)
+
+    def test_an_unallowed_gate_script_change_beside_a_forged_tree_gives_both_reds(self) -> None:
+        parent, sha = self.gate_change()
+        forged = self.forge(sha, parent, "docs")
+        self.set_dispatch(["docs/", "tools/", "skills/other/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1, result.err)
+        self.assertEqual(self.defect_codes(result), [repair_guard.OUTSIDE_ALLOWLIST, repair_guard.PROTECTED_PATH_TOUCHED])
+        self.assertIn(forged, result.err)
+
+    def test_a_walk_that_meets_a_fault_still_hands_over_what_lies_under_every_verified_tree(self) -> None:
+        parent, sha = self.layout_change()
+        forged = self.forge(sha, parent, "docs")
+        handed: list[str] = []
+        with self.assertRaises(repair_guard.ToolFault) as caught:
+            repair_guard.diff_trees(
+                str(self.repo),
+                git(self.repo, "rev-parse", f"{parent}^{{tree}}"),
+                git(self.repo, "rev-parse", f"{sha}^{{tree}}"),
+                handed.extend,
+            )
+        self.assertIn(forged, str(caught.exception))
+        self.assertEqual(sorted(handed), ["README.md", "deep/one/two/three.py", "src/x.py", "tools/a.py"])
+
+    def extra_entry(self, commit: str, depth: str) -> str:
+        """Overwrite the tree of `commit` at `depth` with itself plus one entry; return its id."""
+        victim = git(self.repo, "rev-parse", f"{commit}:{depth}")
+        blob = git_raw(self.repo, ["hash-object", "-w", "--stdin"], b"extra\n")
+        body = self.raw_body(victim, "tree")
+        self.write_loose(self.object_path(victim), "tree", b"100644 aaa_extra\0" + bytes.fromhex(blob) + body)
+        return victim
+
+    def test_a_forged_repair_tree_with_an_extra_entry_gives_no_red_and_exit_two(self) -> None:
+        self.base("README.md", "docs/d.py", "tools/a.py")
+        for rel in ("docs/d.py", "tools/a.py"):
+            self.write(rel, "fixed\n")
+        sha = self.commit("repair")
+        forged = self.extra_entry(sha, "docs")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.out), (2, ""), result.err)
+        self.assertIn(forged, result.err)
+        self.assertIn("hash", result.err)
+
+    def test_a_forged_first_parent_tree_with_an_extra_entry_gives_no_red_and_exit_two(self) -> None:
+        self.base("README.md", "docs/d.py", "tools/a.py")
+        parent = git(self.repo, "rev-parse", "HEAD")
+        for rel in ("docs/d.py", "tools/a.py"):
+            self.write(rel, "fixed\n")
+        sha = self.commit("repair")
+        forged = self.extra_entry(parent, "docs")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.out), (2, ""), result.err)
+        self.assertIn(forged, result.err)
+
+    def test_a_forged_tree_with_an_extra_entry_leaves_the_reds_of_the_verified_ones_alone(self) -> None:
+        self.base("README.md", "docs/d.py", "tools/a.py")
+        for rel in ("README.md", "docs/d.py", "tools/a.py"):
+            self.write(rel, "fixed\n")
+        sha = self.commit("repair")
+        self.extra_entry(sha, "docs")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.lines), (1, self.outside("README.md")), result.err)
+
+    def test_a_tree_read_one_by_one_after_a_failed_batch_is_hashed_like_the_batch(self) -> None:
+        self.base("README.md", "docs/d.py", "tools/a.py")
+        for rel in ("docs/d.py", "tools/a.py"):
+            self.write(rel, "fixed\n")
+        sha = self.commit("repair")
+        forged = self.extra_entry(sha, "docs")
+        good = git(self.repo, "rev-parse", f"{sha}:tools")
+        loaded, fault = repair_guard._read_trees(str(self.repo), [forged, good])
+        self.assertEqual(sorted(loaded), [good])
+        self.assertIsNotNone(fault)
+        self.assertIn(forged, str(fault))
+
+
+class MainGuardPlacementTests(unittest.TestCase):
+    """S56-26: a direct run of this file collects the same tests as pytest."""
+
+    def test_no_test_class_is_defined_after_the_main_guard(self) -> None:
+        import ast
+
+        tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
+        guards = [
+            index for index, node in enumerate(tree.body)
+            if isinstance(node, ast.If) and "__main__" in ast.dump(node.test)
+        ]
+        self.assertEqual(len(guards), 1)
+        after = [node for node in tree.body[guards[0] + 1:] if isinstance(node, (ast.ClassDef, ast.FunctionDef))]
+        self.assertEqual(after, [])
+        self.assertEqual(guards[0], len(tree.body) - 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
