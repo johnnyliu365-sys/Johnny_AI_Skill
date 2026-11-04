@@ -501,12 +501,6 @@ class UsageTests(Fixture):
         with self.assertRaises(repair_guard.UsageError):
             repair_guard.parse_arguments(["--repo", "r", "--repair", "\udc80", "--dispatch", "d"])
 
-    def test_a_dispatch_that_is_not_utf8_is_a_usage_error(self) -> None:
-        sha = self.committed()
-        self.dispatch.write_bytes(b'repair_allowlist: ["\xff"]\nprotected_paths: []\n')
-        self.assertEqual(self.run_guard(sha).code, 3)
-
-
 class FaultTests(Fixture):
     def test_an_unknown_commit_is_a_tool_fault_carrying_gits_message(self) -> None:
         self.base("tools/a.py")
@@ -750,10 +744,14 @@ class TextValueTests(Fixture):
         )
         self.assertEqual(self.run_guard(sha).code, 3)
 
-    def test_a_text_red_stops_before_git_is_asked(self) -> None:
+    def test_a_text_red_is_reported_and_a_git_fault_after_it_goes_to_stderr(self) -> None:
         self.committed()
         self.dispatch.write_text(f'repair_allowlist: ["a{SURROGATE_ESCAPE}"]\nprotected_paths: []\n', encoding="utf-8")
-        self.assertEqual(self.run_guard("no-such-ref").code, 1)
+        result = self.run_guard("no-such-ref")
+        self.assertEqual(result.code, 1)
+        self.assertEqual(self.defect_codes(result), [repair_guard.TEXT_VALUE_INVALID])
+        self.assertIn("tool fault", result.err)
+        self.assertEqual(result.err.count("\n"), 1)
 
     def test_the_text_red_line_is_one_escaped_line(self) -> None:
         sha = self.committed()
@@ -803,6 +801,466 @@ class TextValueTests(Fixture):
         self.assertEqual(result.code, 1)
         self.assertEqual(len(result.lines), 1)
         self.assertTrue(result.out.startswith(repair_guard.OUTSIDE_ALLOWLIST))
+
+
+class SubmodulePointerTests(Fixture):
+    """S56-01: a moved submodule pointer always counts, whatever the repository says about ignoring it."""
+
+    def pointer_repair(self, gitmodules_ignore: bool = False) -> str:
+        self.base("tools/a.py")
+        first = git(self.repo, "rev-parse", "HEAD")
+        self.write("tools/b.py")
+        second = self.commit("two")
+        if gitmodules_ignore:
+            self.write(
+                ".gitmodules",
+                '[submodule "vendor/lib"]\n\tpath = vendor/lib\n\turl = ./lib\n\tignore = all\n',
+            )
+            git(self.repo, "add", ".gitmodules")
+        git(self.repo, "update-index", "--add", "--cacheinfo", f"160000,{first},vendor/lib")
+        git(self.repo, "commit", "-q", "-m", "pointer")
+        git(self.repo, "update-index", "--cacheinfo", f"160000,{second},vendor/lib")
+        git(self.repo, "commit", "-q", "-m", "bump")
+        return git(self.repo, "rev-parse", "HEAD")
+
+    def assert_outside(self, sha: str) -> None:
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1, result.err)
+        self.assertEqual(result.lines, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'vendor/lib'"])
+
+    def test_a_pointer_bump_outside_the_allowlist_is_red(self) -> None:
+        self.assert_outside(self.pointer_repair())
+
+    def test_a_tracked_submodule_list_with_ignore_all_does_not_hide_the_bump(self) -> None:
+        self.assert_outside(self.pointer_repair(gitmodules_ignore=True))
+
+    def test_the_repository_setting_ignore_submodules_all_does_not_hide_the_bump(self) -> None:
+        sha = self.pointer_repair()
+        git(self.repo, "config", "diff.ignoreSubmodules", "all")
+        self.assert_outside(sha)
+
+    def test_both_the_tracked_list_and_the_repository_setting_together_do_not_hide_the_bump(self) -> None:
+        sha = self.pointer_repair(gitmodules_ignore=True)
+        git(self.repo, "config", "diff.ignoreSubmodules", "all")
+        self.assert_outside(sha)
+
+    def test_a_per_submodule_setting_in_the_repository_configuration_does_not_hide_the_bump(self) -> None:
+        sha = self.pointer_repair()
+        git(self.repo, "config", "submodule.vendor/lib.ignore", "all")
+        self.assert_outside(sha)
+
+    def test_a_pointer_under_a_protected_directory_is_protected_with_ignore_all(self) -> None:
+        sha = self.pointer_repair(gitmodules_ignore=True)
+        self.set_dispatch(["vendor/lib"], ["vendor/"])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1)
+        self.assertEqual(result.lines, [f"{repair_guard.PROTECTED_PATH_TOUCHED} 'vendor/lib': covered by 'vendor/'"])
+
+    def test_an_allowlisted_pointer_passes_and_is_counted_with_ignore_all(self) -> None:
+        sha = self.pointer_repair(gitmodules_ignore=True)
+        self.set_dispatch(["vendor/lib"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.out), (0, "paths=1 defects=0\n"))
+
+    def test_an_external_diff_driver_and_a_text_conversion_do_not_change_the_result(self) -> None:
+        sha = self.pointer_repair(gitmodules_ignore=True)
+        git(self.repo, "config", "diff.external", "no-such-diff-driver")
+        git(self.repo, "config", "diff.ignoreSubmodules", "all")
+        self.assert_outside(sha)
+
+
+class DispatchBytesTests(Fixture):
+    """S56-02 and S56-03: a bad byte or raw control character matters on a block line and only there."""
+
+    def committed(self) -> str:
+        self.base("tools/a.py")
+        self.write("tools/a.py", "fixed\n")
+        return self.commit()
+
+    def test_a_raw_control_character_inside_a_json_string_is_a_red(self) -> None:
+        sha = self.committed()
+        for raw in (b"\x01", b"\x1f", b"\t", b"\x7f", b"\x0b", b"\r"):
+            for block in ("repair_allowlist", "protected_paths"):
+                with self.subTest(raw=raw, block=block):
+                    other = "protected_paths" if block == "repair_allowlist" else "repair_allowlist"
+                    self.dispatch.write_bytes(
+                        f'{block}: ["tools/'.encode() + raw + b'x/"]\n' + f"{other}: []\n".encode()
+                    )
+                    result = self.run_guard(sha)
+                    self.assertEqual(result.code, 1, result.err)
+                    self.assertEqual(self.defect_codes(result), [repair_guard.TEXT_VALUE_INVALID])
+                    self.assertEqual(result.err, "")
+
+    def test_a_raw_control_character_outside_a_json_string_is_a_red(self) -> None:
+        sha = self.committed()
+        for raw in (b"\x0b", b"\x0c", b"\x00", b"\x7f", b"\x1c"):
+            with self.subTest(raw=raw):
+                self.dispatch.write_bytes(b'repair_allowlist: [' + raw + b'"tools/"]\nprotected_paths: []\n')
+                result = self.run_guard(sha)
+                self.assertEqual((result.code, self.defect_codes(result)), (1, [repair_guard.TEXT_VALUE_INVALID]))
+
+    def test_an_undecodable_byte_on_a_block_line_is_a_red_inside_or_outside_a_string(self) -> None:
+        sha = self.committed()
+        for line in (
+            b'repair_allowlist: ["\xff"]\nprotected_paths: []\n',
+            b'repair_allowlist: ["tools/"]\nprotected_paths: ["a\xc3"]\n',
+            b'repair_allowlist: [\xff"tools/"]\nprotected_paths: []\n',
+            b'repair_allowlist: ["tools/"]\xfe\nprotected_paths: []\n',
+        ):
+            with self.subTest(line=line):
+                self.dispatch.write_bytes(line)
+                result = self.run_guard(sha)
+                self.assertEqual((result.code, self.defect_codes(result)), (1, [repair_guard.TEXT_VALUE_INVALID]))
+                self.assertEqual(result.err, "")
+                self.assertEqual(len(result.lines), 1)
+
+    def test_an_undecodable_byte_or_control_character_on_another_line_is_ignored(self) -> None:
+        sha = self.committed()
+        for noise in (b"\xff\xfe", b"\x01\x02", b"a\x00b", b"\xed\xa0\x80", b"a\x0bb", b"a\rb"):
+            with self.subTest(noise=noise):
+                self.dispatch.write_bytes(
+                    b"title: " + noise + b'\nrepair_allowlist: ["tools/"]\nprotected_paths: []\nnote: ' + noise + b"\n"
+                )
+                result = self.run_guard(sha)
+                self.assertEqual((result.code, result.out), (0, "paths=1 defects=0\n"), result.err)
+
+    def test_a_structure_error_outranks_a_bad_byte(self) -> None:
+        sha = self.committed()
+        self.dispatch.write_bytes(b'repair_allowlist: ["tools/\xff", 5]\nprotected_paths: []\n')
+        self.assertEqual(self.run_guard(sha).code, 3)
+        self.dispatch.write_bytes(b'repair_allowlist: [\xff"tools/"\nprotected_paths: []\n')
+        self.assertEqual(self.run_guard(sha).code, 3)
+
+    def test_a_bad_byte_in_a_line_that_is_only_a_prefix_of_a_block_key_is_ignored(self) -> None:
+        sha = self.committed()
+        self.dispatch.write_bytes(
+            b'  repair_allowlist: [\xff]\nrepair_allowlist: ["tools/"]\nprotected_paths: []\n'
+        )
+        self.assertEqual(self.run_guard(sha).code, 0)
+
+    def test_a_bad_byte_in_the_dispatch_is_still_a_red_when_git_cannot_answer(self) -> None:
+        self.committed()
+        self.dispatch.write_bytes(b'repair_allowlist: ["\xff"]\nprotected_paths: []\n')
+        result = self.run_guard("no-such-ref")
+        self.assertEqual((result.code, self.defect_codes(result)), (1, [repair_guard.TEXT_VALUE_INVALID]))
+        self.assertIn("tool fault", result.err)
+
+
+class RedBeforeFaultTests(Fixture):
+    def test_a_red_found_before_git_fails_is_reported_and_the_exit_is_one(self) -> None:
+        self.base("tools/a.py")
+        git(self.repo, "checkout", "-q", "-b", "side")
+        self.write("tools/b.py", "side\n")
+        self.commit("side")
+        git(self.repo, "checkout", "-q", "main")
+        self.write("tools/c.py", "main\n")
+        self.commit("main")
+        git(self.repo, "merge", "-q", "--no-ff", "-m", "merge", "side")
+        self.set_dispatch(["tools/"], [])
+        out, err = io.StringIO(), io.StringIO()
+        with mock.patch.object(repair_guard, "parse_name_status", side_effect=repair_guard.ToolFault("boom")):
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = repair_guard.main(["--repo", str(self.repo), "--repair", "HEAD", "--dispatch", str(self.dispatch)])
+        self.assertEqual(code, 1)
+        self.assertEqual([line.split(" ", 1)[0] for line in out.getvalue().splitlines()], [repair_guard.REPAIR_NOT_SINGLE_PARENT])
+        self.assertEqual(err.getvalue(), "repair_guard.py: tool fault: boom\n")
+
+    def test_a_fault_with_no_red_is_still_exit_two(self) -> None:
+        self.base("tools/a.py")
+        self.write("tools/a.py", "fixed\n")
+        self.commit()
+        self.set_dispatch(["tools/"], [])
+        out, err = io.StringIO(), io.StringIO()
+        with mock.patch.object(repair_guard, "parse_name_status", side_effect=repair_guard.ToolFault("boom")):
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = repair_guard.main(["--repo", str(self.repo), "--repair", "HEAD", "--dispatch", str(self.dispatch)])
+        self.assertEqual((code, out.getvalue()), (2, ""))
+        self.assertIn("boom", err.getvalue())
+
+    def test_a_root_commit_red_survives_an_unreadable_name_status(self) -> None:
+        self.write("tools/a.py")
+        self.commit("root")
+        self.set_dispatch(["tools/"], [])
+        out, err = io.StringIO(), io.StringIO()
+        with mock.patch.object(repair_guard, "parse_name_status", side_effect=RuntimeError("odd")):
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = repair_guard.main(["--repo", str(self.repo), "--repair", "HEAD", "--dispatch", str(self.dispatch)])
+        self.assertEqual(code, 1)
+        self.assertIn(repair_guard.REPAIR_NOT_SINGLE_PARENT, out.getvalue())
+        self.assertIn("RuntimeError", err.getvalue())
+        self.assertNotIn("Traceback", err.getvalue())
+
+
+class UnwritableStreamTests(Fixture):
+    """S56-05: output that cannot be written is exit 2, never Python's 120 and never a silent success."""
+
+    def ready(self, red: bool) -> list[str]:
+        self.base("tools/a.py", "src/b.py")
+        self.write("src/b.py" if red else "tools/a.py", "changed\n")
+        sha = self.commit()
+        self.set_dispatch(["tools/"], [])
+        return ["--repo", str(self.repo), "--repair", sha, "--dispatch", str(self.dispatch)]
+
+    def run_with_dead_stream(self, args: list[str], dead: str) -> subprocess.CompletedProcess[bytes]:
+        reader, writer = os.pipe()
+        os.close(reader)
+        env = dict(os.environ, PYTHONUTF8="1")
+        try:
+            if dead == "stdout":
+                return subprocess.run([PY, str(SCRIPT), *args], stdout=writer, stderr=subprocess.PIPE, env=env, check=False)
+            return subprocess.run([PY, str(SCRIPT), *args], stdout=subprocess.PIPE, stderr=writer, env=env, check=False)
+        finally:
+            os.close(writer)
+
+    def test_a_pass_whose_stdout_is_dead_is_exit_two(self) -> None:
+        done = self.run_with_dead_stream(self.ready(red=False), "stdout")
+        self.assertEqual(done.returncode, 2)
+
+    def test_a_red_whose_stdout_is_dead_is_exit_two(self) -> None:
+        done = self.run_with_dead_stream(self.ready(red=True), "stdout")
+        self.assertEqual(done.returncode, 2)
+
+    def test_a_usage_error_whose_stderr_is_dead_is_exit_two(self) -> None:
+        self.ready(red=False)
+        done = self.run_with_dead_stream(["--repo"], "stderr")
+        self.assertEqual(done.returncode, 2)
+
+    def test_a_fault_whose_stderr_is_dead_is_exit_two_and_prints_nothing_else(self) -> None:
+        args = self.ready(red=False)
+        args[3] = "no-such-ref"
+        done = self.run_with_dead_stream(args, "stderr")
+        self.assertEqual((done.returncode, done.stdout), (2, b""))
+
+    def test_a_working_stdout_with_a_dead_stderr_still_passes(self) -> None:
+        done = self.run_with_dead_stream(self.ready(red=False), "stderr")
+        self.assertEqual((done.returncode, done.stdout.replace(b"\r", b"")), (0, b"paths=1 defects=0\n"))
+
+    def test_streams_that_raise_or_do_not_exist_are_exit_two_in_process(self) -> None:
+        args = self.ready(red=False)
+
+        class Dead(io.StringIO):
+            def __init__(self, fail_on: str) -> None:
+                super().__init__()
+                self.fail_on = fail_on
+
+            def write(self, text: str) -> int:
+                if self.fail_on == "write":
+                    raise OSError(32, "broken pipe")
+                return super().write(text)
+
+            def flush(self) -> None:
+                if self.fail_on == "flush":
+                    raise ValueError("I/O operation on closed file")
+
+        for name, make in (
+            ("write", lambda: Dead("write")),
+            ("flush", lambda: Dead("flush")),
+            ("none", lambda: None),
+        ):
+            with self.subTest(stream=name):
+                with mock.patch.object(sys, "stdout", make()):
+                    code = repair_guard.main(args)
+                self.assertEqual(code, 2)
+
+
+class CaseRuleTests(Fixture):
+    """S56-04: on Windows the allowlist never widens and protection never narrows."""
+
+    STRASSE = "straße"
+    KELVIN = "K"
+
+    def rule(self, entry: str) -> repair_guard.PathRule:
+        return repair_guard.make_rule(entry, "t")
+
+    def test_an_allowlist_entry_ignores_ascii_case_only(self) -> None:
+        self.assertTrue(self.rule("Tools/").covers("tools/x", True))
+        self.assertTrue(self.rule("tools/A.py").covers("TOOLS/a.PY", True))
+        self.assertTrue(self.rule(self.STRASSE + "/").covers("STRAßE/x", True))
+        self.assertFalse(self.rule("strasse/").covers(self.STRASSE + "/a.py", True))
+        self.assertFalse(self.rule(self.STRASSE + "/").covers("strasse/a.py", True))
+        self.assertFalse(self.rule("kit/").covers(self.KELVIN + "it/a.py", True))
+        self.assertFalse(self.rule("café/").covers("CAFÉ/x", True))
+        self.assertFalse(self.rule("tools/").covers("Tools/x", False))
+
+    def test_a_protected_entry_folds_case_fully(self) -> None:
+        allow = [self.rule("strasse/"), self.rule(self.STRASSE + "/"), self.rule("kit/"), self.rule(self.KELVIN + "it/")]
+        for protected, path in (
+            (self.STRASSE + "/", "strasse/x"),
+            ("strasse/", self.STRASSE + "/x"),
+            ("kit/", self.KELVIN + "it/x"),
+            (self.KELVIN + "it/", "KIT/x"),
+            ("Tools/a.py", "tools/A.PY"),
+        ):
+            with self.subTest(protected=protected, path=path):
+                defects = repair_guard.check_paths([path], allow + [self.rule("tools/")], [self.rule(protected)], True)
+                self.assertIn(repair_guard.PROTECTED_PATH_TOUCHED, [d.code for d in defects])
+
+    def test_a_protected_entry_does_not_fold_when_case_matters(self) -> None:
+        defects = repair_guard.check_paths(
+            ["strasse/x"], [self.rule("strasse/")], [self.rule(self.STRASSE + "/")], False
+        )
+        self.assertEqual(defects, [])
+
+    def test_the_gate_directory_is_protected_under_full_folding(self) -> None:
+        for path in (
+            "Skills/Johnny-Project-Takeover/Scripts/x.py",
+            "SKILLS/JOHNNY-PROJECT-TAKEOVER/SCRIPTS/dispatch_lint.py",
+            "skills/johnny-project-ta" + self.KELVIN + "eover/scripts/x.py",
+        ):
+            with self.subTest(path=path):
+                defects = repair_guard.check_paths([path], [self.rule(path)], [], True)
+                self.assertEqual([d.code for d in defects], [repair_guard.PROTECTED_PATH_TOUCHED])
+                self.assertEqual(repair_guard.check_paths([path], [self.rule(path)], [], False), [])
+
+    def test_the_cli_protects_a_case_variant_of_the_gate_directory_on_windows_only(self) -> None:
+        variant = "Skills/Johnny-Project-Takeover/Scripts/dispatch_lint.py"
+        self.base("tools/a.py")
+        self.write(variant)
+        sha = self.commit()
+        self.set_dispatch(["Skills/"], [])
+        result = self.run_guard(sha)
+        if ON_WINDOWS:
+            self.assertEqual((result.code, self.defect_codes(result)), (1, [repair_guard.PROTECTED_PATH_TOUCHED]))
+        else:
+            self.assertEqual(result.code, 0)
+
+    def test_the_cli_does_not_widen_the_allowlist_to_a_sharp_s_path_on_windows(self) -> None:
+        name = f"{self.STRASSE}/a.py"
+        self.base("tools/a.py")
+        self.write(name)
+        sha = self.commit()
+        self.set_dispatch(["strasse/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, self.defect_codes(result)), (1, [repair_guard.OUTSIDE_ALLOWLIST]))
+
+
+class EnvironmentAndObjectTests(Fixture):
+    """S56-06: the repository is the one --repo names, as git stores it, whatever the host says."""
+
+    SELECTORS = (
+        "GIT_DIR",
+        "GIT_WORK_TREE",
+        "GIT_INDEX_FILE",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_NAMESPACE",
+        "GIT_CEILING_DIRECTORIES",
+    )
+
+    def committed(self) -> str:
+        self.base("tools/a.py")
+        self.write("tools/a.py", "fixed\n")
+        return self.commit()
+
+    def test_a_replace_ref_does_not_hide_a_protected_change(self) -> None:
+        self.base("tools/a.py", "src/app.py")
+        base = git(self.repo, "rev-parse", "HEAD")
+        self.write("src/app.py", "changed\n")
+        sha = self.commit("repair")
+        harmless = git(self.repo, "commit-tree", f"{base}^{{tree}}", "-p", base, "-m", "harmless")
+        git(self.repo, "replace", "-f", sha, harmless)
+        self.assertEqual(git(self.repo, "diff", "--name-only", base, sha), "")  # the replacement works for plain git
+        self.set_dispatch(["tools/"], ["src/"])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1)
+        self.assertEqual(
+            self.defect_codes(result), [repair_guard.OUTSIDE_ALLOWLIST, repair_guard.PROTECTED_PATH_TOUCHED]
+        )
+
+    def test_the_selecting_variables_are_removed_from_every_git_child(self) -> None:
+        values = {name: "x" for name in self.SELECTORS}
+        with mock.patch.dict(os.environ, values):
+            environment = repair_guard._git_environment()
+        for name in self.SELECTORS:
+            with self.subTest(name=name):
+                self.assertNotIn(name, environment)
+
+    def test_git_object_directory_in_the_environment_changes_nothing(self) -> None:
+        sha = self.committed()
+        empty = self.root / "empty-objects"
+        empty.mkdir()
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha, env={"GIT_OBJECT_DIRECTORY": str(empty)})
+        self.assertEqual((result.code, result.out), (0, "paths=1 defects=0\n"), result.err)
+
+    def test_git_work_tree_in_the_environment_changes_nothing(self) -> None:
+        sha = self.committed()
+        elsewhere = self.root / "elsewhere"
+        elsewhere.mkdir()
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha, env={"GIT_WORK_TREE": str(elsewhere)})
+        self.assertEqual((result.code, result.out), (0, "paths=1 defects=0\n"), result.err)
+
+    def test_git_alternate_object_directories_do_not_supply_a_commit(self) -> None:
+        self.committed()
+        other = self.root / "other"
+        other.mkdir()
+        git(other, "init", "-q", "-b", "main")
+        (other / "z.txt").write_text("z\n", encoding="utf-8")
+        git(other, "add", "-A")
+        git(other, "commit", "-q", "-m", "elsewhere")
+        foreign = git(other, "rev-parse", "HEAD")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(foreign, env={"GIT_ALTERNATE_OBJECT_DIRECTORIES": str(other / ".git" / "objects")})
+        self.assertEqual(result.code, 2)
+
+    def test_git_namespace_in_the_environment_changes_nothing(self) -> None:
+        self.committed()
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard("HEAD", env={"GIT_NAMESPACE": "ns"})
+        self.assertEqual((result.code, result.out), (0, "paths=1 defects=0\n"), result.err)
+
+    def test_git_index_file_in_the_environment_changes_nothing(self) -> None:
+        self.committed()
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard("HEAD", env={"GIT_INDEX_FILE": str(self.root / "no-such-index")})
+        self.assertEqual((result.code, result.out), (0, "paths=1 defects=0\n"), result.err)
+
+    def test_a_git_error_of_many_lines_is_one_line_on_stderr(self) -> None:
+        sha = self.committed()
+        loose = self.repo / ".git" / "objects" / sha[:2] / sha[2:]
+        os.chmod(loose, 0o666)
+        loose.write_bytes(b"garbage")
+        self.set_dispatch(["tools/"], [])
+        reference = subprocess.run(
+            ["git", "-C", str(self.repo), "rev-parse", "--verify", f"{sha}^{{commit}}"], capture_output=True, check=False
+        )
+        self.assertGreater(len(reference.stderr.decode("utf-8", "replace").strip().splitlines()), 1)
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 2)
+        self.assertEqual(result.err.count("\n"), 1, result.err)
+        self.assertTrue(result.err.startswith("repair_guard.py: tool fault:"))
+
+    def test_a_multi_line_git_message_is_quoted_into_one_line(self) -> None:
+        stderr = b"error: first\nOUTSIDE_ALLOWLIST 'forged'\r\nfatal: last\n"
+        done = subprocess.CompletedProcess(["git"], 128, stdout=b"", stderr=stderr)
+        with mock.patch.object(repair_guard.subprocess, "run", return_value=done):
+            with self.assertRaises(repair_guard.ToolFault) as caught:
+                repair_guard.run_git("anywhere", ["rev-parse", "x"])
+        self.assertEqual(str(caught.exception).splitlines(), [str(caught.exception)])
+        self.assertIn("forged", str(caught.exception))
+
+    def test_a_root_commit_in_a_sha256_repository_is_compared_with_that_formats_empty_tree(self) -> None:
+        repo = self.root / "repo256"
+        repo.mkdir()
+        probe = subprocess.run(["git", "-C", str(repo), "init", "-q", "--object-format=sha256", "-b", "main"], capture_output=True, check=False)
+        if probe.returncode != 0:
+            self.skipTest("this git cannot create a SHA-256 repository: " + probe.stderr.decode("utf-8", "replace").strip())
+        git(repo, "config", "user.name", "t")
+        (repo / "tools").mkdir()
+        (repo / "tools" / "a.py").write_text("x\n", encoding="utf-8")
+        (repo / "b.py").write_text("x\n", encoding="utf-8")
+        git(repo, "add", "-A")
+        git(repo, "commit", "-q", "-m", "root")
+        self.assertEqual(len(git(repo, "rev-parse", "HEAD")), 64)
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard("HEAD", repo=repo)
+        self.assertEqual(result.code, 1, result.err)
+        self.assertEqual(
+            self.defect_codes(result), [repair_guard.REPAIR_NOT_SINGLE_PARENT, repair_guard.OUTSIDE_ALLOWLIST]
+        )
+        self.assertIn("'b.py'", result.lines[1])
 
 
 class InProcessTests(Fixture):

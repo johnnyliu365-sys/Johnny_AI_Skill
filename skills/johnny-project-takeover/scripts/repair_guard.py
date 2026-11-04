@@ -18,12 +18,22 @@ change; an empty protected list leaves only the gate scripts protected.
 The changed paths of the repair commit are read from `git diff --name-status -M -z`
 against its first parent, with quoting off. Added, modified, deleted, type-changed and
 renamed paths all count, and a rename counts on both its old and its new side. A root
-commit is compared against the empty tree.
+commit is compared against the empty tree, which is asked from git for the object format
+of the repository and never written down here. Submodule pointers (gitlinks) always
+count: the diff runs with submodule ignoring switched off both in the configuration and on
+the command line, so neither the ignore setting of a tracked submodule list nor a
+repository setting can hide a moved pointer; external diff drivers and text conversion are
+off. Replace refs are ignored, and the environment variables that select a repository are
+removed from every git child.
 
 Matching is by path segment, never by character prefix: the directory entry `d/` covers
 `d/x` and does not cover `d2/x` or a path named exactly `d`. Entries are compared exactly;
-nothing is decoded or Unicode-normalised. On Windows entries and paths are compared
-case-insensitively (the file system folds case); elsewhere case matters.
+nothing is decoded or Unicode-normalised. On Windows case is compared in the fail-closed
+direction on both sides: an allowlist entry covers a path when the two are equal ignoring
+ASCII case only (a non-ASCII character must match exactly, so the allowlist never grows
+beyond what the file system treats as one name), while a protected entry and the gate
+script directory cover a path when the two are equal under full Unicode case folding (so
+protection never shrinks). Elsewhere case matters.
 
 Defect codes (one output line each, exit 1):
 
@@ -31,18 +41,34 @@ Defect codes (one output line each, exit 1):
     PROTECTED_PATH_TOUCHED   a changed path is covered by a protected entry or a gate script
     REPAIR_NOT_SINGLE_PARENT the repair commit is a merge or a root commit
     TEXT_VALUE_INVALID       a string read from the dispatch file or from git holds a lone
-                             surrogate or a control character (U+0000-U+001F, U+007F)
+                             surrogate, an undecodable byte or a control character
+                             (U+0000-U+001F, U+007F)
 
 Every printed subject is escaped with Python `repr`, so one defect is always one line. On
 exit 0 the only output is `paths=N defects=0`, where N counts the distinct changed paths.
 
+A dispatch that holds a text defect is a red by itself and its entries cannot be trusted,
+so the changed paths are then checked for text values only, not against the entries; git is
+still asked, so the single-parent red and any fault are reported too.
+
+The dispatch file is decoded as UTF-8 with surrogate escapes, so no byte sequence makes it
+unreadable. An undecodable byte or a raw control character on a block line (inside or
+outside a JSON string) is a TEXT_VALUE_INVALID red; the same on a line the gate does not
+read is ignored. A block line that is not one JSON array of strings for any other reason
+is a usage error.
+
 Exit codes: 0 pass, 1 contract red (at least one defect), 2 tool fault (git cannot serve
 the check, the repository is not a repository top level, the dispatch file cannot be
-read, an unexpected error), 3 usage error (bad arguments, a dispatch without both lines,
-a line that is not one JSON array of strings, a null value, an empty entry, an entry that
-is absolute, uses a backslash or holds an empty, `.` or `..` segment). A red never exits 2
-and a fault never exits 1. A text-value defect is a red (exit 1) in a file or in git
+read, standard output or standard error cannot be written, an unexpected error), 3 usage
+error (bad arguments, a dispatch without both lines, a line that is not one JSON array of
+strings, a null value, an empty entry, an entry that is absolute, uses a backslash or holds
+an empty, `.` or `..` segment). A text-value defect is a red (exit 1) in a file or in git
 output and a usage error (exit 3) in an argument.
+
+Red before fault: the guard reports every red it can find and exits 1 when there is one,
+with the fault printed on standard error. It exits 2 only when it found no red. The one
+exception is output that cannot be written: then no verdict can be delivered and the exit
+is 2 whatever was found.
 """
 from __future__ import annotations
 
@@ -54,6 +80,7 @@ import subprocess
 import sys
 from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import TextIO
 
 USAGE = "usage: repair_guard.py --repo <dir> --repair <commit> --dispatch <dispatch-file>"
 
@@ -72,6 +99,10 @@ EXIT_FAULT = 2
 EXIT_USAGE = 3
 
 GIT_TIMEOUT_SECONDS = 300.0
+# Submodule pointers always count: ignoring is switched off in the configuration and on the
+# command line (a per-submodule setting in a tracked list outranks the configuration only).
+DIFF_OPTIONS = ("-c", "diff.ignoreSubmodules=none")
+DIFF_FLAGS = ("--name-status", "-M", "-z", "--ignore-submodules=none", "--no-ext-diff", "--no-textconv")
 DRIVE_PREFIX = re.compile(r"^[A-Za-z]:")
 # Environment variables that would point git at some other repository than --repo.
 GIT_SELECTORS = (
@@ -103,10 +134,18 @@ class PathRule:
     entry: str
     is_directory: bool
 
-    def covers(self, path: str, case_insensitive: bool) -> bool:
+    def covers(self, path: str, case_insensitive: bool, full_folding: bool = False) -> bool:
+        """Whether this entry covers `path`.
+
+        `case_insensitive` False compares exactly. True compares ignoring ASCII case only,
+        or under full Unicode case folding when `full_folding` is also True.
+        """
         entry, subject = self.entry, path
         if case_insensitive:
-            entry, subject = entry.casefold(), subject.casefold()
+            if full_folding:
+                entry, subject = entry.casefold(), subject.casefold()
+            else:
+                entry, subject = ascii_lower(entry), ascii_lower(subject)
         if self.is_directory:
             return subject.startswith(entry) and len(subject) > len(entry)
         return subject == entry
@@ -135,6 +174,14 @@ class DispatchRules:
     allowlist: tuple[PathRule, ...]
     protected: tuple[PathRule, ...]
     text_defects: tuple[Defect, ...]
+
+
+ASCII_LOWER = {code: code + 32 for code in range(ord("A"), ord("Z") + 1)}
+
+
+def ascii_lower(text: str) -> str:
+    """`text` with the ASCII letters lowered and every other character left as it is."""
+    return text.translate(ASCII_LOWER)
 
 
 def quote(text: str) -> str:
@@ -188,12 +235,7 @@ def _parse_line(
     raw = line[len(marker):].strip(" ")
     if not raw:
         raise UsageError(f"line {number}: {key} has no value")
-    try:
-        value: object = json.loads(raw)
-    except (ValueError, RecursionError):
-        raise UsageError(f"line {number}: the value of {key} is not one JSON value") from None
-    if not isinstance(value, list):
-        raise UsageError(f"line {number}: {key} must be a JSON array of strings")
+    value = _read_value(raw, key, number, bad is not None)
     rules: list[PathRule] = []
     for position, element in enumerate(value, 1):
         where = f"line {number}, {key} entry {position}"
@@ -201,10 +243,35 @@ def _parse_line(
             raise UsageError(f"{where}: an entry must be a JSON string")
         problem = bad_character(element)
         if problem is not None:
-            text_defects.append(Defect(TEXT_VALUE_INVALID, quote(element), f"{where} holds {problem}"))
+            if bad is None:
+                text_defects.append(Defect(TEXT_VALUE_INVALID, quote(element), f"{where} holds {problem}"))
             continue
         rules.append(make_rule(element, where))
     return tuple(rules)
+
+
+def _read_value(raw: str, key: str, number: int, line_is_bad: bool) -> list[object]:
+    """The JSON array on a block line; a bad character is a text red, never a structure error.
+
+    A raw control character inside a JSON string is read as part of the string. A bad
+    character anywhere else is judged as the blank it would have been, so the line is
+    still checked for being one JSON array of strings.
+    """
+    try:
+        value: object = json.loads(raw, strict=False)
+    except (ValueError, RecursionError):
+        value = None
+        if line_is_bad:
+            blanked = "".join(" " if bad_character(char) is not None else char for char in raw)
+            try:
+                value = json.loads(blanked, strict=False)
+            except (ValueError, RecursionError):
+                value = None
+        if value is None:
+            raise UsageError(f"line {number}: the value of {key} is not one JSON value") from None
+    if not isinstance(value, list):
+        raise UsageError(f"line {number}: {key} must be a JSON array of strings")
+    return list(value)
 
 
 def parse_dispatch(text: str) -> DispatchRules:
@@ -221,17 +288,25 @@ def check_paths(
     allowlist: Sequence[PathRule],
     protected: Sequence[PathRule],
     case_insensitive: bool,
+    judge_rules: bool = True,
 ) -> list[Defect]:
-    """Defects of the changed `paths` against the rules; the gate directory is always protected."""
+    """Defects of the changed `paths` against the rules; the gate directory is always protected.
+
+    With `judge_rules` False only the text values of the paths are checked: the rules came
+    from a dispatch that already holds a text defect, so an entry may be missing from them
+    and neither an outside path nor a protected one can be judged fairly.
+    """
     guarded = (*protected, PathRule(GATE_DIRECTORY, True))
     defects: list[Defect] = []
     for path in paths:
         problem = bad_character(path)
         if problem is not None:
             defects.append(Defect(TEXT_VALUE_INVALID, quote(path), f"a changed path holds {problem}"))
-        if not any(rule.covers(path, case_insensitive) for rule in allowlist):
+        if not judge_rules:
+            continue
+        if not any(rule.covers(path, case_insensitive, False) for rule in allowlist):
             defects.append(Defect(OUTSIDE_ALLOWLIST, quote(path), ""))
-        hit = next((rule for rule in guarded if rule.covers(path, case_insensitive)), None)
+        hit = next((rule for rule in guarded if rule.covers(path, case_insensitive, True)), None)
         if hit is not None:
             defects.append(Defect(PROTECTED_PATH_TOUCHED, quote(path), f"covered by {quote(hit.entry)}"))
     return defects
@@ -264,9 +339,9 @@ def _git_environment() -> dict[str, str]:
     return environment
 
 
-def run_git(repo: str, args: Sequence[str], stdin: bytes = b"") -> bytes:
+def run_git(repo: str, args: Sequence[str], stdin: bytes = b"", options: Sequence[str] = ()) -> bytes:
     """Run git inside `repo` and return stdout; any failure is a ToolFault carrying git's stderr."""
-    command = ["git", "--no-replace-objects", "-c", "core.quotepath=false", "-C", repo, *args]
+    command = ["git", "--no-replace-objects", "-c", "core.quotepath=false", "-C", repo, *options, *args]
     try:
         completed = subprocess.run(
             command,
@@ -281,6 +356,7 @@ def run_git(repo: str, args: Sequence[str], stdin: bytes = b"") -> bytes:
         raise ToolFault(f"git cannot be run: {quote(reason)}") from None
     if completed.returncode != 0:
         message = completed.stderr.decode("utf-8", errors="replace").strip()
+        # git's text is input: quoted, so a message of many lines is still one line here.
         raise ToolFault(f"git {args[0]} failed with exit {completed.returncode}: {quote(message)}")
     return completed.stdout
 
@@ -302,22 +378,33 @@ def require_repository_top(repo: str) -> None:
         raise ToolFault(f"{quote(repo)} is not the top level of a repository (it is inside {quote(top)})")
 
 
-def changed_paths(repo: str, commit: str) -> tuple[list[str], int]:
-    """The changed paths of `commit` against its first parent, and its parent count."""
+def changed_paths(repo: str, commit: str, reds: list[Defect]) -> list[str]:
+    """The changed paths of `commit` against its first parent.
+
+    A merge or a root commit adds its red to `reds` before git is asked for the paths, so
+    the red stands even when that question fails.
+    """
     sha = _git_text(repo, ["rev-parse", "--verify", f"{commit}^{{commit}}"])
     parents = _git_text(repo, ["rev-list", "--parents", "-n", "1", sha]).split()[1:]
     if not parents and _git_text(repo, ["rev-parse", "--is-shallow-repository"]) == "true":
         raise ToolFault("the repository is shallow: a root commit cannot be told from the shallow boundary")
+    if len(parents) != 1:
+        kind = "a root commit" if not parents else f"a merge commit with {len(parents)} parents"
+        reds.append(Defect(REPAIR_NOT_SINGLE_PARENT, quote(commit), f"the repair is {kind}"))
     if parents:
         base = parents[0]
     else:
         base = _git_text_stdin(repo, ["hash-object", "-t", "tree", "--stdin"])
-    data = run_git(repo, ["diff", "--name-status", "-M", "-z", base, sha])
-    return parse_name_status(data), len(parents)
+    data = run_git(repo, ["diff", *DIFF_FLAGS, base, sha], options=DIFF_OPTIONS)
+    return parse_name_status(data)
 
 
 def _git_text_stdin(repo: str, args: Sequence[str]) -> str:
     return run_git(repo, args, stdin=b"").decode("utf-8", errors="replace").strip()
+
+
+class OutputFault(Exception):
+    """Standard output or standard error cannot be written: exit 2."""
 
 
 def _harden_streams() -> None:
@@ -330,10 +417,22 @@ def _harden_streams() -> None:
                 pass
 
 
+def _emit(stream: TextIO | None, text: str) -> None:
+    """Write `text` and flush it now, so a stream that cannot take it fails here and not at exit."""
+    if stream is None:
+        raise OutputFault("the stream is closed")
+    try:
+        stream.write(text)
+        stream.flush()
+    except (OSError, ValueError) as exc:
+        raise OutputFault(type(exc).__name__) from None
+
+
 def _usage_error(message: str | None = None) -> int:
-    print(USAGE, file=sys.stderr)
+    text = USAGE + "\n"
     if message:
-        print(f"repair_guard.py: error: {message}", file=sys.stderr)
+        text += f"repair_guard.py: error: {message}\n"
+    _emit(sys.stderr, text)
     return EXIT_USAGE
 
 
@@ -368,55 +467,92 @@ def parse_arguments(args: Sequence[str]) -> Arguments:
     return Arguments(repo=given["--repo"], repair=given["--repair"], dispatch=given["--dispatch"])
 
 
+def read_dispatch(path: str) -> str:
+    """The dispatch text: UTF-8 with surrogate escapes, so an undecodable byte is never a fault."""
+    try:
+        with open(path, "rb") as handle:
+            raw = handle.read()
+    except OSError as exc:
+        raise ToolFault(f"cannot read {quote(path)}: {quote(exc.strerror or type(exc).__name__)}") from None
+    return raw.decode("utf-8-sig", errors="surrogateescape")
+
+
+def inspect_repair(arguments: Arguments, rules: DispatchRules, reds: list[Defect]) -> int:
+    """Check the repair commit; every red found is added to `reds` before any fault is raised.
+
+    Returns the number of distinct changed paths.
+    """
+    require_repository_top(arguments.repo)
+    paths = changed_paths(arguments.repo, arguments.repair, reds)
+    judge_rules = not rules.text_defects
+    reds.extend(check_paths(paths, rules.allowlist, rules.protected, sys.platform == "win32", judge_rules))
+    return len(paths)
+
+
+def run(arguments: Arguments) -> int:
+    text = read_dispatch(arguments.dispatch)
+    rules = parse_dispatch(text)
+    reds: list[Defect] = list(rules.text_defects)
+    fault: str | None = None
+    count = 0
+    try:
+        count = inspect_repair(arguments, rules, reds)
+    except ToolFault as exc:
+        fault = str(exc)
+    except Exception as exc:  # noqa: BLE001 - any unexpected error is a tool fault, never a traceback
+        fault = f"{quote(type(exc).__name__)}: {quote(str(exc))}"
+    if reds:
+        _emit(sys.stdout, "".join(defect.line() + "\n" for defect in reds))
+        if fault is not None:
+            _emit(sys.stderr, f"repair_guard.py: tool fault: {fault}\n")
+        return EXIT_RED
+    if fault is not None:
+        _emit(sys.stderr, f"repair_guard.py: tool fault: {fault}\n")
+        return EXIT_FAULT
+    _emit(sys.stdout, f"paths={count} defects=0\n")
+    return EXIT_PASS
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     _harden_streams()
     args = list(sys.argv[1:] if argv is None else argv)
     try:
-        arguments = parse_arguments(args)
-    except UsageError as exc:
-        return _usage_error(str(exc))
-    try:
-        with open(arguments.dispatch, "rb") as handle:
-            raw = handle.read()
-    except OSError as exc:
-        print(
-            f"repair_guard.py: tool fault: cannot read {quote(arguments.dispatch)}: {quote(exc.strerror or type(exc).__name__)}",
-            file=sys.stderr,
-        )
+        try:
+            arguments = parse_arguments(args)
+        except UsageError as exc:
+            return _usage_error(str(exc))
+        try:
+            return run(arguments)
+        except UsageError as exc:
+            return _usage_error(str(exc))
+        except ToolFault as exc:
+            _emit(sys.stderr, f"repair_guard.py: tool fault: {exc}\n")
+            return EXIT_FAULT
+    except OutputFault:
         return EXIT_FAULT
-    try:
-        text = raw.decode("utf-8-sig", errors="surrogatepass")
-    except UnicodeDecodeError:
-        return _usage_error(f"{quote(arguments.dispatch)} is not UTF-8 text")
-    try:
-        rules = parse_dispatch(text)
-    except UsageError as exc:
-        return _usage_error(str(exc))
-    if rules.text_defects:
-        for defect in rules.text_defects:
-            print(defect.line())
-        return EXIT_RED
-    try:
-        require_repository_top(arguments.repo)
-        paths, parent_count = changed_paths(arguments.repo, arguments.repair)
-        defects: list[Defect] = []
-        if parent_count != 1:
-            kind = "a root commit" if parent_count == 0 else f"a merge commit with {parent_count} parents"
-            defects.append(Defect(REPAIR_NOT_SINGLE_PARENT, quote(arguments.repair), f"the repair is {kind}"))
-        defects.extend(check_paths(paths, rules.allowlist, rules.protected, sys.platform == "win32"))
-    except ToolFault as exc:
-        print(f"repair_guard.py: tool fault: {exc}", file=sys.stderr)
-        return EXIT_FAULT
-    except Exception as exc:  # noqa: BLE001 - any unexpected error is a tool fault, never a red and never a traceback
-        print(f"repair_guard.py: tool fault: {quote(type(exc).__name__)}: {quote(str(exc))}", file=sys.stderr)
-        return EXIT_FAULT
-    if defects:
-        for defect in defects:
-            print(defect.line())
-        return EXIT_RED
-    print(f"paths={len(paths)} defects=0")
-    return EXIT_PASS
+
+
+def _release_broken_streams() -> None:
+    """Point a stream that cannot be written at the null device, so the exit flush cannot fail.
+
+    Python turns a failed flush at interpreter exit into exit status 120, which would
+    replace the exit 2 this script has already decided on.
+    """
+    for number, stream in ((1, sys.stdout), (2, sys.stderr)):
+        try:
+            if stream is None:
+                raise ValueError("closed")
+            stream.flush()
+        except (OSError, ValueError):
+            try:
+                descriptor = os.open(os.devnull, os.O_WRONLY)
+                os.dup2(descriptor, number)
+                os.close(descriptor)
+            except OSError:
+                pass
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    code = main()
+    _release_broken_streams()
+    sys.exit(code)

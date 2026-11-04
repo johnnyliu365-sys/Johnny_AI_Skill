@@ -105,8 +105,34 @@ segment; any other entry is one exact path. The directory this script lives in (
 scripts) is always protected, whether or not `protected_paths` names it. The changed paths
 are read from `git diff --name-status -M -z` against the first parent, with quoting off, so
 added, modified, deleted and renamed paths all count and a rename counts on both sides; a
-root commit is compared against the empty tree. On Windows paths and entries are compared
-case-insensitively; elsewhere case matters. Entries are never decoded or normalised.
+root commit is compared against the empty tree, which is asked from git for the object
+format of the repository and never written down in the script. Entries are never decoded or
+normalised.
+
+What counts, whatever the repository says:
+
+- A moved submodule pointer always counts. The diff switches submodule ignoring off in the
+  configuration and on the command line, so neither the ignore setting of a tracked
+  submodule list nor a repository setting can hide it. External diff drivers and text
+  conversion are off.
+- Replace refs are ignored, and the environment variables that select a repository (the
+  git directory, the work tree, the index file, the object directory, the alternate object
+  directories, the namespace and the ceiling directories) are removed from every git child.
+
+Case on Windows is compared in the direction that fails closed. An allowlist entry covers a
+path when the two are equal ignoring ASCII case only; a non-ASCII character must match
+exactly, so the allowlist never grows beyond what the file system treats as one name. A
+protected entry and the gate script directory cover a path when the two are equal under
+full Unicode case folding, so protection never shrinks (a path spelled with a German sharp
+s is covered by a protected entry spelled with two letters s, and the other way round).
+Elsewhere case matters.
+
+The dispatch file is read as UTF-8 with surrogate escapes. An undecodable byte or a raw
+control character on a block line, inside or outside a JSON string, is a
+`TEXT_VALUE_INVALID` red. The same on any other line is ignored. A block line that is not
+one JSON array of strings for any other reason is a usage error. When the dispatch holds a
+text defect its entries cannot be trusted, so the changed paths are checked for text
+values only and not against the entries.
 
 Output: one line per defect, `CODE 'subject'` with the subject escaped by Python `repr`
 so a defect is always one line; on exit 0 only `paths=N defects=0`.
@@ -117,13 +143,17 @@ so a defect is always one line; on exit 0 only `paths=N defects=0`.
   and protected is reported under both codes.
 - `REPAIR_NOT_SINGLE_PARENT`: the repair commit is a merge or a root commit.
 - `TEXT_VALUE_INVALID`: a string read from the dispatch file or from git (an entry, a
-  block line, a changed path) holds a lone surrogate or a control character.
+  block line, a changed path) holds a lone surrogate, an undecodable byte or a control
+  character.
 
-Exit 1: at least one defect. Exit 2: git cannot serve the check (unknown commit, `--repo`
-not a repository or not its top level, a shallow boundary commit, git missing), the dispatch
-file is unreadable, or an unexpected error; git's message is printed on one line. Exit 3: bad
-arguments (a control character or a lone surrogate in an argument is one of them), a dispatch
-file that is not UTF-8, lacks either line or repeats one, a value that is not one JSON array
-of strings (`null` included), or an entry that is empty, absolute, uses a backslash or holds
+Red before fault: the guard reports every red it can find and exits 1 when there is one,
+with any fault printed on one line on standard error; it exits 2 only when it found no red.
+Exit 2: git cannot serve the check (unknown commit, `--repo` not a repository or not its
+top level, a shallow boundary commit, git missing), the dispatch file is unreadable, an
+unexpected error, or standard output or standard error cannot be written (then no verdict
+can be delivered, so this wins over a red). git's message is printed on one line. Exit 3:
+bad arguments (a control character or a lone surrogate in an argument is one of them), a
+dispatch file that lacks either line or repeats one, a value that is not one JSON array of
+strings (`null` included), or an entry that is empty, absolute, uses a backslash or holds
 an empty, `.` or `..` segment. A text defect inside a file or in git output is exit 1, and a
 usage error in the same dispatch outranks it.
