@@ -178,3 +178,56 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/53-rev03-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision04 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `ebbb4947cc6586c412c61cd57158289389ebc391` (`ebbb4947` correction 1 → `4252fda6` → `09af7a1f` → `5ea02c13` → `fd456159`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision04 |
+| Summary | The revision04 design holds: one commit per run even when HEAD moves, link and gitlink sources at any depth are `SOURCE_MISSING`, absent and unservable are told apart (pruned blob, tree and root tree, blobless and treeless clones, a corrupt loose object), red before fault holds in every combination tried. No implementation defect. Blocking evidence: 9 counter-mutations survive (S53-22 to S53-26), two of them safety-adjacent. For the control plane: precondition faults end the run before reds are looked for (S53-27, wording) and a forged loose object passes (S53-28). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 212 passed, 1 skipped, 571 subtests; mypy --strict clean |
+| One commit per run; link and gitlink sources; absent vs unservable; red before fault; wording | PASS | real-git probes; S53-22 and S53-27 noted |
+| Regression (guard, decoding, canonical paths, git environment, `--repo`, snapshot, declaration values, links) | PASS | 18 hostile specs, 22 path shapes, a SHA-256 repository probe |
+| R4-2 / one line | PASS | |
+| Seat choices | AGREE | tree walk by object id; unservable vs fault; withheld `NO_SPEC_FOR_REQUIREMENT`; URL-only source; remapped R15, R16; E6 equivalent |
+| Reverse mutations | FAIL | seat 58 red, E6 equivalent; reviewer 30: 20 red, K18 equivalent, 9 survivors |
+| Receipt / boundary | PASS | checker 0 defects; digests recomputed; LF; three files; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S53-01 to S53-21 | CLOSED (S53-16 gitlink-in-the-middle unpinned: S53-22; S53-17 preconditions: S53-27); S53-07 not taken |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S53-22 | EVIDENCE_DEFECT | Low, safety-adjacent | `contract_gate.py:689` | no test has a gitlink in the middle of a source path; descending into it stays green | K1 green |
+| S53-23 | EVIDENCE_DEFECT | Low, safety-adjacent | `contract_gate.py:891` | no test declares a digest equal except late characters; an 8-character compare stays green | K18b green |
+| S53-24 | EVIDENCE_DEFECT | Low (exit code in mutants) | `contract_gate.py:103, 642` | no SHA-256 repository is tested | K6, K7 green |
+| S53-25 | EVIDENCE_DEFECT | Low (exit code in mutants) | `contract_gate.py:364, 954` | URL schemes other than http(s) and the withholding of `NO_SPEC_FOR_REQUIREMENT` after an unexpected error are unpinned | K34, K10 green |
+| S53-26 | EVIDENCE_DEFECT | Low (evidence only) | `contract_gate.py:654-660, 673` | the batch-reader tree side is unpinned: store marked broken, answered subtree id, answered kind | K5, K65, K67 green |
+| S53-27 | TICKET_DEFECT | Low, non-blocking (fails closed) | ticket "Red before fault"; `contract_gate.py:919-928` | an unreadable snapshot, `--repo` not the top level or `--specs` not a directory ends the run at once; the ticket does not name the precondition faults | read |
+| S53-28 | OUT_OF_SCOPE_HARDENING | Medium, safety (a seat that can write the shared store) | `contract_gate.py:700-709, 649-660` | the gate does not hash the objects it reads; an overwritten loose blob passes with the forged digest | probe |
+| S53-29 | OUT_OF_SCOPE_HARDENING | Info | `contract_gate.py:414-416, 437` | with no commit the fault detail is empty | probe |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: a real file symlink under `--specs`; POSIX behaviour; a hanging git; an unreadable file under a real ACL.
+
+```review-verdict
+candidate: ebbb4947cc6586c412c61cd57158289389ebc391
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/53-rev04-initial
+reviewed_at: 2026-11-05
+```

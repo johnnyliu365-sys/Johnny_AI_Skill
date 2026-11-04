@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision04 / receipt under `.worktrees/53-contract-gate-out/` / owner implementation seat / worktree `.worktrees/53-contract-gate` / branch `cp/wave2-53-contract-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 initial review: S53-15 to S53-18 TICKET_DEFECT; correction 1 dispatched to the same seat） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04; revision04 initial review CHANGES_REQUESTED (evidence, S53-28 hardening); correction 2 dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/53-contract-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/53-contract-gate-review` |
@@ -179,3 +179,9 @@ Review record section "Revision03 initial review". S53-15 to S53-18 are `TICKET_
 | S53-19 | EVIDENCE_DEFECT | removal mutants for all six codes in M1 |
 | S53-20 | EVIDENCE_DEFECT | tests for a chained comparison with a literal beyond the first comparator, Unicode whitespace as the separator and in the key, the `--batch` size check, an inexact `missing` answer, and `-True` |
 | S53-21 | OUT_OF_SCOPE_HARDENING (taken now) | one commit per run, as above |
+
+### Disposition correction and correction 2 under revision04 (after the revision04 initial review `CHANGES_REQUESTED`)
+
+S53-27 (wording, the seat's behaviour already matches): the faults that end a run before spec reds are looked for are exactly those that leave nothing to check — the snapshot unreadable or not an R4-7 snapshot (exit 2 or 3), `--repo` not the work-tree top level, `--specs` not a directory, and `HEAD` not resolvable; every other fault is met while checking and follows red before fault. The trees are walked by object id on the one `cat-file --batch` process (the seat's reading of "the parent tree", now the ticket's).
+
+Correction 2: S53-22 to S53-26, the tests the review names (a gitlink in the middle of a source path; a digest equal but for late characters; a SHA-256 repository; `file://`, `ftp://` and `s3://` sources; the withholding of `NO_SPEC_FOR_REQUIREMENT` after an unexpected error; the store marked broken after a tree outside its format, the answered subtree id and the answered kind). Taken now, S53-28: every object the gate reads is hashed by the gate against the id it asked for (`<type> <size>\0<body>`, SHA-1 or SHA-256 by id width), as in ticket 56 revision04; a mismatch is a fault naming the id. S53-29: the no-commit fault names the cause. The next review is the one correction review of revision04.
