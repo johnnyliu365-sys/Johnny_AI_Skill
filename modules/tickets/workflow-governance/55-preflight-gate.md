@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/55-preflight-gate-out/` / owner implementation seat / worktree `.worktrees/55-preflight-gate` / branch `cp/wave2-55-preflight-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED` |
+| 狀態 | `IN_REVIEW`（revision01 with the disposition correction below; candidate `eb9014cc`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/55-preflight-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/55-preflight-gate-review` |
@@ -57,7 +57,7 @@ preflight:
 
 ### Text values (all wave-2 gates; added after the ticket 52 review)
 
-Every string read from an input is valid Unicode without lone surrogates and without control characters (U+0000–U+001F, U+007F) unless a field explicitly allows them; a string that breaks this is a red of the input (exit 1), never a tool fault. Every subject printed in a defect line is printed in a form that cannot span two lines or forge another line (Python `repr` or an equivalent escape), so one defect is always one line.
+Every string read from an input is valid Unicode without lone surrogates and without control characters (U+0000–U+001F, U+007F) unless a field explicitly allows them; a string that breaks this is never a tool fault: preflight has no red (R4-2), so in the dispatch file it is exit 3 (the dispatch does not follow the grammar) and in an argument it is exit 3. Every subject printed in a defect line is printed in a form that cannot span two lines or forge another line (Python `repr` or an equivalent escape), so one defect is always one line.
 
 ## 實作範圍、依賴與 ticket elements
 
@@ -112,3 +112,7 @@ Every string read from an input is valid Unicode without lone surrogates and wit
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Disposition correction (revision01, before the initial review)
+
+The text-value paragraph was copied from the gates that have a red and said "exit 1"; R4-2 gives preflight the exits 0/2/3 only. The implementation seat found the conflict, recorded it in its STATEMENT section and chose exit 3; the control plane adopts that choice as the ticket text above. Nothing else changes, and the candidate is reviewed against this text.

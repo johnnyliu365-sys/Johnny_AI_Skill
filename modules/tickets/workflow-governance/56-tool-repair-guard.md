@@ -58,7 +58,7 @@ Each is one line at column 0 whose value is one JSON array of strings. An entry 
 
 ### Text values (all wave-2 gates; added after the ticket 52 review)
 
-Every string read from an input is valid Unicode without lone surrogates and without control characters (U+0000–U+001F, U+007F) unless a field explicitly allows them; a string that breaks this is a red of the input (exit 1), never a tool fault. Every subject printed in a defect line is printed in a form that cannot span two lines or forge another line (Python `repr` or an equivalent escape), so one defect is always one line.
+Every string read from an input is valid Unicode without lone surrogates and without control characters (U+0000–U+001F, U+007F) unless a field explicitly allows them; a string that breaks this is never a tool fault: in a file the gate reads it is a red of the input (exit 1), and in an argument it is a usage error (exit 3). Every subject printed in a defect line is printed in a form that cannot span two lines or forge another line (Python `repr` or an equivalent escape), so one defect is always one line.
 
 ## 實作範圍、依賴與 ticket elements
 
