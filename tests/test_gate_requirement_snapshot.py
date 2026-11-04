@@ -1989,5 +1989,369 @@ class InputDerivedDocumentationTests(SnapshotCase):
             self.assertNotIn("any unexpected error", text)
 
 
+
+def escape_of(char: str) -> str:
+    """The escape a line-break character is printed as (written out here, not taken from the tool)."""
+    return f"\\x{ord(char):02x}" if ord(char) < 0x100 else f"\\u{ord(char):04x}"
+
+
+def nested_objects_bytes(depth: int) -> bytes:
+    return ('{"a":' * depth + "1" + "}" * depth).encode("utf-8")
+
+
+class DeepObjectFailureTests(InputDerivedFailureTests):
+    """The same failures with the nesting made of objects: input, stored version, diff, verify, real command."""
+
+    def deep_rows_input(self) -> Path:
+        return self.env.write_raw_input(b'{"rows":' + nested_objects_bytes(DEEP) + b"}")
+
+    def deep_bytes(self) -> bytes:
+        return nested_objects_bytes(DEEP)
+
+
+class DeepMixedFailureTests(InputDerivedFailureTests):
+    """The same failures with arrays and objects nested in turn."""
+
+    def deep_rows_input(self) -> Path:
+        return self.env.write_raw_input(('{"rows":' + '[{"a":' * DEEP + "1" + "}]" * DEEP + "}").encode("utf-8"))
+
+    def deep_bytes(self) -> bytes:
+        return ('[{"a":' * DEEP + "1" + "}]" * DEEP).encode("utf-8")
+
+
+class SameCodeDefectTests(SnapshotCase):
+    """Two defects with the same code and the same subject are two lines, in a row and at the top level."""
+
+    def stored_document(self) -> tuple[Path, dict[str, object]]:
+        self.env.take([make_row("r1")], taken_at=T1)
+        path = self.env.snapshot("src", "2026-11-04-v1.json")
+        return path, cast("dict[str, object]", json.loads(path.read_text(encoding="utf-8")))
+
+    def rewrite(self, path: Path, document: dict[str, object]) -> None:
+        path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+    def assert_red_lines(self, result: tuple[int, str, str], expected: list[str]) -> None:
+        code, out, err = result
+        self.assertEqual((code, err), (1, ""), out)
+        self.assertEqual(sorted(out.splitlines()), sorted(expected), out)
+
+    def test_take_prints_two_missing_fields_of_one_row(self) -> None:
+        row = without(without(make_row("r1"), "page_id"), "title")
+        self.assert_red_lines(self.env.take([row]), [
+            "ROW_FIELD_MISSING r1: field page_id is missing",
+            "ROW_FIELD_MISSING r1: field title is missing",
+        ])
+        self.assertEqual(self.env.tree(), {})
+
+    def test_take_prints_two_unexpected_fields_of_one_row(self) -> None:
+        self.assert_red_lines(self.env.take([make_row("r1", extra_one=1, extra_two=2)]), [
+            "ROW_FIELD_TYPE r1: unexpected field 'extra_one'",
+            "ROW_FIELD_TYPE r1: unexpected field 'extra_two'",
+        ])
+        self.assertEqual(self.env.tree(), {})
+
+    def test_take_prints_an_unexpected_and_a_missing_field_and_both_kinds_twice(self) -> None:
+        row = without(make_row("r1", extra_one=1, extra_two=2), "type")
+        row = without(row, "title")
+        self.assert_red_lines(self.env.take([row]), [
+            "ROW_FIELD_TYPE r1: unexpected field 'extra_one'",
+            "ROW_FIELD_TYPE r1: unexpected field 'extra_two'",
+            "ROW_FIELD_MISSING r1: field title is missing",
+            "ROW_FIELD_MISSING r1: field type is missing",
+        ])
+
+    def test_take_prints_two_wrongly_typed_fields_of_one_row(self) -> None:
+        self.assert_red_lines(self.env.take([make_row("r1", title=5, type=6)]), [
+            "ROW_FIELD_TYPE r1: field title must be a string",
+            "ROW_FIELD_TYPE r1: field type must be a string",
+        ])
+
+    def test_take_prints_every_repeated_key_of_a_row_and_of_the_top_level(self) -> None:
+        data = (
+            b'{"rows":[{"requirement_id":"r1","requirement_id":"r1","title":"t","title":"t"}],'
+            b'"a":1,"a":2,"b":1,"b":2}'
+        )
+        path = self.env.write_raw_input(data)
+        self.assert_red_lines(
+            self.env.main("take", "--source", "src", "--input", str(path), "--root", str(self.env.root)),
+            [f"ROW_FIELD_TYPE input: key {key!r} is repeated in an object" for key in ("requirement_id", "title", "a", "b")],
+        )
+
+    def test_verify_prints_every_repeated_top_level_key(self) -> None:
+        path, _ = self.stored_document()
+        text = path.read_text(encoding="utf-8")
+        path.write_text(text.replace("{\n", '{\n  "a": 1,\n  "a": 2,\n  "b": 1,\n  "b": 2,\n', 1), encoding="utf-8", newline="\n")
+        self.assert_red_lines(self.env.main("verify", str(path)), [
+            "ROW_FIELD_TYPE snapshot: key 'a' is repeated in an object",
+            "ROW_FIELD_TYPE snapshot: key 'b' is repeated in an object",
+        ])
+
+    def test_verify_prints_two_unexpected_top_level_fields(self) -> None:
+        path, document = self.stored_document()
+        document.update({"zeta": 1, "alpha": 2})
+        self.rewrite(path, document)
+        self.assert_red_lines(self.env.main("verify", str(path)), [
+            "ROW_FIELD_TYPE zeta: unexpected top-level field",
+            "ROW_FIELD_TYPE alpha: unexpected top-level field",
+        ])
+
+    def test_verify_prints_two_missing_top_level_fields(self) -> None:
+        path, document = self.stored_document()
+        del document["taken_at"]
+        del document["source_sha256"]
+        self.rewrite(path, document)
+        self.assert_red_lines(self.env.main("verify", str(path)), [
+            "ROW_FIELD_MISSING taken_at: field taken_at is missing",
+            "ROW_FIELD_MISSING source_sha256: field source_sha256 is missing",
+        ])
+
+    def test_verify_prints_an_unexpected_and_a_missing_top_level_field_twice(self) -> None:
+        path, document = self.stored_document()
+        document.update({"zeta": 1, "alpha": 2})
+        del document["taken_at"]
+        del document["source_sha256"]
+        self.rewrite(path, document)
+        self.assert_red_lines(self.env.main("verify", str(path)), [
+            "ROW_FIELD_TYPE zeta: unexpected top-level field",
+            "ROW_FIELD_TYPE alpha: unexpected top-level field",
+            "ROW_FIELD_MISSING taken_at: field taken_at is missing",
+            "ROW_FIELD_MISSING source_sha256: field source_sha256 is missing",
+        ])
+
+    def test_take_and_diff_print_both_defects_of_a_stored_version(self) -> None:
+        path, document = self.stored_document()
+        document.update({"zeta": 1, "alpha": 2})
+        self.rewrite(path, document)
+        expected = [
+            "ROW_FIELD_TYPE zeta: unexpected top-level field",
+            "ROW_FIELD_TYPE alpha: unexpected top-level field",
+        ]
+        before = self.env.tree()
+        self.assert_red_lines(self.env.take([make_row("r1")], taken_at=T2), expected)
+        self.assertEqual(self.env.tree(), before)
+        self.assert_red_lines(
+            self.env.main("diff", "--source", "src", "1", "1", "--root", str(self.env.root)), expected,
+        )
+
+
+class UnchangedTakeTests(SnapshotCase):
+    """An unchanged take writes nothing, not even the same bytes, whatever form the stored version has."""
+
+    ROWS = [make_row("r1"), make_row("r2")]
+
+    def stored(self) -> Path:
+        code, out, err = self.env.take(self.ROWS, taken_at=T1)
+        self.assertEqual((code, err), (0, ""), out)
+        return self.env.snapshot("src", "2026-11-04-v1.json")
+
+    def assert_unchanged(self, path: Path, data: bytes, rows: list[Row]) -> None:
+        path.write_bytes(data)
+        old = 946_684_800_000_000_000
+        os.utime(path, ns=(old, old))
+        before = self.env.tree()
+        code, out, err = self.env.take(rows, taken_at=T2)
+        self.assertEqual((code, out, err), (0, f"{path} unchanged\n", ""))
+        self.assertEqual(path.read_bytes(), data)
+        self.assertEqual(path.stat().st_mtime_ns, old)
+        self.assertEqual(self.env.tree(), before)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json"])
+
+    def test_a_crlf_stored_version_stays_byte_identical(self) -> None:
+        path = self.stored()
+        self.assert_unchanged(path, path.read_bytes().replace(b"\n", b"\r\n"), self.ROWS)
+
+    def test_a_stored_version_with_a_bom_and_no_final_line_feed_stays_byte_identical(self) -> None:
+        path = self.stored()
+        text = path.read_bytes().decode("utf-8").replace("\n", "\r\n").rstrip("\r\n")
+        self.assert_unchanged(path, b"\xef\xbb\xbf" + text.encode("utf-8"), self.ROWS)
+
+    def test_a_re_indented_stored_version_stays_byte_identical(self) -> None:
+        path = self.stored()
+        document = json.loads(path.read_text(encoding="utf-8"))
+        self.assert_unchanged(path, json.dumps(document, indent=4, sort_keys=True).encode("utf-8"), self.ROWS)
+
+    def test_the_same_rows_in_another_order_leave_the_stored_version_byte_identical(self) -> None:
+        path = self.stored()
+        self.assert_unchanged(path, path.read_bytes().replace(b"\n", b"\r\n"), list(reversed(self.ROWS)))
+
+
+class PrintedLineTests(SnapshotCase):
+    """Every printed line is one line: the usage line, the success and unchanged lines, defect and diff lines."""
+
+    def test_the_usage_error_is_the_usage_lines_and_one_error_line(self) -> None:
+        usage = requirement_snapshot.USAGE.splitlines()
+        for char in LINE_BREAKS:
+            cases = (
+                (("take", f"--bogus{char}x"), f"unknown option --bogus{escape_of(char)}x"),
+                ((f"frobnicate{char}x",), f"unknown command frobnicate{escape_of(char)}x"),
+                (("take", f"stray{char}x"), f"unexpected argument stray{escape_of(char)}x"),
+                (("diff", "--source", "s", "1", "2", f"--bad{char}x", "v"), f"unknown option --bad{escape_of(char)}x"),
+            )
+            for args, message in cases:
+                with self.subTest(char=ord(char), args=args):
+                    code, out, err = self.env.main(*args)
+                    self.assertEqual((code, out), (3, ""), err)
+                    self.assertEqual(err.splitlines(), [*usage, f"requirement_snapshot.py: error: {message}"], repr(err))
+
+    def test_a_real_command_with_a_line_break_in_an_argument_prints_one_error_line(self) -> None:
+        for char in ("\x85", " ", " "):
+            with self.subTest(char=ord(char)):
+                done = subprocess.run(
+                    [sys.executable, str(SCRIPT), "take", f"--bogus{char}x"],
+                    capture_output=True, text=True, encoding="utf-8", env={**os.environ, "PYTHONUTF8": "1"},
+                )
+                self.assertEqual((done.returncode, done.stdout), (3, ""))
+                self.assertEqual(len(done.stderr.splitlines()), len(requirement_snapshot.USAGE.splitlines()) + 1, repr(done.stderr))
+                self.assertIn(f"unknown option --bogus{escape_of(char)}x", done.stderr)
+
+    def test_the_funnel_escapes_a_line_break_in_a_defect_printed_by_take_and_verify(self) -> None:
+        defect = requirement_snapshot.Defect
+        for char in LINE_BREAKS:
+            with self.subTest(char=ord(char)):
+                made = defect(requirement_snapshot.DefectCode.ROW_FIELD_TYPE, f"s{char}t", f"d{char}e")
+                with mock.patch.object(requirement_snapshot, "parse_input", return_value=([], [made])):
+                    code, out, err = self.env.take([make_row("r1")])
+                self.assertEqual((code, err), (1, ""))
+                self.assertEqual(len(out.splitlines()), 1, repr(out))
+                self.assertTrue(out.endswith(f"d{escape_of(char)}e\n"), repr(out))
+                path = self.env.write_raw_input(b"{}")
+                with mock.patch.object(requirement_snapshot, "parse_snapshot", return_value=(None, [made])):
+                    code, out, err = self.env.main("verify", str(path))
+                self.assertEqual((code, err), (1, ""))
+                self.assertEqual(len(out.splitlines()), 1, repr(out))
+                self.assertTrue(out.endswith(f"d{escape_of(char)}e\n"), repr(out))
+
+    def test_the_funnel_escapes_a_line_break_in_a_diff_line(self) -> None:
+        self.env.take([make_row("r1"), make_row("r3")], taken_at=T1)
+        self.env.take([make_row("r2"), make_row("r3", title="other")], taken_at=T2)
+        for char in LINE_BREAKS:
+            with self.subTest(char=ord(char)):
+                with mock.patch.object(requirement_snapshot, "shown", side_effect=lambda text, c=char: f"{text}{c}"):
+                    code, out, err = self.env.main("diff", "--source", "src", "1", "2", "--root", str(self.env.root))
+                self.assertEqual((code, err), (0, ""))
+                self.assertEqual(
+                    out.splitlines(),
+                    [f"added r2{escape_of(char)}", f"removed r1{escape_of(char)}", f"changed r3{escape_of(char)}"],
+                    repr(out),
+                )
+
+    def patched_store(self, stored: dict[Path, bytes]) -> contextlib.ExitStack:
+        """A store that exists only in memory: nothing is listed, created or written on disk."""
+        stack = contextlib.ExitStack()
+        real_read = requirement_snapshot.read_file
+        names = sorted(stored)
+        versions = [requirement_snapshot.VersionFile(index + 1, path) for index, path in enumerate(names)]
+        stack.enter_context(mock.patch.object(requirement_snapshot, "list_versions", return_value=versions))
+        stack.enter_context(mock.patch.object(requirement_snapshot, "_case_collisions", return_value=[]))
+        stack.enter_context(mock.patch.object(Path, "mkdir"))
+        stack.enter_context(mock.patch.object(requirement_snapshot, "_claim_version", return_value=Path("claim")))
+        stack.enter_context(mock.patch.object(requirement_snapshot, "_release_claim"))
+        stack.enter_context(mock.patch.object(requirement_snapshot, "write_exclusive"))
+        stack.enter_context(
+            mock.patch.object(requirement_snapshot, "read_file", side_effect=lambda path: stored.get(path) or real_read(path))
+        )
+        return stack
+
+    def test_the_success_line_of_take_is_one_line_under_every_line_break_in_the_root(self) -> None:
+        for char in LINE_BREAKS:
+            with self.subTest(char=ord(char)):
+                root = self.env.dir / f"a{char}b"
+                with self.patched_store({}):
+                    code, out, err = self.env.main(
+                        "take", "--source", "src", "--input", str(self.env.write_input([make_row("r1")])),
+                        "--root", str(root), "--taken-at", T2,
+                    )
+                self.assertEqual((code, err), (0, ""))
+                expected = str(root / "src" / "2026-11-05-v1.json").replace(char, escape_of(char))
+                self.assertEqual(out, expected + "\n")
+                self.assertEqual(len(out.splitlines()), 1, repr(out))
+
+    def test_the_unchanged_line_of_take_is_one_line_under_every_line_break_in_the_root(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        data = self.env.snapshot("src", "2026-11-04-v1.json").read_bytes()
+        for char in LINE_BREAKS:
+            with self.subTest(char=ord(char)):
+                root = self.env.dir / f"a{char}b"
+                stored_path = root / "src" / "2026-11-04-v1.json"
+                with self.patched_store({stored_path: data}):
+                    code, out, err = self.env.main(
+                        "take", "--source", "src", "--input", str(self.env.write_input([make_row("r1")])),
+                        "--root", str(root), "--taken-at", T2,
+                    )
+                self.assertEqual((code, err), (0, ""))
+                self.assertEqual(out, str(stored_path).replace(char, escape_of(char)) + " unchanged\n")
+                self.assertEqual(len(out.splitlines()), 1, repr(out))
+
+    def test_the_success_and_unchanged_lines_are_one_line_in_a_real_root_whose_name_has_a_line_break(self) -> None:
+        for char in ("\x85", " ", " "):
+            with self.subTest(char=ord(char)):
+                root = self.env.dir / f"real{char}root"
+                try:
+                    root.mkdir()
+                except OSError:
+                    self.skipTest("the file system does not accept this character in a name")
+                args = ("take", "--source", "src", "--input", str(self.env.write_input([make_row("r1")])), "--root", str(root))
+                code, out, err = self.env.main(*args, "--taken-at", T2)
+                self.assertEqual((code, err), (0, ""))
+                self.assertEqual(out, str(root / "src" / "2026-11-05-v1.json").replace(char, escape_of(char)) + "\n")
+                code, out, err = self.env.main(*args, "--taken-at", T2)
+                self.assertEqual((code, err), (0, ""))
+                self.assertEqual(out, str(root / "src" / "2026-11-05-v1.json").replace(char, escape_of(char)) + " unchanged\n")
+
+
+class RepeatedKeyCollectionTests(SnapshotCase):
+    """Collecting repeated keys is linear: 40000 repeated keys are read in a time a quadratic scan cannot meet."""
+
+    KEYS = 40000
+    BOUND_SECONDS = 1.5
+
+    def repeated_keys_input(self) -> bytes:
+        pairs = ",".join(f'"k{index}":1,"k{index}":2' for index in range(self.KEYS))
+        return ('{"rows":[],' + pairs + "}").encode("utf-8")
+
+    def test_the_reading_of_forty_thousand_repeated_keys_stays_under_the_time_bound(self) -> None:
+        data = self.repeated_keys_input()
+        started = time.perf_counter()
+        value, defects = requirement_snapshot._decode_json(data, "input")
+        elapsed = time.perf_counter() - started
+        self.assertIsNone(value)
+        self.assertEqual(len(defects), self.KEYS)
+        self.assertEqual(defects[0].detail, "key 'k0' is repeated in an object")
+        self.assertEqual(defects[-1].detail, f"key 'k{self.KEYS - 1}' is repeated in an object")
+        self.assertLess(elapsed, self.BOUND_SECONDS, f"{elapsed:.2f} s for {self.KEYS} repeated keys")
+
+    def test_take_prints_one_line_per_repeated_key_for_forty_thousand_keys(self) -> None:
+        path = self.env.write_raw_input(self.repeated_keys_input())
+        code, out, err = self.env.main("take", "--source", "src", "--input", str(path), "--root", str(self.env.root))
+        self.assertEqual((code, err), (1, ""))
+        lines = out.splitlines()
+        self.assertEqual(len(lines), self.KEYS)
+        self.assertEqual(len(set(lines)), self.KEYS)
+        self.assertEqual(self.env.tree(), {})
+
+    def test_one_key_repeated_many_times_is_one_defect(self) -> None:
+        data = ('{"rows":[],' + ",".join('"k":1' for _ in range(2 * self.KEYS)) + "}").encode("utf-8")
+        started = time.perf_counter()
+        value, defects = requirement_snapshot._decode_json(data, "input")
+        elapsed = time.perf_counter() - started
+        self.assertIsNone(value)
+        self.assertEqual([defect.detail for defect in defects], ["key 'k' is repeated in an object"])
+        self.assertLess(elapsed, self.BOUND_SECONDS)
+
+
+class PrintedLineDocumentationTests(SnapshotCase):
+    def test_the_docstring_and_the_readme_state_the_printed_line_and_linear_collection_rules(self) -> None:
+        doc = " ".join((requirement_snapshot.__doc__ or "").split())
+        readme = " ".join((_SCRIPTS / "README.md").read_text(encoding="utf-8").split())
+        for text in (doc, readme):
+            self.assertIn(
+                "every line the tool prints, the usage line and the success and `unchanged` lines included, "
+                "is escaped to one line like defect and fault lines",
+                text.lower(),
+            )
+            self.assertIn("a control or line-break character is shown as a backslash escape", text)
+            self.assertIn("Repeated-key collection is linear in the number of keys.", text)
+
+
 if __name__ == "__main__":
     unittest.main()

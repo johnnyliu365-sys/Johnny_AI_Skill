@@ -138,6 +138,10 @@ numbers in file names, claim file names and arguments are ASCII digits only. A v
 with more digits than a file name can hold names no stored version: `diff` reports that the
 requested version does not exist (exit 2 unless a red was found), never a raw exception text.
 
+Printed lines: every line the tool prints, the usage line and the success and `unchanged` lines
+included, is escaped to one line like defect and fault lines: a control or line-break character is
+shown as a backslash escape. Repeated-key collection is linear in the number of keys.
+
 Red before fault: a command checks everything it can before it decides the exit. If it found any
 red it prints every red on stdout and exits 1; a fault met on the way is printed on stderr, on one
 line, and does not change the exit. It exits 2 only when it found no red and a fault stopped it.

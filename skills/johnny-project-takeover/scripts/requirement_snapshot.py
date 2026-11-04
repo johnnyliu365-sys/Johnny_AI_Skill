@@ -37,6 +37,10 @@ as its escaped form (Python `repr`) unless it is plain, so one defect is always 
 
 `diff` prints `added`, `removed` and `changed` requirement ids, one per line.
 
+Every line the tool prints, the usage line and the success and `unchanged` lines included, is
+escaped to one line like defect and fault lines: a control or line-break character is shown as a
+backslash escape. Repeated-key collection is linear in the number of keys.
+
 Defect codes (exit 1, one line `<code> <requirement_id or field>: <detail>` each):
 ROW_FIELD_MISSING; ROW_FIELD_TYPE (a field of the wrong type, an unexpected field, a blank or
 disallowed requirement_id, a string that breaks the text-value rule, input that is not JSON or has
@@ -89,7 +93,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from enum import StrEnum
 from pathlib import Path
-from typing import cast
+from typing import TextIO, cast
 
 USAGE = (
     "usage: requirement_snapshot.py take --source NAME --input ROWS.json [--root DIR] [--taken-at ISO]\n"
@@ -392,11 +396,13 @@ def parse_taken_at(text: str) -> str | None:
 
 def _decode_json(data: bytes, subject: str) -> tuple[object | None, list[Defect]]:
     repeated: list[str] = []
+    named: set[str] = set()
 
     def collect(pairs: list[tuple[str, object]]) -> dict[str, object]:
         found: dict[str, object] = {}
         for key, item in pairs:
-            if key in found and key not in repeated:
+            if key in found and key not in named:
+                named.add(key)
                 repeated.append(key)
             found[key] = item
         return found
@@ -624,9 +630,14 @@ def _case_collisions(root: Path, source: str) -> list[Defect]:
 # --------------------------------------------------------------------- commands
 
 
+def _emit(text: str, stream: TextIO | None = None) -> None:
+    """Every line the tool prints goes through here: stdout by default, escaped to one line."""
+    print(_one_line(text), file=stream)
+
+
 def _print_defects(defects: Sequence[Defect]) -> None:
     for defect in defects:
-        print(defect.render())
+        _emit(defect.render())
 
 
 def _one_line(text: str) -> str:
@@ -641,7 +652,7 @@ def _finish(reds: Sequence[Defect], faults: Sequence[ToolFault]) -> int:
     """Red before fault: every red on stdout, every fault on stderr (one line each); a red decides exit 1."""
     _print_defects(reds)
     for fault in faults:
-        print(f"requirement_snapshot.py: tool fault: {_one_line(str(fault))}", file=sys.stderr)
+        _emit(f"requirement_snapshot.py: tool fault: {fault}", sys.stderr)
     return 1 if reds else 2
 
 
@@ -681,7 +692,7 @@ def run_take(source: str, input_path: Path, root: Path, taken_at: str | None) ->
         return _finish(reds, faults)
     digest = rows_digest(rows)
     if latest is not None and previous is not None and previous.source_sha256 == digest:
-        print(f"{latest.path} unchanged")
+        _emit(f"{latest.path} unchanged")
         return 0
     number = 1 if latest is None else latest.version + 1
     target = directory / f"{moment[:10]}-v{number}.json"
@@ -699,7 +710,7 @@ def run_take(source: str, input_path: Path, root: Path, taken_at: str | None) ->
         published = True
     finally:
         _release_claim(claim, published)
-    print(target)
+    _emit(str(target))
     return 0
 
 
@@ -708,7 +719,7 @@ def run_verify(path: Path) -> int:
     if snapshot is None:
         _print_defects(defects)
         return 1
-    print(f"OK rows={len(snapshot.rows)}")
+    _emit(f"OK rows={len(snapshot.rows)}")
     return 0
 
 
@@ -769,12 +780,12 @@ def run_diff(source: str, first: str, second: str, root: Path) -> int:
     before = {row.requirement_id: row for row in older.rows}
     after = {row.requirement_id: row for row in newer.rows}
     for identifier in sorted(after.keys() - before.keys()):
-        print(f"added {shown(identifier)}")
+        _emit(f"added {shown(identifier)}")
     for identifier in sorted(before.keys() - after.keys()):
-        print(f"removed {shown(identifier)}")
+        _emit(f"removed {shown(identifier)}")
     for identifier in sorted(before.keys() & after.keys()):
         if before[identifier] != after[identifier]:
-            print(f"changed {shown(identifier)}")
+            _emit(f"changed {shown(identifier)}")
     return 0
 
 
@@ -875,14 +886,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         return _dispatch(args)
     except UsageError as exc:
-        print(USAGE, file=sys.stderr)
-        print(f"requirement_snapshot.py: error: {exc}", file=sys.stderr)
+        for usage_line in USAGE.splitlines():
+            _emit(usage_line, sys.stderr)
+        _emit(f"requirement_snapshot.py: error: {exc}", sys.stderr)
         return 3
     except ToolFault as exc:
-        print(f"requirement_snapshot.py: tool fault: {_one_line(str(exc))}", file=sys.stderr)
+        _emit(f"requirement_snapshot.py: tool fault: {exc}", sys.stderr)
         return 2
     except Exception as exc:  # noqa: BLE001 - an uncaught error must never reach the caller as exit 1
-        print(f"requirement_snapshot.py: tool fault: {type(exc).__name__}: {_one_line(str(exc))}", file=sys.stderr)
+        _emit(f"requirement_snapshot.py: tool fault: {type(exc).__name__}: {exc}", sys.stderr)
         return 2
 
 
