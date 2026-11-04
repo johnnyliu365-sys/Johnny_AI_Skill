@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用（Revision 04 does not seal a new Context） |
-| Agent Context binding | ticket revision01 / receipt under `doc/reviews/workflow-governance/evidence/51/` / owner implementation seat / worktree `.worktrees/51-evidence-gate` / branch `cp/wave2-51-evidence-gate` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `doc/reviews/workflow-governance/evidence/51/` / owner implementation seat / worktree `.worktrees/51-evidence-gate` / branch `cp/wave2-51-evidence-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED` |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S51-02, S51-07 TICKET_DEFECT; correction 1 dispatched to the same seat） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/51-evidence-gate` |
 | 審閱者 | `ticket-review` seat, its own worktree `.worktrees/51-evidence-gate-review` |
@@ -80,16 +80,25 @@ A run cell is a `## <name>` section with the lines `cell: <name>`, `candidate: <
 | `CAPTURE_MISSING` | the capture file does not exist under the evidence root |
 | `CAPTURE_CR` | the capture holds a CR byte |
 | `BLOCK_MISMATCH` | the fenced block differs from the capture byte for byte (block = the lines between the fences joined with LF plus a final LF) |
-| `EXIT_MISMATCH` | the `exit:` list differs from the `exit=N` lines of the capture, in order |
+| `EXIT_MISMATCH` | the `exit:` list differs from the capture's lines that consist of `exit=N` alone (a line holding `exit=N` inside longer text does not count), in order |
+| `FIELD_REPEATED` | a run cell holds a second `cell:`, `candidate:`, `tool_digest:`, `capture:` or `exit:` line, or a second fence |
+| `CELL_NAME_MISMATCH` | a run cell's `cell:` value differs from its `## ` heading name |
 
-A capture path that escapes the evidence root (absolute path, `..` segments after normalisation, a drive letter) is `CAPTURE_MISSING`, never read.
+A capture path that escapes the evidence root (absolute path, `..` segments after normalisation, a drive letter, a link or junction resolving outside it) is `CAPTURE_MISSING`, never read. A `tool_digest` path is checked for form before git is asked: a path that is absolute, has a drive letter, has a `..` segment, starts with `:` (pathspec magic) or is empty is `TOOL_DIGEST_STALE` (a receipt red), never a tool fault; a well-formed path is read from the repository root (`git show <candidate>:<path>`), so `--repo` may name any directory inside the repository.
+
+Relation to R4-7: a cell missing one of the five R4-7 fields is what R4-7 calls `NOT_RUN`; the gate reports it with the more specific code `CELL_FIELD_MISSING` and keeps `NOT_RUN` for a section without `cell:` and an absent required cell. R4-7's "repository-relative" capture path is the case where `--evidence-root` is the repository root; the gate accepts any evidence root so a seat can keep captures outside the tree until they are committed.
+
+### Text values (all wave-2 gates; added after the ticket 52 review)
+
+Every string read from an input is valid Unicode without lone surrogates and without control characters (U+0000–U+001F, U+007F) unless a field explicitly allows them; a string that breaks this is a red of the input (exit 1), never a tool fault. Every subject printed in a defect line is printed in a form that cannot span two lines or forge another line (Python `repr` or an equivalent escape), so one defect is always one line.
+
 
 ## TDD 設計
 
 1. 正常行為：a receipt with two run cells and one statement section, every field correct → exit 0, `cells=2 defects=0`.
 2. 規則違反／輸入錯誤：one test per defect code above, each built from the good receipt by one change; a cell carrying two defects reports both.
 3. 外部失敗／fail-closed：`git show` failing for a listed tool (unknown candidate in the repository) → exit 2 with git's stderr; the receipt path is a directory or unreadable → exit 2; `--repo` not a repository → exit 2; no `--tool` or no `--candidate` → exit 3.
-4. 回歸保護：the seven NF-16 escape shapes from the ticket 48 review (section without `cell:`, statement opt-out, missing `tool_digest:` label, missing capture reported as fault, mixed candidates, exit list contradicting the capture) each give exit 1 with the code above; a receipt written with CRLF line endings is read (the receipt's own line endings are normalised; captures are not).
+4. 回歸保護：the six NF-16 escape shapes from the ticket 48 review (section without `cell:`, statement opt-out, missing `tool_digest:` label, missing capture reported as fault, mixed candidates, exit list contradicting the capture) each give exit 1 with the code above; a receipt written with CRLF line endings is read (the receipt's own line endings are normalised; captures are not); a receipt with a UTF-8 BOM is read; an outward directory junction under the evidence root is `CAPTURE_MISSING` (a test that needs no symlink privilege); `--repo` a subdirectory of the repository gives the same result as the root.
 
 ### 適用的缺陷類別
 
@@ -119,3 +128,20 @@ A capture path that escapes the evidence root (absolute path, `..` segments afte
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用（WPR-only handoff retired; the receipt and the review record hold the evidence）
+
+## Re-plan to closure revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
+
+Review record: `doc/reviews/workflow-governance/51-evidence-gate-code-review.md`. S51-02 and S51-07 are `TICKET_DEFECT`s; the closure is rebuilt here before correction 1.
+
+| Finding | Class | Disposition in revision02 |
+| --- | --- | --- |
+| S51-01 | IMPLEMENTATION_DEFECT | digest-path form check first (`TOOL_DIGEST_STALE`); root-relative `git show`; one test per side |
+| S51-02 | TICKET_DEFECT | `FIELD_REPEATED` |
+| S51-03 | OUT_OF_SCOPE_HARDENING (taken now) | `CELL_NAME_MISMATCH` |
+| S51-04 | OUT_OF_SCOPE_HARDENING (taken now) | paths read from the repository root; subdirectory `--repo` test |
+| S51-05 | EVIDENCE_DEFECT | `EXIT_MISMATCH` counts whole `exit=N` lines only, with a test |
+| S51-06 | OUT_OF_SCOPE_HARDENING (taken now) | junction test; BOM test |
+| S51-07 | TICKET_DEFECT | six shapes; the relation to R4-7 stated |
+| S51-08 | OUT_OF_SCOPE_HARDENING | not taken: only the script is required to pass `mypy --strict` |
+| S51-09 | accepted decisions | none |
+| text values | added for every wave-2 gate | the text-value rule above |
