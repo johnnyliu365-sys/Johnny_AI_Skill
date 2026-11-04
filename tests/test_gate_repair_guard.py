@@ -7,6 +7,7 @@ printed, never copied from the script.
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import io
 import json
 import os
@@ -14,6 +15,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zlib
+from collections.abc import Sequence
 from pathlib import Path
 from unittest import mock
 
@@ -42,6 +45,19 @@ def git(repo: Path, *args: str) -> str:
         ["git", "-c", "core.quotepath=true", "-c", "core.autocrlf=false", "-C", str(repo), *args],
         capture_output=True, env=env, check=False,
     )
+    if done.returncode != 0:
+        raise AssertionError(f"git {args} failed: {done.stderr.decode('utf-8', 'replace')}")
+    return done.stdout.decode("utf-8", "replace").strip()
+
+
+def git_raw(repo: Path, args: list[str], data: bytes) -> str:
+    """Run git with `data` on standard input and return its standard output."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env.update(
+        GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@example.test",
+        GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@example.test",
+    )
+    done = subprocess.run(["git", "-C", str(repo), *args], input=data, capture_output=True, env=env, check=False)
     if done.returncode != 0:
         raise AssertionError(f"git {args} failed: {done.stderr.decode('utf-8', 'replace')}")
     return done.stdout.decode("utf-8", "replace").strip()
@@ -582,11 +598,28 @@ class FaultTests(Fixture):
         self.assertEqual(result.code, 2)
         self.assertIn("shallow", result.err)
 
-    def test_a_malformed_name_status_stream_is_a_tool_fault(self) -> None:
+    def test_a_malformed_tree_body_is_a_tool_fault(self) -> None:
+        oid = "0" * 40
+        raw = b"\x11" * 20
+        for body in (
+            b"100644 a",
+            b"100644 a\0" + raw[:-1],
+            b"100644 a\0" + raw + b"x",
+            b"100644a\0" + raw,
+            b"10x644 a\0" + raw,
+            b"100644 \0" + raw,
+            b"100644 a/b\0" + raw,
+            b"100644 .\0" + raw,
+            b"100644 ..\0" + raw,
+            b"100644 a\0" + raw + b"100644 a\0" + raw,
+            b"12345678 a\0" + raw,
+            b" a\0" + raw,
+        ):
+            with self.subTest(body=body):
+                with self.assertRaises(repair_guard.ToolFault):
+                    repair_guard.parse_tree(oid, body)
         with self.assertRaises(repair_guard.ToolFault):
-            repair_guard.parse_name_status(b"R100\0only-one-path\0")
-        with self.assertRaises(repair_guard.ToolFault):
-            repair_guard.parse_name_status(b"M\0")
+            repair_guard.parse_tree("0" * 41, b"")
 
     def test_a_red_never_exits_two_and_a_fault_never_exits_one(self) -> None:
         self.base("tools/a.py", "src/b.py")
@@ -681,14 +714,30 @@ class PathMatchingTests(Fixture):
         self.set_dispatch(["tools/"], [])
         self.assertEqual(self.run_guard(sha).code, 0)
 
-    def test_name_status_parsing_keeps_both_sides_of_a_rename(self) -> None:
-        data = b"M\0a.py\0R087\0old name.py\0new\xe5\xb7\xa5.py\0D\0gone.py\0"
-        self.assertEqual(repair_guard.parse_name_status(data), ["a.py", "old name.py", "new\u5de5.py", "gone.py"])
+    def test_tree_parsing_reads_mode_name_and_id_exactly(self) -> None:
+        first, second = bytes(range(20)), bytes(range(20, 40))
+        body = b"100644 old name.py\0" + first + b"40000 new\xe5\xb7\xa5\0" + second + b"160000 sub\0" + first
+        entries = repair_guard.parse_tree("0" * 40, body)
+        self.assertEqual(sorted(entries), [b"new\xe5\xb7\xa5", b"old name.py", b"sub"])
+        self.assertEqual(entries[b"old name.py"], repair_guard.TreeEntry("100644", first.hex()))
+        self.assertEqual(entries[b"new\xe5\xb7\xa5"], repair_guard.TreeEntry("40000", second.hex()))
+        self.assertTrue(entries[b"new\xe5\xb7\xa5"].is_tree)
+        self.assertFalse(entries[b"sub"].is_tree)
+        self.assertFalse(entries[b"old name.py"].is_tree)
+        wide = repair_guard.parse_tree("0" * 64, b"100644 a\0" + bytes(range(32)))
+        self.assertEqual(wide[b"a"].oid, bytes(range(32)).hex())
 
     def test_a_git_path_with_invalid_utf8_becomes_a_text_red_not_a_fault(self) -> None:
-        paths = repair_guard.parse_name_status(b"M\0bad\xff.py\0")
-        defects = repair_guard.check_paths(paths, [repair_guard.make_rule("bad/", "t")], [], False)
-        self.assertIn(repair_guard.TEXT_VALUE_INVALID, [d.code for d in defects])
+        self.base("tools/a.py")
+        parent = git(self.repo, "rev-parse", "HEAD")
+        blob = git(self.repo, "rev-parse", "HEAD:tools/a.py")
+        tree = git_raw(self.repo, ["hash-object", "-w", "-t", "tree", "--stdin"], b"100644 bad\xff.py\0" + bytes.fromhex(blob))
+        sha = git(self.repo, "commit-tree", tree, "-p", parent, "-m", "odd name")
+        self.set_dispatch(["bad/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1, result.err)
+        self.assertIn(repair_guard.TEXT_VALUE_INVALID, self.defect_codes(result))
+        self.assertEqual(result.err, "")
 
 
 class TextValueTests(Fixture):
@@ -701,9 +750,10 @@ class TextValueTests(Fixture):
         sha = self.committed()
         for block in ("repair_allowlist", "protected_paths"):
             with self.subTest(block=block):
-                other = "protected_paths" if block == "repair_allowlist" else "repair_allowlist"
+                # the clean block is used (revision04): its allowlist covers the changed path
+                other = "protected_paths: []" if block == "repair_allowlist" else 'repair_allowlist: ["tools/"]'
                 self.dispatch.write_text(
-                    f'{block}: ["tools/{SURROGATE_ESCAPE}"]\n{other}: []\n', encoding="utf-8"
+                    f'{block}: ["tools/{SURROGATE_ESCAPE}"]\n{other}\n', encoding="utf-8"
                 )
                 result = self.run_guard(sha)
                 self.assertEqual(result.code, 1)
@@ -883,9 +933,10 @@ class DispatchBytesTests(Fixture):
         for raw in (b"\x01", b"\x1f", b"\t", b"\x7f", b"\x0b", b"\r"):
             for block in ("repair_allowlist", "protected_paths"):
                 with self.subTest(raw=raw, block=block):
-                    other = "protected_paths" if block == "repair_allowlist" else "repair_allowlist"
+                    # the clean block is used (revision04): its allowlist covers the changed path
+                    other = "protected_paths: []" if block == "repair_allowlist" else 'repair_allowlist: ["tools/"]'
                     self.dispatch.write_bytes(
-                        f'{block}: ["tools/'.encode() + raw + b'x/"]\n' + f"{other}: []\n".encode()
+                        f'{block}: ["tools/'.encode() + raw + b'x/"]\n' + f"{other}\n".encode()
                     )
                     result = self.run_guard(sha)
                     self.assertEqual(result.code, 1, result.err)
@@ -959,7 +1010,7 @@ class RedBeforeFaultTests(Fixture):
         git(self.repo, "merge", "-q", "--no-ff", "-m", "merge", "side")
         self.set_dispatch(["tools/"], [])
         out, err = io.StringIO(), io.StringIO()
-        with mock.patch.object(repair_guard, "parse_name_status", side_effect=repair_guard.ToolFault("boom")):
+        with mock.patch.object(repair_guard, "diff_trees", side_effect=repair_guard.ToolFault("boom")):
             with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
                 code = repair_guard.main(["--repo", str(self.repo), "--repair", "HEAD", "--dispatch", str(self.dispatch)])
         self.assertEqual(code, 1)
@@ -972,18 +1023,18 @@ class RedBeforeFaultTests(Fixture):
         self.commit()
         self.set_dispatch(["tools/"], [])
         out, err = io.StringIO(), io.StringIO()
-        with mock.patch.object(repair_guard, "parse_name_status", side_effect=repair_guard.ToolFault("boom")):
+        with mock.patch.object(repair_guard, "diff_trees", side_effect=repair_guard.ToolFault("boom")):
             with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
                 code = repair_guard.main(["--repo", str(self.repo), "--repair", "HEAD", "--dispatch", str(self.dispatch)])
         self.assertEqual((code, out.getvalue()), (2, ""))
         self.assertIn("boom", err.getvalue())
 
-    def test_a_root_commit_red_survives_an_unreadable_name_status(self) -> None:
+    def test_a_root_commit_red_survives_an_unreadable_tree_walk(self) -> None:
         self.write("tools/a.py")
         self.commit("root")
         self.set_dispatch(["tools/"], [])
         out, err = io.StringIO(), io.StringIO()
-        with mock.patch.object(repair_guard, "parse_name_status", side_effect=RuntimeError("odd")):
+        with mock.patch.object(repair_guard, "diff_trees", side_effect=RuntimeError("odd")):
             with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
                 code = repair_guard.main(["--repo", str(self.repo), "--repair", "HEAD", "--dispatch", str(self.dispatch)])
         self.assertEqual(code, 1)
@@ -1655,6 +1706,12 @@ class TextDefectiveDispatchTests(Fixture):
 
     def test_a_gate_script_change_is_reported_next_to_the_text_red(self) -> None:
         sha = self.gate_change()
+        # Under revision04 only the defective block loses its entries, so the clean block
+        # is used as well: the expected codes are those of the clean block plus the gate rule.
+        expected = {
+            "repair_allowlist": [repair_guard.TEXT_VALUE_INVALID, repair_guard.PROTECTED_PATH_TOUCHED, repair_guard.PROTECTED_PATH_TOUCHED],
+            "protected_paths": [repair_guard.TEXT_VALUE_INVALID, repair_guard.OUTSIDE_ALLOWLIST, repair_guard.PROTECTED_PATH_TOUCHED],
+        }
         for block in ("repair_allowlist", "protected_paths"):
             with self.subTest(block=block):
                 other = "protected_paths" if block == "repair_allowlist" else "repair_allowlist"
@@ -1663,10 +1720,8 @@ class TextDefectiveDispatchTests(Fixture):
                 )
                 result = self.run_guard(sha)
                 self.assertEqual(result.code, 1)
-                self.assertEqual(
-                    self.defect_codes(result), [repair_guard.TEXT_VALUE_INVALID, repair_guard.PROTECTED_PATH_TOUCHED]
-                )
-                self.assertIn(repr(GATE_FILE), result.lines[1])
+                self.assertEqual(self.defect_codes(result), expected[block])
+                self.assertTrue(any(repr(GATE_FILE) in line and line.startswith(repair_guard.PROTECTED_PATH_TOUCHED) for line in result.lines))
                 self.assertEqual(result.err, "")
 
     def test_a_raw_bad_byte_on_a_block_line_does_not_stop_the_gate_script_rule(self) -> None:
@@ -1678,9 +1733,9 @@ class TextDefectiveDispatchTests(Fixture):
             (1, [repair_guard.TEXT_VALUE_INVALID, repair_guard.PROTECTED_PATH_TOUCHED]),
         )
 
-    def test_the_entries_are_still_not_used_and_a_path_outside_them_is_not_reported(self) -> None:
+    def test_the_defective_allowlist_is_not_used_and_a_path_outside_it_is_not_reported(self) -> None:
         self.base("tools/a.py")
-        self.write("src/other.py")
+        self.write("lib/other.py")
         sha = self.commit()
         self.dispatch.write_text(f'repair_allowlist: ["tools/{SURROGATE_ESCAPE}"]\nprotected_paths: ["src/"]\n', encoding="utf-8")
         result = self.run_guard(sha)
@@ -1698,7 +1753,7 @@ class TextDefectiveDispatchTests(Fixture):
 
     def test_check_paths_without_rules_protects_only_the_gate_directory(self) -> None:
         protected = [repair_guard.make_rule("src/", "t")]
-        defects = repair_guard.check_paths([GATE_FILE, "src/x.py", "tools/y.py"], [], protected, False, False)
+        defects = repair_guard.check_paths([GATE_FILE, "src/x.py", "tools/y.py"], [], protected, False, False, False)
         self.assertEqual([(d.code, d.subject) for d in defects], [(repair_guard.PROTECTED_PATH_TOUCHED, repr(GATE_FILE))])
 
 
@@ -1781,6 +1836,653 @@ class InProcessTests(Fixture):
         self.set_dispatch(["tools/"], [])
         result = self.run_guard("HEAD", env={"GIT_DIR": str(other / ".git")})
         self.assertEqual(result.code, 0)
+
+
+class ObjectFixture(Fixture):
+    """Helpers that forge objects in a repository's store, to prove the guard hashes what it reads."""
+
+    def committed_gate_change(self) -> tuple[str, str]:
+        """(first parent, repair): the repair changes a gate script and a tools file."""
+        self.base(GATE_FILE, "tools/a.py", "src/app.py")
+        parent = git(self.repo, "rev-parse", "HEAD")
+        self.write(GATE_FILE, "changed\n")
+        self.write("tools/a.py", "fixed\n")
+        return parent, self.commit("repair")
+
+    def object_path(self, oid: str, repo: Path | None = None) -> Path:
+        return (repo or self.repo) / ".git" / "objects" / oid[:2] / oid[2:]
+
+    def raw_body(self, oid: str, kind: str, repo: Path | None = None) -> bytes:
+        done = subprocess.run(
+            ["git", "-C", str(repo or self.repo), "cat-file", kind, oid], capture_output=True, check=False
+        )
+        self.assertEqual(done.returncode, 0, done.stderr)
+        return done.stdout
+
+    def write_loose(self, path: Path, kind: str, body: bytes) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if path.exists():
+            os.chmod(path, 0o666)
+        path.write_bytes(zlib.compress(f"{kind} {len(body)}".encode("ascii") + b"\0" + body))
+
+    def use_alternate(self, alternate: Path) -> None:
+        """Make the repository read objects from the store `alternate` as well (LF line, no CR)."""
+        info = self.repo / ".git" / "objects" / "info"
+        info.mkdir(parents=True, exist_ok=True)
+        (info / "alternates").write_bytes((str(alternate).replace("\\", "/") + "\n").encode("utf-8"))
+
+    def forged_commit_body(self, tree: str) -> bytes:
+        return f"tree {tree}\nauthor t <t@example.test> 1 +0000\ncommitter t <t@example.test> 1 +0000\n\nforged\n".encode("ascii")
+
+    def plain_diff(self, left: str, right: str, repo: Path | None = None) -> str:
+        return git(repo or self.repo, "diff", "--name-only", left, right)
+
+    def expect_forged_is_a_fault(self, sha: str, forged: str, repo: Path | None = None) -> None:
+        self.set_dispatch([GATE_DIR + "/", "tools/"], [])
+        result = self.run_guard(sha, repo=repo)
+        self.assertEqual((result.code, result.out), (2, ""), result.err)
+        self.assertIn(forged, result.err)
+        self.assertIn("hash", result.err)
+        self.assertNotIn("Traceback", result.err)
+        self.assertEqual(result.err.count("\n"), 1, result.err)
+
+    def baseline(self, sha: str, repo: Path | None = None) -> Result:
+        self.set_dispatch([GATE_DIR + "/", "tools/"], [])
+        result = self.run_guard(sha, repo=repo)
+        self.assertEqual((result.code, self.defect_codes(result)), (1, [repair_guard.PROTECTED_PATH_TOUCHED]), result.err)
+        return result
+
+
+class ForgedObjectTests(ObjectFixture):
+    """S56-15 and S56-16: the guard trusts no object it has not hashed itself."""
+
+    def test_a_forged_loose_first_parent_is_a_fault_and_never_a_pass(self) -> None:
+        parent, sha = self.committed_gate_change()
+        self.baseline(sha)
+        tree = git(self.repo, "rev-parse", f"{sha}^{{tree}}")
+        self.write_loose(self.object_path(parent), "commit", self.forged_commit_body(tree))
+        self.assertEqual(git(self.repo, "cat-file", "-p", parent).splitlines()[0], f"tree {tree}")  # the forgery is in force
+        self.assertEqual(self.plain_diff(parent, sha), "")  # plain git now sees no change at all
+        self.expect_forged_is_a_fault(sha, parent)
+
+    def test_a_forged_first_parent_served_through_alternates_is_a_fault_and_never_a_pass(self) -> None:
+        parent, sha = self.committed_gate_change()
+        tree = git(self.repo, "rev-parse", f"{sha}^{{tree}}")
+        alternate = self.root / "alternate-store"
+        self.write_loose(alternate / parent[:2] / parent[2:], "commit", self.forged_commit_body(tree))
+        os.chmod(self.object_path(parent), 0o666)
+        self.object_path(parent).unlink()
+        self.use_alternate(alternate)
+        self.assertEqual(git(self.repo, "cat-file", "-p", parent).splitlines()[0], f"tree {tree}")
+        self.assertEqual(self.plain_diff(parent, sha), "")
+        self.expect_forged_is_a_fault(sha, parent)
+
+    def test_a_genuine_first_parent_served_through_alternates_is_accepted(self) -> None:
+        parent, sha = self.committed_gate_change()
+        alternate = self.root / "alternate-store"
+        target = alternate / parent[:2] / parent[2:]
+        target.parent.mkdir(parents=True)
+        target.write_bytes(self.object_path(parent).read_bytes())
+        os.chmod(self.object_path(parent), 0o666)
+        self.object_path(parent).unlink()
+        self.use_alternate(alternate)
+        self.baseline(sha)
+
+    def test_a_forged_repair_commit_is_a_fault(self) -> None:
+        parent, sha = self.committed_gate_change()
+        parent_tree = git(self.repo, "rev-parse", f"{parent}^{{tree}}")
+        original = self.raw_body(sha, "commit")
+        forged = original.replace(git(self.repo, "rev-parse", f"{sha}^{{tree}}").encode("ascii"), parent_tree.encode("ascii"))
+        self.assertNotEqual(forged, original)
+        self.write_loose(self.object_path(sha), "commit", forged)
+        self.expect_forged_is_a_fault(sha, sha)
+
+    def test_a_forged_tree_of_the_repair_at_every_depth_is_a_fault_and_never_a_pass(self) -> None:
+        parent, sha = self.committed_gate_change()
+        depths = ["", "skills", "skills/johnny-project-takeover", GATE_DIR]
+        for depth in depths:
+            with self.subTest(depth=depth or "root"):
+                repair_spec = f"{sha}:{depth}" if depth else f"{sha}^{{tree}}"
+                base_spec = f"{parent}:{depth}" if depth else f"{parent}^{{tree}}"
+                repair_tree = git(self.repo, "rev-parse", repair_spec)
+                base_tree = git(self.repo, "rev-parse", base_spec)
+                self.assertNotEqual(repair_tree, base_tree)
+                path = self.object_path(repair_tree)
+                original = path.read_bytes()
+                try:
+                    self.write_loose(path, "tree", self.raw_body(base_tree, "tree"))
+                    self.expect_forged_is_a_fault(sha, repair_tree)
+                finally:
+                    os.chmod(path, 0o666)
+                    path.write_bytes(original)
+        self.baseline(sha)
+
+    def test_the_forged_repair_subtree_hides_the_change_from_plain_git(self) -> None:
+        parent, sha = self.committed_gate_change()
+        scripts = git(self.repo, "rev-parse", f"{sha}:{GATE_DIR}")
+        base_scripts = git(self.repo, "rev-parse", f"{parent}:{GATE_DIR}")
+        self.write_loose(self.object_path(scripts), "tree", self.raw_body(base_scripts, "tree"))
+        self.assertEqual(git(self.repo, "diff", "--name-only", f"{parent}^{{tree}}", f"{sha}^{{tree}}"), "tools/a.py")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 2, result.out)
+        self.assertEqual(result.out, "")
+
+    def test_a_subtree_whose_two_ids_are_equal_is_never_read(self) -> None:
+        parent, sha = self.committed_gate_change()
+        shared = git(self.repo, "rev-parse", f"{sha}:src")
+        self.assertEqual(shared, git(self.repo, "rev-parse", f"{parent}:src"))
+        self.write_loose(self.object_path(shared), "tree", b"garbage that is no tree")
+        self.baseline(sha)
+        os.chmod(self.object_path(shared), 0o666)
+        self.object_path(shared).unlink()
+        self.baseline(sha)
+
+    def test_a_tree_the_store_cannot_serve_is_a_fault_naming_it(self) -> None:
+        parent, sha = self.committed_gate_change()
+        scripts = git(self.repo, "rev-parse", f"{sha}:{GATE_DIR}")
+        os.chmod(self.object_path(scripts), 0o666)
+        self.object_path(scripts).unlink()
+        self.set_dispatch([GATE_DIR + "/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.out), (2, ""))
+        self.assertIn(scripts, result.err)
+        self.assertIn("cannot be read from the object store", result.err)
+
+    def test_a_forged_tree_is_a_fault_after_a_red_that_was_already_found(self) -> None:
+        self.base("tools/a.py")
+        git(self.repo, "checkout", "-q", "-b", "side")
+        self.write("tools/b.py", "side\n")
+        self.commit("side")
+        git(self.repo, "checkout", "-q", "main")
+        self.write("tools/c.py", "main\n")
+        self.commit("main")
+        git(self.repo, "merge", "-q", "--no-ff", "-m", "merge", "side")
+        merge = git(self.repo, "rev-parse", "HEAD")
+        tools = git(self.repo, "rev-parse", f"{merge}:tools")
+        self.write_loose(self.object_path(tools), "tree", b"")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(merge)
+        self.assertEqual((result.code, self.defect_codes(result)), (1, [repair_guard.REPAIR_NOT_SINGLE_PARENT]))
+        self.assertIn(tools, result.err)
+
+    def test_a_forged_object_in_a_sha256_repository_is_a_fault_and_a_genuine_one_is_verified_with_sha256(self) -> None:
+        repo = self.root / "repo256"
+        repo.mkdir()
+        probe = subprocess.run(
+            ["git", "-C", str(repo), "init", "-q", "--object-format=sha256", "-b", "main"], capture_output=True, check=False
+        )
+        if probe.returncode != 0:
+            self.skipTest("this git cannot create a SHA-256 repository: " + probe.stderr.decode("utf-8", "replace").strip())
+        for rel, text in ((GATE_FILE, "base\n"), ("tools/a.py", "base\n")):
+            target = repo / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(text, encoding="utf-8")
+        git(repo, "add", "-A")
+        git(repo, "commit", "-q", "-m", "base")
+        parent = git(repo, "rev-parse", "HEAD")
+        (repo / GATE_FILE).write_text("changed\n", encoding="utf-8")
+        git(repo, "add", "-A")
+        git(repo, "commit", "-q", "-m", "repair")
+        sha = git(repo, "rev-parse", "HEAD")
+        self.assertEqual(len(sha), 64)
+        self.baseline(sha, repo)
+        tree = git(repo, "rev-parse", f"{sha}^{{tree}}")
+        self.write_loose(self.object_path(parent, repo), "commit", self.forged_commit_body(tree))
+        self.assertEqual(self.plain_diff(parent, sha, repo), "")
+        self.expect_forged_is_a_fault(sha, parent, repo)
+
+    def test_the_guard_never_asks_git_for_a_diff_or_for_history(self) -> None:
+        parent, sha = self.committed_gate_change()
+        self.set_dispatch([GATE_DIR + "/"], [])
+        calls: list[list[str]] = []
+        real = repair_guard.run_git
+
+        def recording(repo: str, args: Sequence[str], stdin: bytes = b"", options: Sequence[str] = ()) -> bytes:
+            calls.append(list(args))
+            return real(repo, args, stdin, options)
+
+        out = io.StringIO()
+        with mock.patch.object(repair_guard, "run_git", side_effect=recording), contextlib.redirect_stdout(out):
+            code = repair_guard.main(["--repo", str(self.repo), "--repair", sha, "--dispatch", str(self.dispatch)])
+        self.assertEqual(code, 1)
+        self.assertTrue(calls)
+        self.assertTrue({call[0] for call in calls} <= {"rev-parse", "cat-file"}, calls)
+        for call in calls:
+            if call[0] == "cat-file":
+                self.assertEqual(call, ["cat-file", "--batch"])
+
+
+class CommitGraphTests(ObjectFixture):
+    """S56-17: a commit-graph that gives the repair the base tree changes nothing the guard reads."""
+
+    def forge_graph(self, commit: str, tree: str) -> None:
+        git(self.repo, "commit-graph", "write", "--reachable")
+        path = self.repo / ".git" / "objects" / "info" / "commit-graph"
+        os.chmod(path, 0o666)
+        data = bytearray(path.read_bytes())
+        chunk_count = data[6]
+        table = [
+            (bytes(data[8 + 12 * index:12 + 12 * index]), int.from_bytes(data[12 + 12 * index:20 + 12 * index], "big"))
+            for index in range(chunk_count + 1)
+        ]
+        offsets = {name: (start, table[index + 1][1]) for index, (name, start) in enumerate(table[:-1])}
+        oid_start, oid_end = offsets[b"OIDL"]
+        ids = [bytes(data[oid_start + 20 * i:oid_start + 20 * i + 20]).hex() for i in range((oid_end - oid_start) // 20)]
+        position = ids.index(commit)
+        data_start = offsets[b"CDAT"][0] + 36 * position
+        data[data_start:data_start + 20] = bytes.fromhex(tree)
+        data[-20:] = hashlib.sha1(bytes(data[:-20])).digest()
+        path.write_bytes(bytes(data))
+
+    def test_a_commit_graph_giving_the_repair_the_base_tree_does_not_hide_the_change(self) -> None:
+        parent, sha = self.committed_gate_change()
+        base_tree = git(self.repo, "rev-parse", f"{parent}^{{tree}}")
+        self.assertNotEqual(git(self.repo, "rev-parse", f"{sha}^{{tree}}"), base_tree)
+        self.forge_graph(sha, base_tree)
+        self.assertEqual(self.plain_diff(parent, sha), "")  # the graph is in force: plain git sees no change
+        self.baseline(sha)
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1)
+        self.assertIn(repr(GATE_FILE), "\n".join(result.lines))
+
+
+class TreeWalkTests(Fixture):
+    """S56-16: the guard's own walk of the two trees reports every path whose entry differs."""
+
+    def gate_dispatch(self, allow: object) -> None:
+        self.set_dispatch(allow, [])
+
+    def test_a_mode_only_change_is_a_changed_path(self) -> None:
+        self.base("tools/a.py", "tools/b.py")
+        git(self.repo, "update-index", "--chmod=+x", "tools/a.py")
+        git(self.repo, "commit", "-q", "-m", "mode")
+        self.set_dispatch(["tools/b.py"], [])
+        result = self.run_guard()
+        self.assertEqual((result.code, result.lines), (1, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'tools/a.py'"]))
+        self.set_dispatch(["tools/"], [])
+        self.assertEqual(self.run_guard().out, "paths=1 defects=0\n")
+
+    def test_a_type_change_to_a_symbolic_link_is_a_changed_path(self) -> None:
+        self.base("tools/a.py", "src/b.py")
+        blob = git(self.repo, "rev-parse", "HEAD:tools/a.py")
+        git(self.repo, "update-index", "--cacheinfo", f"120000,{blob},src/b.py")
+        git(self.repo, "commit", "-q", "-m", "link")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard()
+        self.assertEqual((result.code, result.lines), (1, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'src/b.py'"]))
+
+    def test_a_removed_directory_lists_every_file_under_it_and_not_the_directory(self) -> None:
+        self.base("src/x/a.py", "src/x/y/b.py", "src/keep.py", "tools/a.py")
+        git(self.repo, "rm", "-q", "-r", "src/x")
+        git(self.repo, "commit", "-q", "-m", "gone")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard()
+        self.assertEqual(
+            result.lines,
+            [f"{repair_guard.OUTSIDE_ALLOWLIST} 'src/x/a.py'", f"{repair_guard.OUTSIDE_ALLOWLIST} 'src/x/y/b.py'"],
+        )
+
+    def test_an_added_directory_lists_every_file_under_it_and_not_the_directory(self) -> None:
+        self.base("tools/a.py")
+        self.write("lib/p/q.py")
+        self.write("lib/r.py")
+        self.commit("added")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard()
+        self.assertEqual(
+            result.lines,
+            [f"{repair_guard.OUTSIDE_ALLOWLIST} 'lib/p/q.py'", f"{repair_guard.OUTSIDE_ALLOWLIST} 'lib/r.py'"],
+        )
+
+    def test_a_file_that_becomes_a_directory_reports_the_path_and_what_lies_under_it(self) -> None:
+        self.base("tools/a", "tools/keep.py")
+        git(self.repo, "rm", "-q", "tools/a")
+        self.write("tools/a/b.py")
+        self.commit("turn")
+        self.set_dispatch(["tools/a/"], [])
+        result = self.run_guard()
+        self.assertEqual(result.lines, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'tools/a'"])
+        self.assertEqual(self.run_guard().code, 1)
+        self.set_dispatch(["tools/"], [])
+        self.assertEqual(self.run_guard().out, "paths=2 defects=0\n")
+
+    def test_a_directory_that_becomes_a_file_reports_the_path_and_what_lay_under_it(self) -> None:
+        self.base("tools/a/b.py", "tools/keep.py")
+        git(self.repo, "rm", "-q", "-r", "tools/a")
+        self.write("tools/a", "now a file\n")
+        self.commit("turn")
+        self.set_dispatch(["tools/"], [])
+        self.assertEqual(self.run_guard().out, "paths=2 defects=0\n")
+        self.set_dispatch(["tools/a"], [])
+        self.assertEqual(self.run_guard().lines, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'tools/a/b.py'"])
+
+    def test_a_submodule_pointer_is_compared_by_id_and_never_descended(self) -> None:
+        self.base("tools/a.py")
+        git(self.repo, "update-index", "--add", "--cacheinfo", f"160000,{'1' * 40},vendor/lib")
+        git(self.repo, "commit", "-q", "-m", "pointer")
+        git(self.repo, "update-index", "--cacheinfo", f"160000,{'2' * 40},vendor/lib")
+        git(self.repo, "commit", "-q", "-m", "bump")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard()
+        self.assertEqual((result.code, result.lines, result.err), (1, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'vendor/lib'"], ""))
+
+    def test_a_pointer_that_turns_into_a_file_and_back_is_a_changed_path(self) -> None:
+        self.base("tools/a.py")
+        git(self.repo, "update-index", "--add", "--cacheinfo", f"160000,{'1' * 40},vendor/lib")
+        git(self.repo, "commit", "-q", "-m", "pointer")
+        blob = git(self.repo, "rev-parse", "HEAD:tools/a.py")
+        git(self.repo, "update-index", "--cacheinfo", f"100644,{blob},vendor/lib")
+        git(self.repo, "commit", "-q", "-m", "file")
+        self.set_dispatch(["tools/"], [])
+        self.assertEqual(self.run_guard().lines, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'vendor/lib'"])
+
+    def test_an_empty_subtree_that_exists_on_one_side_only_is_a_changed_path(self) -> None:
+        self.base("tools/a.py")
+        parent = git(self.repo, "rev-parse", "HEAD")
+        empty = git_raw(self.repo, ["hash-object", "-t", "tree", "--stdin"], b"")
+        body = subprocess.run(
+            ["git", "-C", str(self.repo), "cat-file", "tree", "HEAD^{tree}"], capture_output=True, check=True
+        ).stdout
+        tree = git_raw(
+            self.repo, ["hash-object", "-w", "-t", "tree", "--stdin"], body + b"40000 zempty\0" + bytes.fromhex(empty)
+        )
+        sha = git(self.repo, "commit-tree", tree, "-p", parent, "-m", "empty directory")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.lines, result.err), (1, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'zempty'"], ""))
+
+    def test_a_directory_mode_spelled_differently_with_the_same_id_is_a_changed_path(self) -> None:
+        self.base("tools/a.py")
+        parent = git(self.repo, "rev-parse", "HEAD")
+        inner = git(self.repo, "rev-parse", "HEAD:tools")
+        raw = git_raw(
+            self.repo, ["hash-object", "--literally", "-w", "-t", "tree", "--stdin"], b"040000 tools\0" + bytes.fromhex(inner)
+        )
+        sha = git(self.repo, "commit-tree", raw, "-p", parent, "-m", "spelling")
+        self.set_dispatch(["tools/x"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.lines, result.err), (1, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'tools'"], ""))
+
+    def test_an_unchanged_commit_has_no_changed_path_and_reads_no_tree(self) -> None:
+        self.base("tools/a.py")
+        sha = self.commit("empty")
+        self.set_dispatch([], [])
+        reads: list[str] = []
+        real = repair_guard.read_objects
+
+        def recording(repo: str, ids: Sequence[str], kind: str) -> dict[str, bytes]:
+            reads.append(kind)
+            return real(repo, ids, kind)
+
+        out = io.StringIO()
+        with mock.patch.object(repair_guard, "read_objects", side_effect=recording), contextlib.redirect_stdout(out):
+            code = repair_guard.main(["--repo", str(self.repo), "--repair", sha, "--dispatch", str(self.dispatch)])
+        self.assertEqual((code, out.getvalue()), (0, "paths=0 defects=0\n"))
+        self.assertEqual(reads, ["commit", "commit"])
+
+    def test_changed_paths_are_listed_in_byte_order_of_their_names(self) -> None:
+        self.base("b/z.py", "a.py", "c.py", "b.py")
+        for rel in ("b/z.py", "a.py", "c.py", "b.py"):
+            self.write(rel, "changed\n")
+        self.commit("all")
+        self.set_dispatch([], [])
+        result = self.run_guard()
+        self.assertEqual([line.split(" ", 1)[1] for line in result.lines], ["'a.py'", "'b.py'", "'b/z.py'", "'c.py'"])
+
+
+class ObjectReadingTests(Fixture):
+    """S56-15: what read_objects accepts, one answer at a time."""
+
+    def real_objects(self) -> tuple[str, str, bytes, bytes]:
+        self.base("tools/a.py")
+        commit = git(self.repo, "rev-parse", "HEAD")
+        tree = git(self.repo, "rev-parse", "HEAD^{tree}")
+        commit_body = subprocess.run(["git", "-C", str(self.repo), "cat-file", "commit", commit], capture_output=True, check=True).stdout
+        tree_body = subprocess.run(["git", "-C", str(self.repo), "cat-file", "tree", tree], capture_output=True, check=True).stdout
+        return commit, tree, commit_body, tree_body
+
+    def serve(self, data: bytes, oid: str, kind: str) -> dict[str, bytes]:
+        with mock.patch.object(repair_guard, "run_git", return_value=data):
+            return repair_guard.read_objects("anywhere", [oid], kind)
+
+    def test_a_genuine_answer_is_returned(self) -> None:
+        commit, tree, commit_body, tree_body = self.real_objects()
+        good = f"{commit} commit {len(commit_body)}\n".encode() + commit_body + b"\n"
+        self.assertEqual(self.serve(good, commit, "commit"), {commit: commit_body})
+        real = repair_guard.read_objects(str(self.repo), [commit], "commit")
+        self.assertEqual(real, {commit: commit_body})
+        self.assertEqual(repair_guard.read_objects(str(self.repo), [tree, tree], "tree"), {tree: tree_body})
+        self.assertEqual(repair_guard.read_objects(str(self.repo), [], "tree"), {})
+
+    def test_the_hash_of_an_object_is_what_git_gives_it(self) -> None:
+        data = b"some content\n"
+        expected = git_raw(self.repo, ["hash-object", "--stdin"], data)
+        self.assertEqual(repair_guard.object_hash("blob", data, 40), expected)
+        empty = git_raw(self.repo, ["hash-object", "-t", "tree", "--stdin"], b"")
+        self.assertEqual(repair_guard.object_hash("tree", b"", 40), empty)
+        self.assertNotEqual(repair_guard.object_hash("blob", data, 64), expected)
+        self.assertEqual(len(repair_guard.object_hash("blob", data, 64)), 64)
+        with self.assertRaises(repair_guard.ToolFault):
+            repair_guard.object_hash("blob", data, 41)
+
+    def test_the_hash_of_an_object_in_a_sha256_repository_is_what_git_gives_it(self) -> None:
+        repo = self.root / "repo256"
+        repo.mkdir()
+        probe = subprocess.run(["git", "-C", str(repo), "init", "-q", "--object-format=sha256"], capture_output=True, check=False)
+        if probe.returncode != 0:
+            self.skipTest("this git cannot create a SHA-256 repository: " + probe.stderr.decode("utf-8", "replace").strip())
+        data = b"some content\n"
+        self.assertEqual(repair_guard.object_hash("blob", data, 64), git_raw(repo, ["hash-object", "--stdin"], data))
+
+    def test_every_way_an_answer_can_be_wrong_is_a_fault_naming_the_id(self) -> None:
+        commit, tree, commit_body, tree_body = self.real_objects()
+        good = f"{commit} commit {len(commit_body)}\n".encode() + commit_body + b"\n"
+        other = "f" * 40
+        said: dict[str, str] = {
+            "the wrong type": "not a commit",
+            "a size too large": "bytes",
+            "a size too small": "hash",
+            "a changed body": "hash",
+            "no final newline": "bytes",
+            "a different id answered": "header",
+            "a missing object": "object store",
+        }
+        cases: dict[str, tuple[bytes, str, str]] = {
+            "a different id answered": (good.replace(commit.encode(), other.encode(), 1), commit, "commit"),
+            "the wrong type": (f"{tree} tree {len(tree_body)}\n".encode() + tree_body + b"\n", tree, "commit"),
+            "a size too large": (f"{commit} commit {len(commit_body) + 1}\n".encode() + commit_body + b"\n", commit, "commit"),
+            "a size too small": (f"{commit} commit {len(commit_body) - 1}\n".encode() + commit_body + b"\n", commit, "commit"),
+            "a changed body": (f"{commit} commit {len(commit_body)}\n".encode() + commit_body.replace(b"base", b"BASE") + b"\n", commit, "commit"),
+            "no final newline": (good[:-1], commit, "commit"),
+            "trailing data": (good + b"extra", commit, "commit"),
+            "a header that is not three words": (f"{commit} commit\n".encode() + commit_body + b"\n", commit, "commit"),
+            "a size that is not a number": (f"{commit} commit x\n".encode() + commit_body + b"\n", commit, "commit"),
+            "nothing": (b"", commit, "commit"),
+            "a missing object": (f"{commit} missing\n".encode(), commit, "commit"),
+        }
+        for name, (data, oid, kind) in cases.items():
+            with self.subTest(name):
+                with self.assertRaises(repair_guard.ToolFault) as caught:
+                    self.serve(data, oid, kind)
+                self.assertEqual(str(caught.exception).splitlines(), [str(caught.exception)])
+                if name not in ("nothing", "trailing data"):
+                    self.assertIn(oid, str(caught.exception))
+                if name in said:
+                    self.assertIn(said[name], str(caught.exception))
+
+    def test_an_id_that_is_not_an_object_id_is_refused_before_git_is_asked(self) -> None:
+        with mock.patch.object(repair_guard, "run_git", side_effect=AssertionError("git must not be asked")):
+            for bad in ("HEAD", "abc", "g" * 40, "A" * 40, "1" * 41):
+                with self.subTest(bad=bad):
+                    with self.assertRaises(repair_guard.ToolFault):
+                        repair_guard.read_objects("anywhere", [bad], "commit")
+
+    def test_the_ids_go_to_git_on_standard_input_and_not_on_the_command_line(self) -> None:
+        commit, _tree, commit_body, _tree_body = self.real_objects()
+        seen: list[tuple[list[str], bytes]] = []
+
+        def fake(repo: str, args: Sequence[str], stdin: bytes = b"", options: Sequence[str] = ()) -> bytes:
+            seen.append((list(args), stdin))
+            return f"{commit} commit {len(commit_body)}\n".encode() + commit_body + b"\n"
+
+        with mock.patch.object(repair_guard, "run_git", side_effect=fake):
+            repair_guard.read_objects("anywhere", [commit, commit], "commit")
+        self.assertEqual(seen, [(["cat-file", "--batch"], (commit + "\n").encode("ascii"))])
+
+
+class DefectiveBlockTests(Fixture):
+    """S56-18: only the block that holds a text defect loses its entries."""
+
+    def changed_outside_both(self) -> str:
+        self.base("tools/a.py", "src/b.py")
+        self.write("src/b.py", "changed\n")
+        return self.commit()
+
+    def test_a_defective_allowlist_leaves_the_protected_entries_in_force(self) -> None:
+        sha = self.changed_outside_both()
+        self.dispatch.write_text(f'repair_allowlist: ["tools/{SURROGATE_ESCAPE}"]\nprotected_paths: ["src/"]\n', encoding="utf-8")
+        result = self.run_guard(sha)
+        self.assertEqual(
+            (result.code, self.defect_codes(result)), (1, [repair_guard.TEXT_VALUE_INVALID, repair_guard.PROTECTED_PATH_TOUCHED])
+        )
+        self.assertIn("'src/b.py'", result.lines[1])
+
+    def test_a_defective_protected_list_leaves_the_allowlist_in_force(self) -> None:
+        sha = self.changed_outside_both()
+        self.dispatch.write_text(f'repair_allowlist: ["tools/"]\nprotected_paths: ["src/{SURROGATE_ESCAPE}"]\n', encoding="utf-8")
+        result = self.run_guard(sha)
+        self.assertEqual(
+            (result.code, self.defect_codes(result)), (1, [repair_guard.TEXT_VALUE_INVALID, repair_guard.OUTSIDE_ALLOWLIST])
+        )
+        self.assertIn("'src/b.py'", result.lines[1])
+
+    def test_a_defective_allowlist_alone_judges_no_path_as_outside(self) -> None:
+        sha = self.changed_outside_both()
+        self.dispatch.write_text(f'repair_allowlist: ["tools/{SURROGATE_ESCAPE}"]\nprotected_paths: []\n', encoding="utf-8")
+        self.assertEqual(self.defect_codes(self.run_guard(sha)), [repair_guard.TEXT_VALUE_INVALID])
+
+    def test_a_defective_protected_list_alone_protects_only_the_gate_scripts(self) -> None:
+        sha = self.changed_outside_both()
+        self.dispatch.write_text(f'repair_allowlist: ["src/"]\nprotected_paths: ["src/{SURROGATE_ESCAPE}"]\n', encoding="utf-8")
+        self.assertEqual(self.defect_codes(self.run_guard(sha)), [repair_guard.TEXT_VALUE_INVALID])
+
+    def test_a_raw_bad_byte_on_a_block_line_makes_that_block_defective_per_side(self) -> None:
+        sha = self.changed_outside_both()
+        self.dispatch.write_bytes(b'repair_allowlist: ["tools/\xff"]\nprotected_paths: ["src/"]\n')
+        result = self.run_guard(sha)
+        self.assertEqual(self.defect_codes(result), [repair_guard.TEXT_VALUE_INVALID, repair_guard.PROTECTED_PATH_TOUCHED])
+        self.dispatch.write_bytes(b'repair_allowlist: ["tools/"]\nprotected_paths: ["src/\xff"]\n')
+        result = self.run_guard(sha)
+        self.assertEqual(self.defect_codes(result), [repair_guard.TEXT_VALUE_INVALID, repair_guard.OUTSIDE_ALLOWLIST])
+
+    def test_the_clean_entries_of_a_defective_block_are_not_used_either(self) -> None:
+        sha = self.changed_outside_both()
+        self.dispatch.write_text(f'repair_allowlist: ["src/", "x{SURROGATE_ESCAPE}"]\nprotected_paths: []\n', encoding="utf-8")
+        rules = repair_guard.parse_dispatch(self.dispatch.read_text(encoding="utf-8"))
+        self.assertEqual((rules.allowlist, rules.allowlist_defective, rules.protected_defective), ((), True, False))
+        self.dispatch.write_text(f'repair_allowlist: []\nprotected_paths: ["src/", "x{SURROGATE_ESCAPE}"]\n', encoding="utf-8")
+        rules = repair_guard.parse_dispatch(self.dispatch.read_text(encoding="utf-8"))
+        self.assertEqual((rules.protected, rules.allowlist_defective, rules.protected_defective), ((), False, True))
+        self.assertEqual(self.defect_codes(self.run_guard(sha)), [repair_guard.TEXT_VALUE_INVALID, repair_guard.OUTSIDE_ALLOWLIST])
+
+    def test_a_clean_dispatch_has_no_defective_block(self) -> None:
+        rules = repair_guard.parse_dispatch(dispatch_text(["tools/"], ["src/"]))
+        self.assertEqual((rules.allowlist_defective, rules.protected_defective, rules.text_defects), (False, False, ()))
+        self.assertEqual(len(rules.allowlist), 1)
+        self.assertEqual(len(rules.protected), 1)
+
+    def test_check_paths_judges_each_side_on_its_own(self) -> None:
+        allow, protect = [repair_guard.make_rule("tools/", "t")], [repair_guard.make_rule("src/", "t")]
+        both = repair_guard.check_paths(["src/x"], allow, protect, False, True, True)
+        self.assertEqual([d.code for d in both], [repair_guard.OUTSIDE_ALLOWLIST, repair_guard.PROTECTED_PATH_TOUCHED])
+        only_protected = repair_guard.check_paths(["src/x"], allow, protect, False, False, True)
+        self.assertEqual([d.code for d in only_protected], [repair_guard.PROTECTED_PATH_TOUCHED])
+        only_allow = repair_guard.check_paths(["src/x"], allow, protect, False, True, False)
+        self.assertEqual([d.code for d in only_allow], [repair_guard.OUTSIDE_ALLOWLIST])
+        neither = repair_guard.check_paths(["src/x"], allow, protect, False, False, False)
+        self.assertEqual(neither, [])
+
+
+class SurrogateAndBomTests(Fixture):
+    """S56-19: the edges of the lone-surrogate range, and a byte order mark at the start of the dispatch."""
+
+    def committed(self) -> str:
+        self.base("tools/a.py")
+        self.write("tools/a.py", "fixed\n")
+        return self.commit()
+
+    def test_the_whole_surrogate_range_and_nothing_next_to_it_is_a_text_defect(self) -> None:
+        for code in (0xD800, 0xD801, 0xDBFF, 0xDC00, 0xDFFE, 0xDFFF):
+            with self.subTest(code=hex(code)):
+                self.assertIsNotNone(repair_guard.bad_character("a" + chr(code) + "b"))
+        for code in (0xD7FF, 0xE000, 0x41, 0x20, 0x7E, 0x80, 0x9F, 0x10FFFF):
+            with self.subTest(code=hex(code)):
+                self.assertIsNone(repair_guard.bad_character("a" + chr(code) + "b"))
+        for code in (0x00, 0x1F, 0x7F):
+            with self.subTest(code=hex(code)):
+                self.assertIsNotNone(repair_guard.bad_character(chr(code)))
+        for code in (0x20, 0x7E, 0x80):
+            self.assertIsNone(repair_guard.bad_character(chr(code)))
+
+    def test_a_surrogate_at_the_top_of_the_range_in_an_entry_is_a_red_and_one_below_it_is_not(self) -> None:
+        sha = self.committed()
+        for escape, code in (("\\udfff", 1), ("\\ud800", 1), ("\\udbff", 1), ("\\ud7ff", 0), ("\\ue000", 0)):
+            for block in ("repair_allowlist", "protected_paths"):
+                with self.subTest(escape=escape, block=block):
+                    entry = f'"x{escape}"'
+                    allow = f'["tools/", {entry}]' if block == "repair_allowlist" else '["tools/"]'
+                    protect = f"[{entry}]" if block == "protected_paths" else "[]"
+                    self.dispatch.write_text(f"repair_allowlist: {allow}\nprotected_paths: {protect}\n", encoding="utf-8")
+                    result = self.run_guard(sha)
+                    self.assertEqual(result.code, code, result.out)
+                    if code:
+                        self.assertEqual(self.defect_codes(result), [repair_guard.TEXT_VALUE_INVALID])
+                        self.assertIn("lone surrogate", result.lines[0])
+
+    def test_a_surrogate_at_the_top_of_the_range_in_an_argument_is_a_usage_error_and_one_below_it_is_not(self) -> None:
+        for bad in ("\udfff", "\udc80", "\ud800"):
+            with self.subTest(bad=hex(ord(bad))):
+                with self.assertRaises(repair_guard.UsageError):
+                    repair_guard.parse_arguments(["--repo", "r", "--repair", "x" + bad, "--dispatch", "d"])
+        for fine in ("퟿", ""):
+            with self.subTest(fine=hex(ord(fine))):
+                parsed = repair_guard.parse_arguments(["--repo", "r", "--repair", "x" + fine, "--dispatch", "d"])
+                self.assertEqual(parsed.repair, "x" + fine)
+
+    def test_a_surrogate_at_the_top_of_the_range_in_a_changed_path_is_a_text_defect(self) -> None:
+        defects = repair_guard.check_paths(["tools/a\udfffb"], [repair_guard.make_rule("tools/", "t")], [], False)
+        self.assertEqual([d.code for d in defects], [repair_guard.TEXT_VALUE_INVALID])
+        self.assertEqual(repair_guard.check_paths(["tools/a퟿b"], [repair_guard.make_rule("tools/", "t")], [], False), [])
+
+    def test_a_byte_order_mark_at_the_start_of_the_dispatch_is_removed(self) -> None:
+        sha = self.committed()
+        body = b'repair_allowlist: ["tools/"]\nprotected_paths: []\n'
+        self.dispatch.write_bytes(b"\xef\xbb\xbf" + body)
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.out), (0, "paths=1 defects=0\n"), result.err)
+        self.dispatch.write_bytes(b"\xef\xbb\xbf" + b'protected_paths: []\nrepair_allowlist: ["tools/"]\n')
+        self.assertEqual(self.run_guard(sha).code, 0)
+        self.assertEqual(repair_guard.read_dispatch(str(self.dispatch)).startswith("﻿"), False)
+
+    def test_only_one_byte_order_mark_at_the_very_start_is_removed(self) -> None:
+        sha = self.committed()
+        body = b'repair_allowlist: ["tools/"]\nprotected_paths: []\n'
+        self.dispatch.write_bytes(b"\xef\xbb\xbf\xef\xbb\xbf" + body)
+        self.assertEqual(self.run_guard(sha).code, 3)
+        self.dispatch.write_bytes(b'title: x\n\xef\xbb\xbfrepair_allowlist: ["tools/"]\nprotected_paths: []\n')
+        self.assertEqual(self.run_guard(sha).code, 3)
+        self.dispatch.write_bytes(b'title: x\nrepair_allowlist: ["tools/"]\nprotected_paths: []\n')
+        self.assertEqual(self.run_guard(sha).code, 0)
+
+    def test_a_byte_order_mark_inside_a_block_value_is_a_text_value_not_a_removal(self) -> None:
+        sha = self.committed()
+        self.dispatch.write_bytes('repair_allowlist: ["tools/", "﻿t/"]\nprotected_paths: []\n'.encode("utf-8"))
+        self.assertEqual(self.run_guard(sha).code, 0)
+        self.dispatch.write_bytes('repair_allowlist: ["﻿tools/"]\nprotected_paths: []\n'.encode("utf-8"))
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, self.defect_codes(result)), (1, [repair_guard.OUTSIDE_ALLOWLIST]))
 
 
 if __name__ == "__main__":

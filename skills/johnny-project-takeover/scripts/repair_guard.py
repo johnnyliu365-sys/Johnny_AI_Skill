@@ -15,24 +15,30 @@ The guard also always protects the directory this script lives in (the gate scri
 whether or not `protected_paths` names it. An empty allowlist makes every change an outside
 change; an empty protected list leaves only the gate scripts protected.
 
-History is read from raw objects, never from git's answer about ancestry. The repair
-commit is resolved to its object id, then read as a raw commit object through
-`git cat-file --batch` (the id on standard input, replace refs off): its `tree` line and
-its `parent` lines come from that object, and its first parent is read the same way for
-its tree. The changed paths are those of `git diff --name-status -M -z` between the two
-tree ids, with quoting off, so a graft file (in the repository, in the common directory of
-a linked work tree, or named by the environment), a replace ref or a shallow file cannot
-change which parent or which trees are compared. A merge is recognised from its parent
-lines; a root commit is compared against the empty tree, which is asked from git for the
-object format of the repository and never written down here; a first parent the object
-store cannot serve is a fault. Added, modified, deleted, type-changed and renamed paths
-all count, and a rename counts on both its old and its new side. Submodule pointers
-(gitlinks) always count: the diff runs with submodule ignoring switched off both in the
-configuration and on the command line, so neither the ignore setting of a tracked
-submodule list nor a repository setting can hide a moved pointer; external diff drivers
-and text conversion are off. The revision given to `--repair` names a commit by id or by
-reference; a name that uses an ancestry or path operator is a usage error, because git
-would answer it through the history that grafts rewrite.
+History is read from raw objects and every object is hashed by this script. The repair
+commit is resolved to its object id, then it, its first parent, both root trees and every
+subtree the walk descends into are read raw through `git cat-file --batch` (the ids on
+standard input, replace refs off) and hashed here: the header `<type> <size>`, a NUL byte
+and the body, with SHA-1 or SHA-256 chosen by the width of the object ids. An object whose
+hash differs from the id it was asked for, whose type is not the expected one, or that the
+store cannot serve is a fault naming that id, so a forged loose object, an object served
+through alternates or a damaged store never decides a verdict. The `tree` line and the
+`parent` lines come from the verified commit, so a graft file, a replace ref, a shallow
+file or a commit-graph cannot change which parent or which trees are compared. A merge is
+recognised from its parent lines; a root commit is compared against the empty tree, which
+needs no object; a first parent the object store cannot serve is a fault.
+
+The changed paths come from this script's own walk of the two root trees, never from
+`git diff`: the trees are compared entry by entry, a subtree is read only when its two ids
+differ, and every path whose entry differs in id or in mode, or exists on one side only, is
+reported (a whole subtree that exists on one side only is listed file by file; a type
+change reports the path and what lay under it). Submodule pointers (gitlinks, mode 160000)
+are compared by id and never descended, so they always count. Added, modified, deleted and
+type-changed paths all count, and a rename is a deletion and an addition, so it counts on
+both sides. No diff machinery, configuration, attribute or external driver is involved.
+The revision given to `--repair` names a commit by id or by reference; a name that uses an
+ancestry or path operator is a usage error, because git would answer it through the
+history that grafts rewrite.
 
 Every git child runs with the environment variables that select a repository, a graft
 file, a shallow file, a replace ref base or a configuration removed, and with replace
@@ -59,14 +65,17 @@ Defect codes (one output line each, exit 1):
 Every printed subject is escaped with Python `repr`, so one defect is always one line. On
 exit 0 the only output is `paths=N defects=0`, where N counts the distinct changed paths.
 
-A dispatch that holds a text defect is a red by itself and its entries cannot be trusted,
-so no entry is used: the allowlist and the protected entries are not judged. Every rule
-that needs no entry still applies: the text values of the changed paths, the single-parent
-rule and the protection of the gate scripts, so a change to a gate script is reported next
-to the text red. git is still asked, so any fault is reported too.
+A dispatch block that holds a text defect is a red by itself and its entries cannot be
+trusted, so none of that block's entries is used: a defective allowlist is not judged (no
+path is called outside it) and a defective protected list protects nothing but the gate
+scripts. The other block is clean and its entries are used as usual. Every rule that needs
+no entry still applies: the text values of the changed paths, the single-parent rule and
+the protection of the gate scripts, so a change to a gate script is reported next to the
+text red. git is still asked, so any fault is reported too.
 
 The dispatch file is decoded as UTF-8 with surrogate escapes, so no byte sequence makes it
-unreadable. An undecodable byte or a raw control character on a block line (inside or
+unreadable. One UTF-8 byte order mark at the very start of the file is removed first, as in
+the other gates; any other U+FEFF stays text. An undecodable byte or a raw control character on a block line (inside or
 outside a JSON string) is a TEXT_VALUE_INVALID red; the same on a line the gate does not
 read is ignored. A block line that is not one JSON array of strings for any other reason
 is a usage error.
@@ -88,6 +97,7 @@ the exit is still 1.
 """
 from __future__ import annotations
 
+import hashlib
 import io
 import json
 import os
@@ -115,10 +125,6 @@ EXIT_FAULT = 2
 EXIT_USAGE = 3
 
 GIT_TIMEOUT_SECONDS = 300.0
-# Submodule pointers always count: ignoring is switched off in the configuration and on the
-# command line (a per-submodule setting in a tracked list outranks the configuration only).
-DIFF_OPTIONS = ("-c", "diff.ignoreSubmodules=none")
-DIFF_FLAGS = ("--name-status", "-M", "-z", "--ignore-submodules=none", "--no-ext-diff", "--no-textconv")
 DRIVE_PREFIX = re.compile(r"^[A-Za-z]:")
 # Environment variables that would point git at some other repository than --repo, or at
 # other history, objects or settings than the repository itself holds.
@@ -143,6 +149,11 @@ GIT_SCRUBBED_PREFIX = "GIT_CONFIG_"
 # Variables every git child gets: replace objects off, no lazy fetch from a remote.
 GIT_FORCED = (("GIT_NO_REPLACE_OBJECTS", "1"), ("GIT_NO_LAZY_FETCH", "1"))
 OBJECT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})")
+# Width in bytes of a raw object id in a tree, by the width in hex digits of the repository's ids.
+RAW_ID_WIDTH = {40: 20, 64: 32}
+MODE_TYPE_MASK = 0o170000
+MODE_TREE = 0o040000
+MODE_OCTAL = re.compile(r"[0-7]{1,7}")
 # A revision that goes through ancestry or a path: git answers these through rewritten history.
 ANCESTRY_MARKS = ("^", "~", ":", "@{")
 
@@ -206,10 +217,26 @@ class RawCommit:
 
 
 @dataclass(frozen=True)
+class TreeEntry:
+    """One entry of a raw tree object: its mode text and the id of what it names."""
+
+    mode: str
+    oid: str
+
+    @property
+    def is_tree(self) -> bool:
+        return int(self.mode, 8) & MODE_TYPE_MASK == MODE_TREE
+
+
+@dataclass(frozen=True)
 class DispatchRules:
+    """The entries of each block; a block that holds a text defect has none and is flagged."""
+
     allowlist: tuple[PathRule, ...]
     protected: tuple[PathRule, ...]
     text_defects: tuple[Defect, ...]
+    allowlist_defective: bool = False
+    protected_defective: bool = False
 
 
 ASCII_LOWER = {code: code + 32 for code in range(ord("A"), ord("Z") + 1)}
@@ -256,7 +283,12 @@ def make_rule(entry: str, where: str) -> PathRule:
 
 def _parse_line(
     lines: Sequence[str], key: str, text_defects: list[Defect]
-) -> tuple[PathRule, ...]:
+) -> tuple[tuple[PathRule, ...], bool]:
+    """The entries of one block line and whether the block holds a text defect.
+
+    A defective block yields no entries at all: they cannot be trusted. Its structure is
+    still checked, so a usage error outranks the text red.
+    """
     marker = key + ":"
     found = [(index, line) for index, line in enumerate(lines) if line.startswith(marker)]
     if not found:
@@ -273,6 +305,7 @@ def _parse_line(
         raise UsageError(f"line {number}: {key} has no value")
     value = _read_value(raw, key, number, bad is not None)
     rules: list[PathRule] = []
+    defective = bad is not None
     for position, element in enumerate(value, 1):
         where = f"line {number}, {key} entry {position}"
         if not isinstance(element, str):
@@ -281,9 +314,10 @@ def _parse_line(
         if problem is not None:
             if bad is None:
                 text_defects.append(Defect(TEXT_VALUE_INVALID, quote(element), f"{where} holds {problem}"))
+            defective = True
             continue
         rules.append(make_rule(element, where))
-    return tuple(rules)
+    return (() if defective else tuple(rules)), defective
 
 
 def _read_value(raw: str, key: str, number: int, line_is_bad: bool) -> list[object]:
@@ -314,9 +348,15 @@ def parse_dispatch(text: str) -> DispatchRules:
     """Read both lines of a dispatch text; raise UsageError when either breaks the grammar."""
     lines = [line[:-1] if line.endswith("\r") else line for line in text.split("\n")]
     text_defects: list[Defect] = []
-    allowlist = _parse_line(lines, ALLOW_KEY, text_defects)
-    protected = _parse_line(lines, PROTECT_KEY, text_defects)
-    return DispatchRules(allowlist=allowlist, protected=protected, text_defects=tuple(text_defects))
+    allowlist, allow_bad = _parse_line(lines, ALLOW_KEY, text_defects)
+    protected, protect_bad = _parse_line(lines, PROTECT_KEY, text_defects)
+    return DispatchRules(
+        allowlist=allowlist,
+        protected=protected,
+        text_defects=tuple(text_defects),
+        allowlist_defective=allow_bad,
+        protected_defective=protect_bad,
+    )
 
 
 def check_paths(
@@ -324,48 +364,29 @@ def check_paths(
     allowlist: Sequence[PathRule],
     protected: Sequence[PathRule],
     case_insensitive: bool,
-    judge_rules: bool = True,
+    judge_allowlist: bool = True,
+    judge_protected: bool = True,
 ) -> list[Defect]:
     """Defects of the changed `paths` against the rules; the gate directory is always protected.
 
-    With `judge_rules` False the rules came from a dispatch that already holds a text
-    defect, so no entry is used: neither an outside path nor a path under a protected
-    entry can be judged fairly. What needs no entry still applies: the text values of the
+    With `judge_allowlist` False the allowlist came from a block that holds a text defect,
+    so no path can be called outside it; with `judge_protected` False the protected entries
+    did, so they are not used. What needs no entry still applies: the text values of the
     paths and the protection of the gate directory.
     """
     gate = PathRule(GATE_DIRECTORY, True)
-    guarded = (*protected, gate) if judge_rules else (gate,)
+    guarded = (*protected, gate) if judge_protected else (gate,)
     defects: list[Defect] = []
     for path in paths:
         problem = bad_character(path)
         if problem is not None:
             defects.append(Defect(TEXT_VALUE_INVALID, quote(path), f"a changed path holds {problem}"))
-        if judge_rules and not any(rule.covers(path, case_insensitive, False) for rule in allowlist):
+        if judge_allowlist and not any(rule.covers(path, case_insensitive, False) for rule in allowlist):
             defects.append(Defect(OUTSIDE_ALLOWLIST, quote(path), ""))
         hit = next((rule for rule in guarded if rule.covers(path, case_insensitive, True)), None)
         if hit is not None:
             defects.append(Defect(PROTECTED_PATH_TOUCHED, quote(path), f"covered by {quote(hit.entry)}"))
     return defects
-
-
-def parse_name_status(data: bytes) -> list[str]:
-    """Changed paths from `git diff --name-status -z` output; a rename or copy yields both sides."""
-    tokens = data.split(b"\0")
-    if tokens and tokens[-1] == b"":
-        tokens.pop()
-    paths: list[str] = []
-    index = 0
-    while index < len(tokens):
-        status = tokens[index].decode("utf-8", errors="replace")
-        width = 2 if status[:1] in ("R", "C") else 1
-        if not status or index + width >= len(tokens):
-            raise ToolFault(f"git printed a name-status record that cannot be read: {quote(status)}")
-        for raw in tokens[index + 1:index + 1 + width]:
-            path = raw.decode("utf-8", errors="surrogateescape")
-            if path not in paths:
-                paths.append(path)
-        index += 1 + width
-    return paths
 
 
 def _git_environment() -> dict[str, str]:
@@ -450,21 +471,61 @@ def parse_commit(oid: str, body: bytes) -> RawCommit:
     return RawCommit(tree=tree, parents=tuple(parents))
 
 
+def object_hash(kind: str, body: bytes, width: int) -> str:
+    """The id git gives an object: the hash of `<type> <size>`, a NUL byte and the body."""
+    if width == 40:
+        digest = hashlib.sha1(usedforsecurity=False)
+    elif width == 64:
+        digest = hashlib.sha256()
+    else:
+        raise ToolFault(f"an object id of {width} digits is neither SHA-1 nor SHA-256")
+    digest.update(f"{kind} {len(body)}".encode("ascii") + b"\0" + body)
+    return digest.hexdigest()
+
+
+def read_objects(repo: str, ids: Sequence[str], kind: str) -> dict[str, bytes]:
+    """Read the objects `ids` raw from the store and verify every one by hashing it here.
+
+    All ids go to one `git cat-file --batch` on standard input (replace refs off). Each
+    answer must name the id asked for, be of type `kind`, have the size its header says
+    and hash to the id; anything else, and a missing object, is a ToolFault naming the id.
+    Nothing git inferred is used: only the bytes of the object and what they hash to.
+    """
+    wanted = list(dict.fromkeys(ids))
+    for oid in wanted:
+        if OBJECT_ID.fullmatch(oid) is None:
+            raise ToolFault(f"an object id was expected, got {quote(oid)}")
+    if not wanted:
+        return {}
+    data = run_git(repo, ["cat-file", "--batch"], stdin=("\n".join(wanted) + "\n").encode("ascii"))
+    found: dict[str, bytes] = {}
+    position = 0
+    for oid in wanted:
+        end = data.find(b"\n", position)
+        header = data[position:end].decode("ascii", errors="replace").split(" ") if end >= 0 else []
+        if len(header) == 2 and header[0] == oid and header[1] == "missing":
+            raise ToolFault(f"the object {quote(oid)} cannot be read from the object store{_shallow_hint(repo)}")
+        if len(header) != 3 or header[0] != oid or not header[2].isdigit():
+            shown = data[position:max(end, position)].decode("utf-8", errors="replace")
+            raise ToolFault(f"git printed an object header that is not that of the object {quote(oid)}: {quote(shown)}")
+        if header[1] != kind:
+            raise ToolFault(f"the object {quote(oid)} is a {quote(header[1])}, not a {kind}")
+        size = int(header[2])
+        body = data[end + 1:end + 1 + size]
+        if len(body) != size or data[end + 1 + size:end + 2 + size] != b"\n":
+            raise ToolFault(f"git printed a body of the object {quote(oid)} that is not {size} bytes")
+        if object_hash(kind, body, len(oid)) != oid:
+            raise ToolFault(f"the object {quote(oid)} does not hash to its id: the store served forged or damaged content")
+        found[oid] = body
+        position = end + 2 + size
+    if position != len(data):
+        raise ToolFault("git printed more than the objects that were asked for")
+    return found
+
+
 def read_commit(repo: str, oid: str) -> RawCommit:
-    """Read the commit object `oid` raw from the object store (replace refs off)."""
-    data = run_git(repo, ["cat-file", "--batch"], stdin=(oid + "\n").encode("ascii"))
-    end = data.find(b"\n")
-    header = data[:end].decode("ascii", errors="replace").split(" ") if end >= 0 else []
-    if len(header) == 2 and header[0] == oid and header[1] == "missing":
-        raise ToolFault(f"the object {quote(oid)} cannot be read from the object store{_shallow_hint(repo)}")
-    if len(header) != 3 or header[0] != oid or header[1] != "commit" or not header[2].isdigit():
-        shown = data[: max(end, 0)].decode("utf-8", errors="replace")
-        raise ToolFault(f"git printed an object header that is not that of the commit {quote(oid)}: {quote(shown)}")
-    size = int(header[2])
-    body = data[end + 1:end + 1 + size]
-    if len(body) != size or data[end + 1 + size:] != b"\n":
-        raise ToolFault(f"git printed a body of the commit {quote(oid)} that is not {size} bytes")
-    return parse_commit(oid, body)
+    """Read the commit object `oid` raw from the object store and verify it by its hash."""
+    return parse_commit(oid, read_objects(repo, [oid], "commit")[oid])
 
 
 def _shallow_hint(repo: str) -> str:
@@ -476,28 +537,104 @@ def _shallow_hint(repo: str) -> str:
     return " (the repository is shallow)" if shallow else ""
 
 
+def parse_tree(oid: str, body: bytes) -> dict[bytes, TreeEntry]:
+    """The entries of a raw tree object by name; a body that is not a clean tree is a ToolFault.
+
+    An entry is `<octal mode> <name>`, a NUL byte and the raw id of as many bytes as the
+    ids of the repository have. The body must be consumed exactly. A name that is empty,
+    `.`, `..` or holds a slash, a mode that is not octal, and a name given twice are
+    refused, because git never writes them and a path built from them would be wrong.
+    """
+    raw_width = RAW_ID_WIDTH.get(len(oid))
+    if raw_width is None:
+        raise ToolFault(f"an object id of {len(oid)} digits is neither SHA-1 nor SHA-256")
+    entries: dict[bytes, TreeEntry] = {}
+    position = 0
+    while position < len(body):
+        space = body.find(b" ", position)
+        nul = body.find(b"\0", space + 1) if space >= 0 else -1
+        if space < 0 or nul < 0 or nul + 1 + raw_width > len(body):
+            raise ToolFault(f"the tree {quote(oid)} is malformed at byte {position}")
+        mode = body[position:space].decode("ascii", errors="replace")
+        name = body[space + 1:nul]
+        if MODE_OCTAL.fullmatch(mode) is None:
+            raise ToolFault(f"the tree {quote(oid)} has an entry with the mode {quote(mode)}")
+        if name in (b"", b".", b"..") or b"/" in name:
+            shown = name.decode("utf-8", errors="replace")
+            raise ToolFault(f"the tree {quote(oid)} has an entry with the name {quote(shown)}")
+        if name in entries:
+            shown = name.decode("utf-8", errors="replace")
+            raise ToolFault(f"the tree {quote(oid)} names {quote(shown)} twice")
+        entries[name] = TreeEntry(mode=mode, oid=body[nul + 1:nul + 1 + raw_width].hex())
+        position = nul + 1 + raw_width
+    return entries
+
+
+def diff_trees(repo: str, left: str | None, right: str | None) -> list[str]:
+    """Every path whose entry differs between two root trees, from this script's own walk.
+
+    `left` or `right` None is the empty tree. The trees are compared entry by entry; a
+    subtree is read (and hashed) only when the ids of its two sides differ, and the walk
+    goes down one level at a time so each level is one read. A path is reported when its
+    entry differs in id or mode or exists on one side only; a subtree that exists on one
+    side only, or that turns into something else, is listed file by file. A gitlink (mode
+    160000) is an entry like a file: compared by id and never descended.
+    """
+    paths: list[str] = []
+    level: list[tuple[str, str | None, str | None]] = [("", left, right)]
+    while level:
+        needed = [oid for _, old_id, new_id in level for oid in (old_id, new_id) if oid is not None]
+        loaded = read_objects(repo, needed, "tree")
+        following: list[tuple[str, str | None, str | None]] = []
+        for prefix, left_id, right_id in level:
+            before = parse_tree(left_id, loaded[left_id]) if left_id is not None else {}
+            after = parse_tree(right_id, loaded[right_id]) if right_id is not None else {}
+            for name in sorted(before.keys() | after.keys()):
+                old, new = before.get(name), after.get(name)
+                if old == new:
+                    continue
+                path = prefix + name.decode("utf-8", errors="surrogateescape")
+                if old is not None and new is not None and old.is_tree and new.is_tree:
+                    if old.mode != new.mode:
+                        paths.append(path)
+                    if old.oid != new.oid:
+                        following.append((path + "/", old.oid, new.oid))
+                    continue
+                only_trees = (old is None or old.is_tree) and (new is None or new.is_tree)
+                if not only_trees:
+                    paths.append(path)
+                for entry in (old, new):
+                    if entry is None or not entry.is_tree:
+                        continue
+                    if entry.oid == object_hash("tree", b"", len(entry.oid)):
+                        # an empty subtree holds no file to list, so the directory itself is the change
+                        if only_trees:
+                            paths.append(path)
+                    elif entry is old:
+                        following.append((path + "/", entry.oid, None))
+                    else:
+                        following.append((path + "/", None, entry.oid))
+        level = following
+    return sorted(dict.fromkeys(paths), key=lambda text: text.encode("utf-8", errors="surrogateescape"))
+
+
 def changed_paths(repo: str, commit: str, reds: list[Defect]) -> list[str]:
     """The changed paths of `commit` against its first parent.
 
-    The parents and the trees come from the raw commit objects, so no graft, replace ref
-    or shallow file can change them. A merge or a root commit adds its red to `reds`
-    before the first parent is read, so the red stands even when that read fails.
+    The commit, its first parent and every tree used are read raw and hashed here, so no
+    graft, replace ref, shallow file, commit-graph or forged object can change what is
+    compared. A merge or a root commit adds its red to `reds` before the first parent is
+    read, so the red stands even when that read fails.
     """
     sha = _object_id(_git_text(repo, ["rev-parse", "--verify", f"{commit}^{{commit}}"]), "the commit id")
     repair = read_commit(repo, sha)
     if len(repair.parents) != 1:
         kind = "a root commit" if not repair.parents else f"a merge commit with {len(repair.parents)} parents"
         reds.append(Defect(REPAIR_NOT_SINGLE_PARENT, quote(commit), f"the repair is {kind}"))
-    if repair.parents:
-        base = read_commit(repo, repair.parents[0]).tree
-    else:
-        base = _git_text_stdin(repo, ["hash-object", "-t", "tree", "--stdin"])
-    data = run_git(repo, ["diff", *DIFF_FLAGS, base, repair.tree], options=DIFF_OPTIONS)
-    return parse_name_status(data)
-
-
-def _git_text_stdin(repo: str, args: Sequence[str]) -> str:
-    return run_git(repo, args, stdin=b"").decode("utf-8", errors="replace").strip()
+    base = read_commit(repo, repair.parents[0]).tree if repair.parents else None
+    if base == repair.tree:
+        return []
+    return diff_trees(repo, base, repair.tree)
 
 
 class OutputFault(Exception):
@@ -583,8 +720,16 @@ def inspect_repair(arguments: Arguments, rules: DispatchRules, reds: list[Defect
     """
     require_repository_top(arguments.repo)
     paths = changed_paths(arguments.repo, arguments.repair, reds)
-    judge_rules = not rules.text_defects
-    reds.extend(check_paths(paths, rules.allowlist, rules.protected, sys.platform == "win32", judge_rules))
+    reds.extend(
+        check_paths(
+            paths,
+            rules.allowlist,
+            rules.protected,
+            sys.platform == "win32",
+            not rules.allowlist_defective,
+            not rules.protected_defective,
+        )
+    )
     return len(paths)
 
 

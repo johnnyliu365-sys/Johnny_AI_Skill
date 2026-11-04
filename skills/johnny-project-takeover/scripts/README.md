@@ -104,27 +104,34 @@ An entry ending in a slash covers that directory and everything under it, by who
 segment; any other entry is one exact path. The directory this script lives in (the gate
 scripts) is always protected, whether or not `protected_paths` names it.
 
-History comes from raw objects. The guard resolves the repair commit to its object id and
-reads it as a raw commit object (`git cat-file --batch`, the id on standard input, replace
-refs off); its tree and its parents are the ones that object names, and its first parent is
-read the same way for its tree. The changed paths are those of `git diff --name-status -M
--z` between the two tree ids, with quoting off, so added, modified, deleted and renamed
-paths all count and a rename counts on both sides. A graft file (in the repository, in the
-common directory of a linked work tree, or named by the environment), a replace ref or a
-shallow file therefore cannot change which parent or which trees are compared. A merge is
-recognised from its parent lines; a root commit is compared against the empty tree, which
-is asked from git for the object format of the repository and never written down in the
-script; a first parent the object store cannot serve is a fault. The revision given to
+History comes from raw objects, and the guard hashes every one of them itself. It resolves
+the repair commit to its object id, then reads the repair commit, its first parent, both
+root trees and every subtree it descends into raw through `git cat-file --batch` (the ids on
+standard input, replace refs off) and computes each object's hash (the header `<type>
+<size>`, a NUL byte, the body; SHA-1 or SHA-256 by the width of the ids). An object whose
+hash differs from its id, whose type is not the expected one, or that the store cannot serve
+is a fault naming the id, so a forged loose object, an object served through alternates or a
+damaged store can never turn a forbidden change into a pass. The tree and the parents are the
+ones the verified commit names, so a graft file, a replace ref, a shallow file or a
+commit-graph cannot change which parent or which trees are compared. A merge is recognised
+from its parent lines; a root commit is compared against the empty tree, which needs no
+object; a first parent the object store cannot serve is a fault. The revision given to
 `--repair` names a commit by id or by reference; a name with an ancestry or path operator
 (a caret, a tilde, a colon or an at-brace) is a usage error, because git answers those
 through the history that grafts rewrite. Entries are never decoded or normalised.
 
+The changed paths come from the guard's own walk of the two root trees, not from `git
+diff`: it compares them entry by entry, reads a subtree only when its two ids differ, and
+reports every path whose entry differs in id or mode or exists on one side only. A
+directory that exists on one side only, or that turns into a file (or the reverse), is
+listed file by file; a rename is a deletion and an addition, so it counts on both sides. A
+submodule pointer (mode 160000) is compared by id and never descended.
+
 What counts, whatever the repository says:
 
-- A moved submodule pointer always counts. The diff switches submodule ignoring off in the
-  configuration and on the command line, so neither the ignore setting of a tracked
-  submodule list nor a repository setting can hide it. External diff drivers and text
-  conversion are off.
+- A moved submodule pointer always counts. The walk compares a pointer by id like any other
+  entry, so no ignore setting (a tracked submodule list, a repository setting), external
+  diff driver or text conversion can hide it.
 - Replace refs are ignored. The environment variables that select a repository, history
   or settings (the git directory, the common directory, the work tree, the index file, the
   object directory, the alternate object directories, the namespace, the ceiling
@@ -140,14 +147,16 @@ full Unicode case folding, so protection never shrinks (a path spelled with a Ge
 s is covered by a protected entry spelled with two letters s, and the other way round).
 Elsewhere case matters.
 
-The dispatch file is read as UTF-8 with surrogate escapes. An undecodable byte or a raw
-control character on a block line, inside or outside a JSON string, is a
-`TEXT_VALUE_INVALID` red. The same on any other line is ignored. A block line that is not
-one JSON array of strings for any other reason is a usage error. A line ending in two
-carriage returns holds a raw control character and is a text red. When the dispatch holds
-a text defect its entries cannot be trusted, so no entry is used (the allowlist and the
-protected entries are not judged); every rule that needs no entry still applies, so a
-change to a gate script is reported as `PROTECTED_PATH_TOUCHED` next to the text red.
+The dispatch file is read as UTF-8 with surrogate escapes; one byte order mark at the very
+start is removed first. An undecodable byte or a raw control character on a block line,
+inside or outside a JSON string, is a `TEXT_VALUE_INVALID` red. The same on any other line
+is ignored. A block line that is not one JSON array of strings for any other reason is a
+usage error. A line ending in two carriage returns holds a raw control character and is a
+text red. A block that holds a text defect has its entries cut off: none of them is used
+(a defective allowlist judges no path as outside; a defective protected list protects
+nothing but the gate scripts), while the other, clean block is used as usual. Every rule
+that needs no entry still applies, so a change to a gate script is reported as
+`PROTECTED_PATH_TOUCHED` next to the text red.
 
 Output: one line per defect, `CODE 'subject'` with the subject escaped by Python `repr`
 so a defect is always one line; on exit 0 only `paths=N defects=0`.
@@ -164,7 +173,8 @@ so a defect is always one line; on exit 0 only `paths=N defects=0`.
 Red before fault: the guard reports every red it can find and exits 1 when there is one,
 with any fault printed on one line on standard error; it exits 2 only when it found no red.
 Exit 2: git cannot serve the check (unknown commit, `--repo` not a repository or not its
-top level, a first parent the object store lacks as in a shallow clone, git missing), the
+top level, a first parent the object store lacks as in a shallow clone, an object whose hash is
+not its id, git missing), the
 dispatch file is unreadable, an unexpected error, or standard output cannot be written
 (then no verdict can be delivered, so this wins over a red), or standard error cannot be
 written when there is no red. When every red reached standard output and only standard
