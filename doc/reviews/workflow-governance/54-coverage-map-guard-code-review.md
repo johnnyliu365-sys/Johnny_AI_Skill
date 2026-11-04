@@ -176,3 +176,61 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/54-rev03-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision03 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `763284bfa9dff9db330b9f6ec357ba836f7a837f` (`763284bf` correction 1 → `b111300e` → `f308f400` → `41482294` → `285e6df8` → `8c91e85d`, on `c0ab4a08`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review of revision03 CodeReview §5 allows |
+| Exit mapping | 0/1/2/3 with exit 2 for faults (R4-7); red before fault binding; the R4-2 row and the object-store trust boundary await the owner and are not raised |
+| Summary | S54-13 to S54-15 are closed as named: grafts in every form built no longer move a relative revision; the regression pass matches the initial review except the three graft probes, now correct; 13 of 14 seat mutations red and G2 equivalent. Open, evidence only: the unknown-path match is unpinned for a leading segment and for case (S54-16). Hardening, safety in the forged-store class: a forged commit-graph moves `--base main^` and a real removal exits 0 (S54-17). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Identity / boundary / payload | PASS | three files; Johnny Liu; trailer names the working model; stdlib only |
+| Ticket tests / mypy | PASS | 122 passed, 249 subtests; mypy --strict clean |
+| S54-13 | PASS with finding | five edges pinned; prefix and case of the unknown-path match unpinned (S54-16) |
+| S54-14, S54-15 | PASS | the whole `GIT_CONFIG_*` family; grafts in the repository, a linked worktree's common directory and an inherited `GIT_GRAFT_FILE` in either case |
+| Other history rewriting | FINDING (hardening) | replace refs and forged loose commits handled; a forged commit-graph moves relative revisions (S54-17) |
+| Seat choices | ACCEPT | the random non-existent graft path fails closed |
+| Red before fault / R4-2 / one line | PASS with finding | S54-16 in mutants only |
+| Regression S54-01 to S54-12 | PASS | |
+| Reverse mutations | seat 13 red, G2 equivalent; reviewer 16: 11 red, Y1 and Y2 findings, Y3, Y5, Y7 equivalent | |
+| Receipt / README | PASS with note | the README claim about relative revisions is overstated under a forged commit-graph |
+| Full suite | PASS under the host lock | second run 8 failed, all base names; a first run under heavy load had two extra `test_codex_lifecycle_oracle.py` failures that pass alone |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S54-01 to S54-07, S54-09 to S54-12, S54-14 | CLOSED |
+| S54-08 | not taken |
+| S54-13 | CLOSED for the five edges; same-family gap S54-16 |
+| S54-15 | CLOSED for grafts; commit-graph door S54-17 |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S54-16 | EVIDENCE_DEFECT | Low (exit code in mutants; not safety) | `coverage_map.py:600-602`; test `:1043` | the unknown-path match is pinned for the separator and suffixes but not for a leading segment or for case; under either mutant a found red is dropped and the run exits 2 | Y1, Y2 green; probes |
+| S54-17 | OUT_OF_SCOPE_HARDENING | safety (a removed test escapes with exit 0; needs write access to the commit-graph file) | `coverage_map.py:284`; README `:170`; docstring `:86` | git takes parents from the commit-graph; a forged one moves `main^` and other relative revisions; a full sha is unaffected; `-c core.commitGraph=false` neutralises it in plain git; an integration clone filled by fetch does not carry the seat's commit-graph | probes H5, CG1 |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: a Linux or POSIX host; SHA-256 repositories; split commit-graph chains; git older than 2.54; `core.commitGraph=false` against the guard itself; fast-forward onto the wave-2 tip.
+
+```review-verdict
+candidate: 763284bfa9dff9db330b9f6ec357ba836f7a837f
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/54-rev03-correction
+reviewed_at: 2026-11-05
+```
+
+### Control-plane disposition (2026-11-05): held for the owner
+
+The blocking item, S54-16, is an evidence gap on a behaviourally correct candidate; S54-17 is a forged-store door of the class the fourth spec correction (R4-4 trust boundary) addresses, with a one-flag hardening available (`-c core.commitGraph=false` on every git child). Both outcomes depend on owner decisions now open: the convergence rule and the R4-4 trust boundary. The control plane does not open revision04. Under the proposed convergence rule this candidate would be approvable with S54-16 carried and S54-17 taken as the one-flag hardening in the next change; under the current rule revision04 opens on the owner's word.

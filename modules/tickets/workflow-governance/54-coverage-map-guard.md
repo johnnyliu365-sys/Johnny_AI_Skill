@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision03 / receipt under `.worktrees/54-coverage-map-guard-out/` / owner implementation seat / worktree `.worktrees/54-coverage-map-guard` / branch `cp/wave2-54-coverage-map-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S54-09, S54-10; revision03 initial review CHANGES_REQUESTED (evidence only); correction 1 dispatched） |
+| 狀態 | `CONVERGENCE_HELD`（revision03 correction review `CONVERGENCE_REVIEW_REQUIRED` on `763284bf`: S54-16 evidence only, S54-17 forged-store hardening; held for the owner's convergence-rule and R4-4 trust-boundary decisions） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/54-coverage-map-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/54-coverage-map-guard-review` |
