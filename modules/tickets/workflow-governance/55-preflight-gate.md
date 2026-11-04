@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/55-preflight-gate-out/` / owner implementation seat / worktree `.worktrees/55-preflight-gate` / branch `cp/wave2-55-preflight-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S55-03, S55-04 TICKET_DEFECT; correction 1 dispatched to the same seat） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S55-03, S55-04 TICKET_DEFECT; correction 1 returned `ced8bd1f`, awaiting the correction review） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/55-preflight-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/55-preflight-gate-review` |
@@ -147,3 +147,7 @@ Review record: `doc/reviews/workflow-governance/55-preflight-gate-code-review.md
 | S55-10 | OUT_OF_SCOPE_HARDENING (taken now) | an unwritable stdout or stderr is exit 2 |
 | S55-11 | OUT_OF_SCOPE_HARDENING | not taken: long-running and detached processes stay out of wave 2; a Windows job object is a wave-3 candidate |
 | S55-12 | accepted decisions | except whitespace-only `expect`, now refused (exit 3) |
+
+### Disposition correction (revision02, before the correction review)
+
+TDD 4 asks both that a path argument holding LF is exit 3 and that a path with a newline prints on one line in a read diagnostic; the first rule makes the second unreachable. The read-diagnostic case is pinned instead with characters the argument rule admits (U+2028, NEL, a backslash), as the seat chose and recorded. Nothing else changes.
