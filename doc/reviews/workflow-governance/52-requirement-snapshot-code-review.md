@@ -115,3 +115,56 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/52-rev02-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision03 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `ac95c321f9496ac2d97fabd5fdc1f6c18d928346` (`ac95c321` correction 2 → `3c485efc` → `21ac4fda` → `dbd74358`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket |
+| Summary | Correction 2 closes S52-10, S52-11, S52-12, S52-13 and S52-15, and the revision02 behaviour holds. S52-14 named three `\d` patterns and only two were converted: the claim-file pattern still matches Unicode digits, and no test covers it (S52-16). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 107 passed, 280 subtests; mypy --strict clean on the script |
+| S52-10 echoed details | PASS | every echoed value on one line in take and diff |
+| S52-11 / S52-12 verify scope | PASS | code, docstring, README and ticket agree; verify applies the name rules only |
+| S52-13 top-level text rule | PASS | NAME_INVALID or DIGEST_FORMAT plus ROW_FIELD_TYPE |
+| S52-14 ASCII digits | PARTIAL | file names and arguments ASCII only; the claim pattern still `\d` (S52-16) |
+| S52-15 repeated keys | PASS | rows, top level, nested, stored files; one line per key |
+| take / verify / diff; codes; damaged versions; source_ref; id set; names | PASS | as specified |
+| Version claim under real races | PASS | 60 two-process races: no duplicate, loser exits 2; a claimless mutant duplicated v2 in 20 of 20 |
+| R4-2 exit classes | PASS | a red never exits 2 (apart from the accepted parser depth limit); a fault never exits 1; S52-17 |
+| Reverse mutations | PARTIAL | seat's 5 red; reviewer's 30: 28 red, C04 and C05 green but equivalent (the values cannot hold a line break); nothing pins the claim-name rule |
+| Receipt / boundary / identity / payload | PASS | checker 0 defects; four digests recomputed; LF; additions-only test change |
+| Full suite | NOT RUN by the reviewer | host busy for 30 minutes; the seat's F1 shows 8 base failures |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S52-01 to S52-07 | CLOSED (revision02) |
+| S52-10, S52-11, S52-12, S52-13, S52-15 | CLOSED |
+| S52-14 | PARTIALLY CLOSED (S52-16) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S52-16 | IMPLEMENTATION_DEFECT | Low (blocking: a closure rule partly applied and untested) | `requirement_snapshot.py:92` | the claim-file pattern uses `\d`, so a claim file named with a non-ASCII digit blocks `take` (exit 2) while the same digit in a version file name is ignored | probe; with `[0-9]` the suite stays green, so nothing pins either form |
+| S52-17 | OUT_OF_SCOPE_HARDENING | Low (non-blocking) | `requirement_snapshot.py:725-729` | a version argument longer than 4300 digits gives exit 2 with a raw `ValueError` message | probe |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: the full suite in the review worktree; the POSIX publish branch; an ACL-unwritable root; a case-sensitive file system.
+
+```review-verdict
+candidate: ac95c321f9496ac2d97fabd5fdc1f6c18d928346
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/52-rev03-initial
+reviewed_at: 2026-11-04
+```

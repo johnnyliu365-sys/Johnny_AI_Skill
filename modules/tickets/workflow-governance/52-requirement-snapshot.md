@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision03 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 initial review: S52-12 TICKET_DEFECT; correction 2 dispatched to the same seat） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 initial review: S52-12 TICKET_DEFECT; revision03 initial review CHANGES_REQUESTED (S52-16); correction 3 dispatched to the same seat） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/52-requirement-snapshot` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/52-requirement-snapshot-review` |
@@ -145,3 +145,7 @@ Review record section "Revision02 initial review". S52-12 is a `TICKET_DEFECT`: 
 | S52-11 | IMPLEMENTATION_DEFECT | docstring matches the README and the code |
 | S52-12 | TICKET_DEFECT | `verify` applies the name rules only, as above |
 | S52-13, S52-14, S52-15 | OUT_OF_SCOPE_HARDENING (taken now) | top-level text rule, ASCII digits, repeated keys, as above, one test each |
+
+### Correction 3 under revision03 (after the revision03 initial review `CHANGES_REQUESTED`)
+
+No ticket defect was found, so revision03 stands. S52-16: the claim-file name pattern uses ASCII digits too, with one test. S52-17 (taken now): a version argument too long to name a stored version is "the requested version does not exist" (exit 2) with that message, never a raw exception text. The next review is the one correction review of revision03.
