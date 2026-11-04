@@ -239,3 +239,65 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/51-rev04-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision04 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `e7594f65eb9896546faf33a14686fa3a73f714bc` (`e7594f65` → `932aee20` → `b08ad456` → `4bcc2873` → `7928d447`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review of revision04 CodeReview §5 allows |
+| Summary | S51-22 holds in every combination built (558 probe runs: 21 value shapes and 13 git-free reds crossed with 10 fault kinds); S51-23 and the S51-24 test are closed; the seat's 27 mutations reproduce (26 red, 1 equivalent). Six counter-mutations survive; two change an exit from 1 to 2 for value reds beside three fault kinds with no test (S51-26, evidence only; the code is correct). The README misnames the red a listed non-blob `--tool` produces (S51-27). The forged-object observation (S51-30) belongs to the R4-4 proposal. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 210 passed, 1 skipped, 226 subtests; mypy --strict clean |
+| S51-22 | PASS | 418 runs over value shapes, lookup outcomes and paths |
+| Red before fault, git-free reds beside every fault kind | PASS | 140 runs |
+| Regression | PASS | canonical form, literal lookup, replace refs, grafts, scrubbed environment, lazy fetch, absent vs unservable |
+| R4-2 and one line | PASS | |
+| S51-23; S51-24 test | PASS | g33 and c25 red, also with the temp directory inside a repository |
+| S51-24 README | PARTIAL | S51-27 |
+| Seat mutations | PASS | 26 red; S23 equivalent (agreed) |
+| Reviewer counter-mutations | FAIL | 13 doors: 8 red; C01, C02, C07, C08, C09 survive |
+| Receipt; E1; E2 | PASS | LF; blocks byte-identical; digest recomputed; independent verifier 0 bad; E1 and E2 identical |
+| Boundary / payload | PASS | |
+| Full suite | PASS under the host lock | 8 failed, all base names; the lifecycle oracle green |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S51-22 | CLOSED except the evidence gap S51-26 |
+| S51-18, S51-23 | CLOSED |
+| S51-24 | CLOSED for the test; README PARTIAL (S51-27) |
+| S51-01 to S51-07, S51-10 to S51-14, S51-16, S51-17, S51-19, S51-20 | remain CLOSED |
+| S51-08, S51-15, S51-21, S51-25 | not taken |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S51-26 | EVIDENCE_DEFECT | Low (a regression would change 1 to 2; never 0) | tests `DigestValueBeforeLookupTests.OUTCOMES`; `evidence_gate.py:745-749` | the tests cover four fault kinds; `cat-file` exiting non-zero, an answer outside the format and an unservable root tree have no value red beside them | C07, C08 survive and change the exit |
+| S51-27 | IMPLEMENTATION_DEFECT | Info (documentation) | `README.md:150-152`; `evidence_gate.py:34-36` | a listed non-blob `--tool` gives `TOOL_DIGEST_STALE`, not `TOOL_DIGEST_MISSING` as the text says; the exit claim is correct | 12 probes |
+| S51-28 | OUT_OF_SCOPE_HARDENING | Info | `evidence_gate.py:724-744` | defect-count decisions unpinned, each overlap-masked | C01, C02, C09 survive |
+| S51-29 | OUT_OF_SCOPE_HARDENING | Info | tests helper | the helper may use the drive root; the fault text is matched in English | read |
+| S51-30 | trust boundary (R4-4 proposal) | safety if the boundary is not adopted | `evidence_gate.py:456-487` | a seat that can write the shared store can replace the candidate's tool blob; a receipt listing the forged digest exits 0 | probe |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: Linux and case-sensitive file systems; git older than 2.54; SHA-256 repositories; a real unreadable capture, `cat-file` failure and garbage answer (injected in-process); the symlink branch; a localised git.
+
+```review-verdict
+candidate: e7594f65eb9896546faf33a14686fa3a73f714bc
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/51-rev04-correction
+reviewed_at: 2026-11-05
+```
+
+### Control-plane disposition (2026-11-05): held for the owner
+
+The blocking item, S51-26, is an evidence gap on a behaviourally correct candidate (three more fault kinds in one test table); S51-27 is one sentence; S51-30 is the forged-object class of the R4-4 trust-boundary proposal. The outcomes depend on the open owner decisions (the convergence rule and R4-4). The control plane does not open revision05. Under the proposed convergence rule this candidate would be approvable with S51-26 to S51-29 carried, and S51-30 settled by R4-4 or by hashing each object as tickets 53 and 56 do.

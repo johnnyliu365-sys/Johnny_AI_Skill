@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用（Revision 04 does not seal a new Context） |
 | Agent Context binding | ticket revision04 / receipt under `doc/reviews/workflow-governance/evidence/51/` / owner implementation seat / worktree `.worktrees/51-evidence-gate` / branch `cp/wave2-51-evidence-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 initial review: S51-17, S51-18 TICKET_DEFECT; revision04 initial review CHANGES_REQUESTED (S51-22); correction 2 dispatched） |
+| 狀態 | `CONVERGENCE_HELD`（revision04 correction review `CONVERGENCE_REVIEW_REQUIRED` on `e7594f65`: S51-26 evidence only; S51-30 forged-store class; held for the owner's convergence-rule and R4-4 trust-boundary decisions） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/51-evidence-gate` |
 | 審閱者 | `ticket-review` seat, its own worktree `.worktrees/51-evidence-gate-review` |
