@@ -160,3 +160,54 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/56-rev03-initial
 reviewed_at: 2026-11-05
 ```
+
+## Revision04 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `241b328a997b279b714a50634e0100fbb87ae5c7` (`241b328a` → `f50d171c` → `8b084b50` → `02d40fd2`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision04 |
+| Summary | Every forged object built is a fault and never a pass (loose, packed, alternates, repair commit, first parent, root trees and subtrees at every depth on both sides, wrong type, truncated object, SHA-256, forged tags); grafts, replace refs, shallow and commit-graph files change nothing; the guard's own walk matches `git diff --no-renames` on 24 clean commits. Blocking: hashing the first parent's trees is unpinned and a mutant skipping it lets a gate-script change exit 0 (S56-21). Also: reds at verified levels are dropped when a deeper object faults (S56-22); the M1 equivalence marking repeats S56-14 (S56-23). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 208 passed, 221 subtests; mypy --strict clean |
+| Seat mutations | PASS | 47 of 48 red; V10 equivalent (rev-parse peels through the hashed commit object, not the commit-graph); V10b red for the intended reason |
+| Reviewer counter-mutations | FINDING | 5 run: K3, K4, K6, K20 red; K2 green (S56-21) |
+| Forged objects; history rewriting; own tree walk | PASS | probes |
+| S56-17 to S56-20; regression S56-01 to S56-14 | PASS except S56-23 | |
+| R4-2 and one line | PASS except S56-22 | |
+| Receipt / boundary | PASS | 0 defects; digests recomputed; captures after the commit and starting with the script digest |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S56-01 to S56-07, S56-09 to S56-13, S56-16 to S56-20 | CLOSED |
+| S56-08 | control plane: correction proposed, awaiting the owner |
+| S56-14 | PARTLY OPEN (S56-23) |
+| S56-15 | CLOSED in behaviour; the base-side half unpinned (S56-21) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S56-21 | EVIDENCE_DEFECT | Medium (blocking; safety unpinned) | `repair_guard.py:517, 586-587`; tests | no test forges a tree of the first parent; skipping the hash check on that side stays green and lets a gate-script change exit 0 | K2 green; probe on mutant and candidate |
+| S56-22 | IMPLEMENTATION_DEFECT | Low (changes an exit code; no pass) | `repair_guard.py:583-618, 722-732` | paths are judged only after the whole walk, so a red at a verified level is dropped when a deeper object faults | probe G1 |
+| S56-23 | EVIDENCE_DEFECT | Low (evidence only) | receipt M1 V10, M2 | V10 is recorded as survived with no marker or reason in the capture, and the M1 header contradicts the reason | comparison; reviewer rerun |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: paths with a newline end to end; Linux and macOS; NTFS short-name aliases and symlink indirection of the gate directory; SHA-1 collision objects; very large commits.
+
+```review-verdict
+candidate: 241b328a997b279b714a50634e0100fbb87ae5c7
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/56-rev04-initial
+reviewed_at: 2026-11-05
+```

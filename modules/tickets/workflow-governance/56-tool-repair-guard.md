@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision04 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 initial review: S56-16 TICKET_DEFECT; implementation 4 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04; revision04 initial review CHANGES_REQUESTED (S56-21 to S56-23); correction 1 dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/56-tool-repair-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/56-tool-repair-guard-review` |
@@ -183,3 +183,7 @@ Review record section "Revision03 initial review". S56-16 is a `TICKET_DEFECT`: 
 | S56-18 | IMPLEMENTATION_DEFECT | only the defective block loses its entries; one test per side |
 | S56-19 | EVIDENCE_DEFECT | tests for a lone surrogate at the top of the range and for a leading BOM |
 | S56-20 | EVIDENCE_DEFECT | the evidence rule above |
+
+### Correction 1 under revision04 (after the revision04 initial review `CHANGES_REQUESTED`)
+
+No ticket defect was found, so revision04 stands. S56-21: tests that forge the first parent's root tree, a `skills/` subtree and the gate-directory subtree, each copying the repair's content, each a fault. S56-22: paths are judged level by level as the walk verifies each tree, so every red found at a verified level is reported beside a fault met deeper (red before fault). S56-23: an equivalent survivor is marked in the M1 capture itself, with its reason, and M2 records the failing test that shows the intended reason. The next review is the one correction review of revision04.
