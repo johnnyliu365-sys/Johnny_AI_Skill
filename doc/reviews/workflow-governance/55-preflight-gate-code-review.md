@@ -123,3 +123,61 @@ verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/55-rev02-correction
 reviewed_at: 2026-11-04
 ```
+
+## Revision03 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `3a7cb3ad97ff6448e75fee1efc5970021128cb6a` on `cp/wave2-55-preflight-gate` (parent `ced8bd1f`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision03 |
+| Reviewed against | closure revision03 with the earlier disposition corrections; R4-2, R4-3, R4-7, R4-8 |
+| Summary | The six closure items hold in behaviour and every earlier rule still holds; exits stay within 0/2/3; the seat's 26 mutations are red; the receipt verifies; no new red. Open, evidence only: the tree kill after an unexpected error (S55-19), the forward-slash share and extended-length drive spellings (S55-20) and the rooted-PATH-entry skip (S55-23) can be removed with every test green. Hardening: other device-namespace prefixes are opened and one read hung (S55-21); an interrupt exits outside 0/2/3 (S55-22). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 142 passed, 2 skipped (POSIX), 368 subtests; mypy --strict clean |
+| Drive rule | PASS in behaviour; pin partial (S55-20) | 47 spellings probed |
+| Run-level handler; PATHEXT; PATH quotes | PASS | |
+| Child cleanup | PASS in behaviour; pin partial (S55-19) | child and grandchild killed before the next tool |
+| Device names | PASS for the closure; S55-21 | 21 reserved spellings exit 3 unopened |
+| Batch refusal; argv0; planted taskkill; any failure gives 2; streams; argument text; grammar; one line | PASS | 400 fuzzed dispatch files exit 0, 2 or 3 only |
+| STATEMENT choices | AGREE 14 of 14 | |
+| Reverse mutations | seat 26 of 26 red; reviewer 16, 5 survive | K1, K2, K3, K4, K22 |
+| Receipt / boundary | PASS | checker 0 defects with P9; digests recomputed; LF; three files; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S55-13 | CLOSED in behaviour; pin partial (S55-20) |
+| S55-14, S55-15, S55-16 | CLOSED |
+| S55-17 | CLOSED in behaviour; tree part unpinned (S55-19) |
+| S55-18 | CLOSED for the closure text; wider namespace in S55-21 |
+| S55-01 to S55-10, S55-12 | still closed |
+| S55-11 | not taken |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S55-19 | EVIDENCE_DEFECT | Low (evidence only) | `preflight.py:414-418`; tests `:1346-1422` | a plain kill instead of the tree kill stays green: the cleanup test starts no grandchild | K1 green |
+| S55-20 | EVIDENCE_DEFECT | Low (evidence only) | `preflight.py:319-323`; tests `:1124-1135` | dropping the `splitdrive` clause stays green: forward-slash shares and `//?/` spellings are untested | K2 green |
+| S55-21 | OUT_OF_SCOPE_HARDENING | Low (safety: an unbounded read) | `preflight.py:91, 506-515, 563-565`; README | `\\?\`, `\??\`, UNC loopback and `GLOBALROOT` reach devices and are opened; a read of an owned pipe hung; the README claims more than the code | probes |
+| S55-22 | OUT_OF_SCOPE_HARDENING | Info | `preflight.py:591-595, 414` | an interrupt after a child started kills the tree, then exits 0xC000013A with a traceback | probe |
+| S55-23 | EVIDENCE_DEFECT | Info | `preflight.py:332`; tests `:840-853` | admitting PATH entries by `isabs` stays green: no test has a rooted entry without a drive | K22 green |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: POSIX behaviour; a real second drive; a console device as the dispatch path; a real disk-full error.
+
+```review-verdict
+candidate: 3a7cb3ad97ff6448e75fee1efc5970021128cb6a
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/55-rev03-initial
+reviewed_at: 2026-11-04
+```
