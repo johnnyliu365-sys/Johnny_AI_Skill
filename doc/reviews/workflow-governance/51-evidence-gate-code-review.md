@@ -182,3 +182,60 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/51-rev03-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision04 initial review
+
+**Verdict: `CHANGES_REQUESTED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `932aee20bedbebdad076cb9e1cec615292181104` (`932aee20` → `b08ad456` → `4bcc2873` → `7928d447`) |
+| Closure | revision04 with the disposition correction `fb74fe85` |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision04 |
+| Summary | The revision04 design holds: replace refs on a blob, a commit and a tree, `core.useReplaceRefs` in configuration or `GIT_CONFIG_*`, grafts, `GIT_GRAFT_FILE`, `GIT_SHALLOW_FILE`, lazy fetch and the selecting variables cannot change the blob read; absent and unservable are told apart in every shape built; the seat's 33 mutations are red; S51-16, S51-17, S51-19, S51-20 closed. Open: when the lookup for a digest path faults, its values are not judged, so two reds that need no git vanish and the run exits 2 (S51-22). One counter-mutation is an evidence gap (S51-23). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 198 passed, 1 skipped, 137 subtests; mypy --strict clean |
+| Replace refs; grafts and shallow file; environment; lazy fetch | PASS | probes |
+| Absent versus unservable | PASS | 14 absent shapes → 1; pruned blob, tree, root tree, commit → 2 |
+| Red before fault | PARTIAL | every combination exits 1 except a malformed or contradicting digest value beside a fault on that lookup (S51-22) |
+| Canonical form and one literal lookup | PASS | 22 shapes refused without asking git |
+| R4-2 and one line | PASS, gap S51-22 | |
+| Seat mutations; regression mutations | PASS | 33 of 33; 37 regression, 33 red, 3 overlap-masked, g33 new (S51-23) |
+| Reviewer counter-mutations | FAIL | 30 new doors: 18 red, 12 survive (S51-23, S51-25) |
+| Changed assertions and seat choices | AGREE with notes (S51-24) | |
+| Receipt; candidate gate on its receipt; E2 | PASS | LF; blocks byte-identical; digest recomputed; `cells=6 defects=0`; E2 unchanged |
+| Boundary | PASS | three files; Johnny Liu; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S51-16, S51-17, S51-19, S51-20 | CLOSED |
+| S51-18 | PARTIALLY CLOSED (S51-22) |
+| S51-01 to S51-07, S51-10 to S51-14 | remain CLOSED |
+| S51-08, S51-15, S51-21 | not taken, as planned |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S51-22 | IMPLEMENTATION_DEFECT | Low (changes an exit code; never exit 0, so not safety) | `evidence_gate.py:718-720` | when the lookup for a listed path faults, its values are skipped: a value that is not 64 lower-case hex, and two different values for one path, both reds that need no git, vanish and the run exits 2 | 8 probes |
+| S51-23 | EVIDENCE_DEFECT | Low | `evidence_gate.py:910` | `main`'s generic unexpected-error branch is unpinned since the only test patches a function `execute` already guards | g33 survives |
+| S51-24 | EVIDENCE_DEFECT | Info | tests `:1630-1635`; README `:143` | the not-a-repository test passes through another fault on hosts where the temp directory is inside a repository; the README lists a non-blob `--tool` under exit 2 although such a run always carries a red | rerun with `TMP` inside the checkout; c25 survives; probe |
+| S51-25 | OUT_OF_SCOPE_HARDENING | Info | various | harmless survivors (unreachable gitlink branch on git 2.54, redundant variables under the flag, quoted PATH entries, caches) | mutations; probes |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: Linux and case-sensitive file systems; git older than 2.44; a real unreadable capture; the symlink branch; SHA-256 repositories.
+
+```review-verdict
+candidate: 932aee20bedbebdad076cb9e1cec615292181104
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/51-rev04-initial
+reviewed_at: 2026-11-04
+```
