@@ -40,7 +40,7 @@ forbid = template/
 
 The owner approved wave 2 on 2026-11-04 ("先做wave2"). A plugin user runs
 `python skills/johnny-project-takeover/scripts/evidence_gate.py <receipt.md> --repo <dir> --candidate <sha> --tool <path> [--tool <path> ...] [--require-cell <name> ...] [--evidence-root <dir>]`.
-Exit 0 with `cells=N defects=0` when every run cell proves itself; exit 1 with one line per defect code otherwise; exit 2 when git or the file system cannot serve the check; exit 3 on bad arguments. The receipt checker committed for ticket 48 (`evidence/48/receipt_check.py`) stays as the record of that ticket; this gate is the plugin's general instrument and closes the gaps the ticket 48 review found in it (NF-16) and F-06.
+Exit 0 with `cells=N defects=0` when every run cell proves itself; exit 1 with one line per defect code otherwise; exit 2 when git or the file system cannot serve the check and no red was found (red before fault, revision04); exit 3 on bad arguments. The receipt checker committed for ticket 48 (`evidence/48/receipt_check.py`) stays as the record of that ticket; this gate is the plugin's general instrument and closes the gaps the ticket 48 review found in it (NF-16) and F-06.
 
 ## 實作範圍、依賴與 ticket elements
 
@@ -186,3 +186,7 @@ Review record section "Revision03 initial review". S51-17 and S51-18 are `TICKET
 | S51-19 | EVIDENCE_DEFECT | tests for a repeated digest path with a contradicting second value, a missing path holding a space, and a `missing` answer with a wrong subject |
 | S51-20 | OUT_OF_SCOPE_HARDENING (taken now) | the git environment rule above, with a `GIT_DIR` test |
 | S51-21 | OUT_OF_SCOPE_HARDENING | not taken: harmless survivors |
+
+### Disposition correction (revision04, before the initial review)
+
+The opening paragraph still said exit 2 whenever git cannot serve the check; the revision04 rule (red before fault) governs, and the paragraph now says so. The implementation seat had followed the revision04 rule and recorded the conflict. Nothing else changes. Revision04 is a new closure revision, so its next review is its initial review.
