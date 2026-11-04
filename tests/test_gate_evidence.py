@@ -1395,6 +1395,146 @@ class RedBeforeFaultTests(GateTestCase):
         self.assertEqual((code, out), (2, ""))
         self.assert_fault_lines(err, 1)
 
+    # revision04 correction 2 (S51-23): an unexpected error outside the receipt checks reaches main's generic branch
+    def assert_generic_branch(self, target: object, name: str) -> None:
+        self.fx.write_receipt(*self.fx.good_parts())
+        with mock.patch.object(target, name, side_effect=RuntimeError("boom\nsecond line")):
+            code, out, err = self.fx.run()
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(err, "tool fault: unexpected RuntimeError: boom\\nsecond line\n")
+
+    def test_an_unexpected_error_in_verify_is_exit_two_with_one_line(self) -> None:
+        self.assert_generic_branch(evidence_gate.GitView, "verify")
+
+    def test_an_unexpected_error_in_the_tool_loop_is_exit_two_with_one_line(self) -> None:
+        self.assert_generic_branch(evidence_gate.GitView, "required_digest")
+
+    def test_an_unexpected_error_while_concluding_is_exit_two_with_one_line(self) -> None:
+        self.assert_generic_branch(evidence_gate, "conclude")
+
+    def test_an_unexpected_error_in_the_tool_loop_is_not_hidden_by_a_red_in_the_receipt(self) -> None:
+        self.fx.write_receipt(self.fx.cell("A", exit_value="9").render())
+        with mock.patch.object(evidence_gate.GitView, "required_digest", side_effect=RuntimeError("boom")):
+            code, out, err = self.fx.run()
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(err, "tool fault: unexpected RuntimeError: boom\n")
+
+
+def directory_without_repository_above(test: unittest.TestCase) -> Path:
+    """A new empty directory that no repository contains, found without trusting where the temporary directory lies.
+
+    Several roots are tried (the temporary directory, its drive or file-system root, the root of the current drive)
+    and each candidate is proved by git itself, asked as the gate asks it, to lie in no repository.
+    """
+    temporary = Path(tempfile.gettempdir())
+    for root in (temporary, Path(temporary.anchor), Path(os.sep)):
+        if not root.is_dir():
+            continue
+        try:
+            holder = tempfile.TemporaryDirectory(prefix="evgate-plain-", dir=root)
+        except OSError:
+            continue
+        probe = subprocess.run(
+            ["git", "-C", holder.name, "rev-parse", "--git-dir"],
+            capture_output=True,
+            env=evidence_gate.git_environment(os.environ),
+        )
+        if probe.returncode != 0 and b"not a git repository" in probe.stderr:
+            test.addCleanup(holder.cleanup)
+            return Path(holder.name)
+        holder.cleanup()
+    test.fail("no directory without a repository above it could be made on this host")
+
+
+class DigestValueBeforeLookupTests(unittest.TestCase):
+    """Revision04 correction 2 (S51-22): a digest value's form and a disagreement between the values of one path
+    are judged before the lookup and whatever its outcome, so these reds stand beside a fault on that lookup."""
+
+    OUTCOMES = ("served", "pruned blob", "git cannot start", "unknown candidate", "repository is not a repository")
+    TARGETS = (OTHER_TOOL_PATH, TOOL_PATH)  # an extra listed path, and the path of the required tool itself
+
+    def run_outcome(self, outcome: str, target: str, values: Sequence[str]) -> tuple[int, str, str]:
+        """One run on a fresh fixture: the receipt lists `values` for `target` (and the good line for the other path)."""
+        fx = Fixture()
+        self.addCleanup(fx.close)
+        digests = [f"{target}={value}" for value in values]
+        if target == OTHER_TOOL_PATH:
+            digests = fx.good_digests() + digests
+        candidate = fx.candidate
+        repo = fx.repo
+        if outcome == "unknown candidate":
+            candidate = "c" * 40
+        if outcome == "repository is not a repository":
+            repo = directory_without_repository_above(self)
+        fx.write_receipt(fx.cell("A", candidate=candidate, digests=digests).render())
+        if outcome == "pruned blob":
+            prune_loose_object(fx.repo, git(fx.repo, "rev-parse", f"{candidate}:{target}").strip())
+        if outcome == "git cannot start":
+            with mock.patch.object(evidence_gate.subprocess, "run", side_effect=FileNotFoundError("git")):
+                return fx.run(candidate=candidate, repo=repo)
+        return fx.run(candidate=candidate, repo=repo)
+
+    def assert_one_red_beside_the_outcome(self, values: Sequence[str], reason: str) -> None:
+        for target in self.TARGETS:
+            for outcome in self.OUTCOMES:
+                with self.subTest(target=target, outcome=outcome, values=len(values)):
+                    code, out, err = self.run_outcome(outcome, target, values)
+                    self.assertEqual(code, 1, out + err)
+                    lines = out.splitlines()
+                    self.assertEqual(len(lines), 2, out)
+                    self.assertTrue(lines[0].startswith("TOOL_DIGEST_STALE A: "), out)
+                    self.assertIn(reason, lines[0])
+                    self.assertEqual(lines[1], "cells=1 defects=1", out)
+                    if outcome == "served":
+                        self.assertEqual(err, "")
+                    else:
+                        self.assertEqual(len(err.splitlines()), 1, err)
+                        self.assertTrue(err.startswith("tool fault: "), err)
+
+    def test_a_value_that_is_not_hex_is_a_red_beside_every_outcome(self) -> None:
+        self.assert_one_red_beside_the_outcome(["g" * 64], "not 64 lower-case hex digits")
+
+    def test_a_value_of_the_wrong_length_is_a_red_beside_every_outcome(self) -> None:
+        self.assert_one_red_beside_the_outcome([sha256(OTHER_TOOL_BODY)[:63]], "not 64 lower-case hex digits")
+        self.assert_one_red_beside_the_outcome([sha256(OTHER_TOOL_BODY) + "0"], "not 64 lower-case hex digits")
+
+    def test_a_value_in_upper_case_is_a_red_beside_every_outcome(self) -> None:
+        self.assert_one_red_beside_the_outcome([sha256(OTHER_TOOL_BODY).upper()], "not 64 lower-case hex digits")
+
+    def test_an_empty_value_is_a_red_beside_every_outcome(self) -> None:
+        self.assert_one_red_beside_the_outcome([""], "not 64 lower-case hex digits")
+
+    def test_two_different_values_for_one_path_are_a_red_beside_every_outcome(self) -> None:
+        for values in (
+            [sha256(OTHER_TOOL_BODY), sha256(b"wrong")],
+            [sha256(b"wrong"), sha256(OTHER_TOOL_BODY)],
+            [sha256(b"one"), sha256(b"two"), sha256(b"one")],
+        ):
+            self.assert_one_red_beside_the_outcome(values, "different values")
+
+    def test_a_malformed_value_beside_a_good_one_is_two_reds_beside_a_fault(self) -> None:
+        values = [sha256(OTHER_TOOL_BODY), "z" * 64]
+        for outcome in self.OUTCOMES:
+            with self.subTest(outcome=outcome):
+                code, out, err = self.run_outcome(outcome, OTHER_TOOL_PATH, values)
+                self.assertEqual(code, 1, out + err)
+                self.assertEqual(out.count("TOOL_DIGEST_STALE A: "), 2, out)
+                self.assertIn("different values", out)
+                self.assertIn("not 64 lower-case hex digits", out)
+                self.assertTrue(out.endswith("cells=1 defects=2\n"), out)
+
+    def test_the_same_good_value_listed_twice_is_no_red_when_the_lookup_serves_it(self) -> None:
+        good = sha256(OTHER_TOOL_BODY)
+        self.assertEqual(self.run_outcome("served", OTHER_TOOL_PATH, [good, good]), (0, "cells=1 defects=0\n", ""))
+
+    def test_good_values_beside_a_fault_are_not_a_red_so_the_run_exits_two(self) -> None:
+        good = sha256(OTHER_TOOL_BODY)
+        for outcome in self.OUTCOMES[1:]:
+            with self.subTest(outcome=outcome):
+                code, out, err = self.run_outcome(outcome, OTHER_TOOL_PATH, [good, good])
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertEqual(len(err.splitlines()), 1, err)
+
 
 class ExitLineTests(GateTestCase):
     def test_exit_equals_inside_a_longer_line_is_not_an_exit(self) -> None:
@@ -1628,11 +1768,16 @@ class FaultTests(GateTestCase):
         self.run_fault(receipt=self.fx.base / "absent.md")
 
     def test_repo_is_not_a_repository(self) -> None:
+        # revision04 correction 2 (S51-24): a directory that no repository contains, on any host, and the fault text
         self.fx.write_receipt(*self.fx.good_parts())
-        plain = self.fx.base / "plain"
-        plain.mkdir()
-        with mock.patch.dict(os.environ, {"GIT_CEILING_DIRECTORIES": str(self.fx.base)}):
-            self.run_fault(repo=plain)
+        plain = directory_without_repository_above(self)
+        _, out, err = self.run_fault(repo=plain)
+        self.assertEqual(out, "")
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertTrue(err.startswith("tool fault: "), err)
+        self.assertIn("is not a usable git repository", err)
+        self.assertIn("not a git repository", err)
+        self.assertNotIn("cannot resolve candidate", err)
 
     def test_repo_directory_does_not_exist(self) -> None:
         self.fx.write_receipt(*self.fx.good_parts())

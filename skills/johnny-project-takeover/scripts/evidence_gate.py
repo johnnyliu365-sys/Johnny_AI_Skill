@@ -29,6 +29,12 @@ tree is read through the same standard input, and an entry that tree names as a 
 object store cannot serve is a tool fault, not an absent path. The root comes from the
 repository, so `--repo` may be any directory inside it.
 
+The listed values need no git, so they are judged before the lookup and whatever its outcome: a
+value that is not 64 lower-case hex digits, and two different values listed for one path, are
+TOOL_DIGEST_STALE beside a fault on that lookup. A `--tool` path that is not a blob at the
+candidate is a tool fault and, since no receipt can list a digest for it, a TOOL_DIGEST_MISSING
+red in every run cell, so it ends in exit 1.
+
 Every git child runs with `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1` and
 `GIT_NO_LAZY_FETCH=1`, with the repository-selecting `GIT_*` and the `GIT_CONFIG_*` variables
 removed from its environment, and is started from the `PATH` entries that are absolute
@@ -84,6 +90,7 @@ HORIZONTAL_SPACE = " 	"
 MAX_DIGEST_PATH_BYTES = 1024
 OBJECT_REPLY = re.compile(r"([0-9a-f]{40}|[0-9a-f]{64}) ([a-z]+)(?: ([0-9]+))?")
 OBJECT_NAME = re.compile(r"[0-9a-f]{40}|[0-9a-f]{64}")
+DIGEST_VALUE = re.compile(r"[0-9a-f]{64}")
 BLOB = "blob"
 REPEAT_ORDER = ("cell", "candidate", "tool_digest", "capture", "exit", "fence")
 NO_REPLACE_FLAG = "--no-replace-objects"
@@ -713,12 +720,36 @@ def check_digests(section: Section, args: Arguments, git: GitView, report: Repor
         if tool not in listed:
             defects.append(Defect(DefectCode.TOOL_DIGEST_MISSING, section.heading, tool))
     for path, values in listed.items():
+        # the values are judged before the lookup and whatever its outcome: they need no git
+        well_formed: list[str] = []
+        for value in values:
+            if DIGEST_VALUE.fullmatch(value) is None:
+                defects.append(
+                    Defect(
+                        DefectCode.TOOL_DIGEST_STALE,
+                        section.heading,
+                        f"{path} lists '{value}', which is not 64 lower-case hex digits",
+                    )
+                )
+            else:
+                well_formed.append(value)
+        disagree = len(set(values)) > 1
+        if disagree:
+            defects.append(
+                Defect(
+                    DefectCode.TOOL_DIGEST_STALE,
+                    section.heading,
+                    f"{path} is listed with {len(set(values))} different values",
+                )
+            )
         try:
             expected = git.digest_or_absent(path)
-        except ToolFault as error:  # git cannot serve this line: a fault, and the line is not judged
+        except ToolFault as error:  # git cannot serve this line: a fault, and the values were judged above
             report.fault(str(error))
             continue
-        for value in values:
+        if disagree:
+            continue  # the disagreement is already a red; no value can be the one the blob gives
+        for value in well_formed:
             if expected is None:
                 defects.append(
                     Defect(DefectCode.TOOL_DIGEST_STALE, section.heading, f"{path} is not present at candidate {args.candidate}")
