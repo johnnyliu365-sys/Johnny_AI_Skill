@@ -1957,6 +1957,39 @@ class ForgedObjectTests(ObjectFixture):
                     path.write_bytes(original)
         self.baseline(sha)
 
+    def test_a_forged_tree_of_the_first_parent_at_every_depth_is_a_fault_and_never_a_pass(self) -> None:
+        """S56-21: the first parent's trees are hashed too; each forgery copies the repair's content."""
+        parent, sha = self.committed_gate_change()
+        for depth in ["", "skills", "skills/johnny-project-takeover", GATE_DIR]:
+            with self.subTest(depth=depth or "root"):
+                repair_spec = f"{sha}:{depth}" if depth else f"{sha}^{{tree}}"
+                base_spec = f"{parent}:{depth}" if depth else f"{parent}^{{tree}}"
+                repair_tree = git(self.repo, "rev-parse", repair_spec)
+                base_tree = git(self.repo, "rev-parse", base_spec)
+                self.assertNotEqual(repair_tree, base_tree)
+                path = self.object_path(base_tree)
+                original = path.read_bytes()
+                try:
+                    self.write_loose(path, "tree", self.raw_body(repair_tree, "tree"))
+                    # the forgery is in force: the store serves the repair's content under the parent's id
+                    self.assertEqual(self.raw_body(base_tree, "tree"), self.raw_body(repair_tree, "tree"))
+                    self.expect_forged_is_a_fault(sha, base_tree)
+                finally:
+                    os.chmod(path, 0o666)
+                    path.write_bytes(original)
+        self.baseline(sha)
+
+    def test_a_forged_first_parent_root_tree_that_copies_the_repair_is_never_exit_zero(self) -> None:
+        parent, sha = self.committed_gate_change()
+        base_tree = git(self.repo, "rev-parse", f"{parent}^{{tree}}")
+        repair_tree = git(self.repo, "rev-parse", f"{sha}^{{tree}}")
+        self.write_loose(self.object_path(base_tree), "tree", self.raw_body(repair_tree, "tree"))
+        self.set_dispatch([GATE_DIR + "/", "tools/"], [GATE_DIR + "/"])
+        result = self.run_guard(sha)
+        self.assertNotEqual(result.code, 0, result.out)
+        self.assertEqual((result.code, result.out), (2, ""), result.err)
+        self.assertIn(base_tree, result.err)
+
     def test_the_forged_repair_subtree_hides_the_change_from_plain_git(self) -> None:
         parent, sha = self.committed_gate_change()
         scripts = git(self.repo, "rev-parse", f"{sha}:{GATE_DIR}")
@@ -1983,11 +2016,16 @@ class ForgedObjectTests(ObjectFixture):
         scripts = git(self.repo, "rev-parse", f"{sha}:{GATE_DIR}")
         os.chmod(self.object_path(scripts), 0o666)
         self.object_path(scripts).unlink()
-        self.set_dispatch([GATE_DIR + "/"], [])
+        self.set_dispatch([GATE_DIR + "/", "tools/"], [])
         result = self.run_guard(sha)
         self.assertEqual((result.code, result.out), (2, ""))
         self.assertIn(scripts, result.err)
         self.assertIn("cannot be read from the object store", result.err)
+        # S56-22: a red found at a level that did verify stands beside the fault
+        self.set_dispatch([GATE_DIR + "/"], [])
+        beside = self.run_guard(sha)
+        self.assertEqual((beside.code, beside.lines), (1, [f"{repair_guard.OUTSIDE_ALLOWLIST} 'tools/a.py'"]))
+        self.assertIn(scripts, beside.err)
 
     def test_a_forged_tree_is_a_fault_after_a_red_that_was_already_found(self) -> None:
         self.base("tools/a.py")
@@ -2487,3 +2525,151 @@ class SurrogateAndBomTests(Fixture):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LevelJudgingTests(ObjectFixture):
+    """S56-22: paths are judged level by level as each tree is verified (red before fault)."""
+
+    LAYOUT = ("README.md", "src/x.py", "docs/d.py", "tools/a.py", "deep/one/two/three.py")
+
+    def layout_change(self) -> tuple[str, str]:
+        """(first parent, repair): the repair changes a file in every directory of LAYOUT."""
+        self.base(*self.LAYOUT)
+        parent = git(self.repo, "rev-parse", "HEAD")
+        for rel in self.LAYOUT:
+            self.write(rel, "fixed\n")
+        return parent, self.commit("repair")
+
+    def forge(self, commit: str, donor: str, depth: str) -> str:
+        """Overwrite the tree of `commit` at `depth` with the content of the one of `donor`; return its id."""
+        victim = git(self.repo, "rev-parse", f"{commit}:{depth}")
+        copy = git(self.repo, "rev-parse", f"{donor}:{depth}")
+        self.assertNotEqual(victim, copy)
+        self.write_loose(self.object_path(victim), "tree", self.raw_body(copy, "tree"))
+        return victim
+
+    def outside(self, *paths: str) -> list[str]:
+        return [f"{repair_guard.OUTSIDE_ALLOWLIST} {path!r}" for path in paths]
+
+    def test_a_red_at_a_verified_level_is_reported_beside_a_forged_deep_subtree(self) -> None:
+        parent, sha = self.layout_change()
+        forged = self.forge(sha, parent, "deep/one/two")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1, result.err)
+        self.assertEqual(result.lines, self.outside("README.md", "docs/d.py", "src/x.py"))
+        self.assertIn(forged, result.err)
+        self.assertIn("hash", result.err)
+        self.assertEqual(result.err.count("\n"), 1, result.err)
+
+    def test_a_root_file_outside_the_allowlist_and_a_forged_gate_directory_give_exit_one(self) -> None:
+        self.base("README.md", GATE_FILE, "tools/a.py")
+        parent = git(self.repo, "rev-parse", "HEAD")
+        for rel in ("README.md", GATE_FILE, "tools/a.py"):
+            self.write(rel, "fixed\n")
+        sha = self.commit("repair")
+        forged = self.forge(sha, parent, GATE_DIR)
+        self.set_dispatch([GATE_DIR + "/", "tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.lines), (1, self.outside("README.md")), result.err)
+        self.assertIn(forged, result.err)
+
+    def test_reds_of_two_verified_levels_are_reported_in_path_order_beside_the_fault(self) -> None:
+        parent, sha = self.layout_change()
+        self.forge(sha, parent, "deep/one/two")
+        self.set_dispatch(["tools/", "docs/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.lines), (1, self.outside("README.md", "src/x.py")), result.err)
+
+    def test_a_forged_sibling_at_the_same_level_does_not_hide_the_reds_of_a_verified_one(self) -> None:
+        parent, sha = self.layout_change()
+        forged = self.forge(sha, parent, "docs")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.lines), (1, self.outside("README.md", "src/x.py")), result.err)
+        self.assertIn(forged, result.err)
+        self.assertNotIn("docs", result.out)
+
+    def test_a_forged_first_parent_sibling_does_not_hide_the_reds_of_a_verified_one(self) -> None:
+        parent, sha = self.layout_change()
+        forged = self.forge(parent, sha, "src")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.lines), (1, self.outside("README.md", "docs/d.py")), result.err)
+        self.assertIn(forged, result.err)
+
+    def test_a_forged_root_tree_leaves_nothing_to_judge_and_is_exit_two(self) -> None:
+        parent, sha = self.layout_change()
+        tree = git(self.repo, "rev-parse", f"{sha}^{{tree}}")
+        self.write_loose(self.object_path(tree), "tree", self.raw_body(git(self.repo, "rev-parse", f"{parent}^{{tree}}"), "tree"))
+        self.set_dispatch([], [])
+        result = self.run_guard(sha)
+        self.assertEqual((result.code, result.out), (2, ""), result.err)
+        self.assertIn(tree, result.err)
+
+    def test_a_sibling_tree_that_cannot_be_parsed_does_not_hide_the_reds_of_a_verified_one(self) -> None:
+        self.base("README.md", "src/x.py")
+        parent = git(self.repo, "rev-parse", "HEAD")
+        self.write("README.md", "fixed\n")
+        self.write("src/x.py", "fixed\n")
+        sha = self.commit("repair")
+        bad = git_raw(self.repo, ["hash-object", "--literally", "-w", "-t", "tree", "--stdin"], b"100644 a/b\0" + bytes(20))
+        root = self.raw_body(git(self.repo, "rev-parse", f"{sha}^{{tree}}"), "tree")
+        tree = git_raw(self.repo, ["hash-object", "--literally", "-w", "-t", "tree", "--stdin"], root + b"40000 bad\0" + bytes.fromhex(bad))
+        broken = git(self.repo, "commit-tree", tree, "-p", parent, "-m", "repair with a tree that cannot be parsed")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(broken)
+        self.assertEqual((result.code, result.lines), (1, self.outside("README.md", "src/x.py")), result.err)
+        self.assertIn(bad, result.err)
+
+    def test_the_walk_hands_over_each_level_before_it_reads_the_next(self) -> None:
+        self.base("README.md", "src/x.py", "src/inner/y.py")
+        parent = git(self.repo, "rev-parse", "HEAD")
+        for rel in ("README.md", "src/x.py", "src/inner/y.py"):
+            self.write(rel, "fixed\n")
+        sha = self.commit("repair")
+        events: list[tuple[str, tuple[str, ...]]] = []
+        real = repair_guard.read_objects
+
+        def recording(repo: str, ids: Sequence[str], kind: str) -> dict[str, bytes]:
+            events.append(("read", ()))
+            return real(repo, ids, kind)
+
+        def handed(level: Sequence[str]) -> None:
+            events.append(("judge", tuple(level)))
+
+        with mock.patch.object(repair_guard, "read_objects", side_effect=recording):
+            paths = repair_guard.diff_trees(
+                str(self.repo), git(self.repo, "rev-parse", f"{parent}^{{tree}}"), git(self.repo, "rev-parse", f"{sha}^{{tree}}"), handed
+            )
+        self.assertEqual(
+            events,
+            [
+                ("read", ()), ("judge", ("README.md",)),
+                ("read", ()), ("judge", ("src/x.py",)),
+                ("read", ()), ("judge", ("src/inner/y.py",)),
+            ],
+        )
+        self.assertEqual(paths, ["README.md", "src/inner/y.py", "src/x.py"])
+
+    def test_every_path_a_walk_returns_is_judged_even_when_it_never_handed_a_level_over(self) -> None:
+        self.base("tools/a.py")
+        self.write("tools/a.py", "fixed\n")
+        self.write("lib/b.py")
+        self.commit("repair")
+        self.set_dispatch(["tools/"], [])
+        out = io.StringIO()
+        with mock.patch.object(repair_guard, "diff_trees", return_value=["lib/b.py", "tools/a.py"]):
+            with contextlib.redirect_stdout(out):
+                code = repair_guard.main(["--repo", str(self.repo), "--repair", "HEAD", "--dispatch", str(self.dispatch)])
+        self.assertEqual((code, out.getvalue()), (1, f"{repair_guard.OUTSIDE_ALLOWLIST} 'lib/b.py'\n"))
+
+    def test_a_clean_walk_lists_reds_in_path_order_whatever_the_level(self) -> None:
+        parent, sha = self.layout_change()
+        self.set_dispatch([], [])
+        result = self.run_guard(sha)
+        self.assertEqual(
+            result.lines,
+            self.outside("README.md", "deep/one/two/three.py", "docs/d.py", "src/x.py", "tools/a.py"),
+        )
+        self.assertEqual(result.err, "")

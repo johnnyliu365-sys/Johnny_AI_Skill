@@ -172,6 +172,10 @@ so a defect is always one line; on exit 0 only `paths=N defects=0`.
 
 Red before fault: the guard reports every red it can find and exits 1 when there is one,
 with any fault printed on one line on standard error; it exits 2 only when it found no red.
+The paths are judged level by level while the walk goes down, as soon as the trees of a
+level have been verified: a red at a level that did verify is reported beside a fault met
+deeper (or beside a tree of the same level that did not verify), and the paths of a tree
+that did not verify are never judged.
 Exit 2: git cannot serve the check (unknown commit, `--repo` not a repository or not its
 top level, a first parent the object store lacks as in a shallow clone, an object whose hash is
 not its id, git missing), the

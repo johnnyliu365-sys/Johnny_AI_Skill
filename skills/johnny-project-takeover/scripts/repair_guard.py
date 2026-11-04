@@ -89,7 +89,12 @@ an empty, `.` or `..` segment). A text-value defect is a red (exit 1) in a file 
 output and a usage error (exit 3) in an argument.
 
 Red before fault: the guard reports every red it can find and exits 1 when there is one,
-with the fault printed on standard error. It exits 2 only when it found no red. The one
+with the fault printed on standard error. It exits 2 only when it found no red. The paths
+are judged level by level while the tree walk goes down: as soon as the trees of a level
+have been verified, the paths they give are judged, before any deeper tree is read. A red
+at a level that did verify is therefore reported beside a fault met deeper (or beside a
+tree of the same level that did not verify), and a path of a tree that did not verify is
+never judged. The one
 exception is standard output that cannot be written: then no verdict can be delivered and
 the exit is 2 whatever was found. A standard error that cannot be written decides the exit
 only when there is nothing else to deliver: when every red line reached standard output
@@ -104,7 +109,7 @@ import os
 import re
 import subprocess
 import sys
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import TextIO
 
@@ -570,7 +575,33 @@ def parse_tree(oid: str, body: bytes) -> dict[bytes, TreeEntry]:
     return entries
 
 
-def diff_trees(repo: str, left: str | None, right: str | None) -> list[str]:
+def _byte_key(text: str) -> bytes:
+    """The order paths are listed in: the bytes of their UTF-8 form, whatever the walk order was."""
+    return text.encode("utf-8", errors="surrogateescape")
+
+
+def _read_trees(repo: str, ids: Sequence[str]) -> tuple[dict[str, bytes], ToolFault | None]:
+    """The trees `ids` read raw and verified, and the first fault met while reading them.
+
+    The ids go to git together. When anything about them is wrong, each is read again on
+    its own, so every tree that verifies is still returned beside the fault that was met:
+    the walk can then judge what it did verify before it reports the fault.
+    """
+    try:
+        return read_objects(repo, ids, "tree"), None
+    except ToolFault as fault:
+        verified: dict[str, bytes] = {}
+        for oid in dict.fromkeys(ids):
+            try:
+                verified.update(read_objects(repo, [oid], "tree"))
+            except ToolFault:
+                continue
+        return verified, fault
+
+
+def diff_trees(
+    repo: str, left: str | None, right: str | None, on_level: Callable[[Sequence[str]], None] | None = None
+) -> list[str]:
     """Every path whose entry differs between two root trees, from this script's own walk.
 
     `left` or `right` None is the empty tree. The trees are compared entry by entry; a
@@ -579,16 +610,30 @@ def diff_trees(repo: str, left: str | None, right: str | None) -> list[str]:
     entry differs in id or mode or exists on one side only; a subtree that exists on one
     side only, or that turns into something else, is listed file by file. A gitlink (mode
     160000) is an entry like a file: compared by id and never descended.
+
+    `on_level` is called with the new paths of a level as soon as the trees that give them
+    are verified, before any deeper tree is read, so a verdict on those paths does not wait
+    for the rest of the walk. A tree that does not verify or cannot be parsed stops the walk
+    after its level has been handed over: the paths of the trees of that level that did
+    verify are handed over too, and the first fault is raised.
     """
     paths: list[str] = []
+    seen: set[str] = set()
     level: list[tuple[str, str | None, str | None]] = [("", left, right)]
     while level:
         needed = [oid for _, old_id, new_id in level for oid in (old_id, new_id) if oid is not None]
-        loaded = read_objects(repo, needed, "tree")
+        loaded, fault = _read_trees(repo, needed)
         following: list[tuple[str, str | None, str | None]] = []
+        found: list[str] = []
         for prefix, left_id, right_id in level:
-            before = parse_tree(left_id, loaded[left_id]) if left_id is not None else {}
-            after = parse_tree(right_id, loaded[right_id]) if right_id is not None else {}
+            if any(oid is not None and oid not in loaded for oid in (left_id, right_id)):
+                continue
+            try:
+                before = parse_tree(left_id, loaded[left_id]) if left_id is not None else {}
+                after = parse_tree(right_id, loaded[right_id]) if right_id is not None else {}
+            except ToolFault as malformed:
+                fault = fault or malformed
+                continue
             for name in sorted(before.keys() | after.keys()):
                 old, new = before.get(name), after.get(name)
                 if old == new:
@@ -596,30 +641,41 @@ def diff_trees(repo: str, left: str | None, right: str | None) -> list[str]:
                 path = prefix + name.decode("utf-8", errors="surrogateescape")
                 if old is not None and new is not None and old.is_tree and new.is_tree:
                     if old.mode != new.mode:
-                        paths.append(path)
+                        found.append(path)
                     if old.oid != new.oid:
                         following.append((path + "/", old.oid, new.oid))
                     continue
                 only_trees = (old is None or old.is_tree) and (new is None or new.is_tree)
                 if not only_trees:
-                    paths.append(path)
+                    found.append(path)
                 for entry in (old, new):
                     if entry is None or not entry.is_tree:
                         continue
                     if entry.oid == object_hash("tree", b"", len(entry.oid)):
                         # an empty subtree holds no file to list, so the directory itself is the change
                         if only_trees:
-                            paths.append(path)
+                            found.append(path)
                     elif entry is old:
                         following.append((path + "/", entry.oid, None))
                     else:
                         following.append((path + "/", None, entry.oid))
+        fresh = sorted((path for path in dict.fromkeys(found) if path not in seen), key=_byte_key)
+        seen.update(fresh)
+        paths.extend(fresh)
+        if on_level is not None and fresh:
+            on_level(fresh)
+        if fault is not None:
+            raise fault
         level = following
-    return sorted(dict.fromkeys(paths), key=lambda text: text.encode("utf-8", errors="surrogateescape"))
+    return sorted(paths, key=_byte_key)
 
 
-def changed_paths(repo: str, commit: str, reds: list[Defect]) -> list[str]:
+def changed_paths(
+    repo: str, commit: str, reds: list[Defect], on_level: Callable[[Sequence[str]], None] | None = None
+) -> list[str]:
     """The changed paths of `commit` against its first parent.
+
+    `on_level` is handed the paths of each level of the tree walk as that level is verified.
 
     The commit, its first parent and every tree used are read raw and hashed here, so no
     graft, replace ref, shallow file, commit-graph or forged object can change what is
@@ -634,7 +690,7 @@ def changed_paths(repo: str, commit: str, reds: list[Defect]) -> list[str]:
     base = read_commit(repo, repair.parents[0]).tree if repair.parents else None
     if base == repair.tree:
         return []
-    return diff_trees(repo, base, repair.tree)
+    return diff_trees(repo, base, repair.tree, on_level)
 
 
 class OutputFault(Exception):
@@ -716,20 +772,31 @@ def read_dispatch(path: str) -> str:
 def inspect_repair(arguments: Arguments, rules: DispatchRules, reds: list[Defect]) -> int:
     """Check the repair commit; every red found is added to `reds` before any fault is raised.
 
-    Returns the number of distinct changed paths.
+    The paths are judged level by level as the walk verifies each tree, so a red at a level
+    that did verify stands beside a fault met deeper. The reds of the paths are added in the
+    byte order of the paths, whichever level they were found at. Returns the number of
+    distinct changed paths.
     """
     require_repository_top(arguments.repo)
-    paths = changed_paths(arguments.repo, arguments.repair, reds)
-    reds.extend(
-        check_paths(
-            paths,
-            rules.allowlist,
-            rules.protected,
-            sys.platform == "win32",
-            not rules.allowlist_defective,
-            not rules.protected_defective,
-        )
-    )
+    judged: dict[str, list[Defect]] = {}
+
+    def judge(level_paths: Sequence[str]) -> None:
+        for path in level_paths:
+            if path not in judged:
+                judged[path] = check_paths(
+                    [path],
+                    rules.allowlist,
+                    rules.protected,
+                    sys.platform == "win32",
+                    not rules.allowlist_defective,
+                    not rules.protected_defective,
+                )
+
+    try:
+        paths = changed_paths(arguments.repo, arguments.repair, reds, judge)
+        judge(paths)
+    finally:
+        reds.extend(defect for path in sorted(judged, key=_byte_key) for defect in judged[path])
     return len(paths)
 
 
