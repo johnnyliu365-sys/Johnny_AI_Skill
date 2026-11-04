@@ -1,11 +1,11 @@
 # Gate scripts
 
-Three stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
+Four stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
 usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
-`receipt_fence_check.py` and `index_pins.py` an unexpected error is also a tool fault
+`receipt_fence_check.py`, `index_pins.py` and `evidence_gate.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red. The console
 encoding never changes an exit code: each script keeps the encoding the host chose for
@@ -89,3 +89,32 @@ commit (`SHALLOW_HISTORY`), `git` cannot be started, not inside a git repository
 is missing or not a directory, an environment git query fails as above, the `--json` path
 cannot be written, or an unexpected error. Exit 3: bad option, missing mode, empty
 `--sealed-state`, an index argument that is not a file, or an index file that is not UTF-8.
+
+## evidence_gate.py
+
+    python evidence_gate.py <receipt> --repo DIR --candidate SHA --tool PATH [--tool PATH ...]
+        [--require-cell NAME ...] [--evidence-root DIR]
+
+Checks that a receipt proves every run cell. A run cell is a `## <name>` section with the
+lines `cell: <name>`, `candidate: <full sha>`, `tool_digest:` followed by
+`- <repository-relative path>=<sha256>` lines, `capture: <path relative to the evidence
+root>` and `exit: <comma-separated exit codes in capture order>`, then the capture in one
+four-backtick fence. A section with `cell: STATEMENT` is informational and has no
+`capture:`, `exit:` or fence. `--candidate` is the full lower-case commit sha every cell must
+name; each `--tool` path must be listed in every run cell with the sha256 of
+`git show <candidate>:<path>` in `--repo`. `--evidence-root` defaults to the receipt's
+directory. The receipt's own CRLF line endings are normalised; captures are not.
+
+Exit 0 prints `cells=N defects=0`. Exit 1 prints one line `<code> <section>: <detail>` per
+defect, then `cells=N defects=M`. Defect codes: `NO_CELLS`, `NOT_RUN` (a section without a
+`cell:` line, or a `--require-cell` name with no run cell), `CELL_FIELD_MISSING`,
+`STATEMENT_HAS_RUN_FIELDS`, `DUPLICATE_CELL`, `CANDIDATE_MISMATCH`, `TOOL_DIGEST_MISSING`,
+`TOOL_DIGEST_STALE`, `CAPTURE_MISSING` (also a path that escapes the evidence root: an
+absolute path, a drive letter, `..` leaving the root, a trailing slash), `CAPTURE_CR`,
+`BLOCK_MISMATCH` (the lines between the fences joined with LF plus a final LF must equal the
+capture byte for byte) and `EXIT_MISMATCH` (the `exit:` list must equal the `exit=N` lines of
+the capture, in order). Exit 2: the receipt or a capture cannot be read, the evidence root is
+not a directory, `git` cannot start, `--repo` is not a repository, the candidate or a
+`--tool` path cannot be read from it, or an unexpected error. Exit 3: a missing or unknown
+argument, no `--tool`, a blank `--tool` or `--require-cell`, a `--candidate` that is not a
+full 40-character lower-case sha. Output uses LF line endings.
