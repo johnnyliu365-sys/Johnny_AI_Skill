@@ -261,3 +261,53 @@ verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/56-rev04-correction
 reviewed_at: 2026-11-05
 ```
+
+## Revision05 initial review
+
+**Verdict: `APPROVED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `9dfe5eb44c8d7adfde5929f2dcc16dc10d857239` (`9dfe5eb4` tests only → `1471b8d0` implementation 5 → `198398ab` → `241b328a` → `f50d171c` → `8b084b50` → `02d40fd2`) |
+| Ticket | closure revision05 (`0c72bf49`) with every earlier rule that still binds |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the initial review of revision05 |
+| Summary | S56-24 to S56-26 are closed. With forged trees anywhere (either side, every depth including the root, added and deleted directories, five kinds of forgery, singly and in pairs), every red reachable from verified objects is reported, the exit is 1 when such a red exists and 2 when none does, the fault is one stderr line, and nothing is derived from an unverified tree: 755 runs, 0 deviations (a stop-at-fault mutant deviates in 640). Grafts, replace refs, shallow files, commit-graph files, forged commits and hash-valid malformed trees never let a gate-script change exit 0. The own walk equals `git diff --no-renames` on 400 real commits. One non-blocking note (S56-27). |
+| Two commits | acceptable: both additive and linear; the second adds tests only and the script digest is equal at both; every cell ran at the head; the split and its reason are disclosed |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 233 passed, 225 subtests; a direct run also collects 233; mypy --strict clean |
+| Seat mutations | PASS | 26 red, V10 equivalent; six rerun by the reviewer, red as captured |
+| Reviewer counter-mutations | PASS | 13 run: 12 red; K9 equivalent (S56-27) |
+| Descent rule; unverified trees never judged | PASS | 755-run sweep |
+| Safety | PASS | |
+| R4-2, streams, one line; regression S56-01 to S56-23; own walk | PASS | 31-case regression probe; 400 commits |
+| STATEMENT choices | AGREE 13 of 13 | |
+| Receipt / boundary | PASS | 0 defects; digests recomputed; LF; captures after the last commit with the script digest |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S56-01 to S56-07, S56-09 to S56-26 | CLOSED |
+| S56-08 | control plane: correction proposed, awaiting the owner; the guard conforms to the proposed R4-2 row |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S56-27 | OUT_OF_SCOPE_HARDENING | Low (evidence only; no exit change, no pass) | `repair_guard.py:619, 671` | which of several faults is printed (the first, as documented) is unpinned | K9 equivalent over the 755-run sweep |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: paths with a newline end to end; Linux and macOS; NTFS short-name and symlink aliases of the gate directory; SHA-1 collisions; SHA-256 repositories in the reviewer probes (ticket tests only); the fallback's cost on a very wide level.
+
+```review-verdict
+candidate: 9dfe5eb44c8d7adfde5929f2dcc16dc10d857239
+verdict: APPROVED
+reviewer: seat:ticket-review/56-rev05-initial
+reviewed_at: 2026-11-05
+```

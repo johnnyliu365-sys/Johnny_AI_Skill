@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision05 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 correction review `CONVERGENCE_REVIEW_REQUIRED`: S56-24 changes an exit code; implementation 5 dispatched, new review cadence） |
+| 狀態 | `REVIEW_APPROVED`（closure revision05; candidate `9dfe5eb4` on `cp/wave2-56-tool-repair-guard`; revision05 initial review APPROVED 2026-11-05; awaiting integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/56-tool-repair-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/56-tool-repair-guard-review` |
@@ -203,3 +203,7 @@ Review record section "Revision04 correction review". The open blocking item cha
 | S56-24 | IMPLEMENTATION_DEFECT | the descent rule above; the two tests that pinned the stop are inverted; tests with a forged sibling on either side and a gate-script change under the verified sibling give exit 1 with `PROTECTED_PATH_TOUCHED` and the fault on stderr |
 | S56-25 | EVIDENCE_DEFECT | a test whose forged sibling holds an extra entry: no red from it, exit 2 when nothing else is red |
 | S56-26 | OUT_OF_SCOPE_HARDENING (taken now) | test classes before the guard |
+
+### Carried after approval
+
+S56-27 (which of several faults is printed is unpinned; Info) is recorded for a later gate-hardening ticket. The guard's verdict does not depend on the R4-4 trust-boundary proposal, because it hashes every object it uses.
