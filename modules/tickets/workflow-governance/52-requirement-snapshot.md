@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision03 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision04 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 initial review: S52-12 TICKET_DEFECT; revision03 initial review CHANGES_REQUESTED (S52-16); correction 3 dispatched to the same seat） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 correction review `CONVERGENCE_REVIEW_REQUIRED`: S52-18 to S52-23; implementation 4 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/52-requirement-snapshot` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/52-requirement-snapshot-review` |
@@ -149,3 +149,23 @@ Review record section "Revision02 initial review". S52-12 is a `TICKET_DEFECT`: 
 ### Correction 3 under revision03 (after the revision03 initial review `CHANGES_REQUESTED`)
 
 No ticket defect was found, so revision03 stands. S52-16: the claim-file name pattern uses ASCII digits too, with one test. S52-17 (taken now): a version argument too long to name a stored version is "the requested version does not exist" (exit 2) with that message, never a raw exception text. The next review is the one correction review of revision03.
+
+## Re-plan to closure revision04 (after the revision03 correction review `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision03 correction review". CodeReview §5: revision03 used its one initial and one correction review. Root cause of S52-18 and S52-20: the order of checks decided the exit, because a fault met early stopped the run before a red could be found. Revision04 fixes the order and the precedence. Revision04 starts a new cadence: one initial review and one correction review.
+
+### Rules added in revision04 (binding)
+
+- Red before fault (R4-2, "a red is never reported as a tool fault"): a command checks everything it can before it decides the exit. If it found any red, it prints every red on stdout and exits 1; a fault met on the way is printed on stderr, on one line, and does not change the exit. It exits 2 only when it found no red and a fault stopped it. The same holds for `take`, `verify` and `diff`.
+- Order in `take` and `diff`: argument grammar (exit 3), then the name rules on `--source` (`NAME_INVALID`), then version lookups (an over-long version argument in either position is "the requested version does not exist", exit 2 unless a red was found), then reading and checking the stored files.
+- Case variants: an existing directory entry collides with a source name only when the entry is ASCII and equal to the source name ignoring ASCII case; a non-ASCII entry never collides (NTFS keeps it distinct).
+- Receipt: the receipt carries cell `P9`; its capture is the checker run on the receipt without its `P9` section, LF only; the receipt is then rebuilt with that section.
+
+| Finding | Class | Disposition in revision04 |
+| --- | --- | --- |
+| S52-18 | IMPLEMENTATION_DEFECT | the order above; a test with an invalid source name and an over-long version argument gives exit 1 `NAME_INVALID` |
+| S52-19 | EVIDENCE_DEFECT | the over-long argument tested in the second position too |
+| S52-20 | TICKET_DEFECT | red before fault, as above; a test with a damaged v2 and a missing v9 gives exit 1 with `SNAPSHOT_DIGEST_MISMATCH` and the missing version on stderr |
+| S52-21 | IMPLEMENTATION_DEFECT | docstring matches the README on claim names and the over-long rule |
+| S52-22 | OUT_OF_SCOPE_HARDENING (taken now) | ASCII-only case comparison, with a test using the ligature and the Kelvin sign |
+| S52-23 | EVIDENCE_DEFECT | the receipt carries `P9` as above |

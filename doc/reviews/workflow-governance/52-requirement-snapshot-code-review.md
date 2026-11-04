@@ -168,3 +168,60 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/52-rev03-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision03 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `bea0cf0c674a49ad1225f0208b879246abe7b84c` (`bea0cf0c` correction 3 → `ac95c321` → `3c485efc` → `21ac4fda` → `dbd74358`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review CodeReview §5 allows for revision03 |
+| Summary | Correction 3 closes S52-16 and S52-17 as dispositioned and the revision03 behaviour holds. The S52-17 guard runs before the name rules, so an invalid source name with a 256 to 4300-digit version argument exits 2 where it exited 1 before (S52-18); one counter-mutation turns nothing red (S52-19). The red-or-fault precedence is undefined in the ticket (S52-20). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Ticket tests / mypy | PASS | 109 passed, 287 subtests; mypy --strict clean |
+| S52-16 claim names ASCII | PASS | non-ASCII digit claim files no longer block `take`; no Unicode digit class remains |
+| S52-17 over-long version argument | PARTIAL | one line, exit 2, no raw exception; the guard precedes the name rules (S52-18); second position untested (S52-19) |
+| 255-digit bound | AGREE | a stored name holds at most 239 digits |
+| take / verify / diff; codes; text values; ids; source_ref; repeated keys; names | PASS | 103 probe cases, 0 failures |
+| Damaged versions | PASS except the combined case | S52-20 |
+| Version claim under real races | PASS | 60 races, no duplicate, nothing left behind |
+| R4-2 exit classes | PARTIAL | single inputs correct; combined red and fault drop the red (S52-18, S52-20) |
+| Reverse mutations | PARTIAL | C6 (order) and C10 (first argument only) green; C9 equivalent |
+| Receipt | PASS with S52-23 | checker 0 defects; digests recomputed; LF; no P9 section |
+| Boundary / identity | PASS | trailer naming another model is a control-plane issue, not a finding |
+| Full suite | PASS under the host lock | 8 failed, all base names; overlapped lock-less runs recorded |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S52-01 to S52-07 | CLOSED (revision02) |
+| S52-10 to S52-16 | CLOSED |
+| S52-17 | PARTIALLY CLOSED (S52-18, S52-19) |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S52-18 | IMPLEMENTATION_DEFECT | Low (blocking: a regression, untested) | `requirement_snapshot.py:781`, `:736-745`, before `run_diff` `:677-684` | the over-long fault is raised before the name rules, so `diff` with an invalid or case-variant source and a 256 to 4300-digit version exits 2 without `NAME_INVALID` | probes on both candidates; C6 green |
+| S52-19 | EVIDENCE_DEFECT | Low (blocking) | tests `:1316` | the over-long argument is tested in the first position only; guarding the first argument alone stays green and prints the raw `ValueError` | C10 green |
+| S52-20 | TICKET_DEFECT | Low (non-blocking for this candidate) | ticket 52 exit codes; `requirement_snapshot.py:686-687` | the ticket does not say which exit wins when a run meets a red and a fault; `diff` with v2 damaged and v9 missing exits 2 without `SNAPSHOT_DIGEST_MISMATCH` | probe |
+| S52-21 | IMPLEMENTATION_DEFECT | Low (documentation) | `requirement_snapshot.py:53-56` | the docstring omits the claim-name and over-long rules the README states | read |
+| S52-22 | OUT_OF_SCOPE_HARDENING | Low | `requirement_snapshot.py:595` | `casefold` makes NTFS-distinct non-ASCII directories collide with an ASCII source | probe |
+| S52-23 | EVIDENCE_DEFECT | Low (non-blocking) | the seat's receipt | the P9 cell is absent from the receipt; the side file has CR bytes; the reviewer's checker run gives 0 defects | checker |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: the POSIX publish branch; an ACL-unwritable root; a case-sensitive file system; any effect of the overlapping lock-less runs.
+
+```review-verdict
+candidate: bea0cf0c674a49ad1225f0208b879246abe7b84c
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/52-rev03-correction
+reviewed_at: 2026-11-04
+```
