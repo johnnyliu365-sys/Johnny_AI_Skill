@@ -4,23 +4,30 @@
 Usage: contract_gate.py --repo <dir> --snapshot <snapshot.json> --specs <dir>
 
 The snapshot is a requirement snapshot file (a JSON object with a `rows` list; a row
-has `requirement_id` and `status`, `active` or `retired`). The specs are every file
-named `test_*.py` under `--specs`, which must lie inside `--repo`. A spec declares its
-contract in its first comment block, the leading run of lines that start with `#`:
+has `requirement_id`, 1 to 128 characters from letters, digits, dot, underscore, colon,
+hyphen and slash, and `status`, `active` or `retired`). The specs are every file named `test_*.py` (case-sensitive) under
+`--specs`, which must lie inside `--repo`. A spec declares its contract in its first
+comment block, the leading run of lines that start with `#`:
 
     # requirement: <id>                          one or more
     # source: <repository path> sha256:<hex>    one or more
     # mutation: <name>                           one or more
 
-Defect codes (exit 1, one line `<code> <spec or requirement>: <detail>` each):
+Only these three lower-case keys are declarations; every other comment line is free text.
+A source is read as the blob at `HEAD` of `--repo`, so the digest does not depend on the
+host's line-ending settings; a source that is not tracked at `HEAD` is SOURCE_MISSING.
+
+Defect codes (exit 1, one line `<code> <spec or requirement>: <detail>` each, subject and
+detail escaped so that one defect is always one line):
   NO_SPEC_FOR_REQUIREMENT, SOURCE_MISSING, SOURCE_DIGEST_MISMATCH,
   RETIRED_REQUIREMENT_BOUND, LITERAL_EXPECTED, NO_MUTATION.
 
-Exit codes: 0 pass, 1 contract red, 2 tool fault (a file cannot be served, or a source
-is a URL, which cannot be checked offline), 3 usage error (bad arguments, or the
-snapshot argument is not a snapshot). A red is never reported as a tool fault and a
-tool fault is never reported as a red. The console encoding never changes an exit
-code: stdout and stderr keep the host encoding but escape what it cannot encode.
+Exit codes: 0 pass, 1 contract red, 2 tool fault (a file cannot be served, git cannot
+serve a source, or a source is a URL, which cannot be checked offline), 3 usage error (bad
+arguments, or the snapshot argument is not a snapshot). A red is never reported as a tool
+fault and a tool fault is never reported as a red. The summary line goes to stdout at exit
+0 and to stderr at exit 1. The console encoding never changes an exit code: stdout and
+stderr keep the host encoding but escape what it cannot encode.
 """
 from __future__ import annotations
 
@@ -31,6 +38,7 @@ import io
 import json
 import os
 import re
+import subprocess
 import sys
 from collections.abc import Sequence
 from dataclasses import dataclass
@@ -51,11 +59,18 @@ STATUS_RETIRED = "retired"
 SPEC_PATTERN = "test_*.py"
 OPTIONS: tuple[str, ...] = ("--repo", "--snapshot", "--specs")
 
-DECLARATION = re.compile(r"#\s*([A-Za-z][A-Za-z0-9_-]*)\s*:(.*)$")
+DECLARATION = re.compile(r"#\s*(requirement|source|mutation)\s*:(.*)$")
+REQUIREMENT_ID = re.compile(r"[A-Za-z0-9._:/-]{1,128}")
 SOURCE_VALUE = re.compile(r"^(?:(?P<path>.*\S)\s+)?sha256:(?P<digest>\S*)$", re.DOTALL)
 DIGEST = re.compile(r"^[0-9a-f]{64}$")
 DRIVE_PREFIX = re.compile(r"^[A-Za-z]:")
 LINE_BREAK = re.compile(r"\r\n|\r|\n")
+CONTROL_TEXT = re.compile("[\\x00-\\x1f\\x7f\\ud800-\\udfff]")
+
+DETAIL_LIMIT = 120
+ANALYSIS_DEPTH = 64
+GIT_TIMEOUT_SECONDS = 60
+REGULAR_FILE_MODES: tuple[bytes, ...] = (b"100644", b"100755")
 
 
 class UsageError(Exception):
@@ -71,6 +86,19 @@ class ToolFault(Exception):
         self.message = message
 
 
+class Unanalysable(Exception):
+    """An assertion nests deeper than the analysis budget."""
+
+
+def escape_text(text: str) -> str:
+    """Keep printable characters and write every other one as a backslash escape.
+
+    Line breaks, control characters, U+2028, NEL and lone surrogates all become escapes,
+    so a printed subject or detail cannot span two lines or forge another line.
+    """
+    return "".join(char if char.isprintable() else repr(char)[1:-1] for char in text)
+
+
 @dataclass(frozen=True)
 class Requirement:
     requirement_id: str
@@ -84,8 +112,7 @@ class Defect:
     detail: str
 
     def render(self) -> str:
-        detail = self.detail.replace("\r", " ").replace("\n", " ")
-        return f"{self.code} {self.subject}: {detail}"
+        return f"{self.code} {escape_text(self.subject)}: {escape_text(self.detail)}"
 
 
 @dataclass(frozen=True)
@@ -155,12 +182,12 @@ def parse_snapshot(raw: bytes, origin: str) -> tuple[Requirement, ...]:
             raise refuse(f"row {index} is not an object")
         identifier: object = row.get("requirement_id")
         status: object = row.get("status")
-        if not isinstance(identifier, str) or not identifier.strip():
-            raise refuse(f"row {index} has no non-empty `requirement_id`")
+        if not isinstance(identifier, str) or REQUIREMENT_ID.fullmatch(identifier) is None:
+            raise refuse(f"row {index} `requirement_id` is not 1 to 128 characters of letters, digits, dot, underscore, colon, hyphen, slash")
         if status not in (STATUS_ACTIVE, STATUS_RETIRED):
             raise refuse(f"row {index} `status` is not `active` or `retired`")
         if identifier in seen:
-            raise refuse(f"row {index} repeats requirement_id {identifier!r}")
+            raise refuse(f"row {index} repeats requirement_id {identifier}")
         seen.add(identifier)
         found.append(Requirement(identifier, str(status)))
     return tuple(found)
@@ -174,7 +201,11 @@ def load_snapshot(path: Path) -> tuple[Requirement, ...]:
 
 
 def parse_header(spec: str, text: str) -> SpecDeclaration:
-    """Read the declarations of the first comment block of a spec."""
+    """Read the declarations of the first comment block of a spec.
+
+    Only the lower-case keys `requirement`, `source` and `mutation` declare anything;
+    every other comment line is free text.
+    """
     requirements: list[tuple[int, str]] = []
     sources: list[SourceLine] = []
     mutations: list[tuple[int, str]] = []
@@ -192,14 +223,14 @@ def parse_header(spec: str, text: str) -> SpecDeclaration:
             if value:
                 requirements.append((number, value))
             else:
-                malformed.append(Defect(NO_SPEC_FOR_REQUIREMENT, spec, f"line {number}: requirement declaration names no requirement"))
+                malformed.append(Defect(RETIRED_REQUIREMENT_BOUND, spec, f"line {number}: requirement declaration names no requirement of the snapshot"))
         elif key == "mutation":
             if value:
                 mutations.append((number, value))
             else:
                 malformed.append(Defect(NO_MUTATION, spec, f"line {number}: mutation declaration has an empty name"))
                 mutations.append((number, ""))
-        elif key == "source":
+        else:
             if "://" in value:
                 urls.append((number, value))
                 continue
@@ -214,25 +245,23 @@ def parse_header(spec: str, text: str) -> SpecDeclaration:
                 malformed.append(Defect(SOURCE_MISSING, spec, f"line {number}: source {path!r} digest is not 64 lower-case hex: {digest!r}"))
             else:
                 sources.append(SourceLine(number, path.strip(), digest))
-        else:
-            malformed.append(Defect(LITERAL_EXPECTED, spec, f"line {number}: unknown declaration key {key!r}"))
     return SpecDeclaration(spec, tuple(requirements), tuple(sources), tuple(mutations), tuple(malformed), tuple(urls))
 
 
 # ------------------------------------------------------------------ source resolution
 
 
-def resolve_source(repo_real: Path, declared: str) -> tuple[Path | None, str]:
-    """Resolve a repository-relative source; the second item is the reason when it is unusable.
+def normalise_source(declared: str) -> tuple[str | None, str]:
+    """Turn a declared repository-relative source into a `/`-separated path.
 
     Separators are normalised, `.` and empty parts dropped, `..` is resolved lexically and
-    may not leave the repository. Every part must match a directory entry exactly, so a
-    case variant is a miss on every platform. The real path must stay inside the repository
-    (a component-wise test, never a string prefix).
+    may not leave the repository. The second item is the reason when the path is unusable.
     """
     text = declared.replace("\\", "/")
     if not text.strip():
         return None, "empty path"
+    if CONTROL_TEXT.search(text):
+        return None, "contains a control character or a lone surrogate"
     if text.startswith("/") or DRIVE_PREFIX.match(text):
         return None, "absolute path"
     if text.endswith("/"):
@@ -249,27 +278,45 @@ def resolve_source(repo_real: Path, declared: str) -> tuple[Path | None, str]:
         parts.append(part)
     if not parts:
         return None, "names the repository root"
-    current = repo_real
-    for part in parts:
-        try:
-            names = os.listdir(current)
-        except (FileNotFoundError, NotADirectoryError):
-            return None, "not found"
-        except OSError as exc:
-            raise ToolFault("TOOL_FAULT", f"cannot list {current}: {exc}") from exc
-        if part not in names:
-            return None, "not found (names match exactly, including case)"
-        current = current / part
-    final = Path(os.path.realpath(current))
-    if not final.is_relative_to(repo_real):
-        return None, "escapes the repository"
-    if not final.is_file():
-        return None, "is not a regular file"
-    return final, ""
+    return "/".join(parts), ""
 
 
-def digest_of(path: Path) -> str:
-    return hashlib.sha256(_read_bytes(path)).hexdigest()
+def _git(repo: Path, *args: str) -> bytes:
+    """Run git in `repo`; any failure to serve the query is a tool fault."""
+    environment = dict(os.environ)
+    environment["GIT_LITERAL_PATHSPECS"] = "1"
+    try:
+        done = subprocess.run(
+            ["git", "-C", str(repo), *args],
+            capture_output=True,
+            check=False,
+            env=environment,
+            timeout=GIT_TIMEOUT_SECONDS,
+        )
+    except (OSError, ValueError, subprocess.SubprocessError) as exc:
+        raise ToolFault("TOOL_FAULT", f"cannot run git: {exc}") from exc
+    if done.returncode != 0:
+        message = done.stderr.decode("utf-8", errors="replace").strip()
+        raise ToolFault("TOOL_FAULT", f"git {args[0]} failed (exit {done.returncode}): {message}")
+    return done.stdout
+
+
+def read_head_blob(repo: Path, path: str) -> tuple[bytes | None, str]:
+    """Read a normalised path as the blob at HEAD of `repo`; the second item is the reason when none."""
+    listing = _git(repo, "ls-tree", "-z", "HEAD", "--", path)
+    wanted = path.encode("utf-8", errors="surrogateescape")
+    for entry in listing.split(b"\0"):
+        meta, tab, name = entry.partition(b"\t")
+        if not tab or name != wanted:
+            continue
+        fields = meta.split(b" ")
+        if len(fields) != 3:
+            raise ToolFault("TOOL_FAULT", f"git ls-tree gave an unreadable entry for {path!r}")
+        mode, kind, identifier = fields
+        if kind != b"blob" or mode not in REGULAR_FILE_MODES:
+            return None, "is not a regular file at HEAD"
+        return _git(repo, "cat-file", "blob", identifier.decode("ascii", errors="replace")), ""
+    return None, "is not tracked at HEAD (names match exactly, including case)"
 
 
 # ------------------------------------------------------------------ literal expected
@@ -283,11 +330,14 @@ def _is_number(node: ast.expr) -> bool:
     )
 
 
-def is_literal(node: ast.expr) -> bool:
+def is_literal(node: ast.expr, depth: int = 0) -> bool:
     """A number, string or bytes constant, or a display made only of such constants.
 
-    `None`, `True`, `False` and `...` are not literals; a signed number is.
+    `None`, `True`, `False` and `...` are not literals; a signed number is. A display
+    nested deeper than the analysis budget raises `Unanalysable`.
     """
+    if depth > ANALYSIS_DEPTH:
+        raise Unanalysable
     if isinstance(node, ast.Constant):
         value = node.value
         if value is None or isinstance(value, bool):
@@ -296,41 +346,58 @@ def is_literal(node: ast.expr) -> bool:
     if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.USub, ast.UAdd)):
         return _is_number(node.operand)
     if isinstance(node, (ast.List, ast.Tuple, ast.Set)):
-        return all(is_literal(element) for element in node.elts)
+        return all(is_literal(element, depth + 1) for element in node.elts)
     if isinstance(node, ast.Dict):
-        return all(key is not None and is_literal(key) for key in node.keys) and all(is_literal(v) for v in node.values)
+        return all(key is not None and is_literal(key, depth + 1) for key in node.keys) and all(
+            is_literal(value, depth + 1) for value in node.values
+        )
     return False
 
 
-def compares_with_literal(test: ast.expr) -> bool:
+def compares_with_literal(test: ast.expr, depth: int = 0) -> bool:
+    if depth > ANALYSIS_DEPTH:
+        raise Unanalysable
     if isinstance(test, ast.Compare):
-        return any(is_literal(operand) for operand in (test.left, *test.comparators))
+        return any(is_literal(operand, depth + 1) for operand in (test.left, *test.comparators))
     if isinstance(test, ast.BoolOp):
-        return any(compares_with_literal(value) for value in test.values)
+        return any(compares_with_literal(value, depth + 1) for value in test.values)
     if isinstance(test, ast.UnaryOp) and isinstance(test.op, ast.Not):
-        return compares_with_literal(test.operand)
+        return compares_with_literal(test.operand, depth + 1)
     return False
+
+
+def _source_text(text: str, node: ast.expr) -> str:
+    """The source of `node`, never rendered from the tree, cut to DETAIL_LIMIT characters."""
+    segment = ast.get_source_segment(text, node)
+    shown = "<source text unavailable>" if segment is None else segment
+    if len(shown) > DETAIL_LIMIT:
+        shown = shown[: DETAIL_LIMIT - 3] + "..."
+    return shown
 
 
 def literal_defects(spec: str, data: bytes) -> list[Defect]:
     try:
         tree = ast.parse(data)
-    except (SyntaxError, ValueError, RecursionError) as exc:
+    except (SyntaxError, ValueError, RecursionError, MemoryError) as exc:
         if isinstance(exc, SyntaxError):
             where = f"line {exc.lineno}" if exc.lineno is not None else "unknown line"
             return [Defect(LITERAL_EXPECTED, spec, f"syntax error {where}: {exc.msg}; the contract cannot be read")]
-        return [Defect(LITERAL_EXPECTED, spec, f"the contract cannot be parsed: {exc}")]
+        return [Defect(LITERAL_EXPECTED, spec, f"the contract cannot be parsed: {type(exc).__name__}")]
+    text = data.decode("utf-8-sig", errors="replace")
     asserts = sorted(
         (node for node in ast.walk(tree) if isinstance(node, ast.Assert)),
         key=lambda node: (node.lineno, node.col_offset),
     )
     found: list[Defect] = []
     for node in asserts:
-        if compares_with_literal(node.test):
-            shown = ast.unparse(node.test)
-            if len(shown) > 60:
-                shown = shown[:57] + "..."
-            found.append(Defect(LITERAL_EXPECTED, spec, f"line {node.lineno}: assert compares with a literal constant: {shown}"))
+        try:
+            literal = compares_with_literal(node.test)
+            note = "assert compares with a literal constant"
+        except (Unanalysable, RecursionError):
+            literal = True
+            note = "assert cannot be analysed within the gate's limits (nesting too deep)"
+        if literal:
+            found.append(Defect(LITERAL_EXPECTED, spec, f"line {node.lineno}: {note}: {_source_text(text, node.test)}"))
     return found
 
 
@@ -358,10 +425,13 @@ def check_spec(spec_path: Path, spec: str, repo_real: Path, status: dict[str, st
         raise ToolFault(SOURCE_UNSERVABLE, f"{spec}: line {number} source {value!r} is a URL and cannot be verified offline")
     defects: list[Defect] = list(declaration.malformed)
     for source in declaration.sources:
-        resolved, reason = resolve_source(repo_real, source.path)
-        if resolved is None:
+        path, reason = normalise_source(source.path)
+        blob: bytes | None = None
+        if path is not None:
+            blob, reason = read_head_blob(repo_real, path)
+        if blob is None:
             defects.append(Defect(SOURCE_MISSING, spec, f"line {source.line}: source {source.path!r} {reason}"))
-        elif digest_of(resolved) != source.digest:
+        elif hashlib.sha256(blob).hexdigest() != source.digest:
             defects.append(Defect(SOURCE_DIGEST_MISMATCH, spec, f"line {source.line}: source {source.path!r} does not match the declared digest"))
     declared: list[str] = []
     for _, identifier in declaration.requirements:
@@ -454,13 +524,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = run(parse_arguments(args))
     except UsageError as exc:
         print(USAGE, file=sys.stderr)
-        print(f"contract_gate.py: error: {exc}", file=sys.stderr)
+        print(f"contract_gate.py: error: {escape_text(str(exc))}", file=sys.stderr)
         return 3
     except ToolFault as exc:
-        print(f"{exc.label} {exc.message}", file=sys.stderr)
+        print(f"{exc.label} {escape_text(exc.message)}", file=sys.stderr)
         return 2
     except Exception as exc:  # an unexpected error is a tool fault, never a red, never a traceback
-        print(f"TOOL_FAULT unexpected {type(exc).__name__}: {exc}", file=sys.stderr)
+        print(f"TOOL_FAULT unexpected {type(exc).__name__}: {escape_text(str(exc))}", file=sys.stderr)
         return 2
     summary = f"requirements={report.requirements} specs={report.specs} defects={len(report.defects)}"
     if report.defects:

@@ -1,12 +1,13 @@
 # Gate scripts
 
-Three stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
+Four stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`,
+`index_pins.py` and `contract_gate.py`) that decide a workflow transition mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
 usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
-`receipt_fence_check.py` and `index_pins.py` an unexpected error is also a tool fault
-(`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
+`receipt_fence_check.py`, `index_pins.py` and `contract_gate.py` an unexpected error is
+also a tool fault (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red. The console
 encoding never changes an exit code: each script keeps the encoding the host chose for
 stdout and stderr but escapes any character it cannot encode as a backslash sequence, so a red whose
@@ -96,34 +97,45 @@ cannot be written, or an unexpected error. Exit 3: bad option, missing mode, emp
 
 Checks that every requirement has a spec and every spec is bound and honest. The
 snapshot is a requirement snapshot file (a JSON object with a `rows` list whose rows
-carry `requirement_id` and `status`, `active` or `retired`). The specs are every file
-named `test_*.py` under `--specs`, a directory inside `--repo`. A spec declares its
-contract in its first comment block, the leading run of lines that start with `#`
-(it ends at the first line that does not):
+carry `requirement_id` and `status`, `active` or `retired`). A `requirement_id` is 1 to
+128 characters from letters, digits, dot, underscore, colon, hyphen and slash, compared
+exactly and never stripped. The specs are every file named `test_*.py` (case-sensitive) under `--specs`, a directory
+inside `--repo`. A spec declares its contract in its first comment block, the leading run
+of lines that start with `#` (it ends at the first line that does not):
 
     # requirement: <id>                          one or more, compared exactly
     # source: <repository path> sha256:<hex>    one or more, 64 lower-case hex
     # mutation: <name>                           one or more
 
-Defects, one line `<code> <spec or requirement>: <detail>` each on stdout:
-`NO_SPEC_FOR_REQUIREMENT` (an active requirement no spec declares), `SOURCE_MISSING`
-(a source that does not exist, escapes the repository, is not a regular file, or whose
-declaration line is unusable; a spec that declares a requirement but no source),
-`SOURCE_DIGEST_MISMATCH` (sha256 of the file bytes differs), `RETIRED_REQUIREMENT_BOUND`
-(a spec declares a requirement that is retired or absent from the snapshot),
-`LITERAL_EXPECTED` (an `assert` comparing with a number, string, bytes or a display of
-such constants, also inside `and`, `or`, `not`; `None`, `True` and `False` do not count;
-also a spec that does not parse, or a header with an unknown declaration key) and
-`NO_MUTATION` (a spec that declares a requirement has no mutation). A source path is
-repository-relative: `./` and backslashes are normalised, every part must match the
-directory entry exactly (a case variant is a miss), and `..` may not leave the
-repository. The digest is over the bytes in the working tree.
+Only the lower-case keys `requirement`, `source` and `mutation` are declarations; every
+other comment line (`# Note: ...`, `# SPDX-License-Identifier: ...`, `# Requirement: ...`)
+is free text and is ignored. A source is read as the blob at `HEAD` of `--repo`, never
+from the working tree, so the digest is the same on every host whatever its line-ending
+settings; an edit counts once it is committed.
 
-Exit 0 prints `requirements=N specs=M defects=0` (N counts snapshot rows). Exit 1 prints
-the defect lines on stdout and the same summary on stderr. Exit 2: the snapshot, a spec,
-a source or a directory cannot be read, `--specs` or `--repo` is not a directory, a
-source is a URL (`SOURCE_UNSERVABLE`, a URL cannot be verified offline), or an
-unexpected error; a fault stops the run and no defect is printed. Exit 3: bad
-arguments, `--specs` outside `--repo`, or a snapshot argument that is not a snapshot
-(not JSON, no `rows`, a row without a non-empty `requirement_id` or with a `status` other
-than `active` or `retired`, a repeated `requirement_id`).
+Defects, one line `<code> <spec or requirement>: <detail>` each on stdout, the subject and
+the detail escaped so that a line break, a control character, U+2028 or a lone surrogate
+cannot split or forge a line:
+`NO_SPEC_FOR_REQUIREMENT` (an active requirement no spec declares), `SOURCE_MISSING`
+(a source that is not a regular file tracked at `HEAD`, escapes the repository, or whose
+declaration line is unusable; a spec that declares a requirement but no source),
+`SOURCE_DIGEST_MISMATCH` (sha256 of the blob differs), `RETIRED_REQUIREMENT_BOUND`
+(a spec declares a requirement that is retired or absent from the snapshot, or an empty
+`requirement:`), `LITERAL_EXPECTED` (an `assert` comparing with a number, string, bytes
+or a display of such constants, also inside `and`, `or`, `not`; `None`, `True` and `False`
+do not count; also a spec that does not parse, and an assertion the gate cannot analyse
+within its limits, such as a very deep nesting; the detail is the source text of the
+assertion, cut to 120 characters) and `NO_MUTATION` (a spec that declares a requirement
+has no mutation, or an empty `mutation:`). A source path is repository-relative: `./` and
+backslashes are normalised, names match exactly (a case variant is a miss), and `..` may
+not leave the repository.
+
+Exit 0 prints `requirements=N specs=M defects=0` on stdout (N counts snapshot rows). Exit 1
+prints the defect lines on stdout and the same summary on stderr. Exit 2: the snapshot, a
+spec or a directory cannot be read, `--specs` or `--repo` is not a directory, git cannot
+serve a source query (not a repository, no commit at `HEAD`, git missing), a source is a
+URL (`SOURCE_UNSERVABLE`, a URL cannot be verified offline), or an unexpected error; a
+fault stops the run and no defect is printed. Exit 3: bad arguments, `--specs` outside
+`--repo`, or a snapshot argument that is not a snapshot (not JSON, no `rows`, a row whose
+`requirement_id` is outside the character set above or with a `status` other than
+`active` or `retired`, a repeated `requirement_id`).
