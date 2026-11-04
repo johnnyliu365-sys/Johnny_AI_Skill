@@ -181,3 +181,56 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/55-rev03-initial
 reviewed_at: 2026-11-04
 ```
+
+## Revision03 correction review
+
+**Verdict: `APPROVED`**
+
+| Field | Value |
+| --- | --- |
+| Candidate | `c7a0409930e7df74878eeb9863b4f74c87e734ae` on `cp/wave2-55-preflight-gate` (parent `3a7cb3ad`) |
+| Reviewer | independent `ticket-review` seat in its own detached worktree; authored nothing in this ticket; the one correction review of revision03 that CodeReview §5 allows |
+| Reviewed against | closure revision03 with "Correction 1 under revision03" and the earlier disposition corrections; R4-2, R4-3, R4-7, R4-8 |
+| Summary | S55-19, S55-20 and S55-23 are pinned (the earlier K1, K2, K4, K22 are red). The plain-dispatch-path rule holds: an oracle sweep of 744,234 spellings found no namespace, share, NT-prefix or DOS-device path admitted, an owned pipe saw no client, and ordinary paths are still served. An interrupt after a child started kills its tree and exits 2 with one line. Every earlier rule holds, exits stay within 0/2/3, the receipt verifies, no new red. Open items are non-blocking hardening (S55-24 to S55-26). |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| P1 / T1 | PASS | 157 passed, 2 skipped (POSIX), 513 subtests; mypy --strict clean |
+| S55-19, S55-20, S55-23 | PASS, pinned | K1, K2, K22, N7 to N10 red |
+| S55-21 plain dispatch path | PASS | oracle sweep; 22 real runs exit 3; 14 plain spellings exit 0; S55-24 is Info |
+| S55-22 interrupt | PASS for the closure | a real pending interrupt exits 2, one line, tree dead |
+| R4-2 never 1, never outside 0/2/3 | PASS | 400 fuzzed dispatch files; S55-25 window is Info |
+| Regression of every earlier rule | PASS | earlier probes rerun |
+| STATEMENT choices | AGREE 15 of 16 | item 4 partly contradicted (S55-24) |
+| Reverse mutations | seat 23 of 23 red; reviewer 20, 19 red | K3 equivalent on this host (`ntpath.splitdrive` gives a drive for every two-separator prefix) |
+| Receipt / boundary | PASS | 0 defects with P9; digests recomputed; LF; three files; trailer names the working model |
+| Full suite | PASS under the host lock | 8 failed, all base names |
+
+### Prior findings
+
+| ID | Status |
+| --- | --- |
+| S55-19 to S55-23 | CLOSED |
+| S55-01 to S55-10, S55-12 to S55-18 | still closed |
+| S55-11 | not taken, as disposed |
+
+### New findings
+
+| ID | Class | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- |
+| S55-24 | OUT_OF_SCOPE_HARDENING | Info | `preflight.py:533-543` vs `:526` | the namespace check does not strip a leading drive letter, so `C:GLOBALROOT\x` is admitted; Windows treats it as a plain file and no namespace is reached | oracle sweep (779 hits, all this shape) |
+| S55-25 | OUT_OF_SCOPE_HARDENING | Info (exit code in a narrow window) | `preflight.py:618-628, 642-647` | an interrupt outside `main`'s handlers (start-up, imports, stream hardening, emitting) exits 0xC000013A with a traceback | probe I3 |
+| S55-26 | OUT_OF_SCOPE_HARDENING | Info (a process can be left running; disclosed) | `preflight.py:425-429, 285-313` | a second interrupt during the tree kill, or a child that exits by itself, can leave a grandchild running; the interrupt is acted on when the wait returns, bounded by `--timeout` | probes I1, I2, I4 |
+
+Raw logs: retained in the review seat's scratch directory under `.worktrees/`; not committed.
+
+Not verified: POSIX behaviour; a real console Ctrl+C; a symbolic link to a device; a DOS-device mapping or a UNC current directory; a real second drive; a real disk-full error.
+
+```review-verdict
+candidate: c7a0409930e7df74878eeb9863b4f74c87e734ae
+verdict: APPROVED
+reviewer: seat:ticket-review/55-rev03-correction
+reviewed_at: 2026-11-04
+```

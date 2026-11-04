@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision03 / receipt under `.worktrees/55-preflight-gate-out/` / owner implementation seat / worktree `.worktrees/55-preflight-gate` / branch `cp/wave2-55-preflight-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`: S55-13 to S55-15; revision03 initial review CHANGES_REQUESTED (evidence only); correction 1 dispatched） |
+| 狀態 | `REVIEW_APPROVED`（closure revision03; candidate `c7a04099` on `cp/wave2-55-preflight-gate`; revision03 correction review APPROVED 2026-11-04; awaiting integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/55-preflight-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/55-preflight-gate-review` |
@@ -169,3 +169,7 @@ Review record section "Revision02 correction review". CodeReview §5: the closur
 ### Correction 1 under revision03 (after the revision03 initial review `CHANGES_REQUESTED`)
 
 No ticket defect was found, so revision03 stands; the behaviour holds and the blocking items are tests. S55-19: a cleanup test whose child starts a grandchild, both gone before the next tool. S55-20: drive-rule tests for forward-slash shares (`//server`, `//server/share`, `\/server`, `/\server`) and `//?/` spellings. S55-23: a test with a rooted PATH entry without a drive, not searched. Taken now: S55-21, the dispatch path is a plain path: a path with a `\?\`, `\??\` or `\.\` prefix in either slash direction, a UNC path, or one naming `GLOBALROOT` is exit 3 and never opened, and the README says exactly this; S55-22, an interrupt after a child started kills its tree and exits 2 with one line. The next review is the one correction review of revision03.
+
+### Carried after approval
+
+Not taken in this ticket, recorded so they are not lost: S55-24 (the namespace check does not strip a drive-relative first component; Windows reads such a path as a plain file) and S55-25 (an interrupt in the start-up and output window exits outside 0/2/3) are Info hardening for a later gate-hardening ticket; S55-26 joins S55-11 (a Windows job object for the process tree) as a wave-3 candidate.
