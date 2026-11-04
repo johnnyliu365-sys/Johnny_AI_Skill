@@ -88,6 +88,39 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+class GitCall:
+    """One git child as the gate started it."""
+
+    def __init__(self, command: list[str], stdin: bytes | None, env: dict[str, str] | None) -> None:
+        self.command = command
+        self.stdin = stdin
+        self.env = env
+
+
+class GitSpy:
+    """Stands in for subprocess.run: records every git child, runs it for real unless told to fail or lie."""
+
+    def __init__(self, fail_on: str | None = None, answers: dict[str, bytes] | None = None) -> None:
+        self.calls: list[GitCall] = []
+        self.fail_on = fail_on
+        self.answers = answers or {}
+        self.real = subprocess.run
+
+    def __call__(self, command: list[str], **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+        stdin = kwargs.get("input")
+        env = kwargs.get("env")
+        self.calls.append(GitCall(list(command), stdin if isinstance(stdin, bytes) else None, env if isinstance(env, dict) else None))
+        if self.fail_on is not None and self.fail_on in command:
+            return subprocess.CompletedProcess(command, 128, b"", b"fatal: injected failure")
+        for flag, answer in self.answers.items():
+            if flag in command:
+                return subprocess.CompletedProcess(command, 0, answer, b"")
+        return self.real(command, **kwargs)
+
+    def lookups(self) -> list[GitCall]:
+        return [call for call in self.calls if "cat-file" in call.command]
+
+
 def spec_body(*asserts: str) -> str:
     lines = ["def test_contract() -> None:", "    value = compute()", "    expected_from_ledger = load()"]
     lines += list(asserts) if asserts else [LEDGER_ASSERT]
@@ -670,11 +703,13 @@ class SnapshotAndFaults(Case):
         self.assertEqual((got, out), (2, ""))
         self.assertIn("TOOL_FAULT", err)
 
-    def test_a_repository_that_serves_no_source_needs_no_git(self) -> None:
+    def test_a_spec_that_serves_no_source_makes_no_lookup(self) -> None:
         self.write_snapshot(("R-1", "active"))
         self.write_spec("test_one.py", "# requirement: R-1\n# mutation: m\n")
-        with mock.patch.object(contract_gate.subprocess, "run", side_effect=AssertionError("git was run")):
+        spy = GitSpy()
+        with mock.patch.object(contract_gate.subprocess, "run", spy):
             self.assertEqual(self.codes(), ["SOURCE_MISSING"])
+        self.assertEqual([call.command[4:] for call in spy.calls], [["rev-parse", "--show-toplevel"]])
 
     def test_an_unexpected_error_is_exit_2_without_a_traceback(self) -> None:
         self.write_snapshot()
@@ -858,12 +893,21 @@ class SourcePaths(Case):
             "./contracts/source.txt",
             "contracts\\source.txt",
             ".\\contracts\\source.txt",
-            "contracts//source.txt",
-            "contracts/./source.txt",
-            "specs/../contracts/source.txt",
         ):
             with self.subTest(path):
                 self.assertEqual(self.declare(path), [])
+
+    def test_a_path_with_an_empty_dot_or_dot_dot_segment_is_not_canonical(self) -> None:
+        for path in (
+            "contracts//source.txt",
+            "contracts/./source.txt",
+            "specs/../contracts/source.txt",
+            "././contracts/source.txt",
+            "contracts\\\\source.txt",
+        ):
+            with self.subTest(path):
+                self.assert_missing(path)
+                self.assertIn("segment", self.declare(path)[0])
 
     def test_dot_dot_escaping_the_repository_is_source_missing(self) -> None:
         for path in (
@@ -916,7 +960,7 @@ class SourcePaths(Case):
     def test_a_path_through_a_file_is_not_found(self) -> None:
         self.assert_missing("contracts/source.txt/inner")
 
-    def test_a_tracked_symbolic_link_is_not_a_regular_file(self) -> None:
+    def test_a_tracked_symbolic_link_is_a_blob_of_its_link_text_and_is_never_followed(self) -> None:
         link_target = self.base / "outside.txt"
         link_target.write_bytes(SOURCE_BYTES)
         identifier = subprocess.run(
@@ -930,8 +974,8 @@ class SourcePaths(Case):
         git(self.repo, "commit", "-q", "--no-verify", "-m", "link")
         lines = self.declare("contracts/link.txt")
         self.assertEqual(len(lines), 1, lines)
-        self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2"), lines[0])
-        self.assertIn("not a regular file", lines[0])
+        self.assertTrue(lines[0].startswith("SOURCE_DIGEST_MISMATCH specs/test_one.py: line 2"), lines[0])
+        self.assertEqual(self.declare("contracts/link.txt", sha(str(link_target).encode("utf-8"))), [])
 
     def test_a_directory_at_head_is_not_a_source(self) -> None:
         for path in ("contracts", "specs/.."):
@@ -964,7 +1008,7 @@ class Streams(Case):
         completed = subprocess.run(
             [sys.executable, str(SCRIPT), *self.argv()],
             capture_output=True,
-            env={"PYTHONIOENCODING": "cp950", "SYSTEMROOT": os.environ.get("SYSTEMROOT", ""), "PATH": ""},
+            env={"PYTHONIOENCODING": "cp950", "SYSTEMROOT": os.environ.get("SYSTEMROOT", ""), "PATH": os.environ.get("PATH", "")},
         )
         self.assertEqual(completed.returncode, 1, completed.stderr)
         self.assertIn(b"RETIRED_REQUIREMENT_BOUND", completed.stdout)
@@ -1040,8 +1084,821 @@ class OneLinePerDefect(Case):
         self.assertEqual(len(out.splitlines()), 1, repr(out))
 
 
+class SpecDecoding(Case):
+    """A spec is decoded the way Python decodes source; the decoded text is what is quoted."""
+
+    def coded(self, coding: str, assertion: str, *, comment: str = "") -> bytes:
+        text = f"# -*- coding: {coding} -*-\n" + comment + self.header(("R-1",)) + "\n" + spec_body(assertion)
+        return text.encode(coding)
+
+    def red(self, data: bytes, *rows: tuple[str, str]) -> list[str]:
+        self.write_snapshot(*rows)
+        (self.specs / "test_one.py").write_bytes(data)
+        code, out, err = self.run_gate()
+        self.assertEqual(code, 1, out + err)
+        self.assertNotIn("TOOL_FAULT", err)
+        self.assertNotIn("Traceback", out + err)
+        return out.splitlines()
+
+    def only_literal_line(self, data: bytes) -> str:
+        lines = self.red(data, ("R-1", "active"))
+        self.assertEqual(len(lines), 1, lines)
+        self.assertTrue(lines[0].startswith("LITERAL_EXPECTED specs/test_one.py: line "), lines[0])
+        return lines[0]
+
+    def test_a_latin_1_spec_with_a_non_ascii_literal_is_a_red_quoting_the_decoded_text(self) -> None:
+        line = self.only_literal_line(self.coded("latin-1", '    assert "\u00e9\u00e9\u00e9" == value'))
+        self.assertTrue(line.endswith('"\u00e9\u00e9\u00e9" == value'), line)
+
+    def test_a_cp950_spec_with_a_non_ascii_literal_is_a_red_quoting_the_decoded_text(self) -> None:
+        line = self.only_literal_line(self.coded("cp950", '    assert value == "\u4e2d\u6587\u5b57"'))
+        self.assertTrue(line.endswith('value == "\u4e2d\u6587\u5b57"'), line)
+
+    def test_other_declared_codings_are_decoded_too(self) -> None:
+        for coding, literal in (("shift_jis", "\u65e5\u672c\u8a9e"), ("koi8-r", "\u043f\u0440\u0438\u0432\u0435\u0442")):
+            with self.subTest(coding):
+                line = self.only_literal_line(self.coded(coding, f'    assert "{literal}" == value'))
+                self.assertTrue(line.endswith(f'"{literal}" == value'), line)
+
+    def test_a_utf_8_spec_with_astral_characters_before_the_literal_keeps_offsets_and_text_in_step(self) -> None:
+        text = self.header(("R-1",)) + "\n" + spec_body('    assert ("\U0001f600", "\u00e9") == value', "    assert value == 3")
+        lines = self.red(text.encode("utf-8"), ("R-1", "active"))
+        self.assertEqual(len(lines), 2, lines)
+        self.assertTrue(lines[0].endswith('("\U0001f600", "\u00e9") == value'), lines[0])
+        self.assertTrue(lines[1].endswith("value == 3"), lines[1])
+
+    def test_a_utf_8_byte_order_mark_is_honoured(self) -> None:
+        text = self.header(("R-1",)) + "\n" + spec_body('    assert "\u00e9" == value')
+        line = self.only_literal_line(b"\xef\xbb\xbf" + text.encode("utf-8"))
+        self.assertTrue(line.endswith('"\u00e9" == value'), line)
+
+    def test_a_non_utf_8_spec_that_asserts_against_the_ledger_is_green(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        header = "# -*- coding: latin-1 -*-\n# caf\u00e9 note\n" + self.header(("R-1",), mutations=("d\u00e9j\u00e0-vu",))
+        (self.specs / "test_one.py").write_bytes((header + "\n" + spec_body()).encode("latin-1"))
+        self.assert_green()
+
+    def test_a_spec_that_cannot_be_decoded_is_a_red_of_that_spec_and_binds_nothing(self) -> None:
+        shapes = {
+            "an invalid utf-8 byte": b"# note\nx = '\xe9'\n",
+            "a utf-16 file": "x = 1\n".encode("utf-16"),
+            "an unknown coding": b"# coding: no-such-codec\nx = 1\n",
+            "a coding that conflicts with the byte order mark": b"\xef\xbb\xbf# coding: latin-1\nx = 1\n",
+            "bytes that are not the declared coding": b"# coding: ascii\nx = '\xe9'\n",
+        }
+        for name, data in shapes.items():
+            with self.subTest(name):
+                lines = self.red(data)
+                self.assertEqual(len(lines), 1, lines)
+                self.assertTrue(lines[0].startswith("LITERAL_EXPECTED specs/test_one.py: "), lines[0])
+
+    def test_an_undecodable_spec_leaves_its_requirements_unbound(self) -> None:
+        lines = self.red(b"# requirement: R-1\n# source: x sha256:00\n# mutation: m\nx = '\xe9'\n", ("R-1", "active"))
+        self.assertEqual(sorted(line.split(" ", 1)[0] for line in lines), ["LITERAL_EXPECTED", "NO_SPEC_FOR_REQUIREMENT"])
+
+
+class Boom(Exception):
+    """An exception type the gate has never heard of."""
+
+
+class BoomWithoutText(Exception):
+    def __str__(self) -> str:
+        raise RuntimeError("no text")
+
+
+class PerSpecGuard(Case):
+    """Whatever the analysis of a spec's bytes raises is a red of that spec, never exit 2."""
+
+    EXCEPTIONS: tuple[BaseException, ...] = (
+        RecursionError("deep"),
+        MemoryError(),
+        ValueError("v"),
+        TypeError("t"),
+        KeyError("k"),
+        IndexError("i"),
+        AttributeError("a"),
+        ZeroDivisionError(),
+        OverflowError("o"),
+        SystemError("s"),
+        UnicodeDecodeError("utf-8", b"\xff", 0, 1, "bad"),
+        SyntaxError("s"),
+        OSError(5, "io"),
+        AssertionError("a"),
+        NotImplementedError("n"),
+        Boom("custom"),
+        BoomWithoutText(),
+    )
+
+    def prepare(self, *asserts: str) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_one.py", self.header(("R-1",)), spec_body(*asserts))
+
+    def assert_one_unanalysable_red(self, label: str) -> list[str]:
+        code, out, err = self.run_gate()
+        self.assertEqual(code, 1, f"{label}: {out}{err}")
+        self.assertNotIn("TOOL_FAULT", err)
+        self.assertNotIn("Traceback", out + err)
+        lines = out.splitlines()
+        reds = [line for line in lines if line.startswith("LITERAL_EXPECTED specs/test_one.py: the spec cannot be analysed")]
+        self.assertEqual(len(reds), 1, f"{label}: {lines}")
+        self.assertEqual(len(out.splitlines()), out.count("\n"), label)
+        return lines
+
+    def test_every_step_of_the_analysis_is_guarded_whatever_exception_type_it_raises(self) -> None:
+        targets = (
+            (contract_gate.ast, "parse"),
+            (contract_gate, "parse_header"),
+            (contract_gate, "decode_source"),
+            (contract_gate, "literal_defects"),
+            (contract_gate, "_source_text"),
+            (contract_gate.ast, "walk"),
+            (contract_gate.ast, "get_source_segment"),
+        )
+        self.prepare("    assert value == 3")
+        for owner, name in targets:
+            for exception in self.EXCEPTIONS:
+                if name == "parse" and isinstance(exception, SyntaxError):
+                    continue  # a syntax error from the parser is the in-band "cannot be read" red, tested elsewhere
+                label = f"{name} raising {type(exception).__name__}"
+                with self.subTest(label), mock.patch.object(owner, name, side_effect=exception):
+                    self.assert_one_unanalysable_red(label)
+
+    def test_a_failed_literal_analysis_keeps_the_declarations_that_were_read(self) -> None:
+        self.prepare()
+        with mock.patch.object(contract_gate, "literal_defects", side_effect=Boom("x")):
+            lines = self.assert_one_unanalysable_red("literal_defects")
+        self.assertEqual(len(lines), 1, lines)
+
+    def test_a_failed_declaration_read_leaves_the_requirement_unbound(self) -> None:
+        self.prepare()
+        with mock.patch.object(contract_gate, "parse_header", side_effect=Boom("x")):
+            lines = self.assert_one_unanalysable_red("parse_header")
+        self.assertEqual(sorted(line.split(" ", 1)[0] for line in lines), ["LITERAL_EXPECTED", "NO_SPEC_FOR_REQUIREMENT"])
+
+    def test_the_detail_names_the_reason_on_one_line_and_is_cut(self) -> None:
+        self.prepare()
+        message = "first line\nsecond\u2028line " + "x" * 5000
+        with mock.patch.object(contract_gate, "literal_defects", side_effect=Boom(message)):
+            lines = self.assert_one_unanalysable_red("long message")
+        self.assertIn("Boom: first line\\nsecond\\u2028line", lines[0])
+        self.assertLess(len(lines[0]), 400, len(lines[0]))
+
+    def test_a_guarded_spec_does_not_stop_the_next_one(self) -> None:
+        self.write_snapshot(("R-1", "active"), ("R-2", "active"))
+        self.good_spec("test_a.py", "R-1")
+        self.write_spec("test_b.py", self.header(("R-2",)), spec_body("    assert value == 3"))
+        real = contract_gate.literal_defects
+
+        def picky(spec: str, text: str) -> list[contract_gate.Defect]:
+            if spec.endswith("test_a.py"):
+                raise Boom("only the first")
+            return real(spec, text)
+
+        with mock.patch.object(contract_gate, "literal_defects", picky):
+            code, out, _ = self.run_gate()
+        self.assertEqual(code, 1)
+        self.assertEqual(
+            [line.split(": ", 1)[0] for line in out.splitlines()],
+            ["LITERAL_EXPECTED specs/test_a.py", "LITERAL_EXPECTED specs/test_b.py"],
+        )
+        self.assertIn("line ", out.splitlines()[1])
+
+    def test_a_syntax_error_and_a_parser_exception_are_both_one_red(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_one.py", self.header(("R-1",)), "def broken(:\n")
+        self.assertEqual(self.codes(), ["LITERAL_EXPECTED"])
+        self.prepare()
+        for exception in (RecursionError("deep"), MemoryError(), ValueError("source code string cannot contain null bytes")):
+            with self.subTest(type(exception).__name__), mock.patch.object(contract_gate.ast, "parse", side_effect=exception):
+                self.assert_one_unanalysable_red(type(exception).__name__)
+
+    def test_only_the_disk_and_git_are_faults(self) -> None:
+        self.prepare()
+        original = Path.read_bytes
+
+        def deny(path: Path) -> bytes:
+            if path.name == "test_one.py":
+                raise PermissionError(13, "Permission denied", str(path))
+            return original(path)
+
+        with mock.patch.object(Path, "read_bytes", deny):
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn("test_one.py", err)
+        with mock.patch.object(contract_gate.subprocess, "run", GitSpy(fail_on="rev-parse")):
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertIn("injected failure", err)
+
+
+class SourceLookup(Case):
+    """A canonical source path is looked up once, literally, through the standard input of git."""
+
+    def declare_many(self, *paths: str) -> list[str]:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_one.py", self.header(("R-1",), tuple(f"{path} sha256:{sha(SOURCE_BYTES)}" for path in paths)))
+        code, out, err = self.run_gate()
+        self.assertIn(code, (0, 1), out + err)
+        return [line for line in out.splitlines() if not line.startswith("requirements=")]
+
+    def test_a_very_long_source_path_is_source_missing_without_any_lookup(self) -> None:
+        spy = GitSpy()
+        for length in (1500, 40000, 400000):
+            with self.subTest(length), mock.patch.object(contract_gate.subprocess, "run", spy):
+                lines = self.declare_many("a/" * (length // 2))
+            self.assertEqual(len(lines), 1, lines[:2])
+            self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0][:100])
+            self.assertIn("longer than 1024 bytes", lines[0])
+            self.assertLess(len(lines[0]), 3000)
+        self.assertEqual(spy.lookups(), [])
+
+    def test_the_path_length_limit_counts_utf_8_bytes_after_normalisation(self) -> None:
+        for path, expected in (
+            ("x" * 1024, "is not tracked at HEAD"),
+            ("x" * 1025, "longer than 1024 bytes"),
+            ("./" + "x" * 1024, "is not tracked at HEAD"),
+            ("\u00e9" * 512, "is not tracked at HEAD"),
+            ("\u00e9" * 513, "longer than 1024 bytes"),
+            ("d/" * 511 + "ab", "is not tracked at HEAD"),
+        ):
+            with self.subTest(path[:12], length=len(path.encode("utf-8"))):
+                lines = self.declare_many(path)
+                self.assertEqual(len(lines), 1, lines)
+                self.assertIn(expected, lines[0])
+
+    def test_a_source_that_looks_like_a_pathspec_is_not_canonical_or_matches_only_itself(self) -> None:
+        for path in (
+            ":(glob)contracts/*",
+            ":/contracts/source.txt",
+            ":!contracts/source.txt",
+            ":(top)contracts/source.txt",
+            ":(literal)contracts/source.txt",
+            ":contracts/source.txt",
+            "contracts/:(glob)source.txt",
+            "contracts/**",
+            "contracts/*.txt",
+            "contracts/[s]ource.txt",
+            "contracts/sourc?.txt",
+            "**/source.txt",
+        ):
+            with self.subTest(path):
+                spy = GitSpy()
+                with mock.patch.object(contract_gate.subprocess, "run", spy):
+                    lines = self.declare_many(path)
+                self.assertEqual(len(lines), 1, lines)
+                self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
+                for call in spy.calls:
+                    self.assertFalse(any("contracts" in argument for argument in call.command[3:]), call.command)
+
+    def test_a_path_that_is_not_relative_is_refused_without_any_lookup(self) -> None:
+        for path in (
+            "/contracts/source.txt",
+            "C:contracts/source.txt",
+            "c:/contracts/source.txt",
+            "C:\\contracts\\source.txt",
+            ":contracts/source.txt",
+            ":(glob)contracts/*",
+            ":/contracts/source.txt",
+            ":!contracts/source.txt",
+        ):
+            with self.subTest(path):
+                spy = GitSpy()
+                with mock.patch.object(contract_gate.subprocess, "run", spy):
+                    lines = self.declare_many(path)
+                self.assertEqual(len(lines), 1, lines)
+                self.assertIn("not a relative repository path", lines[0])
+                self.assertEqual(spy.lookups(), [])
+
+    def test_a_segment_problem_and_a_control_character_are_refused_without_any_lookup(self) -> None:
+        for path, reason in (
+            ("contracts//source.txt", "segment"),
+            ("contracts/../contracts/source.txt", "segment"),
+            ("contracts/", "segment"),
+            ("contracts/so\x01urce.txt", "control character"),
+        ):
+            with self.subTest(path):
+                spy = GitSpy()
+                with mock.patch.object(contract_gate.subprocess, "run", spy):
+                    lines = self.declare_many(path)
+                self.assertEqual(len(lines), 1, lines)
+                self.assertIn(reason, lines[0])
+                self.assertEqual(spy.lookups(), [])
+
+    def test_the_source_reaches_git_only_through_standard_input(self) -> None:
+        self.commit_source("my docs/a b.txt", SOURCE_BYTES)
+        spy = GitSpy()
+        with mock.patch.object(contract_gate.subprocess, "run", spy):
+            self.assertEqual(self.declare_many("my docs/a b.txt"), [])
+        lookups = spy.lookups()
+        self.assertEqual([call.command[4:] for call in lookups], [["cat-file", "--batch-check"], ["cat-file", "--batch"]])
+        for call in lookups:
+            self.assertEqual(call.stdin, b"HEAD:my docs/a b.txt\n")
+        for call in spy.calls:
+            self.assertEqual(call.command[:4], ["git", "-C", str(self.repo), "--no-replace-objects"])
+            self.assertFalse(any("a b.txt" in argument or "my docs" in argument for argument in call.command[4:]), call.command)
+
+    def test_a_name_with_glob_characters_that_is_tracked_resolves_to_itself_only(self) -> None:
+        git(self.repo, "config", "core.protectNTFS", "false")
+        def track(name: str, data: bytes) -> None:
+            identifier = subprocess.run(
+                ["git", "-C", str(self.repo), "hash-object", "-w", "--stdin"],
+                input=data,
+                capture_output=True,
+                env={**os.environ, **GIT_ENVIRONMENT},
+                check=True,
+            ).stdout.decode("ascii").strip()
+            git(self.repo, "update-index", "--add", "--cacheinfo", f"100644,{identifier},{name}")
+
+        track("star*name.txt", b"the star")
+        track("starXname.txt", b"the X")
+        track("[ab].txt", b"the class")
+        track("a.txt", b"the a")
+        git(self.repo, "commit", "-q", "--no-verify", "-m", "glob names")
+        self.write_snapshot(("R-1", "active"))
+        for name, data, ok in (
+            ("star*name.txt", b"the star", True),
+            ("star*name.txt", b"the X", False),
+            ("starXname.txt", b"the X", True),
+            ("[ab].txt", b"the class", True),
+            ("[ab].txt", b"the a", False),
+            ("a.txt", b"the a", True),
+            ("star?name.txt", b"the star", False),
+        ):
+            with self.subTest(name=name, ok=ok):
+                self.write_spec("test_one.py", self.header(("R-1",), (f"{name} sha256:{sha(data)}",)))
+                code, out, err = self.run_gate()
+                self.assertEqual(code, 0 if ok else 1, out + err)
+
+    def test_git_failing_during_a_lookup_is_exit_2_and_never_source_missing(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        for failing in ("cat-file", "--batch-check", "--batch", "--verify"):
+            with self.subTest(failing), mock.patch.object(contract_gate.subprocess, "run", GitSpy(fail_on=failing)):
+                code, out, err = self.run_gate()
+                self.assertEqual((code, out), (2, ""))
+                self.assertIn("injected failure", err)
+                self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_git_answering_outside_its_format_is_exit_2_and_never_a_red(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        name = b"HEAD:contracts/source.txt"
+        identifier = b"a" * 40
+        answers: dict[str, bytes] = {
+            "--batch-check": b"",
+            "--batch-check ": name + b" missing",
+            "--batch-check  ": name + b" ambiguous\n",
+            "--batch-check   ": identifier + b" blob\n",
+            "--batch-check    ": b"x blob 3\n",
+            "--batch-check     ": name + b" missing\nextra\n",
+            "--batch-check      ": identifier + b" blob 3\n" + identifier + b" blob 3\n",
+        }
+        for label, answer in answers.items():
+            with self.subTest(label, answer=answer):
+                with mock.patch.object(contract_gate.subprocess, "run", GitSpy(answers={"--batch-check": answer})):
+                    code, out, err = self.run_gate()
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertIn("outside its format", err)
+
+    def test_a_batch_answer_that_does_not_match_the_check_is_exit_2(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        wrong = (
+            b"",
+            b"short\n",
+            b"deadbeef blob 3\nabc\n",
+            b"a" * 40 + b" blob 3\nabc\n",
+        )
+        for answer in wrong:
+            with self.subTest(answer=answer), mock.patch.object(contract_gate.subprocess, "run", GitSpy(answers={"--batch": answer})):
+                code, out, err = self.run_gate()
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertIn("outside its format", err)
+
+    def test_a_tree_or_a_submodule_at_head_is_source_missing(self) -> None:
+        lines = self.declare_many("contracts")
+        self.assertEqual(len(lines), 1, lines)
+        self.assertIn("is not a blob at HEAD", lines[0])
+        git(self.repo, "update-index", "--add", "--cacheinfo", f"160000,{'b' * 40},modules/sub")
+        git(self.repo, "commit", "-q", "--no-verify", "-m", "gitlink")
+        lines = self.declare_many("modules/sub")
+        self.assertEqual(len(lines), 1, lines)
+        self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
+
+    def test_the_digest_is_over_binary_content_with_every_byte_value(self) -> None:
+        data = bytes(range(256)) * 3 + b"\r\n\n\r\x00 trailing\n\n"
+        self.commit_source("contracts/binary.bin", data)
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/binary.bin sha256:{sha(data)}",)))
+        self.assert_green()
+        empty = b""
+        self.commit_source("contracts/empty.bin", empty)
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/empty.bin sha256:{sha(empty)}",)))
+        self.assert_green()
+
+
+class DeclarationText(Case):
+    """A declaration value loses only spaces and tabs; a control character makes it a red of its key."""
+
+    CONTROLS = ("\x01", "\x0b", "\x0c", "\x1b", "\x1c", "\x1f", "\x7f", "\t")
+
+    def run_header(self, header: str) -> tuple[int, list[str]]:
+        self.write_snapshot(("R-1", "active"))
+        self.write_spec("test_one.py", header)
+        code, out, err = self.run_gate()
+        self.assertNotIn("TOOL_FAULT", err)
+        return code, out.splitlines()
+
+    def good_source(self) -> str:
+        return f"contracts/source.txt sha256:{sha(SOURCE_BYTES)}"
+
+    def test_a_control_character_in_a_requirement_value_is_retired_requirement_bound(self) -> None:
+        for control in self.CONTROLS:
+            for shape in ("R-1{c}", "{c}R-1", "R{c}-1", "R-1{c} "):
+                value = shape.format(c=control)
+                if value.strip(" \t") == "R-1":
+                    continue
+                with self.subTest(value=value):
+                    code, lines = self.run_header(f"# requirement: {value}\n# source: {self.good_source()}\n# mutation: m\n")
+                    self.assertEqual(code, 1, lines)
+                    self.assertEqual(sorted(line.split(" ", 1)[0] for line in lines), ["NO_SPEC_FOR_REQUIREMENT", "RETIRED_REQUIREMENT_BOUND"])
+                    bound = [line for line in lines if line.startswith("RETIRED_REQUIREMENT_BOUND")]
+                    self.assertTrue(bound[0].startswith("RETIRED_REQUIREMENT_BOUND specs/test_one.py: line 1: "), bound[0])
+
+    def test_a_control_character_in_a_source_value_is_source_missing(self) -> None:
+        digest = sha(SOURCE_BYTES)
+        for control in self.CONTROLS:
+            shapes = [f"contracts/so{control}urce.txt sha256:{digest}"]
+            if control != "\t":  # a tab around a value is removed, not refused
+                shapes += [
+                    f"contracts/source.txt{control} sha256:{digest}",
+                    f"contracts/source.txt sha256:{digest}{control}",
+                    f"{control}contracts/source.txt sha256:{digest}",
+                ]
+            for shape in shapes:
+                with self.subTest(value=shape):
+                    code, lines = self.run_header(f"# requirement: R-1\n# source: {shape}\n# mutation: m\n")
+                    self.assertEqual(code, 1, lines)
+                    self.assertEqual(len(lines), 1, lines)
+                    self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
+
+    def test_a_control_character_in_a_mutation_value_is_no_mutation(self) -> None:
+        for control in self.CONTROLS:
+            for shape in ("m{c}", "{c}m", "m{c}n"):
+                value = shape.format(c=control)
+                if value.strip(" \t") == "m":
+                    continue
+                with self.subTest(value=value):
+                    code, lines = self.run_header(f"# requirement: R-1\n# source: {self.good_source()}\n# mutation: {value}\n")
+                    self.assertEqual(code, 1, lines)
+                    self.assertEqual(len(lines), 1, lines)
+                    self.assertTrue(lines[0].startswith("NO_MUTATION specs/test_one.py: line 3: "), lines[0])
+
+    def test_only_spaces_and_tabs_around_a_value_are_removed(self) -> None:
+        header = (
+            f"#\t requirement:\t  R-1 \t\n#  source: \t{self.good_source()}\t \n# mutation:\t m n \t\n"
+        )
+        code, lines = self.run_header(header)
+        self.assertEqual((code, lines), (0, ["requirements=1 specs=1 defects=0"]))
+
+    def test_characters_that_str_strip_would_remove_do_not_bind_the_requirement(self) -> None:
+        for char in ("\x85", "\u2028", "\u2029", "\u00a0", "\u3000", "\u200b"):
+            with self.subTest(char=char):
+                code, lines = self.run_header(f"# requirement: R-1{char}\n# source: {self.good_source()}\n# mutation: m\n")
+                self.assertEqual(code, 1, lines)
+                self.assertIn("NO_SPEC_FOR_REQUIREMENT R-1: no spec declares this active requirement", lines)
+                self.assertTrue(any(line.startswith("RETIRED_REQUIREMENT_BOUND specs/test_one.py: requirement 'R-1") for line in lines), lines)
+
+    def test_a_control_character_in_free_text_is_not_a_declaration_problem(self) -> None:
+        header = "# note \x01\x1b\x1c here\n# SPDX-License-Identifier: MIT\x0b\n" + self.header(("R-1",))
+        code, lines = self.run_header(header)
+        self.assertEqual((code, lines), (0, ["requirements=1 specs=1 defects=0"]))
+
+    def test_the_text_rule_runs_before_the_url_rule(self) -> None:
+        code, lines = self.run_header(f"# requirement: R-1\n# source: https://example.invalid/\x01 sha256:{sha(b'x')}\n# mutation: m\n")
+        self.assertEqual(code, 1, lines)
+        self.assertEqual(len(lines), 1, lines)
+        self.assertTrue(lines[0].startswith("SOURCE_MISSING specs/test_one.py: line 2: "), lines[0])
+
+
+class RepoTopLevel(Case):
+    """`--repo` is the top level of a git work tree, and git runs without repository-selecting variables."""
+
+    def argv_with_repo(self, repo: Path) -> list[str]:
+        return ["--repo", str(repo), "--snapshot", str(self.snapshot), "--specs", str(self.specs)]
+
+    def decoy(self) -> Path:
+        decoy = self.base / "decoy"
+        decoy.mkdir()
+        init_repo(decoy)
+        (decoy / "other.txt").write_bytes(b"other")
+        commit_all(decoy)
+        return decoy
+
+    def test_a_subdirectory_of_the_work_tree_is_exit_2(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        for sub in (self.specs, self.repo / "contracts", self.specs / "inner"):
+            with self.subTest(sub.name):
+                sub.mkdir(exist_ok=True)
+                code, out, err = self.run_gate(self.argv_with_repo(sub))
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertIn("top level", err)
+                self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_a_plain_directory_inside_the_work_tree_is_exit_2(self) -> None:
+        self.write_snapshot()
+        plain = self.repo / "plain"
+        (plain / "specs").mkdir(parents=True)
+        code, out, err = self.run_gate(["--repo", str(plain), "--snapshot", str(self.snapshot), "--specs", str(plain / "specs")])
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertIn("top level", err)
+
+    def test_a_spelling_of_the_top_level_that_reaches_it_is_accepted(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        for spelling in (str(self.repo) + os.sep, str(self.repo / "specs" / ".."), str(self.repo / "."), str(self.repo).replace("\\", "/")):
+            with self.subTest(spelling):
+                code, out, err = self.run_gate(["--repo", spelling, "--snapshot", str(self.snapshot), "--specs", str(self.specs)])
+                self.assertEqual((code, out.strip(), err), (0, "requirements=1 specs=1 defects=0", ""))
+
+    def test_git_answering_a_toplevel_outside_its_format_is_exit_2(self) -> None:
+        self.write_snapshot()
+        for answer in (b"", b"\n", b"a\nb\n", b"no newline"):
+            with self.subTest(answer=answer):
+                done = subprocess.CompletedProcess([], 0, answer, b"")
+                with mock.patch.object(contract_gate.subprocess, "run", return_value=done):
+                    code, out, err = self.run_gate()
+                self.assertEqual((code, out), (2, ""), err)
+
+    def test_an_inherited_repository_variable_does_not_change_the_result(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        baseline = self.run_gate()
+        self.assertEqual(baseline, (0, "requirements=1 specs=1 defects=0\n", ""))
+        decoy = self.decoy()
+        empty_objects = self.base / "empty-objects"
+        empty_objects.mkdir()
+        hostile = {
+            "GIT_DIR": str(decoy / ".git"),
+            "GIT_WORK_TREE": str(decoy),
+            "GIT_INDEX_FILE": str(self.base / "no-such-index"),
+            "GIT_OBJECT_DIRECTORY": str(empty_objects),
+            "GIT_ALTERNATE_OBJECT_DIRECTORIES": str(decoy / ".git" / "objects"),
+            "GIT_NAMESPACE": "hostile",
+            "GIT_CEILING_DIRECTORIES": str(self.base),
+            "GIT_COMMON_DIR": str(decoy / ".git"),
+        }
+        self.assertEqual(set(hostile), {name for name in contract_gate.GIT_SELECTING_VARIABLES} - {"GIT_PREFIX"})
+        for name, value in hostile.items():
+            with self.subTest(name), mock.patch.dict(os.environ, {name: value}):
+                self.assertEqual(self.run_gate(), baseline)
+        with mock.patch.dict(os.environ, hostile):
+            self.assertEqual(self.run_gate(), baseline)
+
+    def test_no_git_child_inherits_a_repository_selecting_variable(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        spy = GitSpy()
+        polluted = {name: "x" for name in contract_gate.GIT_SELECTING_VARIABLES}
+        with mock.patch.dict(os.environ, polluted), mock.patch.object(contract_gate.subprocess, "run", spy):
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out.strip(), err), (0, "requirements=1 specs=1 defects=0", ""))
+        self.assertGreaterEqual(len(spy.calls), 1)
+        for call in spy.calls:
+            self.assertIsNotNone(call.env)
+            names = {name.upper() for name in (call.env or {})}
+            self.assertEqual(names & set(contract_gate.GIT_SELECTING_VARIABLES), set(), call.command)
+
+    def test_a_replace_ref_on_a_source_blob_never_redirects_the_lookup(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        self.assertEqual(self.run_gate(), (0, "requirements=1 specs=1 defects=0\n", ""))
+        fake = b"a replacement blob\n"
+        real_id = git(self.repo, "rev-parse", "HEAD:contracts/source.txt").strip()
+        fake_id = subprocess.run(
+            ["git", "-C", str(self.repo), "hash-object", "-w", "--stdin"],
+            input=fake,
+            capture_output=True,
+            env={**os.environ, **GIT_ENVIRONMENT},
+            check=True,
+        ).stdout.decode("ascii").strip()
+        git(self.repo, "replace", real_id, fake_id)
+        self.assertEqual(git(self.repo, "show", "HEAD:contracts/source.txt").encode("utf-8"), fake)
+        self.assertEqual(self.run_gate(), (0, "requirements=1 specs=1 defects=0\n", ""))
+        self.write_spec("test_one.py", self.header(("R-1",), (f"contracts/source.txt sha256:{sha(fake)}",)))
+        self.assertEqual(self.codes(), ["SOURCE_DIGEST_MISMATCH"])
+
+    def test_every_git_child_ignores_replace_refs_and_never_fetches(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        spy = GitSpy()
+        with mock.patch.object(contract_gate.subprocess, "run", spy):
+            self.assert_green()
+        self.assertGreaterEqual(len(spy.calls), 4)
+        for call in spy.calls:
+            self.assertIn("--no-replace-objects", call.command, call.command)
+            self.assertEqual((call.env or {}).get("GIT_NO_REPLACE_OBJECTS"), "1", call.command)
+            self.assertEqual((call.env or {}).get("GIT_NO_LAZY_FETCH"), "1", call.command)
+
+    def test_the_git_environment_overrides_a_hostile_replace_or_fetch_setting(self) -> None:
+        with mock.patch.dict(os.environ, {"GIT_NO_REPLACE_OBJECTS": "0", "GIT_NO_LAZY_FETCH": "0"}):
+            environment = contract_gate._git_environment()
+        self.assertEqual((environment["GIT_NO_REPLACE_OBJECTS"], environment["GIT_NO_LAZY_FETCH"]), ("1", "1"))
+
+    def test_git_configuration_variables_never_reach_git_and_do_not_change_the_result(self) -> None:
+        self.write_snapshot(("R-1", "active"))
+        self.good_spec("test_one.py", "R-1")
+        baseline = self.run_gate()
+        self.assertEqual(baseline, (0, "requirements=1 specs=1 defects=0\n", ""))
+        bare = self.base / "bare.config"
+        bare.write_text("[core]\n\tbare = true\n", encoding="utf-8")
+        hostile = {
+            "GIT_CONFIG": str(bare),
+            "GIT_CONFIG_GLOBAL": str(bare),
+            "GIT_CONFIG_SYSTEM": str(bare),
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "core.bare",
+            "GIT_CONFIG_VALUE_0": "true",
+            "GIT_CONFIG_PARAMETERS": "'core.bare=true'",
+        }
+        for name, value in hostile.items():
+            with self.subTest(name), mock.patch.dict(os.environ, {name: value}):
+                self.assertNotIn(name, contract_gate._git_environment())
+                self.assertEqual(self.run_gate(), baseline)
+        with mock.patch.dict(os.environ, hostile):
+            self.assertEqual(self.run_gate(), baseline)
+
+    def test_the_environment_given_to_git_keeps_everything_else(self) -> None:
+        with mock.patch.dict(os.environ, {"GIT_DIR": "x", "GIT_AUTHOR_NAME": "kept", "SOME_OTHER": "kept too"}):
+            environment = contract_gate._git_environment()
+        self.assertNotIn("GIT_DIR", environment)
+        self.assertEqual((environment["GIT_AUTHOR_NAME"], environment["SOME_OTHER"]), ("kept", "kept too"))
+
+
+class SnapshotKeys(Case):
+    def expect_three(self, text: str) -> str:
+        self.snapshot.write_text(text, encoding="utf-8")
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out), (3, ""), err)
+        self.assertIn("is not a snapshot", err)
+        return err
+
+    def test_a_repeated_key_in_any_object_is_not_a_snapshot(self) -> None:
+        shapes = {
+            "top level": '{"rows": [], "rows": []}',
+            "escaped spelling of the same key": '{"rows": [], "\\u0072ows": []}',
+            "in a row": '{"rows": [{"requirement_id": "R-1", "requirement_id": "R-2", "status": "active"}]}',
+            "status repeated": '{"rows": [{"requirement_id": "R-1", "status": "active", "status": "retired"}]}',
+            "in an unrelated object": '{"rows": [], "meta": {"a": 1, "a": 2}}',
+            "in a nested list": '{"rows": [], "meta": [{"a": 1, "a": 1}]}',
+        }
+        for name, text in shapes.items():
+            with self.subTest(name):
+                self.assertIn("repeated", self.expect_three(text))
+
+    def test_keys_that_differ_are_not_repeated(self) -> None:
+        self.snapshot.write_text('{"rows": [], "ROWS": [], "Rows": []}', encoding="utf-8")
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out.strip(), err), (0, "requirements=0 specs=0 defects=0", ""))
+
+    def test_a_snapshot_with_no_repeated_key_is_read_as_before(self) -> None:
+        self.write_snapshot(("R-1", "active"), ("R-2", "retired"))
+        self.good_spec("test_one.py", "R-1")
+        self.assert_green()
+
+
+class LinksNotFollowed(Case):
+    def link(self, link: Path, target: Path, directory: bool = True) -> None:
+        """Make a symbolic link, or on Windows a junction; skip the test when neither can be made."""
+        try:
+            os.symlink(target, link, target_is_directory=directory)
+        except (OSError, NotImplementedError):
+            if os.name != "nt" or not directory:
+                self.skipTest("this host cannot make a link here")
+            made = subprocess.run(["cmd", "/c", "mklink", "/J", str(link), str(target)], capture_output=True, check=False)
+            if made.returncode != 0:
+                self.skipTest("this host cannot make a junction")
+        remove = os.rmdir if os.name == "nt" and directory else os.unlink
+        self.addCleanup(remove, link)
+
+    def prepare_outside(self) -> Path:
+        outside = self.repo / "elsewhere"
+        outside.mkdir()
+        (outside / "test_far.py").write_text("def test_far():\n    assert compute() == 3\n", encoding="utf-8")
+        return outside
+
+    def test_a_directory_link_or_junction_under_specs_is_not_followed(self) -> None:
+        outside = self.prepare_outside()
+        self.write_snapshot()
+        code, out, _ = self.run_gate(self.argv(outside))
+        self.assertEqual(code, 1, out)
+        self.assertEqual(len(out.splitlines()), 1, out)
+        self.link(self.specs / "linked", outside)
+        nested = self.specs / "deep" / "er"
+        nested.mkdir(parents=True)
+        self.link(nested / "again", outside)
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out.strip(), err), (0, "requirements=0 specs=0 defects=0", ""))
+
+    def test_a_link_to_a_spec_file_is_not_followed(self) -> None:
+        outside = self.prepare_outside()
+        self.write_snapshot()
+        self.link(self.specs / "test_linked.py", outside / "test_far.py", directory=False)
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out.strip(), err), (0, "requirements=0 specs=0 defects=0", ""))
+
+    def test_real_directories_beside_a_link_are_still_walked(self) -> None:
+        outside = self.prepare_outside()
+        self.write_snapshot(("R-1", "active"))
+        self.link(self.specs / "linked", outside)
+        self.write_spec("real/test_real.py", self.header(("R-1",)))
+        code, out, err = self.run_gate()
+        self.assertEqual((code, out.strip(), err), (0, "requirements=1 specs=1 defects=0", ""))
+
+
+class OneLineMessages(Case):
+    def test_a_usage_message_with_hostile_text_is_two_lines_and_forges_nothing(self) -> None:
+        for hostile in ("--bogus\nCODE forged", "--bogus\r\nCODE forged", "--bogus\u2028x\u0085y", "--bogus\x1b[2J\x00", "--bogus\udc80"):
+            with self.subTest(hostile):
+                code, out, err = self.run_gate([hostile])
+                self.assertEqual((code, out), (3, ""))
+                lines = err.splitlines()
+                self.assertEqual(len(lines), 2, repr(err))
+                self.assertEqual(err.count("\n"), 2, repr(err))
+                self.assertTrue(lines[0].startswith("usage: "), lines[0])
+                self.assertTrue(lines[1].startswith("contract_gate.py: error: unknown option or argument "), lines[1])
+                self.assertTrue(all(char.isprintable() for char in err.replace("\n", "")), repr(err))
+
+    def test_a_hostile_snapshot_error_is_one_escaped_line(self) -> None:
+        self.write_snapshot()
+        name = self.base / "snap\u2028shot\u0085.json"
+        try:
+            name.write_text("not json", encoding="utf-8")
+        except OSError:
+            self.skipTest("this file system refuses the name")
+        code, out, err = self.run_gate(self.argv_with_snapshot(name))
+        self.assertEqual((code, out), (3, ""))
+        self.assertEqual(len(err.splitlines()), 2, repr(err))
+        self.assertIn("\\u2028", err)
+
+    def argv_with_snapshot(self, snapshot: Path) -> list[str]:
+        return ["--repo", str(self.repo), "--snapshot", str(snapshot), "--specs", str(self.specs)]
+
+    def test_a_hostile_missing_snapshot_is_one_escaped_fault_line(self) -> None:
+        missing = self.base / "gone\u2028\u0085.json"
+        code, out, err = self.run_gate(self.argv_with_snapshot(missing))
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(len(err.splitlines()), 1, repr(err))
+        self.assertEqual(err.count("\n"), 1, repr(err))
+        self.assertIn("\\u2028", err)
+
+    def test_a_fault_with_a_hostile_label_and_message_is_one_line(self) -> None:
+        fault = contract_gate.ToolFault("LA\nBEL\u2028", "msg\r\nCODE forged\u0085\x1b\udc80")
+        with mock.patch.object(contract_gate, "run", side_effect=fault):
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(len(err.splitlines()), 1, repr(err))
+        self.assertEqual(err.count("\n"), 1, repr(err))
+        self.assertTrue(err.startswith("LA\\nBEL\\u2028 msg\\r\\nCODE forged"), repr(err))
+
+    def test_an_unexpected_error_with_a_hostile_message_is_one_line(self) -> None:
+        with mock.patch.object(contract_gate, "run", side_effect=RuntimeError("a\nb\u2028c\x1b")):
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(err, "TOOL_FAULT unexpected RuntimeError: a\\nb\\u2028c\\x1b\n")
+
+    def test_the_real_command_line_prints_one_line_for_a_fault_and_two_for_a_usage_error(self) -> None:
+        fault = subprocess.run([sys.executable, str(SCRIPT), *self.argv()], capture_output=True, text=True)
+        self.assertEqual((fault.returncode, fault.stdout, len(fault.stderr.splitlines())), (2, "", 1))
+        usage = subprocess.run([sys.executable, str(SCRIPT), "--x\nforged"], capture_output=True, text=True)
+        self.assertEqual((usage.returncode, usage.stdout, len(usage.stderr.splitlines())), (3, "", 2))
+        self.assertNotIn("Traceback", fault.stderr + usage.stderr)
+
+
 class ReadmeNamesEveryScript(unittest.TestCase):
-    NUMBER_WORDS = {"Two": 2, "Three": 3, "Four": 4, "Five": 5, "Six": 6, "Seven": 7, "Eight": 8}
+    NUMBER_WORDS = {
+        "Two": 2,
+        "Three": 3,
+        "Four": 4,
+        "Five": 5,
+        "Six": 6,
+        "Seven": 7,
+        "Eight": 8,
+        "Nine": 9,
+        "Ten": 10,
+        "Eleven": 11,
+        "Twelve": 12,
+        "Thirteen": 13,
+        "Fourteen": 14,
+        "Fifteen": 15,
+        "Sixteen": 16,
+        "Seventeen": 17,
+        "Eighteen": 18,
+        "Nineteen": 19,
+        "Twenty": 20,
+    }
 
     def setUp(self) -> None:
         self.readme = (_SCRIPTS / "README.md").read_text(encoding="utf-8")
@@ -1057,6 +1914,11 @@ class ReadmeNamesEveryScript(unittest.TestCase):
     def test_the_introduction_counts_the_scripts_that_exist(self) -> None:
         word = self.introduction.split("# Gate scripts", 1)[1].split()[0]
         self.assertEqual(self.NUMBER_WORDS.get(word), len(self.scripts), word)
+
+    def test_the_number_words_run_from_two_to_twenty_without_a_gap(self) -> None:
+        self.assertEqual(sorted(self.NUMBER_WORDS.values()), list(range(2, 21)))
+        self.assertEqual(self.NUMBER_WORDS["Nine"], 9)
+        self.assertEqual(self.NUMBER_WORDS["Twenty"], 20)
 
     def test_the_unexpected_error_rule_names_every_script(self) -> None:
         paragraphs = [text for text in self.introduction.split("\n\n") if "unexpected error" in text]

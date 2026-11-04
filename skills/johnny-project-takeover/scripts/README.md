@@ -99,9 +99,19 @@ Checks that every requirement has a spec and every spec is bound and honest. The
 snapshot is a requirement snapshot file (a JSON object with a `rows` list whose rows
 carry `requirement_id` and `status`, `active` or `retired`). A `requirement_id` is 1 to
 128 characters from letters, digits, dot, underscore, colon, hyphen and slash, compared
-exactly and never stripped. The specs are every file named `test_*.py` (case-sensitive) under `--specs`, a directory
-inside `--repo`. A spec declares its contract in its first comment block, the leading run
-of lines that start with `#` (it ends at the first line that does not):
+exactly and never stripped. A key repeated in any object of the snapshot makes it not a
+snapshot. `--repo` must be the top level of a git work tree: a subdirectory of one, or a
+plain directory, is a tool fault. Every git child runs without the variables that pick a
+repository, a work tree or an object store (the git directory, work tree, index file,
+object directory, alternate object directories, namespace, ceiling directories, common
+directory and prefix variables) and without the git configuration variables, so an
+inherited one never changes the result. Every git child also ignores replace refs (the
+no-replace-objects option and its variable) and never fetches lazily (the no-lazy-fetch
+variable): a replace ref never redirects a lookup and a lookup never uses the network. The specs are
+every file named `test_*.py` (case-sensitive) under `--specs`, a directory inside `--repo`;
+symbolic links and Windows junctions under it are not followed. A spec declares its
+contract in its first comment block, the leading run of lines that start with `#` (it ends
+at the first line that does not):
 
     # requirement: <id>                          one or more, compared exactly
     # source: <repository path> sha256:<hex>    one or more, 64 lower-case hex
@@ -109,33 +119,54 @@ of lines that start with `#` (it ends at the first line that does not):
 
 Only the lower-case keys `requirement`, `source` and `mutation` are declarations; every
 other comment line (`# Note: ...`, `# SPDX-License-Identifier: ...`, `# Requirement: ...`)
-is free text and is ignored. A source is read as the blob at `HEAD` of `--repo`, never
-from the working tree, so the digest is the same on every host whatever its line-ending
-settings; an edit counts once it is committed.
+is free text and is ignored. Of a declared value only the spaces and tabs around it are
+removed. A value that holds a control character (the C0 range or DEL) or a lone surrogate
+is a red with the code of its key: `RETIRED_REQUIREMENT_BOUND` for a requirement,
+`SOURCE_MISSING` for a source, `NO_MUTATION` for a mutation, each naming the line.
+
+A spec is decoded the way Python decodes source: its coding declaration or UTF-8, with a
+byte order mark honoured. The decoded text is what is parsed, analysed and quoted, so
+offsets and text always agree. Everything derived from a spec's bytes (decoding, reading
+the declarations, parsing, walking the tree, rendering a detail) runs inside one per-spec
+guard: whatever exception it raises, it is a red of that spec, `LITERAL_EXPECTED` with a
+detail saying the spec cannot be analysed and why. Only reading a file from disk and
+running git can be a tool fault.
+
+A source is repository-relative and must be canonical: backslashes are read as slashes and
+one leading dot-slash is dropped, after which the path is not empty, is at most 1024 bytes
+in UTF-8, holds no control character, has no leading slash or colon and no drive letter,
+and has no empty, dot or dot-dot segment. A path that is not canonical is `SOURCE_MISSING`
+naming the line. A canonical path is looked up once, literally, as the blob at `HEAD` of
+`--repo`: the name is written to the standard input of `git cat-file` (`--batch-check`, then
+`--batch` for the content). It is never a pathspec and never on a command line, so glob
+and pathspec-magic characters match only themselves and the digest is the same on every
+host whatever its line-ending settings. A name that git reports `missing`, or that is not a
+blob (a directory or a submodule), is `SOURCE_MISSING`; names match exactly, including
+case. A tracked symbolic link is a blob of its link text and is never followed.
 
 Defects, one line `<code> <spec or requirement>: <detail>` each on stdout, the subject and
 the detail escaped so that a line break, a control character, U+2028 or a lone surrogate
 cannot split or forge a line:
 `NO_SPEC_FOR_REQUIREMENT` (an active requirement no spec declares), `SOURCE_MISSING`
-(a source that is not a regular file tracked at `HEAD`, escapes the repository, or whose
-declaration line is unusable; a spec that declares a requirement but no source),
-`SOURCE_DIGEST_MISMATCH` (sha256 of the blob differs), `RETIRED_REQUIREMENT_BOUND`
-(a spec declares a requirement that is retired or absent from the snapshot, or an empty
-`requirement:`), `LITERAL_EXPECTED` (an `assert` comparing with a number, string, bytes
-or a display of such constants, also inside `and`, `or`, `not`; `None`, `True` and `False`
-do not count; also a spec that does not parse, and an assertion the gate cannot analyse
-within its limits, such as a very deep nesting; the detail is the source text of the
-assertion, cut to 120 characters) and `NO_MUTATION` (a spec that declares a requirement
-has no mutation, or an empty `mutation:`). A source path is repository-relative: `./` and
-backslashes are normalised, names match exactly (a case variant is a miss), and `..` may
-not leave the repository.
+(a source that is not canonical or not a blob at `HEAD`, a declaration line that is
+unusable, or a spec that declares a requirement but no source), `SOURCE_DIGEST_MISMATCH`
+(sha256 of the blob differs), `RETIRED_REQUIREMENT_BOUND` (a spec declares a requirement
+that is retired or absent from the snapshot, or an empty `requirement:`), `LITERAL_EXPECTED`
+(an `assert` comparing with a number, string, bytes or a display of such constants, also
+inside `and`, `or`, `not`; `None`, `True` and `False` do not count; also a spec that does
+not parse or cannot be decoded, and an assertion the gate cannot analyse within its limits,
+such as a very deep nesting; the detail is the source text of the assertion, cut to 120
+characters) and `NO_MUTATION` (a spec that declares a requirement has no mutation, or an
+empty `mutation:`).
 
 Exit 0 prints `requirements=N specs=M defects=0` on stdout (N counts snapshot rows). Exit 1
 prints the defect lines on stdout and the same summary on stderr. Exit 2: the snapshot, a
-spec or a directory cannot be read, `--specs` or `--repo` is not a directory, git cannot
-serve a source query (not a repository, no commit at `HEAD`, git missing), a source is a
-URL (`SOURCE_UNSERVABLE`, a URL cannot be verified offline), or an unexpected error; a
-fault stops the run and no defect is printed. Exit 3: bad arguments, `--specs` outside
-`--repo`, or a snapshot argument that is not a snapshot (not JSON, no `rows`, a row whose
-`requirement_id` is outside the character set above or with a `status` other than
-`active` or `retired`, a repeated `requirement_id`).
+spec or a directory cannot be read, `--specs` or `--repo` is not a directory, `--repo` is
+not the top level of a git work tree, git cannot serve a source query (git missing, no
+commit at `HEAD`, a failure or an answer outside its format), a source is a URL
+(`SOURCE_UNSERVABLE`, a URL cannot be verified offline), or an unexpected error; a fault
+stops the run and no defect is printed. A red never exits 2 and a fault never exits 1.
+Exit 3: bad arguments, `--specs` outside `--repo`, or a snapshot argument that is not a
+snapshot (not JSON, a repeated key, no `rows`, a row whose `requirement_id` is outside the
+character set above or with a `status` other than `active` or `retired`, a repeated
+`requirement_id`). Fault and usage messages are escaped to one line as well.
