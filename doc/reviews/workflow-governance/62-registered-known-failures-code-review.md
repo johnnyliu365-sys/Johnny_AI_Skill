@@ -127,3 +127,78 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/62-rev01-initial
 reviewed_at: 2026-11-06
 ```
+
+## Revision01 correction review
+
+**Verdict: `APPROVED`.** Correction 1 rebuilt only the receipt, as the initial review asked. It closes S62-01, S62-02 and S62-03:
+- On the receipt as returned, the R4-2 evidence gate gives `cells=6 defects=0` and `receipt_check.py` gives 0 defects.
+- Every exit list follows its capture in order.
+- MA1 and MA2 are rerun on the full test file, and every referenced capture is LF.
+- The two STATEMENT corrections are accurate.
+
+The candidate is still `bb9c4502` with no new commit, so the initial review's code findings stand unchanged. No finding blocks approval. S62-04 to S62-08 are carried as Correction 1 routes them.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/62-registered-known-failures.md`, revision01, section "Correction 1" read at `cp/wave2-gates` `0c46ff07` |
+| Candidate | `bb9c4502ff4b0806787404d075f469fd42dea543`, unchanged. Local `cp/wave2-62-registered-known-failures`, `git ls-remote origin refs/heads/cp/wave2-62-registered-known-failures` and the seat worktree HEAD all name it. The seat worktree's porcelain is empty |
+| Commits | None new. `gh run list --branch cp/wave2-62-registered-known-failures` still shows only 42107768107 (`bb9c4502`) and 42105962123 (`076066f9`) |
+| Receipt | `.worktrees/62-registered-known-failures-out-c1/RETURN.md` (LF, 75409 bytes) |
+| Review worktree | `.worktrees/62-registered-known-failures-review`, detached at the candidate; porcelain empty before and after |
+| Scratch | `.worktrees/62-registered-known-failures-review-scratch/rev01c/` (`C_P9.txt`, `C_GATE.txt`, this section) |
+| Full suite | Not rerun. The candidate is unchanged, the seat's F1 capture is byte-identical to the one checked in the initial review, and my own locked F1 at this candidate (initial review, cell 17) stands |
+| References applied | `CodeReview.md` §5 (correction review, rule B); `review-checks.md` (receipt evidence; reviewer counter-mutation point 5, unfiltered output) |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| C1 | `receipt_check.py` | PASS | `receipt defects: 0`, exit 0; P1, T1, M1, C1, F1 and P9 `[ok]`; eight STATEMENT sections |
+| C2 | `evidence_gate.py`, three wave-1 tools, six cells | PASS | `cells=6 defects=0`, exit 0 (`C_GATE.txt`). It matches the seat's own gate capture `E1.txt` |
+| C3 | Exit lists against captures | PASS | My check (`rcheck.py`): P1 `1`=`1`, T1 `0`=`0`, M1 `0, 1, 1, 1, 1, 1, 1, 0` = capture `0,1,1,1,1,1,1,0`, C1 `0`=`0`, F1 `1`=`1`, P9 `0`=`0`. Every fenced block is byte-identical to its capture, and every cell names the candidate |
+| C4 | LF | PASS | 0 CR in `RETURN.md` and in all nine files of the out directory, including `F1_other_pytest_lf.txt` (281 bytes). That file equals the earlier `F1_other_pytest2.txt` with its CR bytes removed, byte for byte. The receipt names `F1_other_pytest2.txt` only to say it is no longer referenced. The only other `.txt` names in the receipt (`rev04-D1.txt`, `rev05-D4.txt`) are file paths inside pytest assertion output, not capture references |
+| C5 | New M1 capture | PASS | The first line records the clone command (`git clone -c core.autocrlf=false --no-hardlinks …/62-registered-known-failures C:/Temp/claude/jas62-mut/clone`), then `clone HEAD bb9c4502…`. MA1 now runs `pytest tests/test_atomic_conditional_replace_capability.py` (full file): `2 failed, 7 passed`, red on `test_acr6_exact_test_only_boundary` besides the host baseline acr2. MA2 (full file): `3 failed, 6 passed`, red on `test_acr6_exact_test_only_boundary` and `test_acr6_committed_candidate_diff_and_forbidden_paths`. MB1, MC1, MD1 and ME1 were rerun with the same results as before. Each run has its diff and unfiltered pytest output, and `porcelain=[]` after every restore. No `-k` or `deselected` remains |
+| C6 | Unchanged captures | PASS | `cmp`: `F1.txt`, `P1.txt`, `T1.txt`, `C1.txt` and `F1_lockwait2.txt` are byte-identical to the captures I checked in the initial review |
+| C7 | STATEMENT corrections | PASS | `diff` of the STATEMENT sections between the two receipts. The acr6 STATEMENT now says the live test is narrower: it pins a fact about `5763caf5` and no longer reads staged, unstaged or untracked paths, and the replica test still pins the full rule. That matches my RA1 (zero red) and RA2 (red). The roster STATEMENT now gives `_LifecycleFailure` 6df6885e, `AuthorityFinalizationFailure` 98bafbab (2026-08-25) and `ManagedArtifactWriteFailure` 1bca660f, which matches `git log -S`. The host-runs STATEMENT names the LF copy. No other receipt line changed except the M1 block, M1 `exit:`, the P9 capture and timing or temp-path lines inside pytest output |
+
+### Status of the revision01 findings
+
+| ID | Class | Status | Note |
+| --- | --- | --- | --- |
+| S62-01 | `EVIDENCE_DEFECT` | **Closed** | Cells C1, C2, C3 |
+| S62-02 | `EVIDENCE_DEFECT` | **Closed** | Cells C4, C5 |
+| S62-03 | `EVIDENCE_DEFECT` | **Closed** | Cell C7 |
+| S62-04 | `OUT_OF_SCOPE_HARDENING` | Carried | To a later hardening change (Correction 1) |
+| S62-05 | `OUT_OF_SCOPE_HARDENING` | Carried | With S62-06 (Correction 1) |
+| S62-06 | `OUT_OF_SCOPE_HARDENING` | Carried | To a later hardening change (Correction 1) |
+| S62-07 | `OUT_OF_SCOPE_HARDENING` (pre-existing P0 debt) | Carried | To a P0 cleanup ticket for the three test files (Correction 1) |
+| S62-08 | `REQUIREMENT_CHANGED` | Carried | To the owner's publication step. The four pin rows stay registered until the pinned commit is also reachable from a ref in this repository (Correction 1) |
+
+### New findings
+
+None.
+
+### Commands
+
+- `git fetch origin cp/wave2-62-registered-known-failures cp/wave2-gates`; `git rev-parse cp/wave2-62-registered-known-failures`; `git ls-remote origin refs/heads/cp/wave2-62-registered-known-failures`; `git -C .worktrees/62-registered-known-failures rev-parse HEAD` and `status --porcelain`; `gh run list --branch cp/wave2-62-registered-known-failures`
+- `git show 0c46ff07:modules/tickets/workflow-governance/62-registered-known-failures.md` (section "Correction 1")
+- `python -I -X utf8 doc/reviews/workflow-governance/evidence/48/receipt_check.py <out-c1>/RETURN.md <review>` → `receipt defects: 0`, exit 0
+- `python -I -X utf8 skills/johnny-project-takeover/scripts/evidence_gate.py <out-c1>/RETURN.md --repo <review> --candidate bb9c4502… --tool skills/johnny-project-takeover/scripts/dispatch_lint.py --tool skills/johnny-project-takeover/scripts/receipt_fence_check.py --tool skills/johnny-project-takeover/scripts/index_pins.py --require-cell P1 --require-cell T1 --require-cell M1 --require-cell C1 --require-cell F1 --require-cell P9 --evidence-root <out-c1>` → `cells=6 defects=0`, exit 0
+- `rcheck.py <out-c1>` (CR counts, fenced block versus capture, exit field versus `exit=` lines)
+- `cmp` of F1, P1, T1, C1 and F1_lockwait2 between the two out directories; `tr -d '\r' < F1_other_pytest2.txt | cmp - F1_other_pytest_lf.txt`
+- `diff` of the two `RETURN.md` files and of their STATEMENT sections; `grep` of the new `M1.txt` for its commands, summaries and `exit=` lines
+
+All commands were run directly, with no output-reducing wrapper. The gate outputs are saved in full.
+
+### Not verified
+
+- I did not rerun the seat's six mutations. I read their new capture. My own counter-mutations from the initial review stand, because the candidate is unchanged.
+- No full suite, as stated in the field table.
+- Everything listed under "Not verified" in the initial review still applies: the Linux-side flock mutation, per-test CI pass status, and the publication itself.
+
+```review-verdict
+candidate: bb9c4502ff4b0806787404d075f469fd42dea543
+verdict: APPROVED
+reviewer: seat:ticket-review/62-rev01-correction
+reviewed_at: 2026-11-06
+```

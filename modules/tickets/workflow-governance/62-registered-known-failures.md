@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/62-registered-known-failures-out/` / owner implementation seat / worktree `.worktrees/62-registered-known-failures` / branch `cp/wave2-62-registered-known-failures` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（revision01 initial review CHANGES_REQUESTED on `bb9c4502` for the receipt only (S62-01: the M1 exit list); correction 1 rebuilds the receipt, candidate unchanged） |
+| 狀態 | `REVIEW_APPROVED`（revision01 correction review APPROVED on `bb9c4502` with the rebuilt receipt `.worktrees/62-registered-known-failures-out-c1/RETURN.md`; record `doc/reviews/workflow-governance/62-registered-known-failures-code-review.md`; ready for integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/62-registered-known-failures` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/62-registered-known-failures-review` |
