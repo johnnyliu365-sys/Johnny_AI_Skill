@@ -1,0 +1,54 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.os_name }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            os_name: linux
+          - runner: windows-latest
+            os_name: windows
+    env:
+      PYTHONUTF8: "1"
+    defaults:
+      run:
+        shell: bash
+    steps:
+      # actions/checkout v6.1.0
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # actions/setup-python v6.3.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.11"
+      - name: Neutral git identity for tests that commit
+        run: |
+          git config --global user.name "ci"
+          git config --global user.email "ci@users.noreply.invalid"
+      - name: Install development requirements
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+      - name: Run the whole test suite
+        # The pytest exit is not the job's result; the checker below is. A run that
+        # produces no junit report makes the checker exit 2.
+        run: |
+          python -m pytest tests -q -p no:cacheprovider -rf --junitxml="$RUNNER_TEMP/junit.xml" || echo "pytest exit=$?"
+      - name: Compare failures with the registered list
+        run: |
+          python ci/check_registered_failures.py --os ${{ matrix.os_name }} --junit "$RUNNER_TEMP/junit.xml"
