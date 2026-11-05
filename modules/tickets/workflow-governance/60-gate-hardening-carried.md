@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/60-gate-hardening-carried-out/` / owner implementation seat / worktree `.worktrees/60-gate-hardening-carried` / branch `cp/wave2-60-gate-hardening-carried` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（revision01 implementation returned (`98e31351`, `6dc1dd25`, candidate `1c0fb917`); initial review dispatched） |
+| 狀態 | `REVIEW_APPROVED`（revision01 initial review APPROVED on `1c0fb917`; record `doc/reviews/workflow-governance/60-gate-hardening-carried-code-review.md`; ready for integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/60-gate-hardening-carried` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/60-gate-hardening-carried-review` |
@@ -131,3 +131,15 @@ Unchanged and still binding: red before fault, text values with one line per pri
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Carried after approval
+
+The revision01 initial review approved `1c0fb917` with five non-blocking findings. The control plane routes them as follows:
+
+| Finding | Route |
+| --- | --- |
+| S60-01 | an inherited `GIT_TEST_COMMIT_GRAPH` re-enables the commit-graph the S54-17 flag turns off. This is in the forged-store class the R4-4 integration clone settles, so it does not block. It goes with the next change of the coverage-map guard: drop every `GIT_TEST_*` name from the child environment, add a test, and correct the README sentence. The same environment rule goes into ticket 50's next revision for `integrate.py` |
+| S60-02 | carried to wave 3 with S55-11 and S55-26 (job object or signal handler) |
+| S60-03 | the next change of the contract gate: pin the SHA-256 width of the hash comparison |
+| S60-04 | the next change of the preflight gate: interrupt the standard-error flush too |
+| S60-05 | evidence only, receipt of this ticket; the reviewer's unfiltered rerun stands |
