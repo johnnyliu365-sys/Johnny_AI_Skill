@@ -234,3 +234,22 @@ reviewed_at: 2026-11-05
 ### Control-plane disposition (2026-11-05): held for the owner
 
 The blocking item, S54-16, is an evidence gap on a behaviourally correct candidate; S54-17 is a forged-store door of the class the fourth spec correction (R4-4 trust boundary) addresses, with a one-flag hardening available (`-c core.commitGraph=false` on every git child). Both outcomes depend on owner decisions now open: the convergence rule and the R4-4 trust boundary. The control plane does not open revision04. Under the proposed convergence rule this candidate would be approvable with S54-16 carried and S54-17 taken as the one-flag hardening in the next change; under the current rule revision04 opens on the owner's word.
+
+### Convergence disposition (2026-11-05, CodeReview §5 rule B)
+
+The owner approved rule B and the R4-4 trust boundary on 2026-11-05. No open finding changes an exit code on the candidate; the commit-graph door S54-17 needs write access to the store and is closed at integration by the owner-confirmed R4-4 trust boundary. Every open finding is in the class that does not block approval; the reviewer's verdict block above is unchanged.
+
+| Finding | Class | Carried to |
+| --- | --- | --- |
+| S54-16 | EVIDENCE_DEFECT | later gate-hardening ticket |
+| S54-17 | forged-store class (commit-graph) | settled by the R4-4 trust boundary (a fetched integration clone carries no seat commit-graph); the one-flag hardening `-c core.commitGraph=false` goes to the next change of this gate |
+
+```convergence-disposition
+candidate: 763284bfa9dff9db330b9f6ec357ba836f7a837f
+reviewer_verdict: CONVERGENCE_REVIEW_REQUIRED (seat:ticket-review/54-rev03-correction)
+disposition: APPROVED
+rule: CodeReview §5 rule B (owner-approved 2026-11-05)
+carried:
+  - S54-16
+  - S54-17
+```

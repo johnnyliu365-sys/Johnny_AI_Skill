@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用（Revision 04 does not seal a new Context） |
 | Agent Context binding | ticket revision04 / receipt under `doc/reviews/workflow-governance/evidence/51/` / owner implementation seat / worktree `.worktrees/51-evidence-gate` / branch `cp/wave2-51-evidence-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_HELD`（revision04 correction review `CONVERGENCE_REVIEW_REQUIRED` on `e7594f65`: S51-26 evidence only; S51-30 forged-store class; held for the owner's convergence-rule and R4-4 trust-boundary decisions） |
+| 狀態 | `REVIEW_APPROVED`（candidate `e7594f65`; correction review CONVERGENCE_REVIEW_REQUIRED, approved under CodeReview §5 rule B and the R4-4 trust boundary on 2026-11-05 with findings carried; awaiting integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/51-evidence-gate` |
 | 審閱者 | `ticket-review` seat, its own worktree `.worktrees/51-evidence-gate-review` |
@@ -194,3 +194,11 @@ The opening paragraph still said exit 2 whenever git cannot serve the check; the
 ### Correction 1 under revision04 (after the revision04 initial review `CHANGES_REQUESTED`)
 
 No ticket defect was found, so revision04 stands. S51-22: a digest value is judged for form (64 lower-case hex) and repeated values for one path are compared before the lookup and whatever the lookup's outcome, so these reds are reported beside a fault on that lookup; one test per shape and per fault kind. S51-23: a test for an unexpected error in `verify` and in the `--tool` loop reaching `main`'s generic branch (exit 2, one line). S51-24: the not-a-repository test builds its plain directory inside a temporary work tree's sibling with no repository above it, and checks the not-a-repository fault text; the README lists a non-blob `--tool` under the codes it produces. The next review is the one correction review of revision04.
+
+### Carried after approval (CodeReview §5 rule B)
+
+- S51-26 (EVIDENCE_DEFECT): later gate-hardening ticket.
+- S51-27 (IMPLEMENTATION_DEFECT (documentation only)): the next change of this gate (one README sentence).
+- S51-28 (OUT_OF_SCOPE_HARDENING): later gate-hardening ticket.
+- S51-29 (OUT_OF_SCOPE_HARDENING): later gate-hardening ticket.
+- S51-30 (forged-object class): settled by the R4-4 trust boundary (integration clone with transfer.fsckObjects).

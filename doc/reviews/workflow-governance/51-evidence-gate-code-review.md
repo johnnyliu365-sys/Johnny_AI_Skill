@@ -301,3 +301,28 @@ reviewed_at: 2026-11-05
 ### Control-plane disposition (2026-11-05): held for the owner
 
 The blocking item, S51-26, is an evidence gap on a behaviourally correct candidate (three more fault kinds in one test table); S51-27 is one sentence; S51-30 is the forged-object class of the R4-4 trust-boundary proposal. The outcomes depend on the open owner decisions (the convergence rule and R4-4). The control plane does not open revision05. Under the proposed convergence rule this candidate would be approvable with S51-26 to S51-29 carried, and S51-30 settled by R4-4 or by hashing each object as tickets 53 and 56 do.
+
+### Convergence disposition (2026-11-05, CodeReview §5 rule B)
+
+The owner approved rule B and the R4-4 trust boundary on 2026-11-05. No open finding changes an exit code; the forged-object door S51-30 is closed at integration by the owner-confirmed R4-4 trust boundary. Every open finding is in the class that does not block approval; the reviewer's verdict block above is unchanged.
+
+| Finding | Class | Carried to |
+| --- | --- | --- |
+| S51-26 | EVIDENCE_DEFECT | later gate-hardening ticket |
+| S51-27 | IMPLEMENTATION_DEFECT (documentation only) | the next change of this gate (one README sentence) |
+| S51-28 | OUT_OF_SCOPE_HARDENING | later gate-hardening ticket |
+| S51-29 | OUT_OF_SCOPE_HARDENING | later gate-hardening ticket |
+| S51-30 | forged-object class | settled by the R4-4 trust boundary (integration clone with transfer.fsckObjects) |
+
+```convergence-disposition
+candidate: e7594f65eb9896546faf33a14686fa3a73f714bc
+reviewer_verdict: CONVERGENCE_REVIEW_REQUIRED (seat:ticket-review/51-rev04-correction)
+disposition: APPROVED
+rule: CodeReview §5 rule B (owner-approved 2026-11-05)
+carried:
+  - S51-26
+  - S51-27
+  - S51-28
+  - S51-29
+  - S51-30
+```
