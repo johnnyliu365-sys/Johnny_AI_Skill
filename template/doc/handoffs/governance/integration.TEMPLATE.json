@@ -1,0 +1,10 @@
+{
+  "remote": "<remote URL or path>",
+  "branch": "<integration branch>",
+  "queue_branch": "<integration branch>-queue",
+  "queue_path": "doc/handoffs/<year>/governance/MERGE-QUEUE.json",
+  "spec_command": ["<spec runner>", "<runner argument>"],
+  "invariant_command": ["<invariant runner>", "<runner argument>"],
+  "ci_status_command": ["<ci status tool>", "<tool argument>", "{sha}"],
+  "timeout_seconds": 600
+}

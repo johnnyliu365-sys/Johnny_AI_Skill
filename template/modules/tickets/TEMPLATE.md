@@ -10,7 +10,7 @@
 | Sealed Context binding | `<shared revision/digest + exact feature Context revision/digest>`／不適用 |
 | Agent Context binding | `<ticket revision / receipt / owner / worktree / branch / baseline / side_context_id>` |
 | 實作語言 | 填入 `CONTEXT.md` › `## 實作語言規範` 的**統一後端語言**（不是從清單挑選）。偏離須先滿足該節觸發條件、有實測依據並經需求變更核准。**實作者不得自行決定**；未填不得進入 `implement`，審閱一律 `BLOCKED`。 |
-| 狀態 | `PLANNED`／`IN_PROGRESS`／`BLOCKED`／`DONE`／`SUPERSEDED` |
+| 狀態 | `<STATE>`; dispatch=sha256:<64 lower-case hex of the dispatch file>; receipt `<repository-relative receipt path>`. `<STATE>` is one of `PLANNED`／`IN_PROGRESS`／`BLOCKED`／`DONE`／`SUPERSEDED`／`REVIEW_APPROVED`／`CONVERGENCE_REPLANNED`. The `dispatch=` and receipt parts are present while a dispatch is pending; the digest is the sha256 of the dispatch file's bytes, written as 64 lower-case hex digits. |
 | 共同基準 | `<docs-only commit SHA>` |
 | 實作者 | `<AI／worktree>` |
 | 審閱者 | `<AI／worktree>` |
