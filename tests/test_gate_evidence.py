@@ -1421,36 +1421,40 @@ class RedBeforeFaultTests(GateTestCase):
 
 
 def directory_without_repository_above(test: unittest.TestCase) -> Path:
-    """A new empty directory that no repository contains, found without trusting where the temporary directory lies.
+    """A new directory inside the temporary directory that git does not accept as a repository, on any host.
 
-    Several roots are tried (the temporary directory, its drive or file-system root, the root of the current drive)
-    and each candidate is proved by git itself, asked as the gate asks it, to lie in no repository.
+    Whether the temporary directory itself lies inside a repository is not trusted: the directory holds a `.git`
+    file that names a git directory which does not exist, so git stops there instead of looking above it. Only the
+    temporary directory is used (never the root of a drive), and the exit code git gives is the proof, not its text.
     """
-    temporary = Path(tempfile.gettempdir())
-    for root in (temporary, Path(temporary.anchor), Path(os.sep)):
-        if not root.is_dir():
-            continue
-        try:
-            holder = tempfile.TemporaryDirectory(prefix="evgate-plain-", dir=root)
-        except OSError:
-            continue
-        probe = subprocess.run(
-            ["git", "-C", holder.name, "rev-parse", "--git-dir"],
-            capture_output=True,
-            env=evidence_gate.git_environment(os.environ),
-        )
-        if probe.returncode != 0 and b"not a git repository" in probe.stderr:
-            test.addCleanup(holder.cleanup)
-            return Path(holder.name)
-        holder.cleanup()
-    test.fail("no directory without a repository above it could be made on this host")
+    holder = tempfile.TemporaryDirectory(prefix="evgate-plain-")
+    test.addCleanup(holder.cleanup)
+    directory = Path(holder.name)
+    (directory / ".git").write_text("gitdir: " + str(directory / "no-such-git-directory") + "\n", encoding="utf-8")
+    probe = subprocess.run(
+        ["git", "-C", str(directory), "rev-parse", "--git-dir"],
+        capture_output=True,
+        env=evidence_gate.git_environment(os.environ),
+    )
+    if probe.returncode == 0:
+        test.fail("git accepted a directory whose .git file names no git directory")
+    return directory
 
 
 class DigestValueBeforeLookupTests(unittest.TestCase):
     """Revision04 correction 2 (S51-22): a digest value's form and a disagreement between the values of one path
     are judged before the lookup and whatever its outcome, so these reds stand beside a fault on that lookup."""
 
-    OUTCOMES = ("served", "pruned blob", "git cannot start", "unknown candidate", "repository is not a repository")
+    OUTCOMES = (
+        "served",
+        "pruned blob",
+        "git cannot start",
+        "unknown candidate",
+        "repository is not a repository",
+        "cat-file exits non-zero",  # ticket 60, S51-26
+        "cat-file answers outside its format",
+        "root tree cannot be served",
+    )
     TARGETS = (OTHER_TOOL_PATH, TOOL_PATH)  # an extra listed path, and the path of the required tool itself
 
     def run_outcome(self, outcome: str, target: str, values: Sequence[str]) -> tuple[int, str, str]:
@@ -1469,8 +1473,22 @@ class DigestValueBeforeLookupTests(unittest.TestCase):
         fx.write_receipt(fx.cell("A", candidate=candidate, digests=digests).render())
         if outcome == "pruned blob":
             prune_loose_object(fx.repo, git(fx.repo, "rev-parse", f"{candidate}:{target}").strip())
+        if outcome == "root tree cannot be served":
+            prune_loose_object(fx.repo, git(fx.repo, "rev-parse", f"{candidate}^{{tree}}").strip())
         if outcome == "git cannot start":
             with mock.patch.object(evidence_gate.subprocess, "run", side_effect=FileNotFoundError("git")):
+                return fx.run(candidate=candidate, repo=repo)
+        if outcome in ("cat-file exits non-zero", "cat-file answers outside its format"):
+            real_run_git = evidence_gate.run_git
+            if outcome == "cat-file exits non-zero":
+                failing = evidence_gate.GitResult(128, b"", "fatal: boom")
+            else:
+                failing = evidence_gate.GitResult(0, b"garbage\n", "")
+
+            def run_git(repository: Path, args: Sequence[str], stdin: bytes | None = None) -> evidence_gate.GitResult:
+                return failing if args and args[0] == "cat-file" else real_run_git(repository, args, stdin)
+
+            with mock.patch.object(evidence_gate, "run_git", run_git):
                 return fx.run(candidate=candidate, repo=repo)
         return fx.run(candidate=candidate, repo=repo)
 
@@ -1534,6 +1552,105 @@ class DigestValueBeforeLookupTests(unittest.TestCase):
                 code, out, err = self.run_outcome(outcome, OTHER_TOOL_PATH, [good, good])
                 self.assertEqual((code, out), (2, ""), err)
                 self.assertEqual(len(err.splitlines()), 1, err)
+
+
+class DigestValueCountTests(GateTestCase):
+    """Ticket 60 (S51-28): how many reds the values of one path give. One red per malformed occurrence, one
+    disagreement red per path whatever the number of distinct values, and a value beside its upper-case copy is a
+    disagreement as well as a malformed value."""
+
+    GOOD = sha256(OTHER_TOOL_BODY)
+
+    def listing(self, *entries: str) -> tuple[list[str], str, str]:
+        spec = self.fx.cell("A", digests=self.fx.good_digests() + list(entries))
+        self.fx.write_receipt(spec.render())
+        code, out, err = self.fx.run()
+        self.assertEqual(code, 1, out + err)
+        self.assertEqual(err, "")
+        return out.splitlines(), out, err
+
+    def test_each_occurrence_of_a_malformed_value_is_one_red_even_when_it_repeats(self) -> None:
+        bad = "z" * 64
+        lines, out, _ = self.listing(f"{OTHER_TOOL_PATH}={bad}", f"{OTHER_TOOL_PATH}={bad}")
+        self.assertEqual(sum("not 64 lower-case hex digits" in line for line in lines), 2, out)
+        self.assertEqual(sum("different values" in line for line in lines), 0, out)
+        self.assertEqual(lines[-1], "cells=1 defects=2")
+
+    def test_distinct_malformed_values_are_one_red_each_and_one_disagreement(self) -> None:
+        lines, out, _ = self.listing(f"{OTHER_TOOL_PATH}={'y' * 64}", f"{OTHER_TOOL_PATH}={'z' * 64}")
+        self.assertEqual(sum("not 64 lower-case hex digits" in line for line in lines), 2, out)
+        self.assertEqual(sum("is listed with 2 different values" in line for line in lines), 1, out)
+        self.assertEqual(lines[-1], "cells=1 defects=3")
+
+    def test_three_different_values_for_one_path_are_one_disagreement_red(self) -> None:
+        lines, out, _ = self.listing(*(f"{OTHER_TOOL_PATH}={sha256(name)}" for name in (b"one", b"two", b"three")))
+        self.assertEqual(len(lines), 2, out)
+        self.assertIn("TOOL_DIGEST_STALE A: ", lines[0])
+        self.assertIn("is listed with 3 different values", lines[0])
+        self.assertEqual(lines[1], "cells=1 defects=1")
+
+    def test_every_disagreeing_path_has_its_own_disagreement_red(self) -> None:
+        spec = self.fx.cell(
+            "A",
+            digests=[
+                f"{TOOL_PATH}={sha256(TOOL_BODY)}",
+                f"{TOOL_PATH}={sha256(b'other')}",
+                f"{OTHER_TOOL_PATH}={self.GOOD}",
+                f"{OTHER_TOOL_PATH}={sha256(b'again')}",
+            ],
+        )
+        self.fx.write_receipt(spec.render())
+        code, out, err = self.fx.run()
+        self.assertEqual((code, err), (1, ""), out)
+        lines = out.splitlines()
+        self.assertEqual(len(lines), 3, out)
+        self.assertEqual(sum(line.startswith(f"TOOL_DIGEST_STALE A: {TOOL_PATH} is listed with 2 different values") for line in lines), 1, out)
+        self.assertEqual(sum(line.startswith(f"TOOL_DIGEST_STALE A: {OTHER_TOOL_PATH} is listed with 2 different values") for line in lines), 1, out)
+        self.assertEqual(lines[-1], "cells=1 defects=2")
+
+    def test_a_value_beside_its_upper_case_copy_is_a_disagreement_and_a_malformed_value(self) -> None:
+        lines, out, _ = self.listing(f"{OTHER_TOOL_PATH}={self.GOOD}", f"{OTHER_TOOL_PATH}={self.GOOD.upper()}")
+        self.assertEqual(len(lines), 3, out)
+        self.assertEqual(sum("is listed with 2 different values" in line for line in lines), 1, out)
+        self.assertEqual(sum(f"lists '{self.GOOD.upper()}', which is not 64 lower-case hex digits" in line for line in lines), 1, out)
+        self.assertEqual(lines[-1], "cells=1 defects=2")
+
+    def test_an_upper_case_value_beside_the_same_upper_case_value_is_two_malformed_reds_and_no_disagreement(self) -> None:
+        lines, out, _ = self.listing(f"{OTHER_TOOL_PATH}={self.GOOD.upper()}", f"{OTHER_TOOL_PATH}={self.GOOD.upper()}")
+        self.assertEqual(sum("not 64 lower-case hex digits" in line for line in lines), 2, out)
+        self.assertEqual(sum("different values" in line for line in lines), 0, out)
+
+
+class NonBlobToolTests(GateTestCase):
+    """Ticket 60 (S51-27): a `--tool` that is not a blob at the candidate is a fault on standard error and a red in every
+    cell: MISSING when the cell lists no digest for it, STALE when it lists one; the exit is always 1."""
+
+    NOT_BLOBS = ("tools", "tools/absent.py", f"{TOOL_PATH}/below.py")
+
+    def run_tool(self, tool: str, listed: bool) -> tuple[int, list[str], str, str]:
+        digests = self.fx.good_digests() + ([f"{tool}={sha256(b'x')}"] if listed else [])
+        spec_a, spec_b = self.fx.cell("A", digests=digests), self.fx.cell("B", digests=digests)
+        self.fx.write_receipt(spec_a.render(), spec_b.render())
+        code, out, err = self.fx.run(tools=[TOOL_PATH, tool])
+        return code, self.fx.codes(out), out, err
+
+    def test_a_tool_that_no_cell_lists_is_missing_in_every_cell_and_the_exit_is_one(self) -> None:
+        for tool in self.NOT_BLOBS:
+            with self.subTest(tool=tool):
+                code, codes, out, err = self.run_tool(tool, listed=False)
+                self.assertEqual((code, codes), (1, ["TOOL_DIGEST_MISSING", "TOOL_DIGEST_MISSING"]), out)
+                self.assertEqual(len(err.splitlines()), 1, err)
+                self.assertTrue(err.startswith("tool fault: "), err)
+                self.assertIn("is not a blob", err)
+
+    def test_a_tool_that_each_cell_lists_is_stale_in_every_cell_and_the_exit_is_one(self) -> None:
+        for tool in self.NOT_BLOBS:
+            with self.subTest(tool=tool):
+                code, codes, out, err = self.run_tool(tool, listed=True)
+                self.assertEqual((code, codes), (1, ["TOOL_DIGEST_STALE", "TOOL_DIGEST_STALE"]), out)
+                self.assertNotIn("TOOL_DIGEST_MISSING", out)
+                self.assertEqual(len(err.splitlines()), 1, err)
+                self.assertTrue(err.startswith("tool fault: "), err)
 
 
 class ExitLineTests(GateTestCase):
@@ -1775,8 +1892,8 @@ class FaultTests(GateTestCase):
         self.assertEqual(out, "")
         self.assertEqual(len(err.splitlines()), 1, err)
         self.assertTrue(err.startswith("tool fault: "), err)
-        self.assertIn("is not a usable git repository", err)
-        self.assertIn("not a git repository", err)
+        self.assertIn(plain.name, err)  # the path is escaped in the message, its last component is not changed
+        self.assertIn(" is not a usable git repository", err)  # the gate's own text, not git's wording
         self.assertNotIn("cannot resolve candidate", err)
 
     def test_repo_directory_does_not_exist(self) -> None:

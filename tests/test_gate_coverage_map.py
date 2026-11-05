@@ -6,10 +6,12 @@ id, count and message part is derived from the sources the fixture wrote.
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import io
 import json
 import os
 import stat
+import struct
 import subprocess
 import sys
 import tempfile
@@ -1061,6 +1063,37 @@ class FaultTests(GuardCase):
                 else:
                     self.assert_fault(result)
 
+    # ticket 60, S54-16: the match starts at the first character of the id and is case-sensitive
+    def test_a_carried_target_is_in_an_unreadable_spec_only_without_an_extra_leading_segment_and_in_the_same_case(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        unreadable = "specs/test_b.py"
+        for target in (
+            "x/" + tid(unreadable, "test_two"),
+            "./" + tid(unreadable, "test_two"),
+            "/" + tid(unreadable, "test_two"),
+            "specs/" + tid(unreadable, "test_two"),
+            "..::" + tid(unreadable, "test_two"),
+            tid("Specs/test_b.py", "test_two"),
+            tid("specs/Test_b.py", "test_two"),
+            tid("specs/test_b.PY", "test_two"),
+            tid("SPECS/TEST_B.PY", "test_two"),
+            tid(unreadable, "test_two").upper(),
+        ):
+            with self.subTest(target=target):
+                carried = map_text(row(tid(SPEC_A, "test_two"), "carried", target))
+                candidate = self.repo.commit({SPEC_A: functions("test_one"), unreadable: "def (:\n", MAP: carried})
+                result = run(self.repo, base, candidate)
+                self.assert_red_with_faults(result, 1, "CARRIED_TARGET_MISSING")
+
+    def test_a_carried_target_in_an_unreadable_spec_is_not_judged_whatever_the_test_name_after_the_separator(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        unreadable = "specs/test_b.py"
+        for target in (tid(unreadable, "test_two"), tid(unreadable, "TEST_TWO"), tid(unreadable, "Inner", "test_two"), tid(unreadable, "x/y")):
+            with self.subTest(target=target):
+                carried = map_text(row(tid(SPEC_A, "test_two"), "carried", target))
+                candidate = self.repo.commit({SPEC_A: functions("test_one"), unreadable: "def (:\n", MAP: carried})
+                self.assert_fault(run(self.repo, base, candidate))
+
     def test_a_red_is_reported_when_opening_a_side_fails_with_an_error_that_is_not_a_tool_fault(self) -> None:
         base = self.repo.commit({SPEC_A: functions("test_one")})
         candidate = self.repo.commit({MAP: "{nope"})
@@ -1519,6 +1552,62 @@ class GitEnvironmentTests(GuardCase):
             self.assertEqual(len(given), 1, variables)
             self.assertNotEqual(given[0], str(inherited))
             self.assertFalse(os.path.lexists(given[0]), given[0])
+
+    # ticket 60, S54-17: git takes parents from the commit-graph file, which a writer of the store could forge
+    def forge_commit_graph(self, victim: str, new_parent: str) -> None:
+        """Write a commit-graph of every reachable commit, then make `new_parent` the first parent of `victim` in it."""
+        git(self.repo.dir, "-c", "commitGraph.generationVersion=1", "commit-graph", "write", "--reachable", "--no-changed-paths")
+        path = self.repo.dir / ".git" / "objects" / "info" / "commit-graph"
+        data = bytearray(path.read_bytes())
+        self.assertEqual(bytes(data[:4]), b"CGPH")
+        chunks: dict[bytes, int] = {}
+        for index in range(data[6] + 1):
+            offset = 8 + 12 * index
+            chunks[bytes(data[offset : offset + 4])] = struct.unpack(">Q", data[offset + 4 : offset + 12])[0]
+        first_oid, commit_data = chunks[b"OIDL"], chunks[b"CDAT"]
+        ids = [bytes(data[first_oid + 20 * n : first_oid + 20 * n + 20]).hex() for n in range((commit_data - first_oid) // 20)]
+        record = commit_data + 36 * ids.index(victim)
+        struct.pack_into(">I", data, record + 20, ids.index(new_parent))  # the first parent
+        data[-20:] = hashlib.sha1(bytes(data[:-20])).digest()
+        os.chmod(path, 0o666)
+        path.write_bytes(bytes(data))
+
+    def removal_with_a_forged_commit_graph(self) -> tuple[str, str]:
+        """main^ is the commit holding two tests; the forged graph makes it a decoy holding one. Returns (the true parent, the decoy)."""
+        parent = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        tip = self.repo.commit({SPEC_A: functions("test_one")})
+        decoy = self.repo.commit_tree({SPEC_A: functions("test_one").encode("utf-8")}, parent=parent)
+        git(self.repo.dir, "branch", "decoy", decoy)  # reachable, so the graph holds it
+        self.forge_commit_graph(tip, decoy)
+        return parent, decoy
+
+    def test_a_forged_commit_graph_does_not_move_a_relative_revision(self) -> None:
+        parent, decoy = self.removal_with_a_forged_commit_graph()
+        self.assertEqual(git(self.repo.dir, "rev-parse", "main^").strip(), decoy, "the forged graph must move main^ for this test to mean anything")
+        for base in ("main^", "main~1", "main^1", "HEAD^"):
+            with self.subTest(base=base):
+                result = run(self.repo, base, "main")
+                self.assertEqual((result.code, result.defect_codes(), self.summary(result), result.err), (1, ["UNMAPPED_REMOVAL"], "removed=1 defects=1", ""), result.out)
+        self.assertEqual(run(self.repo, parent, "main").code, 1)
+
+    def test_every_git_child_runs_with_the_commit_graph_off(self) -> None:
+        base, candidate = self.two_commits()
+        real = subprocess.run
+        commands: list[object] = []
+
+        def spy(*args: object, **kwargs: object) -> object:
+            commands.append(args[0] if args else None)
+            return real(*args, **kwargs)
+
+        with mock.patch.object(cm.subprocess, "run", spy):
+            self.assertEqual(run(self.repo, base, candidate).code, 0)
+        self.assertGreaterEqual(len(commands), 6)
+        for command in commands:
+            arguments = command if isinstance(command, list) else []
+            self.assertTrue(
+                any(arguments[at : at + 2] == ["-c", "core.commitGraph=false"] for at in range(len(arguments) - 1)),
+                arguments,
+            )
 
 
 class CommandLineTests(GuardCase):

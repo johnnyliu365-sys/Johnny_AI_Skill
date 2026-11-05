@@ -2587,6 +2587,107 @@ class ForgedObjects(Case):
         self.assertIn("does not hash to its id", err)
         self.assertEqual(spy.queries(), [self.head.encode("ascii")])
 
+    # ticket 60, S53-30: the comparison of the hash with the id covers every digit of the id
+    @staticmethod
+    def neighbour(oid: str, flip: int, index: int = -1) -> str:
+        """`oid` with one hex digit changed (the last by default): the id of an object that does not exist and differs from `oid` in that digit only."""
+        at = index % len(oid)
+        return oid[:at] + format(int(oid[at], 16) ^ flip, "x") + oid[at + 1 :]
+
+    def assert_a_near_miss_is_a_fault(self, asked: str, kind: str, body: bytes) -> None:
+        answer = object_answer(asked, kind, body)
+        spy = GitSpy(replies=lambda query: answer if query == asked.encode("ascii") else None)
+        with spy.patched():
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertTrue(err.startswith("TOOL_FAULT "), err)
+        self.assertIn(asked, err)
+        self.assertIn("does not hash to its id", err)
+        self.assertNotIn("SOURCE_", err)
+        self.assertEqual(spy.queries()[-1], asked.encode("ascii"))
+        self.assertEqual(spy.alive(), [])
+
+    def test_a_blob_answer_whose_body_hashes_to_an_id_that_differs_only_in_the_last_digit_is_a_fault(self) -> None:
+        genuine = write_blob(self.repo, FORGED)
+        for flip in (1, 2, 4, 8):
+            asked = self.neighbour(genuine, flip)
+            with self.subTest(flip=flip):
+                self.assertNotEqual(asked, genuine)
+                point_head_at_tree(
+                    self.repo,
+                    raw_tree(("40000", "contracts", bytes.fromhex(store_object(self.repo, "tree", raw_tree(("100644", "source.txt", bytes.fromhex(asked))))))),
+                )
+                self.declare(FORGED)
+                self.assert_a_near_miss_is_a_fault(asked, "blob", FORGED)
+
+    def test_a_blob_answer_whose_body_hashes_to_an_id_that_differs_in_one_digit_anywhere_is_a_fault(self) -> None:
+        genuine = write_blob(self.repo, FORGED)
+        for index in (0, 1, 8, 19, 20, 31, 32, 38, 39):
+            asked = self.neighbour(genuine, 1, index)
+            with self.subTest(index=index):
+                self.assertNotEqual(asked, genuine)
+                point_head_at_tree(
+                    self.repo,
+                    raw_tree(("40000", "contracts", bytes.fromhex(store_object(self.repo, "tree", raw_tree(("100644", "source.txt", bytes.fromhex(asked))))))),
+                )
+                self.declare(FORGED)
+                self.assert_a_near_miss_is_a_fault(asked, "blob", FORGED)
+
+    def test_a_tree_answer_whose_body_hashes_to_an_id_that_differs_in_one_digit_anywhere_is_a_fault(self) -> None:
+        root_body = git_raw(self.repo, "cat-file", "tree", self.root)
+        stamp = "author A <a@example.invalid> 0 +0000\ncommitter A <a@example.invalid> 0 +0000\n\nmessage\n"
+        for index in (0, 1, 8, 19, 20, 31, 32, 38, 39):
+            asked = self.neighbour(self.root, 1, index)
+            with self.subTest(index=index):
+                point_head_at_commit(self.repo, f"tree {asked}\n{stamp}".encode("ascii"))
+                self.declare(SOURCE_BYTES)
+                self.assert_a_near_miss_is_a_fault(asked, "tree", root_body)
+
+    def test_a_tree_answer_whose_body_hashes_to_an_id_that_differs_only_in_the_last_digit_is_a_fault(self) -> None:
+        root_body = git_raw(self.repo, "cat-file", "tree", self.root)
+        stamp = "author A <a@example.invalid> 0 +0000\ncommitter A <a@example.invalid> 0 +0000\n\nmessage\n"
+        for flip in (1, 2, 4, 8):
+            asked = self.neighbour(self.root, flip)
+            with self.subTest(flip=flip):
+                point_head_at_commit(self.repo, f"tree {asked}\n{stamp}".encode("ascii"))
+                self.declare(SOURCE_BYTES)
+                self.assert_a_near_miss_is_a_fault(asked, "tree", root_body)
+
+    # ticket 60, S53-31: a blob entry that serves an object of another kind is a fault naming the id
+    def assert_another_kind_is_a_fault(self, kind: str, body: bytes) -> None:
+        forge_loose_object(self.repo, self.blob, kind, body)
+        self.declare(SOURCE_BYTES)
+        spy = GitSpy()
+        with spy.patched():
+            code, out, err = self.run_gate()
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertTrue(err.startswith("TOOL_FAULT "), err)
+        self.assertIn(self.blob, err)
+        self.assertIn("another kind of object", err)
+        self.assertIn("mismatch", err)
+        self.assertIn(f"({kind})", err)
+        self.assertNotIn("SOURCE_", err)
+        self.assertEqual(spy.alive(), [])
+
+    def test_a_blob_entry_that_serves_a_tree_is_a_fault_naming_its_id(self) -> None:
+        self.assert_another_kind_is_a_fault("tree", raw_tree(("100644", "source.txt", bytes.fromhex(self.blob))))
+
+    def test_a_blob_entry_that_serves_a_commit_is_a_fault_naming_its_id(self) -> None:
+        stamp = "author A <a@example.invalid> 0 +0000\ncommitter A <a@example.invalid> 0 +0000\n\nforged\n"
+        self.assert_another_kind_is_a_fault("commit", f"tree {self.root}\n{stamp}".encode("ascii"))
+
+    def test_a_blob_entry_that_serves_another_kind_is_a_fault_beside_a_red(self) -> None:
+        forge_loose_object(self.repo, self.blob, "tree", raw_tree(("100644", "source.txt", bytes.fromhex(self.blob))))
+        self.write_spec("test_a_red.py", "", "assert value == 3\n")
+        self.declare(SOURCE_BYTES)
+        code, out, err = self.run_gate()
+        self.assertEqual(code, 1, err)
+        self.assertTrue(out.startswith("LITERAL_EXPECTED specs/test_a_red.py: "), out)
+        self.assertEqual(len(err.splitlines()), 2, err)
+        self.assertIn(self.blob, err.splitlines()[0])
+
     def test_a_forgery_beside_a_red_exits_1_with_the_fault_and_never_passes(self) -> None:
         forge_loose_object(self.repo, self.blob, "blob", FORGED)
         self.write_spec("test_a_red.py", "", "assert value == 3\n")

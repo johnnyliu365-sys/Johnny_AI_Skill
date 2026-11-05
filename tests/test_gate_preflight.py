@@ -1593,6 +1593,113 @@ class ChildCleanupTests(Fixture):
         self.assertEqual(done.stderr.replace(b"\r\n", b"\n"), b"preflight.py: tool fault: interrupted\n")
 
 
+class InterruptWindowTests(Fixture):
+    """Ticket 60 (S55-25): an interrupt outside the handlers of the run is exit 2 and one line, in each window that can
+    be reached in-process: the start of main, the setup of the streams, the printing, the final flush."""
+
+    LINE = "preflight.py: tool fault: interrupted\n"
+
+    def served_path(self) -> Path:
+        return self.write(dispatch_text(*good_item()))
+
+    def assert_interrupted(self, code: int, err: str) -> None:
+        self.assertEqual(code, 2)
+        self.assertEqual(err, self.LINE)
+        self.assertEqual(len(err.splitlines()), 1)
+        self.assertNotIn("Traceback", err)
+
+    def test_an_interrupt_in_the_setup_of_the_streams_is_exit_two_with_one_line(self) -> None:
+        path = self.served_path()
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            with mock.patch.object(preflight, "_harden_streams", side_effect=KeyboardInterrupt()):
+                code = preflight.main([str(path)])
+        self.assert_interrupted(code, err.getvalue())
+        self.assertEqual(out.getvalue(), "")
+
+    def test_an_interrupt_while_a_real_stream_is_reconfigured_is_exit_two_with_one_line(self) -> None:
+        class Interrupted(io.TextIOWrapper):
+            def reconfigure(self, **kwargs: object) -> None:
+                raise KeyboardInterrupt()
+
+        path = self.served_path()
+        out = Interrupted(io.BytesIO(), encoding="utf-8")
+        err = io.StringIO()
+        with mock.patch.object(sys, "stdout", out), mock.patch.object(sys, "stderr", err):
+            code = preflight.main([str(path)])
+        self.assert_interrupted(code, err.getvalue())
+
+    def test_an_interrupt_while_the_arguments_are_taken_is_exit_two_with_one_line(self) -> None:
+        class Argv(list[str]):
+            def __getitem__(self, index: object) -> str:
+                raise KeyboardInterrupt()
+
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err), mock.patch.object(sys, "argv", Argv(["preflight.py"])):
+            code = preflight.main()
+        self.assert_interrupted(code, err.getvalue())
+        self.assertEqual(out.getvalue(), "")
+
+    def test_an_interrupt_while_the_result_is_printed_is_exit_two_with_one_line(self) -> None:
+        class Interrupted(io.StringIO):
+            def write(self, text: str) -> int:
+                raise KeyboardInterrupt()
+
+        path = self.served_path()
+        err = io.StringIO()
+        with mock.patch.object(sys, "stdout", Interrupted()), mock.patch.object(sys, "stderr", err):
+            code = preflight.main([str(path)])
+        self.assert_interrupted(code, err.getvalue())
+
+    def test_an_interrupt_while_an_error_is_printed_is_exit_two_with_one_line(self) -> None:
+        class Interrupted(io.StringIO):
+            def write(self, text: str) -> int:
+                if not self.getvalue():
+                    super().write(text)
+                    raise KeyboardInterrupt()
+                return super().write(text)
+
+        out, err = io.StringIO(), Interrupted()
+        with mock.patch.object(sys, "stdout", out), mock.patch.object(sys, "stderr", err):
+            code = preflight.main([])  # a usage error: the usage text goes to standard error
+        self.assertEqual(code, 2)
+        self.assertTrue(err.getvalue().endswith(self.LINE), err.getvalue())
+
+    def test_an_interrupt_in_the_emit_step_is_exit_two_with_one_line(self) -> None:
+        path = self.served_path()
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            with mock.patch.object(preflight, "_emit", side_effect=KeyboardInterrupt()):
+                code = preflight.main([str(path)])
+        self.assert_interrupted(code, err.getvalue())
+
+    def test_an_interrupt_in_the_final_flush_is_exit_two_with_one_line(self) -> None:
+        path = self.served_path()
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err), mock.patch.object(sys, "argv", ["preflight.py", str(path)]):
+            with mock.patch.object(preflight, "_settle", side_effect=KeyboardInterrupt()):
+                code = preflight.entry()
+        self.assertEqual(out.getvalue(), "tools=1 served=1\n")
+        self.assert_interrupted(code, err.getvalue())
+
+    def test_an_interrupt_in_the_hardened_start_of_the_command_line_is_exit_two_without_a_traceback(self) -> None:
+        path = self.served_path()
+        driver = (
+            "import sys; sys.path.insert(0, sys.argv[1]); del sys.argv[1]; import preflight\n"
+            "def stop(): raise KeyboardInterrupt()\n"
+            "preflight._harden_streams = stop\n"
+            "sys.exit(preflight.entry())\n"
+        )
+        done = subprocess.run([PY, "-c", driver, str(_SCRIPTS), str(path)], capture_output=True, timeout=120, stdin=subprocess.DEVNULL)
+        self.assertEqual(done.returncode, 2, done.stderr)
+        self.assertEqual(done.stdout, b"")
+        self.assertEqual(done.stderr.replace(b"\r\n", b"\n"), self.LINE.encode("ascii"))
+
+    def test_a_run_without_an_interrupt_is_unchanged(self) -> None:
+        path = self.served_path()
+        self.assertEqual(self.run_main(str(path)), (0, "tools=1 served=1\n", ""))
+
+
 class DeviceNameTests(Fixture):
     """Revision03 (S55-18): a device name as the dispatch path is exit 3, and nothing is opened."""
 
@@ -1674,6 +1781,9 @@ class NamespacePathTests(Fixture):
         # the global root, anywhere
         "\\\\?\\GLOBALROOT\\Device\\x", "\\??\\GLOBALROOT\\Device\\x", "GLOBALROOT\\Device\\x", "globalroot/device/x",
         "C:\\dir\\GlobalRoot\\x", "dir/GLOBALROOT.yaml", "dir/GLOBALROOT:s", "dir/GLOBALROOT /x", "dir/GlobalRoot./x",
+        # ticket 60, S55-24: right after a drive letter and colon, where the component is the first
+        "C:GLOBALROOT\\x", "c:globalroot/x", "Z:GlobalRoot.yaml", "C:GLOBALROOT:s", "C:GLOBALROOT /x", "C:GlobalRoot./x",
+        "C:GLOBALROOT",
     )
     PLAIN = (
         "d.yaml", "GLOBALROOTS.yaml", "MYGLOBALROOT.yaml", "GLOBAL\\ROOT.yaml", "x.globalroot", "a//b.yaml",

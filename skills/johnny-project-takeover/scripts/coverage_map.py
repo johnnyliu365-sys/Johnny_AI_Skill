@@ -80,10 +80,11 @@ ceiling directories, common directory and prefix), so a hook that exports them c
 the guard at another repository or make a plain directory pass as `--repo`. They also run
 without the `GIT_CONFIG_*` variables, with `--no-replace-objects` and `GIT_NO_REPLACE_OBJECTS=1`
 (a replace ref never redirects a lookup, so a blob read at a commit is the blob the commit
-holds) and with `GIT_NO_LAZY_FETCH=1` (a lookup never fetches over the network). `GIT_GRAFT_FILE`
-names a path that does not exist (any inherited value is dropped first), so neither
-`info/grafts` nor an inherited graft file moves a parent: a relative revision such as `main^`
-means what the commit objects say.
+holds), with `-c core.commitGraph=false` (git takes no parent from a commit-graph file, which a
+writer of the store could forge) and with `GIT_NO_LAZY_FETCH=1` (a lookup never fetches over the
+network). `GIT_GRAFT_FILE` names a path that does not exist (any inherited value is dropped
+first), so neither `info/grafts` nor an inherited graft file moves a parent: a relative revision
+such as `main^` means what the commit objects say.
 """
 from __future__ import annotations
 
@@ -281,7 +282,7 @@ def _absent_path() -> str:
 
 def run_git(repo: str, args: Sequence[str]) -> bytes:
     """Run one git query in `repo`; any failure is a tool fault carrying git's stderr."""
-    command = ["git", "-C", repo, "--no-replace-objects", *args]
+    command = ["git", "-C", repo, "--no-replace-objects", "-c", "core.commitGraph=false", *args]
     try:
         done = subprocess.run(command, capture_output=True, stdin=subprocess.DEVNULL, check=False, env=git_environment())
     except OSError as error:

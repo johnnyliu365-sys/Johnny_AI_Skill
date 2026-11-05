@@ -2599,6 +2599,60 @@ class LevelJudgingTests(ObjectFixture):
         self.assertIn(forged, result.err)
         self.assertNotIn("src", result.out)
 
+    # ticket 60, S56-27: of several faults the one printed is the first met in the walk, as documented
+    def test_with_two_forged_trees_the_fault_names_the_first_one_met_not_the_last(self) -> None:
+        parent, sha = self.layout_change()
+        first = self.forge(sha, parent, "docs")  # read with the level below the root
+        last = self.forge(sha, parent, "deep/one/two")  # read three levels further down
+        self.assertNotEqual(first, last)
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1, result.err)
+        self.assertEqual(result.err.count("\n"), 1, result.err)
+        self.assertIn(first, result.err)
+        self.assertNotIn(last, result.err)
+        self.assertEqual(result.lines, self.outside("README.md", "src/x.py"))
+
+    def test_with_forged_trees_on_the_two_sides_the_fault_names_the_first_one_met(self) -> None:
+        parent, sha = self.layout_change()
+        first = self.forge(sha, parent, "src")  # a tree of the repair, one level below the root
+        last = self.forge(parent, sha, "deep/one")  # a tree of the first parent, one level further down
+        self.assertNotEqual(first, last)
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1, result.err)
+        self.assertEqual(result.err.count("\n"), 1, result.err)
+        self.assertIn(first, result.err)
+        self.assertNotIn(last, result.err)
+
+    def test_with_two_forged_trees_on_one_level_the_fault_names_one_of_them_on_one_line(self) -> None:
+        parent, sha = self.layout_change()
+        forged = {self.forge(sha, parent, "docs"), self.forge(sha, parent, "src")}
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(sha)
+        self.assertEqual(result.code, 1, result.err)
+        self.assertEqual(result.err.count("\n"), 1, result.err)
+        self.assertEqual(sum(oid in result.err for oid in forged), 1, result.err)
+
+    def test_a_forged_tree_that_fails_the_hash_comes_before_a_verified_tree_that_cannot_be_parsed(self) -> None:
+        self.base("README.md", "src/x.py", "docs/d.py")
+        parent = git(self.repo, "rev-parse", "HEAD")
+        for rel in ("README.md", "src/x.py", "docs/d.py"):
+            self.write(rel, "fixed\n")
+        sha = self.commit("repair")
+        bad = git_raw(self.repo, ["hash-object", "--literally", "-w", "-t", "tree", "--stdin"], b"100644 a/b\0" + bytes(20))
+        root = self.raw_body(git(self.repo, "rev-parse", f"{sha}^{{tree}}"), "tree")
+        tree = git_raw(self.repo, ["hash-object", "--literally", "-w", "-t", "tree", "--stdin"], root + b"40000 bad\0" + bytes.fromhex(bad))
+        broken = git(self.repo, "commit-tree", tree, "-p", parent, "-m", "repair with a tree that cannot be parsed")
+        forged = self.forge(broken, parent, "docs")
+        self.set_dispatch(["tools/"], [])
+        result = self.run_guard(broken)
+        self.assertEqual(result.code, 1, result.err)
+        self.assertEqual(result.err.count("\n"), 1, result.err)
+        self.assertIn(forged, result.err)  # met first, when the level was read
+        self.assertNotIn(bad, result.err)  # met later, when the level was parsed
+        self.assertEqual(result.lines, self.outside("README.md", "src/x.py"))
+
     def test_a_forged_root_tree_leaves_nothing_to_judge_and_is_exit_two(self) -> None:
         parent, sha = self.layout_change()
         tree = git(self.repo, "rev-parse", f"{sha}^{{tree}}")
