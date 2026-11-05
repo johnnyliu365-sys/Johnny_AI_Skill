@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED` |
+| 狀態 | `IN_PROGRESS`（revision01 implementation returned (candidate `b74840f1`, CI run 42108480717 green on both jobs); 38 of 39 rows removed, the 39th routed by the control plane; initial review dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
