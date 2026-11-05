@@ -8,13 +8,13 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（revision01 implementation returned (candidate `b74840f1`, CI run 42108480717 green on both jobs); 38 of 39 rows removed, the 39th routed by the control plane; initial review dispatched） |
+| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `b74840f1`: S63-01 containment bypass (blocks), S63-02 the same class already at the base, S63-07 the 39th row; correction 1 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
-| 責任邊界 | `library/local_orchestration/path_containment.py`, its test, and the Windows rows of `ci/registered-failures.json` that become passing |
+| 責任邊界 | `library/local_orchestration/path_containment.py`, its test, the bundle-builder test whose fixture spells the temporary root by its short name, and the Windows rows of `ci/registered-failures.json` that become passing |
 | 禁止修改 | everything else; no containment refusal is weakened for a real redirect (junction, symlink, reparse point) |
 | 環境 | `LOCAL` and GitHub Actions on the plugin repository |
 
@@ -24,6 +24,7 @@
 modify = library/local_orchestration/path_containment.py
 modify = ci/registered-failures.json
 modify = ci/README.md
+modify = tests/test_plugin_distribution_bundle.py
 create = tests/test_path_containment_short_names.py
 forbid = skills/
 forbid = Workflow.md
@@ -92,3 +93,21 @@ After this ticket a short-name alias and its long name are the same path for con
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision01 initial review". The review found a containment bypass the candidate introduces (S63-01) and the same class already present at the base (S63-02). Both break the AGENTS.md P0 rule that a path reached through a junction or reparse point is refused. The ticket said that junctions, symlinks and reparse points stay refused exactly as before, but not *how* that refusal is decided. Both doors come from deciding it by comparing spellings, which folds case where NTFS does not. Revision02 states the rule and widens the closure to the base defect, which lives in the same function. The work is one additive correction commit on the revision01 candidate `b74840f1`, and the next review is the revision02 initial review.
+
+**Rule (revision02).** A redirect is decided from the file system, never from a spelling comparison. On Windows, every existing component of the base, from the root of its volume to the base itself, is examined with `os.lstat`; if any component carries `FILE_ATTRIBUTE_REPARSE_POINT`, containment is refused. This holds whether or not the base is spelt by a short name. The short-name lookup only decides that two spellings name the same directory after that check has passed. On POSIX, a symbolic link in any component is refused, as before. A component that cannot be examined is refused.
+
+| Finding | Class | Work in correction 1 |
+| --- | --- | --- |
+| S63-01 | IMPLEMENTATION_DEFECT (confinement, P0) | the rule above; a test in a case-sensitive directory (created where the host allows it, with a stated skip reason where it does not): a junction `A` to a sibling `a`, spelt through a short-name parent, is refused |
+| S63-02 | IMPLEMENTATION_DEFECT at the base (confinement, P0), closed here | the same rule applies to every base; tests: a junction whose name case-folds to its target (for example U+212A KELVIN SIGN to `k`, and `A` to `a` under a long parent) is refused |
+| S63-03 | EVIDENCE_DEFECT | the receipt's M1 `exit:` list follows its capture; `evidence_gate.py` is run last on the receipt as returned and gives `defects=0` |
+| S63-04 | EVIDENCE_DEFECT | a test pins case comparison: the reviewer's R3 (pathlib equality) turns red |
+| S63-05 | OUT_OF_SCOPE_HARDENING | a test for the lookup retry on a base longer than 1024 characters (R5, R6 red) |
+| S63-06 | OUT_OF_SCOPE_HARDENING | the kernel32 handle is loaded once with `use_last_error=True` and its argument and return types declared once; a failed call reads `ctypes.get_last_error()` into the refusal reason |
+| S63-07 | TICKET_DEFECT, closed here | `tests/test_plugin_distribution_bundle.py`: the fixture builds the patched path from the resolved temporary root, so the patch matches the path the builder walks; the 39th Windows row passes on the runner and is removed |
+
+A CI run on the correction commit with both jobs `success` is part of the evidence.
