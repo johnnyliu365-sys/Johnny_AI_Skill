@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/58-governance-hardening-row13-out/` / owner implementation seat / worktree `.worktrees/58-governance-hardening-row13` / branch `cp/wave2-58-governance-hardening-row13` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）; Markdown for the two document edits |
-| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `49c2c43c`: S58-04 TICKET_DEFECT; revision02 initial review CHANGES_REQUESTED on `71b0d8ff` (S58-10, S58-11); correction 2 returned (`939e3648`, candidate `02814a05`); correction review dispatched） |
+| 狀態 | `REVIEW_APPROVED`（closure revision02, candidate `02814a05`: correction review CONVERGENCE_REVIEW_REQUIRED, convergence disposition APPROVED under CodeReview §5 rule B; record `doc/reviews/workflow-governance/58-governance-hardening-row13-code-review.md`; ready for integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/58-governance-hardening-row13` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/58-governance-hardening-row13-review` |
@@ -151,3 +151,7 @@ Carried, no work here: S58-06 (vocabulary and paraphrase gaps in the sweep) goes
 ### Correction 2 under revision02 (after the revision02 initial review `CHANGES_REQUESTED`)
 
 No ticket defect was found, so revision02 stands. S58-10: a Chinese negation after the reviewer exempts a sentence only when an executor verb follows it directly (代為, 整合, 合併, 推送, 落地, 執行, commit); the before-form gets the same check; the reviewer's CM10 sentence is an injection that goes red. S58-11: the field-list lookahead accepts only what R4-7 uses (`from`, and a closing bracket or full stop if the entry list needs one); CM12 and CM13 are injections that go red. S58-13: E1 runs last, on the receipt as returned, and the STATEMENT describes the mutation clones as the capture does. Carried, no work here: S58-12 (English negation markers anywhere in the sentence) goes with S58-06 to the next change of the consistency test. The next review is the one correction review of revision02.
+
+### Carried after approval (CodeReview §5 rule B)
+
+S58-06, S58-12, S58-14 and S58-15 go to the next change of `tests/test_governance_consistency.py`. The disposition and its reasons are in the review record.

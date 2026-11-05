@@ -273,3 +273,135 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/58-rev02-initial
 reviewed_at: 2026-11-06
 ```
+
+## Revision02 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`.** Correction 2 closes S58-10 and S58-13, and every earlier door stays red: CM1, CM2, both CM3 doors, CS1, the six CS2 drops, CM10, CM12 and CM13. The before-form executor-verb check is pinned. The receipt passes both checkers, and P1, `mypy --strict` and the full suite are green with no new red. One implementation defect is left, S58-14 (rows S58-02 and S58-11). The lookahead still accepts a closing bracket, a full stop and the end of the unit, which R4-7 does not need. As a result, "the candidate is integrated by `reviewer` and `submitter`." is masked and stays green. The field-list sample that changed is a form R4-7 does not use. This is the one correction review of revision02, so CodeReview §5 sends the ticket back to the control plane. Every open finding is in a class rule B lets through: S58-14 (`IMPLEMENTATION_DEFECT`, but with no effect on exit codes, safety, confinement or P0), the new S58-15 (`OUT_OF_SCOPE_HARDENING`), and the carried S58-06 and S58-12. A `convergence-disposition` under rule B is therefore open to the control plane. S58-14 is a gap that would let a regression through, so it is fixed with the next change to this test.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/58-governance-hardening-row13.md` at `3f3d4670`, closure revision02, section "Correction 2 under revision02" |
+| Candidate | `02814a05d8c64deac9f2ea4f845fd9a365baad3d` on `cp/wave2-58-governance-hardening-row13`; two additive commits on `71b0d8ff`: `939e3648` (the rule changes), `02814a05` (one case for the before-form check) |
+| Commits | Both: author and committer `Johnny Liu <johnny.liu365@gmail.com>`; trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`, which is the correct form (it names the model that did the work; which model ran the seat is not verified here) |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-58c_dispatch.yaml` |
+| Review worktree | `.worktrees/58-governance-hardening-row13-review`, detached at the candidate, porcelain empty before and after |
+| Scratch | `.worktrees/58-governance-hardening-row13-review-scratch/rev02c` (a `--no-hardlinks` LF clone at the candidate, captures) |
+| Receipt | `.worktrees/58-governance-hardening-row13-out-c2/RETURN.md` (LF, 101334 bytes, 0 CR) |
+| References applied | `CodeReview.md` §5 (one correction review, rule B); `review-checks.md` (test truthfulness and reviewer counter-mutation) |
+| XSS / Agent control / profile / POC | Not applicable: one test file changed |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | Boundary | PASS | `git diff --name-only 71b0d8ff 02814a05` = `tests/test_governance_consistency.py` only. No scripts, documents or `doc/reviews/` changed |
+| 2 | Stdlib, `Any`, names | PASS | No new import, no `Any`, no `type: ignore`. The added lines name no company address, no target project and no vendor |
+| 3 | `mypy --strict --python-version 3.11` (two scripts, the test) | PASS | `Success: no issues found in 3 source files`, exit 0 (own run; `T1.txt` the same) |
+| 4 | P1 in the receipt (`-rA`) | PASS | `204 passed, 404 subtests passed`, exit 0. The 5 tolerated-hit lines are present |
+| 5 | F1, own full suite under the host lock | PASS | `8 failed, 3338 passed, 35 skipped, 6805 subtests passed in 738.25s`, exit 1. All 8 `FAILED` names are among the 12 base names: zero new red. The seat's F1 is the same |
+| 6 | `receipt_check.py` on the receipt | PASS | `receipt defects: 0`, exit 0 |
+| 7 | `evidence_gate.py`, three wave-1 tools, `--require-cell P1 T1 M1 F1` | PASS | `cells=6 defects=0`, exit 0, equal to `E1.txt` |
+| 8 | Receipt form | PASS | 0 CR in the receipt and in all 10 files of the out dir. Every raw block is byte-identical to its capture. Every exit list equals the capture (M1: `0,1,1,1,1,1,1`, also in `M1.exits`). Every cell names the candidate, and every `tool_digest` equals the blob's sha256 |
+| 9 | M1 | PASS | It records its clone command (`git clone --no-hardlinks …` to a disposable path, then a detached checkout of the candidate, "one disposable clone, no other clone, runs sequential"). A baseline plus 6 mutations, all red: after-form check removed, before-form check removed, lookahead widened back, CM10, CM12, CM13. The restore hashes equal the CRLF bytes of the candidate blobs (`621b0e9aa62d`, `f3944b27a55b`, `b76c5b55e7c5`); porcelain is empty |
+| 10 | Every revision02 rule and closed row still holds | PASS | My reruns below are all red, each for its intended reason. The only existing assertion that changed is the field-list sample (S58-14). Every other change only adds entries |
+
+### The changed field-list sample
+
+The sample changed from ``Entry: `ticket`, `reviewer`, `submitter` (must differ)`` (masked) to ``Entry (`ticket`, `reviewer`, `submitter`) must differ`` (masked). It does not follow the row.
+
+- **R4-7's real entry list** (`modules/spec/workflow-governance.md:204`) is ``…, `reviewer`, `submitter` (must differ from `reviewer`), `state` …``. There the run of names is followed by an *opening* bracket. The new lookahead no longer masks that list, which is correct, because the list produces no hit.
+- **The new sample** is a form R4-7 does not use (names inside brackets). It exists only to justify the closing-bracket branch.
+- **What the row allows:** "a closing bracket or full stop *if the entry list needs one*". My probe shows the entry list needs neither. With the lookahead reduced to `\s+from\b`, the real tree has 0 live hits. With the bracket and full-stop branch only, the R4-7 hit at `:204` comes back.
+
+STATEMENT choice 4 ("these are the minimum the ticket allows") reads the condition as permission. See S58-14.
+
+### Status of S58-01 to S58-13
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| S58-01 | CLOSED | CM1 rerun is red (real-tree LIVE `c`); its residual S58-10 is closed |
+| S58-02 | PARTIAL (S58-14) | CM2 rerun is red (real-tree LIVE `g1`). Residual: bracket and full-stop masking (S58-14) |
+| S58-03 | CLOSED | Both CM3 doors rerun are red through `RealTreeTests::test_the_precedence_sentence_is_pinned_by_rule_and_place` |
+| S58-04 | CLOSED | Scripts unchanged since `71b0d8ff`; the revision02 initial review's probes still apply |
+| S58-05 | CLOSED | P1 holds the report; `EXPECTED_TOLERATED` unchanged |
+| S58-06 | CARRIED | Next change of the consistency test |
+| S58-07 | ACCEPTED | Control plane, revision02 |
+| S58-08 | CLOSED | CS1 rerun is red (`test_a_self_note_run_on_a_section_with_zero_fences_is_exit_1_no_fences`) |
+| S58-09 | CLOSED | Six CS2 drops rerun are red, each with `SUBFAILED(name=<that name>)` |
+| S58-10 | CLOSED | CM10 rerun is red (real-tree LIVE `c`); it is an injection. After-form check: CS5 (verb check removed after the reviewer) is red, 4 failed. Before-form check pinned: CS7 (verb removed from the first before-form) and CS6 (the verb-before form allowed across a comma) are each red through `核准後整合候選到候選分支，不是審閱者可略過的環節`, the case `02814a05` added |
+| S58-11 | PARTIAL (S58-14) | CM12 and CM13 rerun are red (real-tree LIVE `g1`); both are injections; the five new unmasked tails are pinned. Residual: S58-14 |
+| S58-12 | CARRIED | With S58-06 |
+| S58-13 | CLOSED | `E1.txt` (06:11:11) is the newest file; `RETURN.md` (06:11:05) and `P9.txt` (06:11:04) come before it, and nothing was written after. The receipt's E1 block equals the capture, and my run on the returned receipt gives the same text. The STATEMENT's clone description ("one disposable git clone --no-hardlinks copy …, runs sequential, no other clone") matches lines 1–2 of `M1.txt` |
+
+### Reviewer counter-mutations (scratch clone at the candidate, each restored, porcelain 0, full output per run)
+
+| # | Door | Result | Reading |
+| --- | --- | --- | --- |
+| 1–4 | CM1, CM2, CM3 door 1, CM3 door 2 rerun | RED (11, 11, 5, 5 failed) | revision02 rules hold |
+| 5 | CS1 rerun | RED (1 failed) | holds |
+| 6–11 | CS2 reruns (six names) | RED ×6 | holds |
+| 12–14 | CM10, CM12, CM13 rerun | RED (11 failed each, real-tree LIVE) | S58-10, S58-11 doors closed |
+| 15 | CM14: `CodeReview.md` + "After approval the candidate is integrated by `reviewer` and `submitter`." | GREEN (46 passed) | S58-14: masked by the full-stop branch; with masking off, `classify` gives `a1 reviewer integrates` |
+| 16 | CM15: `CodeReview.md` + "After approval the candidate is integrated (by `reviewer` or `submitter`) by hand." | GREEN | S58-14: masked by the closing-bracket branch; with masking off, `a1` |
+| 17 | CM16: `Workflow.md` + "審閱者核准後代為 commit，整合不由審閱者以外的人執行。" | RED, but through `x integration executor without the script` (R3-07), not through `c` | the same sentence with 負責 instead of 執行 gives no hit in `classify` (S58-15) |
+| 18 | CM17: `Workflow.md` + "審閱者不得整合未審的候選，核准後代為 commit 到候選分支。" | GREEN | S58-15 |
+| 19 | CM18: `Workflow.md` + "審閱者核准後代為 commit，推送不由審閱者執行。" | GREEN | S58-15 |
+| 20 | CS5: the after-form without its executor verb | RED (4 failed) | pinned |
+| 21 | CS6: the verb-before form allowed across a comma (40 characters) | RED (1 failed) | pinned, by one case |
+| 22 | CS7: the first before-form without its executor verb | RED (1 failed) | pinned, by one case |
+| — | Lookahead probe on the real tree | `from` only: 0 live; bracket/full stop only: 1 live (R4-7 `:204`); nothing masked: 1 live | S58-14 |
+
+### New findings
+
+| ID | Class | Severity | Rule B | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- | --- |
+| S58-14 | `IMPLEMENTATION_DEFECT` (rows S58-02, S58-11: "accepts only what R4-7 uses (`from`, and a closing bracket or full stop if the entry list needs one)") | Low | Not blocking: no exit-code, safety, confinement or P0 effect. A gate gap that would let a regression through, so it is fixed with the next change to this test | `tests/test_governance_consistency.py` `FIELD_LIST` (lookahead `(?=\s*(?:[)）.。]\|$)\|\s+from\b)`); the sample in `test_the_field_list_form_masks_the_names_and_nothing_else` | The entry list does not need a bracket or a full stop (probe), so the row allows only `from`. The extra branch masks a list that ends a sentence or a bracket, so "the candidate is integrated by `reviewer` and `submitter`." and "(by `reviewer` or `submitter`)" are green (CM14, CM15). The changed sample pins an invented bracket form, not R4-7's. Fix: lookahead `(?=\s+from\b)`, restore a sample in R4-7's real form (the `from the review record` sentence), and add CM14 and CM15 as injections | CM14, CM15 green; lookahead probe |
+| S58-15 | `OUT_OF_SCOPE_HARDENING` | Low | Not blocking | `tests/test_governance_consistency.py` `classify` (`pattern.exempt` searched over the whole sentence), `REVIEWER_NEGATED_ZH` | A negation that rightly negates the reviewer as executor in one clause exempts every clause of the sentence, because `，` does not split a sentence. So "審閱者核准後代為 commit，推送不由審閱者執行" and "審閱者不得整合未審的候選，核准後代為 commit 到候選分支" stay green (CM17, CM18). The verb-before form also takes "整合不由審閱者以外的人負責" (anyone other than the reviewer) as a negation. Each case matches the row's own examples, so this is beyond the closure. It is the same family as S58-12; carry it with S58-06 and S58-12 to the next change of the consistency test (clause-level exemption, a 以外 guard) | CM17, CM18; `classify` probe |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | `git log`/`diff` `71b0d8ff..02814a05`, both commits; ticket and dispatch read with `git show 3f3d4670:…` | 0 |
+| 2 | `git clone --no-hardlinks` (LF) into `rev02c/clone`; checkout `02814a05` | 0 |
+| 3 | `fieldlist_probe.txt`: real-tree sweep with the lookahead as committed, `from` only, bracket/full stop only, nothing masked | 0 / 0 / 1 / 1 live |
+| 4 | `cm_rev02c.sh`: 22 runs, each with its full test file, restored by `git checkout`, full output in `rev02c/cm_raw/<n>.txt` | 1 ×18, 0 ×4 |
+| 5 | `door_probe.txt`: `classify` and `execution_defects` on the six new door sentences; CM14 and CM15 with masking off | as in the table |
+| 6 | `receipt_check.py`; `evidence_gate.py` (three wave-1 tools, P1 T1 M1 F1); `verify_receipt.py`; CR count of every out-dir file; `stat` of the out dir; M1 restore hashes against the CRLF bytes of the blobs | 0; 0; all equal; 0 CR; E1 last; equal |
+| 7 | `python -m mypy --strict --python-version 3.11` on the two scripts and the test | 0 |
+| 8 | host lock `C:/Temp/claude/jas-fullsuite.lock` by `mkdir`, retried every 30 s: waited 22:27:16Z–22:36:20Z while run `63-rev01-initial-F1` held it (not touched); acquired 22:36:50Z with `owner.txt` = `run_id=58-rev02-correction`. `Get-CimInstance Win32_Process` at acquisition: no pytest or mutation process (two `tail`/`grep` watchers started 2026-10-27 from a checkout outside this repository, and the query itself). Released 22:49:11Z: `owner.txt` checked, the directory renamed to `jas-fullsuite.lock.released-58-rev02-correction-<pid>-<epoch>`, checked again, removed | 0 |
+| 9 | `python -m pytest tests -q -p no:cacheprovider` (review worktree, under the lock); `FAILED` names against `C:/Temp/claude/jas48_F1_base.txt` | 1 (8 failed, all base names) |
+
+Raw logs: kept by the reviewer seat in `.worktrees/58-governance-hardening-row13-review-scratch/rev02c` (`cm_rev02c.txt`, `cm_raw/1.txt`–`22.txt`, `fieldlist_probe.txt`, `door_probe.txt`, `p9_full.txt`, `e1_mine.txt`, `t1_mine.txt`, `f1_mine.txt`, `procs_at_acquire.txt`, `fullsuite.log`); not committed. Each red and green was read in the full output in `cm_raw`. `cm_rev02c.txt` holds extracts.
+
+Not verified: a POSIX run; which model ran the seat; whether the seat's disposable M1 clone outside the repository (`C:/Temp/claude/…`) and its other scratch files there are still needed (they are not a worktree and not in the receipt's scope); the seat's first M1 probe, which it reports led to `02814a05` (not in the receipt).
+
+```review-verdict
+candidate: 02814a05d8c64deac9f2ea4f845fd9a365baad3d
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/58-rev02-correction
+reviewed_at: 2026-11-06
+```
+
+### Convergence disposition (2026-11-06, CodeReview §5 rule B)
+
+The correction review closed S58-10 and S58-13; every earlier door stays red, the receipt passes both checkers, and the full suite has no new red. The open findings change no exit code, safety, confinement or P0 rule: S58-14 is a residual masking form in the consistency test (an extra lookahead branch R4-7 does not need), S58-15, S58-12 and S58-06 are sentence-level vocabulary gaps in the same test. Each would let a reworded sentence through a sweep that is not a gate's exit code, so all go to the next change of `tests/test_governance_consistency.py`. The reviewer's verdict block above is unchanged.
+
+| Finding | Class | Carried to |
+| --- | --- | --- |
+| S58-06 | OUT_OF_SCOPE_HARDENING | the next change of the consistency test |
+| S58-12 | OUT_OF_SCOPE_HARDENING | the next change of the consistency test |
+| S58-14 | IMPLEMENTATION_DEFECT (Low, test-only masking) | the next change of the consistency test: lookahead `(?=\s+from)`, a sample in R4-7's real form, CM14 and CM15 as injections |
+| S58-15 | OUT_OF_SCOPE_HARDENING | the next change of the consistency test: clause-level exemption and a 以外 guard |
+
+```convergence-disposition
+candidate: 02814a05d8c64deac9f2ea4f845fd9a365baad3d
+reviewer_verdict: CONVERGENCE_REVIEW_REQUIRED (seat:ticket-review/58-rev02-correction)
+disposition: APPROVED
+rule: CodeReview §5 rule B (owner-approved 2026-11-05)
+carried:
+  - S58-06
+  - S58-12
+  - S58-14
+  - S58-15
+```
