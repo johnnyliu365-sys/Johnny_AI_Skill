@@ -84,7 +84,14 @@ REVIEWER_NEGATED: tuple[str, ...] = (
     r"does not (integrate|merge|push|land)", r"never (integrates|merges|pushes|lands|submits)",
     r"differs from", r"superseded", r"\bnot (by|via) a reviewer",
 )
-REVIEWER_NEGATED_ZH: tuple[str, ...] = (r"不是", r"不由", r"不得", r"不等於", r"不指定", r"並非", r"而非", r"不可")
+# S58-01 (revision02): a Chinese negation exempts a sentence only when it negates the reviewer as the
+# executor: a negation word directly before the reviewer (不由審閱者, 並非審閱者) or directly after it
+# (審閱者不得…). A 不得 of an unrelated clause ("審閱者核准後代為 commit，不得略過閘門") exempts nothing.
+_ZH_REVIEWER = r"(?:審閱者|審查者|reviewer)"
+REVIEWER_NEGATED_ZH: tuple[str, ...] = (
+    r"(?:不由|不是|並非|而非|不等於|不指定|不得由|不可由|不能由|非由)(?:該|其|核准的|任何)?" + _ZH_REVIEWER,
+    _ZH_REVIEWER + r"(?:本人|自己)?(?:不得|不可|不能|不會|不是|並非|不等於|不指定)",
+)
 FIXED_INTEGRATOR_NEGATED: tuple[str, ...] = (
     r"must not be assumed", r"no fixed integrator", r"not required", r"不指定固定整合者", r"不指定固定的個人整合者",
     r"not a fixed integrator", r"is not an integrator",
@@ -369,8 +376,24 @@ def bridge_scoped(text: str) -> bool:
     return any(SCOPE_NOTE.match(line) for line in head_lines(text))
 
 
-# A field name in backticks (`reviewer`, `submitter`) is not a person who acts.
-FIELD_NAME = re.compile(r"`(reviewer|submitter|review_candidate)`")
+# S58-02 (revision02): a backticked `reviewer` or `submitter` is a field name, not a person, only in the
+# field-list form R4-7 uses ("... reads `review_candidate` and `reviewer` from the review record",
+# "Entry: `ticket`, `candidate`, ..., `reviewer`, `submitter` (must differ ...)"): a run of two or more
+# backticked names joined by list separators, followed by punctuation, a bracket, or a preposition. A single
+# backticked name, or a list followed by a verb ("the `reviewer` and `submitter` merge ..."), is a person.
+_FIELD_TOKEN = r"`[A-Za-z_][A-Za-z_0-9]*`"
+_FIELD_SEPARATOR = r"\s*(?:,|，|、|\band\b|\bor\b|及|與|和)\s*"
+FIELD_LIST = re.compile(
+    r"(?P<run>" + _FIELD_TOKEN + r"(?:" + _FIELD_SEPARATOR + _FIELD_TOKEN + r")+)"
+    r"(?=\s*(?:[,，、;；.。:：()（）|]|$)|\s+(?:from|of|in|at|differs?|are|is|as|must|=))",
+    re.I,
+)
+FIELD_NAME = re.compile(r"`(reviewer|submitter)`")
+
+
+def mask_field_lists(unit: str) -> str:
+    """`unit` with `reviewer` and `submitter` replaced by FIELD inside field lists, and nowhere else."""
+    return FIELD_LIST.sub(lambda match: FIELD_NAME.sub("FIELD", match.group("run")), unit)
 
 
 def classify(path: str, text: str, historical: bool) -> list[Hit]:
@@ -380,7 +403,7 @@ def classify(path: str, text: str, historical: bool) -> list[Hit]:
     noted = carries_note(text)
     hits: list[Hit] = []
     for start, raw_unit, section in units(text):
-        unit = FIELD_NAME.sub("FIELD", raw_unit)
+        unit = mask_field_lists(raw_unit)
         for pattern in PATTERNS:
             seen: set[str] = set()
             for match in pattern.regex.finditer(unit):
@@ -570,7 +593,8 @@ def r307_defects(base: Path) -> list[str]:
 # --------------------------------------------- N9-05: the precedence sentence, by rule and place
 
 
-PRECEDENCE_REVERSED_OK = re.compile(r"R4-1[、，, 及和]*R4-4[^；。]{0,12}衝突[^；。]{0,12}以本修訂為準")
+# S58-03 (revision02): the rule is pinned exactly, with nothing (no 不, no 以外) between its parts.
+PRECEDENCE_REVERSED_OK = re.compile(r"與 R4-1、R4-4 衝突處以本修訂為準")
 PRECEDENCE_NOT_COMPETING = re.compile(r"不構成互相競爭的 reference")
 PRECEDENCE_NO_INVALID = re.compile(r"不觸發 `?ROUTE_REFERENCE_INVALID`?")
 PRECEDENCE_SPEC_SCOPE = re.compile(r"早於 Revision 04 的專案 SPEC")
@@ -679,6 +703,16 @@ class TemporaryDocuments(unittest.TestCase):
 
 # ================================================================ the real tree
 
+# S58-05: the tolerated hits of the real tree, by file and count. A change here is a decision: read the new
+# sentences, then update this list in the same commit.
+EXPECTED_TOLERATED: list[str] = [
+    "tolerated under the precedence note: doc/runbooks/handover-2026-08-22-plugin-distribution.md: 3 hit(s)",
+    "tolerated under the precedence note: modules/spec/adaptive-project-orchestration.md: 1 hit(s)",
+    "tolerated under the precedence note: modules/spec/claude-code-plugin-distribution.md: 1 hit(s)",
+    "tolerated under the precedence note: modules/spec/executor-routing.md: 2 hit(s)",
+    "tolerated under the precedence note: modules/spec/project-authority-integration.md: 1 hit(s)",
+]
+
 
 class RealTreeTests(unittest.TestCase):
     """The checkout as it stands: every rule green, every tolerated hit reported."""
@@ -700,6 +734,8 @@ class RealTreeTests(unittest.TestCase):
         report = tolerated_report(self.result)
         for line in report:
             print(line, file=sys.stderr)
+        # S58-05: the report is part of the result, so a new or a vanished tolerated file is red.
+        self.assertEqual(report, EXPECTED_TOLERATED)
         tolerated = self.result.tolerated_under_note()
         self.assertEqual(len(report), len({hit.path for hit in tolerated}))
         counted = 0
@@ -754,6 +790,9 @@ class InjectionTests(TemporaryDocuments):
         ("c 審閱者整合 (zh)", "Workflow.md", "審閱者審完後代為 commit 到候選分支，再過閘門。"),
         ("h1 dispatch is a queue row", "AGENTS.md", "派工以整合佇列列表示。"),
         ("a3 fixed integrator role", "template/README.md", "A fixed integrator owns guarded integration for every ticket and runs the integration script."),
+        # revision02: the reviewer's counter-mutations CM1 (S58-01) and CM2 (S58-02), both red now
+        ("c 審閱者整合 (zh)", "Workflow.md", "審閱者核准後代為 commit 到候選分支，不得略過閘門。"),
+        ("g1 reviewer merges, pushes or lands", "CodeReview.md", "After approval the `reviewer` merges the candidate into main."),
     )
 
     def test_the_f07_injection_the_executor_of_r4_4_reworded_to_the_reviewer_who_approved_it_goes_red(self) -> None:
@@ -793,11 +832,36 @@ class InjectionTests(TemporaryDocuments):
             "Integration is executed by the versioned integration script, not by the reviewer.",
             "The reviewer never merges, pushes or lands a candidate.",
             "整合不由審閱者執行，由整合腳本執行。",
+            "審閱者不得代為 commit 或整合候選。",
+            "The integration script reads `review_candidate` and `reviewer` from the review record, not from the queue row.",
         ):
             with self.subTest(sentence=sentence):
                 self.setUp()
                 self.append("Workflow.md", sentence)
                 self.assertEqual(self.live_names(), [], sentence)
+
+    def test_a_negation_of_an_unrelated_clause_or_a_backticked_person_exempts_nothing(self) -> None:
+        """S58-01 and S58-02: the exemptions are tied to the executor and to the field-list form."""
+        for sentence in (
+            "審閱者核准後代為 commit 到候選分支，不得略過閘門。",
+            "審閱者核准後整合候選，並非可選步驟。",
+            "After approval the `reviewer` merges the candidate into main.",
+            "After approval the `reviewer` and `submitter` merge the candidate into main.",
+            "The `reviewer` integrates the approved candidate by hand.",
+        ):
+            with self.subTest(sentence=sentence):
+                self.setUp()
+                self.append("Workflow.md", sentence)
+                self.assertTrue(self.live_names(), sentence)
+
+    def test_the_field_list_form_masks_the_names_and_nothing_else(self) -> None:
+        self.assertEqual(
+            mask_field_lists("reads `review_candidate` and `reviewer` from the review record"),
+            "reads `review_candidate` and FIELD from the review record",
+        )
+        self.assertEqual(mask_field_lists("Entry: `ticket`, `reviewer`, `submitter` (must differ)"), "Entry: `ticket`, FIELD, FIELD (must differ)")
+        self.assertEqual(mask_field_lists("the `reviewer` merges it"), "the `reviewer` merges it")
+        self.assertEqual(mask_field_lists("the `reviewer` and `submitter` merge it"), "the `reviewer` and `submitter` merge it")
 
     # ---- the remaining D7 patterns
     D7_INJECTIONS: tuple[tuple[str, str, str], ...] = (
@@ -1029,13 +1093,20 @@ class InjectionTests(TemporaryDocuments):
 
     # ---- N9-05: the precedence sentence by rule and place
     def test_the_precedence_sentence_reversed_moved_or_narrowed_is_red(self) -> None:
+        # S58-03: every case first asserts that the phrase it changes is present (`removed` raises when it is not),
+        # so a case can never become a no-op; the two reviewer doors (CM3) are cases of their own.
+        exact = "與 R4-1、R4-4 衝突處以本修訂為準"
+        meaning_rule = "Revision 04 (R4-1, R4-4) prevails"
         cases: tuple[tuple[str, Callable[[str], str], str], ...] = (
-            ("reversed precedence", lambda t: t.replace("衝突處以本修訂為準", "衝突處以該 SPEC 為準"), "Revision 04 (R4-1, R4-4) prevails"),
-            ("competing reference allowed", lambda t: t.replace("不構成互相競爭的 reference", "構成互相競爭的 reference"), "not a competing reference"),
-            ("raises the halt", lambda t: t.replace("不觸發 `ROUTE_REFERENCE_INVALID`", "觸發 `ROUTE_REFERENCE_INVALID`"), "raises no ROUTE_REFERENCE_INVALID"),
-            ("runbooks left out", lambda t: re.sub(r"，以及 runbooks 目錄[^，]*，", "，", t), "dated handover runbooks"),
-            ("SPECs left out", lambda t: t.replace("早於 Revision 04 的專案 SPEC", "專案 SPEC"), "SPECs that predate Revision 04"),
-            ("any runbook, noted or not", lambda t: t.replace("同一優先序註記", "優先序註記"), "carry the same precedence note"),
+            ("reversed precedence", lambda t: self.removed(t, exact, "與 R4-1、R4-4 衝突處以該 SPEC 為準"), meaning_rule),
+            ("CM3 door 1: negated", lambda t: self.removed(t, exact, "與 R4-1、R4-4 衝突處不以本修訂為準"), meaning_rule),
+            ("CM3 door 2: anything else than R4-1 and R4-4", lambda t: self.removed(t, exact, "與 R4-1、R4-4 以外的衝突處以本修訂為準"), meaning_rule),
+            ("only R4-1", lambda t: self.removed(t, exact, "與 R4-1 衝突處以本修訂為準"), meaning_rule),
+            ("competing reference allowed", lambda t: self.removed(t, "不構成互相競爭的 reference", "構成互相競爭的 reference"), "not a competing reference"),
+            ("raises the halt", lambda t: self.removed(t, "不觸發 `ROUTE_REFERENCE_INVALID`", "觸發 `ROUTE_REFERENCE_INVALID`"), "raises no ROUTE_REFERENCE_INVALID"),
+            ("runbooks left out", lambda t: self.removed_pattern(t, r"，以及 runbooks 目錄[^，]*，", "，"), "dated handover runbooks"),
+            ("SPECs left out", lambda t: self.removed(t, "早於 Revision 04 的專案 SPEC", "專案 SPEC"), "SPECs that predate Revision 04"),
+            ("any runbook, noted or not", lambda t: self.removed(t, "同一優先序註記", "優先序註記"), "carry the same precedence note"),
         )
         for name, change, meaning in cases:
             with self.subTest(name):
@@ -1043,6 +1114,22 @@ class InjectionTests(TemporaryDocuments):
                 self.edit(WORKFLOW, change)
                 defects = precedence_defects(self.base)
                 self.assertTrue(any(meaning in d for d in defects), defects)
+
+    def test_a_case_whose_phrase_is_absent_raises_instead_of_turning_into_a_no_op(self) -> None:
+        """S58-03: `removed` and `removed_pattern` assert that the phrase is present before they change it."""
+        with self.assertRaises(AssertionError):
+            self.removed("abc", "zzz", "y")
+        with self.assertRaises(AssertionError):
+            self.removed_pattern("abc", "zzz", "y")
+        self.assertEqual(self.removed("abc", "b", "y"), "ayc")
+
+    @staticmethod
+    def removed_pattern(text: str, pattern: str, replacement: str) -> str:
+        """`re.sub` that raises when the pattern matches nothing: a case never turns into a no-op."""
+        changed, count = re.subn(pattern, replacement, text, count=1)
+        if count != 1:
+            raise AssertionError(f"pattern not present: {pattern}")
+        return changed
 
     def test_the_precedence_sentence_moved_out_of_section_zero_is_red(self) -> None:
         def move(text: str) -> str:
@@ -1054,7 +1141,7 @@ class InjectionTests(TemporaryDocuments):
         self.assertIn("PRECEDENCE_SENTENCE_OUTSIDE_SECTION_ZERO", precedence_defects(self.base))
 
     def test_the_precedence_sentence_absent_or_duplicated_is_red(self) -> None:
-        self.edit(WORKFLOW, lambda t: t.replace(PRECEDENCE_PHRASE, "以其檔頭讀取"))
+        self.edit(WORKFLOW, lambda t: self.removed(t, PRECEDENCE_PHRASE, "以其檔頭讀取"))
         self.assertTrue(any(d.startswith("PRECEDENCE_SENTENCE_COUNT 0") for d in precedence_defects(self.base)))
         self.setUp()
         self.append(WORKFLOW, f"- 另一句 {PRECEDENCE_PHRASE}。")
@@ -1063,7 +1150,7 @@ class InjectionTests(TemporaryDocuments):
     # ---- part B: the handover runbook cites the sentence
     def test_a_handover_note_that_grants_itself_the_waiver_is_red(self) -> None:
         runbook = "doc/runbooks/handover-2026-08-22-plugin-distribution.md"
-        self.edit(runbook, lambda t: t.replace("`Workflow.md` section 0", "this note", 1))
+        self.edit(runbook, lambda t: self.removed(t, "`Workflow.md` section 0", "this note"))
         self.assertIn(f"HANDOVER_NOTE_DOES_NOT_CITE_WORKFLOW_SECTION_0 {runbook}", handover_citation_defects(self.base))
 
 

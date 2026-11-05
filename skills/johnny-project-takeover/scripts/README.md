@@ -84,8 +84,9 @@ argument every tracked Markdown file that has a `revision` and `digest` header i
 scanned. Structural defects (rows with the wrong column count, pinned rows outside a
 table, unresolved or untracked leaves, cells without a hash) exit 1.
 Every git child runs with `--no-replace-objects`, `-c core.quotepath=false`,
-`GIT_NO_REPLACE_OBJECTS=1` and `GIT_NO_LAZY_FETCH=1`, with the repository-selecting `GIT_*`
-variables and the `GIT_CONFIG*` variables removed. `git ls-files` runs with `-z`, so a tracked
+`GIT_NO_REPLACE_OBJECTS=1` and `GIT_NO_LAZY_FETCH=1`, with the thirteen repository-selecting `GIT_*`
+variables of the evidence gate (including `GIT_GRAFT_FILE` and `GIT_SHALLOW_FILE`), the `GIT_CONFIG*`
+variables and the `GIT_TEST_*` variables removed. `git ls-files` runs with `-z`, so a tracked
 leaf whose name is not ASCII resolves. Every printed subject is escaped to one line.
 A git failure that stems from the environment (`git log -1 -- <leaf>`,
 `git ls-files`, the single shallow-boundary `git rev-parse`, or `git show <revision>:<leaf>`

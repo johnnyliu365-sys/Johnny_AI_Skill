@@ -40,8 +40,11 @@ An unborn `HEAD` (a repository with no commit) is a tool fault, exit 2, never a 
 serve a history that does not exist, so `git log -1 -- <leaf>` fails and its message is printed.
 
 Every git child runs with `--no-replace-objects`, `-c core.quotepath=false`,
-`GIT_NO_REPLACE_OBJECTS=1` and `GIT_NO_LAZY_FETCH=1`, without the repository-selecting `GIT_*`
-variables and without the `GIT_CONFIG*` variables. `git ls-files` runs with `-z`, so a tracked
+`GIT_NO_REPLACE_OBJECTS=1` and `GIT_NO_LAZY_FETCH=1`, without the thirteen
+repository-selecting `GIT_*` variables of the wave-2 gates (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`,
+`GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`,
+`GIT_COMMON_DIR`, `GIT_PREFIX`, `GIT_QUARANTINE_PATH`, `GIT_REPLACE_REF_BASE`, `GIT_GRAFT_FILE`,
+`GIT_SHALLOW_FILE`) and without the `GIT_CONFIG*` and `GIT_TEST_*` variables. `git ls-files` runs with `-z`, so a tracked
 leaf whose name is not ASCII resolves. Every printed subject is escaped to one line.
 
 Fault versus red: a git failure that stems from the environment (git cannot run, the
@@ -111,13 +114,16 @@ DEFECTS = (
     "SKIP_NO_HASH_IN_CELL", "SKIP_NO_BLOB",
 )
 
-# Variables that would point git at some other repository than the work tree under check; the
-# GIT_CONFIG variables (GIT_CONFIG, GIT_CONFIG_GLOBAL, GIT_CONFIG_COUNT and the like) go too.
+# The list of the wave-2 gates (ticket 58 revision02): the thirteen names `evidence_gate.py` removes,
+# every GIT_CONFIG* name (GIT_CONFIG, GIT_CONFIG_GLOBAL, GIT_CONFIG_COUNT and the like) and every
+# GIT_TEST_* name. An inherited variable is an environment input and never changes a verdict.
 GIT_SELECTING_VARIABLES = (
     "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
     "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_NAMESPACE", "GIT_CEILING_DIRECTORIES",
-    "GIT_COMMON_DIR", "GIT_PREFIX",
+    "GIT_COMMON_DIR", "GIT_PREFIX", "GIT_QUARANTINE_PATH", "GIT_REPLACE_REF_BASE",
+    "GIT_GRAFT_FILE", "GIT_SHALLOW_FILE",
 )
+GIT_REMOVED_PREFIXES = ("GIT_CONFIG", "GIT_TEST_")
 GIT_PREFIX_ARGS = ("--no-replace-objects", "-c", "core.quotepath=false")
 _UNPRINTABLE = re.compile(r"[\x00-\x1f\x7f-\x9f  ]")
 
@@ -128,7 +134,7 @@ def git_environment() -> dict[str, str]:
     selecting = set(GIT_SELECTING_VARIABLES)
     environment = {
         name: value for name, value in os.environ.items()
-        if name.upper() not in selecting and not name.upper().startswith("GIT_CONFIG")
+        if name.upper() not in selecting and not name.upper().startswith(GIT_REMOVED_PREFIXES)
     }
     environment["GIT_NO_REPLACE_OBJECTS"] = "1"
     environment["GIT_NO_LAZY_FETCH"] = "1"

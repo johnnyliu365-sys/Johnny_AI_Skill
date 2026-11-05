@@ -1633,6 +1633,15 @@ class RunThatCheckedNothingTests(unittest.TestCase):
         self.assertIn("FAIL NO_FENCES", out)
         self.assertTrue(out.endswith("fences=0 failures=1\n"), out)
 
+    def test_a_self_note_run_on_a_section_with_zero_fences_is_exit_1_no_fences(self) -> None:
+        """S58-08: the --self-note form is no exemption from NO_FENCES."""
+        receipt = self.root / "receipt.md"
+        receipt.write_text("## delivery\nprose only, no fenced block\n", encoding="utf-8")
+        code, out, err = self.run_main([str(receipt), "## delivery", str(self.ev), "--self-note"])
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("FAIL NO_FENCES", out)
+        self.assertIn("failures=1", out)
+
     def test_a_heading_with_a_fence_is_not_no_fences(self) -> None:
         (self.ev / "out.txt").write_text("ok\n", encoding="utf-8")
         receipt = self.root / "receipt.md"

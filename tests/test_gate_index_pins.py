@@ -42,6 +42,15 @@ def sha256_of_committed(repo: Path, commit: str, path: str) -> str:
     return hashlib.sha256(shown.stdout).hexdigest()
 
 
+# The names the thirteen-name list of revision02 removes (the list of `evidence_gate.py`); written out here
+# on purpose, so a name dropped from the script goes red.
+REMOVED_GIT_NAMES: tuple[str, ...] = (
+    "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_NAMESPACE", "GIT_CEILING_DIRECTORIES", "GIT_COMMON_DIR", "GIT_PREFIX", "GIT_QUARANTINE_PATH",
+    "GIT_REPLACE_REF_BASE", "GIT_GRAFT_FILE", "GIT_SHALLOW_FILE",
+)
+
+
 class Repo:
     """A temporary repository with one leaf and room for an index."""
 
@@ -657,23 +666,19 @@ class ShallowRevisionTests(unittest.TestCase):
         self.assertEqual(len(calls), 1, calls)
         self.assertIn("--git-common-dir", calls[0])
 
-    def test_shallow_reported_without_a_shallow_file_is_a_tool_fault(self) -> None:
-        """A boundary file that git reads from elsewhere: the script finds none in the common directory."""
+    def test_an_inherited_shallow_file_changes_nothing(self) -> None:
+        """Revision02 (S58-04): GIT_SHALLOW_FILE is an environment input and is removed from every git child.
+        It used to be a tool fault here ("no shallow file"); with the variable set a correct index gives the
+        same result as without it."""
         elsewhere = self.base / "boundary-elsewhere"
         elsewhere.write_text(self.source.last_commit() + "\n", encoding="utf-8", newline="\n")
-        index = self.source.write_index("")
+        self.source.write_index(self.source.row(self.source.last_commit(), self.source.digest()))
         self.source.commit("index")
+        without = self.source.run("--check", "INDEX.md")
+        self.assertEqual(without[0], 0, without)
         with mock.patch.dict(os.environ, {"GIT_SHALLOW_FILE": str(elsewhere)}):
+            self.assertEqual(self.source.run("--check", "INDEX.md"), without)
             self.assertEqual(git(self.source.dir, "rev-parse", "--is-shallow-repository").strip(), "true")
-            self.assertFalse((self.source.dir / ".git" / "shallow").exists())
-            for mode in ("--check", "--write"):
-                with self.subTest(mode):
-                    code, out, err = self.source.run(mode, "INDEX.md")
-                    self.assertEqual(code, 2, out + err)
-                    self.assertIn("tool fault", err)
-                    self.assertIn("no shallow file", err)
-                    self.assertEqual(out, "")
-        self.assertEqual(index.read_text(encoding="utf-8"), HEADER)
 
     def test_a_simulated_shallow_answer_without_a_shallow_file_is_a_tool_fault(self) -> None:
         repository = index_pins.Repo(self.source.dir)
@@ -1376,12 +1381,15 @@ class CarriedFindingTests(PinCase):
             calls.append((list(command), captured))
             return real_run(command, *args, **kwargs)
 
-        injected = {
-            "GIT_DIR": str(self.repo.dir / "nowhere"), "GIT_WORK_TREE": str(self.repo.dir / "nowhere"),
-            "GIT_INDEX_FILE": str(self.repo.dir / "nowhere.idx"), "GIT_CONFIG_COUNT": "1",
-            "GIT_CONFIG_KEY_0": "core.quotepath", "GIT_CONFIG_VALUE_0": "true", "GIT_CONFIG_GLOBAL": str(self.repo.dir / "nowhere.cfg"),
+        injected = {name: str(self.repo.dir / "nowhere") for name in REMOVED_GIT_NAMES}
+        injected.update({
+            "GIT_CONFIG": str(self.repo.dir / "nowhere.cfg"), "GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "core.quotepath",
+            "GIT_CONFIG_VALUE_0": "true", "GIT_CONFIG_GLOBAL": str(self.repo.dir / "nowhere.cfg"),
+            "GIT_CONFIG_SYSTEM": str(self.repo.dir / "nowhere.cfg"), "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_TEST_FAKE_VARIABLE": "1", "GIT_TEST_OTHER": "1", "git_test_lower": "1",
             "GIT_NO_REPLACE_OBJECTS": "0", "GIT_NO_LAZY_FETCH": "0",
-        }
+        })
+        removed = set(injected) - {"GIT_NO_REPLACE_OBJECTS", "GIT_NO_LAZY_FETCH"}
         with mock.patch.dict(os.environ, injected), mock.patch.object(index_pins.subprocess, "run", spy):
             code, out, err = self.repo.run("--check", "INDEX.md")
         self.assertEqual(code, 0, out + err)
@@ -1393,8 +1401,31 @@ class CarriedFindingTests(PinCase):
                 self.assertIn("core.quotepath=false", command)
                 self.assertEqual(env.get("GIT_NO_REPLACE_OBJECTS"), "1")
                 self.assertEqual(env.get("GIT_NO_LAZY_FETCH"), "1")
-                for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_CONFIG_COUNT", "GIT_CONFIG_KEY_0", "GIT_CONFIG_VALUE_0", "GIT_CONFIG_GLOBAL"):
-                    self.assertNotIn(name, env)
+                for name in sorted(removed):
+                    with self.subTest(name=name):
+                        self.assertNotIn(name, env)
+                        self.assertNotIn(name.upper(), env)
+
+    def test_each_name_of_the_list_is_removed_one_by_one(self) -> None:
+        """S58-09: inject one name at a time, so dropping any one of them from the tuple goes red."""
+        for name in list(REMOVED_GIT_NAMES) + ["GIT_CONFIG_PARAMETERS", "GIT_CONFIG_KEY_7", "GIT_TEST_X", "git_graft_file", "Git_Test_Y"]:
+            with self.subTest(name=name):
+                with mock.patch.dict(os.environ, {name: "x"}):
+                    self.assertNotIn(name, index_pins.git_environment())
+                    self.assertNotIn(name.upper(), index_pins.git_environment())
+        self.assertEqual(set(REMOVED_GIT_NAMES), set(index_pins.GIT_SELECTING_VARIABLES))
+
+    def test_an_inherited_graft_file_does_not_turn_a_correct_pin_stale(self) -> None:
+        """S58-04: a graft that gives HEAD no parent used to move the leaf's last revision and turn a correct pin STALE."""
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        head = git(self.repo.dir, "rev-parse", "HEAD").strip()
+        graft = self.repo.dir.parent / "graft-for-test"
+        graft.write_text(head + "\n", encoding="utf-8", newline="\n")
+        without = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(without[0], 0, without)
+        with mock.patch.dict(os.environ, {"GIT_GRAFT_FILE": str(graft)}):
+            self.assertEqual(self.repo.run("--check", "INDEX.md"), without)
 
     def test_the_removed_variables_are_matched_case_insensitively_and_the_rest_pass_through(self) -> None:
         with mock.patch.dict(os.environ, {"git_dir": "x", "Git_Config_Count": "1", "KEEP_ME": "yes"}):
