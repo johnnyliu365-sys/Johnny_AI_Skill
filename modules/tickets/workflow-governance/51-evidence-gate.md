@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用（Revision 04 does not seal a new Context） |
 | Agent Context binding | ticket revision04 / receipt under `doc/reviews/workflow-governance/evidence/51/` / owner implementation seat / worktree `.worktrees/51-evidence-gate` / branch `cp/wave2-51-evidence-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（candidate `e7594f65`; correction review CONVERGENCE_REVIEW_REQUIRED, approved under CodeReview §5 rule B and the R4-4 trust boundary on 2026-11-05 with findings carried; awaiting integration） |
+| 狀態 | `INTEGRATED`（candidate `e7594f65` integrated on `cp/wave2-gates` at `6fbec950` on 2026-11-05; record `doc/reviews/workflow-governance/wave2-gate-integration-2026-11-05.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/51-evidence-gate` |
 | 審閱者 | `ticket-review` seat, its own worktree `.worktrees/51-evidence-gate-review` |

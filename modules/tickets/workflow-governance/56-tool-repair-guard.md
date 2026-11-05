@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision05 / receipt under `.worktrees/56-tool-repair-guard-out/` / owner implementation seat / worktree `.worktrees/56-tool-repair-guard` / branch `cp/wave2-56-tool-repair-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（closure revision05; candidate `9dfe5eb4` on `cp/wave2-56-tool-repair-guard`; revision05 initial review APPROVED 2026-11-05; awaiting integration） |
+| 狀態 | `INTEGRATED`（candidate `9dfe5eb4` integrated on `cp/wave2-gates` at `cbb8306d` on 2026-11-05; record `doc/reviews/workflow-governance/wave2-gate-integration-2026-11-05.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/56-tool-repair-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/56-tool-repair-guard-review` |

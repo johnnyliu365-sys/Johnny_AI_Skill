@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision03 / receipt under `.worktrees/55-preflight-gate-out/` / owner implementation seat / worktree `.worktrees/55-preflight-gate` / branch `cp/wave2-55-preflight-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（closure revision03; candidate `c7a04099` on `cp/wave2-55-preflight-gate`; revision03 correction review APPROVED 2026-11-04; awaiting integration） |
+| 狀態 | `INTEGRATED`（candidate `c7a04099` integrated on `cp/wave2-gates` at `c3aa5a5f` on 2026-11-05; record `doc/reviews/workflow-governance/wave2-gate-integration-2026-11-05.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/55-preflight-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/55-preflight-gate-review` |

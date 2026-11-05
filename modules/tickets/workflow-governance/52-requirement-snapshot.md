@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision05 / receipt under `doc/reviews/workflow-governance/evidence/52/` / owner implementation seat / worktree `.worktrees/52-requirement-snapshot` / branch `cp/wave2-52-requirement-snapshot` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（candidate `91beb02d`; correction review CONVERGENCE_REVIEW_REQUIRED, approved under CodeReview §5 rule B on 2026-11-05 with findings carried; awaiting integration） |
+| 狀態 | `INTEGRATED`（candidate `91beb02d` integrated on `cp/wave2-gates` at `64251c9a` on 2026-11-05; record `doc/reviews/workflow-governance/wave2-gate-integration-2026-11-05.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/52-requirement-snapshot` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/52-requirement-snapshot-review` |

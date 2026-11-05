@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision03 / receipt under `.worktrees/54-coverage-map-guard-out/` / owner implementation seat / worktree `.worktrees/54-coverage-map-guard` / branch `cp/wave2-54-coverage-map-guard` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（candidate `763284bf`; correction review CONVERGENCE_REVIEW_REQUIRED, approved under CodeReview §5 rule B and the R4-4 trust boundary on 2026-11-05 with findings carried; awaiting integration） |
+| 狀態 | `INTEGRATED`（candidate `763284bf` integrated on `cp/wave2-gates` at `8fc352d1` on 2026-11-05; record `doc/reviews/workflow-governance/wave2-gate-integration-2026-11-05.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/54-coverage-map-guard` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/54-coverage-map-guard-review` |
