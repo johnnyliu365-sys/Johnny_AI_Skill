@@ -84,13 +84,19 @@ REVIEWER_NEGATED: tuple[str, ...] = (
     r"does not (integrate|merge|push|land)", r"never (integrates|merges|pushes|lands|submits)",
     r"differs from", r"superseded", r"\bnot (by|via) a reviewer",
 )
-# S58-01 (revision02): a Chinese negation exempts a sentence only when it negates the reviewer as the
-# executor: a negation word directly before the reviewer (不由審閱者, 並非審閱者) or directly after it
-# (審閱者不得…). A 不得 of an unrelated clause ("審閱者核准後代為 commit，不得略過閘門") exempts nothing.
+# S58-01 and S58-10 (revision02): a Chinese negation exempts a sentence only when it negates the reviewer as
+# the executor, which means an executor verb follows it directly. After the reviewer: 審閱者不得代為,
+# 審閱者不得整合 (the negation, then an executor verb). Before the reviewer: 不由審閱者執行, 並非審閱者整合,
+# or an executor verb just before the negation (整合不由審閱者, 整合者並非審閱者). A 不得 of an unrelated clause
+# ("審閱者不得略過閘門，核准後代為 commit") exempts nothing, and neither does a negation whose verb is another.
 _ZH_REVIEWER = r"(?:審閱者|審查者|reviewer)"
+_ZH_EXECUTOR_VERB = r"(?:代為|整合|合併|推送|落地|執行|commit)"
+_ZH_NEGATION = r"(?:不由|不是|並非|而非|不等於|不指定|不得由|不可由|不能由|非由)"
+_ZH_NEGATION_AFTER = r"(?:不得|不可|不能|不會|不是|並非|不等於|不指定)"
 REVIEWER_NEGATED_ZH: tuple[str, ...] = (
-    r"(?:不由|不是|並非|而非|不等於|不指定|不得由|不可由|不能由|非由)(?:該|其|核准的|任何)?" + _ZH_REVIEWER,
-    _ZH_REVIEWER + r"(?:本人|自己)?(?:不得|不可|不能|不會|不是|並非|不等於|不指定)",
+    _ZH_NEGATION + r"(?:該|其|核准的|任何)?" + _ZH_REVIEWER + r"(?:本人|自己)?" + _ZH_EXECUTOR_VERB,
+    _ZH_EXECUTOR_VERB + r"[^，。；,.;|]{0,4}" + _ZH_NEGATION + r"(?:該|其|核准的|任何)?" + _ZH_REVIEWER,
+    _ZH_REVIEWER + r"(?:本人|自己)?" + _ZH_NEGATION_AFTER + _ZH_EXECUTOR_VERB,
 )
 FIXED_INTEGRATOR_NEGATED: tuple[str, ...] = (
     r"must not be assumed", r"no fixed integrator", r"not required", r"不指定固定整合者", r"不指定固定的個人整合者",
@@ -376,16 +382,16 @@ def bridge_scoped(text: str) -> bool:
     return any(SCOPE_NOTE.match(line) for line in head_lines(text))
 
 
-# S58-02 (revision02): a backticked `reviewer` or `submitter` is a field name, not a person, only in the
-# field-list form R4-7 uses ("... reads `review_candidate` and `reviewer` from the review record",
-# "Entry: `ticket`, `candidate`, ..., `reviewer`, `submitter` (must differ ...)"): a run of two or more
-# backticked names joined by list separators, followed by punctuation, a bracket, or a preposition. A single
-# backticked name, or a list followed by a verb ("the `reviewer` and `submitter` merge ..."), is a person.
+# S58-02 and S58-11 (revision02): a backticked `reviewer` or `submitter` is a field name, not a person, only in
+# the field-list form R4-7 uses ("... reads `review_candidate` and `reviewer` from the review record"; the
+# Entry and block lists end at a closing bracket or a full stop): a run of two or more backticked names joined
+# by list separators, followed by `from`, a closing bracket or a full stop. A single backticked name, or a list
+# followed by any other word ("`reviewer` and `submitter` must merge", "... are the ones who merge"), is a person.
 _FIELD_TOKEN = r"`[A-Za-z_][A-Za-z_0-9]*`"
 _FIELD_SEPARATOR = r"\s*(?:,|，|、|\band\b|\bor\b|及|與|和)\s*"
 FIELD_LIST = re.compile(
     r"(?P<run>" + _FIELD_TOKEN + r"(?:" + _FIELD_SEPARATOR + _FIELD_TOKEN + r")+)"
-    r"(?=\s*(?:[,，、;；.。:：()（）|]|$)|\s+(?:from|of|in|at|differs?|are|is|as|must|=))",
+    r"(?=\s*(?:[)）.。]|$)|\s+from\b)",
     re.I,
 )
 FIELD_NAME = re.compile(r"`(reviewer|submitter)`")
@@ -793,6 +799,10 @@ class InjectionTests(TemporaryDocuments):
         # revision02: the reviewer's counter-mutations CM1 (S58-01) and CM2 (S58-02), both red now
         ("c 審閱者整合 (zh)", "Workflow.md", "審閱者核准後代為 commit 到候選分支，不得略過閘門。"),
         ("g1 reviewer merges, pushes or lands", "CodeReview.md", "After approval the `reviewer` merges the candidate into main."),
+        # correction 2: the reviewer's CM10 (S58-10), CM12 and CM13 (S58-11), red now
+        ("c 審閱者整合 (zh)", "Workflow.md", "審閱者不得略過閘門，核准後代為 commit 到候選分支。"),
+        ("g1 reviewer merges, pushes or lands", "CodeReview.md", "After approval `reviewer` and `submitter` must merge the candidate into main."),
+        ("g1 reviewer merges, pushes or lands", "CodeReview.md", "After approval `reviewer`, `submitter` are the ones who merge the candidate into main."),
     )
 
     def test_the_f07_injection_the_executor_of_r4_4_reworded_to_the_reviewer_who_approved_it_goes_red(self) -> None:
@@ -833,6 +843,9 @@ class InjectionTests(TemporaryDocuments):
             "The reviewer never merges, pushes or lands a candidate.",
             "整合不由審閱者執行，由整合腳本執行。",
             "審閱者不得代為 commit 或整合候選。",
+            "審閱者本人不得整合候選，由整合腳本執行。",
+            "整合者並非審閱者，由持有預算者執行整合腳本。",
+            "整合不由審閱者本人執行，由整合腳本執行。",
             "The integration script reads `review_candidate` and `reviewer` from the review record, not from the queue row.",
         ):
             with self.subTest(sentence=sentence):
@@ -845,6 +858,11 @@ class InjectionTests(TemporaryDocuments):
         for sentence in (
             "審閱者核准後代為 commit 到候選分支，不得略過閘門。",
             "審閱者核准後整合候選，並非可選步驟。",
+            "審閱者不得略過閘門，核准後代為 commit 到候選分支。",
+            "審閱者並非可略過的環節，核准後整合候選。",
+            "不得略過閘門，審閱者核准後代為 commit 到候選分支。",
+            "After approval `reviewer` and `submitter` must merge the candidate into main.",
+            "After approval `reviewer`, `submitter` are the ones who merge the candidate into main.",
             "After approval the `reviewer` merges the candidate into main.",
             "After approval the `reviewer` and `submitter` merge the candidate into main.",
             "The `reviewer` integrates the approved candidate by hand.",
@@ -859,9 +877,11 @@ class InjectionTests(TemporaryDocuments):
             mask_field_lists("reads `review_candidate` and `reviewer` from the review record"),
             "reads `review_candidate` and FIELD from the review record",
         )
-        self.assertEqual(mask_field_lists("Entry: `ticket`, `reviewer`, `submitter` (must differ)"), "Entry: `ticket`, FIELD, FIELD (must differ)")
+        self.assertEqual(mask_field_lists("Entry (`ticket`, `reviewer`, `submitter`) must differ"), "Entry (`ticket`, FIELD, FIELD) must differ")
         self.assertEqual(mask_field_lists("the `reviewer` merges it"), "the `reviewer` merges it")
         self.assertEqual(mask_field_lists("the `reviewer` and `submitter` merge it"), "the `reviewer` and `submitter` merge it")
+        for tail in ("must merge it", "are the ones who merge it", "is the one who merges it", "of the record merge it", ", merge it"):
+            self.assertEqual(mask_field_lists("the `reviewer` and `submitter` " + tail), "the `reviewer` and `submitter` " + tail, tail)
 
     # ---- the remaining D7 patterns
     D7_INJECTIONS: tuple[tuple[str, str, str], ...] = (
