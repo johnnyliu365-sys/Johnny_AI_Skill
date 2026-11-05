@@ -31,7 +31,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [59-ci-linux-windows](59-ci-linux-windows.md) | Every push runs the whole suite on Linux and Windows, green only when each failure is registered by name with a reason | `INTEGRATED` (`e067b81b` at `ea51e1c1`, CI green) | Wave 2 acceptance; R4-6, readiness criterion 2 |
 | [60-gate-hardening-carried](60-gate-hardening-carried.md) | The findings carried when the six wave-2 gates were approved under rule B are pinned or closed, the two that guard a forbidden change first | `INTEGRATED` (`1c0fb917` at `093f221e`) | Wave 2; R4-2, R4-4, CodeReview §5 rule B |
 | [62-registered-known-failures](62-registered-known-failures.md) | Every failure CI registers that is not an environment failure is fixed in its test or carries a confirmed cause and an open follow-up | `INTEGRATED` (`bb9c4502` at `68c318a5`, CI green) | Wave 2 acceptance follow-up; ticket 59 S59-02, S59-03, S59-05 |
-| [63-short-name-containment](63-short-name-containment.md) | A Windows 8.3 short-name alias of the repository root is the same path for containment, while junctions and reparse points stay refused | `IN_PROGRESS` (revision02; initial review CHANGES_REQUESTED, S63-08 to S63-10; correction 2 dispatched) | Wave 2 acceptance follow-up; ticket 59 S59-04; AGENTS.md P0 |
+| [63-short-name-containment](63-short-name-containment.md) | A Windows 8.3 short-name alias of the repository root is the same path for containment, while junctions and reparse points stay refused | `IN_PROGRESS` (revision02; correction 2 returned, `259598d7`; correction review dispatched) | Wave 2 acceptance follow-up; ticket 59 S59-04; AGENTS.md P0 |
 
 ## Shared baseline
 
