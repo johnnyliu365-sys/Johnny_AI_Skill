@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/57-state-file-templates-out/` / owner implementation seat / worktree `.worktrees/57-state-file-templates` / branch `cp/wave2-57-state-file-templates` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the test（CONTEXT.md Implementation language）; the templates are Markdown and JSON |
-| 狀態 | `REVIEW_APPROVED`（closure revision02, candidate `f423748b`: correction review CONVERGENCE_REVIEW_REQUIRED, convergence disposition APPROVED under CodeReview §5 rule B; record `doc/reviews/workflow-governance/57-state-file-templates-code-review.md`; ready for integration） |
+| 狀態 | `INTEGRATED`（candidate `f423748b` integrated on `cp/wave2-gates` at `7da279a7` on 2026-11-06; record `doc/reviews/workflow-governance/wave2-integration-2026-11-06.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/57-state-file-templates` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/57-state-file-templates-review` |

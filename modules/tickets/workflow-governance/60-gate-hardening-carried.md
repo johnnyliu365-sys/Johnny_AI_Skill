@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/60-gate-hardening-carried-out/` / owner implementation seat / worktree `.worktrees/60-gate-hardening-carried` / branch `cp/wave2-60-gate-hardening-carried` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（revision01 initial review APPROVED on `1c0fb917`; record `doc/reviews/workflow-governance/60-gate-hardening-carried-code-review.md`; ready for integration） |
+| 狀態 | `INTEGRATED`（candidate `1c0fb917` integrated on `cp/wave2-gates` at `093f221e` on 2026-11-06; record `doc/reviews/workflow-governance/wave2-integration-2026-11-06.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/60-gate-hardening-carried` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/60-gate-hardening-carried-review` |
