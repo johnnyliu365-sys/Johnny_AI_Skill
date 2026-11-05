@@ -55,6 +55,10 @@ Windows runner 47 rows, Linux runner 234 rows (read from CI runs 42009508339 and
 
 The 39 rows of `test_dispatch_authority`, `test_dispatch_session`, `test_parallel_worker_dispatch`, `test_review_return` and `test_plugin_distribution_bundle`: the runner's temp directory is the 8.3 short path `C:/Users/RUNNER~1/...`, which makes the worktree containment check refuse the worktree; the host's temp path has no short name. `test_acr2_linux_requires_an_actual_linux_kernel_and_backend` fails on the host and on the Windows runner for different causes (the host has WSL but the proof fails there; the runner has none).
 
+### Line endings (checkout configuration)
+
+The maintainer's checkout has repo-local `core.autocrlf=false`. The Windows runner has none repo-local and runs under the system default `core.autocrlf=true` (`file:C:/Program Files/Git/etc/gitconfig true`, printed by the workflow's identity step), so LF blobs become CRLF working files there; the Linux runner has the setting unset and keeps LF. No registered failure is a line-ending failure: on the Windows runner the byte-checking tests pass under `autocrlf=true`, and the workflow does not change the setting, so that difference stays visible instead of being tuned away.
+
 ### Linux runner
 
 Every failure on the Linux runner is a Windows-only facility the test needs (`st_file_attributes`, `cmd.exe`, `powershell.exe`, `%LOCALAPPDATA%`, batch-file shims, Windows path forms, the pywin32 binding), or one of the operating-system independent failures that also fail on the host (pinned commit not in the clone, `test_acr6_exact_test_only_boundary`, the router audit step, the refusal-guidance roster). `tests/test_codex_registration_contracts.py` is a collection error; the workflow passes `--continue-on-collection-errors` so that it does not stop the rest of the suite.
