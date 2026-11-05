@@ -433,9 +433,10 @@ directory, alternate object directories, namespace, ceiling directories, common 
 prefix) and without the `GIT_CONFIG_*` variables, so an exporting hook cannot point the guard
 elsewhere; it also runs with `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1` and
 `GIT_NO_LAZY_FETCH=1`, so a replace ref never changes the blob read at a commit and a lookup
-never fetches over the network; `GIT_GRAFT_FILE` names a path that does not exist (an
-inherited value is dropped first), so neither `info/grafts` nor an inherited graft file moves a
-parent and `--base main^` means what the commit objects say. Exit 3: a
+never fetches over the network; every git child also runs with `-c core.commitGraph=false`, so a
+forged commit-graph file cannot move a parent; `GIT_GRAFT_FILE` names a path that does not exist
+(an inherited value is dropped first), so neither `info/grafts` nor an inherited graft file moves
+a parent and `--base main^` means what the commit objects say. Exit 3: a
 missing or unknown option, an empty value, an argument that holds a lone surrogate or a
 control character, an absolute `--map` or `--specs`, a `..` segment, or a revision that
 starts with `-`. `--specs` and `--map` accept forward or back slashes and a trailing slash;
