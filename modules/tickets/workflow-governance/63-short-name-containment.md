@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `b74840f1`: S63-01 containment bypass (blocks), S63-02 the same class already at the base, S63-07 the 39th row; correction 1 returned (`00fdc179`, CI run 42123979062 green on both jobs); revision02 initial review dispatched） |
+| 狀態 | `IN_PROGRESS`（closure revision02; revision02 initial review CHANGES_REQUESTED on `00fdc179` (S63-08 resolve-twice race, S63-09 P0 source type, S63-10); correction 2 dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
@@ -111,3 +111,14 @@ Review record section "Revision01 initial review". The review found a containmen
 | S63-07 | TICKET_DEFECT, closed here | `tests/test_plugin_distribution_bundle.py`: the fixture builds the patched path from the resolved temporary root, so the patch matches the path the builder walks; the 39th Windows row passes on the runner and is removed |
 
 A CI run on the correction commit with both jobs `success` is part of the evidence.
+
+### Correction 2 under revision02 (after the revision02 initial review `CHANGES_REQUESTED`)
+
+No ticket defect blocks, so revision02 stands. S63-08 (confinement): the base is resolved once; containment is anchored on that checked resolution; and the component walk covers both the given base and its resolved path, so a component swapped between the walk and the resolve cannot pass. S63-09 (P0 source type): the component result is a typed value (an Enum for pass, refuse and missing), never an empty-string convention; the last Windows error is held in a typed field, not a dynamic attribute read through `getattr`; the reparse attribute is read from `st_file_attributes` directly. S63-10: tests for the ancestor half of the walk, the reviewer's AN1 to AN3, red under the reviewer's K2. `base_refusal_reason` becomes private (its only caller is `resolves_within_root`). The receipt carries an E1 capture, run last.
+
+Routed, no work here:
+- S63-11 (an `lstat` result without the attribute) is hardening with the next change of this module.
+- S63-12 (OneDrive cloud-files folders carry reparse tags): the rule stays as AGENTS.md P0 writes it, and every reparse point refuses. A repository in a synced folder works today only because Python runs with placeholders disguised. This choice is put to the owner.
+- S63-13 (a junction inside the root that points inside the root, on the target side) is already present at the base. It is put to the owner with S63-12 as one P0 wording question.
+
+The next review is the one correction review of revision02.

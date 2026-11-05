@@ -132,3 +132,167 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/63-rev01-initial
 reviewed_at: 2026-11-06
 ```
+
+## Revision02 initial review
+
+**Verdict: `CHANGES_REQUESTED`.** Correction 1 (`00fdc179`) applies the revision02 rule. Every existing component of every base is examined with `os.lstat`, a reparse point refuses, and a component that cannot be examined refuses. My revision01 bypasses are now all refused: cs1–cs3, the Kelvin and Ohm junction bases, and the ancestor junction. The same holds for the new mount-point, alternate-stream, trailing-space/dot and beyond-MAX_PATH shapes. The 39th row is fixed in its test and passes on the runner. S63-01 to S63-07 are closed as specified. CI run 42123979062 is green on both jobs at the candidate. No common setup that I could test is over-refused.
+
+Two new findings block approval:
+
+- **S63-08 (confinement).** `resolves_within_root` now resolves the base twice. It checks the first resolution in `base_refusal_reason` and anchors containment on a second, unchecked `base.resolve()`. The base is swapped for a junction pointing outside right after the first resolve. The candidate then accepts a target under the junction. Under the identical swap the revision01 and base code refuse it (probe N2). The candidate has widened the check-then-use window into the predicate itself. The same split leaves a window between the `lstat` walk and the resolve that reopens the S63-01 case-twin shape.
+- **S63-09 (P0 source type).** `_component_refusal` encodes a three-state result as `str | None`, with `""` meaning "missing component, stop". That is a string convention for a finite domain state, which AGENTS.md P0 forbids.
+
+S63-10 also has to be closed in this correction under rule B: no test pins the ancestor half of the walk against case-folding junctions. My K2 mutation, which examines only the base itself, reopens AN1–AN3 and turns nothing red. The rest do not block: S63-11 and S63-13 are hardening, and S63-12 is a ticket defect for the control plane.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/63-short-name-containment.md`, closure revision02, read with `git show 8ed97a29:…`. It has the boundary block (five paths) and the "Revision02" section with its rule and findings table |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-63b_dispatch.yaml` (correction 1 on `b74840f1`) |
+| Candidate | `00fdc179f07e7d57cd828634396e71af77ad352b` on `cp/wave2-63-short-name-containment`. `origin/cp/wave2-63-short-name-containment` is the same sha. It is one additive commit whose parent is `b74840f1` |
+| Commit identity | Author and committer are `Johnny Liu <johnny.liu365@gmail.com>`. The trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` names the model that did the work, which is correct |
+| Changed paths | `git diff --name-only 92ee3a94 HEAD`: `ci/README.md`, `ci/registered-failures.json`, `library/local_orchestration/path_containment.py`, `tests/test_path_containment_short_names.py`, `tests/test_plugin_distribution_bundle.py`. These are exactly the boundary block's entries, and no `forbid` path is touched |
+| Review worktree | `.worktrees/63-short-name-containment-review`, detached at the candidate. Porcelain was empty before and after |
+| Receipt | `.worktrees/63-short-name-containment-out-c1/RETURN.md` (LF, 65617 bytes, 0 CR) |
+| CI run | 42123979062, event `push`, `headSha` = candidate, `test (linux)` success, `test (windows)` success. `gh run list` on the branch: 42105264082 failure (`b6821f4b`), 42108480717 success (`b74840f1`), 42123979062 success (`00fdc179`) |
+| References applied | `AGENTS.md` (P0 permissions and ownership; P0 source type); `CodeReview.md` (§3–§5, rule B); `review-checks.md` (path identity, authorization bypass, exception behaviour, error-code consistency, test truthfulness with reviewer counter-mutation, task/worktree binding); `security-boundary.md` |
+| XSS / secrets / Agent control / profile / POC | Not applicable, for the same reasons as revision01 |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | Revision02 rule: every existing component of every base examined with `lstat`; a reparse point refuses; a component that cannot be examined refuses; the short-name lookup decides spelling only afterwards | PASS in effect, except S63-08 and S63-10 | `_redirected_component` walks `Path(*parts[:count])` from the volume root, and `_component_refusal` refuses on `S_ISLNK` or `FILE_ATTRIBUTE_REPARSE_POINT`. Any `OSError` other than not-found or not-a-directory refuses (K1 red). Only then does `base.resolve()` run, followed by `_is_same_directory_alias`. A relative base is refused |
+| 2 | Revision01 probes rerun | PASS | All refuse except the intended same-directory spellings. a9 (Kelvin junction, long parent) is now **refused**; it was accepted at revision01 and at the base. cs1, cs2 and cs3 are refused, and the cs4 control is accepted. Table below |
+| 3 | New probes | **FAIL: N2 (S63-08)**; N6 raises (S63-11) | Table below |
+| 4 | Over-refusal on Windows | PASS on this host; process-mode dependency (S63-12) | Over-refusal table below |
+| 5 | `base_refusal_reason` | Contract acceptable; see S63-09 | `(base: Path) -> str \| None`: `None` means the base can anchor; otherwise a free-text diagnostic that names the component, the resolution or the Windows error. The only caller is `resolves_within_root`; `worktree_containment.py` and `payload_effect_ports.py` still use the boolean. `__all__` exports it. Its result is diagnostic text, not a finite reason type, so nothing should branch on it. If a caller later needs the reason, it should get a named enum. Until then it could stay private. Its inner helper's `""` sentinel is S63-09 |
+| 6 | ctypes | PASS | `ctypes.WinDLL("kernel32", use_last_error=True)` once at import, under `sys.platform == "win32"`. `argtypes`/`restype` are declared once. `set_last_error(0)` runs before the call, and `get_last_error()` is read on a zero return into a thread-local, then into the reason ("Windows error N"). The retry pins hold: M1d (R5) and M1e (R6) are red. M1f (`use_last_error=False`) is red through the real-lookup test. `test_the_kernel_function_is_declared_once_with_last_error` checks types and identity, not the `use_last_error` flag; M1f covers the flag |
+| 7 | 39th row | PASS | The only edit to `tests/test_plugin_distribution_bundle.py` is `parent = Path(temp_name).resolve()` plus a comment; no assertion changed. The row is removed from `ci/registered-failures.json`. CI Windows `FAILED` set (8) equals the 8 registered rows, and the test is not among them. M1g (fixture back to the short spelling) is red under a short `TMP` with `ENTRY_UNAVAILABLE != None`, and the seat's M1base is green under the same `TMP` |
+| 8 | No existing assertion weakened; revision01 rules still hold | PASS | `git diff b74840f1 HEAD -- tests/` removes one line, the fixture line above. The new file grows from 13 to 28 tests, all additions. In my clone, the new file plus the five existing containment test files gave 70 passed, 22 subtests passed. Windows CI: skips stay at 34, and the test count grows by exactly 15, so every new test ran on the runner. Linux: 12 more skip, 3 more pass |
+| 9 | Receipt | PASS | `receipt_check.py` → 6 `[ok]`, 0 defects, exit 0. `evidence_gate.py` with the three wave-1 tools and P1, T1, M1, C1, F1, P9 → `cells=6 defects=0`, exit 0 (S63-03 closed). My byte check: 0 CR, every raw block byte-identical to its capture, every exit list equal to the capture's `exit=` lines (M1 `0,0,0` = clone, checkout, final). The STATEMENT says E1 ran last, but there is no E1 capture: a receipt cannot hold the gate's verdict on itself. My own run on the receipt as returned gives `defects=0` |
+| 10 | M1: seven mutations red for the intended reason | PASS | Read unfiltered. M1a (walk removed) → the 4 case-fold junction tests and the cannot-be-examined test, all `True is not false`. M1b (walk only for short-name bases) → the 2 long-parent case-fold tests, Kelvin, Ohm and cannot-be-examined. M1c (R3, pathlib equality) → `test_a_lookup_that_differs_by_a_character_only_pathlib_folds_is_refused`. M1d (R5) → retry test, `WindowsPath('.')`. M1e (R6) → retry test, `!= None`. M1f → `0 not found in (2, 3)`. M1g → `ENTRY_UNAVAILABLE != None`. Each restore leaves an empty porcelain. The clone command and detach are recorded |
+| 11 | Boundary, identity, stdlib, `Any`, mypy | PASS (with S63-09 note) | Five declared paths; Johnny Liu. Imports are stdlib only (`os`, `stat`, `sys`, `threading`, `pathlib`, `ctypes`, `ctypes.wintypes`). No explicit `Any`. `mypy --strict --python-version 3.11 --no-incremental` on the three changed Python files → exit 0, and with `--platform linux` → exit 0. `--disallow-any-expr` flags the ctypes call result (line 45), `getattr(_lookup_state, "error", 0)` (line 76) and `getattr(status, "st_file_attributes", 0)` (line 106), each narrowed by `int()` |
+| 12 | Seat F1 | PASS | 8 failure names, all among the 12 base names. The seat's lock log names only its own runner at acquisition |
+| 13 | Reviewer F1 under the host lock | PASS | `python -m pytest tests -q -p no:cacheprovider` in the review worktree → 8 failed, 3421 passed, 36 skipped, 6839 subtests passed, exit 1. The 8 names are all among the 12 base names, with zero new red, and they are the same 8 the seat reported |
+
+### Bypass probes
+
+`True` means accepted. Candidate `00fdc179`, against revision01 `b74840f1` and base `92ee3a94` where they differ. All links, case-sensitive directories, mount points and the subst drive lived in fresh `%TEMP%` directories or session mappings, and were removed afterwards: links first, by explicit list, then the tree.
+
+**Revision01 probes, rerun**
+
+| Probe | Shape | Candidate | rev01 | Base |
+| --- | --- | --- | --- | --- |
+| (a) a1–a7b | junction or its short name inside the root as target; junction, its short name, a junction to a short-spelt target, an ancestor junction (long and short) as base | refused | refused | refused |
+| (a) a8 | symlink as base | not run (WinError 1314) | — | — |
+| (a) cs1 / cs2 / cs3 | case-twin junction `A` → `a`; long parent / short parent / target under real `a` | **refused** | accepted / **accepted** / **accepted** | accepted / refused / refused |
+| (a) cs4 | real `a` via short parent (control) | accepted | — | — |
+| (a) a9 / a9b / a9c | Kelvin junction long parent / Kelvin short parent / Ohm short parent | **refused** / refused / refused | accepted / refused / refused | accepted / refused / refused |
+| (b) b1, b2, b4 | short name of an outside directory as target | refused | refused | refused |
+| (c) c1–c4, c9, c11 | case, trailing separator or dot, `.` and forward-slash spellings of the same directory | accepted (same directory) | accepted | c1 only |
+| (c) c5–c8, c10 | trailing space, `. .`, long base with a dot, `::$INDEX_ALLOCATION`, `..` | refused | refused | refused |
+| (d) d1–d9 | `\\?\`, `\\.\`, drive-relative, relative, `\\localhost\C$`, `\\?\UNC\…` | refused | refused | refused |
+| (e) e1 / e2 | 1030-character base via short names / missing base | accepted / refused | same | refused / refused |
+| (f) f1 / f2–f4 | third-party non-surrogate reparse tag: leaf inside the root as target / beneath it or as base | accepted / refused | same | same (S63-13) |
+| (g) | POSIX | By reading and CI. `S_ISLNK` refuses a symlink component, and the spelling comparison refuses as before. The Linux job ran the symlink tests, with 3 more passing. K8 (`S_ISLNK` removed) is overlap-masked by the spelling comparison | — | — |
+| (h) | TOCTOU | see N2 and S63-08 | — | — |
+
+**New probes**
+
+| Probe | Shape | Candidate | rev01 | Base | Judgement |
+| --- | --- | --- | --- | --- | --- |
+| N1 / N1b | a reparse point in the target: a junction inside the root pointing at a child of the root / a Kelvin junction pointing at a sibling inside the root | accepted / accepted | same | same | Pre-existing; resolves inside the root; the revision02 rule covers bases only (S63-13) |
+| AN1–AN4 | case-twin and Kelvin junctions in an **ancestor** of the base, long and short parent | refused (all four) | accepted ×3 / refused | accepted ×2 / refused ×2 | Closed by the walk; unpinned (K2, S63-10) |
+| N2 | base swapped for a junction to outside right after the first `resolve` of the base, target `base\x` | **accepted** | refused | refused | **S63-08**: the second, unchecked `base.resolve()` becomes the anchor |
+| N2′ | a component swapped between the `lstat` walk and `resolve` | by reading: refused for a plain junction (the spelling differs); **accepted for a case-twin junction** (`normcase` equal) | — | — | Part of S63-08 |
+| N3 / N3b / N3c | volume mount point of `C:` (made with `FSCTL_SET_REPARSE_POINT`, tag `0xA0000003`, no elevation) as base / base below it / as target | refused / refused / refused | refused | refused | Holds: "component … is a reparse point" |
+| N4 / N4b / N4c | subst drive `Q:` → temp parent: base on it / its root as base / target via `Q:` with a `C:` base | refused / refused / accepted | same | same | Unchanged: a subst base resolves to its `C:` spelling ("not the same spelling"). A target through it resolves inside |
+| — | mapped network drive | not made | — | — | I did not create a `net use` mapping, to avoid a credential prompt and session configuration. The UNC forms d8 and d9 refuse |
+| N6 / N6b | `lstat` succeeds but `st_file_attributes` is unavailable (an `os.stat_result` built without it; `None`) on the root / on a junction base | **raises `TypeError`** / **raises `TypeError`** | accepted / refused | accepted / refused | Unreachable through CPython's `os.lstat` on Windows, which always fills the field. The exception escapes `resolves_within_root`, which catches only `OSError` (S63-11) |
+| N7 / N7b / N7c | a junction base spelt `J::$INDEX_ALLOCATION` / `J ` / `J.` | refused ×3 | refused | refused | `lstat` reports the junction's attribute through each spelling |
+| N8 / N8b | a junction 598 characters deep (beyond MAX_PATH; `LongPathsEnabled=1`) as base / the same depth without a junction | refused / accepted | refused / accepted | same | Holds |
+
+### Over-refusal on Windows
+
+| Setup | Candidate | Base | Note |
+| --- | --- | --- | --- |
+| This repository, `C:/Users/User/Desktop/Johnny_AI_Skill` | accepted | accepted | No component carries a reparse bit (`lstat` attributes `0x11`, `0x10`, `0x11`, `0x36`, `0x10`) |
+| `%TEMP%` working directory | accepted | accepted | The GitHub runner's `C:/Users/RUNNER~1/…` is accepted: 38 + 1 rows pass in CI |
+| Drive root `C:\` as base | accepted | accepted | |
+| Long path, 598 and 1030 characters, long and short spellings | accepted | accepted (long spelling) | `LongPathsEnabled=1` on this host |
+| OneDrive folder `C:/Users/User/OneDrive` and its subfolder | accepted in this process | accepted | PowerShell shows `ReparsePoint` (cloud tags). Python's default placeholder mode is `PHCM_DISGUISE_PLACEHOLDER` (1), so `lstat` and `GetFileAttributesW` report `0x31`/`0x10`. After `RtlSetProcessPlaceholderCompatibilityMode(PHCM_EXPOSE_PLACEHOLDERS)` in a separate process, both read `0x431`/`0x410`, and `base_refusal_reason` refuses: "component C:\Users\User\OneDrive is a reparse point". This depends on the process's mode (S63-12). Desktop is not redirected to OneDrive on this host |
+| Base on a subst drive or volume mount point | refused | refused | Unchanged. A mount point is a name-surrogate redirect |
+
+### Status of S63-01 to S63-07
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| S63-01 | **Closed**; a race variant is reopened in S63-08 | cs2/cs3 refused; `test_a_case_twin_junction_base_through_a_short_parent_is_refused`; M1a and M1b red |
+| S63-02 | **Closed** for the base; the target side stays as before (S63-13) | a9 and cs1 refused; Kelvin, Ohm and long-parent case-twin tests; the walk applies to every base (M1b red) |
+| S63-03 | **Closed** | M1 `exit: 0,0,0`; `evidence_gate.py` → `defects=0` |
+| S63-04 | **Closed** | M1c (R3) red; my K7 (`str.casefold`) red |
+| S63-05 | **Closed** | M1d (R5) and M1e (R6) red |
+| S63-06 | **Closed** | `WinDLL(..., use_last_error=True)` once; types declared once; error read into the reason; M1f red |
+| S63-07 | **Closed** | fixture resolved; row removed; passes in CI 42123979062; M1g red |
+
+### Reviewer counter-mutations (disposable `git clone --no-hardlinks` copy at `C:/Temp/claude/jas63rev02_mut`, removed)
+
+These doors differ from the seat's seven. Output was read from unfiltered pytest (`-q -rfEs`), and each mutation was restored with an empty porcelain. Baseline: 70 passed, 22 subtests passed.
+
+| ID | Mutation | Result |
+| --- | --- | --- |
+| K1 | every `lstat` `OSError` treated as a missing component | red: `test_a_component_that_cannot_be_examined_is_a_refusal` |
+| K2 | only the base itself examined, not its ancestors | **zero red**. Under K2, AN1–AN3 are accepted (S63-10) |
+| K3 | the volume root not examined | zero red. **Equivalent**: a volume root cannot carry a reparse point |
+| K4 | the Windows reparse attribute ignored | red: the 4 case-fold junction tests |
+| K5 | the absolute-path requirement removed | zero red. Equivalent in effect: a relative base still differs from its resolution and is refused |
+| K6 | the walk continues past a missing component | zero red. Equivalent: nothing below a missing component exists |
+| K7 | alias compared with `str.casefold` | red: the pathlib-fold case test |
+| K8 | the `S_ISLNK` check removed | zero red. Overlap-masked: on Windows a symlink also carries the reparse bit, and on POSIX the spelling comparison refuses a symlink base |
+
+### New findings
+
+| ID | Class | Blocks? | Finding | Route |
+| --- | --- | --- | --- | --- |
+| S63-08 | `IMPLEMENTATION_DEFECT` (confinement; AGENTS.md P0) | **Yes** | `resolves_within_root` calls `base_refusal_reason(base)`, which walks the components with `lstat` and then resolves the base, and then calls `resolved_base = base.resolve()` a **second** time. The anchor of the containment check is therefore a resolution nobody checked. Probe N2 swaps the base for a junction pointing outside immediately after the first resolve. The candidate accepts `resolves_within_root(base\x, base)`, while revision01 and the base commit refuse under the identical swap, because their anchor is the resolution they compared. By reading, the same split between the walk and the resolve lets a component swapped for a case-twin junction in that window pass the `normcase` comparison. That reopens S63-01 as a race. Fix inside the boundary: resolve once, and anchor on the resolution that was checked (for example, a private helper that returns the checked resolution or a typed refusal). Then walk the components of the resolved path too, so a swap between the walk and the resolve is seen. The residual check-then-use gap after the predicate returns is inherent and not part of this finding | This correction |
+| S63-09 | `IMPLEMENTATION_DEFECT` (AGENTS.md P0 source type) | **Yes** | `_component_refusal(component) -> str \| None` encodes three states, with `None` for an ordinary component, `""` for a missing component (stop the walk) and text for a refusal. `_redirected_component` branches on `refusal == ""`. A finite domain state carried as a string convention is what the P0 forbids ("有限領域狀態 … 不得把 … 字串慣例向內傳遞"). Lesser instances: the last error is held as a dynamic attribute on a `threading.local` and read with `getattr(..., "error", 0)` (an `Any` expression), and the attribute is read with `getattr(status, "st_file_attributes", 0)`. The fix is mechanical: an `Enum` (or a frozen dataclass) for the component state, and a typed holder for the last error | This correction |
+| S63-10 | `EVIDENCE_DEFECT` (would let a bypass pass; rule B: close in the next change of this gate, here this correction) | No by class; must close now | The ancestor half of the walk is not pinned against the shapes it exists for. K2 (only the base examined) turns nothing red, because `test_a_junction_in_an_ancestor_of_the_base_is_refused` uses a junction whose spelling differs and is refused by the spelling comparison anyway (overlap masking). Under K2, AN1 (case-twin ancestor, long parent), AN2 (case-twin ancestor, short parent) and AN3 (Kelvin ancestor, long parent) are accepted. Add those three as tests | This correction |
+| S63-11 | `OUT_OF_SCOPE_HARDENING` | No | When `st_file_attributes` is `None` or absent, `int(getattr(status, "st_file_attributes", 0))` either raises `TypeError`, which escapes `resolves_within_root` (it catches only `OSError`, probe N6), or defaults to `0`, which reads as "not a reparse point". That contradicts the rule "a component that cannot be examined is refused". It cannot be reached through CPython's `os.lstat` on Windows | Follow-up hardening, or fold into the S63-09 typing change |
+| S63-12 | `TICKET_DEFECT` | No | The rule refuses any `FILE_ATTRIBUTE_REPARSE_POINT`, which includes non-surrogate tags that are not redirects: cloud-file placeholders (OneDrive), dedup, WCI. On this host the OneDrive folders are accepted only because Python runs with placeholders disguised by default. A process with placeholders exposed refuses them. A repository inside a OneDrive-synced folder, a common Windows 11 default for Desktop and Documents, would then fail. Python 3.11's `lstat` follows non-surrogate tags, so `st_reparse_tag` reads `0` and the tag cannot be used to tell them apart | Control plane: state whether the rule refuses name-surrogate tags only (junction, symlink, mount point; `IsReparseTagNameSurrogate`) plus anything that cannot be opened, or every reparse point. Either way, say what a OneDrive-hosted repository gets |
+| S63-13 | `OUT_OF_SCOPE_HARDENING` (pre-existing; P0 reading) | No | On the target side, a junction inside the root that points inside the root (N1, N1b), and a leaf with a non-surrogate tag (f1), are accepted, as at revision01 and the base. Containment holds, because the target resolves inside the root. But AGENTS.md P0 says a path *reached through* a junction is refused, and the revision02 rule covers bases only | Control plane: whether the P0 covers worktree paths reached through an in-root junction; if so, a follow-up ticket for `worktree_containment` |
+
+### Commands
+
+From the main checkout unless noted. Python `C:/Temp/claude/jas-venv/Scripts/python.exe` with `PYTHONUTF8=1`. Scratch at `.worktrees/63-short-name-containment-review-scratch/rev02`.
+
+- `git -C <review> rev-parse HEAD` → `00fdc179…`; `git status --porcelain` → empty (before and after); `git log --format=… b74840f1..HEAD`; `git diff --stat b74840f1 HEAD`; `git diff --name-only 92ee3a94 HEAD` → five paths; `git diff b74840f1 HEAD -- tests/ | grep '^-'` → one line
+- `git show 8ed97a29:modules/tickets/workflow-governance/63-short-name-containment.md` (boundary and Revision02)
+- `gh run view 42123979062 --json headSha,headBranch,conclusion,event,jobs`; `gh run view 42123979062 --log` → `run_log.txt`; `gh run list --branch cp/wave2-63-short-name-containment`; `../rows.py run_log.txt <review>` → Windows 47 → 8, 39 removed, CI `FAILED` set = registered rows
+- `receipt_check.py <out-c1>/RETURN.md <review>` → exit 0; `evidence_gate.py … --candidate 00fdc179… --tool …dispatch_lint.py --tool …receipt_fence_check.py --tool …index_pins.py --require-cell P1 … P9 --evidence-root <out-c1>` → `cells=6 defects=0`, exit 0; `../receipt_bytes.py <out-c1>` → 0 CR, all blocks equal, exit lists equal
+- `../probe.py <module> rev02` → `probe_rev02.txt`; `../probe_rp.py` → `probe_rp_rev02.txt`; `../probe_cs.py` (fresh case-sensitive temp directory via `fsutil file setCaseSensitiveInfo`, removed) → `probe_cs_rev02.txt`
+- `probe_r2.py <module> rev02|rev01|base` → `probe_r2_*.txt` (N1–N8, O1–O5; subst `Q:` created and removed; mount point made and removed)
+- `probe_ancestor.py <module> rev02|K2|rev01|base` → `probe_ancestor.txt`
+- OneDrive: `os.lstat` / `GetFileAttributesW` in the default mode, and again after `RtlSetProcessPlaceholderCompatibilityMode(2)` in a separate process → `onedrive.txt`; `Get-Item … | Attributes` in PowerShell; registry reads of `LongPathsEnabled` and the Desktop shell folder (read only)
+- `mypy --strict --python-version 3.11 --no-incremental` on the three changed Python files → exit 0; the same with `--platform linux` → exit 0; `--disallow-any-expr --follow-imports=silent` per file
+- `git clone --no-hardlinks <review> C:/Temp/claude/jas63rev02_mut`, `checkout --detach 00fdc179…`, `mutate2.py` → `mutations2.txt` (K1–K8); the clone was removed
+- `locked_f1.py` → host lock `C:/Temp/claude/jas-fullsuite.lock`. While I waited, it was held by `integ-58-…`. I tried `mkdir` every 20 s and acquired it at 2026-11-05T23:14:11Z as `63-rev02-initial-F1`, writing `owner.txt` with the run id and time. At acquisition, `Get-CimInstance Win32_Process` (`procs_at_acquisition.txt`) showed no other pytest; the only python processes were my own lock runner and its launcher. The full suite ran in the review worktree → `F1.txt`, exit 1. The lock was released at 23:25:00Z: after checking that `owner.txt` still named my run, I renamed the directory to `jas-fullsuite.lock.released-63-rev02-initial-F1-<uuid>` and removed it. No mutation worker or other pytest of mine ran while I held the lock
+
+### Raw-log note
+
+The captures in `rev02/` are unedited tool output: `probe_*.txt`, `probe_ancestor.txt`, `onedrive.txt`, `mutations2.txt`, `F1.txt`, `procs_at_acquisition.txt`, `lock_log.txt` and `run_log.txt`. The probe tables shorten paths for width only. CI was read with `gh run view` only. Nothing was pushed, and no workflow run was triggered. Counter-mutations and F1 were judged on unfiltered pytest output. No tracked file was modified anywhere.
+
+### Not verified
+
+- Real Windows symlinks (WinError 1314 on this host). The symlink shapes ran as junctions, and the Linux job ran the symlink tests.
+- POSIX was judged by reading the code and by the Linux CI counts; I ran no POSIX interpreter.
+- A mapped network drive was not created. The UNC forms were probed instead.
+- Whether a real OneDrive sync client, as opposed to this host's folders with no running client, changes the default-mode result. Dedup and WCI tags are also unverified: none were present.
+- The TOCTOU variant N2′ (a swap between the `lstat` walk and the resolve) was judged by reading. N2 (a swap after the first resolve) was run with a patched `Path.resolve` that performs the swap.
+- A host with `LongPathsEnabled=0`.
+
+```review-verdict
+candidate: 00fdc179f07e7d57cd828634396e71af77ad352b
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/63-rev02-initial
+reviewed_at: 2026-11-06
+```
