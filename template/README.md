@@ -23,6 +23,11 @@
    │  └─ requirements/<year>/
    ├─ reviews/
    ├─ adr/
+   ├─ handoffs/
+   │  └─ <year>/governance/
+   │     ├─ integration.json      # from integration.TEMPLATE.json
+   │     ├─ MERGE-QUEUE.json      # from MERGE-QUEUE.TEMPLATE.json; lives on the queue branch only
+   │     └─ <receipt>.md          # from RECEIPT.TEMPLATE.md, at the path a ticket's state row names
    ├─ RequirementChangeLog.md
    ├─ WorkProgressReport.md
    └─ security-agent-boundary.md
@@ -35,7 +40,25 @@
 3. 複製並填寫 `CONTEXT.TEMPLATE.md`、`doc/context/TEMPLATE.md`、`doc/RequirementChangeLog.TEMPLATE.md`、
    `doc/requirements/REQ.TEMPLATE.md`、`doc/archive/requirements/ARCH-REQ.TEMPLATE.md`、`modules/spec/TEMPLATE.md`、
    `modules/tickets/TEMPLATE.md`、`doc/reviews/TEMPLATE.md`、`doc/adr/TEMPLATE.md` 與相符語言的 element 模板。
-4. 先完成 `CONTEXT.md`、`PRD.md`、`ProjectSchedule.md`、需求變更與安全邊界的最小內容，再開始第一個 Grill。
+4. Copy the state-file templates (see "State files" below) before the first ticket needs them.
+5. 先完成 `CONTEXT.md`、`PRD.md`、`ProjectSchedule.md`、需求變更與安全邊界的最小內容，再開始第一個 Grill。
+
+## State files
+
+A project starts with the four files the gates and the integration script read, so the first
+ticket needs no hand-made file:
+
+| Template | Copy to | Holds |
+| --- | --- | --- |
+| `modules/tickets/TEMPLATE.md` | `modules/tickets/<ticket>.md` | the ticket; its state row reads `<STATE>`; dispatch=sha256:<hex of the dispatch file>; receipt `<path>` |
+| `doc/handoffs/governance/RECEIPT.TEMPLATE.md` | the receipt path the ticket's state row names | one run cell per command, one statement cell per choice made where the work was silent |
+| `doc/handoffs/governance/integration.TEMPLATE.json` | `doc/handoffs/<year>/governance/integration.json` | the integration configuration: remote, branch, queue branch, queue path, the spec, invariant and CI-status commands, the timeout |
+| `doc/handoffs/governance/MERGE-QUEUE.TEMPLATE.json` | the `queue_path` key of the copied configuration, on the queue branch | the empty merge queue, `{"entries": []}` |
+
+The queue file lives on the queue branch, not on the integration branch: copy it to `queue_path`
+on the queue branch (by default `<branch>-queue`), never to the integration branch, so a queue
+write never moves the integration tip. The configuration and the receipt live on the integration
+branch like any other project file.
 
 ## Policy and dispatch safety
 
