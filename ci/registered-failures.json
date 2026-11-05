@@ -1188,11 +1188,6 @@
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
-      "test": "tests/test_plugin_distribution_bundle.py::PluginBundleBuilderTests::test_missing_changed_and_symlink_entries_block_with_finite_failures",
-      "reason": "the test patches Path.is_symlink for one path inside a repository created under the 8.3 short temp path C:/Users/RUNNER~1/...; the patched path (short spelling) does not compare equal to the path the builder walks (long spelling), so the builder reports ENTRY_UNAVAILABLE instead of the symlink failure the test expects. Ticket 63 fixed the containment predicate and this test still fails on the Windows runner (CI run 42105264082), so the cause is the test's path spelling against the builder's, not path_containment; the fix lies in the bundle builder or its test, outside ticket 63's boundary",
-      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
-    },
-    {
       "test": "tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists",
       "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"

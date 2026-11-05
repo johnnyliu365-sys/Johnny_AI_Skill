@@ -295,7 +295,9 @@ class PluginBundleBuilderTests(TestCase):
     def test_missing_changed_and_symlink_entries_block_with_finite_failures(self) -> None:
         template = _template_manifest()
         with tempfile.TemporaryDirectory(prefix="pd09-entries-") as temp_name:
-            parent = Path(temp_name)
+            # The builder walks the resolved root, so the patched path below must be
+            # built from the resolved temporary root, not from its short-name spelling.
+            parent = Path(temp_name).resolve()
             missing_root, missing_commit = _create_repository(parent, "missing", template)
             old_manifest = _manifest(missing_root, missing_commit)
             (missing_root / "README.md").unlink()
