@@ -1,10 +1,10 @@
 # Gate scripts
 
-Seven stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py` and `coverage_map.py`) that decide a workflow transition or keep a versioned record mechanically.
+Eight stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py` and `preflight.py`) that decide a workflow transition or keep a versioned record mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
-usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
+usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). `preflight.py` has no red (`0`, `2`, `3`). In
 `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py` and `coverage_map.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red; the wave-2 gates
@@ -440,3 +440,79 @@ missing or unknown option, an empty value, an argument that holds a lone surroga
 control character, an absolute `--map` or `--specs`, a `..` segment, or a revision that
 starts with `-`. `--specs` and `--map` accept forward or back slashes and a trailing slash;
 `--specs .` selects the whole repository.
+
+## preflight.py
+
+    python preflight.py <dispatch-file> [--timeout SECONDS]
+
+Checks that every tool a dispatch names starts and serves before any product edit. The
+dispatch file carries one `preflight:` block: the key starts at column 0 and the block
+ends at the next line that starts at column 0. Each item is four lines, and every value is
+one JSON value on its own line (a JSON string for `tool` and `expect`, a JSON array of
+strings for `start` and `probe`):
+
+    preflight:
+      - tool: "<name>"
+        start: ["<argv0>", "<arg>", ...]
+        probe: ["<argv0>", "<arg>", ...]
+        expect: "<substring>"
+
+`start` runs to completion first, `probe` runs after it. Both run without a shell, with an
+empty stdin and the dispatch file's directory as working directory, each bounded by
+`--timeout` (default 120 seconds, above 0 and at most 86400); a command that exceeds it is
+killed together with the processes it started. Tools that start and exit are supported;
+long-running servers are not. A tool is served when `start` exits 0 and `probe` exits 0
+with `expect` in its output (stdout and stderr, decoded with replacement, compared exactly
+and case-sensitively). Every tool is tried and every failing tool is reported; the exit is
+2 when any tool failed, whichever tool came last.
+
+The gate resolves the program name itself, the same way on every platform, before it
+launches anything. A name that carries a drive (a letter and a colon at its start, or the
+extended-length or share prefix) must be absolute, and this is checked first, before every
+other rule: a name that is relative to a drive, with or without a separator after the
+colon, is refused with the cause `cannot be resolved` and is never joined to the dispatch
+directory. An absolute name is used as given. A relative name that contains a
+path separator (a slash or a backslash) is joined to the dispatch file's directory, so
+it never depends on the directory the gate was started from. A bare name is looked up in
+the entries of the search path only (with the executable extensions of the platform on
+Windows), never in the current directory or the dispatch directory; an empty or relative
+entry is skipped. A program whose resolved name ends in the extension of a batch file
+(either of the two that Windows runs through its command interpreter, in any letter case)
+is refused, because that interpreter reads the arguments as commands; name the interpreter
+or the executable instead. On Windows the executable extensions come from the environment
+list of extensions (the default list when it is missing or empty), in its order, and a
+quote or blank around a search-path entry is removed.
+
+A command whose run raised an unexpected error after its child had started kills that
+child, with the processes it started, before the next tool runs; an unexpected error
+anywhere else in the run is exit 2 with one line on standard error and no traceback. An
+interrupt (the keyboard interrupt) after a child started kills that child and the processes
+it started in the same way, then ends the run with exit 2 and one line on standard error,
+no traceback.
+
+The dispatch path must be a plain path. A path is refused with exit 3, and never opened, when
+it starts with two separators (a share path, or an extended-length or device spelling), when
+it starts with a separator followed by one or two question marks and a separator, or by a
+single dot and a separator, or when any component of it is the global root of the object
+manager (compared up to its first dot or colon, in any letter case). Both slash directions
+and any mix of them count, on every platform; the decision is made from the text alone.
+
+Exit 0 prints `tools=N served=N`. Exit 2 prints one line `TOOL_UNSERVED <tool>: <cause>` per
+failing tool; the causes are `start cannot be launched`, `start cannot be resolved`,
+`start is refused` (a batch file), `start exited with code N`, `start timed out`, the same
+five for `probe`, `probe output does not contain the expected text`, and `unexpected error`
+(the exception type and its message, for that tool alone; the later tools are still tried).
+Exit 2 is also an unreadable dispatch file, an interrupt, or a standard output or standard error that
+cannot be written (never another code, whatever the run would have returned). Exit 3: bad
+arguments, no `preflight:` block, a block that does not follow the grammar (a missing,
+repeated or unknown key, a key at the wrong indent, a value that is not one JSON value of
+the right type, an empty argument array, an empty or blank `tool` or `expect`), a file
+that is not UTF-8, a dispatch path that names a device (a reserved device name as any
+path component, with or without an extension, a colon part or trailing blanks, or a path
+in the device namespace; it is judged from the text alone, on every platform, and never
+opened), or a dispatch path that is not a plain path (above), or a string that holds a lone surrogate
+or a control character. The
+text rule applies to the arguments as well as to the file: the dispatch path and the
+`--timeout` value are checked before anything is read, and `--timeout` must match its
+whole text (digits with an optional fraction; no trailing newline, no surrounding space).
+Every printed subject is escaped so one defect is one line.
