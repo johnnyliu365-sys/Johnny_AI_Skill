@@ -284,3 +284,24 @@ reviewed_at: 2026-11-05
 ### Control-plane disposition (2026-11-05): held for the owner
 
 The only blocking item, S53-30, is one test (an answer whose body hash differs from the id only in its last digit) on a candidate whose hashing held against every real forgery. S53-32 belongs to the R4-4 trust-boundary proposal. The control plane does not open revision05. Under the proposed convergence rule this candidate would be approvable with S53-30 taken as the one test in the next change (it is safety-adjacent) and S53-31, S53-32 carried.
+
+### Convergence disposition (2026-11-05, CodeReview §5 rule B)
+
+The owner approved rule B on 2026-11-05. No open finding changes an exit code or breaks a safety property; the gate hashes every object it reads and held against 21 real-git forgeries. Every open finding is in the class that does not block approval; the reviewer's verdict block above is unchanged.
+
+| Finding | Class | Carried to |
+| --- | --- | --- |
+| S53-30 | EVIDENCE_DEFECT (a regression would let a forged object pass) | the next change of this gate (one test: an answer whose body hash differs from the id only in its last digit) |
+| S53-31 | OUT_OF_SCOPE_HARDENING | later gate-hardening ticket |
+| S53-32 | OUT_OF_SCOPE_HARDENING | the R4-4 trust-boundary decision (SHA-1 without collision detection) |
+
+```convergence-disposition
+candidate: 2a71042675baaa97a87654a01767c7602b819660
+reviewer_verdict: CONVERGENCE_REVIEW_REQUIRED (seat:ticket-review/53-rev04-correction)
+disposition: APPROVED
+rule: CodeReview §5 rule B (owner-approved 2026-11-05)
+carried:
+  - S53-30
+  - S53-31
+  - S53-32
+```

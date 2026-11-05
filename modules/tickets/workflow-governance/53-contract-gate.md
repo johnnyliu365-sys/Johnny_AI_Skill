@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision04 / receipt under `.worktrees/53-contract-gate-out/` / owner implementation seat / worktree `.worktrees/53-contract-gate` / branch `cp/wave2-53-contract-gate` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_HELD`（revision04 correction review `CONVERGENCE_REVIEW_REQUIRED` on `2a710426`: S53-30 evidence only; held for the owner's convergence-rule and R4-4 decisions） |
+| 狀態 | `REVIEW_APPROVED`（candidate `2a710426`; correction review CONVERGENCE_REVIEW_REQUIRED, approved under CodeReview §5 rule B on 2026-11-05 with findings carried; awaiting integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/53-contract-gate` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/53-contract-gate-review` |
@@ -189,3 +189,9 @@ Correction 2: S53-22 to S53-26, the tests the review names (a gitlink in the mid
 ### Disposition correction (revision04, before the correction review)
 
 The precondition list named an unresolvable `HEAD`; the implementation reports the reds that need no git before it exits, which is red before fault, and the ticket now says so. The root tree is reached by hashing the commit and following its `tree` line, never by asking for `<commit>^{tree}`, whose answer could not be hashed against a known id.
+
+### Carried after approval (CodeReview §5 rule B)
+
+- S53-30 (EVIDENCE_DEFECT (a regression would let a forged object pass)): the next change of this gate (one test: an answer whose body hash differs from the id only in its last digit).
+- S53-31 (OUT_OF_SCOPE_HARDENING): later gate-hardening ticket.
+- S53-32 (OUT_OF_SCOPE_HARDENING): the R4-4 trust-boundary decision (SHA-1 without collision detection).

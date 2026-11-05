@@ -440,3 +440,28 @@ reviewed_at: 2026-11-05
 ### Control-plane disposition (2026-11-05): held for the owner
 
 Nine reviews of this ticket; the last three found the candidate behaviourally correct and only tests that do not pin it (S52-28 to S52-30, S52-34 to S52-36, now S52-37 to S52-40). Under CodeReview §5 as written, the next step is closure revision06 for four more tests, and the pattern shows the next correction review will find further unpinned spellings. The control plane does not open revision06. The ticket is held until the owner decides the convergence rule proposed on 2026-11-04 (blocking: R4-2 exit misclassification, safety or confinement, P0; carried to a hardening ticket: evidence-only gaps on a behaviourally correct candidate). Under the proposed rule this candidate would be approvable with S52-37 to S52-41 carried; under the current rule revision06 opens on the owner's word.
+
+### Convergence disposition (2026-11-05, CodeReview §5 rule B)
+
+The owner approved rule B on 2026-11-05. No open finding changes an exit code or breaks a safety or confinement property; the candidate behaved as the closure says in every probe (89 of 89, 60 real races). Every open finding is in the class that does not block approval; the reviewer's verdict block above is unchanged.
+
+| Finding | Class | Carried to |
+| --- | --- | --- |
+| S52-37 | EVIDENCE_DEFECT | later gate-hardening ticket |
+| S52-38 | EVIDENCE_DEFECT | later gate-hardening ticket |
+| S52-39 | EVIDENCE_DEFECT | later gate-hardening ticket |
+| S52-40 | EVIDENCE_DEFECT | later gate-hardening ticket |
+| S52-41 | OUT_OF_SCOPE_HARDENING | later gate-hardening ticket |
+
+```convergence-disposition
+candidate: 91beb02d58592eec106bfdee583e93be90d2e663
+reviewer_verdict: CONVERGENCE_REVIEW_REQUIRED (seat:ticket-review/52-rev05-correction)
+disposition: APPROVED
+rule: CodeReview §5 rule B (owner-approved 2026-11-05)
+carried:
+  - S52-37
+  - S52-38
+  - S52-39
+  - S52-40
+  - S52-41
+```

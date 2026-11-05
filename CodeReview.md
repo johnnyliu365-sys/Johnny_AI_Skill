@@ -95,6 +95,17 @@ defect。分類固定為：
 - 同一 Closure revision 最多一次 initial review 加一次 correction review。第二次
   仍有 implementation/evidence defect，結論附 `CONVERGENCE_REVIEW_REQUIRED` 並回
   控制面做架構／ticket 分解；不得自動第三次 correction。
-- 只有全部 blocking findings 關閉、證據完整且結論 `APPROVED`，整合腳本才可把候選列入
+- 收斂規則 B（owner 2026-11-05 核准）：correction review 之後仍未關閉的 finding 分兩類。
+  - 擋住核准：會改變結束碼分類（R4-2 紅燈與故障互相誤判）、破壞安全或範圍邊界、或違反 P0
+    的 `IMPLEMENTATION_DEFECT` 與 `TICKET_DEFECT`。
+  - 不擋核准：候選行為正確、只是測試沒有釘住的 `EVIDENCE_DEFECT`，以及 `OUT_OF_SCOPE_HARDENING`。
+    其中「若日後退化會放行不該放行的變更」的證據缺口，必須在同一閘門的下一次改動補上；其餘移交
+    後續強化 ticket。
+  - 結論為 `CONVERGENCE_REVIEW_REQUIRED`、且未關閉的 finding 全屬「不擋核准」時，控制面在審查紀錄
+    附「收斂處置」段：逐項列出 finding、類別與移交去處，並附 `convergence-disposition` 區塊
+    （`candidate`、`reviewer_verdict`、`disposition: APPROVED`、`rule: CodeReview §5 rule B`、
+    `carried:` 清單）。reviewer 原本的 `review-verdict` 區塊不改。票面狀態改為 `REVIEW_APPROVED`。
+  - 只要有一項屬「擋住核准」，照上一條回控制面重新規劃，不得套用本規則。
+- 只有全部 blocking findings 關閉、證據完整，且結論 `APPROVED` 或附有依規則 B 的 `convergence-disposition`，整合腳本才可把候選列入
   guarded integration／handoff（Revision 04 R4-4）。Review approval 不自動授權 push、release、部署、
   付費、正式權限或其他外部 effect。
