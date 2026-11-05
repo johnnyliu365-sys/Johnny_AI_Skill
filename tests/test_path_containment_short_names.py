@@ -304,6 +304,48 @@ class FileSystemDecidedRedirectTests(unittest.TestCase):
                     short_base = short / _LONG_CHILD_NAME
                     self.assertFalse(resolves_within_root(short_base / "x", short_base))
 
+    def test_a_case_twin_junction_in_an_ancestor_of_the_base_is_refused(self) -> None:
+        with _case_sensitive_parent() as parent:
+            if parent is None:
+                self.skipTest("a case-sensitive directory cannot be created on this host")
+            assert parent is not None
+            real = parent / "a"
+            (real / "sub").mkdir(parents=True)
+            with _junction(parent / "A", real) as made:
+                if not made:
+                    self.skipTest("no junction can be created here")
+                base = parent / "A" / "sub"
+                self.assertFalse(resolves_within_root(base / "x", base))
+                self.assertFalse(resolves_within_root(real / "sub" / "x", base))
+
+    def test_a_case_twin_junction_in_an_ancestor_through_a_short_parent_is_refused(self) -> None:
+        with _case_sensitive_parent() as parent:
+            if parent is None:
+                self.skipTest("a case-sensitive directory cannot be created on this host")
+            assert parent is not None
+            real = parent / "a"
+            (real / "sub").mkdir(parents=True)
+            with _junction(parent / "A", real) as made:
+                if not made:
+                    self.skipTest("no junction can be created here")
+                short_parent = _short_name(parent)
+                if short_parent is None:
+                    self.skipTest("this volume has no 8.3 short name for the test directory")
+                assert short_parent is not None
+                base = short_parent / "A" / "sub"
+                self.assertFalse(resolves_within_root(base / "x", base))
+
+    def test_a_kelvin_sign_junction_in_an_ancestor_of_the_base_is_refused(self) -> None:
+        with _layout() as (parent, _root, _outside):
+            real = parent / "k"
+            (real / "sub").mkdir(parents=True)
+            with _junction(parent / "K", real) as made:
+                if not made or not (parent / "K").is_dir():
+                    self.skipTest("no junction named with U+212A can be created here")
+                base = parent / "K" / "sub"
+                self.assertFalse(resolves_within_root(base / "x", base))
+                self.assertFalse(resolves_within_root(real / "sub" / "x", base))
+
     def test_a_component_that_cannot_be_examined_is_a_refusal(self) -> None:
         with _layout() as (_, root, _outside):
             real_lstat = os.lstat
@@ -316,7 +358,7 @@ class FileSystemDecidedRedirectTests(unittest.TestCase):
 
             with mock.patch.object(os, "lstat", side_effect=lstat):
                 self.assertFalse(resolves_within_root(denied / "x", denied))
-                reason = path_containment.base_refusal_reason(denied)
+                reason = path_containment._base_refusal_reason(denied)
             self.assertIsNotNone(reason)
             assert reason is not None
             self.assertIn("cannot be examined", reason)
@@ -324,11 +366,140 @@ class FileSystemDecidedRedirectTests(unittest.TestCase):
     def test_a_base_that_does_not_exist_yet_is_not_a_redirect(self) -> None:
         with _layout() as (_, root, _outside):
             future = root / "not" / "created" / "yet"
-            self.assertIsNone(path_containment.base_refusal_reason(future))
+            self.assertIsNone(path_containment._base_refusal_reason(future))
 
     def test_a_relative_base_is_refused(self) -> None:
         with _layout() as (_, root, _outside):
             self.assertFalse(resolves_within_root(root, Path(_LONG_ROOT_NAME)))
+
+
+def _swap_for_junction_after_resolving(
+    base: Path, link_to: Path
+) -> tuple["mock._patch[object]", list[bool]]:
+    """Patch ``Path.resolve`` so the first resolution of ``base`` is followed by a swap.
+
+    Right after the real resolution of ``base`` returns, the (empty) directory
+    ``base`` is replaced by a junction to ``link_to``: the race the reviewer's
+    probe N2 describes. The list records whether the swap was made.
+    """
+
+    real_resolve = Path.resolve
+    swapped: list[bool] = []
+
+    def resolve(self: Path, strict: bool = False) -> Path:
+        result = real_resolve(self, strict=strict)
+        if self == base and not swapped:
+            os.rmdir(base)
+            swapped.append(_make_junction(base, link_to))
+        return result
+
+    return mock.patch.object(Path, "resolve", resolve), swapped
+
+
+class OneResolutionTests(unittest.TestCase):
+    """Correction 2: the base is resolved once and what was resolved was checked."""
+
+    def setUp(self) -> None:
+        if sys.platform != "win32":
+            self.skipTest("a junction swap is the Windows shape under test")
+
+    def test_a_base_swapped_for_a_junction_after_it_is_resolved_is_refused(self) -> None:
+        with _layout() as (parent, _root, outside):
+            (outside / "x").mkdir()
+            base = parent / "swapped_base_with_a_long_name"
+            base.mkdir()
+            patch, swapped = _swap_for_junction_after_resolving(base, outside)
+            try:
+                with patch:
+                    contained = resolves_within_root(base / "x", base)
+            finally:
+                if swapped:
+                    os.rmdir(base)
+            if swapped != [True]:
+                self.skipTest("no junction can be created here")
+            self.assertFalse(contained)
+
+    def test_a_case_twin_swapped_in_after_the_base_is_resolved_is_refused(self) -> None:
+        with _case_sensitive_parent() as parent:
+            if parent is None:
+                self.skipTest("a case-sensitive directory cannot be created on this host")
+            assert parent is not None
+            real = parent / "a"
+            (real / "x").mkdir(parents=True)
+            base = parent / "A"
+            base.mkdir()
+            patch, swapped = _swap_for_junction_after_resolving(base, real)
+            try:
+                with patch:
+                    contained = resolves_within_root(base / "x", base)
+            finally:
+                if swapped:
+                    os.rmdir(base)
+            if swapped != [True]:
+                self.skipTest("no junction can be created here")
+            self.assertFalse(contained)
+
+    def test_the_base_is_resolved_exactly_once(self) -> None:
+        with _layout() as (_, root, _outside):
+            real_resolve = Path.resolve
+            resolved: list[Path] = []
+
+            def resolve(self: Path, strict: bool = False) -> Path:
+                if self == root:
+                    resolved.append(self)
+                return real_resolve(self, strict=strict)
+
+            with mock.patch.object(Path, "resolve", resolve):
+                self.assertTrue(resolves_within_root(root / _LONG_CHILD_NAME, root))
+            self.assertEqual(1, len(resolved))
+
+    def test_the_resolved_spelling_is_examined_as_well_as_the_given_one(self) -> None:
+        with _layout() as (_, root, _outside):
+            short = _short_name(root)
+            if short is None:
+                self.skipTest("this volume has no 8.3 short name for the test directory")
+            assert short is not None
+            real_lstat = os.lstat
+
+            def lstat(path: str | os.PathLike[str]) -> os.stat_result:
+                if os.fspath(path) == str(root):
+                    raise PermissionError(13, "denied")
+                return real_lstat(path)
+
+            self.assertTrue(resolves_within_root(short / _LONG_CHILD_NAME, short))
+            with mock.patch.object(os, "lstat", side_effect=lstat):
+                self.assertFalse(resolves_within_root(short / _LONG_CHILD_NAME, short))
+
+
+class TypedStateTests(unittest.TestCase):
+    def test_a_component_result_is_an_enum_member(self) -> None:
+        with _layout() as (parent, root, _outside):
+            passed = path_containment._examine_component(root)
+            self.assertIs(path_containment._Component.PASS, passed.state)
+            missing = path_containment._examine_component(root / "not" / "there")
+            self.assertIs(path_containment._Component.MISSING, missing.state)
+            self.assertIsNone(missing.reason)
+            link = parent / "typed_state_junction"
+            with _junction(link, root) as made:
+                if not made:
+                    self.skipTest("no junction can be created here")
+                refused = path_containment._examine_component(link)
+                self.assertIs(path_containment._Component.REFUSE, refused.state)
+                self.assertIsInstance(refused.reason, str)
+
+    def test_the_component_states_are_exactly_pass_refuse_and_missing(self) -> None:
+        self.assertEqual(
+            {"PASS", "REFUSE", "MISSING"},
+            {member.name for member in path_containment._Component},
+        )
+
+    def test_the_last_lookup_error_is_a_typed_field(self) -> None:
+        self.assertIsInstance(path_containment._lookup_state, path_containment._LookupState)
+        self.assertIsInstance(path_containment._lookup_state.error, int)
+
+    def test_the_reason_function_is_private(self) -> None:
+        self.assertFalse(hasattr(path_containment, "base_refusal_reason"))
+        self.assertEqual(["resolves_within_root"], list(path_containment.__all__))
 
 
 class CaseComparisonTests(unittest.TestCase):
@@ -405,7 +576,7 @@ class LongNameLookupTests(unittest.TestCase):
                 return 0
 
             with mock.patch.object(path_containment, "_get_long_path_name", fake):
-                reason = path_containment.base_refusal_reason(short)
+                reason = path_containment._base_refusal_reason(short)
             self.assertIsNotNone(reason)
             assert reason is not None
             self.assertIn("Windows error 5", reason)

@@ -17,12 +17,22 @@ import os
 import stat
 import sys
 import threading
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 
 _FILE_ATTRIBUTE_REPARSE_POINT = 0x400
 _INITIAL_BUFFER_CHARACTERS = 1024
 
-_lookup_state = threading.local()
+
+
+class _LookupState(threading.local):
+    """The Windows error code of the last long-name lookup, kept per thread."""
+
+    error: int = 0
+
+
+_lookup_state = _LookupState()
 
 if sys.platform == "win32":
     import ctypes
@@ -73,7 +83,7 @@ def _long_name(path: Path) -> Path | None:
 def _last_lookup_error() -> int:
     """The Windows error code of the most recent failed long-name lookup."""
 
-    return int(getattr(_lookup_state, "error", 0))
+    return _lookup_state.error
 
 
 def _is_same_directory_alias(base: Path, resolved_base: Path) -> bool:
@@ -91,22 +101,44 @@ def _is_same_directory_alias(base: Path, resolved_base: Path) -> bool:
     return os.path.normcase(str(long_base)) == os.path.normcase(str(resolved_base))
 
 
-def _component_refusal(component: Path) -> str | None:
-    """Why this existing path component is a redirect or cannot be examined."""
+class _Component(Enum):
+    """What examining one existing path component found."""
+
+    PASS = "pass"
+    REFUSE = "refuse"
+    MISSING = "missing"
+
+
+@dataclass(frozen=True)
+class _ComponentResult:
+    """The state of one component; ``reason`` is diagnostic text for REFUSE only."""
+
+    state: _Component
+    reason: str | None = None
+
+
+_PASSED = _ComponentResult(_Component.PASS)
+_MISSING = _ComponentResult(_Component.MISSING)
+
+
+def _examine_component(component: Path) -> _ComponentResult:
+    """Examine one path component with ``lstat``, which does not follow links."""
 
     try:
         status = os.lstat(component)
     except (FileNotFoundError, NotADirectoryError):
-        return ""
+        return _MISSING
     except OSError as error:
-        return f"component {component} cannot be examined ({error})"
+        reason = f"component {component} cannot be examined ({error})"
+        return _ComponentResult(_Component.REFUSE, reason)
     if stat.S_ISLNK(status.st_mode):
-        return f"component {component} is a symbolic link"
+        reason = f"component {component} is a symbolic link"
+        return _ComponentResult(_Component.REFUSE, reason)
     if sys.platform == "win32":
-        attributes = int(getattr(status, "st_file_attributes", 0))
-        if attributes & _FILE_ATTRIBUTE_REPARSE_POINT:
-            return f"component {component} is a reparse point"
-    return None
+        if status.st_file_attributes & _FILE_ATTRIBUTE_REPARSE_POINT:
+            reason = f"component {component} is a reparse point"
+            return _ComponentResult(_Component.REFUSE, reason)
+    return _PASSED
 
 
 def _redirected_component(base: Path) -> str | None:
@@ -121,37 +153,66 @@ def _redirected_component(base: Path) -> str | None:
 
     parts = base.parts
     for count in range(1, len(parts) + 1):
-        refusal = _component_refusal(Path(*parts[:count]))
-        if refusal is None:
-            continue
-        if refusal == "":
+        result = _examine_component(Path(*parts[:count]))
+        if result.state is _Component.MISSING:
             return None
-        return refusal
+        if result.state is _Component.REFUSE:
+            if result.reason is None:
+                return f"component {Path(*parts[:count])} is refused"
+            return result.reason
     return None
 
 
-def base_refusal_reason(base: Path) -> str | None:
-    """Why ``base`` cannot anchor a containment check, or None when it can."""
+@dataclass(frozen=True)
+class _Anchor:
+    """A base that was checked and resolved exactly once."""
+
+    resolved: Path
+
+
+@dataclass(frozen=True)
+class _Refusal:
+    """A base that cannot anchor a containment check."""
+
+    reason: str
+
+
+def _anchor_for(base: Path) -> _Anchor | _Refusal:
+    """Check ``base`` and return the one resolution that was checked.
+
+    The base is resolved once. The components of the given spelling and of the
+    resolved path are both examined after that resolution, so a component
+    swapped for a redirect before or during it is seen, and the anchor of the
+    containment check is the very path that was examined.
+    """
 
     if not base.is_absolute():
-        return f"base {base} is not an absolute path"
-    redirect = _redirected_component(base)
-    if redirect is not None:
-        return redirect
+        return _Refusal(f"base {base} is not an absolute path")
     try:
         resolved_base = base.resolve()
     except OSError as error:
-        return f"base {base} cannot be resolved ({error})"
+        return _Refusal(f"base {base} cannot be resolved ({error})")
+    for spelling in (base, resolved_base):
+        redirect = _redirected_component(spelling)
+        if redirect is not None:
+            return _Refusal(redirect)
     if resolved_base == base:
-        return None
+        return _Anchor(resolved_base)
     if _is_same_directory_alias(base, resolved_base):
-        return None
+        return _Anchor(resolved_base)
     if sys.platform == "win32" and _long_name(base) is None:
-        return (
+        return _Refusal(
             f"the long-name lookup of base {base} failed "
             f"(Windows error {_last_lookup_error()})"
         )
-    return f"base {base} resolves to {resolved_base}, which is not the same spelling"
+    return _Refusal(f"base {base} resolves to {resolved_base}, which is not the same spelling")
+
+
+def _base_refusal_reason(base: Path) -> str | None:
+    """Why ``base`` cannot anchor a containment check, or None when it can."""
+
+    outcome = _anchor_for(base)
+    return outcome.reason if isinstance(outcome, _Refusal) else None
 
 
 def resolves_within_root(target: Path, base: Path) -> bool:
@@ -164,12 +225,13 @@ def resolves_within_root(target: Path, base: Path) -> bool:
     """
 
     try:
-        if base_refusal_reason(base) is not None:
+        outcome = _anchor_for(base)
+        if isinstance(outcome, _Refusal):
             # The base itself redirects somewhere else; a containment check
             # anchored to the redirected location would be circular. A Windows
             # 8.3 short-name spelling of the same directory is not a redirect.
             return False
-        resolved_base = base.resolve()
+        resolved_base = outcome.resolved
         existing = target
         remainder: list[str] = []
         while not existing.exists():
@@ -183,4 +245,4 @@ def resolves_within_root(target: Path, base: Path) -> bool:
         return False
 
 
-__all__ = ["base_refusal_reason", "resolves_within_root"]
+__all__ = ["resolves_within_root"]
