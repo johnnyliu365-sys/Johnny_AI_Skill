@@ -12,7 +12,7 @@ jobs:
   test:
     name: test (${{ matrix.os_name }})
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 90
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -45,10 +45,12 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements-dev.txt
       - name: Run the whole test suite
+        # A module that cannot be imported on a runner is a registered failure; without
+        # --continue-on-collection-errors it would stop the whole run before any other test ran.
         # The pytest exit is not the job's result; the checker below is. A run that
         # produces no junit report makes the checker exit 2.
         run: |
-          python -m pytest tests -q -p no:cacheprovider -rf --junitxml="$RUNNER_TEMP/junit.xml" || echo "pytest exit=$?"
+          python -m pytest tests -q -p no:cacheprovider -rf --junitxml="$RUNNER_TEMP/junit.xml" --continue-on-collection-errors || echo "pytest exit=$?"
       - name: Compare failures with the registered list
         run: |
           python ci/check_registered_failures.py --os ${{ matrix.os_name }} --junit "$RUNNER_TEMP/junit.xml"

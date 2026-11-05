@@ -304,6 +304,7 @@ class WorkflowLockTests(unittest.TestCase):
         for needle in ("ubuntu-latest", "windows-latest", 'python-version: "3.11"', "fetch-depth: 0",
                        'PYTHONUTF8: "1"', "pip install -r requirements-dev.txt",
                        "python -m pytest tests -q -p no:cacheprovider -rf --junitxml=",
+                       "--continue-on-collection-errors",
                        "python ci/check_registered_failures.py --os ${{ matrix.os_name }} --junit"):
             self.assertIn(needle, self.text)
         self.assertRegex(self.text, r"(?m)^on:\n  push:\n    branches: \[\"\*\*\"\]\n  pull_request:\n")
