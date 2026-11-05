@@ -40,6 +40,14 @@ needs a `capture: <file>` line within three lines above it, normally preceded by
 `BODY_MISMATCH`, `ELISION_MISSING`, `UNCLOSED_FENCE` and `LEGACY_UNCLAIMED_EXIT`. The
 last line is `fences=N failures=M`; exit 0 only when `failures=0`.
 
+A run that checked nothing never exits 0. `NO_FENCES` (exit 1): the named section, or a
+scanned section with a capture line, holds no fenced block. `SCAN_NO_RECEIPTS` (exit 1):
+`--scan` found no `*.md` receipt under its directory. `SCAN_NOTHING_CHECKED` (exit 1):
+receipts exist but no section with a capture line and a fence was checked. `--help` is not
+an option: it exits 3 like the other gate scripts, as does `--require-cmd` (removed: it was
+parsed and never used), any unknown option, and any argument after `--scan <dir>`. Every
+printed subject (heading, path, capture name, command excerpt) is escaped to one line.
+
 - `--authority-root PATH`: an absolute path prefix under which the receipt was
   recorded; it is mapped onto the current working directory when comparing redirect
   targets. A section may also declare `authority_root=<path>` on its own line.
@@ -52,6 +60,9 @@ last line is `fences=N failures=M`; exit 0 only when `failures=0`.
 - Exit 2: the evidence root (or the scan root) is not a readable directory, or an
   unexpected error. Exit 3: bad arguments, a heading that names no section, or an
   unreadable receipt or allowlist.
+- For new receipts in the R4-7 cell form, `evidence_gate.py` (below) supersedes
+  the ticket 48 receipt checker: the evidence gate is the general instrument that closed
+  that checker's gaps (ticket 48 review NF-16), and the committed checker is not edited.
 
 ## index_pins.py
 
@@ -72,6 +83,10 @@ verified, never rewritten; `--sealed-state` must not be empty or blank. With no 
 argument every tracked Markdown file that has a `revision` and `digest` header is
 scanned. Structural defects (rows with the wrong column count, pinned rows outside a
 table, unresolved or untracked leaves, cells without a hash) exit 1.
+Every git child runs with `--no-replace-objects`, `-c core.quotepath=false`,
+`GIT_NO_REPLACE_OBJECTS=1` and `GIT_NO_LAZY_FETCH=1`, with the repository-selecting `GIT_*`
+variables and the `GIT_CONFIG*` variables removed. `git ls-files` runs with `-z`, so a tracked
+leaf whose name is not ASCII resolves. Every printed subject is escaped to one line.
 A git failure that stems from the environment (`git log -1 -- <leaf>`,
 `git ls-files`, the single shallow-boundary `git rev-parse`, or `git show <revision>:<leaf>`
 failing although the revision and its tree check out) is a tool fault, exit 2 with git's
@@ -79,7 +94,12 @@ message, never `SKIP_UNTRACKED`. A failure that stems from an index row or the w
 a red, exit 1: the script checks that the recorded revision is a commit and that its tree
 lists the leaf before it reads the blob, so a sealed row failing either check is
 `SEALED_PIN_INVALID` and an open row whose tracked leaf is absent from the tree of its last
-commit is `SKIP_NO_BLOB`. The recorded revision of a sealed row that is missing in a shallow
+commit is `SKIP_NO_BLOB`. A sealed row whose revision cell names a tag object (an annotated
+tag peels to the right commit, so the digest could still verify) is `SEALED_REV_NOT_COMMIT`
+(exit 1), found with `git cat-file -t` before any blob is read; a blob, a tree or a missing
+object stays `SEALED_PIN_INVALID`. A repository whose `HEAD` is unborn (no commit) is a tool
+fault, exit 2, never a red: git cannot serve a history that does not exist, so `git log -1 --
+<leaf>` fails and its message is printed. The recorded revision of a sealed row that is missing in a shallow
 repository is `SHALLOW_HISTORY` (exit 2), read through the common git directory so a linked
 work tree of a shallow clone raises it too, while in a complete repository it stays
 `SEALED_PIN_INVALID`. An open row never needs its recorded revision object: a stale open row

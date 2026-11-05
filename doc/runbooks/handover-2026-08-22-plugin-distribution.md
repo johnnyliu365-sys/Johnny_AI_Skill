@@ -1,6 +1,6 @@
 # 交接：Level 1 plugin 的出貨邊界（2026-08-22）
 
-> Precedence note (`CHG-20261103-043`): this handover runbook is dated 2026-08-22 and predates workflow-governance Revision 04. Where it has the reviewer commit, submit or integrate a candidate, or treats the receipt-bound bridge or the live descriptor as required or as the default dispatch route, Revision 04 R4-1 and R4-4 prevail; reading it through this note raises no `ROUTE_REFERENCE_INVALID`. It is a record of the 2026-08-22 handover, kept as written.
+> Precedence note (`CHG-20261103-043`): this handover runbook is dated 2026-08-22 and predates workflow-governance Revision 04. Where it has the reviewer commit, submit or integrate a candidate, or treats the receipt-bound bridge or the live descriptor as required or as the default dispatch route, Revision 04 R4-1 and R4-4 prevail, as the precedence sentence in `Workflow.md` section 0 states for dated handover runbooks that carry this note; reading it through this note is not a competing reference and raises no `ROUTE_REFERENCE_INVALID`. It is a record of the 2026-08-22 handover, kept as written.
 
 寫給接手的 agent（Codex 或其他 host）。**這份文件不重述規則**——規則在票裡，
 重抄會產生第二份會漂移的來源。這裡只講「你現在站在哪、下一步是什麼、哪裡會踩到」。

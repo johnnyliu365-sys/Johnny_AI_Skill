@@ -1607,5 +1607,113 @@ class ExitCodeContractTests(unittest.TestCase):
         self.assertIn(NON_CP950.encode("unicode_escape").decode("ascii"), out)
 
 
+class RunThatCheckedNothingTests(unittest.TestCase):
+    """Ticket 58 / ticket 48 F-06: a run that checked nothing never exits 0; `--help` and the unused option exit 3."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory(prefix="rf-nothing-")
+        self.root = Path(self.tmp.name)
+        self.ev = self.root / "evidence"
+        self.ev.mkdir()
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def run_main(self, argv: list[str]) -> tuple[int, str, str]:
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = rf.main(argv)
+        return code, out.getvalue(), err.getvalue()
+
+    def test_a_section_with_zero_fences_is_exit_1_with_a_named_code(self) -> None:
+        receipt = self.root / "receipt.md"
+        receipt.write_text("## delivery\nprose only, no fenced block\n", encoding="utf-8")
+        code, out, err = self.run_main([str(receipt), "## delivery", str(self.ev)])
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("FAIL NO_FENCES", out)
+        self.assertTrue(out.endswith("fences=0 failures=1\n"), out)
+
+    def test_a_heading_with_a_fence_is_not_no_fences(self) -> None:
+        (self.ev / "out.txt").write_text("ok\n", encoding="utf-8")
+        receipt = self.root / "receipt.md"
+        receipt.write_text("## delivery\ncmd: tool > out.txt 2>&1; echo exit=0 >> out.txt\ncapture: out.txt\n```text\nok\n```\n", encoding="utf-8")
+        code, out, _ = self.run_main([str(receipt), "## delivery", str(self.ev)])
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("NO_FENCES", out)
+
+    def test_the_name_of_a_section_is_printed_on_one_line(self) -> None:
+        receipt = self.root / "receipt.md"
+        receipt.write_text("## a\nno fences\n", encoding="utf-8")
+        code, out, _ = self.run_main([str(receipt), "## a b\x1b[0m", str(self.ev)])
+        self.assertEqual(code, 3)
+        self.assertEqual(len(out.splitlines()), 1, out)
+        self.assertIn("\\u2028", out)
+        self.assertIn("\\x1b", out)
+
+    def test_scan_of_a_directory_with_no_receipt_is_exit_1_with_a_named_code(self) -> None:
+        empty = self.root / "empty-scan"
+        empty.mkdir()
+        (empty / "notes.txt").write_text("not a receipt", encoding="utf-8")
+        code, out, err = self.run_main(["--scan", str(empty)])
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("FAIL SCAN_NO_RECEIPTS", out)
+        self.assertIn("receipts=0", out)
+
+    def test_scan_of_receipts_with_no_checked_section_is_exit_1_with_a_named_code(self) -> None:
+        tree = self.root / "idle-scan"
+        tree.mkdir()
+        (tree / "receipt.md").write_text("## summary\nno capture line and no fence here\n", encoding="utf-8")
+        code, out, err = self.run_main(["--scan", str(tree)])
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("FAIL SCAN_NOTHING_CHECKED", out)
+        self.assertIn("skipped=1", out)
+
+    def test_scan_of_a_section_with_a_capture_line_and_no_fence_is_red(self) -> None:
+        tree = self.root / "capture-scan"
+        (tree / "evidence").mkdir(parents=True)
+        (tree / "evidence" / "out.txt").write_text("ok\n", encoding="utf-8")
+        (tree / "receipt.md").write_text("## delivery\ncmd: tool > out.txt\ncapture: out.txt\nno fence follows\n", encoding="utf-8")
+        code, out, err = self.run_main(["--scan", str(tree)])
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("NO_FENCES", out)
+
+    def test_scan_that_checked_something_still_exits_0(self) -> None:
+        tree = self.root / "checked-scan"
+        (tree / "evidence").mkdir(parents=True)
+        (tree / "evidence" / "out.txt").write_text("ok\n", encoding="utf-8")
+        (tree / "receipt.md").write_text("## delivery\ncmd: tool > out.txt\ncapture: out.txt\n```text\nok\n```\n", encoding="utf-8")
+        code, out, err = self.run_main(["--scan", str(tree)])
+        self.assertEqual(code, 0, out + err)
+
+    def test_help_exits_3_like_the_other_gate_scripts(self) -> None:
+        for flag in ("--help", "-h"):
+            with self.subTest(flag):
+                code, out, err = self.run_main([flag])
+                self.assertEqual(code, 3, out + err)
+                self.assertEqual(len([line for line in err.splitlines() if line.startswith("usage:")]), 1, err)
+
+    def test_extra_positional_arguments_to_scan_are_exit_3(self) -> None:
+        tree = self.root / "scan-extra"
+        tree.mkdir()
+        code, out, err = self.run_main(["--scan", str(tree), "stray-argument"])
+        self.assertEqual(code, 3, out + err)
+        self.assertIn("stray-argument", err)
+        self.assertEqual(out, "")
+
+    def test_require_cmd_is_removed_and_giving_it_is_exit_3(self) -> None:
+        receipt = self.root / "receipt.md"
+        receipt.write_text("## delivery\n```text\nx\n```\n", encoding="utf-8")
+        code, out, err = self.run_main([str(receipt), "## delivery", str(self.ev), "--require-cmd"])
+        self.assertEqual(code, 3, out + err)
+        code, out, err = self.run_main(["--scan", str(self.root), "--require-cmd"])
+        self.assertEqual(code, 3, out + err)
+
+    def test_the_subprocess_exit_codes_agree_with_main(self) -> None:
+        for argv, expected in ((["--help"], 3), (["--scan", str(self.root / "no-such-dir")], 2)):
+            with self.subTest(argv):
+                done = subprocess.run([sys.executable, str(SCRIPT), *argv], capture_output=True)
+                self.assertEqual(done.returncode, expected, done.stdout + done.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
