@@ -142,3 +142,144 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/59-rev01-initial
 reviewed_at: 2026-11-06
 ```
+
+## Revision02 initial review
+
+**Verdict: `APPROVED`.** Correction 1 (`e067b81b`) closes every finding the Revision02 table assigned to it: S59-01, -02, -03, -04, -05, -06, -07 and -11. Every revision01 rule still holds. CI run 42084063480 is green on both jobs at the candidate, the junit checker decided the result, and the registered set equals the log's failure set for each operating system.
+
+My counter-mutations found five new doors where no test goes red. They are S59-12 and S59-13: regressions that would let a red pass. Under rule B they do not block approval, but they must be closed in the next change of this gate. S59-09 and S59-10 stay carried. Nothing open is an exit-code misclassification, a safety or confinement break, or a P0 violation.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/59-ci-linux-windows.md`, closure revision02, read at `e252249a`. The ticket file differs from `4440077b` (the dispatch's ticket commit) only in its status line |
+| Follow-up tickets | `62-registered-known-failures.md` and `63-short-name-containment.md` at `e252249a`, both `PLANNED` |
+| Candidate | `e067b81b2d0934d1bca6c3af1e749d70fed72f3a` on `cp/wave2-59-ci-linux-windows`. It is one commit whose parent is `3ab5ac439eb726ec28e5e455f2cb44ccfb1bd9f8` |
+| Commit identity | Author and committer `Johnny Liu <johnny.liu365@gmail.com>`. The trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` names the model that did the work, which is correct |
+| Changed paths | `ci/README.md`, `ci/registered-failures.json`, `tests/test_ci_registered_failures.py`. The workflow and the checker are byte-identical to `3ab5ac43`. From `e760d2e8`, the diff is still exactly the five created paths |
+| Review worktree | `.worktrees/59-ci-linux-windows-review`, detached at the candidate. Porcelain was empty before and after |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-59b_dispatch.yaml` |
+| Receipt | `.worktrees/59-ci-linux-windows-out-c1/RETURN.md` (LF, 55642 bytes) |
+| CI run | 42084063480, https://github.com/johnnyliu365-sys/Johnny_AI_Skill/actions/runs/42084063480. `headSha` is the candidate; event `push` |
+| References applied | `CodeReview.md` §5 (including rule B); `review-checks.md` (test truthfulness, reviewer counter-mutation, error-code consistency) |
+| XSS, Agent control, profile, POC | Not applicable, for the reasons given in the revision01 review; nothing in this commit changes them |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | Revision02 rows | PASS | See the status table. My MA, MB, MC and MD now go red: MA and MB fail `test_the_checker_step_exit_is_the_job_result`; MC and MD fail `test_the_token_is_read_only_and_no_secret_is_read` |
+| 1a | Reasons and follow-ups | PASS | The test ids per OS are unchanged in both set and order; only `reason` and `follow_up` changed. **Linux:** 224 `environment` rows and 10 rows on ticket 62. The 10 are acr2, acr3 and file_lock, plus the seven failures on main that do not depend on the OS. **Windows:** 39 rows on ticket 63, 7 rows on ticket 62, and 1 `environment` row (acr2: the runner has no WSL backend, a real missing capability). Every non-`environment` row points at ticket 62 or 63. All 39 Windows 8.3 rows point at 63. Ticket 62's boundary names every test of its rows, and ticket 63's names `path_containment.py` and the rows |
+| 1b | `ci/README.md` | PASS | The causes stated for the four base-capture failures check out against `jas48_F1_base.txt`. The capture shows `('checkout', '--detach', '6953f1e4…')`, then `RuntimeError: disposable Git fixture setup failed`, and `PinnedCommitError … fcb46045…`. Both commits exist in the review worktree. The Linux paragraph now separates the three test defects and the seven failures on main from the Windows-only facilities, and names tickets 62 and 63 |
+| 2 | Revision01 rules still hold; nothing skipped, deleted or weakened | PASS | The workflow and checker are unchanged. In the test file there are three kinds of change: <br>• Typing: `Any` became `object` or `dict[str, object]`, and two lists got annotations. <br>• `test_the_token_is_read_only_and_no_secret_is_read` is stricter. It still requires exactly one `permissions:` line; that line must now be the top-level one, its only entry must be `  contents: read`, and `secrets.`, `GITHUB_TOKEN`, `github.token` and `id-token` are refused. <br>• One test was added. <br>No assertion was removed, and the diff adds no `skip`, `xfail`, `deselect` or `ignore`. The ticket test file passes 39 of 39. My revision01 checker mutations ME to MO give the same results as before. |
+| 2a | Ticket command and workflow | Observation | The revision02 ticket writes `-rf --continue-on-collection-errors --junitxml=<file>`. The workflow writes `-rf --junitxml=… --continue-on-collection-errors`. The two are equivalent for pytest; the test pins the workflow's order |
+| 3 | CI run 42084063480 | PASS | `gh run view --json jobs`: `test (linux)` and `test (windows)` are both `success`, and so is every step, including step 7 "Compare failures with the registered list". The log shows `pytest exit=1` in both jobs (Linux `351 failed, 3082 passed, 49 skipped, 2 errors`; Windows `56 failed, 3264 passed, 33 skipped`), then the checker step with no output. I parsed the log's `FAILED`, `SUBFAILED` and collection `ERROR` lines and compared them with the list. Linux: 233 unique ids plus the collection error `tests/test_codex_registration_contracts.py` gives 234, equal to the registered set. Windows: 47, equal to the registered set. Line-ending settings are as before (Windows `file:C:/Program Files/Git/etc/gitconfig true`, Linux unset) |
+| 4 | Receipt | PASS | `receipt_check.py`: exit 0, `receipt defects: 0`. `evidence_gate.py` with the three wave-1 tools and the six required cells: `cells=6 defects=0`, exit 0. My own check: 0 CR in the receipt and in every capture; every fenced block is byte-identical to its capture; every `exit:` matches its capture (0, 0, 0, 0, 1, 0); every cell names candidate `e067b81b`. C1 holds `conclusion`, `headSha`, `jobs` and `url`, with both jobs `success` |
+| 4a | Seat F1 ran beside an unlocked `tests/test_gate_index_pins.py` | Holds | The other run was one file (PIDs 55092 and 3792), started a second before the seat acquired the lock. The seat's F1 failed 8 tests, all base names, none outside the base. A concurrent run can add red but cannot hide one, and my locked F1 gives the same 8 |
+| 4b | Seat M1 clone | Observation (S59-14) | The receipt says M1 ran "in a disposable clone … under C:/Temp/claude/jas59b-mut" but records neither the clone command nor `--no-hardlinks`, which the dispatch requires |
+| 5 | Boundary, identity, typing | PASS | Five paths in total, three in this commit. Johnny Liu on every commit. Imports are stdlib only. No `Any`, `type: ignore` or `cast` in the checker or the test. `mypy --strict --python-version 3.11` on the checker and the test together: `Success: no issues found in 2 source files`, exit 0. Payload boundary: `1 failed, 40 passed`, and the one failure is `CommittedPinTests::test_the_pinned_sha_exists` |
+| 6 | Full suite under the host lock | PASS | `8 failed, 3299 passed, 35 skipped, 6505 subtests passed in 800.29s`, exit 1. The failures are a subset of the base names, with nothing outside it. The lock was held by another run when I started, so I waited, then acquired it at 2026-11-05T19:46:47Z as `59-rev02-initial`. The lock incident and the other pytest running at acquisition are under Commands |
+
+### Status of revision01 findings
+
+| ID | Class | Status | Evidence |
+| --- | --- | --- | --- |
+| S59-01 | `IMPLEMENTATION_DEFECT` (P0) | **Closed** | No `Any` in the test file; `mypy --strict` on it exits 0 |
+| S59-02 | `IMPLEMENTATION_DEFECT` | **Closed** | The acr2 and acr3 Linux rows now name the validator refusing `linux-fs:ext2/ext3` and the host's earlier `_PlatformProofUnavailable: LINUX`, which matches the CI traceback. Follow-up is ticket 62 |
+| S59-03 | `IMPLEMENTATION_DEFECT` | **Closed** | The file_lock row now says stdin is closed and then `communicate()` is called on POSIX, raising `ValueError: I/O operation on closed file`, with `-9` coming from cleanup and the POSIX `fcntl.flock` path left unexercised. Follow-up is ticket 62 |
+| S59-04 | `TICKET_DEFECT`, routed | **Closed** | All 39 Windows rows name `resolves_within_root` (`base.resolve() != base`) and carry follow-up ticket 63. The bundle row explains its own mechanism. The product fix belongs to ticket 63 |
+| S59-05 | `TICKET_DEFECT`, routed | **Closed** | The seven rows per OS now point at ticket 62 with unchanged reasons; no row names ticket 59 |
+| S59-06 | `EVIDENCE_DEFECT` | **Closed as specified** | `test_the_checker_step_exit_is_the_job_result` checks four things: <br>• `continue-on-error` appears nowhere. <br>• There is exactly one checker line, and it ends at the junit argument with no operator after it. <br>• Nothing follows the checker step. <br>• The checker is the last step. <br>MA and MB go red. Doors outside the row's wording are S59-12 |
+| S59-07 | `EVIDENCE_DEFECT` | **Closed** | The permissions block must be exactly `contents: read`; `secrets.`, `GITHUB_TOKEN`, `github.token` and `id-token` are refused. MC and MD go red |
+| S59-08 | `TICKET_DEFECT` | **Closed** | The revision02 ticket command includes `--continue-on-collection-errors`, which the workflow already carried |
+| S59-09 | `OUT_OF_SCOPE_HARDENING` | Carried | Not in scope for revision02; checker unchanged |
+| S59-10 | `OUT_OF_SCOPE_HARDENING` | Carried | MJ, MN and MP still give zero red, as expected |
+| S59-11 | `EVIDENCE_DEFECT` | **Closed** | All three parts (a, b, c) corrected and checked (cell 1b) |
+
+### New findings
+
+| ID | Class | Blocks | Finding | Route |
+| --- | --- | --- | --- | --- |
+| S59-12 | `EVIDENCE_DEFECT` (would let a red pass) | No. Under rule B it must close in the next change of this gate | The tests pin the checker step's own line but not the conditions under which that line decides the job. Each of these gives zero red: <br>• MQ: a job-level `if: ${{ false }}` skips both jobs, so no checker result exists. <br>• MR: `defaults.run.shell: true {0}` stops every step script from running, the checker's included; `shell: bash` is not pinned. <br>• MU: a step inserted before the checker rewrites `$RUNNER_TEMP/junit.xml`; nothing pins that the step before the checker is the pytest step. <br>The fix is to pin that the job has no `if:`, that the default shell is exactly `bash`, and that the steps are exactly the expected sequence | Next change of this gate (a hardening ticket or ticket 62's CI touch) |
+| S59-13 | `EVIDENCE_DEFECT` (would let a red pass) | No. Under rule B, next change | "Every push runs the whole test suite" is pinned only by the prefix `python -m pytest tests -q -p no:cacheprovider -rf --junitxml=`. Two mutations give zero red: <br>• MS: appending `-k "not dispatch"`. <br>• MT: appending `--ignore=tests/test_dispatch_session.py`. <br>Either drops tests silently. A failure in a dropped test that is not registered would never reach the checker. A dropped registered test does turn red, as `REGISTERED_NOT_FAILING`. The fix is to pin the pytest line exactly | Next change of this gate |
+| S59-14 | `EVIDENCE_DEFECT` (receipt) | No | M1 does not record its clone command, so I cannot confirm `--no-hardlinks`. The clone was removed and the worktree porcelain stayed empty. My own mutations repeat the seat's eight doors and all eight are red, so the evidence holds without it | Next receipt from this seat: record the clone command |
+
+### Reviewer counter-mutations
+
+Script: `rev02/tools/mutate2.py`; output in `rev02/R_M3.txt`. It runs in a disposable copy built with `git show HEAD:<path>` (not a clone, so no hardlinks), with its own `pytest.ini`, and removes the copy afterwards. I read the pytest output unfiltered (`-rf`).
+
+**Baseline copy:** 39/39 pass.
+
+**Red as required:**
+- MA, MB → `test_the_checker_step_exit_is_the_job_result`
+- MC, MD → `test_the_token_is_read_only_and_no_secret_is_read`
+
+**Revision01 checker and list doors:** ME, MF, MG, MH, MI, MK, ML, MM and MO are red, with the same failing tests as before.
+
+**Carried, zero red (S59-10):** MJ, MN, MP.
+
+**New doors:**
+
+| Door | Mutation | Result |
+| --- | --- | --- |
+| MQ | job-level `if: ${{ false }}` | zero red (S59-12) |
+| MR | `shell: true {0}` | zero red (S59-12) |
+| MU | inserted step rewrites the junit report | zero red (S59-12) |
+| MS | `-k "not dispatch"` | zero red (S59-13) |
+| MT | `--ignore=tests/test_dispatch_session.py` | zero red (S59-13) |
+| MV | pytest pointed at a single file before `tests` | red: `test_the_matrix_triggers_and_steps_are_as_the_ticket_states` |
+
+### Commands
+
+From the main checkout unless noted. Python `C:/Temp/claude/jas-venv/Scripts/python.exe` with `PYTHONUTF8=1`. Scratch directory `.worktrees/59-ci-linux-windows-review-scratch/rev02`.
+
+**Tickets and candidate**
+- `git show e252249a:modules/tickets/workflow-governance/{59-ci-linux-windows,62-registered-known-failures,63-short-name-containment}.md`
+- `git diff --stat 4440077b e252249a -- <the three tickets>` → only the ticket 59 status line
+- `git log 3ab5ac43..HEAD`
+- `git diff --stat 3ab5ac43 HEAD` and `git diff --stat e760d2e8 HEAD`
+- `git diff 3ab5ac43 HEAD -- tests/test_ci_registered_failures.py ci/README.md`
+- An inline diff of `ci/registered-failures.json` per row at `3ab5ac43` and at HEAD → ids and order unchanged; the changed rows are listed in the status table
+
+**CI**
+- `gh run list --branch cp/wave2-59-ci-linux-windows`
+- `gh run view 42084063480 --json headSha,headBranch,conclusion,status,event,url,jobs,workflowName` → `run.json`
+- `gh run view 42084063480 --log` → `run_log.txt` (21291 lines)
+- `python ../cmp.py ../../59-ci-linux-windows-review/ci/registered-failures.json` → Linux 233 + 1 = 234 and Windows 47, each equal to the registered set
+
+**Receipt**
+- `python -I -X utf8 doc/reviews/workflow-governance/evidence/48/receipt_check.py .worktrees/59-ci-linux-windows-out-c1/RETURN.md .worktrees/59-ci-linux-windows-review` → exit 0
+- `python -I -X utf8 skills/johnny-project-takeover/scripts/evidence_gate.py <receipt> --repo <review> --candidate e067b81b… --tool skills/johnny-project-takeover/scripts/dispatch_lint.py --tool skills/johnny-project-takeover/scripts/receipt_fence_check.py --tool skills/johnny-project-takeover/scripts/index_pins.py --require-cell P1 --require-cell T1 --require-cell M1 --require-cell C1 --require-cell F1 --require-cell P9 --evidence-root .worktrees/59-ci-linux-windows-out-c1` → `cells=6 defects=0`, exit 0
+- An inline check of bytes, exit lists, candidates and the C1 shape → all equal, 0 CR
+
+**Checks in the review worktree**
+- `python -m mypy --strict --python-version 3.11 --no-incremental ci/check_registered_failures.py tests/test_ci_registered_failures.py` → exit 0 (`R_T1.txt`)
+- `python -m pytest tests/test_ci_registered_failures.py -q -rfEs -p no:cacheprovider` → 39 passed, exit 0 (`R_P1.txt`)
+- `python -m pytest tests/test_plugin_payload_boundary.py -q -p no:cacheprovider -rf` → only the pinned-sha test fails (`R_P2.txt`)
+- `rev02/tools/mutate2.py` → `R_M3.txt`
+
+**Full suite: `rev02/tools/f1_locked.sh`**
+- **Acquisition:** the lock was held by `integ-5760-1320283-1793907309`, started 19:35:09Z, and its suite was live. I retried every 30 s and acquired the lock by `mkdir` at 2026-11-05T19:46:47Z, writing `owner.txt` with `run_id=59-rev02-initial` and the start time.
+- **Other processes at acquisition** (`Get-CimInstance Win32_Process`, `R_procs_at_acquisition.txt`):
+  - ticket 58's mutation driver `jas58c1_mutate.py` (PIDs 28824 and 58260), running `pytest tests/test_governance_consistency.py -q -p no:cacheprovider` (PIDs 60072 and 3756, started 03:46:45 local) in its disposable copy `C:/Temp/claude/jas58c1-mut`, outside the lock;
+  - an unrelated `grep.exe` from 2026-10-28.
+- **Suite:** `python -m pytest tests -q -p no:cacheprovider` in the review worktree → `R_F1.txt`, exit 1.
+- **Lock incident:** at release (20:00:10Z) the script found that `owner.txt` no longer named my run id, and left the lock alone, as the rule requires. The lock directory was already gone. The previous holder's capture `C:/Temp/claude/jas-integ2-F1.txt` was last written at 03:46:47.670 local, and the parent directory changed at 03:46:47.705, the same second I acquired. That points to the previous holder's cleanup removing the lock directory just after I created it. For most of my run the host was therefore not protected by the lock. My F1 still shows nothing outside the base, and a concurrent run can only add red, so the result stands. The double release belongs to the integration script's lock handling, not to ticket 59, and goes to the control plane. No other pytest of mine ran during the suite.
+
+### Raw-log note
+
+The `R_*.txt` files, `run.json` and `run_log.txt` in `rev02/` are unedited tool output. I read the CI logs with `gh run view --json` and `gh run view --log` only. Nothing was pushed and no workflow run was triggered. I read every `FAILED` line of `R_F1.txt` through no wrapper. The excerpts here are trimmed only for width.
+
+### Not verified
+
+- The pinned order of the ticket command (cell 2a). I judged it equivalent for pytest; nothing tests the ticket's own word order.
+- What GitHub reports for a run whose jobs are all skipped (MQ). The finding rests on the job producing no checker result, not on the run's displayed conclusion.
+- That the seat's M1 clone used `--no-hardlinks` (S59-14).
+- I did not run the `pull_request` trigger; every run was `push`.
+- Ticket 63's product fix and ticket 62's test fixes are outside this review; I checked only that their boundaries cover the rows that point at them.
+
+```review-verdict
+candidate: e067b81b2d0934d1bca6c3af1e749d70fed72f3a
+verdict: APPROVED
+reviewer: seat:ticket-review/59-rev02-initial
+reviewed_at: 2026-11-06
+```

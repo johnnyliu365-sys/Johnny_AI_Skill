@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/59-ci-linux-windows-out/` / owner implementation seat / worktree `.worktrees/59-ci-linux-windows` / branch `cp/wave2-59-ci-linux-windows` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the checker and its test（CONTEXT.md Implementation language）; YAML for the workflow |
-| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `3ab5ac43`: S59-01 P0, S59-08 TICKET_DEFECT; correction 1 returned (`e067b81b`, CI run 42084063480 green on both jobs); revision02 initial review dispatched） |
+| 狀態 | `REVIEW_APPROVED`（closure revision02, candidate `e067b81b`: revision02 initial review APPROVED; CI run 42084063480 green on both jobs; record `doc/reviews/workflow-governance/59-ci-linux-windows-code-review.md`; ready for integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/59-ci-linux-windows` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/59-ci-linux-windows-review` |
@@ -130,3 +130,12 @@ Review record section "Revision01 initial review". S59-08 is a `TICKET_DEFECT`: 
 | S59-11 | EVIDENCE_DEFECT | `ci/README.md`: a cause for every host-only failure, those four described as base-capture failures not seen at the candidate, and the Linux paragraph corrected by S59-02 and S59-03 |
 
 A CI run on the correction commit with both jobs `success` is part of the evidence. Carried, no work here: S59-09 (DOCTYPE refusal for non-UTF-8 reports) and S59-10 (id normalisation, `follow_up` domain, duplicate JSON keys, subtests inside a registered test) are out-of-scope hardening for a later change of this gate.
+
+### Carried after approval (CodeReview §5 rule B)
+
+| Finding | Route |
+| --- | --- |
+| S59-09, S59-10 | out-of-scope hardening of the checker, the next change of this gate |
+| S59-12 | the next change of this gate: pin that the job has no `if:`, that the default shell is exactly `bash`, and the exact step sequence |
+| S59-13 | the next change of this gate: pin the pytest line exactly, so no `-k`, `--ignore` or narrower path can drop tests |
+| S59-14 | evidence only: the next receipt from a seat records its clone command |
