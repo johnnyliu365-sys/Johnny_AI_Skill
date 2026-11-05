@@ -83,7 +83,7 @@ Revision 04（`PRD-20261103-043`）起，「Router」指的是對狀態檔執行
 - `ACTION_COMPLETED`、`ImplementationReturn`、`ImplementationHandoff`、`WAIT_FOR_HUMAN` 與 `HALT` 仍是受據與回傳紀錄的詞彙：完成動作的 agent 把它們寫進受據；`ACTION_COMPLETED` 必須先附 `CompletionEvidence`，commit 不能自行選下一關。
 - `WAIT_FOR_HUMAN` 的合法理由沿 `router-control.md`〈Continuation〉第 2 條：Profile 宣告的核准、owner 決策、不可逆外部 effect，含 Wayfinder 缺口輪。Revision 04 加的是過濾（R4-3）：工具故障、可自行查證的事實與受據格式不得以上述理由之名上拋。
 - 缺失、不可讀、版本不符或互相競爭的 reference 固定 `HALT / ROUTE_REFERENCE_INVALID`。不得用模型記憶重建規則。
-- 早於 Revision 04 的專案 SPEC（workflow-governance SPEC 以外者）以其檔頭的優先序註記讀取：與 R4-1、R4-4 衝突處以本修訂為準，不構成互相競爭的 reference，不觸發 `ROUTE_REFERENCE_INVALID`；該類 SPEC 於第三波退場 router library 時依 requirement-lineage 封存，不刪除。
+- 早於 Revision 04 的專案 SPEC（workflow-governance SPEC 以外者），以及 runbooks 目錄下帶有同一優先序註記的日期化交接 runbook，以其檔頭的優先序註記讀取：與 R4-1、R4-4 衝突處以本修訂為準，不構成互相競爭的 reference，不觸發 `ROUTE_REFERENCE_INVALID`；該類 SPEC 於第三波退場 router library 時依 requirement-lineage 封存，不刪除。
 - 受據欄位的型別與事件名稱仍以 `router-control.md`（[skills/johnny-project-takeover/references/router-control.md](skills/johnny-project-takeover/references/router-control.md)）的 typed contracts 為準；其〈Closed state machine〉的 stage 順序自 Revision 04 起只適用 `GREENFIELD`（R4-5）。
 
 十一個 stage 的順序只適用 `GREENFIELD`；`TAKEOVER` 與 `DELTA` 從需求快照直接進票（R4-5）。`library/workflow_router/` 的 typed contracts 保留為受據欄位的型別定義；其 graph 與 private router 不再是流程 authority，退場排在 Revision 04 第三波。

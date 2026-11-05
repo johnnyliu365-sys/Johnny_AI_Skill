@@ -28,8 +28,24 @@ SEALED) are never repinned; their digest must verify under the recorded revision
 row is a defect. The sealed word must not be empty or blank.
 
 Defects (exit 1): ROW_SHAPE_MISMATCH, ORPHAN_PINNED_ROW, SEALED_PIN_INVALID,
-SEALED_PIN_MISSING, SKIP_UNRESOLVED, SKIP_UNTRACKED, SKIP_NO_PATH_IN_CELL,
-SKIP_NO_HASH_IN_CELL, SKIP_NO_BLOB.
+SEALED_REV_NOT_COMMIT, SEALED_PIN_MISSING, SKIP_UNRESOLVED, SKIP_UNTRACKED,
+SKIP_NO_PATH_IN_CELL, SKIP_NO_HASH_IN_CELL, SKIP_NO_BLOB.
+
+SEALED_REV_NOT_COMMIT: the revision cell of a sealed row names a tag object (git peels an
+annotated tag to the commit it points at, so the digest could still verify); a pin records the
+commit itself, so the row is a red, found with `git cat-file -t` before any blob is read. A
+revision that names a blob or a tree, or no object at all, stays SEALED_PIN_INVALID.
+
+An unborn `HEAD` (a repository with no commit) is a tool fault, exit 2, never a red: git cannot
+serve a history that does not exist, so `git log -1 -- <leaf>` fails and its message is printed.
+
+Every git child runs with `--no-replace-objects`, `-c core.quotepath=false`,
+`GIT_NO_REPLACE_OBJECTS=1` and `GIT_NO_LAZY_FETCH=1`, without the thirteen
+repository-selecting `GIT_*` variables of the wave-2 gates (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`,
+`GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`,
+`GIT_COMMON_DIR`, `GIT_PREFIX`, `GIT_QUARANTINE_PATH`, `GIT_REPLACE_REF_BASE`, `GIT_GRAFT_FILE`,
+`GIT_SHALLOW_FILE`) and without the `GIT_CONFIG*` and `GIT_TEST_*` variables. `git ls-files` runs with `-z`, so a tracked
+leaf whose name is not ASCII resolves. Every printed subject is escaped to one line.
 
 Fault versus red: a git failure that stems from the environment (git cannot run, the
 object store or the index is unreadable, `git log`, `git ls-files`, the shallow-boundary
@@ -55,7 +71,7 @@ shallow clone whose history would pin the boundary commit; git cannot be started
 inside a git repository; --root missing or not a directory; an environment git query
 fails and exits 2 with git's message (`git log -1 -- <leaf>`, `git ls-files`, the single
 shallow-boundary `git rev-parse`, `git show <revision>:<leaf>` after the revision and
-tree checks passed), never a defect such as SKIP_UNTRACKED; the --json path cannot be
+tree checks passed, an unborn HEAD), never a defect such as SKIP_UNTRACKED; the --json path cannot be
 written; any other unexpected error), 3 usage error (bad option, missing mode, empty
 --sealed-state, index argument that is not a file, index file that is not UTF-8). The
 console encoding never changes an exit code: stdout and stderr keep the host encoding
@@ -66,6 +82,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import os
 import re
 import subprocess
 import sys
@@ -92,10 +109,44 @@ _MD_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 _BACKTICKED = re.compile(r"`([^`]+)`")
 
 DEFECTS = (
-    "ROW_SHAPE_MISMATCH", "ORPHAN_PINNED_ROW", "SEALED_PIN_INVALID", "SEALED_PIN_MISSING",
-    "SKIP_UNRESOLVED", "SKIP_UNTRACKED", "SKIP_NO_PATH_IN_CELL", "SKIP_NO_HASH_IN_CELL",
-    "SKIP_NO_BLOB",
+    "ROW_SHAPE_MISMATCH", "ORPHAN_PINNED_ROW", "SEALED_PIN_INVALID", "SEALED_REV_NOT_COMMIT",
+    "SEALED_PIN_MISSING", "SKIP_UNRESOLVED", "SKIP_UNTRACKED", "SKIP_NO_PATH_IN_CELL",
+    "SKIP_NO_HASH_IN_CELL", "SKIP_NO_BLOB",
 )
+
+# The list of the wave-2 gates (ticket 58 revision02): the thirteen names `evidence_gate.py` removes,
+# every GIT_CONFIG* name (GIT_CONFIG, GIT_CONFIG_GLOBAL, GIT_CONFIG_COUNT and the like) and every
+# GIT_TEST_* name. An inherited variable is an environment input and never changes a verdict.
+GIT_SELECTING_VARIABLES = (
+    "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_NAMESPACE", "GIT_CEILING_DIRECTORIES",
+    "GIT_COMMON_DIR", "GIT_PREFIX", "GIT_QUARANTINE_PATH", "GIT_REPLACE_REF_BASE",
+    "GIT_GRAFT_FILE", "GIT_SHALLOW_FILE",
+)
+GIT_REMOVED_PREFIXES = ("GIT_CONFIG", "GIT_TEST_")
+GIT_PREFIX_ARGS = ("--no-replace-objects", "-c", "core.quotepath=false")
+_UNPRINTABLE = re.compile(r"[\x00-\x1f\x7f-\x9f  ]")
+
+
+def git_environment() -> dict[str, str]:
+    """The environment of every git child: no repository-selecting or configuration variable,
+    replace refs ignored, no lazy fetch over the network."""
+    selecting = set(GIT_SELECTING_VARIABLES)
+    environment = {
+        name: value for name, value in os.environ.items()
+        if name.upper() not in selecting and not name.upper().startswith(GIT_REMOVED_PREFIXES)
+    }
+    environment["GIT_NO_REPLACE_OBJECTS"] = "1"
+    environment["GIT_NO_LAZY_FETCH"] = "1"
+    return environment
+
+
+def one_line(text: str) -> str:
+    """`text` with every control character and line separator written as an escape: one printed line."""
+    return _UNPRINTABLE.sub(
+        lambda match: f"\\x{ord(match.group()):02x}" if ord(match.group()) < 256 else f"\\u{ord(match.group()):04x}",
+        text,
+    )
 
 
 class GitFault(Exception):
@@ -146,12 +197,13 @@ class Repo:
         self.last_stderr = ""
         self._reasons: dict[tuple[str, str], str] = {}
         self._shallow: tuple[bool, set[str]] | None = None
+        self._wrong_type: dict[str, str] = {}
 
     def git_text(self, *args: str, stdin: str | None = None) -> tuple[int, str]:
         try:
             done = subprocess.run(
-                ["git", *args], cwd=self.root, capture_output=True, text=True,
-                encoding="utf-8", errors="replace", input=stdin,
+                ["git", *GIT_PREFIX_ARGS, *args], cwd=self.root, capture_output=True, text=True,
+                encoding="utf-8", errors="replace", input=stdin, env=git_environment(),
             )
         except OSError as exc:
             raise GitFault(f"git cannot be started: {exc}") from exc
@@ -179,6 +231,14 @@ class Repo:
         """
         first_code, _ = self.git_text("cat-file", "-e", f"{rev}^{{commit}}")
         if first_code == 0:
+            # `^{commit}` peels an annotated tag to its commit: the object itself must be the commit.
+            code, out = self.git_text("cat-file", "-t", rev)
+            if code != 0:
+                raise GitFault(f"git cat-file -t {rev} failed with exit {code}: {self.last_stderr}")
+            kind = out.strip()
+            if kind != "commit":
+                self._wrong_type[rev] = kind
+                return False
             return True
         first = self.last_stderr
         code, out = self.git_text("cat-file", "--batch-check", stdin=rev + "\n")
@@ -188,6 +248,10 @@ class Repo:
         if len(fields) >= 2 and fields[1] != "commit":
             return False
         raise GitFault(f"git cat-file -e {rev}^{{commit}} failed with exit {first_code}: {first}")
+
+    def wrong_object_type(self, rev: str) -> str | None:
+        """The type (`tag`) of a present object that peels to a commit but is not one; None otherwise."""
+        return self._wrong_type.get(rev)
 
     def object_missing(self, rev: str) -> bool:
         """True when the object store holds no object named `rev`; a failing query is a tool fault."""
@@ -231,13 +295,20 @@ class Repo:
             if not self.is_commit(commit):
                 self.require_available(commit, leaf)
                 self._digests[key] = None
-                self._reasons[key] = f"{commit[:12]} is not a commit of this repository"
+                kind = self._wrong_type.get(commit)
+                self._reasons[key] = (
+                    f"{commit[:12]} is a {kind} object, not a commit" if kind
+                    else f"{commit[:12]} is not a commit of this repository"
+                )
             elif not self.tree_lists(commit, leaf):
                 self._digests[key] = None
                 self._reasons[key] = f"the tree of {commit[:12]} does not list {leaf}"
             else:
                 try:
-                    done = subprocess.run(["git", "show", f"{commit}:{leaf}"], cwd=self.root, capture_output=True)
+                    done = subprocess.run(
+                        ["git", *GIT_PREFIX_ARGS, "show", f"{commit}:{leaf}"], cwd=self.root,
+                        capture_output=True, env=git_environment(),
+                    )
                 except OSError as exc:
                     raise GitFault(f"git cannot be started: {exc}") from exc
                 if done.returncode != 0:
@@ -251,10 +322,10 @@ class Repo:
         return self._reasons.get((commit, leaf), "no blob")
 
     def tracked_files(self) -> set[str]:
-        code, out = self.git_text("ls-files")
+        code, out = self.git_text("ls-files", "-z")
         if code != 0:
             raise GitFault(f"git ls-files failed with exit {code}: {self.last_stderr}")
-        return set(out.splitlines())
+        return {name for name in out.split("\0") if name}
 
     def _shallow_state(self) -> tuple[bool, set[str]]:
         """(is the repository shallow, boundary commits) from one `git rev-parse` invocation.
@@ -503,7 +574,11 @@ def scan(repo: Repo, index_file: Path, tracked: set[str], sealed_state: str = DE
                         old_rev=old_rev, old_digest=old_digest)
                     continue
                 actual = repo.blob_sha256_at(old_rev, leaf)
-                if actual is None:
+                if actual is None and repo.wrong_object_type(old_rev):
+                    add(lineno, "SEALED_REV_NOT_COMMIT", prefix, leaf_raw=leaf_raw, leaf=leaf,
+                        old_rev=old_rev, old_digest=old_digest,
+                        detail=f"the recorded revision is not a commit: {repo.missing_reason(old_rev, leaf)}")
+                elif actual is None:
                     add(lineno, "SEALED_PIN_INVALID", prefix, leaf_raw=leaf_raw, leaf=leaf,
                         old_rev=old_rev, old_digest=old_digest,
                         detail=f"the recorded revision cannot verify the leaf: {repo.missing_reason(old_rev, leaf)}")
@@ -587,7 +662,7 @@ def _harden_streams() -> None:
 def _usage_error(message: str | None = None) -> int:
     print(USAGE, file=sys.stderr)
     if message:
-        print(f"index_pins.py: error: {message}", file=sys.stderr)
+        print(f"index_pins.py: error: {one_line(message)}", file=sys.stderr)
     return 3
 
 
@@ -595,8 +670,8 @@ def _toplevel(cwd: Path) -> Path | None:
     """The work tree root; None when git reports no work tree; GitFault when git cannot start or fails."""
     try:
         done = subprocess.run(
-            ["git", "rev-parse", "--show-toplevel"], cwd=cwd, capture_output=True, text=True,
-            encoding="utf-8", errors="replace",
+            ["git", *GIT_PREFIX_ARGS, "rev-parse", "--show-toplevel"], cwd=cwd, capture_output=True, text=True,
+            encoding="utf-8", errors="replace", env=git_environment(),
         )
     except OSError as exc:
         raise GitFault(f"git cannot be started: {exc}") from exc
@@ -610,7 +685,7 @@ def _toplevel(cwd: Path) -> Path | None:
 
 
 def _tool_fault(message: str) -> int:
-    print(f"index_pins.py: tool fault: {message}", file=sys.stderr)
+    print(f"index_pins.py: tool fault: {one_line(message)}", file=sys.stderr)
     return 2
 
 
@@ -692,7 +767,7 @@ def _run(argv: Sequence[str] | None) -> int:
         except IndexUnreadable as exc:
             return _usage_error(str(exc))
         except ShallowHistory as exc:
-            print(f"SHALLOW_HISTORY: the recorded revision {exc.revision} of {exc.leaf} is missing from this "
+            print(f"SHALLOW_HISTORY: the recorded revision {one_line(exc.revision)} of {one_line(exc.leaf)} is missing from this "
                   "shallow repository; fetch the full history and run again")
             return 2
         all_findings.extend(findings)
@@ -707,7 +782,7 @@ def _run(argv: Sequence[str] | None) -> int:
     if grafted:
         print("SHALLOW_HISTORY: these leaves would be pinned to the shallow boundary commit:")
         for leaf in grafted[:10]:
-            print("    " + leaf)
+            print("    " + one_line(leaf))
         print(f"    ({len(grafted)} in total; fetch the full history and run again)")
         return 2
 
@@ -732,15 +807,15 @@ def _run(argv: Sequence[str] | None) -> int:
     for finding in drift:
         by_file[finding.index] = by_file.get(finding.index, 0) + 1
     for name, count in sorted(by_file.items(), key=lambda item: (-item[1], item[0])):
-        print(f"  {count:3d}  {name}")
+        print(f"  {count:3d}  {one_line(name)}")
     for finding in drift:
-        print(f"STALE {finding.index}:{finding.line} {finding.leaf}")
+        print(f"STALE {one_line(finding.index)}:{finding.line} {one_line(finding.leaf or '')}")
     print(f"drift={len(drift)} files={len(by_file)} defects={len(defects)} indexes={len(candidates)}")
 
     if defects:
         print(f"defects need manual repair ({len(defects)} rows):")
         for finding in defects[:40]:
-            print(f"    {finding.index}:{finding.line}  {finding.status}  {finding.detail or finding.leaf_raw or ''}")
+            print(f"    {one_line(finding.index)}:{finding.line}  {finding.status}  {one_line(finding.detail or finding.leaf_raw or '')}")
         if any(finding.status == "ROW_SHAPE_MISMATCH" for finding in defects):
             print("   Rows with a broken shape must be fixed first: re-pinning would lock the misplacement in.")
 

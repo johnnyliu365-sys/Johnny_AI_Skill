@@ -6,9 +6,15 @@ Usage:
   receipt_fence_check.py --scan <dir> [--authority-root PATH] [--legacy-allowlist FILE]
 
 Exit codes: 0 pass, 1 contract red, 2 tool fault (the evidence or scan root is not a
-readable directory, or any other unexpected error), 3 usage error. The console encoding
-never changes an exit code: stdout and stderr keep the host encoding but escape what it
-cannot encode.
+readable directory, or any other unexpected error), 3 usage error (`--help`, an unknown option
+such as `--require-cmd`, extra positional arguments after `--scan <dir>`, a wrong number of
+positional arguments). The console encoding never changes an exit code: stdout and stderr keep
+the host encoding but escape what it cannot encode.
+
+A run that checked nothing is never a pass (exit 1): NO_FENCES (a section holds no fenced block),
+SCAN_NO_RECEIPTS (the scanned directory holds no receipt) and SCAN_NOTHING_CHECKED (receipts
+exist but no section with a capture line was checked). Every printed subject (heading, path,
+capture name, command excerpt) is escaped to one line.
 """
 from __future__ import annotations
 
@@ -22,6 +28,20 @@ from pathlib import Path
 from typing import NoReturn
 
 ELISIONS = ("(empty)", "<snip>", "…", "...")
+_UNPRINTABLE = re.compile(r"[\x00-\x1f\x7f-\x9f  ]")
+
+
+def one_line(text: str) -> str:
+    """`text` with every control character and line separator written as an escape: one printed line."""
+    return _UNPRINTABLE.sub(
+        lambda match: f"\\x{ord(match.group()):02x}" if ord(match.group()) < 256 else f"\\u{ord(match.group()):04x}",
+        text,
+    )
+
+
+def say(text: str) -> None:
+    print(one_line(text))
+
 PLACEHOLDER = re.compile(r"<[A-Za-z][^<>]*>")
 MOVING_REF = re.compile(r"(?<![\w/.-])(HEAD|@\{u\}|@\{upstream\}|origin/\w+|github/\w+|refs/heads/\w+)(?![\w/.-])")
 
@@ -728,7 +748,7 @@ def check_section(
 USAGE = (
     "usage: receipt_fence_check.py <receipt> <heading> <evidence-root> "
     "[--no-moving-ref] [--self-note] [--authority-root PATH] [--legacy-allowlist FILE] "
-    "| --scan <dir>"
+    "| --scan <dir> [--authority-root PATH] [--legacy-allowlist FILE]"
 )
 
 
@@ -750,16 +770,16 @@ def explicit(
     legacy_allowlist: set[tuple[str, str, str]] | None = None,
 ) -> int:
     if not _evidence_root_readable(evidence):
-        print(f"FAIL EVIDENCE_ROOT_UNREADABLE: {evidence}")
+        say(f"FAIL EVIDENCE_ROOT_UNREADABLE: {evidence}")
         return 2
     try:
         text = receipt.read_text(encoding="utf-8").replace("\r\n", "\n")
     except (OSError, UnicodeDecodeError) as exc:
-        print(f"FAIL receipt unreadable: {receipt}: {exc}")
+        say(f"FAIL receipt unreadable: {receipt}: {exc}")
         return 3
     found = next(((start, lines) for title, start, lines in sections(text) if title == heading.strip()), None)
     if found is None:
-        print(f"FAIL section heading not found: {heading}")
+        say(f"FAIL section heading not found: {heading}")
         return 3
     start, lines = found
     allowlist = legacy_allowlist if legacy_allowlist is not None else set()
@@ -770,13 +790,15 @@ def explicit(
         legacy_receipt_path=receipt.as_posix(), legacy_heading=heading.strip(),
         default_authority_root=authority_root,
     )
+    if fences == 0:
+        failures.append(f"FAIL NO_FENCES: the section {heading.strip()} holds no fenced block, so nothing was checked")
     for failure in failures:
-        print(failure)
+        say(failure)
     legacy_suffix = f" legacy_unclaimed_exit={counter[0]}" if counter[0] else ""
     if self_note:
-        print(f"fences={max(0, fences - 1)} (excluding this run's own capture fence) failures={len(failures)}{legacy_suffix}")
+        say(f"fences={max(0, fences - 1)} (excluding this run's own capture fence) failures={len(failures)}{legacy_suffix}")
     else:
-        print(f"fences={fences} failures={len(failures)}{legacy_suffix}")
+        say(f"fences={fences} failures={len(failures)}{legacy_suffix}")
     return 1 if failures else 0
 
 
@@ -787,7 +809,7 @@ def scan(
     legacy_allowlist: set[tuple[str, str, str]] | None = None,
 ) -> int:
     if not _evidence_root_readable(root):
-        print(f"FAIL SCAN_ROOT_UNREADABLE: {root}")
+        say(f"FAIL SCAN_ROOT_UNREADABLE: {root}")
         return 2
     receipts = section_count = skipped = fences = failures = legacy_cmd = legacy_ref = 0
     legacy_unclaimed_exit = 0
@@ -815,7 +837,7 @@ def scan(
                 matches = list(evidence_root.rglob(Path(name).name)) if evidence_root.exists() else []
                 if len(matches) != 1:
                     failures += 1
-                    print(f"FAIL SCAN_CAPTURE_{'MISSING' if not matches else 'AMBIGUOUS'} {receipt}:{title}: {name} matches={len(matches)}")
+                    say(f"FAIL SCAN_CAPTURE_{'MISSING' if not matches else 'AMBIGUOUS'} {receipt}:{title}: {name} matches={len(matches)}")
                 else:
                     rel = matches[0].relative_to(evidence_root).as_posix()
                     for pos, line in enumerate(resolved_lines):
@@ -832,6 +854,8 @@ def scan(
                 default_authority_root=authority_root,
             )
             legacy_unclaimed_exit += legacy_counter[0]
+            if section_fences == 0:
+                section_failures.append("FAIL NO_FENCES: the section holds no fenced block, so nothing was checked")
             self_note_captures = []
             for capture_index, line in enumerate(lines):
                 match = re.match(r"^capture:\s*(\S+)\s*$", line.strip())
@@ -854,9 +878,15 @@ def scan(
             fences += section_fences
             failures += len(section_failures)
             for failure in section_failures:
-                print(f"{receipt}:{title}: {failure}")
+                say(f"{receipt}:{title}: {failure}")
+    if receipts == 0:
+        say(f"FAIL SCAN_NO_RECEIPTS: no receipt (*.md) under {root}, so nothing was checked")
+        failures += 1
+    elif section_count == 0 or fences == 0:
+        say(f"FAIL SCAN_NOTHING_CHECKED: {receipts} receipt(s) under {root} but no section with a capture line and a fence was checked")
+        failures += 1
     legacy_suffix = f" legacy_unclaimed_exit={legacy_unclaimed_exit}" if legacy_unclaimed_exit else ""
-    print(f"receipts={receipts} sections={section_count} skipped={skipped} fences={fences} failures={failures} legacy_cmd={legacy_cmd} legacy_ref={legacy_ref}{legacy_suffix}")
+    say(f"receipts={receipts} sections={section_count} skipped={skipped} fences={fences} failures={failures} legacy_cmd={legacy_cmd} legacy_ref={legacy_ref}{legacy_suffix}")
     return 1 if failures else 0
 
 
@@ -885,14 +915,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         return _run(argv)
     except Exception as exc:  # noqa: BLE001 - an uncaught error must never reach the caller as exit 1
-        print(f"receipt_fence_check.py: tool fault: {type(exc).__name__}: {exc}", file=sys.stderr)
+        print(f"receipt_fence_check.py: tool fault: {one_line(f'{type(exc).__name__}: {exc}')}", file=sys.stderr)
         return 2
 
 
 def _run(argv: Sequence[str] | None) -> int:
-    parser = _Parser(prog="receipt_fence_check.py", usage=USAGE, add_help=True)
+    parser = _Parser(prog="receipt_fence_check.py", usage=USAGE, add_help=False)
     parser.add_argument("--scan", metavar="ROOT")
-    parser.add_argument("--require-cmd", action="store_true")
     parser.add_argument("--no-moving-ref", action="store_true")
     parser.add_argument("--self-note", action="store_true")
     parser.add_argument("--authority-root", metavar="PATH")
@@ -902,19 +931,23 @@ def _run(argv: Sequence[str] | None) -> int:
         ns = parser.parse_args(argv)
     except _UsageError as exc:
         print(USAGE, file=sys.stderr)
-        print(f"receipt_fence_check.py: error: {exc}", file=sys.stderr)
+        print(f"receipt_fence_check.py: error: {one_line(str(exc))}", file=sys.stderr)
         return 3
     except SystemExit as exc:
-        return exc.code if isinstance(exc.code, int) else 0
+        return exc.code if isinstance(exc.code, int) and exc.code != 0 else 3
     allowlist: set[tuple[str, str, str]] = set()
     if ns.legacy_allowlist:
         try:
             allowlist = load_legacy_allowlist(Path(ns.legacy_allowlist))
         except (OSError, UnicodeDecodeError) as exc:
             print(USAGE, file=sys.stderr)
-            print(f"receipt_fence_check.py: error: allowlist unreadable: {exc}", file=sys.stderr)
+            print(f"receipt_fence_check.py: error: allowlist unreadable: {one_line(str(exc))}", file=sys.stderr)
             return 3
     if ns.scan:
+        if ns.args:
+            print(USAGE, file=sys.stderr)
+            print(f"receipt_fence_check.py: error: --scan takes one directory and no other argument: {one_line(' '.join(ns.args))}", file=sys.stderr)
+            return 3
         return scan(Path(ns.scan), authority_root=ns.authority_root, legacy_allowlist=allowlist)
     if len(ns.args) != 3:
         print(USAGE, file=sys.stderr)

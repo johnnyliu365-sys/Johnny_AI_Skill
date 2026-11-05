@@ -14,6 +14,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from collections.abc import Callable
 from pathlib import Path
 from unittest import mock
 
@@ -39,6 +40,15 @@ def git(repo: Path, *args: str) -> str:
 def sha256_of_committed(repo: Path, commit: str, path: str) -> str:
     shown = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=repo, capture_output=True)
     return hashlib.sha256(shown.stdout).hexdigest()
+
+
+# The names the thirteen-name list of revision02 removes (the list of `evidence_gate.py`); written out here
+# on purpose, so a name dropped from the script goes red.
+REMOVED_GIT_NAMES: tuple[str, ...] = (
+    "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_NAMESPACE", "GIT_CEILING_DIRECTORIES", "GIT_COMMON_DIR", "GIT_PREFIX", "GIT_QUARANTINE_PATH",
+    "GIT_REPLACE_REF_BASE", "GIT_GRAFT_FILE", "GIT_SHALLOW_FILE",
+)
 
 
 class Repo:
@@ -656,23 +666,19 @@ class ShallowRevisionTests(unittest.TestCase):
         self.assertEqual(len(calls), 1, calls)
         self.assertIn("--git-common-dir", calls[0])
 
-    def test_shallow_reported_without_a_shallow_file_is_a_tool_fault(self) -> None:
-        """A boundary file that git reads from elsewhere: the script finds none in the common directory."""
+    def test_an_inherited_shallow_file_changes_nothing(self) -> None:
+        """Revision02 (S58-04): GIT_SHALLOW_FILE is an environment input and is removed from every git child.
+        It used to be a tool fault here ("no shallow file"); with the variable set a correct index gives the
+        same result as without it."""
         elsewhere = self.base / "boundary-elsewhere"
         elsewhere.write_text(self.source.last_commit() + "\n", encoding="utf-8", newline="\n")
-        index = self.source.write_index("")
+        self.source.write_index(self.source.row(self.source.last_commit(), self.source.digest()))
         self.source.commit("index")
+        without = self.source.run("--check", "INDEX.md")
+        self.assertEqual(without[0], 0, without)
         with mock.patch.dict(os.environ, {"GIT_SHALLOW_FILE": str(elsewhere)}):
+            self.assertEqual(self.source.run("--check", "INDEX.md"), without)
             self.assertEqual(git(self.source.dir, "rev-parse", "--is-shallow-repository").strip(), "true")
-            self.assertFalse((self.source.dir / ".git" / "shallow").exists())
-            for mode in ("--check", "--write"):
-                with self.subTest(mode):
-                    code, out, err = self.source.run(mode, "INDEX.md")
-                    self.assertEqual(code, 2, out + err)
-                    self.assertIn("tool fault", err)
-                    self.assertIn("no shallow file", err)
-                    self.assertEqual(out, "")
-        self.assertEqual(index.read_text(encoding="utf-8"), HEADER)
 
     def test_a_simulated_shallow_answer_without_a_shallow_file_is_a_tool_fault(self) -> None:
         repository = index_pins.Repo(self.source.dir)
@@ -1194,6 +1200,263 @@ class ParsingHelperTests(unittest.TestCase):
     def test_strict_pattern_does_not_bite_into_a_longer_hex_run(self) -> None:
         self.assertIsNone(index_pins._HEX64.search("c" * 65))
         self.assertIsNotNone(index_pins._HEX64.search("c" * 64))
+
+
+class CarriedFindingTests(PinCase):
+    """Ticket 58, part C: the ticket 48 findings NF-04, NF-08 and NF-17, and the git environment rules."""
+
+    NON_ASCII_LEAF = "規格/葉子.md"
+
+    def run_main(self, argv: list[str]) -> tuple[int, str, str]:
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = index_pins.main(argv)
+        return code, out.getvalue(), err.getvalue()
+
+    # ---- NF-04: a tracked leaf with a non-ASCII name resolves
+    def non_ascii_leaf_index(self, stale: bool) -> None:
+        self.repo.write_leaf("non-ascii leaf body\n", name=self.NON_ASCII_LEAF)
+        self.repo.commit("non-ascii leaf")
+        digest = "0" * 64 if stale else self.repo.digest(self.NON_ASCII_LEAF)
+        revision = self.repo.last_commit(self.NON_ASCII_LEAF)
+        self.repo.write_index(self.repo.row(revision, digest, leaf=f"`{self.NON_ASCII_LEAF}`"))
+        self.repo.commit("index")
+
+    def test_a_tracked_leaf_with_a_non_ascii_name_resolves_under_the_default_quotepath(self) -> None:
+        git(self.repo.dir, "config", "core.quotepath", "true")
+        self.non_ascii_leaf_index(stale=False)
+        quoted = git(self.repo.dir, "-c", "core.quotepath=true", "ls-files")
+        self.assertIn('"\\', quoted, "the premise: plain `git ls-files` quotes the name")
+        code, out, err = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(code, 0, out + err)
+        self.assertNotIn("SKIP_UNRESOLVED", out)
+        self.assertIn("drift=0 files=0 defects=0", out)
+
+    def test_a_stale_pin_on_a_non_ascii_leaf_is_drift_and_write_repairs_it(self) -> None:
+        self.non_ascii_leaf_index(stale=True)
+        code, out, err = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("STALE", out)
+        self.assertNotIn("SKIP_UNRESOLVED", out)
+        code, out, err = self.repo.run("--write", "INDEX.md")
+        self.assertEqual(code, 0, out + err)
+        self.assertIn(self.repo.digest(self.NON_ASCII_LEAF), (self.repo.dir / "INDEX.md").read_text(encoding="utf-8"))
+
+    def test_tracked_files_are_read_nul_separated(self) -> None:
+        repository = index_pins.Repo(self.repo.dir)
+        asked: list[tuple[str, ...]] = []
+
+        def listing(*args: str, stdin: str | None = None) -> tuple[int, str]:
+            asked.append(args)
+            return 0, "a.md\0has\nnewline.md\0葉.md\0"
+
+        with mock.patch.object(repository, "git_text", listing):
+            tracked = repository.tracked_files()
+        self.assertEqual(asked, [("ls-files", "-z")])
+        self.assertEqual(tracked, {"a.md", "has\nnewline.md", "葉.md"})
+
+    # ---- NF-08: an unborn HEAD stays a fault
+    def test_an_unborn_head_is_a_tool_fault_exit_2_never_a_red(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="idxpin-unborn-") as raw:
+            fresh = Path(raw)
+            git(fresh, "init", "-q", "-b", "main")
+            (fresh / "leaf.md").write_text("body\n", encoding="utf-8", newline="\n")
+            git(fresh, "add", "leaf.md")
+            index = fresh / "INDEX.md"
+            index.write_text(HEADER + "| a1 | spec | open | `git:" + "1" * 40 + "` | `sha256:" + "2" * 64 + "` | leaf.md |\n", encoding="utf-8", newline="\n")
+            for mode in ("--check", "--write"):
+                with self.subTest(mode):
+                    before = index.read_bytes()
+                    code, out, err = self.run_main(["--root", str(fresh), mode, str(index)])
+                    self.assertEqual(code, 2, out + err)
+                    self.assertIn("tool fault", err)
+                    self.assertNotIn("SKIP_UNTRACKED", out)
+                    self.assertEqual(index.read_bytes(), before)
+
+    def test_a_leaf_with_no_history_in_a_repository_that_has_commits_is_still_exit_1(self) -> None:
+        self.repo.write_leaf("staged only\n", name="staged.md")
+        git(self.repo.dir, "add", "staged.md")
+        self.repo.write_index(self.repo.row("1" * 40, "2" * 64, leaf="staged.md"))
+        git(self.repo.dir, "add", "INDEX.md")
+        code, out, err = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("SKIP_UNTRACKED", out)
+
+    # ---- NF-17: a sealed revision that is not a commit
+    def annotated_tag(self) -> str:
+        commit = self.repo.last_commit()
+        git(self.repo.dir, "tag", "-a", "-m", "seal", "seal-1", commit)
+        tag = git(self.repo.dir, "rev-parse", "seal-1").strip()
+        self.assertNotEqual(tag, commit)
+        self.assertEqual(git(self.repo.dir, "cat-file", "-t", tag).strip(), "tag")
+        return tag
+
+    def test_a_sealed_row_whose_revision_is_an_annotated_tag_is_red_with_a_named_code(self) -> None:
+        digest = self.repo.digest()
+        tag = self.annotated_tag()
+        self.repo.write_index(self.repo.row(tag, digest, state="SEALED"))
+        self.repo.commit("index")
+        for mode in ("--check", "--write"):
+            with self.subTest(mode):
+                code, out, err = self.repo.run(mode, "INDEX.md")
+                self.assertEqual(code, 1, out + err)
+                self.assertIn("SEALED_REV_NOT_COMMIT", out)
+                self.assertIn("is a tag object, not a commit", out)
+                self.assertNotIn("SEALED_PIN_INVALID", out)
+
+    def test_the_same_sealed_row_with_the_commit_itself_is_green(self) -> None:
+        self.annotated_tag()
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest(), state="SEALED"))
+        self.repo.commit("index")
+        code, out, err = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(code, 0, out + err)
+
+    def test_a_blob_or_a_missing_object_as_the_sealed_revision_stays_sealed_pin_invalid(self) -> None:
+        blob = git(self.repo.dir, "rev-parse", f"{self.repo.last_commit()}:leaf.md").strip()
+        for label, revision in (("blob", blob), ("missing", "1" * 40)):
+            with self.subTest(label):
+                self.repo.write_index(self.repo.row(revision, self.repo.digest(), state="SEALED"))
+                self.repo.commit(f"index {label}")
+                code, out, err = self.repo.run("--check", "INDEX.md")
+                self.assertEqual(code, 1, out + err)
+                self.assertIn("SEALED_PIN_INVALID", out)
+                self.assertNotIn("SEALED_REV_NOT_COMMIT", out)
+
+    def test_an_open_row_that_records_a_tag_as_its_old_revision_is_ordinary_drift(self) -> None:
+        tag = self.annotated_tag()
+        self.repo.write_index(self.repo.row(tag, self.repo.digest()))
+        self.repo.commit("index")
+        code, out, err = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(code, 1, out + err)
+        self.assertIn("STALE", out)
+        self.assertNotIn("SEALED_REV_NOT_COMMIT", out)
+
+    def test_the_new_code_is_listed_as_a_defect(self) -> None:
+        self.assertIn("SEALED_REV_NOT_COMMIT", index_pins.DEFECTS)
+        self.assertIn("SEALED_REV_NOT_COMMIT", index_pins.__doc__ or "")
+
+    def test_a_failing_object_type_query_is_a_tool_fault_with_gits_message(self) -> None:
+        """`cat-file -e` accepts the revision, then `cat-file -t` fails: the object store is broken, not the row."""
+        repository = index_pins.Repo(self.repo.dir)
+        commit = self.repo.last_commit()
+
+        def odd(*args: str, stdin: str | None = None) -> tuple[int, str]:
+            if args[:2] == ("cat-file", "-e"):
+                return 0, ""
+            repository.last_stderr = "fatal: simulated failure of the type query"
+            return 128, ""
+
+        with mock.patch.object(repository, "git_text", odd):
+            with self.assertRaises(index_pins.GitFault) as raised:
+                repository.is_commit(commit)
+        self.assertIn("fatal: simulated failure of the type query", str(raised.exception))
+
+    def test_a_control_character_in_a_leaf_is_escaped_in_the_stale_line_and_the_defect_line(self) -> None:
+        name = "dir/a\x1bb.md"
+        blob = git(self.repo.dir, "rev-parse", f"{self.repo.last_commit()}:leaf.md").strip()
+        git(self.repo.dir, "-c", "core.protectNTFS=false", "update-index", "--add", "--cacheinfo", f"100644,{blob},{name}")
+        git(self.repo.dir, "commit", "-q", "-m", "a leaf whose name holds a control character")
+        revision = self.repo.last_commit(name)
+        stale = self.repo.row(revision, "0" * 64, leaf=f"`{name}`", ident="a1")
+        unresolved = self.repo.row(revision, "0" * 64, leaf="`gone\x1b.md`", ident="a2")
+        self.repo.write_index(stale + unresolved)
+        git(self.repo.dir, "add", "INDEX.md")
+        git(self.repo.dir, "commit", "-q", "-m", "index")
+        code, out, err = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(code, 1, out + err)
+        self.assertNotIn("\x1b", out)
+        self.assertIn("STALE INDEX.md:3 dir/a\\x1bb.md", out)
+        self.assertIn("SKIP_UNRESOLVED  gone\\x1b.md", out)
+
+    # ---- the git environment rules of the wave-2 gates
+    def test_every_git_child_runs_with_the_hardened_command_line_and_environment(self) -> None:
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest(), state="SEALED"))
+        self.repo.commit("index")
+        calls: list[tuple[list[str], dict[str, str]]] = []
+        real_run: Callable[..., subprocess.CompletedProcess[bytes]] = subprocess.run
+
+        def spy(command: list[str], *args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+            env = kwargs.get("env")
+            captured = {str(key): str(value) for key, value in env.items()} if isinstance(env, dict) else {}
+            calls.append((list(command), captured))
+            return real_run(command, *args, **kwargs)
+
+        injected = {name: str(self.repo.dir / "nowhere") for name in REMOVED_GIT_NAMES}
+        injected.update({
+            "GIT_CONFIG": str(self.repo.dir / "nowhere.cfg"), "GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "core.quotepath",
+            "GIT_CONFIG_VALUE_0": "true", "GIT_CONFIG_GLOBAL": str(self.repo.dir / "nowhere.cfg"),
+            "GIT_CONFIG_SYSTEM": str(self.repo.dir / "nowhere.cfg"), "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_TEST_FAKE_VARIABLE": "1", "GIT_TEST_OTHER": "1", "git_test_lower": "1",
+            "GIT_NO_REPLACE_OBJECTS": "0", "GIT_NO_LAZY_FETCH": "0",
+        })
+        removed = set(injected) - {"GIT_NO_REPLACE_OBJECTS", "GIT_NO_LAZY_FETCH"}
+        with mock.patch.dict(os.environ, injected), mock.patch.object(index_pins.subprocess, "run", spy):
+            code, out, err = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(code, 0, out + err)
+        self.assertGreaterEqual(len(calls), 5)
+        for command, env in calls:
+            with self.subTest(command=command[:6]):
+                self.assertEqual(command[0], "git")
+                self.assertIn("--no-replace-objects", command)
+                self.assertIn("core.quotepath=false", command)
+                self.assertEqual(env.get("GIT_NO_REPLACE_OBJECTS"), "1")
+                self.assertEqual(env.get("GIT_NO_LAZY_FETCH"), "1")
+                for name in sorted(removed):
+                    with self.subTest(name=name):
+                        self.assertNotIn(name, env)
+                        self.assertNotIn(name.upper(), env)
+
+    def test_each_name_of_the_list_is_removed_one_by_one(self) -> None:
+        """S58-09: inject one name at a time, so dropping any one of them from the tuple goes red."""
+        for name in list(REMOVED_GIT_NAMES) + ["GIT_CONFIG_PARAMETERS", "GIT_CONFIG_KEY_7", "GIT_TEST_X", "git_graft_file", "Git_Test_Y"]:
+            with self.subTest(name=name):
+                with mock.patch.dict(os.environ, {name: "x"}):
+                    self.assertNotIn(name, index_pins.git_environment())
+                    self.assertNotIn(name.upper(), index_pins.git_environment())
+        self.assertEqual(set(REMOVED_GIT_NAMES), set(index_pins.GIT_SELECTING_VARIABLES))
+
+    def test_an_inherited_graft_file_does_not_turn_a_correct_pin_stale(self) -> None:
+        """S58-04: a graft that gives HEAD no parent used to move the leaf's last revision and turn a correct pin STALE."""
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        head = git(self.repo.dir, "rev-parse", "HEAD").strip()
+        graft = self.repo.dir.parent / "graft-for-test"
+        graft.write_text(head + "\n", encoding="utf-8", newline="\n")
+        without = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(without[0], 0, without)
+        with mock.patch.dict(os.environ, {"GIT_GRAFT_FILE": str(graft)}):
+            self.assertEqual(self.repo.run("--check", "INDEX.md"), without)
+
+    def test_the_removed_variables_are_matched_case_insensitively_and_the_rest_pass_through(self) -> None:
+        with mock.patch.dict(os.environ, {"git_dir": "x", "Git_Config_Count": "1", "KEEP_ME": "yes"}):
+            environment = index_pins.git_environment()
+        self.assertNotIn("git_dir", environment)
+        self.assertNotIn("Git_Config_Count", environment)
+        self.assertEqual(environment.get("KEEP_ME"), "yes")
+
+    def test_a_selecting_variable_in_the_environment_does_not_change_the_verdict(self) -> None:
+        other = tempfile.TemporaryDirectory(prefix="idxpin-other-")
+        self.addCleanup(other.cleanup)
+        git(Path(other.name), "init", "-q", "-b", "main")
+        self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest()))
+        self.repo.commit("index")
+        with mock.patch.dict(os.environ, {"GIT_DIR": str(Path(other.name) / ".git")}):
+            code, out, err = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(code, 0, out + err)
+
+    # ---- every printed subject is one line
+    def test_one_line_escapes_control_characters_and_line_separators(self) -> None:
+        self.assertEqual(index_pins.one_line("a\nb\r\tc\x1b[0m d\x85e"), "a\\x0ab\\x0d\\x09c\\x1b[0m\\u2028d\\x85e")
+        self.assertEqual(index_pins.one_line("規格 plain"), "規格 plain")
+
+    def test_a_fault_and_a_usage_error_print_one_line_each(self) -> None:
+        code, out, err = self.run_main(["--check", "--root", str(self.repo.dir / "no\nsuch\x1bdir")])
+        self.assertEqual(code, 2, out + err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("\\x0a", err)
+        code, out, err = self.run_main(["--check", "--root", str(self.repo.dir), str(self.repo.dir / "no\nsuch.md")])
+        self.assertEqual(code, 3, out + err)
+        self.assertEqual(len([line for line in err.splitlines() if not line.startswith("usage:")]), 1, err)
 
 
 if __name__ == "__main__":
