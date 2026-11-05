@@ -27,6 +27,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [55-preflight-gate](55-preflight-gate.md) | Every tool a dispatch names starts and serves before the first product edit, or the run stops as a tool fault | `INTEGRATED` (`c3aa5a5f`) | Wave 2; R4-2, R4-3, R4-8 |
 | [56-tool-repair-guard](56-tool-repair-guard.md) | A tool-repair commit touches only the declared allowlist and never a spec, ledger, product source or gate script | `INTEGRATED` (`cbb8306d`) | Wave 2; R4-3, R4-8 |
 | [57-state-file-templates](57-state-file-templates.md) | A project created from the template starts with the ticket state row, receipt, queue file and integration configuration the gates read | `PLANNED` | Wave 2; R4-1, R4-7, R4-8 |
+| [58-governance-hardening-row13](58-governance-hardening-row13.md) | A reworded document that brings a retired rule back goes red in the plugin's own tests, and the wave-1 scripts close the gaps their review carried | `PLANNED` | Wave 2; R4-1, R4-4, change-log row 13 |
 | [60-gate-hardening-carried](60-gate-hardening-carried.md) | The findings carried when the six wave-2 gates were approved under rule B are pinned or closed, the two that guard a forbidden change first | `PLANNED` | Wave 2; R4-2, R4-4, CodeReview §5 rule B |
 
 ## Shared baseline
