@@ -367,6 +367,24 @@ def run_git(repo: Path, *args: str) -> str:
     return done.stdout.strip()
 
 
+def object_file_modes(repo: Path) -> dict[str, int]:
+    """The mode bits of every loose object file and pack file of a repository, keyed by relative path."""
+    objects = Path(run_git(repo, "rev-parse", "--path-format=absolute", "--git-path", "objects"))
+    return {
+        path.relative_to(objects).as_posix(): stat.S_IMODE(path.stat().st_mode)
+        for path in objects.rglob("*")
+        if path.is_file()
+    }
+
+
+def clone_without_hardlinks(source: Path, clone: Path) -> None:
+    """A clone with no checkout and core.autocrlf=true, whose object files are copies, never links to the source's."""
+    run_git(
+        clone.parent,
+        "clone", "-q", "--no-checkout", "--no-hardlinks", "-c", "core.autocrlf=true", str(source), str(clone),
+    )
+
+
 def git_available() -> bool:
     try:
         done = subprocess.run(["git", "--version"], capture_output=True, env=clean_environment())
@@ -429,12 +447,25 @@ class LineEndingPinTests(unittest.TestCase):
 class CrlfCheckoutTests(unittest.TestCase):
     """The byte rules and every other test of this file, run in a clone checked out with core.autocrlf=true."""
 
+    modes_before: dict[str, int]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.modes_before = object_file_modes(ROOT)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        after = object_file_modes(ROOT)
+        changed = sorted(name for name, mode in cls.modes_before.items() if name in after and after[name] != mode)
+        if changed:
+            raise AssertionError(f"{len(changed)} object file(s) of the repository under test changed mode, e.g. {changed[:3]}")
+
     def make_clone(self) -> Path:
         work = Path(tempfile.mkdtemp(prefix="state-template-clone-"))
         self.addCleanup(remove_tree, work)
         clone = work / "clone"
         head = run_git(ROOT, "rev-parse", "HEAD")
-        run_git(work, "clone", "-q", "--no-checkout", "-c", "core.autocrlf=true", str(ROOT), str(clone))
+        clone_without_hardlinks(ROOT, clone)
         run_git(clone, "update-ref", "--no-deref", "HEAD", head)
         self.assertEqual(run_git(clone, "rev-parse", "HEAD"), head)
         self.assertEqual(run_git(clone, "config", "--local", "core.autocrlf"), "true")
@@ -455,6 +486,25 @@ class CrlfCheckoutTests(unittest.TestCase):
         )
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
         self.assertIn("OK", done.stderr)
+
+    def test_removing_the_clone_leaves_the_source_object_files_with_the_same_mode_bits(self) -> None:
+        source = Path(tempfile.mkdtemp(prefix="state-template-source-"))
+        self.addCleanup(remove_tree, source)
+        run_git(source, "init", "-q")
+        (source / "a.txt").write_bytes(b"content" + bytes([10]))
+        run_git(source, "add", "a.txt")
+        run_git(source, "commit", "-q", "-m", "one")
+        object_files = [path for path in (source / ".git" / "objects").rglob("*") if path.is_file()]
+        self.assertTrue(object_files)
+        for path in object_files:
+            os.chmod(path, stat.S_IREAD)
+        before = object_file_modes(source)
+        work = Path(tempfile.mkdtemp(prefix="state-template-clone-"))
+        self.addCleanup(remove_tree, work)
+        clone_without_hardlinks(source, work / "clone")
+        self.assertTrue(any((work / "clone" / ".git" / "objects").rglob("*")))
+        remove_tree(work / "clone")
+        self.assertEqual(object_file_modes(source), before)
 
     def test_a_clone_with_autocrlf_true_keeps_the_three_templates_lf_and_is_green(self) -> None:
         clone = self.make_clone()
