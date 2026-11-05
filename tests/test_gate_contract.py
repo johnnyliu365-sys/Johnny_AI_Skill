@@ -2589,9 +2589,10 @@ class ForgedObjects(Case):
 
     # ticket 60, S53-30: the comparison of the hash with the id covers every digit of the id
     @staticmethod
-    def neighbour(oid: str, flip: int) -> str:
-        """`oid` with its last hex digit changed: the id of an object that does not exist and hashes like `oid` but for that digit."""
-        return oid[:-1] + format(int(oid[-1], 16) ^ flip, "x")
+    def neighbour(oid: str, flip: int, index: int = -1) -> str:
+        """`oid` with one hex digit changed (the last by default): the id of an object that does not exist and differs from `oid` in that digit only."""
+        at = index % len(oid)
+        return oid[:at] + format(int(oid[at], 16) ^ flip, "x") + oid[at + 1 :]
 
     def assert_a_near_miss_is_a_fault(self, asked: str, kind: str, body: bytes) -> None:
         answer = object_answer(asked, kind, body)
@@ -2619,6 +2620,29 @@ class ForgedObjects(Case):
                 )
                 self.declare(FORGED)
                 self.assert_a_near_miss_is_a_fault(asked, "blob", FORGED)
+
+    def test_a_blob_answer_whose_body_hashes_to_an_id_that_differs_in_one_digit_anywhere_is_a_fault(self) -> None:
+        genuine = write_blob(self.repo, FORGED)
+        for index in (0, 1, 8, 19, 20, 31, 32, 38, 39):
+            asked = self.neighbour(genuine, 1, index)
+            with self.subTest(index=index):
+                self.assertNotEqual(asked, genuine)
+                point_head_at_tree(
+                    self.repo,
+                    raw_tree(("40000", "contracts", bytes.fromhex(store_object(self.repo, "tree", raw_tree(("100644", "source.txt", bytes.fromhex(asked))))))),
+                )
+                self.declare(FORGED)
+                self.assert_a_near_miss_is_a_fault(asked, "blob", FORGED)
+
+    def test_a_tree_answer_whose_body_hashes_to_an_id_that_differs_in_one_digit_anywhere_is_a_fault(self) -> None:
+        root_body = git_raw(self.repo, "cat-file", "tree", self.root)
+        stamp = "author A <a@example.invalid> 0 +0000\ncommitter A <a@example.invalid> 0 +0000\n\nmessage\n"
+        for index in (0, 1, 8, 19, 20, 31, 32, 38, 39):
+            asked = self.neighbour(self.root, 1, index)
+            with self.subTest(index=index):
+                point_head_at_commit(self.repo, f"tree {asked}\n{stamp}".encode("ascii"))
+                self.declare(SOURCE_BYTES)
+                self.assert_a_near_miss_is_a_fault(asked, "tree", root_body)
 
     def test_a_tree_answer_whose_body_hashes_to_an_id_that_differs_only_in_the_last_digit_is_a_fault(self) -> None:
         root_body = git_raw(self.repo, "cat-file", "tree", self.root)
