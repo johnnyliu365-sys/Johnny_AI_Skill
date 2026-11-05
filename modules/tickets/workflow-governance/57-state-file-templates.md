@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/57-state-file-templates-out/` / owner implementation seat / worktree `.worktrees/57-state-file-templates` / branch `cp/wave2-57-state-file-templates` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the test（CONTEXT.md Implementation language）; the templates are Markdown and JSON |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S57-02 TICKET_DEFECT; revision02 initial review CHANGES_REQUESTED (S57-08); correction 2 returned (`f423748b`); correction review dispatched） |
+| 狀態 | `REVIEW_APPROVED`（closure revision02, candidate `f423748b`: correction review CONVERGENCE_REVIEW_REQUIRED, convergence disposition APPROVED under CodeReview §5 rule B; record `doc/reviews/workflow-governance/57-state-file-templates-code-review.md`; ready for integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/57-state-file-templates` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/57-state-file-templates-review` |
@@ -119,3 +119,7 @@ Carried, no work here: S57-05 (the integrate.py cross-check runs the template's 
 ### Correction 2 under revision02 (after the revision02 initial review `CHANGES_REQUESTED`)
 
 No ticket defect was found, so revision02 stands. S57-08 (confinement): the clone in `CrlfCheckoutTests` is made with `--no-hardlinks`, so removing it never changes a file of the repository under test, and a test asserts that the mode bits of that repository's object files are the same after the class as before. P1 runs with `-rfEs` so a red capture names its failures (S57-11). Carried, no work here: S57-09 (a working copy that differs from the committed blob is not red), S57-10 (README sentences outside the pinned places). The next review is the one correction review of revision02.
+
+### Carried after approval (CodeReview §5 rule B)
+
+S57-05 goes to ticket 50's landing; S57-06, S57-09, S57-10 and S57-12 go to the next change of the templates or this test file. The disposition and its reasons are in the review record.

@@ -148,3 +148,99 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/57-rev02-initial
 reviewed_at: 2026-11-05
 ```
+
+## Revision02 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`.** Every finding still open is in the class rule B does not block on, so the control plane may record a convergence disposition.
+
+| Field | Value |
+| --- | --- |
+| Candidate | `f423748b005ca17ab0a112c65188e55c07d8bac2` on `cp/wave2-57-state-file-templates`. It is one additive commit on `40b7ea46`, which is on `27318feb`, which is on `9a26eeb1`. |
+| Ticket | Revision02 with "Correction 2 under revision02": blob `fc9e59f9` at `860057ac`. At the `cp/wave2-gates` tip `70dd7fb7` the blob is `3fd7bf97`; the only difference is the state row. Dispatch: `JAS-57c_dispatch.yaml`. |
+| Reviewer | Independent `ticket-review` seat, run `57-rev02-correction`, in the detached worktree `.worktrees/57-state-file-templates-review`. The seat authored nothing in this ticket. This is the single correction review of closure revision02. |
+| Summary | S57-08 is closed. The clone in `CrlfCheckoutTests` is made with `--no-hardlinks` through one helper. My H1 probe at the candidate found no file under the source `.git` added, removed or changed (size, mtime or mode) across the class, and all 335 read-only object files stayed read-only. So the mode check in `setUpClass` and `tearDownClass` writes nothing. S57-11 is closed: P1 ran with `-rfEs`. Every revision02 rule and every S57-01 to S57-07 closure still holds. The receipt passes both checkers. One new evidence gap is open (S57-12). The synthetic source-repository test pins the helper, not the clone call `make_clone` actually makes. The check on the repository under test can only go red if that repository holds at least one read-only object file. With `make_clone` cloning by hard links directly and every object file already writable, the whole file is green (K1w). The candidate's behaviour is correct, so rule B does not block. I could not run the full suite myself: the host lock was held by other seats for the whole 45-minute limit. The seat's F1 under the lock is verified against its capture. |
+
+### Cell results
+
+| Cell | Result | Evidence |
+| --- | --- | --- |
+| Diff | PASS | `git diff --name-status 40b7ea46 f423748b`: only `M tests/test_state_file_templates.py`. Additive: two helpers (`object_file_modes`, `clone_without_hardlinks`), `setUpClass`/`tearDownClass`, and the test `test_removing_the_clone_leaves_the_source_object_files_with_the_same_mode_bits`; `make_clone` calls the helper. No existing assertion changed, no import added. `git diff --check` is clean. |
+| H1 hard-link probe at the candidate (S57-08) | PASS | `--no-hardlinks` clone at `f423748b`, all 335 object files set read-only, `.git` snapshotted before and after `pytest -k CrlfCheckoutTests -rfEs` (3 passed). Result: `added=0 removed=0 changed=0` over 360 files; read-only 335/335 before and after; no `state-template-*` directory left in `%TEMP%`. |
+| Mode check writes nothing | PASS | `object_file_modes` runs `git rev-parse --path-format=absolute --git-path objects` and `stat` only. The H1 snapshot covers every file under `.git`, so nothing was written, not even an mtime change. In a worktree, `--git-path objects` resolves to the common object store. |
+| Seat mutations marked equivalent (M-12, M-13) | Not equivalent mutants; no gap while both detectors stay; see S57-12 and S57-13 | M-12 deletes both detectors while the fault is absent, and M-13 deletes them while the fault is present. Neither is an equivalent mutant. M-13 shows that nothing else in the file catches hard-linking, so the two detectors are the only guard. My K2 (flag removed, synthetic assertion removed, `tearDownClass` check kept) gives ERROR at teardown, red. My K3 (flag removed, `tearDownClass` check removed) gives the synthetic test FAILED, red. So each detector alone catches removal of the flag from the helper, provided the repository under test holds a read-only object file. The open door is K1 (the next row). |
+| Reviewer counter-mutations | 5 red, 1 green (S57-12) | K1, in a clone with all object files read-only and in a clone with only new loose objects read-only: `make_clone` changed to an inline `git clone` of ROOT without `--no-hardlinks`, helper and both assertions kept. ERROR at teardown, red. K1w, the same mutation with every object file of the repository under test made writable first: 48 passed, exit 0, zero red. K2 red; K3 red. W1, `committed_bytes` returning the working copy, committed so the inner clone runs it too: `test_gitattributes_holds_the_pin_once…` and both `CrlfCheckoutTests` red. In the seat's M1 the same door turned only 1 test red; see S57-13. |
+| P1 (test file, S57-11) | PASS | Review worktree, `-q -rfEs`: 48 passed, 1 skipped, 149 subtests, exit 0, with the stated skip reason. |
+| Fresh clone with `core.autocrlf=true` (S57-01, S57-02) | PASS | `--no-hardlinks` clone; `core.autocrlf=true` comes from the system config. The three files are `i/lf w/lf attr/text eol=lf`; the README is `w/crlf`. Test file: 48 passed, 1 skipped, exit 0. |
+| T1 (mypy) | PASS | `mypy --strict --python-version 3.11`: no issues, exit 0. |
+| Revision02 rules | PASS | Templates, README and `.gitattributes` are unchanged since `40b7ea46` (0 diff lines). The cumulative diff from `9a26eeb1` is exactly the seven declared paths. In the receipt, the ten correction-1 mutations are all red again. |
+| Receipt template, reviewer fill | PASS | Template blob at the candidate, filled with a real LF capture (my T1) and the real sha256 of `evidence_gate.py` (`0d099836…942f`). `evidence_gate.py --require-cell R1`: `cells=1 defects=0`, exit 0, both with the preamble dropped and with it kept. |
+| Receipt | PASS | `receipt_check.py`: exit 0 (P1, T1, M1, F1, P9 ok; 0 defects). `evidence_gate.py` with the three wave-1 tools and `--require-cell` P1/T1/M1/F1/P9: `cells=5 defects=0`, exit 0. My own comparison: 0 CR bytes in the receipt and every capture, no BOM; every raw block byte-identical to its capture; every `exit:` list equals the capture's `exit=N` lines in order (M1: `1×11,0,0`); every candidate and every `tool_digest` is correct at `f423748b`. The M1 tails are unfiltered from the short summary on, with 12 `SUBFAILED` lines and 1 `ERROR` line kept. |
+| Boundary | PASS | Only the test file changed in this commit. Author and committer are Johnny Liu <johnny.liu365@gmail.com>. The trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` is taken as naming the model that did the work. Stdlib only. I read the added lines in full: they contain no model or vendor name and no target-project path. |
+| Payload tests | PASS | 51 passed, 1 failed, 252 subtests. The failure is only `CommittedPinTests::test_the_pinned_sha_exists`. |
+| Full suite, reviewer run | NOT RUN (lock unavailable for 45 minutes) | `fullsuite.sh`, run id `57-rev02-correction`: atomic `mkdir`, retried every 30 s from 18:46:12Z, gave up at 19:31:39Z (exit 99). The lock was never created by this run and nothing was removed. Holders seen in turn: `60-rev01-initial` (from 18:43:19Z), `jas59b-f1-1311949` (from 18:56:10Z), `58-rev01-initial` (from 19:08:24Z), `jas59b-f1-1318636` (from 19:20:59Z). Each new holder took the lock within 30 s of the previous release. Since the lock was never acquired, there was no acquisition moment to record. Pytests seen while waiting: at 18:44Z, the `60-rev01-initial` full suite (`pytest tests`) and a three-file run (`test_governance_consistency`, `test_gate_index_pins`, `test_gate_receipt_fence_check`); at 19:00Z, the `jas59b` full suite; at the end, `jas59b_cell.py F1` in `.worktrees/59-ci-linux-windows` with its full suite. |
+| Full suite, seat F1 | PASS (seat evidence, verified) | Under the lock (`jas57c-f1-652-1793901873`, 18:31:59Z to 18:43:17Z): 8 failed, 3308 passed, 36 skipped, 6657 subtests in 676 s. All 8 failure names are base names (my `comm` against the normalised `jas48_F1_base.txt`); zero new red. The block is byte-identical to the capture. |
+
+### Status of S57-08 to S57-11
+
+| ID | Class | Status | Evidence |
+| --- | --- | --- | --- |
+| S57-08 | IMPLEMENTATION_DEFECT (confinement) | CLOSED | H1 at the candidate: no change under the source `.git`; read-only 335/335 kept. The seat's M-11 (flag removed) is red, as are my K2 and K3. |
+| S57-09 | OUT_OF_SCOPE_HARDENING | CARRIED, as the ticket says | Unchanged by design: the file judges HEAD. |
+| S57-10 | OUT_OF_SCOPE_HARDENING | CARRIED, as the ticket says | Unchanged. |
+| S57-11 | OUT_OF_SCOPE_HARDENING (dispatch) | CLOSED | The dispatch P1 cell and my P1 use `-rfEs`. |
+
+### New findings
+
+| ID | Class | Rule B | Severity | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- | --- |
+| S57-12 | EVIDENCE_DEFECT (closure item: Correction 2, "a test asserts that the mode bits of that repository's object files are the same after the class as before") | Does not block: the candidate's behaviour is correct, and the gap is in a pin. A regression would be red in a fresh checkout, where git makes every object read-only, and on this host's shared store, which holds 75 read-only object files of 335 at present. It is green only in a store with no read-only object file. Carry to the next change of this test file. | Low | `tests/test_state_file_templates.py:381-385` (helper), `:453-461` (`setUpClass`/`tearDownClass`), `:490-507` (synthetic test), `make_clone` | Of the two detectors, the synthetic test pins the helper, which is a copy of the path, not the clone `make_clone` makes. The check on the repository under test is environment-scoped: if every object file is already writable, a chmod-on-delete changes nothing it can see. K1w (`make_clone` cloning by hard links directly, every object file writable) is green. Suggested pin, independent of the host: in `make_clone`, assert that `st_nlink == 1` for the clone's pack and loose object files. | K1w green; K1 red when any object file is read-only |
+| S57-13 | EVIDENCE_DEFECT (seat M1) | Does not block; the reviewer supplied the missing evidence, so no work is needed | Low | seat receipt M1, mutations 9, 12 and 13 | M-12 and M-13 are labelled "equivalent". They are detector deletions, not equivalent mutants, although the reasoning given (M-11 against M-13) is right. Mutation 9 (`committed_bytes` reading the working copy) was written to the clone's working copy but not committed, so the inner scratch clone ran the unmutated committed test file: 1 red here, against 3 in correction 1. My committed W1 gives 3 red. | W1, K2, K3 |
+
+The open findings are S57-12 (EVIDENCE_DEFECT) and the carried S57-05 (to ticket 50's landing), S57-06, S57-09 and S57-10 (OUT_OF_SCOPE_HARDENING). None of them blocks approval under rule B: no exit-code misclassification, no safety or confinement break, no P0. Per CodeReview §5, the control plane may record a `convergence-disposition` with `disposition: APPROVED`, carrying S57-12 to the next change of this test file. This review does not start a third correction.
+
+### Commands
+
+- `git show --stat f423748b`; `git log -1 --format=…`; `git diff --name-status 40b7ea46 f423748b` and `9a26eeb1 f423748b`; `git diff --check`; `git rev-parse <rev>:<ticket path>`
+- Review worktree: `python -m pytest tests/test_state_file_templates.py -q -rfEs -p no:cacheprovider` → exit 0; `python -m mypy --strict --python-version 3.11 tests/test_state_file_templates.py` → exit 0; `python -m pytest tests/test_plugin_payload_boundary.py tests/test_plugin_distribution_payload_manifest.py -q -rfE` → only the pinned-sha failure
+- `receipt_check.py <out-c2>/RETURN.md <review worktree>` → exit 0; `evidence_gate.py … --candidate f423748b… --tool <three wave-1 scripts> --require-cell P1 T1 M1 F1 P9 --evidence-root <out-c2>` → exit 0; `tools/receipt_compare.py`; `comm` of the seat's F1 names against the base names
+- `tools/fill.py` (dropped and kept) → `evidence_gate.py … --tool skills/johnny-project-takeover/scripts/evidence_gate.py --require-cell R1` → exit 0 twice
+- Two `git clone --no-hardlinks` scratch clones detached at the candidate: one with every object file set read-only through PowerShell `IsReadOnly`, one left writable. `tools/snapshot.py` and `tools/snapdiff.py` around `pytest -k CrlfCheckoutTests` (H1). `tools/mutate2.py` for K1, K2, K3 and W1: each mutation written with `hash-object --no-filters`, committed and written to the working copy, the whole file run with `-rfEs`, then `reset --hard` and `clean -fdx`, with the read-only marking repeated before each run in the read-only clone. K1w was done by hand in the writable clone with every object set writable. Porcelain was empty in both clones afterwards, and both clones were removed.
+- Fresh clone (system `core.autocrlf=true`): `git ls-files --eol`; the whole test file → exit 0
+- `tools/fullsuite.sh` (atomic `mkdir` lock, owner file `run.txt`, 30 s retry, 45-minute limit, removal only if the file names `57-rev02-correction`) → gave up, exit 99; `tools/pytests.ps1` recorded the running pytests
+- I read the unfiltered output of every run, with no output-reducing wrapper. Red and green were judged from the short summary of `-rfEs` runs, which lists `FAILED` and `ERROR` lines.
+
+Raw logs are in `.worktrees/57-state-file-templates-review-scratch/rev02c/` (`P1.raw`, `T1.raw`, `payload.raw`, `H1.raw`, `h1-before.json`, `h1-after.json`, `M-review.raw`, `P1-crlfclone.raw`, `receipt_check.raw`, `evidence_gate.raw`, `receipt_compare.raw`, `fill/`, `lock-log.txt`, `tools/`, this `section.md`) and are not committed. Porcelain is empty in the main checkout and in the review worktree, which is still detached at the candidate. No run at this candidate changed an object file's mode.
+
+Not verified: a reviewer full suite at this candidate (lock unavailable for the 45-minute limit; the seat's F1 under the lock is the full-suite evidence); integrate.py's configuration parser (absent); a real GitHub `windows-latest` runner and Linux; whether another seat running the file at the earlier candidate `40b7ea46` (hard links) while this candidate's class runs on the shared store could make this candidate's `tearDownClass` go red. It could not make it wrongly green.
+
+```review-verdict
+candidate: f423748b005ca17ab0a112c65188e55c07d8bac2
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/57-rev02-correction
+reviewed_at: 2026-11-06
+```
+
+### Convergence disposition (2026-11-06, CodeReview §5 rule B)
+
+The correction review closed S57-08 and S57-11. The one new open finding, S57-12, is an evidence gap in a pin, and the candidate's behaviour is correct: no exit code, safety or confinement effect, no P0. S57-13 needs no work (the reviewer supplied the evidence). Every open finding is in the class that does not block approval; the reviewer's verdict block above is unchanged. The reviewer could not run the full suite within the lock limit; the seat's locked F1 (8 failures, all base names) was verified against its capture, and the full suite runs again in the integration clone before landing.
+
+| Finding | Class | Carried to |
+| --- | --- | --- |
+| S57-05 | EVIDENCE_DEFECT | ticket 50's landing (the integrate.py cross-check runs the template's own list shapes) |
+| S57-06 | OUT_OF_SCOPE_HARDENING | a later template change |
+| S57-09 | OUT_OF_SCOPE_HARDENING | the next change of this test file |
+| S57-10 | OUT_OF_SCOPE_HARDENING | the next change of this test file |
+| S57-12 | EVIDENCE_DEFECT | the next change of this test file (assert `st_nlink == 1` for the clone's object files in `make_clone`) |
+
+```convergence-disposition
+candidate: f423748b005ca17ab0a112c65188e55c07d8bac2
+reviewer_verdict: CONVERGENCE_REVIEW_REQUIRED (seat:ticket-review/57-rev02-correction)
+disposition: APPROVED
+rule: CodeReview §5 rule B (owner-approved 2026-11-05)
+carried:
+  - S57-05
+  - S57-06
+  - S57-09
+  - S57-10
+  - S57-12
+```
