@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/57-state-file-templates-out/` / owner implementation seat / worktree `.worktrees/57-state-file-templates` / branch `cp/wave2-57-state-file-templates` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the test（CONTEXT.md Implementation language）; the templates are Markdown and JSON |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S57-02 TICKET_DEFECT; correction 1 returned (`40b7ea46`); revision02 initial review dispatched） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S57-02 TICKET_DEFECT; revision02 initial review CHANGES_REQUESTED (S57-08); correction 2 dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/57-state-file-templates` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/57-state-file-templates-review` |
@@ -115,3 +115,7 @@ Review record section "Revision01 initial review". S57-02 is a `TICKET_DEFECT`: 
 | S57-07 | EVIDENCE_DEFECT | M1 tails keep `SUBFAILED` lines; P1 runs with `-rs` so the skip reason is in a capture |
 
 Carried, no work here: S57-05 (the integrate.py cross-check runs the template's own list shapes) goes to ticket 50's landing; S57-06 (placeholder enforcement and wording in the receipt template) is out-of-scope hardening.
+
+### Correction 2 under revision02 (after the revision02 initial review `CHANGES_REQUESTED`)
+
+No ticket defect was found, so revision02 stands. S57-08 (confinement): the clone in `CrlfCheckoutTests` is made with `--no-hardlinks`, so removing it never changes a file of the repository under test, and a test asserts that the mode bits of that repository's object files are the same after the class as before. P1 runs with `-rfEs` so a red capture names its failures (S57-11). Carried, no work here: S57-09 (a working copy that differs from the committed blob is not red), S57-10 (README sentences outside the pinned places). The next review is the one correction review of revision02.

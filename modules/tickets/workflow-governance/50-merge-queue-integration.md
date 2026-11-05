@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/50-merge-queue-integration-out/` / owner implementation seat / worktree `.worktrees/50-merge-queue-integration` / branch `cp/wave2-50-merge-queue-integration` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED` |
+| 狀態 | `IN_PROGRESS`（revision01 implementation returned (`37bacce9`); initial review dispatched; the seat reported a ticket conflict between reading the review record at the tip and requiring a fast-forward of that tip, routed to the owner） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/50-merge-queue-integration` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/50-merge-queue-integration-review` |
