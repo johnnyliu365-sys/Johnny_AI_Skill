@@ -1708,6 +1708,16 @@ class RunThatCheckedNothingTests(unittest.TestCase):
         code, out, err = self.run_main(["--scan", str(self.root), "--require-cmd"])
         self.assertEqual(code, 3, out + err)
 
+    def test_a_usage_error_message_and_the_extra_scan_argument_print_on_one_line(self) -> None:
+        code, out, err = self.run_main(["--scan", str(self.root), "stray\nargument\x1b"])
+        self.assertEqual(code, 3, out + err)
+        self.assertEqual(len(err.splitlines()), 2, err)
+        self.assertIn("stray\\x0aargument\\x1b", err)
+        code, out, err = self.run_main(["--no-such\noption"])
+        self.assertEqual(code, 3, out + err)
+        self.assertEqual(len(err.splitlines()), 2, err)
+        self.assertIn("\\x0a", err)
+
     def test_the_subprocess_exit_codes_agree_with_main(self) -> None:
         for argv, expected in ((["--help"], 3), (["--scan", str(self.root / "no-such-dir")], 2)):
             with self.subTest(argv):

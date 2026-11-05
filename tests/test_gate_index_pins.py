@@ -1330,6 +1330,39 @@ class CarriedFindingTests(PinCase):
         self.assertIn("SEALED_REV_NOT_COMMIT", index_pins.DEFECTS)
         self.assertIn("SEALED_REV_NOT_COMMIT", index_pins.__doc__ or "")
 
+    def test_a_failing_object_type_query_is_a_tool_fault_with_gits_message(self) -> None:
+        """`cat-file -e` accepts the revision, then `cat-file -t` fails: the object store is broken, not the row."""
+        repository = index_pins.Repo(self.repo.dir)
+        commit = self.repo.last_commit()
+
+        def odd(*args: str, stdin: str | None = None) -> tuple[int, str]:
+            if args[:2] == ("cat-file", "-e"):
+                return 0, ""
+            repository.last_stderr = "fatal: simulated failure of the type query"
+            return 128, ""
+
+        with mock.patch.object(repository, "git_text", odd):
+            with self.assertRaises(index_pins.GitFault) as raised:
+                repository.is_commit(commit)
+        self.assertIn("fatal: simulated failure of the type query", str(raised.exception))
+
+    def test_a_control_character_in_a_leaf_is_escaped_in_the_stale_line_and_the_defect_line(self) -> None:
+        name = "dir/a\x1bb.md"
+        blob = git(self.repo.dir, "rev-parse", f"{self.repo.last_commit()}:leaf.md").strip()
+        git(self.repo.dir, "-c", "core.protectNTFS=false", "update-index", "--add", "--cacheinfo", f"100644,{blob},{name}")
+        git(self.repo.dir, "commit", "-q", "-m", "a leaf whose name holds a control character")
+        revision = self.repo.last_commit(name)
+        stale = self.repo.row(revision, "0" * 64, leaf=f"`{name}`", ident="a1")
+        unresolved = self.repo.row(revision, "0" * 64, leaf="`gone\x1b.md`", ident="a2")
+        self.repo.write_index(stale + unresolved)
+        git(self.repo.dir, "add", "INDEX.md")
+        git(self.repo.dir, "commit", "-q", "-m", "index")
+        code, out, err = self.repo.run("--check", "INDEX.md")
+        self.assertEqual(code, 1, out + err)
+        self.assertNotIn("\x1b", out)
+        self.assertIn("STALE INDEX.md:3 dir/a\\x1bb.md", out)
+        self.assertIn("SKIP_UNRESOLVED  gone\\x1b.md", out)
+
     # ---- the git environment rules of the wave-2 gates
     def test_every_git_child_runs_with_the_hardened_command_line_and_environment(self) -> None:
         self.repo.write_index(self.repo.row(self.repo.last_commit(), self.repo.digest(), state="SEALED"))
@@ -1390,7 +1423,7 @@ class CarriedFindingTests(PinCase):
         self.assertEqual(code, 2, out + err)
         self.assertEqual(len(err.splitlines()), 1, err)
         self.assertIn("\\x0a", err)
-        code, out, err = self.run_main(["--check", str(self.repo.dir / "no\nsuch.md")])
+        code, out, err = self.run_main(["--check", "--root", str(self.repo.dir), str(self.repo.dir / "no\nsuch.md")])
         self.assertEqual(code, 3, out + err)
         self.assertEqual(len([line for line in err.splitlines() if not line.startswith("usage:")]), 1, err)
 

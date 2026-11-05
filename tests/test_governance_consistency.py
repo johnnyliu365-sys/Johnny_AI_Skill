@@ -1034,6 +1034,8 @@ class InjectionTests(TemporaryDocuments):
             ("competing reference allowed", lambda t: t.replace("不構成互相競爭的 reference", "構成互相競爭的 reference"), "not a competing reference"),
             ("raises the halt", lambda t: t.replace("不觸發 `ROUTE_REFERENCE_INVALID`", "觸發 `ROUTE_REFERENCE_INVALID`"), "raises no ROUTE_REFERENCE_INVALID"),
             ("runbooks left out", lambda t: re.sub(r"，以及 runbooks 目錄[^，]*，", "，", t), "dated handover runbooks"),
+            ("SPECs left out", lambda t: t.replace("早於 Revision 04 的專案 SPEC", "專案 SPEC"), "SPECs that predate Revision 04"),
+            ("any runbook, noted or not", lambda t: t.replace("同一優先序註記", "優先序註記"), "carry the same precedence note"),
         )
         for name, change, meaning in cases:
             with self.subTest(name):
