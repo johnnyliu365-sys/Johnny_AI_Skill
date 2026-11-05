@@ -1,4 +1,4 @@
-# Wave-2 integration record (2026-11-06): tickets 60, 57 and 59
+# Wave-2 integration record (2026-11-06): tickets 60, 57, 59 and 62
 
 ## What landed
 
@@ -35,3 +35,17 @@ A second fresh integration clone (`C:/Temp/claude/jas-integ3`, `transfer.fsckObj
 | Lock release | the lock directory is renamed before it is removed, so a run that acquires the lock in the same second keeps its own. The release used for tickets 60 and 57 removed the directory in place, and a reviewer that acquired the lock in that second lost it (recorded in the ticket 59 revision02 review) |
 | Pushed | `cp/wave2-gates` at `ea51e1c1` (fast-forward from `aeabe7a5`) |
 | CI readback | run 42101907082 on `ea51e1c1`: `test (linux)` and `test (windows)` both `success`. This is the first CI run of the integrated branch, with tickets 51 to 57, 59 and 60 in it |
+
+## Ticket 62 (third integration of the day)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 62 known failures CI registers | `bb9c4502` | revision01 correction review `APPROVED` (receipt rebuilt; candidate unchanged) | `68c318a5` |
+
+A fresh integration clone (`C:/Temp/claude/jas-integ4`, `transfer.fsckObjects=true`, `fetch.fsckObjects=true`, `core.autocrlf=false`) was made from `78aeeedc`; the branch tip was checked equal to the candidate, and the merge had no conflict.
+
+| Check | Result |
+| --- | --- |
+| Full suite in the integration clone under the host lock | 5 failed, 3397 passed, 36 skipped; every failure is a base name; zero new red (three base failures are now fixed). No other pytest was running at acquisition |
+| Pushed | `cp/wave2-gates` at `68c318a5` (fast-forward from `78aeeedc`) |
+| CI readback | run 42121310874 on `68c318a5`: `test (linux)` and `test (windows)` both `success`, with the registered lists at Linux 228 and Windows 44 rows |
