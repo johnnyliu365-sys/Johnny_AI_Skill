@@ -860,6 +860,7 @@ class InjectionTests(TemporaryDocuments):
             "審閱者核准後整合候選，並非可選步驟。",
             "審閱者不得略過閘門，核准後代為 commit 到候選分支。",
             "審閱者並非可略過的環節，核准後整合候選。",
+            "核准後整合候選到候選分支，不是審閱者可略過的環節。",
             "不得略過閘門，審閱者核准後代為 commit 到候選分支。",
             "After approval `reviewer` and `submitter` must merge the candidate into main.",
             "After approval `reviewer`, `submitter` are the ones who merge the candidate into main.",
