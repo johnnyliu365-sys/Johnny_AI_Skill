@@ -374,29 +374,33 @@ class FileSystemDecidedRedirectTests(unittest.TestCase):
 
 
 def _swap_for_junction_after_resolving(
-    base: Path, link_to: Path, before: bool = False
+    base: Path, link_to: Path, before: bool = False, at_call: int = 1
 ) -> tuple["mock._patch[object]", list[bool]]:
-    """Patch ``Path.resolve`` so the first resolution of ``base`` comes with a swap.
+    """Patch ``Path.resolve`` so that one chosen resolution comes with a swap.
 
-    Right after the real resolution of ``base`` returns (right before it when
-    ``before`` is set), the (empty) directory ``base`` is replaced by a
-    junction to ``link_to``: the race the reviewer's probe N2 describes, and
-    the window between a component walk and the resolution. The list records
-    whether the swap was made.
+    On the ``at_call``-th call of ``Path.resolve`` (the first by default), right
+    after the real resolution returns (right before it when ``before`` is set),
+    the empty directory ``base`` is replaced by a junction to ``link_to``: the
+    race the reviewer's probe N2 describes, and the windows between a component
+    walk and a resolution. The list records whether the swap was made.
     """
 
     real_resolve = Path.resolve
     swapped: list[bool] = []
+    calls: list[Path] = []
+
+    def swap() -> None:
+        os.rmdir(base)
+        swapped.append(_make_junction(base, link_to))
 
     def resolve(self: Path, strict: bool = False) -> Path:
-        due = self == base and not swapped
+        calls.append(self)
+        due = len(calls) == at_call
         if due and before:
-            os.rmdir(base)
-            swapped.append(_make_junction(base, link_to))
+            swap()
         result = real_resolve(self, strict=strict)
         if due and not before:
-            os.rmdir(base)
-            swapped.append(_make_junction(base, link_to))
+            swap()
         return result
 
     return mock.patch.object(Path, "resolve", resolve), swapped
@@ -455,6 +459,26 @@ class OneResolutionTests(unittest.TestCase):
             base = parent / "A"
             base.mkdir()
             patch, swapped = _swap_for_junction_after_resolving(base, real, before=True)
+            try:
+                with patch:
+                    contained = resolves_within_root(base / "x", base)
+            finally:
+                if swapped:
+                    os.rmdir(base)
+            if swapped != [True]:
+                self.skipTest("no junction can be created here")
+            self.assertFalse(contained)
+
+    def test_a_base_swapped_for_a_junction_before_the_second_resolution_is_refused(self) -> None:
+        # The second resolution in the predicate is the target's. The anchor was
+        # the base as resolved and checked, so a swap after that must not move it.
+        with _layout() as (parent, _root, outside):
+            (outside / "x").mkdir()
+            base = parent / "late_swapped_base_with_a_long_name"
+            base.mkdir()
+            patch, swapped = _swap_for_junction_after_resolving(
+                base, outside, before=True, at_call=2
+            )
             try:
                 with patch:
                     contained = resolves_within_root(base / "x", base)
