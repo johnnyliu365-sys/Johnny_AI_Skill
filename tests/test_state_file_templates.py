@@ -34,6 +34,7 @@ RECEIPT_TEMPLATE = GOVERNANCE_DIR / "RECEIPT.TEMPLATE.md"
 SCRIPTS_DIR = ROOT / "skills" / "johnny-project-takeover" / "scripts"
 EVIDENCE_GATE = SCRIPTS_DIR / "evidence_gate.py"
 INTEGRATE = SCRIPTS_DIR / "integrate.py"
+GITATTRIBUTES = ROOT / ".gitattributes"
 
 NEW_TEMPLATES = (QUEUE_TEMPLATE, CONFIG_TEMPLATE, RECEIPT_TEMPLATE)
 ALL_TEMPLATES = (*NEW_TEMPLATES, TICKET_TEMPLATE, README)
@@ -102,6 +103,15 @@ README_FILE_NAMES = (
     "modules/tickets/TEMPLATE.md",
 )
 README_QUEUE_BRANCH_SENTENCE = "The queue file lives on the queue branch, not on the integration branch"
+README_STRUCTURE_QUEUE_COMMENT = "lives on the queue branch only"
+README_ROW_QUEUE_PHRASE = "on the queue branch"
+README_TICKET_COPY_TO = "`modules/tickets/<feature>/<ticket>.md`"
+README_OLD_TICKET_COPY_TO = "`modules/tickets/<ticket>.md`"
+
+GITATTRIBUTES_LINE = "template/doc/handoffs/governance/* text eol=lf"
+GITATTRIBUTES_EXISTING_LINES = ("*.cmd text eol=crlf", "*.bat text eol=crlf")
+CLONE_CHILD_ENV = "JAS_STATE_TEMPLATE_CLONE_CHILD"
+CLONE_PATHS = ("template", "tests/test_state_file_templates.py", "skills/johnny-project-takeover/scripts")
 
 # ----------------------------------------------------------------------------- helpers
 
@@ -131,16 +141,34 @@ def strict_loads(text: str) -> JsonValue:
     return value
 
 
-def read_bytes(path: Path) -> bytes:
-    return path.read_bytes()
+def committed_bytes(path: Path) -> bytes:
+    """The bytes of `path` as committed at HEAD, never the working copy.
+
+    A checkout may rewrite line endings (core.autocrlf, a CRLF editor); every byte rule is judged on the
+    blob, so a correct commit is green in any checkout. Git failing to serve the blob fails the test.
+    """
+    relative = path.relative_to(ROOT).as_posix()
+    done = subprocess.run(
+        ["git", "-C", str(ROOT), "cat-file", "blob", f"HEAD:./{relative}"],
+        capture_output=True,
+        env=clean_environment(),
+    )
+    if done.returncode != 0:
+        raise AssertionError(f"the committed blob of {relative} cannot be read: {done.stderr.decode('utf-8', 'replace')}")
+    return done.stdout
 
 
-def read_text(path: Path) -> str:
-    return read_bytes(path).decode("utf-8")
+def committed_text(path: Path) -> str:
+    return committed_bytes(path).decode("utf-8")
+
+
+def normalised_text(path: Path) -> str:
+    """The committed text of a file whose line ending no rule here governs, CRLF read as LF."""
+    return committed_text(path).replace("\r\n", "\n")
 
 
 def load_config() -> JsonValue:
-    return strict_loads(read_text(CONFIG_TEMPLATE))
+    return strict_loads(committed_text(CONFIG_TEMPLATE))
 
 
 def has_bad_text(text: str) -> bool:
@@ -178,6 +206,8 @@ def config_problems(value: JsonValue) -> list[str]:
         item = value.get(key)
         if key in value and (not isinstance(item, str) or not item or has_bad_text(item)):
             problems.append(f"{key} is not a non-empty clean string")
+    if isinstance(value.get("branch"), str) and value.get("branch") == value.get("queue_branch"):
+        problems.append("queue_branch equals branch (the queue must live on its own branch)")
     queue_path = value.get("queue_path")
     if isinstance(queue_path, str):
         why = path_problem(queue_path)
@@ -362,17 +392,86 @@ class TemplateFileTests(unittest.TestCase):
     def test_no_template_has_a_byte_order_mark_or_invalid_utf8(self) -> None:
         for path in ALL_TEMPLATES:
             with self.subTest(path=path.name):
-                data = read_bytes(path)
+                data = committed_bytes(path)
                 self.assertFalse(data.startswith(b"\xef\xbb\xbf"), "BOM")
                 data.decode("utf-8")
 
     def test_the_new_templates_are_lf_only_and_end_with_a_newline(self) -> None:
         for path in NEW_TEMPLATES:
             with self.subTest(path=path.name):
-                data = read_bytes(path)
+                data = committed_bytes(path)
                 self.assertNotIn(b"\r", data)
                 self.assertTrue(data.endswith(b"\n"))
                 self.assertFalse(data.endswith(b"\n\n"))
+
+
+class LineEndingPinTests(unittest.TestCase):
+    def test_gitattributes_holds_the_pin_once_and_keeps_the_existing_lines(self) -> None:
+        lines = committed_text(GITATTRIBUTES).split("\n")
+        self.assertEqual(lines.count(GITATTRIBUTES_LINE), 1)
+        for existing in GITATTRIBUTES_EXISTING_LINES:
+            with self.subTest(existing=existing):
+                self.assertIn(existing, lines)
+
+    def test_git_reports_lf_for_each_of_the_three_templates(self) -> None:
+        for path in NEW_TEMPLATES:
+            relative = path.relative_to(ROOT).as_posix()
+            with self.subTest(path=path.name):
+                reported = run_git(ROOT, "check-attr", "--cached", "eol", "text", "--", relative).split("\n")
+                self.assertEqual(
+                    sorted(line.strip() for line in reported),
+                    sorted([f"{relative}: eol: lf", f"{relative}: text: set"]),
+                )
+
+
+@unittest.skipIf(os.environ.get(CLONE_CHILD_ENV) == "1", "already inside a scratch clone run: no clone of a clone")
+@unittest.skipUnless(git_available(), "git is absent: no scratch clone can be made")
+class CrlfCheckoutTests(unittest.TestCase):
+    """The byte rules and every other test of this file, run in a clone checked out with core.autocrlf=true."""
+
+    def make_clone(self) -> Path:
+        work = Path(tempfile.mkdtemp(prefix="state-template-clone-"))
+        self.addCleanup(remove_tree, work)
+        clone = work / "clone"
+        head = run_git(ROOT, "rev-parse", "HEAD")
+        run_git(work, "clone", "-q", "--no-checkout", "-c", "core.autocrlf=true", str(ROOT), str(clone))
+        run_git(clone, "update-ref", "--no-deref", "HEAD", head)
+        self.assertEqual(run_git(clone, "rev-parse", "HEAD"), head)
+        self.assertEqual(run_git(clone, "config", "--local", "core.autocrlf"), "true")
+        run_git(clone, "checkout", "-q", head, "--", ".gitattributes")
+        run_git(clone, "checkout", "-q", head, "--", *CLONE_PATHS)
+        return clone
+
+    def run_file_in(self, clone: Path) -> None:
+        env = clean_environment()
+        env[CLONE_CHILD_ENV] = "1"
+        done = subprocess.run(
+            [sys.executable, "-I", "-X", "utf8", str(clone / "tests" / "test_state_file_templates.py")],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=env,
+            cwd=clone,
+        )
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        self.assertIn("OK", done.stderr)
+
+    def test_a_clone_with_autocrlf_true_keeps_the_three_templates_lf_and_is_green(self) -> None:
+        clone = self.make_clone()
+        for path in NEW_TEMPLATES:
+            with self.subTest(path=path.name):
+                self.assertNotIn(b"\r", (clone / path.relative_to(ROOT)).read_bytes())
+        self.run_file_in(clone)
+
+    def test_a_crlf_working_copy_of_a_correct_commit_is_green(self) -> None:
+        clone = self.make_clone()
+        for relative in (*(path.relative_to(ROOT) for path in ALL_TEMPLATES), Path(".gitattributes")):
+            target = clone / relative
+            data = target.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+            target.write_bytes(data)
+            with self.subTest(path=target.name):
+                self.assertIn(b"\r\n", target.read_bytes(), "the scenario must hold CRLF bytes")
+        self.run_file_in(clone)
 
 
 class StrictJsonTests(unittest.TestCase):
@@ -392,7 +491,7 @@ class StrictJsonTests(unittest.TestCase):
     def test_both_json_templates_parse_strictly(self) -> None:
         for path in (QUEUE_TEMPLATE, CONFIG_TEMPLATE):
             with self.subTest(path=path.name):
-                self.assertIsInstance(strict_loads(read_text(path)), dict)
+                self.assertIsInstance(strict_loads(committed_text(path)), dict)
 
 
 # ----------------------------------------------------------------------------- queue file
@@ -400,9 +499,9 @@ class StrictJsonTests(unittest.TestCase):
 
 class QueueTemplateTests(unittest.TestCase):
     def test_the_queue_template_is_exactly_an_empty_entry_list_and_a_newline(self) -> None:
-        self.assertEqual(read_bytes(QUEUE_TEMPLATE), QUEUE_BYTES)
-        self.assertEqual(strict_loads(read_text(QUEUE_TEMPLATE)), {"entries": []})
-        self.assertEqual(queue_problems(strict_loads(read_text(QUEUE_TEMPLATE))), [])
+        self.assertEqual(committed_bytes(QUEUE_TEMPLATE), QUEUE_BYTES)
+        self.assertEqual(strict_loads(committed_text(QUEUE_TEMPLATE)), {"entries": []})
+        self.assertEqual(queue_problems(strict_loads(committed_text(QUEUE_TEMPLATE))), [])
 
     def test_a_queue_holding_an_entry_is_a_problem(self) -> None:
         self.assertTrue(queue_problems({"entries": [{"ticket": "x"}]}))
@@ -451,6 +550,15 @@ class ConfigTemplateTests(unittest.TestCase):
         assert isinstance(value, list)
         self.assertEqual(value.count(SHA_TOKEN), 1)
         self.assertEqual(sum(str(argument).count(SHA_TOKEN) for argument in value), 1)
+
+    def test_the_queue_branch_placeholder_differs_from_the_branch_placeholder(self) -> None:
+        config = self.config()
+        self.assertNotEqual(config["queue_branch"], config["branch"])
+
+    def test_a_queue_branch_equal_to_the_branch_is_a_problem(self) -> None:
+        config = self.config()
+        config["queue_branch"] = config["branch"]
+        self.assertTrue(config_problems(config))
 
     def test_the_queue_path_placeholder_is_a_canonical_repository_relative_path(self) -> None:
         value = self.config()["queue_path"]
@@ -520,13 +628,13 @@ class ConfigTemplateTests(unittest.TestCase):
 
 class ReceiptTemplateTests(unittest.TestCase):
     def text(self) -> str:
-        return read_text(RECEIPT_TEMPLATE)
+        return committed_text(RECEIPT_TEMPLATE)
 
     def test_the_receipt_template_has_one_run_cell_and_one_statement_cell(self) -> None:
         self.assertEqual(receipt_problems(self.text()), [])
 
     def test_the_receipt_template_has_no_cr_byte(self) -> None:
-        self.assertNotIn(b"\r", read_bytes(RECEIPT_TEMPLATE))
+        self.assertNotIn(b"\r", committed_bytes(RECEIPT_TEMPLATE))
         self.assertTrue(receipt_problems(self.text().replace("\n", "\r\n")))
         self.assertTrue(receipt_problems(self.text().replace("exit: ", "exit: \r")))
 
@@ -578,24 +686,24 @@ class ReceiptTemplateTests(unittest.TestCase):
 
 class StateRowTests(unittest.TestCase):
     def test_the_state_row_carries_the_dispatch_digest_and_receipt_parts(self) -> None:
-        self.assertEqual(state_row_problems(read_text(TICKET_TEMPLATE)), [])
+        self.assertEqual(state_row_problems(normalised_text(TICKET_TEMPLATE)), [])
 
     def test_dropping_a_part_of_the_state_row_is_a_problem(self) -> None:
-        text = read_text(TICKET_TEMPLATE)
+        text = normalised_text(TICKET_TEMPLATE)
         for dropped in (f"{DISPATCH_PART}; ", RECEIPT_PART, "dispatch=", "sha256:", PENDING_SENTENCE, DIGEST_SENTENCE):
             with self.subTest(dropped=dropped):
                 self.assertIn(dropped, text)
                 self.assertTrue(state_row_problems(text.replace(dropped, "", 1)))
 
     def test_a_missing_or_extra_state_is_a_problem(self) -> None:
-        text = read_text(TICKET_TEMPLATE)
+        text = normalised_text(TICKET_TEMPLATE)
         for state in sorted(ALLOWED_STATES):
             with self.subTest(removed=state):
                 self.assertTrue(state_row_problems(text.replace(f"`{state}`／", "").replace(f"／`{state}`", "")))
         self.assertTrue(state_row_problems(text.replace("／`DONE`", "／`DONE`／`ARCHIVED`")))
 
     def test_the_dispatch_token_is_compared_exactly(self) -> None:
-        text = read_text(TICKET_TEMPLATE)
+        text = normalised_text(TICKET_TEMPLATE)
         for wrong in ("dispatch=sha1:", "dispatch: sha256:", "Dispatch=sha256:", "dispatch=sha256 "):
             with self.subTest(wrong=wrong):
                 self.assertTrue(state_row_problems(text.replace("dispatch=sha256:", wrong, 1)))
@@ -603,16 +711,46 @@ class StateRowTests(unittest.TestCase):
 
 class ReadmeTests(unittest.TestCase):
     def test_the_readme_lists_the_four_files(self) -> None:
-        text = read_text(README)
+        text = normalised_text(README)
         for name in README_FILE_NAMES:
             with self.subTest(name=name):
                 self.assertIn(name, text)
 
     def test_the_readme_says_the_queue_file_lives_on_the_queue_branch(self) -> None:
-        self.assertIn(README_QUEUE_BRANCH_SENTENCE, read_text(README))
+        self.assertIn(README_QUEUE_BRANCH_SENTENCE, normalised_text(README))
+
+    def test_the_structure_comment_for_the_queue_file_says_the_queue_branch(self) -> None:
+        text = normalised_text(README)
+        structure = text[text.index("## 固定結構") : text.index("## 建置順序")]
+        lines = [line for line in structure.split("\n") if "MERGE-QUEUE.json" in line]
+        self.assertEqual(len(lines), 1)
+        self.assertIn(README_STRUCTURE_QUEUE_COMMENT, lines[0])
+        self.assertNotIn("integration branch", lines[0])
+
+    def state_files_rows(self) -> dict[str, list[str]]:
+        text = normalised_text(README)
+        section = text[text.index("## State files") :]
+        rows: dict[str, list[str]] = {}
+        for line in section.split("\n"):
+            if not line.startswith("| `"):
+                continue
+            cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+            rows[cells[0]] = cells
+        return rows
+
+    def test_the_state_files_row_for_the_queue_file_says_the_queue_branch(self) -> None:
+        rows = self.state_files_rows()
+        row = rows["`doc/handoffs/governance/MERGE-QUEUE.TEMPLATE.json`"]
+        self.assertIn(README_ROW_QUEUE_PHRASE, row[1])
+        self.assertNotIn("integration branch", " ".join(row))
+
+    def test_the_state_files_row_for_the_ticket_copies_to_the_feature_path(self) -> None:
+        rows = self.state_files_rows()
+        self.assertEqual(rows["`modules/tickets/TEMPLATE.md`"][1], README_TICKET_COPY_TO)
+        self.assertNotIn(README_OLD_TICKET_COPY_TO, normalised_text(README))
 
     def test_the_readme_puts_the_state_files_in_the_structure_and_the_build_order(self) -> None:
-        text = read_text(README)
+        text = normalised_text(README)
         structure = text[text.index("## 固定結構") : text.index("## 建置順序")]
         order = text[text.index("## 建置順序") : text.index("## State files")]
         for name in ("integration.json", "MERGE-QUEUE.json"):
@@ -669,7 +807,7 @@ class EvidenceGateCrossCheck(unittest.TestCase):
 
     def read(self, values: Mapping[str, str]) -> subprocess.CompletedProcess[str]:
         receipt = self.evidence / "RETURN.md"
-        filled = fill_receipt(read_text(RECEIPT_TEMPLATE), values)
+        filled = fill_receipt(committed_text(RECEIPT_TEMPLATE), values)
         receipt.write_bytes(filled.encode("utf-8"))
         return subprocess.run(
             [
@@ -699,7 +837,7 @@ class EvidenceGateCrossCheck(unittest.TestCase):
         done = self.read(self.values())
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
         self.assertIn("cells=1 defects=0", done.stdout)
-        filled = fill_receipt(read_text(RECEIPT_TEMPLATE), self.values())
+        filled = fill_receipt(committed_text(RECEIPT_TEMPLATE), self.values())
         self.assertEqual(PLACEHOLDER.findall(filled), [])
 
     def test_the_gate_reads_the_filled_receipt_and_refuses_a_wrong_digest(self) -> None:

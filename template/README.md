@@ -50,7 +50,7 @@ ticket needs no hand-made file:
 
 | Template | Copy to | Holds |
 | --- | --- | --- |
-| `modules/tickets/TEMPLATE.md` | `modules/tickets/<ticket>.md` | the ticket; its state row reads `<STATE>`; dispatch=sha256:<hex of the dispatch file>; receipt `<path>` |
+| `modules/tickets/TEMPLATE.md` | `modules/tickets/<feature>/<ticket>.md` | the ticket; its state row reads `<STATE>`; dispatch=sha256:<hex of the dispatch file>; receipt `<path>` |
 | `doc/handoffs/governance/RECEIPT.TEMPLATE.md` | the receipt path the ticket's state row names | one run cell per command, one statement cell per choice made where the work was silent |
 | `doc/handoffs/governance/integration.TEMPLATE.json` | `doc/handoffs/<year>/governance/integration.json` | the integration configuration: remote, branch, queue branch, queue path, the spec, invariant and CI-status commands, the timeout |
 | `doc/handoffs/governance/MERGE-QUEUE.TEMPLATE.json` | the `queue_path` key of the copied configuration, on the queue branch | the empty merge queue, `{"entries": []}` |
