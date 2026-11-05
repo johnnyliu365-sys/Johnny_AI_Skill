@@ -1,13 +1,14 @@
 # Gate scripts
 
-Three stand-alone Python 3.11 scripts that decide a workflow transition mechanically.
+Four stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py` and `evidence_gate.py`) that decide a workflow transition or keep a versioned record mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
 usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
-`receipt_fence_check.py` and `index_pins.py` an unexpected error is also a tool fault
+`receipt_fence_check.py`, `index_pins.py` and `evidence_gate.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
-never reported as a tool fault and a tool fault is never reported as a red. The console
+never reported as a tool fault and a tool fault is never reported as a red; the wave-2 gates
+report every red they can find even when a fault was met on the way (see each section). The console
 encoding never changes an exit code: each script keeps the encoding the host chose for
 stdout and stderr but escapes any character it cannot encode as a backslash sequence, so a red whose
 text holds such a character still exits `1` under a cp950 console.
@@ -89,3 +90,65 @@ commit (`SHALLOW_HISTORY`), `git` cannot be started, not inside a git repository
 is missing or not a directory, an environment git query fails as above, the `--json` path
 cannot be written, or an unexpected error. Exit 3: bad option, missing mode, empty
 `--sealed-state`, an index argument that is not a file, or an index file that is not UTF-8.
+
+## evidence_gate.py
+
+    python evidence_gate.py <receipt> --repo DIR --candidate SHA --tool PATH [--tool PATH ...]
+        [--require-cell NAME ...] [--evidence-root DIR]
+
+Checks that a receipt proves every run cell. A run cell is a `## <name>` section with the
+lines `cell: <name>`, `candidate: <full sha>`, `tool_digest:` followed by
+`- <repository-relative path>=<sha256>` lines, `capture: <path relative to the evidence
+root>` and `exit: <comma-separated exit codes in capture order>`, then the capture in one
+four-backtick fence. A section with `cell: STATEMENT` is informational and has no
+`capture:`, `exit:` or fence. `--candidate` is the full lower-case commit sha every cell must
+name; each `--tool` path must be listed in every run cell with the sha256 of
+the blob at `<candidate>:<path>` in `--repo`. `--evidence-root` defaults to the receipt's
+directory. The receipt's own CRLF line endings are normalised; captures are not.
+
+Exit 0 prints `cells=N defects=0`. Exit 1 prints one line `<code> <section>: <detail>` per
+defect, then `cells=N defects=M`; a tool fault met on the way is printed on standard error, one
+line each, beside the reds (red before fault: the gate reports every red it can find and exits `2`
+only when it found none). Defect codes: `NO_CELLS`, `NOT_RUN` (a section without a
+`cell:` line, or a `--require-cell` name with no run cell), `CELL_FIELD_MISSING`,
+`STATEMENT_HAS_RUN_FIELDS`, `DUPLICATE_CELL`, `CANDIDATE_MISMATCH`, `TOOL_DIGEST_MISSING`,
+`TOOL_DIGEST_STALE`, `CAPTURE_MISSING` (also a path that escapes the evidence root: an
+absolute path, a drive letter, `..` leaving the root, a trailing slash), `CAPTURE_CR`,
+`BLOCK_MISMATCH` (the lines between the fences joined with LF plus a final LF must equal the
+capture byte for byte), `EXIT_MISMATCH` (the `exit:` list must equal the lines of the capture
+that consist of `exit=N` alone, in order; `exit=N` inside a longer line does not count),
+`FIELD_REPEATED` (a run cell holds a second `cell:`, `candidate:`, `tool_digest:`, `capture:`
+or `exit:` line, or a second fence) and `CELL_NAME_MISMATCH` (the `cell:` value differs from
+the `## ` heading). A `tool_digest` path is judged in two steps, and neither can turn a red into a tool fault.
+First its form: a canonical path is non-empty, at most 1024 bytes in UTF-8, holds no control
+character (U+0000 to U+001F, U+007F) or lone surrogate, uses only the forward slash as
+separator (no backslash), does not start with a slash or a colon, has no drive letter and no
+empty, `.` or `..` segment; any other path is `TOOL_DIGEST_STALE` and git is never asked about
+it. Then one literal lookup from the repository root: the line `<candidate>:<path>` is
+written to the standard input of `git cat-file --batch-check` (and, for a blob, of
+`git cat-file --batch`), never passed to git as a pathspec or on its command line, so
+existence and content come from the same lookup. A missing object, or one that is not a blob
+(a tree, a submodule entry), is `TOOL_DIGEST_STALE`; a symbolic link is a blob and is read as
+stored. A `missing` answer is told apart from an object the store cannot serve: the parent tree
+is read through the same standard input, and an entry that tree names as a blob is a tool fault
+(`2` when no red was found), while a path the tree does not name is `TOOL_DIGEST_STALE`. The listed values are judged before the lookup and whatever its outcome, because they need no git: a value
+that is not 64 lower-case hex digits, and two different values listed for one path, are each
+`TOOL_DIGEST_STALE` beside a fault on that lookup. Every
+git child runs with `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1` and `GIT_NO_LAZY_FETCH=1`,
+with the repository-selecting `GIT_*` variables and the `GIT_CONFIG_*` variables removed, so a
+replace ref never redirects a lookup and a lookup never fetches; `git` is started from the `PATH`
+entries that are absolute directories, never from the current directory. The repository root is found from `--repo`, so it may be any directory inside the
+repository. A string in the
+receipt that holds a lone surrogate or a control character is a red (a capture reference is
+`CAPTURE_MISSING`, a section or cell name is `NOT_RUN`), never a fault, and every printed
+subject is escaped so one defect is always one line. Exit 2 (no red found): the receipt or a capture cannot be read, the evidence root is
+not a directory, `git` cannot start, `--repo` is not a repository, the candidate cannot be
+resolved, a blob the candidate names is missing from the
+object store, `git cat-file` exits non-zero or answers outside its documented format (a failing
+lookup is never read as an absent path), or an unexpected error; each fault message is escaped
+to one line. A receipt that cannot be read ends the run at once, because no red can be found
+without it. A `--tool` path that is not a blob at the candidate is a tool fault
+on standard error and, because no receipt can list a digest for it, a `TOOL_DIGEST_MISSING` red in
+every run cell, so it produces exit 1 and never exit 2 alone. Exit 3: a missing or unknown
+argument, no `--tool`, a blank `--tool` or `--require-cell`, a `--tool` path that is not canonical, a `--candidate` that is not a
+full 40-character lower-case sha. Output uses LF line endings.
