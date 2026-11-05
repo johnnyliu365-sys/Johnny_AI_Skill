@@ -1,11 +1,11 @@
 # Gate scripts
 
-Nine stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `preflight.py` and `repair_guard.py`) that decide a workflow transition or keep a versioned record mechanically.
+Ten stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `preflight.py`, `repair_guard.py` and `integrate.py`) that decide a workflow transition, keep a versioned record or move a reviewed candidate onto the integration branch mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
-usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). `preflight.py` has no red (`0`, `2`, `3`). In
-`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py` and `repair_guard.py` an unexpected error is also a tool fault
+usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). `preflight.py` has no red (`0`, `2`, `3`). `integrate.py` reads `0` as landed, recorded or nothing to do and `1` as an entry bounced or a precondition red. In
+`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `repair_guard.py` and `integrate.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red; the wave-2 gates
 report every red they can find even when a fault was met on the way (see each section). The console
@@ -616,3 +616,107 @@ dispatch file that lacks either line or repeats one, a value that is not one JSO
 strings (`null` included), or an entry that is empty, absolute, uses a backslash or holds
 an empty, `.` or `..` segment. A text defect inside a file or in git output is exit 1, and a
 usage error in the same dispatch outranks it.
+
+## integrate.py
+
+    python integrate.py submit   --config <file> --ticket <id> --candidate <sha> --review <path> --submitter <seat> [--clears <ticket>@<sha>,...]
+    python integrate.py land     --config <file>
+    python integrate.py readback --config <file>
+
+The merge-queue integration script (R4-4, R4-7, R4-8). A reviewed candidate is queued by `submit`,
+landed by `land` and its CI result is read back by `readback`. Exit codes: `0` landed, recorded or
+nothing to do; `1` an entry bounced or a precondition is red; `2` git, the remote or a configured
+command cannot serve the run; `3` usage (arguments and configuration). It prints `<CODE> <subject>:
+<detail>` on standard output for every red and one `tool fault:` line on standard error for every
+fault. Red before fault: a run that meets both prints every red, exits `1` and still writes the
+bounce it found; it exits `2` only when it found no red. A fault that leaves nothing to check (an
+unreadable configuration, an unreachable remote, a queue file that breaks its schema) ends the run
+at once. Every printed subject is escaped to one line, and a standard output or error that cannot
+be written is exit `2`.
+
+**Configuration.** One JSON object given by `--config`; every value is one JSON value, and an
+unknown key, a missing key, a repeated key, `NaN`, `Infinity`, a number out of range, nesting too
+deep to parse, bytes that are not UTF-8, a control character or a lone surrogate is exit `3` naming
+the key. Keys: `remote` (a URL or path), `branch` (the integration branch), `queue_branch`
+(default `<branch>-queue`), `queue_path` (a canonical repository-relative path on the queue
+branch: no backslash, no `.` or `..` segment, no empty segment, no leading or trailing slash, no
+drive letter), `spec_command` and `invariant_command` (argument lists), `ci_status_command` (an
+argument list with exactly one argument after the program equal to `{sha}`) and `timeout_seconds`
+(a positive integer, default 600). A configured command runs without a shell, with its program
+resolved by the rules of the preflight gate (an absolute name as given; a relative name with a
+separator joined to the integration clone; a bare name from absolute `PATH` entries only; a batch
+file refused), with an empty standard input, bounded by `timeout_seconds`; past it the process and
+every process it started are killed and the run is a fault.
+
+**The queue.** `{"entries": [...]}` on the queue branch at `queue_path`, UTF-8, LF, one object per
+entry with exactly the fields `ticket`, `candidate`, `parent`, `review`, `review_candidate`,
+`reviewer`, `submitter`, `state`, `landed_sha`, `reason` and `clears`, all text. States: `QUEUED`,
+`LANDED_PENDING_CI`, `LANDED`, `LANDED_CI_RED`, `CLEARED` and `BOUNCED`. The key of an entry is its
+ticket and candidate. A queue file that breaks this schema (a repeated key, a field of the wrong
+kind, a sha of the wrong width or case, a state that does not fit `landed_sha` or `reason`, a
+carriage return, a byte order mark) is exit `2` naming the entry and the field, and nothing is
+rewritten. A queue branch without the queue file, or no queue branch, is an empty queue; the first
+`submit` creates the branch as an orphan commit. A queue write is always a commit on the queue
+branch, so it never moves the integration tip.
+
+**The review record.** The record at the `review` path is read as the blob at the current remote
+tip of the branch, through the verified integration clone, never from the candidate or from any
+other branch. The last fenced block tagged `review-verdict` whose `candidate` equals the entry's
+candidate decides: its `verdict` must be `APPROVED`, or `CONVERGENCE_REVIEW_REQUIRED` with a
+fenced `convergence-disposition` block for the candidate that says `disposition: APPROVED`. The
+`reviewer` must match `seat:<profile>/<run-id>`, differ from the submitter, and the submitter must
+appear as `reviewer` in no `review-verdict` block of the record. A block that repeats a key, has a
+line that is not `key: value`, is not closed or holds a control character is malformed and does
+not approve. A row copy of `review_candidate` or `reviewer` that differs from the record is
+`REVIEW_MISMATCH` at `land`. Open conflict, not relaxed here: a record names its candidate by sha, and a commit cannot descend
+from a record that contains its own sha, so a record that sits in the tip's tree never names a
+candidate that fast-forwards that tip. The script reads the record where the rule says and checks
+the fast-forward where the rule says; which of the two the workflow relaxes is an owner decision.
+
+**submit.** Refuses an existing key in any state (`KEY_EXISTS`) and a record that does not approve
+the candidate (`REVIEW_MISMATCH`, one line per problem), then records the entry as `QUEUED` with
+`parent` set to the tip it read, in one commit pushed with a lease on the queue-branch sha it read.
+A lost lease is `QUEUE_MOVED` (exit `1`, nothing written).
+
+**land.** Blocked (`BLOCKED_BY_CI`, exit `1`, nothing pushed) while an entry is
+`LANDED_PENDING_CI`, or a `LANDED_CI_RED` entry is not named by a queued entry whose `clears` lists
+every red key; it takes the oldest admissible `QUEUED` entry. In a fresh integration clone (an
+empty repository in a temporary directory, filled by one fetch of the remote's branches with
+`transfer.fsckObjects=true` and `fetch.fsckObjects=true`, removed afterwards also on failure) it
+checks that the candidate is a commit the remote's branches hold and that the tip is a proper
+ancestor of it (`NOT_FAST_FORWARD`), rereads the record at the tip (`REVIEW_MISMATCH`), computes the
+affected specs and runs `spec_command` with them and `invariant_command` on the checked-out
+candidate (`SPEC_RED`, `INVARIANT_RED`; both run, every red is printed, the recorded reason is the
+first in that order). Every red writes the entry as `BOUNCED` with its reason, on the queue branch
+only. When nothing is red, the candidate and the queue commit that records `LANDED_PENDING_CI` with
+`landed_sha` go out in one `git push --atomic`, each branch with a lease on the sha read. A lost
+lease on the queue is `QUEUE_MOVED` (nothing written, both branches unchanged); a lost lease on
+the tip is `TIP_MOVED`, a bounce, and the submitter resubmits under a new key. One entry is landed
+per run. With no admissible entry the run is exit `0`.
+
+**Affected specs.** The specs are the files named `test_*.py` in the candidate's tree. A spec is
+affected when it is itself a changed path, when its text names a changed path as a whole path
+(not as part of a longer name), or when a page that owns a changed path also owns the spec. The page
+registry is the file pages.json at the root of the candidate's tree, when there is one: a list
+of pages (or an object with a `pages` list), each with a `paths` list of repository-relative files
+and of directories written with a trailing slash; a directory owns what is below it by whole path
+segment, so a directory entry for specs does not own the path specs2/x. Without a registry only file paths decide. A registry
+that cannot be read, or a changed path that is not clean text, is `SPEC_RED`. Specs are passed to
+`spec_command` as further arguments (a path that starts with a hyphen gets a leading `./`); when
+no spec is affected `spec_command` is not run and the run says so.
+
+**readback.** Asks `ci_status_command` about every `LANDED_PENDING_CI` entry, with `{sha}`
+replaced by its `landed_sha`. The answer on standard output, without one trailing newline, must be
+exactly `green`, `red` or `pending`; anything else, a non-zero exit, a program that cannot be
+started or a timeout is a fault for that entry. `green` moves the entry to `LANDED` and each
+entry its `clears` names from `LANDED_CI_RED` to `CLEARED`; `red` moves it to `LANDED_CI_RED`;
+`pending` leaves it. Every change is one queue commit pushed with a lease (a lost lease is
+`QUEUE_MOVED`); a fault on one entry does not drop what was read for the others. Exit `0` when
+every status was served, recorded `red` included.
+
+**Git.** Every git child runs with `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1`,
+`GIT_NO_LAZY_FETCH=1`, `GIT_GRAFT_FILE` at a fresh path that does not exist, `-c core.commitGraph=false`,
+without `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`,
+`GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_COMMON_DIR`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`,
+`GIT_SHALLOW_FILE`, `GIT_REPLACE_REF_BASE` and any `GIT_CONFIG*` variable, and `git` is looked up in
+absolute `PATH` entries only. The configured commands get the same environment.
