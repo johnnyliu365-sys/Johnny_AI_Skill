@@ -1059,6 +1059,28 @@ def test_acr3_acm1_current_python_abstraction_final_window_qualifies_no(
         _test_only_runtime_primitive(qualification)
 
 
+def test_acr2_linux_label_for_a_slash_named_filesystem_is_a_valid_token(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    # `stat -f -c %T` reports an ext4 volume as "ext2/ext3".  The label has to
+    # survive the bounded-label validator on every host, so the check does not
+    # wait for a Linux runner to show it.
+    def fake_stat(
+        arguments: tuple[str, ...], **_: object
+    ) -> "subprocess.CompletedProcess[str]":
+        return subprocess.CompletedProcess(arguments, 0, stdout="ext2/ext3\n", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_stat)
+    label = _linux_filesystem_backend(tmp_path)
+    assert label == "linux-fs:ext2-ext3"
+    backend = PlatformBackendTuple(
+        subject=QualificationSubject.LINUX,
+        platform_identity="linux:test-version",
+        filesystem_backend=label,
+    )
+    assert backend.filesystem_backend == label
+
+
 def test_acr4_acm2_typed_construction_rejects_incomplete_positive_claims() -> None:
     platform_backend = PlatformBackendTuple(
         subject=QualificationSubject.WINDOWS,
