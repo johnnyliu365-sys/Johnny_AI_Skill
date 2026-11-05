@@ -1,0 +1,1411 @@
+{
+  "linux": [
+    {
+      "test": "tests/test_antigravity_wake_command.py::DiscoveryTests::test_discovery_returns_the_first_proven_candidate",
+      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_antigravity_wake_command.py::DiscoveryTests::test_the_probe_separates_the_authenticated_endpoint",
+      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_antigravity_wake_command.py::SendTests::test_a_failing_send_is_a_typed_refusal",
+      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_antigravity_wake_command.py::SendTests::test_a_successful_send_happens_exactly_once",
+      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_antigravity_wake_command.py::SendTests::test_the_message_never_carries_the_payload_body",
+      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_antigravity_wake_command.py::WakePortIntegrationTests::test_the_port_reports_host_accepted_when_the_send_succeeds",
+      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr1_windows_movefileex_final_window_qualifies_no",
+      "reason": "the test needs the Windows MoveFileEx proof environment; on the Linux runner the platform proof is unavailable (_PlatformProofUnavailable: WINDOWS)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an_actual_linux_kernel_and_backend",
+      "reason": "the test's own label validator (_validate_bounded_label in tests/test_atomic_conditional_replace_capability.py) rejects the Linux runner's filesystem label 'linux-fs:ext2/ext3' because it contains a '/' ('identity fields must not contain paths or raw bodies'); the runner does have an actual Linux kernel, so this is a defect in the test's validator, not a missing capability; on the maintainer's host the same test fails earlier (_PlatformProofUnavailable: LINUX) because the WSL proof does not run there",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr3_acm1_current_python_abstraction_final_window_qualifies_no",
+      "reason": "the test's own label validator (_validate_bounded_label in tests/test_atomic_conditional_replace_capability.py) rejects the Linux runner's filesystem label 'linux-fs:ext2/ext3' because it contains a '/' ('identity fields must not contain paths or raw bodies'); the runner does have an actual Linux kernel, so this is a defect in the test's validator, not a missing capability; on the maintainer's host the same test fails earlier (_PlatformProofUnavailable: LINUX) because the WSL proof does not run there",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr6_exact_test_only_boundary",
+      "reason": "the exact test-only boundary compares the branch's changed paths since the ticket authority baseline with a one-file allowed set; the integration branch changes many other paths (doc/, modules/tickets/ ...), so the equality assertion fails on any runner and on the maintainer's host",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_r02_t2_live_cwd_junction_after_request_construction_blocks_before_child_start",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_r02_t2_live_each_owned_child_and_overlay_path_rejects_a_junction",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_r02_t2_live_marker_tamper_after_request_construction_blocks_before_child_start",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_r02_t2_live_root_junction_is_rejected_before_process_port",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_r02_t3_injected_port_maps_all_termination_failures_without_exception",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_r03_t3_every_unconfirmed_cleanup_failure_carries_its_first_wait_trigger",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_r03_t3_run_wait_os_error_is_not_a_confirmed_timeout",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_second_of_two_lease_acquisitions_failing_still_tears_down_the_first",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_t1_strict_request_boundary_rejects_before_child_effects",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_t2_real_fixture_receives_exact_argv_cwd_and_owned_overlay",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_t3_success_nonzero_and_timeout_are_distinct_and_timeout_has_no_late_completion",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_t3_windows_launch_errors_use_winerror_not_exception_class",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_t4_every_outcome_has_exact_invocation_and_no_raw_output",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::AppTabClaimTests::test_a_conversation_an_app_tab_wraps_is_refused_without_any_process",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::AppTabClaimTests::test_an_unrelated_tab_does_not_block_the_wake",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::AuthenticationGateTests::test_unauthenticated_host_refuses_and_never_drives",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::CommandEntryTests::test_delivered_wake_exits_zero_through_the_module_entry",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::DeliveryTests::test_a_payload_without_the_protocol_line_is_refused",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::DeliveryTests::test_two_reviewers_reach_two_different_branches",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::DeliveryTests::test_unmapped_reviewer_is_refused_by_name_not_delivered_elsewhere",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::DeliveryTests::test_wake_resumes_the_mapped_branch_and_names_only_the_payload_path",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::LiveSessionGuardTests::test_a_branch_held_by_a_live_session_is_refused_not_driven",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::LiveSessionGuardTests::test_an_unreadable_inventory_refuses_rather_than_assuming_free",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::LiveSessionGuardTests::test_an_unrelated_live_session_does_not_block_the_wake",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::LiveSessionGuardTests::test_inventory_reads_every_live_session_id",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::ProbeHonestyTests::test_exit_zero_without_a_completed_turn_is_refused",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_claude_wake_command.py::ProbeHonestyTests::test_probe_drives_a_throwaway_branch_and_reports_capability",
+      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_agent_profile_capability.py::CodexAgentProfileCapabilityTests::test_p2_access_denied_unavailable_and_timeout_are_finite_unproven_results",
+      "reason": "the pydantic model CodexExecutableLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_agent_profile_capability.py::CodexAgentProfileCapabilityTests::test_p2_successful_version_exit_without_readback_is_install_blocked",
+      "reason": "the pydantic model CodexExecutableLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_agent_profile_capability.py::CodexAgentProfileCapabilityTests::test_p3_config_only_reversed_or_forged_readback_never_projects_supported",
+      "reason": "the pydantic model CodexExecutableLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_agent_profile_capability.py::CodexAgentProfileCapabilityTests::test_p3_effective_direct_and_indirect_readback_can_prove_only_the_frozen_split",
+      "reason": "the pydantic model CodexExecutableLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_agent_profile_capability.py::CodexAgentProfileCapabilityTests::test_p3_malformed_capability_readback_is_not_a_supported_result",
+      "reason": "the pydantic model CodexExecutableLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_agent_profile_capability.py::CodexAgentProfileCapabilityTests::test_p4_cleanup_failure_is_blocked_and_can_be_recovered_only_from_the_owned_lease",
+      "reason": "the pydantic model CodexExecutableLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_agent_profile_capability.py::CodexAgentProfileCapabilityTests::test_p4_profile_write_failure_still_removes_the_owned_disposable_root",
+      "reason": "the pydantic model CodexExecutableLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_agent_profile_capability.py::CodexAgentProfileCapabilityTests::test_p4_teardown_removes_disposable_profiles_and_preserves_foreign_and_target_snapshots",
+      "reason": "the pydantic model CodexExecutableLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_cli_preflight.py::CodexCliPreflightTests::test_a1_official_shapes_and_invented_fields",
+      "reason": "the test reads os.environ['LOCALAPPDATA'], which is defined only on Windows; KeyError on the Linux runner",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_cli_preflight.py::CodexCliPreflightTests::test_a1_wrong_plugin_shape_is_rejected_before_mutation",
+      "reason": "the test reads os.environ['LOCALAPPDATA'], which is defined only on Windows; KeyError on the Linux runner",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_cli_preflight.py::CodexCliPreflightTests::test_a2_foreign_filesystem_proof_is_blocked_before_lists",
+      "reason": "the test reads os.environ['LOCALAPPDATA'], which is defined only on Windows; KeyError on the Linux runner",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_cli_preflight.py::CodexCliPreflightTests::test_a3_market_and_same_plugin_collisions_do_not_mutate",
+      "reason": "the test reads os.environ['LOCALAPPDATA'], which is defined only on Windows; KeyError on the Linux runner",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_cli_preflight.py::CodexCliPreflightTests::test_cr86_official_optional_sources_and_plain_version_are_strict",
+      "reason": "the test reads os.environ['LOCALAPPDATA'], which is defined only on Windows; KeyError on the Linux runner",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_cli_preflight.py::CodexCliPreflightTests::test_cr87_absolute_proof_must_be_exact_canonical_root_before_lists",
+      "reason": "the test reads os.environ['LOCALAPPDATA'], which is defined only on Windows; KeyError on the Linux runner",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_cli_preflight.py::CodexCliPreflightTests::test_cr88_available_collision_blocks_with_documented_command",
+      "reason": "the test reads os.environ['LOCALAPPDATA'], which is defined only on Windows; KeyError on the Linux runner",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_cli_preflight.py::CodexCliPreflightTests::test_final_explicit_null_marketplace_source_is_blocked",
+      "reason": "the test reads os.environ['LOCALAPPDATA'], which is defined only on Windows; KeyError on the Linux runner",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_cli_preflight.py::CodexCliPreflightTests::test_final_version_exposes_only_semver",
+      "reason": "the test reads os.environ['LOCALAPPDATA'], which is defined only on Windows; KeyError on the Linux runner",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a1_factory_and_port_admit_exactly_five_operations",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a1_invalid_factory_inputs_reject_without_oracle_effect",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a2_invalid_and_foreign_requests_fail_before_effect",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a3_plugin_remove_uses_one_action_and_exact_identity",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a4_marketplace_remove_uses_one_action_and_exact_identity",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a5_lists_return_rebuilt_data_without_filtering_foreign_entries",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a6_absence_proof_requires_exact_admitted_oracle_absent",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a7_exact_oracle_substitution_drives_five_in_memory_operations",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a8_reverse_absence_gate",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a8_reverse_action_binding",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a8_reverse_removal_identity",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a8_reverse_request_before_effect",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_a8_reverse_response_admission",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_m3_absence_failure_matrix_remains_finite_without_proof",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_compensation_oracle_adapter.py::CodexCompensationOracleAdapterTests::test_m5_adapter_preserves_exact_oracle_exception",
+      "reason": "the pydantic model EnvironmentLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_a1_a2_a3_a4_owned_absence_keeps_valid_empty_state_until_teardown",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_a1_a2_a3_a5_absence_preserves_foreign_state_payloads_and_truthful_list",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_a3_a6_parent_revalidates_post_child_owned_state_before_oracle_absent",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_a6_absence_missing_tampered_owned_and_topology_state_never_yields_absent",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_cr126_duplicate_foreign_identities_are_blocked_before_fresh_child_list",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_cr126_tampered_foreign_duplicates_are_rejected_by_the_fresh_child",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_cr127_failed_exact_command_cleanup_is_finite",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_cr127_ordinary_fixture_error_removes_the_exact_command_file",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_cr157_plugin_remove_requires_exact_logical_installed_path",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_cr158_segment_ending_paths_reject_fresh_child_before_mutation",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_cr161_constructed_accepted_subclass_payload_must_not_prove_absence",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_cr161_non_exact_and_recursively_malformed_absence_responses_block_finitely",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_e0_invalid_logical_paths_are_rejected_before_oracle_mutation",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_e0_logical_installed_path_round_trips_response_state_digest_and_physical_locator",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_e0_persisted_logical_path_old_schema_extra_and_tamper_fail_closed",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_o1_serial_owned_lifecycle_uses_fresh_child_lists",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_o3_foreign_records_are_preserved_and_never_authorize_owned_removal",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_o4_invalid_state_and_topology_cells_are_finite_before_false_results",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_o5_protocol_runner_cannot_synthesize_or_queue_a_response",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_o6_failures_remain_finite_and_leave_no_command_or_response_residue",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_p2_absence_returns_exact_present_for_owned_plugin_and_payload",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_p3_fresh_and_marketplace_only_states_are_exact_absent",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_p4_incomplete_mismatched_and_tampered_presence_evidence_blocks",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_p5_foreign_only_presence_evidence_is_absent_and_byte_preserving",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_p5_owned_present_preserves_foreign_plugin_state_and_payload",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_p7_presence_requires_logical_and_physical_conjunct",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_s1_real_owned_marketplace_add_list_derives_source_from_persisted_locator",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_s2_marketplace_list_derives_each_foreign_source_without_filtering",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_s4_marketplace_source_drives_residue_then_absent_with_foreign_preserved",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_v3_v4_version_is_persisted_and_independent_from_command_identity",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_v5_version_state_invalid_cells_fail_closed_before_partial_success",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_lifecycle_oracle.py::CodexLifecycleOracleTests::test_v6_version_preserves_owned_and_foreign_state_and_payloads",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_protocol_fixture.py::CodexProtocolFixtureTests::test_t3_real_child_proves_all_seven_payloads_are_not_parent_synthesized",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_protocol_fixture.py::CodexProtocolFixtureTests::test_t4_collision_faults_and_response_topology_are_finite_and_exact",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a1_boundary_rejections_do_not_call_oracle",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a1_subclass_constructed_and_identity_mismatch_are_finite",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a2_actual_registration_receipt_reaches_removal_acceptance",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a3_first_removal_and_replay_prove_owned_absence",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a4_trace_is_exact_and_plugin_removal_precedes_marketplace",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a5_foreign_records_and_payload_bytes_are_preserved",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a6_external_git_and_empty_sentinels_remain_untouched",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_a7_public_constructors_and_round_trips_keep_strong_types",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_receipt_removal_acceptance.py::CodexReceiptRemovalAcceptanceTests::test_c10_ready_tears_down_when_oracle_initialize_fails_after_provision",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_compensation_acceptance.py::CodexRegistrationCompensationAcceptanceTests::test_p2_invalid_inputs_are_rejected_before_oracle_effect",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_compensation_acceptance.py::CodexRegistrationCompensationAcceptanceTests::test_p3_to_p7_real_child_preserves_parent_temp_and_lease_ownership",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_contracts.py",
+      "reason": "collection error: line 44 evaluates ntpath.expandvars(CANONICAL_INSTALL_ROOT) with %LOCALAPPDATA% undefined on Linux, so CodexObservedAbsolutePath rejects the value ('observed path must be a canonical Windows absolute path') at import; the whole module is not collected",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_foreign_state_isolation_acceptance.py::CodexRegistrationForeignStateIsolationAcceptanceTests::test_a1_to_a8_second_lease_acquisition_failure_still_tears_down_the_first_lease",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_foreign_state_isolation_acceptance.py::CodexRegistrationForeignStateIsolationAcceptanceTests::test_a1_to_a8_success_and_compensation_preserve_prefix_similar_foreign_state",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_forward.py::CodexRegistrationForwardTests::test_f3_f8_exact_phase_dispatch_order_and_requests",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_forward.py::CodexRegistrationForwardTests::test_f4_f8_start_precedes_each_effect_and_blocks_reentry",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_forward.py::CodexRegistrationForwardTests::test_f4_synchronized_duplicate_each_phase_is_single_call",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_forward.py::CodexRegistrationForwardTests::test_f5_declared_failures_return_existing_terminal_truth",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_forward.py::CodexRegistrationForwardTests::test_f5_f8_returned_value_is_completed_once",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_forward.py::CodexRegistrationForwardTests::test_f5_wrong_foreign_and_recursive_returns_stop_without_later_operation",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_forward.py::CodexRegistrationForwardTests::test_f6_f8_exception_stops_replay_and_recovery",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_cr162_direct_constructor_requires_private_factory_authority",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_cr163_constructed_bound_state_is_finitely_rejected",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_cr164_preflight_classifies_block_malformed_and_version_mismatch",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r2_ambient_logical_root_mismatch_blocks_before_oracle_effect",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r2_invalid_binding_is_rejected_before_logical_root_or_oracle_effect",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r3_child_version_is_persisted_not_caller_substituted",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r4_accepted_payload_that_disagrees_with_retained_identity_is_started_failure",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r4_constructed_invalid_request_is_not_started_without_oracle_mutation",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r4_foreign_request_is_not_started_and_leaves_oracle_state_unchanged",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r5_plugin_before_owned_marketplace_is_not_started_without_oracle_mutation",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r6_foreign_fresh_list_preserves_owned_proof",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r6_proof_before_same_instance_exact_adds_is_declared_failure_without_list_effect",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r6_zero_or_duplicate_owned_matches_raise_declared_proof_failure",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_oracle_adapter.py::CodexRegistrationOracleAdapterTests::test_r7_child_success_uses_fixed_logical_environment_without_parent_mutation",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_port.py::CodexRegistrationPortTests::test_a2_exact_result_envelopes_rebuild_and_mismatches_are_finite",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_port.py::CodexRegistrationPortTests::test_a2_wrong_operation_targets_are_rejected_exactly",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_port.py::CodexRegistrationPortTests::test_i1_expected_plugin_id_is_required_and_foreign_id_is_rejected",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_port.py::CodexRegistrationPortTests::test_i3_expected_plugin_id_binds_request_and_every_result_envelope",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_port.py::CodexRegistrationPortTests::test_i4_plugin_observation_id_must_match_request_authority",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_proof_settlement.py::CodexRegistrationProofSettlementTests::test_p2_invalid_port_admission_leaves_claim_live_without_calls",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_proof_settlement.py::CodexRegistrationProofSettlementTests::test_p3_only_one_exact_live_proof_claim_can_settle",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_proof_settlement.py::CodexRegistrationProofSettlementTests::test_p4_exact_claim_calls_only_prove_once_and_returns_metadata_receipt",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_proof_settlement.py::CodexRegistrationProofSettlementTests::test_p5_declared_malformed_and_all_exact_proof_mismatches_remain_finite",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_proof_settlement.py::CodexRegistrationProofSettlementTests::test_p6_duplicate_settlement_consumes_once_before_one_proof_effect",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_proof_settlement.py::CodexRegistrationProofSettlementTests::test_p6_unexpected_proof_failures_consume_claim_before_one_call_and_replay_blocks",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_b2_every_terminal_compensation_path_carries_exact_request_context",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_cr149_missing_required_pending_status_returns_invalid_state",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_d3_fresh_phase_accepts_only_exact_current_eligible_truth",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_d4_d7_preexisting_marketplace_never_grants_removal_authority",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_d4_marketplace_matrix_preserves_only_exact_new_ownership",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_d5_d7_proof_binds_exact_expected_plugin_id",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_d5_plugin_matrix_returns_only_proof_or_exact_compensation",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_d6_d7_plugin_before_marketplace_is_rejected",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_d6_phase_terminal_and_invalid_nested_shape_guards_are_closed",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_n5_plugin_no_effect_failures_keep_only_marketplace_cleanup_authority",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_r2_d1_exact_pending_copies_and_reconstruction_reduce_identically",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_r2_d2_private_identity_authority_is_completely_absent",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_reducer.py::CodexRegistrationReducerTests::test_r2_d4_public_pending_and_terminal_data_is_metadata_safe",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_settlement_authority.py::CodexRegistrationSettlementAuthorityTests::test_c3_forwards_ready_and_terminal_blocked_data_but_claims_exact_terminal_kinds",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_settlement_authority.py::CodexRegistrationSettlementAuthorityTests::test_c4_claim_metadata_is_finite_and_transfer_fabrication_are_forbidden",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_settlement_authority.py::CodexRegistrationSettlementAuthorityTests::test_c5_kind_identity_and_atomic_tombstone_reject_wrong_clone_and_replay",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_settlement_authority.py::CodexRegistrationSettlementAuthorityTests::test_c6_duplicate_consume_is_synchronized_and_owner_collection_reclaims_claim",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_settlement_authority.py::CodexRegistrationSettlementAuthorityTests::test_c8_reverse_atomic_tombstone_blocks_the_second_identical_claim_consume",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_settlement_authority.py::CodexRegistrationSettlementAuthorityTests::test_c8_reverse_claim_kind_identity_blocks_cross_kind_consume",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_settlement_authority.py::CodexRegistrationSettlementAuthorityTests::test_c8_reverse_terminal_and_recovery_kind_classification_issues_only_matching_claims",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_settlement_authority.py::CodexRegistrationSettlementAuthorityTests::test_cr155_in_place_valid_metadata_mutation_is_blocked_and_unchanged_claim_consumes_once",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_success_acceptance.py::CodexRegistrationSuccessAcceptanceTests::test_s2_invalid_lease_or_request_is_rejected_before_effect",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_success_acceptance.py::CodexRegistrationSuccessAcceptanceTests::test_s3_s4_s5_s7_clean_child_success_order_payload_parent_preservation_unique_child_temp_absence_and_exact_lease_teardown",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_success_acceptance.py::CodexRegistrationSuccessAcceptanceTests::test_s6_one_shot_claim_replay_and_fabrication_are_blocked",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_success_acceptance.py::CodexRegistrationSuccessAcceptanceTests::test_s8_physical_payload_identity_and_digest_gate",
+      "reason": "the child process the test starts exits 1: its provisioning of the disposable environment raises AttributeError on os.stat_result.st_file_attributes (Windows-only) in environment_core, as the captured child stderr shows",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_target_project_isolation_acceptance.py::CodexRegistrationTargetProjectIsolationAcceptanceTests::test_b4_success_acceptance_preserves_both_external_repository_snapshots",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_target_project_isolation_acceptance.py::CodexRegistrationTargetProjectIsolationAcceptanceTests::test_b5_compensation_acceptance_preserves_both_external_repository_snapshots",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_transaction.py::CodexRegistrationTransactionTests::test_t2_t7_terminal_tombstone_retains_duplicate_attempt_id",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_transaction.py::CodexRegistrationTransactionTests::test_t4_three_phases_use_monotonic_generations_and_terminal_replay_blocks",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_transaction.py::CodexRegistrationTransactionTests::test_t4_wrong_phase_and_never_started_complete_block_finitely",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_registration_transaction.py::CodexRegistrationTransactionTests::test_t6_t7_started_add_recovery_is_conservative",
+      "reason": "the pydantic model CodexObservedAbsolutePath validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_exact_directory_and_readback_create_metadata_only_receipt_binding",
+      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_exact_duplicate_directory_rows_are_deduplicated",
+      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_missing_ambiguous_project_host_and_activity_cells_are_finite",
+      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_readback_unavailable_invalid_mismatch_and_not_ready_fail_closed",
+      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_workspace_requires_exact_existing_root_and_accepts_slash_variation",
+      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ContainmentGateTests::test_a_junctioned_worktree_refuses_identically",
+      "reason": "the test launches cmd.exe, which does not exist on the Linux runner (FileNotFoundError)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_05_r1_a_transient_rename_block_leaves_no_orphan",
+      "reason": "the expected Windows error text ('WinError 5') and an empty error list come from the Windows environment; on Linux the same module's provisioning raises AttributeError on os.stat_result.st_file_attributes, which appears in the reported errors",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_05_r2_a_failed_cell_assertion_still_tears_the_environment_down",
+      "reason": "the expected Windows error text ('WinError 5') and an empty error list come from the Windows environment; on Linux the same module's provisioning raises AttributeError on os.stat_result.st_file_attributes, which appears in the reported errors",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_05_r2_b_a_permanently_blocked_rename_still_tears_the_environment_down",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_05_r3_a_transient_delete_block_still_tears_the_environment_down",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_05_r3_b_a_permanently_blocked_delete_is_finite_and_retains_live_claim",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_05_r3_c_a_permanently_blocked_delete_raises_rather_than_reporting_done",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_cr167_non_exact_root_names_block_before_marker_read_or_delete",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_cr168_delete_failure_is_finite_and_retains_live_claim",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_r1_project_runtime_replaces_system_temp_factory",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_r6_project_runtime_residue_blocks_and_preserves_exact_bytes",
+      "reason": "tests/.johnny-runtime already exists as residue of earlier tests of the same module whose provisioning raised AttributeError on os.stat_result.st_file_attributes (Windows-only), so the test's mkdir fails with FileExistsError",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_r6_unexpected_sibling_and_malformed_parent_block_without_cleanup",
+      "reason": "tests/.johnny-runtime already exists as residue of earlier tests of the same module whose provisioning raised AttributeError on os.stat_result.st_file_attributes (Windows-only), so the test's mkdir fails with FileExistsError",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_t1_two_distinct_owners_provision_unique_direct_project_roots_and_reject_replay",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_t2_overlay_has_exact_owned_keys_without_mutating_parent_environment",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_t3_marker_reparse_and_child_escape_block_exact_teardown_then_intact_retry_works",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_t3_physical_root_junction_blocks_before_marker_read_through",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_t4_after_root_and_after_marker_faults_remove_only_owned_root_and_preserve_sibling",
+      "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_event_runner_cli.py::RefWatchCapabilityNeverInferredFromAnEmptyQueueTests::test_real_and_forced_unavailable_capability_are_told_apart",
+      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_event_runner_cli.py::RunEventRunnerGateTests::test_a_gate_failure_names_capability_unavailable_when_forced",
+      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_event_runner_cli.py::RunEventRunnerGateTests::test_a_gate_failure_still_names_the_real_ref_watch_capability",
+      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_file_lock.py::BlockingAcquisitionTests::test_a_waiter_is_held_out_and_then_let_in_rather_than_refused",
+      "reason": "the test closes waiter.stdin and then calls waiter.communicate(timeout=...); on POSIX communicate() flushes stdin and raises 'ValueError: I/O operation on closed file', and the test's cleanup then kills the child (returncode -9); a defect in the test, not a missing runner capability: library/local_orchestration/file_lock.py ships a POSIX fcntl.flock path whose blocking behaviour this test therefore does not exercise on Linux",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_guarded_integration_corrections.py::ReceiptBoundCorrectionTests::test_reviewed_router_profile_composes_return_integration_and_audit",
+      "reason": "RouterEngine.decide for AUDIT_COMPLETED in stage GRILL returns SUSPEND where the test asserts ADVANCE (tests/test_guarded_integration_corrections.py:751); the engine and the test disagree on main, independent of operating system, and the test also fails on the maintainer's host",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_live_install_root.py::JohnnyRootLayoutTests::test_every_owned_path_derives_from_base",
+      "reason": "the pydantic model JohnnyRootLayout validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_live_install_root.py::JohnnyRootLayoutTests::test_override_and_default_resolution",
+      "reason": "the pydantic model JohnnyRootLayout validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_metadata_runtime_and_guarded_git.py::MetadataRuntimeAndGuardedGitTests::test_d1_first_event_completes_and_replay_halts_without_calls",
+      "reason": "the pydantic model RegistryLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_metadata_runtime_and_guarded_git.py::MetadataRuntimeAndGuardedGitTests::test_d2_human_wait_never_reaches_guarded_decision",
+      "reason": "the pydantic model RegistryLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_metadata_runtime_and_guarded_git.py::MetadataRuntimeAndGuardedGitTests::test_d3_only_exact_canonical_registry_root_is_admitted",
+      "reason": "the pydantic model RegistryLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_metadata_runtime_and_guarded_git.py::MetadataRuntimeAndGuardedGitTests::test_d5_direct_and_runtime_paths_share_all_guard_conditions",
+      "reason": "the pydantic model RegistryLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_metadata_runtime_and_guarded_git.py::MetadataRuntimeAndGuardedGitTests::test_d6_four_declared_failures_halt_with_unique_reasons",
+      "reason": "the pydantic model RegistryLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_metadata_runtime_and_guarded_git.py::MetadataRuntimeAndGuardedGitTests::test_d7_persistence_is_metadata_only_and_repositories_are_unchanged",
+      "reason": "the pydantic model RegistryLocator validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_one_click_installer.py::OneClickInstallerGateTests::test_missing_bundle_fails_with_bundle_not_found",
+      "reason": "the test launches cmd.exe, which does not exist on the Linux runner (FileNotFoundError)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_one_click_installer.py::OneClickInstallerGateTests::test_tampered_bundle_fails_with_digest_mismatch",
+      "reason": "the test launches cmd.exe, which does not exist on the Linux runner (FileNotFoundError)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_one_click_installer.py::OneClickInstallerSmokeAndPayloadTests::test_smoke_with_synthetic_matching_bundle_reaches_install_gate",
+      "reason": "the test launches cmd.exe, which does not exist on the Linux runner (FileNotFoundError)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists",
+      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_plugin_publication.py::CandidateMetadataTests::test_l5_stale_candidate_pin_is_named_before_generation",
+      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_plugin_publication.py::PublicationReachabilityTests::test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable",
+      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_plugin_publication.py::PublicationReachabilityTests::test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor",
+      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_ref_watch_capability.py::ImportSafetyTests::test_the_module_itself_imports_cleanly_without_pywin32",
+      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_ref_watch_capability.py::RealProbeOnThisMachineTests::test_this_windows_machine_reports_available",
+      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_ref_watch_capability.py::SimulatedDegradationTests::test_windows_without_the_native_binding_is_named_differently",
+      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_refusal_guidance.py::ClassificationAuditTests::test_every_failure_enum_in_the_library_is_covered_or_uncovered",
+      "reason": "the uncovered-enum roster found by the classification audit differs from the test's _UNCOVERED_ROSTER (library enums changed without the roster); an operating-system independent drift on main, also failing on the maintainer's host",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_refusal_guidance.py::InstallScriptTests::test_a_real_refusal_keeps_status_and_code_where_they_were",
+      "reason": "the test launches powershell.exe, which does not exist on the Linux runner (FileNotFoundError)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_wake_delivery.py::WakeCommandConfigTests::test_rendering_substitutes_only_declared_placeholders",
+      "reason": "the test expects the queue path rendered with Windows backslashes; on POSIX the rendered path keeps forward slashes (C:/jr/queue/p.json)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_windows_native_git_ref_notification.py::WindowsNativeGitRefNotificationTests::test_callback_can_cancel_its_own_subscription_without_deadlock",
+      "reason": "native git ref notification is a Windows-only facility; registration returns UNAVAILABLE on the Linux runner where the test expects REGISTERED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_windows_native_git_ref_notification.py::WindowsNativeGitRefNotificationTests::test_exact_loose_ref_change_signals_but_sibling_ref_does_not",
+      "reason": "native git ref notification is a Windows-only facility; registration returns UNAVAILABLE on the Linux runner where the test expects REGISTERED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_windows_native_git_ref_notification.py::WindowsNativeGitRefNotificationTests::test_packed_refs_replacement_signals_and_cancel_is_idempotent",
+      "reason": "native git ref notification is a Windows-only facility; registration returns UNAVAILABLE on the Linux runner where the test expects REGISTERED",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_worker_assignment.py::WorktreePathMatchingTests::test_a_case_variant_of_a_contained_worktree_is_still_contained",
+      "reason": "the case-variant containment check relies on Windows case-insensitive paths; on the case-sensitive Linux filesystem the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_worktree_containment.py::ReparseEvasionTests::test_r4_a_junctioned_repository_root_is_refused",
+      "reason": "the test launches cmd.exe, which does not exist on the Linux runner (FileNotFoundError)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_worktree_containment.py::ReparseEvasionTests::test_r4_a_worktree_reached_through_a_junction_is_refused",
+      "reason": "the test launches cmd.exe, which does not exist on the Linux runner (FileNotFoundError)",
+      "follow_up": "environment"
+    }
+  ],
+  "windows": [
+    {
+      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an_actual_linux_kernel_and_backend",
+      "reason": "the test needs an actual Linux kernel and backend (WSL Ubuntu with renameat2); the Windows runner has none (_PlatformProofUnavailable: LINUX)",
+      "follow_up": "environment"
+    },
+    {
+      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr6_exact_test_only_boundary",
+      "reason": "the exact test-only boundary compares the branch's changed paths since the ticket authority baseline with a one-file allowed set; the integration branch changes many other paths (doc/, modules/tickets/ ...), so the equality assertion fails on any runner and on the maintainer's host",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::AdmissionTests::test_a_conflicting_receipt_id_refuses_without_replacing",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::AdmissionTests::test_a_valid_request_dispatches_and_reads_back_claimable",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::AdmissionTests::test_an_identical_repeat_is_idempotent",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::FixtureFreeChainTests::test_an_admitted_receipt_composes_a_subscription",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_a_compensated_receipt_is_revoked_and_journaled_with_both_receipts",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_a_foreign_request_is_refused_as_invalid",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_a_never_claimed_receipt_is_refused_as_assignment_absent",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_a_receipt_the_store_does_not_hold_is_named_apart_from_a_mismatch",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_a_stale_receipt_reference_is_refused_as_a_mismatch",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_a_successor_equal_to_the_receipt_refuses_before_anything_closes",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_an_admission_line_names_no_superseded_receipt",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_an_open_claim_refuses_the_revocation_and_the_receipt_stands",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_an_unreadable_ledger_never_reads_as_a_settled_claim",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_every_revocation_refusal_carries_its_own_name",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_revocation_without_a_grant_refuses_and_writes_no_store_effect",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_authority.py::ReceiptRevocationTests::test_revoking_an_already_revoked_receipt_converges",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::DispatchPathTests::test_a_failed_compensation_is_named_apart_from_the_spawn_failure",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::DispatchPathTests::test_a_failed_spawn_settles_its_claim_and_leaves_no_orphan",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::DispatchPathTests::test_a_raising_spawn_port_fails_closed_identically",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::DispatchPathTests::test_claim_refusal_spawns_nothing_and_is_named_apart",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::DispatchPathTests::test_one_call_issues_claims_and_spawns_in_order",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::IntegrationPathTests::test_a_stolen_head_is_surfaced_not_judged_by_the_wrong_facts",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::IntegrationPathTests::test_an_unresolvable_ticket_consumes_nothing",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::RedispatchPathTests::test_a_redispatch_over_an_open_claim_is_refused_and_spawns_nothing",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::RedispatchPathTests::test_a_second_redispatch_naming_the_stale_receipt_is_refused",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::RedispatchPathTests::test_an_interrupted_redispatch_leaves_one_readable_state_and_resumes",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::RedispatchPathTests::test_the_four_step_dead_end_now_ends_in_a_dispatch",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::WorkerReturnPathTests::test_a_return_settles_the_claim_and_queues_exactly_one_item",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::WorkerReturnPathTests::test_a_return_with_the_wrong_receipt_leaves_the_claim_open",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::WorkerReturnPathTests::test_a_second_return_is_refused_as_already_recorded",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::WorkerReturnPathTests::test_an_interrupted_return_is_completed_not_duplicated",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::WorkerReturnPathTests::test_an_unreadable_ledger_refuses_before_any_enqueue",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::WorkerReturnPathTests::test_an_unreadable_queue_refuses_before_any_settlement",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::WorkerReturnPathTests::test_every_return_failure_carries_its_own_name",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_dispatch_session.py::WorkerReturnPathTests::test_work_queued_without_a_settlement_is_surfaced_not_repaired",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_guarded_integration_corrections.py::ReceiptBoundCorrectionTests::test_reviewed_router_profile_composes_return_integration_and_audit",
+      "reason": "RouterEngine.decide for AUDIT_COMPLETED in stage GRILL returns SUSPEND where the test asserts ADVANCE (tests/test_guarded_integration_corrections.py:751); the engine and the test disagree on main, independent of operating system, and the test also fails on the maintainer's host",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_parallel_worker_dispatch.py::ParallelIssuanceTests::test_one_ticket_dispatched_twice_at_once_yields_one_receipt",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_parallel_worker_dispatch.py::ParallelIssuanceTests::test_two_different_tickets_each_receive_their_own_receipt",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_plugin_distribution_bundle.py::PluginBundleBuilderTests::test_missing_changed_and_symlink_entries_block_with_finite_failures",
+      "reason": "the test patches Path.is_symlink for one path inside a repository created under the 8.3 short temp path C:/Users/RUNNER~1/...; the patched path no longer compares equal to the resolved long path, so the builder reports ENTRY_UNAVAILABLE instead of the symlink failure the test expects; the same short-name alias that path_containment.resolves_within_root treats as a redirect, a product-or-fixture defect and not a capability the runner lacks",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    },
+    {
+      "test": "tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists",
+      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_plugin_publication.py::CandidateMetadataTests::test_l5_stale_candidate_pin_is_named_before_generation",
+      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_plugin_publication.py::PublicationReachabilityTests::test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable",
+      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_plugin_publication.py::PublicationReachabilityTests::test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor",
+      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_refusal_guidance.py::ClassificationAuditTests::test_every_failure_enum_in_the_library_is_covered_or_uncovered",
+      "reason": "the uncovered-enum roster found by the classification audit differs from the test's _UNCOVERED_ROSTER (library enums changed without the roster); an operating-system independent drift on main, also failing on the maintainer's host",
+      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
+    },
+    {
+      "test": "tests/test_review_return.py::ClosedLoopTests::test_the_loop_closes",
+      "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
+      "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
+    }
+  ]
+}
