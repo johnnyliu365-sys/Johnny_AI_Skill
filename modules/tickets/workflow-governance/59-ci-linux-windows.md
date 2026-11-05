@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/59-ci-linux-windows-out/` / owner implementation seat / worktree `.worktrees/59-ci-linux-windows` / branch `cp/wave2-59-ci-linux-windows` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/59-ci-linux-windows-out/` / owner implementation seat / worktree `.worktrees/59-ci-linux-windows` / branch `cp/wave2-59-ci-linux-windows` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the checker and its test（CONTEXT.md Implementation language）; YAML for the workflow |
-| 狀態 | `IN_PROGRESS`（revision01 implementation returned (candidate `3ab5ac43`, CI run 42016463075 green on both jobs); initial review dispatched） |
+| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `3ab5ac43`: S59-01 P0, S59-08 TICKET_DEFECT; correction 1 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/59-ci-linux-windows` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/59-ci-linux-windows-review` |
@@ -44,7 +44,7 @@ The owner made implementation readiness criterion 2 part of wave-2 acceptance on
 ### Workflow (`.github/workflows/ci.yml`)
 
 - Triggers: `push` to any branch and `pull_request`; one job per operating system in a matrix of `ubuntu-latest` and `windows-latest`; Python 3.11; `actions/checkout` with `fetch-depth: 0` (several tests read history and tags); the git identity set to a neutral CI identity for tests that commit; `PYTHONUTF8=1`.
-- Steps: `pip install -r requirements-dev.txt`; `python -m pytest tests -q -p no:cacheprovider -rf --junitxml=<file>`; then `python ci/check_registered_failures.py --os <linux|windows> --junit <file>`, whose exit is the job's result (the pytest exit itself is not the job's result).
+- Steps: `pip install -r requirements-dev.txt`; `python -m pytest tests -q -p no:cacheprovider -rf --continue-on-collection-errors --junitxml=<file>` (revision02: a module that fails to import is a collection error the checker reports by its file, so one such module cannot stop the rest of the run); then `python ci/check_registered_failures.py --os <linux|windows> --junit <file>`, whose exit is the job's result (the pytest exit itself is not the job's result).
 - Third-party actions are pinned to a full commit sha with the version in a comment; no secret is read; the token permission is `contents: read`.
 
 ### Registered failures (`ci/registered-failures.json`)
@@ -113,3 +113,20 @@ The seat pushes its own ticket branch `cp/wave2-59-ci-linux-windows` (and no oth
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision01 initial review". S59-08 is a `TICKET_DEFECT`: the frozen pytest command lacked `--continue-on-collection-errors`, which the seat added with cause; the command above now holds it. This is a closure rebuild: the work is one additive correction commit on the revision01 candidate `3ab5ac43`, and the next review is the revision02 initial review.
+
+| Finding | Class | Work in correction 1 |
+| --- | --- | --- |
+| S59-01 | IMPLEMENTATION_DEFECT (P0: source type) | no `Any` in the test file (`object`, `dict[str, object]`); `mypy --strict` on the test file exit 0. AGENTS.md P0 covers every formal source file, tests included |
+| S59-02 | IMPLEMENTATION_DEFECT | the acr2 and acr3 rows name the real cause (the test's label validator refuses `linux-fs:ext2/ext3`) and `follow_up` = `modules/tickets/workflow-governance/62-registered-known-failures.md` |
+| S59-03 | IMPLEMENTATION_DEFECT | the file-lock row names the real cause (closed stdin then `communicate()` on POSIX) and `follow_up` = ticket 62 |
+| S59-04 | TICKET_DEFECT, routed | the 39 Windows 8.3 rows name the cause (`resolves_within_root` treats a short-name alias as a redirect) and `follow_up` = `modules/tickets/workflow-governance/63-short-name-containment.md` |
+| S59-05 | TICKET_DEFECT, routed | the seven rows per OS that named this ticket name ticket 62 instead |
+| S59-06 | EVIDENCE_DEFECT | pin that the checker step's exit is the job's result: the checker line ends at the junit argument, no `continue-on-error`, no `||` or `;` after the checker |
+| S59-07 | EVIDENCE_DEFECT | pin the permissions block to exactly `contents: read` and refuse `github.token` and `secrets.` anywhere in the workflow |
+| S59-11 | EVIDENCE_DEFECT | `ci/README.md`: a cause for every host-only failure, those four described as base-capture failures not seen at the candidate, and the Linux paragraph corrected by S59-02 and S59-03 |
+
+A CI run on the correction commit with both jobs `success` is part of the evidence. Carried, no work here: S59-09 (DOCTYPE refusal for non-UTF-8 reports) and S59-10 (id normalisation, `follow_up` domain, duplicate JSON keys, subtests inside a registered test) are out-of-scope hardening for a later change of this gate.
