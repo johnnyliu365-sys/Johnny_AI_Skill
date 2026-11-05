@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/58-governance-hardening-row13-out/` / owner implementation seat / worktree `.worktrees/58-governance-hardening-row13` / branch `cp/wave2-58-governance-hardening-row13` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/58-governance-hardening-row13-out/` / owner implementation seat / worktree `.worktrees/58-governance-hardening-row13` / branch `cp/wave2-58-governance-hardening-row13` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）; Markdown for the two document edits |
-| 狀態 | `IN_PROGRESS`（revision01 implementation returned (`f85b4917`, candidate `49c2c43c`); initial review dispatched） |
+| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `49c2c43c`: S58-04 TICKET_DEFECT; correction 1 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/58-governance-hardening-row13` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/58-governance-hardening-row13-review` |
@@ -76,7 +76,7 @@ The instruments of ticket 47 (`doc/reviews/workflow-governance/evidence/47/d7_sw
 | NF-17 | `index_pins.py` | a sealed row whose revision cell names an object whose type (`cat-file -t`) is not `commit`, such as an annotated tag, is exit 1 with a named code |
 | NF-16 | `evidence/48/receipt_check.py` | no edit: the evidence gate of ticket 51 closed these gaps as a general instrument; the scripts README says the evidence gate supersedes it for new receipts |
 
-Every change in part C keeps the exit-code contract of R4-2, escapes every printed subject to one line, and adds the git environment rules of the wave-2 gates to the git calls it touches (`--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1`, `GIT_NO_LAZY_FETCH=1`, repository-selecting `GIT_*` and `GIT_CONFIG*` variables removed).
+Every change in part C keeps the exit-code contract of R4-2, escapes every printed subject to one line, and adds the git environment rules of the wave-2 gates to the git calls it touches: `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1`, `GIT_NO_LAZY_FETCH=1`, and these variables removed (revision02 names the list): `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`, `GIT_COMMON_DIR`, `GIT_PREFIX`, `GIT_QUARANTINE_PATH`, `GIT_REPLACE_REF_BASE`, `GIT_GRAFT_FILE`, `GIT_SHALLOW_FILE`, every name starting `GIT_CONFIG` and every name starting `GIT_TEST_` (case-insensitive). An inherited variable is an environment input, so it never changes a verdict: with any of them set, a correct index gives the same result as without it.
 
 ## 實作範圍、依賴與 ticket elements
 
@@ -131,3 +131,19 @@ Every change in part C keeps the exit-code contract of R4-2, escapes every print
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision01 initial review". S58-04 is a `TICKET_DEFECT`: part C named "repository-selecting `GIT_*`" without a list, and the wave-2 gates disagree. Part C above now names the list: the thirteen names `evidence_gate.py` removes, every `GIT_CONFIG*` name and every `GIT_TEST_*` name (the last after S60-01). This is a closure rebuild: the work is one additive correction commit on the revision01 candidate `49c2c43c`, and the next review is the revision02 initial review. The wording "runbooks 目錄" in `Workflow.md` section 0 is accepted as it is (S58-07): it is unambiguous and part A pins it by rule and place.
+
+| Finding | Class | Work in correction 1 |
+| --- | --- | --- |
+| S58-01 | IMPLEMENTATION_DEFECT | a Chinese negation exempts a sentence only when it negates the reviewer as executor (for example 不由審閱者, 審閱者不得…); the reviewer's CM1 sentence is an injection that goes red |
+| S58-02 | IMPLEMENTATION_DEFECT | a backticked field name is exempt only in the field-list form R4-7 uses (read from the review record); CM2 is an injection that goes red |
+| S58-03 | IMPLEMENTATION_DEFECT | the precedence rule is pinned exactly (與 R4-1、R4-4 衝突處以本修訂為準, with no 不 or 以外 between the parts); every case asserts that its phrase is present before it changes it; both CM3 doors are cases |
+| S58-04 | TICKET_DEFECT | `index_pins.py` removes the full list above; a graft file in the environment no longer turns a correct pin `STALE`; the ticket 48 test that pinned an inherited shallow file as a tool fault changes to "an inherited shallow file changes nothing", named in the STATEMENT; `receipt_fence_check.py` follows the same list where it runs git |
+| S58-05 | EVIDENCE_DEFECT | the tolerated-hit report is part of the test result (a test asserts the set of tolerated files and counts), and P1 runs with `-rA` |
+| S58-08 | EVIDENCE_DEFECT | a test runs `--self-note` on a section with zero fences: exit 1 `NO_FENCES` |
+| S58-09 | EVIDENCE_DEFECT | the spy test injects and asserts every name of the list, one by one |
+
+Carried, no work here: S58-06 (vocabulary and paraphrase gaps in the sweep) goes with the next change of the consistency test. Routed outside this ticket: `contract_gate.py` removes only nine of the listed names, and `coverage_map.py` and `integrate.py` keep `GIT_TEST_*`; each closes with the next change of its gate (with S60-01 and S60-03), and ticket 50's revision02 states the full list.
