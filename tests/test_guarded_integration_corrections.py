@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import sys
 import unittest
 from collections.abc import Callable
+from pathlib import Path
 from threading import Event, Thread
 
 from library.workflow_router import (
@@ -43,6 +45,22 @@ from library.workflow_router.guarded_integration import (
     IntegrationResult,
     IntegrationStatus,
     MainSnapshot,
+)
+from library.workflow_router.test_engineer_contracts import (
+    ResolvedTestEvidence,
+    TestCleanup as ReportCleanup,
+)
+
+_TESTS_DIRECTORY = str(Path(__file__).resolve().parent)
+if _TESTS_DIRECTORY not in sys.path:
+    sys.path.insert(0, _TESTS_DIRECTORY)
+
+from test_review_admission import (
+    StaticEvidenceResolver,
+    _authority,
+    _binding,
+    _cell,
+    _report,
 )
 
 
@@ -743,13 +761,53 @@ class ReceiptBoundCorrectionTests(unittest.TestCase):
         self.assertEqual(ContinuationDirective.AUTO_CONTINUE, integrated.continuation)
         self.assertEqual(ProcessStage.GRILL, integrated.next_stage)
         self.assertIsNone(integrated.wait_reason)
-        audited = RouterEngine().decide(
+        # The audit step enters REVIEW, and since the independent review evidence
+        # admission gate (d06fd729) every review entry needs a bound test scope and
+        # a report the resolver admits.  A bare audit is refused; a bound, admitted
+        # report advances.
+        bare_audit = RouterEngine().decide(
             state=audit_state,
             event=RouterEvent(event_id="audit-completed-02", kind=RouterEventKind.AUDIT_COMPLETED),
             profile=profile,
         )
+        self.assertEqual(RouterOutcome.SUSPEND, bare_audit.outcome)
+        self.assertIsNone(bare_audit.next_stage)
+        self.assertEqual("test_review_not_admitted", bare_audit.blockers[0].code.value)
+
+        scope_ref = "correction-02-review-scope"
+        report_ref = "correction-02-review-report"
+        binding = _binding(
+            scope_ref=scope_ref,
+            project_ref=state.project_id,
+            ticket_ref=self.ticket,
+        )
+        resolver = StaticEvidenceResolver(
+            ResolvedTestEvidence(
+                authority=_authority(
+                    binding,
+                    expected_report_ref=report_ref,
+                    expected_cell_ids=("cell-pass",),
+                ),
+                report=_report(
+                    binding,
+                    report_ref=report_ref,
+                    cells=(_cell("cell-pass"),),
+                    cleanup=ReportCleanup.CONFIRMED,
+                ),
+            )
+        )
+        audited = RouterEngine(test_evidence_resolver=resolver).decide(
+            state=audit_state.model_copy(update={"review_scope_ref": scope_ref}),
+            event=RouterEvent(
+                event_id="audit-completed-02",
+                kind=RouterEventKind.AUDIT_COMPLETED,
+                test_report_ref=report_ref,
+            ),
+            profile=profile,
+        )
         self.assertEqual(RouterOutcome.ADVANCE, audited.outcome)
         self.assertEqual(ProcessStage.REVIEW, audited.next_stage)
+        self.assertEqual(1, resolver.calls)
 
     def test_coordinator_adapter_emits_only_reviewed_router_events(self) -> None:
         event = self._event(correlation="return-adapter-02", event_id="event-adapter-02")

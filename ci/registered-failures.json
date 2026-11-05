@@ -36,21 +36,6 @@
       "follow_up": "environment"
     },
     {
-      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an_actual_linux_kernel_and_backend",
-      "reason": "the test's own label validator (_validate_bounded_label in tests/test_atomic_conditional_replace_capability.py) rejects the Linux runner's filesystem label 'linux-fs:ext2/ext3' because it contains a '/' ('identity fields must not contain paths or raw bodies'); the runner does have an actual Linux kernel, so this is a defect in the test's validator, not a missing capability; on the maintainer's host the same test fails earlier (_PlatformProofUnavailable: LINUX) because the WSL proof does not run there",
-      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
-    },
-    {
-      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr3_acm1_current_python_abstraction_final_window_qualifies_no",
-      "reason": "the test's own label validator (_validate_bounded_label in tests/test_atomic_conditional_replace_capability.py) rejects the Linux runner's filesystem label 'linux-fs:ext2/ext3' because it contains a '/' ('identity fields must not contain paths or raw bodies'); the runner does have an actual Linux kernel, so this is a defect in the test's validator, not a missing capability; on the maintainer's host the same test fails earlier (_PlatformProofUnavailable: LINUX) because the WSL proof does not run there",
-      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
-    },
-    {
-      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr6_exact_test_only_boundary",
-      "reason": "the exact test-only boundary compares the branch's changed paths since the ticket authority baseline with a one-file allowed set; the integration branch changes many other paths (doc/, modules/tickets/ ...), so the equality assertion fails on any runner and on the maintainer's host",
-      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
-    },
-    {
       "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_r02_t2_live_cwd_junction_after_request_construction_blocks_before_child_start",
       "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
       "follow_up": "environment"
@@ -1026,16 +1011,6 @@
       "follow_up": "environment"
     },
     {
-      "test": "tests/test_file_lock.py::BlockingAcquisitionTests::test_a_waiter_is_held_out_and_then_let_in_rather_than_refused",
-      "reason": "the test closes waiter.stdin and then calls waiter.communicate(timeout=...); on POSIX communicate() flushes stdin and raises 'ValueError: I/O operation on closed file', and the test's cleanup then kills the child (returncode -9); a defect in the test, not a missing runner capability: library/local_orchestration/file_lock.py ships a POSIX fcntl.flock path whose blocking behaviour this test therefore does not exercise on Linux",
-      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
-    },
-    {
-      "test": "tests/test_guarded_integration_corrections.py::ReceiptBoundCorrectionTests::test_reviewed_router_profile_composes_return_integration_and_audit",
-      "reason": "RouterEngine.decide for AUDIT_COMPLETED in stage GRILL returns SUSPEND where the test asserts ADVANCE (tests/test_guarded_integration_corrections.py:751); the engine and the test disagree on main, independent of operating system, and the test also fails on the maintainer's host",
-      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
-    },
-    {
       "test": "tests/test_live_install_root.py::JohnnyRootLayoutTests::test_every_owned_path_derives_from_base",
       "reason": "the pydantic model JohnnyRootLayout validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
       "follow_up": "environment"
@@ -1092,22 +1067,22 @@
     },
     {
       "test": "tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists",
-      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "reason": "the marketplace pin 0b3afd3645946f97662c336f0e6ac0dcae502e69 is the parentless generated publication commit of the separate repository Johnny_AI_Skill_publication (tag plugin-v0.4.14); this repository holds no object with that id on any branch (PinnedCommitError: the pinned sha names no commit in this repository), and the same test fails on the maintainer's host. With the commit fetched, three of the four pin tests pass and test_l5_stale_candidate_pin_is_named_before_generation still fails: the declared payload has changed since 0.4.14, so the pin is also stale. The commit the pin should name is the one the generator writes from the current declared payload (a6de33bdd6eaab668f71f6b4d46557846f112805 at 92ee3a94); re-pinning is the owner's publication step",
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
       "test": "tests/test_plugin_publication.py::CandidateMetadataTests::test_l5_stale_candidate_pin_is_named_before_generation",
-      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "reason": "the marketplace pin 0b3afd3645946f97662c336f0e6ac0dcae502e69 is the parentless generated publication commit of the separate repository Johnny_AI_Skill_publication (tag plugin-v0.4.14); this repository holds no object with that id on any branch (PinnedCommitError: the pinned sha names no commit in this repository), and the same test fails on the maintainer's host. With the commit fetched, three of the four pin tests pass and test_l5_stale_candidate_pin_is_named_before_generation still fails: the declared payload has changed since 0.4.14, so the pin is also stale. The commit the pin should name is the one the generator writes from the current declared payload (a6de33bdd6eaab668f71f6b4d46557846f112805 at 92ee3a94); re-pinning is the owner's publication step",
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
       "test": "tests/test_plugin_publication.py::PublicationReachabilityTests::test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable",
-      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "reason": "the marketplace pin 0b3afd3645946f97662c336f0e6ac0dcae502e69 is the parentless generated publication commit of the separate repository Johnny_AI_Skill_publication (tag plugin-v0.4.14); this repository holds no object with that id on any branch (PinnedCommitError: the pinned sha names no commit in this repository), and the same test fails on the maintainer's host. With the commit fetched, three of the four pin tests pass and test_l5_stale_candidate_pin_is_named_before_generation still fails: the declared payload has changed since 0.4.14, so the pin is also stale. The commit the pin should name is the one the generator writes from the current declared payload (a6de33bdd6eaab668f71f6b4d46557846f112805 at 92ee3a94); re-pinning is the owner's publication step",
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
       "test": "tests/test_plugin_publication.py::PublicationReachabilityTests::test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor",
-      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "reason": "the marketplace pin 0b3afd3645946f97662c336f0e6ac0dcae502e69 is the parentless generated publication commit of the separate repository Johnny_AI_Skill_publication (tag plugin-v0.4.14); this repository holds no object with that id on any branch (PinnedCommitError: the pinned sha names no commit in this repository), and the same test fails on the maintainer's host. With the commit fetched, three of the four pin tests pass and test_l5_stale_candidate_pin_is_named_before_generation still fails: the declared payload has changed since 0.4.14, so the pin is also stale. The commit the pin should name is the one the generator writes from the current declared payload (a6de33bdd6eaab668f71f6b4d46557846f112805 at 92ee3a94); re-pinning is the owner's publication step",
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
@@ -1124,11 +1099,6 @@
       "test": "tests/test_ref_watch_capability.py::SimulatedDegradationTests::test_windows_without_the_native_binding_is_named_differently",
       "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
       "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_refusal_guidance.py::ClassificationAuditTests::test_every_failure_enum_in_the_library_is_covered_or_uncovered",
-      "reason": "the uncovered-enum roster found by the classification audit differs from the test's _UNCOVERED_ROSTER (library enums changed without the roster); an operating-system independent drift on main, also failing on the maintainer's host",
-      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
       "test": "tests/test_refusal_guidance.py::InstallScriptTests::test_a_real_refusal_keeps_status_and_code_where_they_were",
@@ -1176,11 +1146,6 @@
       "test": "tests/test_atomic_conditional_replace_capability.py::test_acr2_linux_requires_an_actual_linux_kernel_and_backend",
       "reason": "the test needs an actual Linux kernel and backend (WSL Ubuntu with renameat2); the Windows runner has none (_PlatformProofUnavailable: LINUX)",
       "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_atomic_conditional_replace_capability.py::test_acr6_exact_test_only_boundary",
-      "reason": "the exact test-only boundary compares the branch's changed paths since the ticket authority baseline with a one-file allowed set; the integration branch changes many other paths (doc/, modules/tickets/ ...), so the equality assertion fails on any runner and on the maintainer's host",
-      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
       "test": "tests/test_dispatch_authority.py::AdmissionTests::test_a_conflicting_receipt_id_refuses_without_replacing",
@@ -1358,11 +1323,6 @@
       "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
     },
     {
-      "test": "tests/test_guarded_integration_corrections.py::ReceiptBoundCorrectionTests::test_reviewed_router_profile_composes_return_integration_and_audit",
-      "reason": "RouterEngine.decide for AUDIT_COMPLETED in stage GRILL returns SUSPEND where the test asserts ADVANCE (tests/test_guarded_integration_corrections.py:751); the engine and the test disagree on main, independent of operating system, and the test also fails on the maintainer's host",
-      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
-    },
-    {
       "test": "tests/test_parallel_worker_dispatch.py::ParallelIssuanceTests::test_one_ticket_dispatched_twice_at_once_yields_one_receipt",
       "reason": "path_containment.resolves_within_root returns False whenever base.resolve() != base, so the 8.3 short-name alias of the repository root (C:/Users/RUNNER~1/AppData/Local/Temp/...) is treated as a redirect and the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT (worktree_containment.verify_worktree_contained); a product defect on a supported platform for any repository path with a short-name component, not a capability the runner lacks; the maintainer's host temp path has no 8.3 short name",
       "follow_up": "modules/tickets/workflow-governance/63-short-name-containment.md"
@@ -1379,27 +1339,22 @@
     },
     {
       "test": "tests/test_plugin_payload_boundary.py::CommittedPinTests::test_the_pinned_sha_exists",
-      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "reason": "the marketplace pin 0b3afd3645946f97662c336f0e6ac0dcae502e69 is the parentless generated publication commit of the separate repository Johnny_AI_Skill_publication (tag plugin-v0.4.14); this repository holds no object with that id on any branch (PinnedCommitError: the pinned sha names no commit in this repository), and the same test fails on the maintainer's host. With the commit fetched, three of the four pin tests pass and test_l5_stale_candidate_pin_is_named_before_generation still fails: the declared payload has changed since 0.4.14, so the pin is also stale. The commit the pin should name is the one the generator writes from the current declared payload (a6de33bdd6eaab668f71f6b4d46557846f112805 at 92ee3a94); re-pinning is the owner's publication step",
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
       "test": "tests/test_plugin_publication.py::CandidateMetadataTests::test_l5_stale_candidate_pin_is_named_before_generation",
-      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "reason": "the marketplace pin 0b3afd3645946f97662c336f0e6ac0dcae502e69 is the parentless generated publication commit of the separate repository Johnny_AI_Skill_publication (tag plugin-v0.4.14); this repository holds no object with that id on any branch (PinnedCommitError: the pinned sha names no commit in this repository), and the same test fails on the maintainer's host. With the commit fetched, three of the four pin tests pass and test_l5_stale_candidate_pin_is_named_before_generation still fails: the declared payload has changed since 0.4.14, so the pin is also stale. The commit the pin should name is the one the generator writes from the current declared payload (a6de33bdd6eaab668f71f6b4d46557846f112805 at 92ee3a94); re-pinning is the owner's publication step",
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
       "test": "tests/test_plugin_publication.py::PublicationReachabilityTests::test_deleting_the_actual_publication_anchor_makes_the_marketplace_pin_unreachable",
-      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
+      "reason": "the marketplace pin 0b3afd3645946f97662c336f0e6ac0dcae502e69 is the parentless generated publication commit of the separate repository Johnny_AI_Skill_publication (tag plugin-v0.4.14); this repository holds no object with that id on any branch (PinnedCommitError: the pinned sha names no commit in this repository), and the same test fails on the maintainer's host. With the commit fetched, three of the four pin tests pass and test_l5_stale_candidate_pin_is_named_before_generation still fails: the declared payload has changed since 0.4.14, so the pin is also stale. The commit the pin should name is the one the generator writes from the current declared payload (a6de33bdd6eaab668f71f6b4d46557846f112805 at 92ee3a94); re-pinning is the owner's publication step",
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
       "test": "tests/test_plugin_publication.py::PublicationReachabilityTests::test_the_marketplace_pin_is_bound_to_the_actual_publication_anchor",
-      "reason": "the pinned plugin commit 0b3afd3645946f97662c336f0e6ac0dcae502e69 is not a commit in the runner's clone of this repository (PinnedCommitError: the pinned sha names no commit in this repository); the same test fails on the maintainer's host for the same reason",
-      "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
-    },
-    {
-      "test": "tests/test_refusal_guidance.py::ClassificationAuditTests::test_every_failure_enum_in_the_library_is_covered_or_uncovered",
-      "reason": "the uncovered-enum roster found by the classification audit differs from the test's _UNCOVERED_ROSTER (library enums changed without the roster); an operating-system independent drift on main, also failing on the maintainer's host",
+      "reason": "the marketplace pin 0b3afd3645946f97662c336f0e6ac0dcae502e69 is the parentless generated publication commit of the separate repository Johnny_AI_Skill_publication (tag plugin-v0.4.14); this repository holds no object with that id on any branch (PinnedCommitError: the pinned sha names no commit in this repository), and the same test fails on the maintainer's host. With the commit fetched, three of the four pin tests pass and test_l5_stale_candidate_pin_is_named_before_generation still fails: the declared payload has changed since 0.4.14, so the pin is also stale. The commit the pin should name is the one the generator writes from the current declared payload (a6de33bdd6eaab668f71f6b4d46557846f112805 at 92ee3a94); re-pinning is the owner's publication step",
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {

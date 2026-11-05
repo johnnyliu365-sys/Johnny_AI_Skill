@@ -43,6 +43,11 @@ _TICKET_AUTHORITY_BASELINE = "6953f1e49bc60e66a5f8a2ce9cfd879f0d606ece"
 _ALLOWED_CANDIDATE_PATHS = frozenset(
     {"tests/test_atomic_conditional_replace_capability.py"}
 )
+# The last commit of the candidate that added this file (5763caf5 "test: harden
+# capability qualification evidence"), whose parent chain to the baseline
+# is 12c7689a.  The boundary belongs to that candidate, not to whatever HEAD the
+# repository has since reached.
+_CANDIDATE_TIP = "5763caf5dc26e382dd8092545fde053063792a37"
 
 
 class QualificationSubject(Enum):
@@ -516,6 +521,10 @@ def _linux_filesystem_backend(directory: Path) -> str:
     filesystem = completed.stdout.strip().lower()
     if completed.returncode != 0 or not filesystem:
         raise _PlatformProofUnavailable(QualificationSubject.LINUX)
+    # `stat -f %T` names an ext2/ext3/ext4 volume "ext2/ext3".  A label is a
+    # bounded token that must not look like a path, so the slash is spelled
+    # out instead of loosening _validate_bounded_label.
+    filesystem = filesystem.replace("/", "-")
     return f"linux-fs:{filesystem}"
 
 
@@ -1050,6 +1059,28 @@ def test_acr3_acm1_current_python_abstraction_final_window_qualifies_no(
         _test_only_runtime_primitive(qualification)
 
 
+def test_acr2_linux_label_for_a_slash_named_filesystem_is_a_valid_token(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    # `stat -f -c %T` reports an ext4 volume as "ext2/ext3".  The label has to
+    # survive the bounded-label validator on every host, so the check does not
+    # wait for a Linux runner to show it.
+    def fake_stat(
+        arguments: tuple[str, ...], **_: object
+    ) -> "subprocess.CompletedProcess[str]":
+        return subprocess.CompletedProcess(arguments, 0, stdout="ext2/ext3\n", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_stat)
+    label = _linux_filesystem_backend(tmp_path)
+    assert label == "linux-fs:ext2-ext3"
+    backend = PlatformBackendTuple(
+        subject=QualificationSubject.LINUX,
+        platform_identity="linux:test-version",
+        filesystem_backend=label,
+    )
+    assert backend.filesystem_backend == label
+
+
 def test_acr4_acm2_typed_construction_rejects_incomplete_positive_claims() -> None:
     platform_backend = PlatformBackendTuple(
         subject=QualificationSubject.WINDOWS,
@@ -1316,8 +1347,37 @@ def test_correction_qualification_rejects_cross_platform_and_contradictory_field
 
 
 def test_acr6_exact_test_only_boundary() -> None:
+    # The candidate's boundary is read at the candidate's own tip.  Reading it at
+    # HEAD held only while the candidate branch was checked out: every later
+    # commit of the repository widens the baseline-to-HEAD diff, so the check
+    # could never pass again on main.  The replica test below still applies the
+    # HEAD-relative rule (_assert_exact_candidate_boundary) to a candidate.
     repository = Path(__file__).resolve().parents[1]
-    _assert_exact_candidate_boundary(repository)
+    contained = subprocess.run(
+        (
+            "git",
+            "-C",
+            str(repository),
+            "merge-base",
+            "--is-ancestor",
+            _CANDIDATE_TIP,
+            "HEAD",
+        ),
+        check=False,
+        capture_output=True,
+        timeout=20,
+    )
+    assert contained.returncode == 0, "the candidate tip is not an ancestor of HEAD"
+    changed = _git_path_set(
+        repository,
+        "diff",
+        "--name-only",
+        "-z",
+        "--no-renames",
+        _TICKET_AUTHORITY_BASELINE,
+        _CANDIDATE_TIP,
+    )
+    assert changed == _ALLOWED_CANDIDATE_PATHS
 
 
 def test_acr6_committed_candidate_diff_and_forbidden_paths(

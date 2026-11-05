@@ -414,8 +414,10 @@ class BlockingAcquisitionTests(unittest.TestCase):
                 _await_line(holder, "held")
                 _await_line(waiter, "ready")
                 _release_child(waiter)
-                assert waiter.stdin is not None
-                waiter.stdin.close()
+                # stdin is left open here: communicate() closes it itself after
+                # flushing.  Closing it first made the POSIX flush raise
+                # "ValueError: I/O operation on closed file" before the lock
+                # path under test ran.
 
                 try:
                     body, errors = waiter.communicate(
