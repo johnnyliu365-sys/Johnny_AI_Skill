@@ -1,11 +1,11 @@
 # Gate scripts
 
-Six stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py` and `contract_gate.py`) that decide a workflow transition or keep a versioned record mechanically.
+Seven stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py` and `coverage_map.py`) that decide a workflow transition or keep a versioned record mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
 usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). In
-`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py` and `contract_gate.py` an unexpected error is also a tool fault
+`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py` and `coverage_map.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red; the wave-2 gates
 report every red they can find even when a fault was met on the way (see each section). The console
@@ -358,3 +358,85 @@ repeated key, no `rows`, a row whose `requirement_id` is outside the character s
 with a `status` other than `active` or `retired`, a repeated `requirement_id`); a usage error
 prints the usage banner and one escaped error line. Fault and usage messages are escaped to
 one line as well.
+
+## coverage_map.py
+
+    python coverage_map.py --repo DIR --base COMMIT --candidate COMMIT --map PATH --specs DIR
+
+Checks that no test function leaves a spec file without a map row. It lists every test
+present in a spec file under `--specs` at `--base` and absent at `--candidate`, and requires
+each to have a row in the map file at `--candidate`. The map is read as the blob of the
+candidate commit (git `ls-tree` finds the entry, `cat-file` reads it), never from the working
+tree.
+
+`--repo` must be the top level of a git work tree: a plain directory, or a subdirectory of a
+work tree, is exit 2. `--specs` must name a directory at `--base`, at `--candidate`, or at
+both; a path that names no directory at either commit (a typo, a file, a case variant) is
+a fault naming the path and both commits, because a guard that checks nothing must not pass.
+A directory present at one commit only is read as empty at the other, and a present
+directory that holds no spec file is exit 0. Directories are listed, not inferred from the
+files below them: git is asked for the tree entries themselves, so an empty tree object at
+`--specs` is a present, empty directory.
+
+A spec file is a regular file (git mode 100644 or 100755) named `test_*.py` below `--specs`,
+matched by path component (a sibling directory whose name only begins like `specs` is not
+below it). A symbolic link or a submodule entry is not a spec file and is never parsed; a
+spec file that becomes a link at the candidate has all its tests removed. Paths from git are
+decoded as UTF-8 with surrogateescape, so a path that is not UTF-8 is still a test id,
+compared byte for byte and printed escaped, never a tool fault. A test is a function, sync or
+async, whose name starts with `test`, at module level or inside a class (nested classes
+included), also inside the `if`, `else`, `try`, `except`, `finally`, `with`, `for`, `while`
+and `match` blocks of those levels, never inside another function. Its id is `<path>::<name>`,
+`<path>::<Class>::<name>` or `<path>::<Outer>::<Inner>::<name>`. A test that moved to another
+file or was renamed is removed under its old id. Specs are parsed with the standard `ast`
+module and the grammar of the interpreter that runs the guard (Python 3.11); a spec written
+with later syntax does not parse and is exit 2.
+
+Map file, UTF-8 JSON:
+
+    {"rows": [{"assertion": "<id>", "disposition": "carried" | "dropped" | "escalated",
+               "carried_to": "<id or empty>", "reason": "<text or empty>", "ticket": "<text or empty>"}]}
+
+Every string in a row is valid Unicode without lone surrogates and without control
+characters (U+0000 to U+001F, U+007F); a row that breaks this is `MAP_ROW_INVALID`, so a map
+cannot name a test whose path is not UTF-8 and such a removal is `UNMAPPED_REMOVAL`.
+
+Defect codes (exit 1): `UNMAPPED_REMOVAL` (a removed id has no valid row; also every removed
+id when the map is absent at the candidate), `CARRIED_TARGET_MISSING` (`carried_to` empty or
+naming no test at the candidate), `DROPPED_WITHOUT_REASON` (`dropped` with an empty or
+whitespace-only `reason`), `ESCALATED_WITHOUT_TICKET` (`escalated` with an empty or
+whitespace-only `ticket`), `MAP_ROW_INVALID` (an unknown disposition, a missing or non-string
+field, a string with a control character or lone surrogate, an assertion that is empty or has
+surrounding whitespace, or a duplicate assertion; a row that is invalid or duplicated covers
+nothing, so the removed id it names also gets `UNMAPPED_REMOVAL`). The subject of a
+`MAP_ROW_INVALID` line is `rows[N]` (the zero-based position of the row) for a row defect, or the map
+path for a defect of the file: a map file that is not UTF-8 JSON of the required shape, or a
+map path that names a directory (an empty tree object included), a submodule entry or a link. A
+key given twice in any object of the map file is `MAP_ROW_INVALID` as well: for the row
+(`rows[N]`, which then covers nothing) when a row holds it, for the map path when the top level
+or anything beside `rows` does. A map absent at the candidate is
+not itself a defect. A row's disposition is judged only when its assertion is a removed id;
+every row is shape-checked.
+
+Output is one line per defect (`CODE "<subject>" <detail>`, subjects JSON-quoted with ASCII
+escapes), then `removed=N defects=M`; exit 0 only when `defects=0`. A defect or a fault is
+always one line: stderr messages are escaped to printable ASCII, so an argument, a path or a
+parser message that holds a newline is never echoed raw. Exit 2, only when no red was found:
+`git` cannot be started, `--repo` is not a work-tree top level, a commit, tree or blob cannot
+be served (git's stderr is printed escaped), `--specs` names no directory at either commit, a
+spec does not parse at either commit (the message names the commit and the path), or an
+unexpected error. Red before fault: the guard reports every red it can find and exits 1 when
+there is one, printing each fault it met on stderr, one line each; a spec file it cannot read
+is judged by nothing, so a fault never invents a red. Every git child runs without the
+variables that select another repository (git directory, work tree, index file, object
+directory, alternate object directories, namespace, ceiling directories, common directory,
+prefix) and without the `GIT_CONFIG_*` variables, so an exporting hook cannot point the guard
+elsewhere; it also runs with `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1` and
+`GIT_NO_LAZY_FETCH=1`, so a replace ref never changes the blob read at a commit and a lookup
+never fetches over the network; `GIT_GRAFT_FILE` names a path that does not exist (an
+inherited value is dropped first), so neither `info/grafts` nor an inherited graft file moves a
+parent and `--base main^` means what the commit objects say. Exit 3: a
+missing or unknown option, an empty value, an argument that holds a lone surrogate or a
+control character, an absolute `--map` or `--specs`, a `..` segment, or a revision that
+starts with `-`. `--specs` and `--map` accept forward or back slashes and a trailing slash;
+`--specs .` selects the whole repository.
