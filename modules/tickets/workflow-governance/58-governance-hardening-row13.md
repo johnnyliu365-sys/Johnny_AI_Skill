@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/58-governance-hardening-row13-out/` / owner implementation seat / worktree `.worktrees/58-governance-hardening-row13` / branch `cp/wave2-58-governance-hardening-row13` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）; Markdown for the two document edits |
-| 狀態 | `REVIEW_APPROVED`（closure revision02, candidate `02814a05`: correction review CONVERGENCE_REVIEW_REQUIRED, convergence disposition APPROVED under CodeReview §5 rule B; record `doc/reviews/workflow-governance/58-governance-hardening-row13-code-review.md`; ready for integration） |
+| 狀態 | `INTEGRATED`（candidate `02814a05` integrated on `cp/wave2-gates` at `88321851` on 2026-11-06; CI run 42128071544 green on both jobs; record `doc/reviews/workflow-governance/wave2-integration-2026-11-06.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/58-governance-hardening-row13` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/58-governance-hardening-row13-review` |

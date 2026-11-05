@@ -1,4 +1,4 @@
-# Wave-2 integration record (2026-11-06): tickets 60, 57, 59 and 62
+# Wave-2 integration record (2026-11-06): tickets 60, 57, 59, 62 and 58
 
 ## What landed
 
@@ -49,3 +49,17 @@ A fresh integration clone (`C:/Temp/claude/jas-integ4`, `transfer.fsckObjects=tr
 | Full suite in the integration clone under the host lock | 5 failed, 3397 passed, 36 skipped; every failure is a base name; zero new red (three base failures are now fixed). No other pytest was running at acquisition |
 | Pushed | `cp/wave2-gates` at `68c318a5` (fast-forward from `78aeeedc`) |
 | CI readback | run 42121310874 on `68c318a5`: `test (linux)` and `test (windows)` both `success`, with the registered lists at Linux 228 and Windows 44 rows |
+
+## Ticket 58 (fourth integration of the day)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 58 governance hardening (row 13 and wave-1 carried findings) | `02814a05` | revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`, convergence disposition `APPROVED` (CodeReview §5 rule B) | `88321851` |
+
+A fresh integration clone (`C:/Temp/claude/jas-integ5`, `transfer.fsckObjects=true`, `fetch.fsckObjects=true`, `core.autocrlf=false`) was made from `ac631a22`; the branch tip was checked equal to the candidate, and the merge had no conflict. The consistency test passed on the merged tree, which holds every ticket and review record written after the candidate's base (46 passed).
+
+| Check | Result |
+| --- | --- |
+| Full suite in the integration clone under the host lock | 5 failed, 3475 passed, 36 skipped; every failure is a base name; zero new red. No other pytest was running at acquisition |
+| Pushed | `cp/wave2-gates` at `88321851` (fast-forward from `ac631a22`) |
+| CI readback | run 42128071544 on `88321851`: `test (linux)` and `test (windows)` both `success` |
