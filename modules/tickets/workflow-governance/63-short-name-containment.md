@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `b74840f1`: S63-01 containment bypass (blocks), S63-02 the same class already at the base, S63-07 the 39th row; correction 1 dispatched, new review cadence） |
+| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `b74840f1`: S63-01 containment bypass (blocks), S63-02 the same class already at the base, S63-07 the 39th row; correction 1 returned (`00fdc179`, CI run 42123979062 green on both jobs); revision02 initial review dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
