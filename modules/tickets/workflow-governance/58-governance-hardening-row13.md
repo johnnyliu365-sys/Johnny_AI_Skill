@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/58-governance-hardening-row13-out/` / owner implementation seat / worktree `.worktrees/58-governance-hardening-row13` / branch `cp/wave2-58-governance-hardening-row13` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）; Markdown for the two document edits |
-| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `49c2c43c`: S58-04 TICKET_DEFECT; correction 1 returned (`71b0d8ff`); revision02 initial review dispatched） |
+| 狀態 | `IN_PROGRESS`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `49c2c43c`: S58-04 TICKET_DEFECT; revision02 initial review CHANGES_REQUESTED on `71b0d8ff` (S58-10, S58-11); correction 2 dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/58-governance-hardening-row13` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/58-governance-hardening-row13-review` |
@@ -147,3 +147,7 @@ Review record section "Revision01 initial review". S58-04 is a `TICKET_DEFECT`: 
 | S58-09 | EVIDENCE_DEFECT | the spy test injects and asserts every name of the list, one by one |
 
 Carried, no work here: S58-06 (vocabulary and paraphrase gaps in the sweep) goes with the next change of the consistency test. Routed outside this ticket: `contract_gate.py` removes only nine of the listed names, and `coverage_map.py` and `integrate.py` keep `GIT_TEST_*`; each closes with the next change of its gate (with S60-01 and S60-03), and ticket 50's revision02 states the full list.
+
+### Correction 2 under revision02 (after the revision02 initial review `CHANGES_REQUESTED`)
+
+No ticket defect was found, so revision02 stands. S58-10: a Chinese negation after the reviewer exempts a sentence only when an executor verb follows it directly (代為, 整合, 合併, 推送, 落地, 執行, commit); the before-form gets the same check; the reviewer's CM10 sentence is an injection that goes red. S58-11: the field-list lookahead accepts only what R4-7 uses (`from`, and a closing bracket or full stop if the entry list needs one); CM12 and CM13 are injections that go red. S58-13: E1 runs last, on the receipt as returned, and the STATEMENT describes the mutation clones as the capture does. Carried, no work here: S58-12 (English negation markers anywhere in the sentence) goes with S58-06 to the next change of the consistency test. The next review is the one correction review of revision02.

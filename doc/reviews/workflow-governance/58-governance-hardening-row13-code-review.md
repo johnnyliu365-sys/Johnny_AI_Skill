@@ -155,3 +155,121 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/58-rev01-initial
 reviewed_at: 2026-11-06
 ```
+
+## Revision02 initial review
+
+**Verdict: `CHANGES_REQUESTED`.** Correction 1 closes S58-03, -04, -05, -08 and -09 completely. Every door I left open in revision01 is now red: CM1, CM2, both CM3 doors, CS1 and the six CS2 drops. The graft probe and the shallow-file probe give exit 0 on a correct pin, also under `--write`, which leaves the index unchanged. The receipt passes both checkers. P1, `mypy --strict` and the full suite are green with no new red. Two rows are only partly closed, and each leaves a new door: S58-10 (row S58-01: `審閱者不得…` about another verb still exempts an executor clause in the same sentence) and S58-11 (row S58-02: the field-list lookahead accepts `must`, `are`, `is` and seven more words that the tree does not need, so "`reviewer` and `submitter` must merge the candidate" stays green). Both are Low, both are additive fixes of one expression each in `tests/test_governance_consistency.py`, and under rule B neither would block approval. S58-12 is hardening, and S58-13 is a receipt-order note.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/58-governance-hardening-row13.md` at `56f6cd75`, closure revision02 (part C names the git environment list; section "Revision02") |
+| Candidate | `71b0d8ff99ac17e7527a12587fe610a3cfaf41b9` on `cp/wave2-58-governance-hardening-row13`, one additive commit on the revision01 candidate `49c2c43c` |
+| Commit | Author and committer `Johnny Liu <johnny.liu365@gmail.com>`; trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`, which is the correct form (it names the model that did the work; which model ran the seat is not verified here) |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-58b_dispatch.yaml` |
+| Review worktree | `.worktrees/58-governance-hardening-row13-review`, detached at the candidate, porcelain empty before and after |
+| Scratch | `.worktrees/58-governance-hardening-row13-review-scratch/rev02` (a `--no-hardlinks` LF clone at the candidate, captures) |
+| Receipt | `.worktrees/58-governance-hardening-row13-out-c1/RETURN.md` (LF, 249801 bytes, 0 CR) |
+| References applied | `CodeReview.md` (§5, rule B); `review-checks.md` (test truthfulness and reviewer counter-mutation, error-code consistency, exception behaviour) |
+| XSS / Agent control / profile / POC | Not applicable, as in revision01: a test, one script, two test files and a README; no browser surface, no Agent control path, one seat, no POC |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | Boundary | PASS | `49c2c43c..71b0d8ff` touches 5 paths (`index_pins.py`, scripts `README.md`, the three ticket test files), all in the boundary block. `dddc2126..71b0d8ff` touches the same 8 paths as revision01. Nothing under `doc/reviews/` |
+| 2 | Part B unchanged | PASS | `git diff 49c2c43c 71b0d8ff -- Workflow.md doc/runbooks/` is empty |
+| 3 | Stdlib, `Any`, names | PASS | No new import, no `Any`, no `type: ignore`. The added lines name no company address, no target project, no vendor and no host path |
+| 4 | T1 `mypy --strict --python-version 3.11` (two scripts, new test) | PASS | `Success: no issues found in 3 source files`, exit 0 |
+| 5 | P1 in the receipt (`-rA`) | PASS | `204 passed, 389 subtests passed`, exit 0. The capture holds the 5 `tolerated under the precedence note` lines |
+| 6 | F1, own full suite under the host lock | PASS | `8 failed, 3338 passed, 35 skipped, 6788 subtests passed in 761.97s`, exit 1. All 8 `FAILED` names are among the 12 base names: zero new red. That equals the seat's F1 |
+| 7 | `receipt_check.py` (ticket 48) on the receipt | PASS | `receipt defects: 0`, exit 0 |
+| 8 | `evidence_gate.py`, three wave-1 tools, `--require-cell P1 T1 M1 F1` | PASS | `cells=6 defects=0`, exit 0, the same text as `E1.txt` (order note S58-13) |
+| 9 | Receipt form | PASS | 0 CR in the receipt and in every capture. Every raw block is byte-identical to its capture. Every exit list equals the `exit=` lines in capture order (M1: 35). Every cell names the candidate. Every `tool_digest` equals the sha256 of the blob at the candidate |
+| 10 | M1 merged from four clones | PASS | 35 blocks numbered 1–35 without gaps. Each block has exactly one header, `test file`, diff, `pytest tail`, one summary line, `verdict` and `exit=`. Every RED block has exit 1 and a `FAILED`/`SUBFAILED` line; the baselines and mutation 35 have exit 0. Then 5 restore records with empty porcelain: one for all four clones, and one per clone with hashes (`9332804a22db`, `2755ab9a1fb7`, `b3efa3627c62`). Those hashes equal the sha256 of the candidate blobs with CRLF line ends, so each clone was restored to the bytes of its own checkout |
+| 11 | `receipt_fence_check.py` runs no git child | PASS | No `subprocess` import or call in the script; it is unchanged in this commit |
+| 12 | Every revision01 rule still holds | PASS | All revision01 tests pass in P1. The changed assertions are the ones the rows name: the Chinese negation list (S58-01), `FIELD_NAME` → `mask_field_lists` (S58-02), the precedence pin and `removed()` everywhere (S58-03), the replaced shallow test (S58-04), and the spy test's injected set, a superset of the old one (S58-09). My CM9 control (the 代為 commit injection without a negation) is still red |
+
+### Status of S58-01 to S58-09
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| S58-01 | PARTIAL (S58-10) | CM1 rerun is red: `RealTreeTests::test_no_retired_rule_is_live…` lists `Workflow.md:318 (c 審閱者整合 (zh))`; it is also an injection in `INJECTIONS`. `審閱者不得代為 commit 或整合候選` and `整合不由審閱者執行` stay green. Open: the negation after the reviewer exempts the sentence whatever verb it negates (CM10) |
+| S58-02 | PARTIAL (S58-11) | CM2 rerun is red, through the real-tree test, and it is an injection. The R4-7 sentence at `modules/spec/workflow-governance.md:204` stays green through `mask_field_lists`. Open: lists followed by `must`/`are` are masked too (CM12, CM13) |
+| S58-03 | CLOSED | `PRECEDENCE_REVERSED_OK` is the exact text `與 R4-1、R4-4 衝突處以本修訂為準`. Both CM3 doors, rerun on the tree, are red through `RealTreeTests::test_the_precedence_sentence_is_pinned_by_rule_and_place` (`PRECEDENCE_RULE_MISSING: Revision 04 (R4-1, R4-4) prevails …`). Every case goes through `removed()`/`removed_pattern()`, which raise when the phrase is absent, and a test pins that |
+| S58-04 | CLOSED | `GIT_SELECTING_VARIABLES` is the 13 names of `evidence_gate.py`; `GIT_REMOVED_PREFIXES = ("GIT_CONFIG", "GIT_TEST_")`, matched on `name.upper()`. Graft probe from revision01 at the candidate: `--check` exit 0, `--write` exit 0 with `rewrote=0` and the index byte-identical. Was exit 1 `STALE`. An inherited `GIT_SHALLOW_FILE` naming HEAD: exit 0 for `--check` and `--write`, index unchanged. `GIT_QUARANTINE_PATH`, `GIT_REPLACE_REF_BASE`, `GIT_TEST_FOO` and `GIT_CONFIG_PARAMETERS` each give exit 0. The README and the docstring state the list. `receipt_fence_check.py` runs no git (cell 11) |
+| S58-05 | CLOSED | `EXPECTED_TOLERATED` holds the 5 files and counts, and the real-tree test asserts equality. P1 runs with `-rA` and shows the report. The seat's mutations 15–18 (a file removed, a wrong count, an empty report, a growing set) are red |
+| S58-06 | CARRIED | As routed: the next change of the consistency test |
+| S58-07 | ACCEPTED | The control plane accepts "runbooks 目錄" (ticket Revision02 section) |
+| S58-08 | CLOSED | CS1 rerun is red: `test_a_self_note_run_on_a_section_with_zero_fences_is_exit_1_no_fences` |
+| S58-09 | CLOSED | All six CS2 drops rerun are red, each through `test_each_name_of_the_list_is_removed_one_by_one` with `SUBFAILED(name=…)` for the dropped name. Four of them also go red through the spy test's per-command subtests. The test lists the names itself (`REMOVED_GIT_NAMES`) and compares that set with the script's tuple |
+
+### Question 2: the replaced ticket 48 test
+
+`test_shallow_reported_without_a_shallow_file_is_a_tool_fault` is now `test_an_inherited_shallow_file_changes_nothing` (`tests/test_gate_index_pins.py:669`). That follows the row. The row asks for exactly this rename of the rule, and the STATEMENT names it. The new test is a real pin. It first asserts the premise: under the variable, plain `git rev-parse --is-shallow-repository` says `true`. It then compares the whole `(exit, stdout, stderr)` triple with the run without the variable. If `GIT_SHALLOW_FILE` were kept, the script would see a shallow repository with no shallow file and exit 2, so the comparison would fail (the seat's mutation 32 is red). The old test pinned four things:
+
+- (a) an inherited `GIT_SHALLOW_FILE` is a fault. This is reversed on purpose by the row.
+- (b) "git says shallow, but the common directory holds no shallow file" is a fault. This is still pinned by `test_a_simulated_shallow_answer_without_a_shallow_file_is_a_tool_fault` (`:683`), at the `Repo.shallow_boundary` level with a mocked git answer. The variable was the only way to produce this state on a real repository, so an end-to-end CLI test of it is no longer possible.
+- (c) `--write` writes nothing when it faults. This is still pinned for faults in general (for example the unborn-HEAD test checks `--check` and `--write` and that the index is unchanged).
+- (d) The `--write` mode with the variable set. The new test runs `--check` only. My probe shows `--write` with the variable gives exit 0 and `rewrote=0` on a correct index.
+
+Nothing that should still hold has become unpinned. (d) is a small coverage difference, not a finding.
+
+### Question 3: mutation 35 (names matched case-sensitively)
+
+The equivalence is real on Windows, and not only there. On this host `os.environ` upper-cases every name (probe: after `mock.patch.dict(os.environ, {"git_dir": …, "Git_Test_Y": …})` the keys read back as `GIT_DIR`, `GIT_TEST_Y`), so the mutant sees the same names as the candidate.
+
+On a case-preserving environment I replaced `os.environ` with a plain dict. There the candidate keeps only `KEEP`, while the mutant also keeps `git_dir`, `Git_Graft_File` and `git_test_z`. The existing case tests (`test_the_removed_variables_are_matched_case_insensitively…`, the lower-case and mixed-case names in `test_each_name_of_the_list_is_removed_one_by_one`, `git_test_lower` in the spy test) assert on that dict, so on Linux CI the mutant goes red. It is killed where it can be observed.
+
+Its effect on a verdict is nil on POSIX as well, because git reads its variables by their exact upper-case names there. The case-insensitive match is the rule the ticket writes ("case-insensitive"), and the POSIX run pins it. I accept the marker: it is equivalent on this host and pinned on Linux. No finding.
+
+### Reviewer counter-mutations (scratch clone at the candidate, each restored, porcelain 0; unfiltered output kept per run)
+
+| # | Door | Result | Reading |
+| --- | --- | --- | --- |
+| 1 | CM1 rerun | RED (8 failed: real-tree LIVE `c`, the unmodified-copy test, the green-negation subtests) | S58-01 door closed |
+| 2 | CM2 rerun | RED (8 failed, real-tree LIVE `g1`) | S58-02 door closed |
+| 3 | CM3 door 1 rerun (`衝突處不以本修訂為準`) | RED (5 failed, real-tree `PRECEDENCE_RULE_MISSING`) | closed on the production check |
+| 4 | CM3 door 2 rerun (`R4-1、R4-4 以外的衝突處`) | RED (5 failed, same) | closed |
+| 5 | CS1 rerun | RED (1 failed, the new S58-08 test) | closed |
+| 6–11 | CS2 reruns: `GIT_OBJECT_DIRECTORY`, `GIT_ALTERNATE_OBJECT_DIRECTORIES`, `GIT_NAMESPACE`, `GIT_CEILING_DIRECTORIES`, `GIT_COMMON_DIR`, `GIT_PREFIX` dropped | RED ×6 (3, 9, 9, 9, 3, 9 failed) | each through `SUBFAILED(name=<that name>)` of the one-by-one test |
+| 12 | CM9 control rerun | RED | the sweep still reaches appended text |
+| 13 | CM10: `Workflow.md` + "審閱者不得略過閘門，核准後代為 commit 到候選分支。" | GREEN (46 passed) | S58-10 |
+| 14 | CM11: `CodeReview.md` + "After approval the reviewer merges the candidate into main, and the submitter does not merge anything." | GREEN | S58-12 |
+| 15 | CM12: `CodeReview.md` + "After approval `reviewer` and `submitter` must merge the candidate into main." | GREEN | S58-11 |
+| 16 | CM13: `CodeReview.md` + "After approval `reviewer`, `submitter` are the ones who merge the candidate into main." | GREEN | S58-11 |
+| — | Probe: rebuild `FIELD_LIST` without each lookahead word in turn and sweep the real tree | Only `from` is needed (dropping it gives the one R4-7 hit at `workflow-governance.md:204`). Dropping `of`, `in`, `at`, `differs`, `are`, `is`, `as`, `must`, `=` or the punctuation branch gives 0 live hits | S58-11 |
+
+### New findings
+
+| ID | Class | Severity | Rule B | File:line | Observation | Verification |
+| --- | --- | --- | --- | --- | --- | --- |
+| S58-10 | `IMPLEMENTATION_DEFECT` (Revision02 row S58-01: "only when it negates the reviewer as executor") | Low | Not blocking. A gate gap that would let a regression pass, so it is fixed with the next change to this test | `tests/test_governance_consistency.py:91-94` | The after-form `審閱者(本人\|自己)?(不得\|不可\|…)` accepts any following verb. "審閱者不得略過閘門，核准後代為 commit 到候選分支" negates the reviewer as the one who skips the gate, not as executor, and `，` does not split the sentence, so the 代為 commit clause is exempt again. Fix: require an executor verb right after the negation (for example `審閱者(本人\|自己)?(不得\|不可\|不能\|不會)(代為\|整合\|合併\|推送\|落地\|執行\|commit)`), give the before-form the same check, and add CM10 as an injection | CM10 green |
+| S58-11 | `IMPLEMENTATION_DEFECT` (Revision02 row S58-02: "exempt only in the field-list form R4-7 uses (read from the review record)") | Low | Not blocking, same reasoning | `tests/test_governance_consistency.py:386-390` (`FIELD_LIST` lookahead) | The lookahead accepts punctuation or any of `from, of, in, at, differs, are, is, as, must, =`. The real tree needs only `from`. With every other word and the punctuation branch removed, the sweep still has 0 live hits. So a list followed by `must` or `are` and then a merge verb is masked, and "`reviewer` and `submitter` must merge the candidate" is green. STATEMENT choice 1 says "a list followed by a verb is a person", but `must merge` and `are the ones who merge` are verbs after the list, and both are masked. Fix: limit the lookahead to what R4-7 uses (`from` and, if needed for the Entry list, a closing bracket or a full stop), and add CM12 and CM13 as injections | CM12, CM13 green; lookahead probe |
+| S58-12 | `OUT_OF_SCOPE_HARDENING` | Low | Not blocking | `tests/test_governance_consistency.py:81-86` (`REVIEWER_NEGATED`) | The English markers (`does not (integrate\|merge\|push\|land)`, `not the reviewer`, `differs from`, `superseded`, …) match anywhere in the sentence, the S58-01 shape in English: an unrelated "the submitter does not merge anything" exempts "the reviewer merges the candidate". This corrects my revision01 record, which called the English list executor-only. No Revision02 row covers it; carry it with S58-06 | CM11 green |
+| S58-13 | `EVIDENCE_DEFECT` (receipt rule "E1 on the receipt as returned") | Low | Not blocking; the result is unchanged | `.worktrees/58-governance-hardening-row13-out-c1/` | `E1.txt` was written at 04:37:52 local, before the final `M1.txt` (04:45:05), `P9.txt` (04:45:18) and `RETURN.md` (04:45:19). So the seat's E1 did not run on the receipt as returned. My run of the same command on the returned receipt gives the identical `cells=6 defects=0`, exit 0. The STATEMENT also says M1 ran in "a disposable --no-hardlinks clone", while the capture says four. From the pytest durations (1423 s in total, at most 84 s each) and the file times, the four-clone run fits after F1 ended at 04:37:11, so it did not overlap the lock. In the next receipt, run E1 last and describe the clones as the capture does | `stat` of the out dir; own E1 |
+
+### Commands
+
+| # | Command | Exit |
+| --- | --- | --- |
+| 1 | `git log`/`diff --stat` `49c2c43c..71b0d8ff`; `git diff --name-only dddc2126 71b0d8ff`; `git diff 49c2c43c 71b0d8ff -- Workflow.md doc/runbooks/`; ticket and dispatch read with `git show 56f6cd75:…` | 0; part B diff empty |
+| 2 | `git clone --no-hardlinks` (LF, `core.autocrlf=false`) into `rev02/clone`; checkout `71b0d8ff` | 0 |
+| 3 | `receipt_check.py` on the receipt; `evidence_gate.py … --tool dispatch_lint.py --tool index_pins.py --tool receipt_fence_check.py --require-cell P1 T1 M1 F1`; `verify_receipt.py` (LF, raw blocks, exit lists, candidate, digests); M1 block checker; `stat` of the out dir | 0; 0; all equal; 35 intact blocks, 5 clean restore records |
+| 4 | `cm_rev02.sh`: 16 runs, each with its full test file, restored by `git checkout`, full output in `rev02/cm_rev02_raw/<n>.txt` | 1 ×12, 0 ×4 |
+| 5 | `index_pins.py` probes on the revision01 probe repository: plain, `GIT_GRAFT_FILE` (`--check`, `--write`), `GIT_SHALLOW_FILE` (`--check`, `--write`), `GIT_QUARANTINE_PATH`, `GIT_REPLACE_REF_BASE`, `GIT_TEST_FOO`, `GIT_CONFIG_PARAMETERS` | 0 every run; index byte-identical |
+| 6 | `case_probe.txt`: `os.environ` read-back on Windows; `git_environment()` on a case-preserving dict, candidate against mutant 35 | candidate keeps `KEEP` only; mutant keeps three more |
+| 7 | `fieldlist_probe.txt`: `FIELD_LIST` without each lookahead word, sweep of the real tree | only `from` needed |
+| 8 | `python -m mypy --strict --python-version 3.11` on the two scripts and the new test | 0 |
+| 9 | host lock `C:/Temp/claude/jas-fullsuite.lock` by `mkdir`, retried every 30 s: waited 20:58:38Z–21:09:16Z while run `jas62-F1` held it (not touched); acquired 21:09:46Z with `owner.txt` = `run_id=58-rev02-initial`. `Get-CimInstance Win32_Process` at acquisition: no pytest or mutation process (two `tail`/`grep` watchers started 2026-10-27 from a checkout outside this repository, and the query itself). Released 21:22:30Z: `owner.txt` checked, the directory renamed to `jas-fullsuite.lock.released-58-rev02-initial-<pid>-<epoch>`, `owner.txt` checked again in the renamed directory, then removed | 0 |
+| 10 | `python -m pytest tests -q -p no:cacheprovider` (review worktree, under the lock); `FAILED` names compared with `C:/Temp/claude/jas48_F1_base.txt` (CR removed, `^FAILED` lines) | 1 (8 failed, all base names) |
+
+Raw logs: kept by the reviewer seat in `.worktrees/58-governance-hardening-row13-review-scratch/rev02` (`cm_rev02.txt`, `cm_rev02_raw/1.txt`–`16.txt`, `case_probe.txt`, `fieldlist_probe.txt`, `p9_full.txt`, `e1_mine.txt`, `t1_mine.txt`, `f1_mine.txt`, `procs_at_acquire.txt`, `fullsuite.log`); not committed. Every counter-mutation was judged on its full pytest output (the reason for each red was read in `cm_rev02_raw`). The log file holds extracts only.
+
+Not verified: a POSIX run of the case tests (no Linux host here; the Linux claim rests on reading the tests and on the dict probe); whether git on Windows would honour a lower-case name passed in a child environment (moot, because `os.environ` never yields one); which model ran the seat; whether the seat's first, discarded M1 run differed from the committed one in anything but mutation 35's marker (it is not in the receipt); the order of the seat's M1 slices against other seats' runs on the host.
+
+```review-verdict
+candidate: 71b0d8ff99ac17e7527a12587fe610a3cfaf41b9
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/58-rev02-initial
+reviewed_at: 2026-11-06
+```
