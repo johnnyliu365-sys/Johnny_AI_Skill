@@ -8,7 +8,6 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from typing import Any
 
 REPO = Path(__file__).resolve().parents[1]
 CHECKER = REPO / "ci" / "check_registered_failures.py"
@@ -44,7 +43,7 @@ class CheckerBase(unittest.TestCase):
     def run_checker(
         self,
         xml: str | bytes | None,
-        registered: Any,
+        registered: object,
         operating_system: str = "linux",
         raw_list: str | None = None,
     ) -> subprocess.CompletedProcess[str]:
@@ -171,8 +170,8 @@ class SchemaAndInputTests(CheckerBase):
         self.assertEqual(result.stdout, "")
         self.assertEqual(len(result.stderr.splitlines()), 1, result.stderr)
 
-    def listed(self, **extra: Any) -> dict[str, Any]:
-        value = row("tests/test_a.py::test_one")
+    def listed(self, **extra: object) -> dict[str, object]:
+        value: dict[str, object] = dict(row("tests/test_a.py::test_one"))
         value.update(extra)
         return {"linux": [value], "windows": []}
 
@@ -224,13 +223,13 @@ class SchemaAndInputTests(CheckerBase):
         self.assert_exit_2(self.run_checker(None, {"linux": [], "windows": []}))
 
     def test_a_malformed_report_is_exit_2(self) -> None:
-        empty = {"linux": [], "windows": []}
+        empty: dict[str, list[object]] = {"linux": [], "windows": []}
         self.assert_exit_2(self.run_checker("<testsuites><testsuite>", empty))
         self.assert_exit_2(self.run_checker("", empty))
         self.assert_exit_2(self.run_checker(b"\xff\xfe\x00garbage", empty))
 
     def test_a_report_with_the_wrong_root_or_a_doctype_is_exit_2(self) -> None:
-        empty = {"linux": [], "windows": []}
+        empty: dict[str, list[object]] = {"linux": [], "windows": []}
         self.assert_exit_2(self.run_checker("<html><testcase classname='a' name='b'/></html>", empty))
         self.assert_exit_2(self.run_checker('<!DOCTYPE x [<!ENTITY a "b">]><testsuites/>', empty))
 
@@ -295,10 +294,17 @@ class WorkflowLockTests(unittest.TestCase):
             self.assertRegex(lines[index - 1], r"#\s*\S+\s+v\d+\.\d+\.\d+", lines[index - 1])
 
     def test_the_token_is_read_only_and_no_secret_is_read(self) -> None:
-        self.assertRegex(self.text, r"(?m)^permissions:\n  contents: read\n")
-        self.assertEqual(len(re.findall(r"(?m)^\s*permissions:", self.text)), 1)
-        self.assertNotIn("secrets.", self.text)
-        self.assertNotIn("GITHUB_TOKEN", self.text)
+        lines = self.text.splitlines()
+        blocks = [i for i, line in enumerate(lines) if re.match(r"^\s*permissions:", line)]
+        self.assertEqual(blocks, [lines.index("permissions:")])
+        entries: list[str] = []
+        for line in lines[blocks[0] + 1:]:
+            if not line.startswith(" "):
+                break
+            entries.append(line)
+        self.assertEqual(entries, ["  contents: read"])
+        for forbidden in ("secrets.", "GITHUB_TOKEN", "github.token", "id-token"):
+            self.assertNotIn(forbidden, self.text)
 
     def test_the_matrix_triggers_and_steps_are_as_the_ticket_states(self) -> None:
         for needle in ("ubuntu-latest", "windows-latest", 'python-version: "3.11"', "fetch-depth: 0",
@@ -312,6 +318,20 @@ class WorkflowLockTests(unittest.TestCase):
     def test_the_pytest_exit_is_not_the_job_result(self) -> None:
         pytest_line = next(line for line in self.text.splitlines() if "python -m pytest" in line)
         self.assertIn("||", pytest_line)
+
+    def test_the_checker_step_exit_is_the_job_result(self) -> None:
+        lines = self.text.splitlines()
+        self.assertNotIn("continue-on-error", self.text)
+        checkers = [i for i, line in enumerate(lines) if "ci/check_registered_failures.py" in line]
+        self.assertEqual(len(checkers), 1)
+        command = lines[checkers[0]]
+        self.assertRegex(command, r'^\s+python ci/check_registered_failures\.py --os \$\{\{ matrix\.os_name \}\} --junit "\$RUNNER_TEMP/junit\.xml"$')
+        for operator in ("||", ";", "|", "&", ">", "`", "$("):
+            self.assertNotIn(operator, command.split("--junit", 1)[1].replace("$RUNNER_TEMP", ""))
+        self.assertNotIn("||", command)
+        self.assertEqual([line for line in lines[checkers[0] + 1:] if line.strip()], [])
+        self.assertEqual(lines[checkers[0] - 1].strip(), "run: |")
+        self.assertEqual(lines[checkers[0] - 2].strip(), "- name: Compare failures with the registered list")
 
 
 if __name__ == "__main__":
