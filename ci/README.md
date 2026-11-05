@@ -43,7 +43,7 @@ them.
 
 ### Registered counts
 
-Windows runner 47 rows, Linux runner 234 rows (read from CI runs 42009508339 and 42011080430; the Windows set was identical in both runs).
+Windows runner 8 rows, Linux runner 234 rows. The Windows count was 47 until ticket 63 removed the 39 short-name rows; the other counts were read from CI runs 42009508339 and 42011080430.
 
 ### Host failures that do not fail on a runner
 
@@ -55,7 +55,7 @@ These four failed in the base capture (`C:/Temp/claude/jas48_F1_base.txt`, a ful
 
 ### Windows runner failures that do not fail on the host
 
-The 39 rows of `test_dispatch_authority`, `test_dispatch_session`, `test_parallel_worker_dispatch`, `test_review_return` and `test_plugin_distribution_bundle`: the runner's temp directory is the 8.3 short path `C:/Users/RUNNER~1/...`. `path_containment.resolves_within_root` returns `False` whenever `base.resolve() != base`, so it treats the short-name alias of the repository root as a redirect and the worktree is refused. That is a product defect on a supported platform, not a capability the runner lacks; the host's temp path has no short name. Follow-up: `modules/tickets/workflow-governance/63-short-name-containment.md`. `test_acr2_linux_requires_an_actual_linux_kernel_and_backend` fails on the Windows runner because it has no WSL Linux backend (`_PlatformProofUnavailable: LINUX`); on the host the WSL proof does not run either.
+The 39 rows of `test_dispatch_authority`, `test_dispatch_session`, `test_parallel_worker_dispatch`, `test_review_return` and `test_plugin_distribution_bundle` were registered because the runner's temp directory is the 8.3 short path `C:/Users/RUNNER~1/...` and `path_containment.resolves_within_root` treated the short-name alias of the repository root as a redirect. Ticket 63 fixed that (the alias is the same directory; junctions, symlinks and reparse points are still refused) and removed the rows. `test_acr2_linux_requires_an_actual_linux_kernel_and_backend` fails on the Windows runner because it has no WSL Linux backend (`_PlatformProofUnavailable: LINUX`); on the host the WSL proof does not run either.
 
 ### Line endings (checkout configuration)
 
