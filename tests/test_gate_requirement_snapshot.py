@@ -2175,6 +2175,63 @@ class UnchangedTakeTests(SnapshotCase):
         self.assert_unchanged(path, path.read_bytes().replace(b"\n", b"\r\n"), list(reversed(self.ROWS)))
 
 
+class UnchangedAfterLaterVersionsTests(SnapshotCase):
+    """Ticket 60 (S52-37): rows equal to the latest version's rows print `unchanged` and write nothing whichever
+    version the latest is, not only when it is the first."""
+
+    def test_equal_rows_after_v2_and_after_v3_are_unchanged_and_write_nothing(self) -> None:
+        first, second, third = [make_row("r1")], [make_row("r1"), make_row("r2")], [make_row("r1"), make_row("r2"), make_row("r3")]
+        for rows, stamp in ((first, T1), (second, T2), (third, "2026-11-06T09:00:00Z")):
+            code, out, err = self.env.take(rows, taken_at=stamp)
+            self.assertEqual((code, err), (0, ""), out)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json", "2026-11-05-v2.json", "2026-11-06-v3.json"])
+        before = self.env.tree()
+        for rows, latest in ((third, "2026-11-06-v3.json"),):
+            code, out, err = self.env.take(rows, taken_at="2026-11-07T09:00:00Z")
+            self.assertEqual((code, out, err), (0, f"{self.env.snapshot('src', latest)} unchanged\n", ""))
+            self.assertEqual(self.env.tree(), before)
+        self.assertEqual(self.env.files(), ["2026-11-04-v1.json", "2026-11-05-v2.json", "2026-11-06-v3.json"])
+
+    def test_equal_rows_after_v2_are_unchanged_and_write_nothing(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        before = self.env.tree()
+        code, out, err = self.env.take([make_row("r2"), make_row("r1")], taken_at="2026-11-06T09:00:00Z")
+        self.assertEqual((code, out, err), (0, f"{self.env.snapshot('src', '2026-11-05-v2.json')} unchanged\n", ""))
+        self.assertEqual(self.env.tree(), before)
+
+    def test_rows_equal_to_an_older_version_only_are_a_new_version(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        code, out, err = self.env.take([make_row("r1")], taken_at="2026-11-06T09:00:00Z")
+        self.assertEqual((code, err), (0, ""))
+        self.assertEqual(out, f"{self.env.snapshot('src', '2026-11-06-v3.json')}\n")
+
+
+class StrayClaimNameTests(SnapshotCase):
+    """Ticket 60 (S52-39): only a file named exactly `.v<n>.claim` is a claim; a name that merely starts or ends
+    like one does not block take."""
+
+    STRAYS = (".v2.claim.bak", "x.v2.claim", ".v1.claimx", "a.v1.claim.bak", ".v.claim", ".v2.claim~")
+
+    def test_a_stray_file_beside_a_claim_name_does_not_block_take(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        for name in self.STRAYS:
+            self.env.snapshot("src", name).write_bytes(b"not a claim\n")
+        code, out, err = self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        self.assertEqual((code, err), (0, ""), out)
+        self.assertEqual(out, f"{self.env.snapshot('src', '2026-11-05-v2.json')}\n")
+        self.assertEqual(self.env.files(), sorted(["2026-11-04-v1.json", "2026-11-05-v2.json", *self.STRAYS]))
+
+    def test_a_claim_named_exactly_still_blocks_take(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        self.env.snapshot("src", ".v2.claim").write_bytes(b"1\n")
+        code, out, err = self.env.take([make_row("r1"), make_row("r2")], taken_at=T2)
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertIn(".v2.claim", err)
+        self.assertEqual(self.env.files(), [".v2.claim", "2026-11-04-v1.json"])
+
+
 class PrintedLineTests(SnapshotCase):
     """Every printed line is one line: the usage line, the success and unchanged lines, defect and diff lines."""
 
@@ -2354,14 +2411,14 @@ class PrintedLineDocumentationTests(SnapshotCase):
 
 
 
-CONTROLS = ("\x1b", "\t", "\x00", "\x7f")
+CONTROLS = ("\x1b", "\t", "\x00", "\x7f", "\x1f")
 
 
 class ControlCharacterLineTests(SnapshotCase):
     """ESC, TAB, NUL and DEL are shown as escapes in every printed line, not only the line breaks."""
 
     def test_the_helper_shows_each_control_character_as_its_escape(self) -> None:
-        expected = {"\x1b": "\\x1b", "\t": "\\x09", "\x00": "\\x00", "\x7f": "\\x7f"}
+        expected = {"\x1b": "\\x1b", "\t": "\\x09", "\x00": "\\x00", "\x7f": "\\x7f", "\x1f": "\\x1f"}
         for char, escape in expected.items():
             with self.subTest(char=ord(char)):
                 self.assertEqual(requirement_snapshot._one_line(f"a{char}b"), f"a{escape}b")
@@ -2384,7 +2441,7 @@ class ControlCharacterLineTests(SnapshotCase):
                     self.assertEqual(err.splitlines(), [*usage, f"requirement_snapshot.py: error: {message}"], repr(err))
 
     def test_a_real_command_shows_a_control_character_in_an_argument_as_an_escape(self) -> None:
-        for char in ("\x1b", "\t", "\x7f"):
+        for char in ("\x1b", "\t", "\x7f", "\x1f"):
             with self.subTest(char=ord(char)):
                 done = subprocess.run(
                     [sys.executable, str(SCRIPT), "take", f"--bogus{char}x"],
@@ -2421,7 +2478,7 @@ class ControlCharacterLineTests(SnapshotCase):
                 self.assertEqual(err, f"requirement_snapshot.py: tool fault: RuntimeError: x{escape_of(char)}y\n")
 
     def test_a_fault_naming_a_path_with_a_control_character_is_one_escaped_line(self) -> None:
-        for char in ("\x1b", "\t", "\x7f"):
+        for char in ("\x1b", "\t", "\x7f", "\x1f"):
             with self.subTest(char=ord(char)):
                 code, out, err = self.env.main("verify", str(self.env.dir / f"a{char}b.json"))
                 self.assertEqual((code, out), (2, ""), err)
@@ -2484,6 +2541,79 @@ class ControlCharacterLineTests(SnapshotCase):
                     )
                 self.assertEqual((code, err), (0, ""))
                 self.assertEqual(out, str(stored_path).replace(char, escape_of(char)) + " unchanged\n")
+
+
+C1_CONTROLS = ("\x80", "\x8d", "\x90", "\x9b", "\x9f")
+
+
+class C1ControlCharacterLineTests(SnapshotCase):
+    """Ticket 60 (S52-41): the C1 controls (U+0080 to U+009F) are shown as escapes in every printed line, as the C0
+    controls are; U+00A0, the first character after them, is printed as it is."""
+
+    def test_the_helper_escapes_every_c1_control_and_leaves_the_next_character(self) -> None:
+        for code in range(0x80, 0xA0):
+            with self.subTest(code=code):
+                self.assertEqual(requirement_snapshot._one_line(f"a{chr(code)}b"), f"a\\x{code:02x}b")
+        self.assertEqual(requirement_snapshot._one_line("a\xa0b"), "a\xa0b")
+        self.assertEqual(requirement_snapshot._one_line("a\x7fb"), "a\\x7fb")
+
+    def test_the_usage_error_shows_each_c1_control_as_an_escape(self) -> None:
+        for char in C1_CONTROLS:
+            with self.subTest(char=ord(char)):
+                code, out, err = self.env.main("take", f"--bogus{char}x")
+                self.assertEqual((code, out), (3, ""), err)
+                self.assertNotIn(char, err)
+                self.assertEqual(err.splitlines()[-1], f"requirement_snapshot.py: error: unknown option --bogus{escape_of(char)}x")
+
+    def test_the_success_and_unchanged_lines_show_a_c1_control_in_the_root_as_an_escape(self) -> None:
+        self.env.take([make_row("r1")], taken_at=T1)
+        data = self.env.snapshot("src", "2026-11-04-v1.json").read_bytes()
+        store = PrintedLineTests.patched_store
+        for char in C1_CONTROLS:
+            with self.subTest(char=ord(char)):
+                root = self.env.dir / f"a{char}b"
+                with store(cast("PrintedLineTests", self), {}):
+                    code, out, err = self.env.main(
+                        "take", "--source", "src", "--input", str(self.env.write_input([make_row("r1")])),
+                        "--root", str(root), "--taken-at", T2,
+                    )
+                self.assertEqual((code, err), (0, ""))
+                self.assertNotIn(char, out)
+                self.assertEqual(out, str(root / "src" / "2026-11-05-v1.json").replace(char, escape_of(char)) + "\n")
+                stored_path = root / "src" / "2026-11-04-v1.json"
+                with store(cast("PrintedLineTests", self), {stored_path: data}):
+                    code, out, err = self.env.main(
+                        "take", "--source", "src", "--input", str(self.env.write_input([make_row("r1")])),
+                        "--root", str(root), "--taken-at", T2,
+                    )
+                self.assertEqual((code, err), (0, ""))
+                self.assertEqual(out, str(stored_path).replace(char, escape_of(char)) + " unchanged\n")
+
+    def test_a_defect_and_a_fault_line_show_a_c1_control_as_an_escape(self) -> None:
+        defect = requirement_snapshot.Defect
+        for char in C1_CONTROLS:
+            with self.subTest(char=ord(char)):
+                made = defect(requirement_snapshot.DefectCode.ROW_FIELD_TYPE, f"s{char}t", f"d{char}e")
+                with mock.patch.object(requirement_snapshot, "parse_input", return_value=([], [made])):
+                    code, out, err = self.env.take([make_row("r1")])
+                self.assertEqual((code, err), (1, ""))
+                self.assertNotIn(char, out)
+                self.assertTrue(out.endswith(f"d{escape_of(char)}e\n"), repr(out))
+                with mock.patch.object(requirement_snapshot, "_dispatch", side_effect=requirement_snapshot.ToolFault(f"x{char}y")):
+                    code, out, err = self.env.main("verify", "ignored")
+                self.assertEqual((code, out), (2, ""))
+                self.assertEqual(err, f"requirement_snapshot.py: tool fault: x{escape_of(char)}y\n")
+
+    def test_a_real_command_shows_a_c1_control_in_an_argument_as_an_escape(self) -> None:
+        for char in ("\x9b", "\x80"):
+            with self.subTest(char=ord(char)):
+                done = subprocess.run(
+                    [sys.executable, str(SCRIPT), "take", f"--bogus{char}x"],
+                    capture_output=True, text=True, encoding="utf-8", env={**os.environ, "PYTHONUTF8": "1"},
+                )
+                self.assertEqual((done.returncode, done.stdout), (3, ""))
+                self.assertNotIn(char, done.stderr)
+                self.assertEqual(done.stderr.splitlines()[-1], f"requirement_snapshot.py: error: unknown option --bogus{escape_of(char)}x")
 
 
 class EveryDuplicateTests(SnapshotCase):
@@ -2612,6 +2742,13 @@ class ExactVersionFileNameTests(SnapshotCase):
         code, out, err = self.env.main("diff", "--source", "src", "1", "9", "--root", str(self.env.root))
         self.assertEqual((code, out), (2, ""), err)
         self.assertIn("version 9 does not exist", err)
+
+
+class MoreStrayVersionNameTests(ExactVersionFileNameTests):
+    """Ticket 60 (S52-38): more names that are not versions: a letter where the dot is, a short date, and a changed
+    case of the extension or of the v. They change neither the listing, nor take, nor diff."""
+
+    STRAYS = ("2026-11-09-v9Xjson", "2026-11-9-v9.json", "2026-11-09-v8.JSON", "2026-11-09-V7.json", "2026-11-09-v6.Json")  # one version per case variant: a file system may fold case
 
 
 class NonJsonConstantTests(SnapshotCase):

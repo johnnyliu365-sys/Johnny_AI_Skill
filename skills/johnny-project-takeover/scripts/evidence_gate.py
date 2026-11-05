@@ -32,8 +32,10 @@ repository, so `--repo` may be any directory inside it.
 The listed values need no git, so they are judged before the lookup and whatever its outcome: a
 value that is not 64 lower-case hex digits, and two different values listed for one path, are
 TOOL_DIGEST_STALE beside a fault on that lookup. A `--tool` path that is not a blob at the
-candidate is a tool fault and, since no receipt can list a digest for it, a TOOL_DIGEST_MISSING
-red in every run cell, so it ends in exit 1.
+candidate (absent, a tree, a submodule entry) is a tool fault on standard error and a red in
+every run cell: TOOL_DIGEST_MISSING when the cell lists no digest for it, TOOL_DIGEST_STALE
+when the cell lists one (the path is not present as a blob, whatever value is listed). The exit
+is always 1 with the fault on standard error, never 2.
 
 Every git child runs with `--no-replace-objects`, `GIT_NO_REPLACE_OBJECTS=1` and
 `GIT_NO_LAZY_FETCH=1`, with the repository-selecting `GIT_*` and the `GIT_CONFIG_*` variables

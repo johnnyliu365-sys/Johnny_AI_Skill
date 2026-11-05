@@ -147,9 +147,11 @@ resolved, a blob the candidate names is missing from the
 object store, `git cat-file` exits non-zero or answers outside its documented format (a failing
 lookup is never read as an absent path), or an unexpected error; each fault message is escaped
 to one line. A receipt that cannot be read ends the run at once, because no red can be found
-without it. A `--tool` path that is not a blob at the candidate is a tool fault
-on standard error and, because no receipt can list a digest for it, a `TOOL_DIGEST_MISSING` red in
-every run cell, so it produces exit 1 and never exit 2 alone. Exit 3: a missing or unknown
+without it. A `--tool` path that is not a blob at the candidate (absent, a tree, a submodule
+entry) is a tool fault on standard error and a red in every run cell: `TOOL_DIGEST_MISSING`
+when the cell lists no digest for it, `TOOL_DIGEST_STALE` when the cell lists one (the path is
+not present as a blob, whatever value is listed). The exit is always 1 with the fault on
+standard error, never 2. Exit 3: a missing or unknown
 argument, no `--tool`, a blank `--tool` or `--require-cell`, a `--tool` path that is not canonical, a `--candidate` that is not a
 full 40-character lower-case sha. Output uses LF line endings.
 
@@ -204,7 +206,8 @@ requested version does not exist (exit 2 unless a red was found), never a raw ex
 
 Printed lines: every line the tool prints, the usage line and the success and `unchanged` lines
 included, is escaped to one line like defect and fault lines: a control or line-break character is
-shown as a backslash escape. Repeated-key collection is linear in the number of keys.
+shown as a backslash escape. The characters escaped are U+0000 to U+001F, U+007F to U+009F (the
+C1 controls), U+2028 and U+2029. Repeated-key collection is linear in the number of keys.
 
 Red before fault: a command checks everything it can before it decides the exit. If it found any
 red it prints every red on stdout and exits 1; a fault met on the way is printed on stderr, on one
@@ -312,8 +315,13 @@ Every object the gate reads is hashed by the gate against the id it asked for: t
 `<type> <size>`, a NUL byte and the body, with SHA-1 or SHA-256 chosen by the width of the id.
 An object that does not hash to its id (a forged or damaged loose object, an object served
 through alternates) is a tool fault naming the id: it is never a red and never a pass, and
-the object store is not used again in the run. A repository whose ids are SHA-256 is read the
-same way.
+the object store is not used again in the run; so is an object of another kind than the tree entry
+that names it (a blob entry that serves a tree or a commit), reported with its id and the words
+another kind of object and mismatch. A repository whose ids are SHA-256 is read the same way.
+The hash is the plain SHA-1 or SHA-256 of the standard library; SHA-1 collision resistance is
+not provided here. It is carried by the integration clone of the R4-4 trust boundary, which is
+filled with `transfer.fsckObjects` and `fetch.fsckObjects` on, and which uses git's own
+collision-detecting SHA-1.
 
 Defects, one line `<code> <spec or requirement>: <detail>` each on stdout, the subject and
 the detail escaped so that a line break, a control character, U+2028 or a lone surrogate
@@ -489,14 +497,18 @@ child, with the processes it started, before the next tool runs; an unexpected e
 anywhere else in the run is exit 2 with one line on standard error and no traceback. An
 interrupt (the keyboard interrupt) after a child started kills that child and the processes
 it started in the same way, then ends the run with exit 2 and one line on standard error,
-no traceback.
+no traceback. An interrupt in any other window of the run (the start of the run, the setup of
+the standard streams, the printing of the result, the final flush) ends it in the same way, with
+exit 2 and that one line.
 
 The dispatch path must be a plain path. A path is refused with exit 3, and never opened, when
 it starts with two separators (a share path, or an extended-length or device spelling), when
 it starts with a separator followed by one or two question marks and a separator, or by a
 single dot and a separator, or when any component of it is the global root of the object
-manager (compared up to its first dot or colon, in any letter case). Both slash directions
-and any mix of them count, on every platform; the decision is made from the text alone.
+manager (compared up to its first dot or colon, in any letter case, and after a drive letter and
+colon at the start of the path is set aside, as for a device name, so a global root written right
+after a drive letter and colon is refused too). Both slash directions and any mix of them count,
+on every platform; the decision is made from the text alone.
 
 Exit 0 prints `tools=N served=N`. Exit 2 prints one line `TOOL_UNSERVED <tool>: <cause>` per
 failing tool; the causes are `start cannot be launched`, `start cannot be resolved`,

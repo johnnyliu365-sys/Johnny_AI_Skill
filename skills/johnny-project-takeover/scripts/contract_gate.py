@@ -41,8 +41,8 @@ clone; nothing is fetched) is a fault, never a red.
 Every object the gate reads is hashed by the gate against the id it asked for: the header
 `<type> <size>`, a NUL byte and the body, with SHA-1 or SHA-256 chosen by the width of the id.
 An object that does not hash to its id (a forged or damaged loose object, an object served
-through alternates) is a fault naming the id, never a red and never a pass, and the object store
-is not used again in the run. Every git child ignores replace refs, never fetches lazily and
+through alternates), and an object of another kind than the tree entry that names it, is a fault
+naming the id, never a red and never a pass, and the object store is not used again in the run. Every git child ignores replace refs, never fetches lazily and
 runs without the variables that select a repository, a work tree or a configuration.
 
 Defect codes (exit 1, one line `<code> <spec or requirement>: <detail>` each, subject and
@@ -774,7 +774,10 @@ class HeadReader:
     @staticmethod
     def _blob_digest(header: Header, stream: Body) -> str:
         if header.kind != "blob":
-            raise ValueError("a file entry is not a blob")
+            raise ValueError(
+                f"git cat-file answered a blob lookup for {header.oid} with another kind of object ({header.kind}): "
+                "a mismatch between the tree entry and the object, which a forged or damaged store can cause"
+            )
         return _digest_of(stream, header.size)
 
 

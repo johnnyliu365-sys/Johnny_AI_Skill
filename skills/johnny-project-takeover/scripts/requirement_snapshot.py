@@ -39,7 +39,8 @@ as its escaped form (Python `repr`) unless it is plain, so one defect is always 
 
 Every line the tool prints, the usage line and the success and `unchanged` lines included, is
 escaped to one line like defect and fault lines: a control or line-break character is shown as a
-backslash escape. Repeated-key collection is linear in the number of keys.
+backslash escape. The characters escaped are U+0000 to U+001F, U+007F to U+009F (the C1
+controls), U+2028 and U+2029. Repeated-key collection is linear in the number of keys.
 
 Defect codes (exit 1, one line `<code> <requirement_id or field>: <detail>` each):
 ROW_FIELD_MISSING; ROW_FIELD_TYPE (a field of the wrong type, an unexpected field, a blank or
@@ -113,7 +114,7 @@ MAX_VERSION_DIGITS = 255
 ID_PATTERN = re.compile(r"[A-Za-z0-9._:/-]{1,128}")
 SUBJECT_PATTERN = re.compile(r"[A-Za-z0-9._:/\[\]-]{1,128}")
 CLAIM_PATTERN = re.compile(r"\.v[0-9]+\.claim")
-LINE_BREAK_PATTERN = re.compile(r"[\x00-\x1f\x7f\x85\u2028\u2029]")
+LINE_BREAK_PATTERN = re.compile(r"[\x00-\x1f\x7f-\x9f\u2028\u2029]")
 URL_PATTERN = re.compile(r"[A-Za-z][A-Za-z0-9+.-]+://")
 DRIVE_PATTERN = re.compile(r"[A-Za-z]:")
 RESERVED_DEVICE_NAMES = frozenset(

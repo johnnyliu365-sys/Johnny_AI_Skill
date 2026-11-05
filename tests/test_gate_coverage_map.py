@@ -1063,6 +1063,37 @@ class FaultTests(GuardCase):
                 else:
                     self.assert_fault(result)
 
+    # ticket 60, S54-16: the match starts at the first character of the id and is case-sensitive
+    def test_a_carried_target_is_in_an_unreadable_spec_only_without_an_extra_leading_segment_and_in_the_same_case(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        unreadable = "specs/test_b.py"
+        for target in (
+            "x/" + tid(unreadable, "test_two"),
+            "./" + tid(unreadable, "test_two"),
+            "/" + tid(unreadable, "test_two"),
+            "specs/" + tid(unreadable, "test_two"),
+            "..::" + tid(unreadable, "test_two"),
+            tid("Specs/test_b.py", "test_two"),
+            tid("specs/Test_b.py", "test_two"),
+            tid("specs/test_b.PY", "test_two"),
+            tid("SPECS/TEST_B.PY", "test_two"),
+            tid(unreadable, "test_two").upper(),
+        ):
+            with self.subTest(target=target):
+                carried = map_text(row(tid(SPEC_A, "test_two"), "carried", target))
+                candidate = self.repo.commit({SPEC_A: functions("test_one"), unreadable: "def (:\n", MAP: carried})
+                result = run(self.repo, base, candidate)
+                self.assert_red_with_faults(result, 1, "CARRIED_TARGET_MISSING")
+
+    def test_a_carried_target_in_an_unreadable_spec_is_not_judged_whatever_the_test_name_after_the_separator(self) -> None:
+        base = self.repo.commit({SPEC_A: functions("test_one", "test_two")})
+        unreadable = "specs/test_b.py"
+        for target in (tid(unreadable, "test_two"), tid(unreadable, "TEST_TWO"), tid(unreadable, "Inner", "test_two"), tid(unreadable, "x/y")):
+            with self.subTest(target=target):
+                carried = map_text(row(tid(SPEC_A, "test_two"), "carried", target))
+                candidate = self.repo.commit({SPEC_A: functions("test_one"), unreadable: "def (:\n", MAP: carried})
+                self.assert_fault(run(self.repo, base, candidate))
+
     def test_a_red_is_reported_when_opening_a_side_fails_with_an_error_that_is_not_a_tool_fault(self) -> None:
         base = self.repo.commit({SPEC_A: functions("test_one")})
         candidate = self.repo.commit({MAP: "{nope"})

@@ -42,11 +42,15 @@ error and is never opened, whatever the platform. So is a dispatch path that is 
 path: one that starts with two separators (a share path, or an extended-length or device
 spelling), or with a separator followed by a namespace marker (one or two question marks, or
 a single dot, then a separator), or that has the global root of the object manager as a
-component (compared as a device name is, up to the first dot or colon, in any letter case);
+component (compared as a device name is, up to the first dot or colon, in any letter case, and
+after a drive letter and colon at the start of the path is set aside, as for a device name);
 both slash directions and any mix of them count, and nothing is opened to decide it.
 
 An interrupt after a child started kills that child with the processes it started, then ends
-the run as a tool fault: exit 2 with one line on standard error and no traceback.
+the run as a tool fault: exit 2 with one line on standard error and no traceback. An interrupt
+in any other window of the run (the start of `main`, the setup of the streams, the printing of the
+result, the final flush) ends it the same way: exit 2 with the one line, never the status the
+interpreter gives an interrupt that nothing handles.
 
 Output: `tools=N served=N` on exit 0; one `TOOL_UNSERVED <tool>: <cause>` line per
 failing tool on exit 2. Every printed subject is escaped to one line.
@@ -537,7 +541,9 @@ def names_a_namespace(path: str) -> bool:
     text = path.replace("\\", "/")
     if text.startswith(NAMESPACE_ROOTS):
         return True
-    for component in text.split("/"):
+    # a drive letter and colon at the start belong to no component: `C:GLOBALROOT/x` has the global root as its first
+    rest = text[2:] if DRIVE_LETTER.match(text) is not None else text
+    for component in rest.split("/"):
         if _component_stem(component).upper() == GLOBAL_ROOT:
             return True
     return False
@@ -615,17 +621,29 @@ def _gate(args: Sequence[str]) -> Outcome:
     return EXIT_SERVED, f"tools={len(items)} served={len(items)}\n", ""
 
 
+INTERRUPTED_LINE = "preflight.py: tool fault: interrupted\n"
+
+
+def _interrupted() -> int:
+    """An interrupt that no handler of the run met: one line on standard error and exit 2."""
+    _write(sys.stderr, INTERRUPTED_LINE)
+    return EXIT_UNSERVED
+
+
 def main(argv: Sequence[str] | None = None) -> int:
-    _harden_streams()
-    args = list(sys.argv[1:] if argv is None else argv)
     try:
-        outcome = _gate(args)
-    except KeyboardInterrupt:
-        # A child that was started is already killed with its tree (run_command); the run ends as a tool fault.
-        outcome = EXIT_UNSERVED, "", "preflight.py: tool fault: interrupted\n"
-    except Exception as exc:  # noqa: BLE001 - any unexpected error is a tool fault, never a red and never a traceback
-        outcome = EXIT_UNSERVED, "", f"preflight.py: tool fault: {escape(type(exc).__name__)}: {escape(str(exc))}\n"
-    return _emit(outcome)
+        _harden_streams()
+        args = list(sys.argv[1:] if argv is None else argv)
+        try:
+            outcome = _gate(args)
+        except KeyboardInterrupt:
+            # A child that was started is already killed with its tree (run_command); the run ends as a tool fault.
+            outcome = EXIT_UNSERVED, "", INTERRUPTED_LINE
+        except Exception as exc:  # noqa: BLE001 - any unexpected error is a tool fault, never a red and never a traceback
+            outcome = EXIT_UNSERVED, "", f"preflight.py: tool fault: {escape(type(exc).__name__)}: {escape(str(exc))}\n"
+        return _emit(outcome)
+    except KeyboardInterrupt:  # outside the handlers above: the start of the run, the streams, the printing
+        return _interrupted()
 
 
 def _settle(name: str) -> None:
@@ -641,9 +659,12 @@ def _settle(name: str) -> None:
 
 def entry() -> int:
     """The command-line entry: main, then a last flush that cannot turn the exit into 120."""
-    code = main()
-    _settle("stdout")
-    _settle("stderr")
+    try:
+        code = main()
+        _settle("stdout")
+        _settle("stderr")
+    except KeyboardInterrupt:  # an interrupt in the last flush ends the run as a tool fault too
+        return _interrupted()
     return code
 
 
