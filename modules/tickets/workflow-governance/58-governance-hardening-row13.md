@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/58-governance-hardening-row13-out/` / owner implementation seat / worktree `.worktrees/58-governance-hardening-row13` / branch `cp/wave2-58-governance-hardening-row13` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）; Markdown for the two document edits |
-| 狀態 | `PLANNED` |
+| 狀態 | `IN_PROGRESS`（revision01 implementation returned (`f85b4917`, candidate `49c2c43c`); initial review dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/58-governance-hardening-row13` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/58-governance-hardening-row13-review` |
