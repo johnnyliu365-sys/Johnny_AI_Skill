@@ -8,13 +8,13 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/57-state-file-templates-out/` / owner implementation seat / worktree `.worktrees/57-state-file-templates` / branch `cp/wave2-57-state-file-templates` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/57-state-file-templates-out/` / owner implementation seat / worktree `.worktrees/57-state-file-templates` / branch `cp/wave2-57-state-file-templates` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the test（CONTEXT.md Implementation language）; the templates are Markdown and JSON |
-| 狀態 | `PLANNED` |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review: S57-02 TICKET_DEFECT; correction 1 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/57-state-file-templates` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/57-state-file-templates-review` |
-| 責任邊界 | the target-project templates for the ticket state row, the receipt, the queue file and the integration configuration, the template README and one test file |
+| 責任邊界 | the target-project templates for the ticket state row, the receipt, the queue file and the integration configuration, the template README, one test file and one `.gitattributes` line |
 | 禁止修改 | everything else, every gate script and this repository's own `modules/tickets/TEMPLATE.md` included |
 | 環境 | `LOCAL` |
 
@@ -27,6 +27,7 @@ create = template/doc/handoffs/governance/MERGE-QUEUE.TEMPLATE.json
 create = template/doc/handoffs/governance/integration.TEMPLATE.json
 create = template/doc/handoffs/governance/RECEIPT.TEMPLATE.md
 create = tests/test_state_file_templates.py
+modify = .gitattributes
 forbid = skills/
 forbid = library/
 forbid = modules/
@@ -45,6 +46,7 @@ The owner approved wave 2 and R4-8 on 2026-11-04 and confirmed the queue-branch 
 - **Integration configuration** (`integration.TEMPLATE.json`): one object with exactly the keys of ticket 50's configuration table (`remote`, `branch`, `queue_branch`, `queue_path`, `spec_command`, `invariant_command`, `ci_status_command`, `timeout_seconds`), each with a placeholder value of the right JSON type; the argument lists are lists of strings and `ci_status_command` holds exactly one `{sha}`.
 - **Receipt** (`RECEIPT.TEMPLATE.md`): one run cell in the R4-7 shape with the five fields (`cell`, `candidate`, `tool_digest` with one `path=sha256` line, `capture`, `exit`) and a raw block, one `STATEMENT` cell, LF only, written so that filling the placeholders gives a receipt the evidence gate (ticket 51) can read; it names which placeholders a seat replaces.
 - The template README adds the four files to the fixed structure and to the build order, and states that the queue file lives on the queue branch, not on the integration branch.
+- **Line endings** (revision02): `.gitattributes` gains one line, `template/doc/handoffs/governance/* text eol=lf`, so the three files come out LF in every checkout (a CRLF queue file is a schema break for ticket 50); the existing lines stay as they are. The test judges every byte rule (LF only, final newline, exact bytes, no BOM) on the committed blob, so a CRLF working copy of a correct candidate is green.
 
 ## 實作範圍、依賴與 ticket elements
 
@@ -99,3 +101,17 @@ The owner approved wave 2 and R4-8 on 2026-11-04 and confirmed the queue-branch 
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Revision02 (after the revision01 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision01 initial review". S57-02 is a `TICKET_DEFECT`: nothing pinned the templates' line endings, so the boundary gains `.gitattributes` and the line-endings bullet above. This is a closure rebuild: the work is one additive correction commit on the revision01 candidate `27318feb`, and the next review is the revision02 initial review.
+
+| Finding | Class | Work in correction 1 |
+| --- | --- | --- |
+| S57-01 | IMPLEMENTATION_DEFECT | LF, final-newline, exact-byte, BOM and CR checks read the committed blob (`git cat-file blob HEAD:<path>` or the index), not the working copy; shape checks normalise first; a test runs the suite's byte rules in a clone checked out with `core.autocrlf=true` and is green |
+| S57-02 | TICKET_DEFECT | the `.gitattributes` line above; a test that `git check-attr eol` gives `lf` for each of the three files |
+| S57-03 | EVIDENCE_DEFECT | a test that `queue_branch` differs from `branch` in the configuration template (counter-mutation C3 red) |
+| S57-04 | IMPLEMENTATION_DEFECT / EVIDENCE_DEFECT | the README's structure comment and State-files row say the queue lives on the queue branch, and a test pins each place (D1, D2 red); the copy-to path reads `modules/tickets/<feature>/<ticket>.md` as in AGENTS.md |
+| S57-07 | EVIDENCE_DEFECT | M1 tails keep `SUBFAILED` lines; P1 runs with `-rs` so the skip reason is in a capture |
+
+Carried, no work here: S57-05 (the integrate.py cross-check runs the template's own list shapes) goes to ticket 50's landing; S57-06 (placeholder enforcement and wording in the receipt template) is out-of-scope hardening.
