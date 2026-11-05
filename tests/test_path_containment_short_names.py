@@ -374,21 +374,27 @@ class FileSystemDecidedRedirectTests(unittest.TestCase):
 
 
 def _swap_for_junction_after_resolving(
-    base: Path, link_to: Path
+    base: Path, link_to: Path, before: bool = False
 ) -> tuple["mock._patch[object]", list[bool]]:
-    """Patch ``Path.resolve`` so the first resolution of ``base`` is followed by a swap.
+    """Patch ``Path.resolve`` so the first resolution of ``base`` comes with a swap.
 
-    Right after the real resolution of ``base`` returns, the (empty) directory
-    ``base`` is replaced by a junction to ``link_to``: the race the reviewer's
-    probe N2 describes. The list records whether the swap was made.
+    Right after the real resolution of ``base`` returns (right before it when
+    ``before`` is set), the (empty) directory ``base`` is replaced by a
+    junction to ``link_to``: the race the reviewer's probe N2 describes, and
+    the window between a component walk and the resolution. The list records
+    whether the swap was made.
     """
 
     real_resolve = Path.resolve
     swapped: list[bool] = []
 
     def resolve(self: Path, strict: bool = False) -> Path:
+        due = self == base and not swapped
+        if due and before:
+            os.rmdir(base)
+            swapped.append(_make_junction(base, link_to))
         result = real_resolve(self, strict=strict)
-        if self == base and not swapped:
+        if due and not before:
             os.rmdir(base)
             swapped.append(_make_junction(base, link_to))
         return result
@@ -429,6 +435,26 @@ class OneResolutionTests(unittest.TestCase):
             base = parent / "A"
             base.mkdir()
             patch, swapped = _swap_for_junction_after_resolving(base, real)
+            try:
+                with patch:
+                    contained = resolves_within_root(base / "x", base)
+            finally:
+                if swapped:
+                    os.rmdir(base)
+            if swapped != [True]:
+                self.skipTest("no junction can be created here")
+            self.assertFalse(contained)
+
+    def test_a_case_twin_swapped_in_before_the_base_is_resolved_is_refused(self) -> None:
+        with _case_sensitive_parent() as parent:
+            if parent is None:
+                self.skipTest("a case-sensitive directory cannot be created on this host")
+            assert parent is not None
+            real = parent / "a"
+            (real / "x").mkdir(parents=True)
+            base = parent / "A"
+            base.mkdir()
+            patch, swapped = _swap_for_junction_after_resolving(base, real, before=True)
             try:
                 with patch:
                     contained = resolves_within_root(base / "x", base)
