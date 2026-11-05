@@ -43,7 +43,7 @@ them.
 
 ### Registered counts
 
-Windows runner 47 rows, Linux runner 234 rows (read from CI runs 42009508339 and 42011080430; the Windows set was identical in both runs).
+Windows runner 44 rows, Linux runner 228 rows (ticket 62 removed 3 and 6 rows that its fixes turned green; the earlier counts, 47 and 234, were read from CI runs 42009508339 and 42011080430).
 
 ### Host failures that do not fail on a runner
 
@@ -65,9 +65,9 @@ The maintainer's checkout has repo-local `core.autocrlf=false`. The Windows runn
 
 Most Linux failures are a Windows-only facility the test needs (`st_file_attributes`, `cmd.exe`, `powershell.exe`, `%LOCALAPPDATA%`, batch-file shims, Windows path forms, the pywin32 binding). Not every row is an environment failure:
 
-- Three rows are defects in their tests, not missing capabilities: `test_acr2_linux_requires_an_actual_linux_kernel_and_backend` and `test_acr3_acm1_current_python_abstraction_final_window_qualifies_no` (the test's label validator refuses the runner's `linux-fs:ext2/ext3` because of the `/`; the runner does have a Linux kernel), and `tests/test_file_lock.py::BlockingAcquisitionTests::test_a_waiter_is_held_out_and_then_let_in_rather_than_refused` (the test closes the waiter's stdin and then calls `communicate()`, which raises `ValueError: I/O operation on closed file` on POSIX).
-- Seven rows per operating system are known failures on main that do not depend on the operating system (the pinned commit `0b3afd3645946f97662c336f0e6ac0dcae502e69` missing from the clone, four tests; `test_acr6_exact_test_only_boundary`; the router audit step; the refusal-guidance roster).
+- Three Linux rows were defects in their tests, not missing capabilities, and ticket 62 fixed them: `test_acr2_linux_requires_an_actual_linux_kernel_and_backend` and `test_acr3_acm1_current_python_abstraction_final_window_qualifies_no` (the test's label validator refused the runner's `linux-fs:ext2/ext3` because of the `/`; the label now spells it `ext2-ext3`), and `tests/test_file_lock.py::BlockingAcquisitionTests::test_a_waiter_is_held_out_and_then_let_in_rather_than_refused` (the test closed the waiter's stdin and then called `communicate()`, which raised `ValueError: I/O operation on closed file` on POSIX; stdin is no longer closed first). Their rows are gone.
+- Four rows per operating system stay registered with ticket 62 as their follow-up: the marketplace pin `0b3afd3645946f97662c336f0e6ac0dcae502e69` (one payload-boundary test and three publication tests). The pinned commit is the generated publication commit of the separate publication repository, so this repository holds no such object; the pin is also stale against the declared payload. Re-pinning is the owner's publication step. The other three OS-independent rows that ticket 62 inherited (`test_acr6_exact_test_only_boundary`, the router audit step, the refusal-guidance roster) are fixed in their tests and their rows are gone.
 
-Those ten Linux rows, and the seven on Windows, carry `modules/tickets/workflow-governance/62-registered-known-failures.md` as their follow-up. `tests/test_codex_registration_contracts.py` is a collection error; the workflow passes `--continue-on-collection-errors` so that it does not stop the rest of the suite.
+Those four Linux rows, and the four on Windows, carry `modules/tickets/workflow-governance/62-registered-known-failures.md` as their follow-up. `tests/test_codex_registration_contracts.py` is a collection error; the workflow passes `--continue-on-collection-errors` so that it does not stop the rest of the suite.
 
 The reason of each row names its own cause. A row whose follow-up is a ticket path is a failure that is not an environment capability; the ticket named there owns it.

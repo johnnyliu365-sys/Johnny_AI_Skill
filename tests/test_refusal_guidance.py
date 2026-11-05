@@ -79,6 +79,12 @@ _UNCOVERED_ROSTER: frozenset[str] = frozenset(
         "library/local_orchestration/plugin_bundle_builder.py::PluginBundleBuildFailure",
         "library/local_orchestration/plugin_install_transaction.py::PluginInstallFailure",
         "library/local_orchestration/plugin_uninstall_transaction.py::PluginUninstallFailure",
+        # Project-authority lifecycle failures (feat 6df6885e, 2026-08-24): added
+        # after the classification batch, with their own remote-ref and evidence
+        # codes; classifying them is a later batch of this roster.
+        "library/local_orchestration/project_authority/contracts.py::_LifecycleFailure",
+        # Project-authority finalization failures (same feature, same reason).
+        "library/local_orchestration/project_authority/integration.py::AuthorityFinalizationFailure",
         "library/local_orchestration/project_subscription_runtime.py::ProjectSubscriptionFailure",
         "library/local_orchestration/release_pin_guard.py::ReleasePinFailure",
         "library/local_orchestration/review_return.py::ReviewReturnFailure",
@@ -103,6 +109,9 @@ _UNCOVERED_ROSTER: frozenset[str] = frozenset(
         "library/workflow_router/role_wake_contracts.py::RoleWakeChainFailure",
         "library/workflow_router/supervision_runtime_contracts.py::SupervisionRuntimeFailure",
         "library/workflow_router/target_document_contracts.py::DocumentWriteFailure",
+        # Managed-artifact write failures (feat 1bca660f, 2026-08-28): a sibling of
+        # DocumentWriteFailure added after the classification batch.
+        "library/workflow_router/target_document_contracts.py::ManagedArtifactWriteFailure",
         "library/workflow_router/telemetry.py::TelemetryReportFailure",
         "library/workflow_router/thread_dispatch_contracts.py::CodexThreadDispatchFailure",
         "library/workflow_router/thread_dispatch_contracts.py::DispatchClaimFailure",
@@ -445,8 +454,8 @@ class ClassificationAuditTests(unittest.TestCase):
             set(audit.discovered_enums),
             _COVERED_ENUM_ROSTER | _UNCOVERED_ROSTER,
         )
-        self.assertEqual(len(audit.discovered_enums), 48)
-        self.assertEqual(len(audit.uncovered_enums), 45)
+        self.assertEqual(len(audit.discovered_enums), 51)
+        self.assertEqual(len(audit.uncovered_enums), 48)
 
     def test_the_uncovered_list_is_read_from_the_sources_not_recited(self) -> None:
         # Nailed on a tree this cell wrote, so a constant returned in place of
