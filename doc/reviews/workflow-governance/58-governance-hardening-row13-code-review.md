@@ -391,7 +391,7 @@ The correction review closed S58-10 and S58-13; every earlier door stays red, th
 | --- | --- | --- |
 | S58-06 | OUT_OF_SCOPE_HARDENING | the next change of the consistency test |
 | S58-12 | OUT_OF_SCOPE_HARDENING | the next change of the consistency test |
-| S58-14 | IMPLEMENTATION_DEFECT (Low, test-only masking) | the next change of the consistency test: lookahead `(?=\s+from)`, a sample in R4-7's real form, CM14 and CM15 as injections |
+| S58-14 | IMPLEMENTATION_DEFECT (Low, test-only masking) | the next change of the consistency test: lookahead `(?=\s+from\b)`, a sample in R4-7's real form, CM14 and CM15 as injections |
 | S58-15 | OUT_OF_SCOPE_HARDENING | the next change of the consistency test: clause-level exemption and a 以外 guard |
 
 ```convergence-disposition
