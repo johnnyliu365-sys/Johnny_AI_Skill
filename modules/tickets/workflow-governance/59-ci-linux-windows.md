@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/59-ci-linux-windows-out/` / owner implementation seat / worktree `.worktrees/59-ci-linux-windows` / branch `cp/wave2-59-ci-linux-windows` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the checker and its test（CONTEXT.md Implementation language）; YAML for the workflow |
-| 狀態 | `PLANNED` |
+| 狀態 | `IN_PROGRESS`（revision01 implementation returned (candidate `3ab5ac43`, CI run 42016463075 green on both jobs); initial review dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/59-ci-linux-windows` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/59-ci-linux-windows-review` |
