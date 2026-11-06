@@ -169,6 +169,6 @@ S50-01 is a `TICKET_DEFECT`. The record is read at the tip, and the candidate ha
 | S50-08 | OUT_OF_SCOPE_HARDENING, closed here | the fetch takes only `branch`, `queue_branch` and the candidates of queued entries |
 | S50-09 | OUT_OF_SCOPE_HARDENING, closed here | `mypy --strict` on the test file exit 0 |
 | S58-04, S60-01 | routed from tickets 58 and 60 | the removed-variable list is the shared one: the thirteen names of `evidence_gate.py`, every `GIT_CONFIG*` name and every `GIT_TEST_*` name |
-| S57-05 | routed from ticket 57 | the configuration cross-check in `tests/test_state_file_templates.py` runs the template's own list shapes through the real parser. That file is outside this boundary, so the cross-check is pinned by a test in this ticket's test file that reads the template |
+| S57-05 | routed from ticket 57, carried | the template's configuration cross-check needs both the template (ticket 57) and `integrate.py` on one tree. This ticket's branch starts before ticket 57, so the cross-check is pinned after integration, in the first change that touches either |
 
 The work is additive commits on `37bacce9`. The next review is the revision02 initial review.
