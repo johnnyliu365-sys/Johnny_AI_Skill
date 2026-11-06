@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision03 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（closure revision02; revision02 initial review CHANGES_REQUESTED on `00fdc179` (S63-08 resolve-twice race, S63-09 P0 source type, S63-10); correction 2 returned (`259598d7`, CI run 42130209504 green on both jobs); correction review dispatched） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review CONVERGENCE_REVIEW_REQUIRED on `259598d7`: S63-14 and S63-15 confinement, both from case folding; implementation 3 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
@@ -122,3 +122,28 @@ Routed, no work here:
 - S63-13 (a junction inside the root that points inside the root, on the target side) is already present at the base. It is put to the owner with S63-12 as one P0 wording question.
 
 The next review is the one correction review of revision02.
+
+## Re-plan to closure revision03 (after the revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`)
+
+Review record section "Revision02 correction review". Correction 2 closed S63-08 to S63-10. Two confinement findings remain, and rule B does not cover confinement, so the control plane re-plans.
+
+- **S63-14:** the final containment comparison uses pathlib equality, which folds case on Windows. A target in a real sibling directory that differs from the root only by case is accepted. This is already true at the base.
+- **S63-15:** "same directory" between the given and the resolved spelling is still decided by a folded string comparison. That leaves a race in which a case-twin junction is in place at the resolve and gone at the walk.
+
+Both come from one cause: a string comparison that folds case is used where NTFS does not fold. Revision03 removes folding from every containment decision. The work is one additive commit on `259598d7`, and the next review is the revision03 initial review.
+
+**Rule (revision03), in addition to the revision02 rule.**
+
+1. **Containment is decided case-exactly.** After the checked resolution, the target is contained when the resolved base's components are an exact, component-by-component prefix of the resolved target's components. No case folding, no `normcase` and no pathlib equality. Both sides come from `resolve()` and carry the on-disk spelling, so a real directory of the same name never differs in case from itself.
+2. **"Same directory" is decided by file identity.** Wherever two spellings must name one directory (the given base and its resolution), the decision compares `(st_dev, st_ino)` from `os.stat` of both. A string comparison never decides it.
+3. **The identity must hold across the walk.** The base's identity is taken before the walk and again after the resolve. If it changed, containment is refused.
+4. **Refusal stays the default.** A component that cannot be examined refuses, and an identity that cannot be read refuses.
+
+| Finding | Class | Work in implementation 3 |
+| --- | --- | --- |
+| S63-14 | IMPLEMENTATION_DEFECT (confinement), present since the base | rule 1. Tests: the reviewer's F1 (U+212A root, sibling `kroot`) and F2 (case-sensitive directory, root `Root`, sibling `root`) refuse |
+| S63-15 | IMPLEMENTATION_DEFECT (confinement, race) | rules 2 and 3. Test: the reviewer's SW5 swap refuses |
+| S63-16 | EVIDENCE_DEFECT | the STATEMENT and the `_anchor_for` docstring describe what the code does, including the SW4 case |
+| S63-11 | OUT_OF_SCOPE_HARDENING, closed here | an `lstat` result without `st_file_attributes` on Windows refuses rather than raising |
+
+Every revision02 rule, closed row and probe still holds, and nothing that refused before may be accepted. A CI run on the commit with both jobs `success` is part of the evidence. S63-12 and S63-13 stay with the owner.

@@ -296,3 +296,174 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/63-rev02-initial
 reviewed_at: 2026-11-06
 ```
+
+## Revision02 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`.** Correction 2 (`f85ddb0b`, `ce050e97`, `259598d7`) closes the three findings it was given:
+
+- **S63-08:** the base is resolved once, and the anchor is the checked resolution. N2 and the plain-junction swap windows refuse.
+- **S63-09:** a `_Component` Enum, a typed `_LookupState.error`, and `st_file_attributes` read directly. No empty-string or `getattr` convention remains.
+- **S63-10:** AN1–AN3 are tests and go red under K2.
+
+Every revision01 and revision02 probe still refuses. No over-refusal appears for the repository path, `%TEMP%`, the drive root or long paths. The receipt passes both gates, and E1 was written last. CI run 42130209504 is green on both jobs at the candidate.
+
+Two confinement findings remain, so approval is withheld:
+
+- **S63-14:** the containment comparison itself folds case. `resolved == resolved_base or resolved_base in resolved.parents` is pathlib equality, which on Windows folds with `str.lower`. So a target in a **real sibling directory outside the root**, whose name folds to the root's name, is accepted, with no junction and no race:
+  - U+212A `Kroot` beside `kroot` in an ordinary NTFS directory;
+  - `Root` beside `root` in a case-sensitive directory.
+
+  This holds at the base commit, revision01, correction 1 and the candidate.
+- **S63-15:** a case-twin junction that is in place when the base is resolved, and swapped back to a real directory before the walk, anchors containment on the twin (SW5). Correction 1 refused this, because it walked first. The candidate resolves first and walks afterwards, so it accepts it, as revision01 and the base did.
+
+Both come from one root cause: "same directory" is decided by a case-folded spelling (pathlib equality and `normcase`), not by the file system. This is the one correction review of this closure revision, and both findings are confinement findings. So CodeReview §5 gives `CONVERGENCE_REVIEW_REQUIRED`, and rule B's disposition is not available. The ticket goes back to the control plane; no third correction follows automatically.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/63-short-name-containment.md`, closure revision02, the section "Correction 2 under revision02", read with `git show 3bab70d6:…` |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-63c_dispatch.yaml` (correction 2 on `00fdc179`) |
+| Candidate | `259598d778c256f9dc640a0defef681f15584ba0` on `cp/wave2-63-short-name-containment`; `origin/…` is the same sha. Three additive commits on `00fdc179`: `f85ddb0b` (fix), `ce050e97` (test), `259598d7` (test) |
+| Commit identity | On all three, author and committer are `Johnny Liu <johnny.liu365@gmail.com>`. The trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` is correct |
+| Changed paths | Correction 2: `library/local_orchestration/path_containment.py` and `tests/test_path_containment_short_names.py`. From `92ee3a94`: the five declared paths, with no `forbid` path |
+| Review worktree | `.worktrees/63-short-name-containment-review`, detached at the candidate. Porcelain was empty before and after |
+| Receipt | `.worktrees/63-short-name-containment-out-c2/RETURN.md` (LF, 56020 bytes, 0 CR), with `E1.txt` |
+| CI run | 42130209504, event `push`, `headSha` = candidate, `test (windows)` success, `test (linux)` success. The branch also has 42129712313 (`f85ddb0b`) and 42129984809 (`ce050e97`), both success but not claimed |
+| References applied | `AGENTS.md` (P0 permissions and ownership; P0 source type); `CodeReview.md` §3–§5 (correction review, `CONVERGENCE_REVIEW_REQUIRED`, rule B); `review-checks.md` (path identity: case; test truthfulness with reviewer counter-mutation; exception behaviour); `security-boundary.md` |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | S63-08: resolved once; the anchor is the checked resolution | PASS for redirects; **case-fold windows fail (S63-14, S63-15)** | `_anchor_for` resolves once, walks `(base, resolved_base)` with `lstat`, then returns `_Anchor(resolved_base)`, and `resolves_within_root` uses `outcome.resolved`. N2/SW2 refuse, as do SW1 (swap before the resolve), SW3 (swap before the target's resolve) and SW6 (a junction to outside at the resolve, swapped back before the walk). By reading, the walk-then-resolve race of revision02 (N2′) is closed: the walk now follows the resolve. The new window that order opens, a swap back after the resolve, is closed for a plain junction (the spelling differs) but open for a case twin (SW5, S63-15) |
+| 1a | Does M1a's red pin the anchor rule? | Yes | Under M1a (the second resolve restored), `test_a_base_swapped_for_a_junction_before_the_second_resolution_is_refused` swaps before the target's resolve, a behavioural check of exactly "the anchor is what was checked" on the production path. `test_the_base_is_resolved_exactly_once` adds a structural count. The after-first-resolve swap tests staying green under M1a is overlap masking by the post-resolve walk, and the seat states it. Enough |
+| 2 | S63-09: typed component result | PASS | `_Component(Enum)` with PASS, REFUSE and MISSING; `_ComponentResult(state, reason: str \| None)`; `_redirected_component` branches on `state is`. `_LookupState(threading.local)` with `error: int`, read as `_lookup_state.error`. `status.st_file_attributes` is read directly. The module has no `getattr`, and its only `""` occurrences are docstring quotes. M1d is red |
+| 3 | S63-10: AN1–AN3 as tests | PASS | Three ancestor tests (case-twin under a long parent, case-twin under a short parent, U+212A). M1c (= my K2) turns all three red. My probes AN1–AN4 refuse |
+| 4 | `test_the_resolved_spelling_is_examined_as_well_as_the_given_one` (a faked `lstat` failure on the long spelling only) | Acceptable, as evidence for a defence-in-depth branch | I found no real file-system case that walking the resolved path catches and walking the given spelling misses. Both walks traverse the same directory entries (a long spelling is the same string; a short spelling names the same entries). Where they differ (a subst drive, UNC), the alias check refuses anyway. A swap after the resolve (SW2) is seen by the given-spelling walk, and a swap back (SW5, SW6) passes both walks. The mock is the only feasible pin. The reverse door, walking the resolved path only (my D2), is pinned by 8 real file-system tests |
+| 5 | `_base_refusal_reason` | PASS | Renamed and removed from `__all__` (now `["resolves_within_root"]`). The only use outside the module is three calls in the test file, which have unchanged assertions. No other caller exists in `library/` or `tests/` |
+| 6 | Revision02 rules and closed rows; all probe sets rerun | PASS except S63-14/S63-15 | Every revision01 probe (a–f), cs1–cs4, N1–N8, AN1–AN4 and O1–O5 gives the same answer as at correction 1 (table below). N6 now raises `TypeError` (`None & int`), routed as S63-11. The 39th row still passes in CI |
+| 7 | Receipt | PASS | `receipt_check.py` → 6 `[ok]`, 0 defects, exit 0. `evidence_gate.py` (three wave-1 tools, P1, T1, M1, C1, F1, P9) → `cells=6 defects=0`, exit 0. `E1.txt` = `cells=6 defects=0` / `exit=0`, LF; written at 07:49:20.989, after `RETURN.md` at 07:49:20.264, the last file in the directory. My byte check: 0 CR, every block byte-identical to its capture, exit lists equal (M1 `0,0` = clone, checkout). M1 was run at `259598d7` (07:33:25, after the last commit at 07:32:54). Read unfiltered, each M1 mutation is red for its intended reason: M1a → the late-swap test (`True is not false`) and the resolved-once count (`1 != 2`); M1b → the resolved-spelling test; M1c → the three ancestor tests; M1d → `'NoneType' object has no attribute 'state'` in the Enum test; M1e → the case-twin swapped in before the resolve. Each restore leaves an empty porcelain |
+| 8 | Boundary, identity, stdlib, `Any`, mypy | PASS | Five declared paths; Johnny Liu on all three commits. Imports are stdlib only (`os`, `stat`, `sys`, `threading`, `dataclasses`, `enum`, `pathlib`, `ctypes`). No explicit `Any`. `--disallow-any-expr` flags only the ctypes call result (line 55), narrowed by `int()`. `mypy --strict --python-version 3.11 --no-incremental` on the three changed Python files → exit 0, and with `--platform linux` → exit 0 |
+| 9 | CI | PASS | Windows: 8 failed, 3436 passed, 34 skipped. The Windows `FAILED` set equals the 8 registered rows; the test count is +13 against `00fdc179` with skips unchanged, so all 41 tests in the file ran. Linux: success, with 3 more passing and 10 more skipped |
+| 10 | Seat F1 | PASS | 8 failure names, all among the base names. The seat's lock log names only its own runner |
+| 11 | Reviewer F1 under the host lock | PASS | `python -m pytest tests -q -p no:cacheprovider` in the review worktree → 8 failed, 3434 passed, 36 skipped, 6839 subtests passed, exit 1. The 8 names are all among the 12 base names, with zero new red, and they are the same 8 the seat reported |
+
+### Bypass probes
+
+`True` means accepted. c2 = candidate `259598d7`; c1 = `00fdc179`; rev01 = `b74840f1`; base = `92ee3a94`. All links, case-sensitive directories, the mount point and the subst drive were made in fresh `%TEMP%` trees or session mappings and removed afterwards, links first, by explicit list.
+
+**Earlier sets, rerun on c2** (same answer as c1 unless stated)
+
+| Probes | c2 |
+| --- | --- |
+| a1–a7b, a9, a9b, a9c, b1, b2, b4, c5–c8, c10, d1–d9, e2, f2–f4 | refused |
+| A0, A1, b3, c1–c4, c9, c11, e1 (same-directory spellings, 1030-character base) | accepted, as intended |
+| f1, N1, N1b (target-side reparse points inside the root) | accepted (pre-existing, S63-13) |
+| cs1, cs2, cs3 / cs4 control | refused / accepted |
+| AN1–AN4 | refused |
+| N2 | **refused** (accepted at c1) |
+| N3, N3b, N3c (volume mount point) | refused |
+| N4, N4b / N4c (subst drive) | refused / accepted (target resolves inside) |
+| N6, N6b (attribute unavailable) | raise `TypeError` (S63-11, routed) |
+| N7, N7b, N7c, N8 / N8b | refused / accepted |
+
+**New: real sibling outside the root whose name case-folds to the root's (no junction, no race)**
+
+| Probe | Shape | c2 | c1 | rev01 | base |
+| --- | --- | --- | --- | --- | --- |
+| F1 / F1b / F1c | root `…\Kroot` (U+212A), target `…\kroot\victim` / a new leaf under it / `…\kroot` itself, in an ordinary directory; `os.path.samefile` is `False` | **accepted ×3** | accepted | accepted | accepted |
+| F1d | control: target inside the root | accepted | accepted | accepted | accepted |
+| F2 / F2b | case-sensitive parent: root `…\Root`, target `…\root\victim` / a new leaf | **accepted ×2** | accepted | accepted | accepted |
+| F2c | control | accepted | accepted | accepted | accepted |
+
+**New swap windows** (`Path.resolve` patched to make one swap at one call)
+
+| Window | Swap | c2 | c1 | rev01 | base |
+| --- | --- | --- | --- | --- | --- |
+| SW1 | a junction to outside swapped in **before** the base's resolve | refused | refused | refused | refused |
+| SW2 (= N2) | a junction to outside swapped in **after** the base's resolve | refused | **accepted** | refused | refused |
+| SW3 | a junction to outside swapped in before the **target's** resolve (after `_anchor_for`) | refused | **accepted** | refused | refused |
+| SW4 | a **case-twin** junction `A`→`a` swapped in before the target's resolve | **accepted** | accepted | accepted | accepted |
+| SW5 / SW5b | a case-twin junction `A`→`a` present **at** the base's resolve, swapped back to a real `A` before the walk; target `A\x` / `a\x` | **accepted / accepted** | refused / refused | accepted | accepted |
+| SW6 | a junction to outside present at the resolve, swapped back to a real directory before the walk | refused | refused | refused | refused |
+
+### Over-refusal on Windows
+
+| Setup | c2 | Note |
+| --- | --- | --- |
+| This repository, `C:/Users/User/Desktop/Johnny_AI_Skill` | accepted | no reparse bit on any component |
+| `%TEMP%` working directory | accepted | the runner's `RUNNER~1` paths pass in CI |
+| Drive root `C:\` | accepted | |
+| Long paths (598 and 1030 characters; long and short spellings) | accepted | `LongPathsEnabled=1` |
+| OneDrive folder (default placeholder mode) | accepted | refused with placeholders exposed (S63-12, put to the owner) |
+| Subst drive base, volume mount point | refused | unchanged |
+
+### Status of S63-01 to S63-13
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| S63-01 | Closed for a junction present at the walk | cs2/cs3 refused. A race variant (swap back after the resolve) is S63-15 |
+| S63-02 | Closed for junction bases | a9 and cs1 refused. The case-fold comparison on the target side is S63-14 |
+| S63-03 | Closed | M1 `exit: 0,0`; gate `defects=0`; `E1.txt` written last |
+| S63-04 | Closed (for the alias branch) | M1c at correction 1; the `CaseComparisonTests` still pass. The final comparison is S63-14 |
+| S63-05 | Closed | the retry tests still pass |
+| S63-06 | Closed | unchanged since correction 1 |
+| S63-07 | Closed | the row stays removed; passes in CI 42130209504 |
+| S63-08 | **Closed** for redirects | one resolve (count test); anchor = `outcome.resolved`; N2, SW1, SW2, SW3 and SW6 refuse; M1a red |
+| S63-09 | **Closed** | Enum; typed field; direct attribute read; M1d red |
+| S63-10 | **Closed** | AN1–AN3 tests; M1c (K2) red |
+| S63-11 | Routed (hardening, next change) | N6 raises `TypeError` |
+| S63-12 | Routed to the owner | OneDrive in exposed mode |
+| S63-13 | Routed to the owner | target-side junction inside the root |
+
+### Reviewer counter-mutations (disposable `git clone --no-hardlinks` copy at `C:/Temp/claude/jas63rev02c_mut`, removed)
+
+These doors differ from the seat's five. Output was unfiltered (`-q -rfEs`), and each restore left an empty porcelain. Baseline: 83 passed, 22 subtests passed.
+
+| ID | Mutation | Result |
+| --- | --- | --- |
+| D1 | every `lstat` `OSError` treated as missing | red: the cannot-be-examined test and the resolved-spelling test |
+| D2 | only the resolved path walked, not the given spelling | red: 8 tests (case-twin and Kelvin bases and ancestors, Ohm, the case twin swapped in before the resolve) |
+| D3 | any spelling difference accepted after the walk (alias check skipped) | red: 3 tests (failed lookup, the pathlib-fold case, last error) |
+| D4 | the reparse attribute ignored | red: 10 tests |
+| D5 | the walk stops at the first PASS (first-match door) | red: 11 tests |
+| D6 | the anchor is the given spelling when pathlib calls it equal | zero red. **Equivalent today**: the two spellings differ only by case fold, and the final comparison folds too. It stops being equivalent once S63-14 is fixed |
+
+### New findings
+
+| ID | Class | Blocks? | Finding | Route |
+| --- | --- | --- | --- | --- |
+| S63-14 | `IMPLEMENTATION_DEFECT` (confinement; AGENTS.md P0; ticket defect category 1 "case" and the revision02 rule "never from a spelling comparison") | **Yes** | `resolves_within_root` decides containment with `resolved == resolved_base or resolved_base in resolved.parents`. That is pathlib equality, which folds with `str.lower` on Windows. NTFS keeps U+212A and `k` distinct in any directory, and keeps `Root` and `root` distinct in a case-sensitive one. Probes F1 and F2 accept a target in a real sibling directory **outside** the root, on every commit from the base to the candidate, with no junction and no race. `worktree_containment` applies this predicate to the repository root and to each sanctioned `.worktrees`-style root. So a worktree in a case-variant sibling (for example `.Worktrees` beside `.worktrees` in a case-sensitive repository) is accepted as inside the sanctioned directory. The same fold appears in `_anchor_for`'s `resolved_base == base`. SW4 is this finding's race form. Fix inside the boundary: compare resolved paths case-exactly, because both sides come from `resolve()` and carry the on-disk spelling (for example, `tuple(resolved.parts[:n]) == tuple(resolved_base.parts)` on `str`). Add F1 and F2 as tests | Control plane (convergence) |
+| S63-15 | `IMPLEMENTATION_DEFECT` (confinement; race) | **Yes** | `_anchor_for` resolves and then walks. A case-twin junction `A`→`a` that is present at the resolve and swapped back to a real `A` before the walk passes both walks. `…\A` is a real directory and `…\a` is real, and `resolved_base == base` (pathlib fold) or the `normcase` alias comparison accepts the pair. Containment is then anchored on the twin `…\a` (SW5, SW5b). Correction 1 refused this because its walk came first; revision01 and the base accept it. A plain junction (SW6) is refused, because its spelling differs. Fix: after the walk, decide "same directory" from the file system, by comparing `(st_dev, st_ino)` of `lstat(base)` and `lstat(resolved_base)`, rather than by `normcase`, together with the exact comparison of S63-14 | Control plane (convergence) |
+| S63-16 | `EVIDENCE_DEFECT` | No | The STATEMENT and the `_anchor_for` docstring say that after a swap past the walk "a target resolved after such a swap lands outside it and is refused". SW4 contradicts that for a case twin. The claim holds only for redirects whose spelling differs | With S63-14 |
+
+### Commands
+
+From the main checkout unless noted. Python `C:/Temp/claude/jas-venv/Scripts/python.exe` with `PYTHONUTF8=1`. Scratch at `.worktrees/63-short-name-containment-review-scratch/rev02c`.
+
+- `git -C <review> rev-parse HEAD` → `259598d7…`; porcelain empty before and after; `git log --format='%h an=… cn=… %B' 00fdc179..HEAD`; `git log --format='%h %cI' …`; `git diff --stat 00fdc179 HEAD`; `git diff --name-only 92ee3a94 HEAD`; `git diff 00fdc179 HEAD -- tests/ | grep '^-'` → three renames of the private name
+- `git show 3bab70d6:modules/tickets/workflow-governance/63-short-name-containment.md` (Correction 2 under revision02)
+- `gh run view 42130209504 --json …`; `gh run view 42130209504 --log` → `run_log.txt`; `gh run list --branch …`; `../rows.py run_log.txt <review>` → 8 = 8
+- `receipt_check.py <out-c2>/RETURN.md <review>` → exit 0; `evidence_gate.py … --candidate 259598d7… --tool …×3 --require-cell P1 … P9 --evidence-root <out-c2>` → `defects=0`, exit 0; `../receipt_bytes.py <out-c2>`; file times by `ls --time-style=full-iso`
+- `grep -n getattr`, an empty-string grep, and a `base_refusal_reason` caller grep on `library/` and `tests/`
+- `mypy --strict --python-version 3.11 --no-incremental` (win32, and `--platform linux`) on the three changed Python files → exit 0 both; `--disallow-any-expr --follow-imports=silent` on the module
+- Probes (all with the module registered in `sys.modules`, because the candidate uses dataclasses): `probe.py`, `probe_rp.py`, `probe_cs.py` (fresh case-sensitive temp directory, removed), `probe_r2.py` (subst `Q:` and mount point made and removed), `probe_ancestor.py` → `probe_*_c2.txt`; `probe_fold_target.py` on c2, c1, rev01 and base → `probe_fold_target*.txt`; `probe_swaps.py` on c2, c1, rev01 and base → `probe_swaps.txt`
+- `git clone --no-hardlinks <review> C:/Temp/claude/jas63rev02c_mut`, `checkout --detach 259598d7…`, `mutate3.py` → `mutations3.txt` (D1–D6); the clone was removed
+- `locked_f1.py` → host lock `C:/Temp/claude/jas-fullsuite.lock`, free when I asked. Acquired at 2026-11-05T23:55:14Z as `63-rev02-correction-F1`, with `owner.txt` holding the run id and time. At acquisition, `Get-CimInstance Win32_Process` (`procs_at_acquisition.txt`) showed no other pytest; the only python processes were my own lock runner and its launcher. The full suite ran in the review worktree → `F1.txt`, exit 1. Released at 2026-11-06T00:07:31Z: after checking that `owner.txt` still named my run, I renamed the directory to `jas-fullsuite.lock.released-63-rev02-correction-F1-<uuid>` and removed it. No mutation worker or other pytest of mine ran while I held the lock
+
+### Raw-log note
+
+The captures in `rev02c/` are unedited tool output: `probe_*.txt`, `probe_fold_target*.txt`, `probe_swaps.txt`, `mutations3.txt`, `F1.txt`, `procs_at_acquisition.txt`, `lock_log.txt` and `run_log.txt`. The tables shorten paths for width only. CI was read with `gh run view` only. Nothing was pushed, and no workflow was triggered. Counter-mutations and F1 were judged on unfiltered output. No tracked file was modified anywhere.
+
+### Not verified
+
+- Real Windows symlinks (WinError 1314). Junctions stood in, and the Linux job ran the symlink tests.
+- POSIX was judged by reading and by the Linux CI counts. On POSIX the final comparison is case-sensitive, so S63-14 is Windows-only. macOS case-insensitive volumes were not considered.
+- The swap windows were driven by a patched `Path.resolve`, not by a concurrent process. Whether an attacker can win SW5 on real timing is not measured. A deterministic window inside the predicate is enough for the finding.
+- A mapped network drive (not created), a host with `LongPathsEnabled=0`, and a OneDrive sync client running.
+
+```review-verdict
+candidate: 259598d778c256f9dc640a0defef681f15584ba0
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/63-rev02-correction
+reviewed_at: 2026-11-06
+```
