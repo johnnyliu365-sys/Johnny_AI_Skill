@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision05 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 initial review CHANGES_REQUESTED on `7216af66`: S63-21 dangling-junction chain, S63-22 lexists regression, S63-23 TICKET_DEFECT; the target side is now decided by one strict walk; implementation 5 returned (`8e6aed94`, CI run 42145605778 green on both jobs); revision05 initial review dispatched） |
+| 狀態 | `REVIEW_APPROVED`（closure revision05, candidate `8e6aed94`: revision05 initial review APPROVED; CI run 42145605778 green on both jobs; record `doc/reviews/workflow-governance/63-short-name-containment-code-review.md`; ready for integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
@@ -200,3 +200,12 @@ S63-23 is a `TICKET_DEFECT`: revision04 said "no path reached through a reparse 
 | S63-25 | OUT_OF_SCOPE_HARDENING, closed here | rule 1: a NUL, and a literal `..` under `\\?\`, refuse |
 
 The revision04 acceptance sentence still holds: no path outside the root, and no path reached through a reparse point, may be accepted. Every earlier probe that refused must still refuse. Over-refusal is checked as before: the repository path, the same path in another case, %TEMP%, the drive root, a short-name root and long paths are accepted. The work is one additive commit on `7216af66`, and the next review is the revision05 initial review. A CI run on the commit with both jobs `success` is part of the evidence.
+
+### Carried after approval (CodeReview §5 rule B)
+
+| Finding | Route |
+| --- | --- |
+| S63-26 | TICKET_DEFECT: a component swapped for a junction to an in-root directory between the walk and the strict resolve is accepted (the final location is inside the root; the same swap to outside refuses). The next revision of this gate compares the deepest existing component's identity before and after the resolve, as the base side's rule 3 does |
+| S63-27 | the next change of this gate (a gap that would let a regression through): f2 with a real third-party reparse tag, P1 on an existing directory, Q3b with a subst drive |
+| S63-28 | hardening: a typed refusal reason on the target side |
+| S63-12 | the owner's question 4 (cloud-file reparse tags); until decided, every reparse point refuses as AGENTS.md P0 is written |
