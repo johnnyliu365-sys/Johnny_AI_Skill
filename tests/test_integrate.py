@@ -1179,6 +1179,27 @@ class RealLandTests(LandCase):
         self.assertEqual((result.code, result.err), (0, ""), result.text)
         self.assertEqual(self.rig.states(), {"T1": "LANDED_PENDING_CI"})
 
+    def test_the_commands_run_on_the_merged_tree_which_holds_both_sides(self) -> None:
+        probe = self.rig.tools / "tree.py"
+        out = self.rig.root / "tree.out"
+        probe.write_text(
+            "import json, os, sys\n"
+            "with open(sys.argv[1], 'a', encoding='utf-8') as handle:\n"
+            "    handle.write(json.dumps({name: os.path.exists(name) for name in sys.argv[2:]}) + chr(10))\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        names = ["src/c1.py", "docs/newer.md", REVIEW]
+        self.rig.config["invariant_command"] = [PY, str(probe), str(out), *names]
+        self.rig.write_config()
+        cand = self.rig.candidate()
+        self.rig.publish({"docs/newer.md": "newer\n"})
+        self.rig.publish_record(cand)
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        result = self.rig.land()
+        self.assertEqual((result.code, result.err), (0, ""), result.text)
+        self.assertEqual([json.loads(line) for line in out.read_text(encoding="utf-8").splitlines()], [{name: True for name in names}])
+
     def test_a_candidate_that_is_not_a_branch_tip_is_fetched_by_its_sha(self) -> None:
         first = self.rig.candidate()
         second = self.rig.commit({"src/more.py": "m\n"}, "more on the same branch", first)
