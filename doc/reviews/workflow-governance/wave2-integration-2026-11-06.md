@@ -1,4 +1,4 @@
-# Wave-2 integration record (2026-11-06): tickets 60, 57, 59, 62 and 58
+# Wave-2 integration record (2026-11-06): tickets 60, 57, 59, 62, 58 and 63
 
 ## What landed
 
@@ -63,3 +63,19 @@ A fresh integration clone (`C:/Temp/claude/jas-integ5`, `transfer.fsckObjects=tr
 | Full suite in the integration clone under the host lock | 5 failed, 3475 passed, 36 skipped; every failure is a base name; zero new red. No other pytest was running at acquisition |
 | Pushed | `cp/wave2-gates` at `88321851` (fast-forward from `ac631a22`) |
 | CI readback | run 42128071544 on `88321851`: `test (linux)` and `test (windows)` both `success` |
+
+## Ticket 63 (fifth integration of the day)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 63 short-name containment | `8e6aed94` | closure revision05 initial review `APPROVED` | `5c704541` |
+
+A fresh integration clone (`C:/Temp/claude/jas-integ6`, `transfer.fsckObjects=true`, `fetch.fsckObjects=true`, `core.autocrlf=false`) was made from `802b1cbe`. The branch tip was checked equal to the candidate before the merge.
+
+The merge conflicted with ticket 62 in `ci/registered-failures.json` and `ci/README.md`. The list was resolved by a three-way merge of rows keyed by test id against the merge base `92ee3a94`: ticket 62's removals and ticket 63's 39 Windows removals both apply, and no row was changed by both sides. The README's count line names both. The ticket test files for both sides passed in the clone before the full suite ran (113 passed, 2 skipped for symlink privilege).
+
+| Check | Result |
+| --- | --- |
+| Full suite in the integration clone under the host lock | 5 failed, 3549 passed, 38 skipped; every failure is a base name; zero new red. No other pytest was running at acquisition |
+| Pushed | `cp/wave2-gates` at `5c704541`, fast-forward from `802b1cbe` |
+| CI readback | run 42150728351 on `5c704541`: `test (linux)` and `test (windows)` both `success`, with the registered lists at Linux 228 and Windows 5 rows |

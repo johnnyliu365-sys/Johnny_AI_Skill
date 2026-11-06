@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision05 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（closure revision05, candidate `8e6aed94`: revision05 initial review APPROVED; CI run 42145605778 green on both jobs; record `doc/reviews/workflow-governance/63-short-name-containment-code-review.md`; ready for integration） |
+| 狀態 | `INTEGRATED`（candidate `8e6aed94` integrated on `cp/wave2-gates` at `5c704541` on 2026-11-06; CI run 42150728351 green on both jobs; record `doc/reviews/workflow-governance/wave2-integration-2026-11-06.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
