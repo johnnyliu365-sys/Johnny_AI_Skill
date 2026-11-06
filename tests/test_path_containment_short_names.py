@@ -9,7 +9,7 @@ import subprocess
 import sys
 import types
 import unittest
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -795,6 +795,234 @@ class FileIdentityTests(unittest.TestCase):
                 result = path_containment._examine_component(root)
                 self.assertIs(path_containment._Component.REFUSE, result.state)
                 self.assertFalse(resolves_within_root(root / "x", root))
+
+
+class DanglingLinkTests(unittest.TestCase):
+    """Revision04 S63-17: a link whose target does not exist yet is a link, not a gap."""
+
+    def test_a_dangling_junction_pointing_outside_is_refused(self) -> None:
+        # The reviewer's G1, G1b and G1c.
+        if sys.platform != "win32":
+            self.skipTest("a junction is the Windows shape under test")
+        with _layout() as (parent, root, _outside):
+            later = parent / "directory_that_does_not_exist_yet"
+            link = root / "dangling_junction"
+            with _junction(link, later) as made:
+                if not made:
+                    self.skipTest("no junction can be created here")
+                self.assertFalse(later.exists())
+                self.assertFalse(resolves_within_root(link / "worktree", root))
+                self.assertFalse(resolves_within_root(link, root))
+                later.mkdir()
+                self.assertFalse(resolves_within_root(link / "worktree", root))
+
+    def test_a_dangling_symlink_pointing_outside_is_refused(self) -> None:
+        with _layout() as (parent, root, _outside):
+            later = parent / "directory_that_does_not_exist_yet"
+            link = root / "dangling_symlink"
+            try:
+                os.symlink(later, link, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("no symlink can be created here")
+            try:
+                self.assertTrue(os.path.lexists(link))
+                self.assertFalse(resolves_within_root(link / "worktree", root))
+                self.assertFalse(resolves_within_root(link, root))
+            finally:
+                try:
+                    os.unlink(link)
+                except OSError:
+                    pass
+
+    def test_a_missing_path_without_a_link_is_still_contained(self) -> None:
+        with _layout() as (_, root, _outside):
+            self.assertTrue(resolves_within_root(root / "a" / "b", root))
+
+    def test_the_existence_test_does_not_follow_links(self) -> None:
+        with _layout() as (_, root, _outside):
+            calls: list[Path] = []
+
+            def exists(self: Path, *args: object, **kwargs: object) -> bool:
+                calls.append(self)
+                return False
+
+            with mock.patch.object(Path, "exists", exists):
+                self.assertTrue(resolves_within_root(root / _LONG_CHILD_NAME / "x", root))
+            self.assertEqual([], calls)
+
+
+def _stat_with_inode_zero(
+    real_stat: Callable[..., os.stat_result],
+) -> Callable[..., os.stat_result]:
+    """An ``os.stat`` stand-in that reports ``st_ino == 0``, as a volume with no file index does."""
+
+    def stat(path: str | os.PathLike[str], *args: object, **kwargs: object) -> os.stat_result:
+        status = real_stat(path, *args, **kwargs)
+        fields = list(status[:10])
+        fields[1] = 0
+        return os.stat_result(tuple(fields))
+
+    return stat
+
+
+class IdentityEdgeTests(unittest.TestCase):
+    """Revision04 S63-19 and S63-20: an identity that is not one, and a missing attribute."""
+
+    def test_an_inode_of_zero_is_an_unreadable_identity(self) -> None:
+        # The reviewer's G5b: with no file index every directory would "match".
+        with _layout() as (_, root, _outside):
+            stand_in = _stat_with_inode_zero(os.stat)
+            with mock.patch.object(os, "stat", side_effect=stand_in):
+                self.assertIsNone(path_containment._identity(root))
+                self.assertIsNone(path_containment._identity(root / "missing" / "x"))
+                self.assertFalse(resolves_within_root(root / "x", root))
+                reason = path_containment._base_refusal_reason(root)
+            self.assertIsNotNone(reason)
+            assert reason is not None
+            self.assertIn("identity", reason)
+            self.assertTrue(resolves_within_root(root / "x", root))
+
+    def test_a_real_stat_result_whose_attributes_are_none_is_a_refusal(self) -> None:
+        # The reviewer's N6 and N6b: a real os.stat_result built without the field.
+        if sys.platform != "win32":
+            self.skipTest("the reparse attribute exists only on Windows")
+        with _layout() as (_, root, _outside):
+            real = os.lstat(root)
+            bare = os.stat_result(tuple(real[:10]))
+            self.assertIsNone(bare.st_file_attributes)
+            with mock.patch.object(os, "lstat", return_value=bare):
+                result = path_containment._examine_component(root)
+                self.assertIs(path_containment._Component.REFUSE, result.state)
+                self.assertIsNotNone(result.reason)
+                self.assertIs(False, resolves_within_root(root / "x", root))
+                reason = path_containment._base_refusal_reason(root)
+            self.assertIsNotNone(reason)
+
+    def test_a_non_integer_attribute_is_a_refusal(self) -> None:
+        if sys.platform != "win32":
+            self.skipTest("the reparse attribute exists only on Windows")
+        with _layout() as (_, root, _outside):
+            odd = types.SimpleNamespace(st_mode=stat.S_IFDIR | 0o755, st_file_attributes="16")
+            with mock.patch.object(os, "lstat", return_value=odd):
+                self.assertIs(
+                    path_containment._Component.REFUSE,
+                    path_containment._examine_component(root).state,
+                )
+
+    def test_a_real_lstat_result_with_attributes_is_still_read(self) -> None:
+        if sys.platform != "win32":
+            self.skipTest("the reparse attribute exists only on Windows")
+        with _layout() as (_, root, _outside):
+            self.assertIs(
+                path_containment._Component.PASS, path_containment._examine_component(root).state
+            )
+
+
+@contextmanager
+def _substituted_drive(directory: Path) -> Iterator[Path | None]:
+    """Map a free drive letter to ``directory`` with ``subst``; None where that cannot be done."""
+
+    if sys.platform != "win32":
+        yield None
+        return
+    letter = next((c for c in "QRSTUVWXYZ" if not os.path.exists(f"{c}:\\")), None)
+    if letter is None:
+        yield None
+        return
+    made = (
+        subprocess.run(
+            ("subst.exe", f"{letter}:", str(directory)),
+            check=False,
+            capture_output=True,
+            timeout=30,
+        ).returncode
+        == 0
+    )
+    try:
+        yield Path(f"{letter}:\\") if made else None
+    finally:
+        if made:
+            subprocess.run(
+                ("subst.exe", f"{letter}:", "/d"), check=False, capture_output=True, timeout=30
+            )
+
+
+class SameDirectorySpellingTests(unittest.TestCase):
+    """Revision04 S63-18: a spelling of the root that names it by identity is the root.
+
+    Each of these once failed a string comparison and now passes the identity
+    check. None of them admits a path outside the root, which is what is pinned.
+    """
+
+    def _assert_outside_is_refused(
+        self, spelling: Path, outside: Path, traversal: bool = True
+    ) -> None:
+        self.assertFalse(resolves_within_root(outside / "victim", spelling))
+        self.assertFalse(resolves_within_root(outside, spelling))
+        if traversal:
+            # A drive root has no parent, so ".." through it stays inside; the
+            # drive-letter test passes traversal=False.
+            self.assertFalse(
+                resolves_within_root(spelling / ".." / outside.name / "victim", spelling)
+            )
+
+    def test_a_trailing_dot_or_space_spelling_of_the_root_admits_nothing_outside(self) -> None:
+        if sys.platform != "win32":
+            self.skipTest("trailing dots and spaces are ignored by Windows only")
+        with _layout() as (_, root, outside):
+            (outside / "victim").mkdir()
+            for suffix in (".", " ", ". ", " ."):
+                with self.subTest(suffix=repr(suffix)):
+                    spelling = Path(str(root) + suffix)
+                    self._assert_outside_is_refused(spelling, outside)
+                    self.assertFalse(
+                        resolves_within_root(Path(str(outside) + suffix) / "victim", spelling)
+                    )
+
+    def test_an_index_allocation_spelling_of_the_root_admits_nothing_outside(self) -> None:
+        if sys.platform != "win32":
+            self.skipTest("the stream suffix exists on NTFS only")
+        with _layout() as (_, root, outside):
+            (outside / "victim").mkdir()
+            spelling = Path(str(root) + "::$INDEX_ALLOCATION")
+            self._assert_outside_is_refused(spelling, outside)
+            self.assertFalse(
+                resolves_within_root(
+                    Path(str(outside) + "::$INDEX_ALLOCATION") / "victim", spelling
+                )
+            )
+
+    def test_a_device_prefix_spelling_of_the_root_admits_nothing_outside(self) -> None:
+        if sys.platform != "win32":
+            self.skipTest("the device prefix exists on Windows only")
+        with _layout() as (_, root, outside):
+            (outside / "victim").mkdir()
+            spelling = Path("\\\\.\\" + str(root))
+            self._assert_outside_is_refused(spelling, outside)
+            self.assertFalse(
+                resolves_within_root(Path("\\\\.\\" + str(outside)) / "victim", spelling)
+            )
+
+    def test_a_substituted_drive_for_the_root_admits_nothing_outside(self) -> None:
+        if sys.platform != "win32":
+            self.skipTest("subst drives exist on Windows only")
+        with _layout() as (_, root, outside):
+            (outside / "victim").mkdir()
+            with _substituted_drive(root) as drive:
+                if drive is None:
+                    self.skipTest("no drive letter can be substituted here")
+                assert drive is not None
+                self._assert_outside_is_refused(drive, outside, traversal=False)
+                with _substituted_drive(outside) as other:
+                    if other is None:
+                        self.skipTest("no second drive letter can be substituted here")
+                    assert other is not None
+                    self.assertFalse(resolves_within_root(other / "victim", drive))
+                    self.assertFalse(resolves_within_root(other / "victim", root))
+                    self.assertFalse(resolves_within_root(other, drive))
+                # The root is still the root through its own drive letter.
+                self.assertTrue(resolves_within_root(drive / _LONG_CHILD_NAME, drive))
+                self.assertTrue(resolves_within_root(root / _LONG_CHILD_NAME, drive))
 
 
 if __name__ == "__main__":

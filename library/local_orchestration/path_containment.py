@@ -95,7 +95,8 @@ def _identity(path: Path) -> tuple[int, int, int] | None:
 
     The result is ``(st_dev, st_ino, missing)``, where ``missing`` counts the
     trailing components that do not exist yet. None means the identity cannot
-    be read, and the caller refuses. No spelling is compared.
+    be read, and the caller refuses; an inode number of 0 is not an identity and
+    is unreadable too. No spelling is compared.
     """
 
     current = path
@@ -111,6 +112,10 @@ def _identity(path: Path) -> tuple[int, int, int] | None:
             missing += 1
             continue
         except OSError:
+            return None
+        if int(status.st_ino) == 0:
+            # A file system that gives no file index reports 0 for every
+            # directory, which would make every directory "the same one".
             return None
         return (int(status.st_dev), int(status.st_ino), missing)
 
@@ -149,9 +154,15 @@ def _examine_component(component: Path) -> _ComponentResult:
         reason = f"component {component} is a symbolic link"
         return _ComponentResult(_Component.REFUSE, reason)
     if sys.platform == "win32":
+        # A result that lacks the field may raise AttributeError or, for a real
+        # ``os.stat_result`` built without it, report None. Only an int is a
+        # reading of the attributes; anything else is refused.
+        attributes: int | None
         try:
             attributes = status.st_file_attributes
         except AttributeError:
+            attributes = None
+        if not isinstance(attributes, int):
             reason = f"component {component} has no file attributes to examine"
             return _ComponentResult(_Component.REFUSE, reason)
         if attributes & _FILE_ATTRIBUTE_REPARSE_POINT:
@@ -258,7 +269,8 @@ def resolves_within_root(target: Path, base: Path) -> bool:
     Checking only an existing leaf misses two cases: a not-yet-created leaf
     under a redirected parent, and a redirected ancestor above it. The nearest
     existing ancestor is therefore resolved and required to stay inside the
-    resolved base, with the unresolved remainder appended unchanged.
+    resolved base, with the unresolved remainder appended unchanged. A link
+    whose target does not exist yet is still a link, not a missing component.
     """
 
     try:
@@ -271,7 +283,9 @@ def resolves_within_root(target: Path, base: Path) -> bool:
         resolved_base = outcome.resolved
         existing = target
         remainder: list[str] = []
-        while not existing.exists():
+        # ``lexists`` does not follow links: a dangling junction or symlink
+        # exists as the link it is, and the resolution below follows it.
+        while not os.path.lexists(existing):
             if os.fspath(existing.parent) == os.fspath(existing):
                 return False
             remainder.append(existing.name)
