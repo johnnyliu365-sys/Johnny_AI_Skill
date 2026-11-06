@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision03 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision04 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review CONVERGENCE_REVIEW_REQUIRED on `259598d7`: S63-14 and S63-15 confinement, both from case folding; implementation 3 returned (`51bbb509`, candidate `1103ef13`, CI run 42135324714 green on both jobs); revision03 initial review dispatched） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 initial review CHANGES_REQUESTED on `1103ef13`: S63-18 TICKET_DEFECT (acceptance wording); S63-17 dangling junction, S63-19, S63-20; implementation 4 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
@@ -147,3 +147,22 @@ Both come from one cause: a string comparison that folds case is used where NTFS
 | S63-11 | OUT_OF_SCOPE_HARDENING, closed here | an `lstat` result without `st_file_attributes` on Windows refuses rather than raising |
 
 Every revision02 rule, closed row and probe still holds, and nothing that refused before may be accepted. A CI run on the commit with both jobs `success` is part of the evidence. S63-12 and S63-13 stay with the owner.
+
+## Re-plan to closure revision04 (after the revision03 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision03 initial review". S63-14, S63-15 and S63-16 are closed.
+
+S63-18 is a `TICKET_DEFECT`. Revision03 said "nothing that refused before may be accepted", but rule 2 now correctly accepts spellings of the same directory that the old string comparison refused: a subst-drive base, `\\.\`, a trailing dot or space, and `::$INDEX_ALLOCATION`. Containment is anchored on the real resolution, so no path outside the root is admitted by any of them. Revision04 replaces the sentence:
+
+> **No path outside the root may be accepted, and no path reached through a reparse point may be accepted. A spelling of the same directory (by file identity) may be accepted where an earlier string comparison refused it; each such case is named in the STATEMENT.**
+
+This is a closure rebuild. The work is one additive commit on `1103ef13`, and the next review is the revision04 initial review.
+
+| Finding | Class | Work in implementation 4 |
+| --- | --- | --- |
+| S63-17 | IMPLEMENTATION_DEFECT (confinement), present since the base | the target loop tests existence without following links (`os.path.lexists`), so a dangling junction inside the root is examined as the reparse point it is and refused. The reviewer's G1 and G1b are tests that refuse; G1c still refuses |
+| S63-18 | TICKET_DEFECT | the sentence above. The STATEMENT names each same-directory spelling that is now accepted (subst drive, `\\.\`, trailing dot or space, `::$INDEX_ALLOCATION`), and a test for each shows that a target outside the root is still refused through that spelling |
+| S63-19 | hardening, closed here (rule 4) | an identity with `st_ino == 0` is unreadable and refuses; G5b refuses |
+| S63-20 | IMPLEMENTATION_DEFECT (the S63-11 row) | a real `os.stat_result` whose `st_file_attributes` is `None` or absent refuses, with no exception out of the predicate. The test builds a real `os.stat_result`, not a stand-in |
+
+Every revision03 rule, closed row and probe still holds. A CI run on the commit with both jobs `success` is part of the evidence. S63-12 and S63-13 stay with the owner.
