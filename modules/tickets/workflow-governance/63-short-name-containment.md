@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision04 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision05 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision04 after the revision03 initial review CHANGES_REQUESTED on `1103ef13`: S63-18 TICKET_DEFECT (acceptance wording); S63-17 dangling junction, S63-19, S63-20; implementation 4 returned (`7216af66`, CI run 42140315406 green on both jobs); revision04 initial review dispatched） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 initial review CHANGES_REQUESTED on `7216af66`: S63-21 dangling-junction chain, S63-22 lexists regression, S63-23 TICKET_DEFECT; the target side is now decided by one strict walk; implementation 5 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
@@ -166,3 +166,37 @@ This is a closure rebuild. The work is one additive commit on `1103ef13`, and th
 | S63-20 | IMPLEMENTATION_DEFECT (the S63-11 row) | a real `os.stat_result` whose `st_file_attributes` is `None` or absent refuses, with no exception out of the predicate. The test builds a real `os.stat_result`, not a stand-in |
 
 Every revision03 rule, closed row and probe still holds. A CI run on the commit with both jobs `success` is part of the evidence. S63-12 and S63-13 stay with the owner.
+
+## Re-plan to closure revision05 (after the revision04 initial review `CHANGES_REQUESTED`)
+
+Review record section "Revision04 initial review". S63-19 and S63-20 are closed. Each of the four reviews found a new way past the target side of the check:
+
+- case folding (S63-14);
+- a dangling junction (S63-17);
+- a chain of dangling junctions that the non-strict `resolve()` returns as unresolved text (S63-21);
+- a component that cannot be examined being treated as missing (S63-22, introduced by the `os.path.lexists` the ticket itself named).
+
+Every one comes from the same source. The target side asks the path *text* where it leads (non-strict `resolve()`, existence tests that swallow errors) instead of asking the file system about each component. Revision05 replaces the target side with one strict walk.
+
+S63-23 is a `TICKET_DEFECT`: revision04 said "no path reached through a reparse point may be accepted" while S63-13 (a junction inside the root that points inside the root) was left open. AGENTS.md P0 already says that a path reached through a junction or reparse point is refused, without exception. Revision05 applies that rule to the target side, so S63-13 closes here. Owner question 4 (whether cloud-file reparse tags such as OneDrive's should be exempt) stays open; until the owner decides, every reparse point refuses, as P0 is written.
+
+**Rule (revision05), target side.** It replaces every earlier statement about how a target is resolved; the base-side rules of revisions 02 to 04 are unchanged.
+
+1. The target is made absolute. A target that holds a NUL, a stream separator after the drive (`:`), or a `..` or `.` component anywhere refuses.
+2. Every component of the target is examined from its volume root downward with `os.lstat`.
+   - A component that exists must not carry `FILE_ATTRIBUTE_REPARSE_POINT` on Windows, and must not be a symbolic link on POSIX. Otherwise refuse.
+   - `FileNotFoundError` or `NotADirectoryError` ends the walk: that component and everything after it are the missing remainder.
+   - Any other error refuses.
+3. The deepest existing component is resolved with `resolve(strict=True)`. Any error refuses.
+4. Containment holds when the resolved base is an exact, component-by-component prefix of that resolved component followed by the missing remainder (revision03 rule 1).
+5. Any exception from a file-system call in the predicate refuses. The predicate never raises.
+
+| Finding | Class | Work in implementation 5 |
+| --- | --- | --- |
+| S63-21 | IMPLEMENTATION_DEFECT (confinement), present since the base | rules 2 and 3. The reviewer's H1, H1b to H1e and H1c are tests that refuse |
+| S63-22 | IMPLEMENTATION_DEFECT (confinement), regression in revision04 | rule 2: only `FileNotFoundError` and `NotADirectoryError` mean missing. The reviewer's f2 (error 1920 under a third-party reparse point) and P1 (an access-denied component before a junction) are tests that refuse |
+| S63-23 | TICKET_DEFECT | rule 2 refuses every reparse point on the target side. S63-13's N1, N1b and f1 are tests that refuse |
+| S63-24 | EVIDENCE_DEFECT | the STATEMENT names `:$I30:$INDEX_ALLOCATION` and the `\\.\` prefix with the root's short name among the accepted base spellings |
+| S63-25 | OUT_OF_SCOPE_HARDENING, closed here | rule 1: a NUL, and a literal `..` under `\\?\`, refuse |
+
+The revision04 acceptance sentence still holds: no path outside the root, and no path reached through a reparse point, may be accepted. Every earlier probe that refused must still refuse. Over-refusal is checked as before: the repository path, the same path in another case, %TEMP%, the drive root, a short-name root and long paths are accepted. The work is one additive commit on `7216af66`, and the next review is the revision05 initial review. A CI run on the commit with both jobs `success` is part of the evidence.

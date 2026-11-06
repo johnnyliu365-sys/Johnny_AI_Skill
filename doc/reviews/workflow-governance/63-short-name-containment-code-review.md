@@ -630,3 +630,189 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/63-rev03-initial
 reviewed_at: 2026-11-06
 ```
+
+## Revision04 initial review
+
+**Verdict: `CHANGES_REQUESTED`.** Implementation 4 (`7216af66`) does what the revision04 table lists:
+
+- the target loop uses `os.path.lexists`, so the dangling junction G1 and G1b now refuse, and G1c still refuses;
+- an `st_ino` of 0 is an unreadable identity, so G5b refuses;
+- a real `os.stat_result` whose `st_file_attributes` is `None` refuses, with no exception escaping (N6, N6b);
+- each of the four named same-directory spellings has a test showing that a target outside the root is refused through it.
+
+The receipt passes both gates, E1 was written last, and CI run 42140315406 is green on both jobs at the candidate. No ordinary setup is over-refused.
+
+Two confinement findings block approval:
+
+- **S63-21 (bypass, present since the base).** A dangling junction inside the root is still accepted when its target is spelt *through another in-root junction* that points outside (H1). For example, `root\J1` points to `root\sub\notyet`, and `root\sub` points to `outside`. `lexists` finds `J1`. Non-strict `resolve()` cannot open it, falls back to `readlink`, and returns the link text `root\sub\notyet` without resolving `sub`. The exact prefix then passes. I made `outside\notyet` and then `root\J1\wt_made`, and the directory landed in `outside\notyet\wt_made`. This is S63-17's own shape, one hop deeper, so the S63-17 row is not met.
+- **S63-22 (regression introduced by the candidate).** `os.path.lexists` returns `False` for *every* `lstat` error, not only for "not found". A target component that cannot be examined is therefore walked past as missing. Probe f2 is a real file-system case: a leaf under a third-party reparse point inside the root, where `lstat` fails with error 1920. Revision03 refused it, and the candidate accepts it. That breaks "every revision03 … probe still holds", the revision04 sentence "no path reached through a reparse point may be accepted", the revision02 rule "a component that cannot be examined is refused" and revision03 rule 4. A mocked access-denied component in front of a junction to outside (P1) is accepted the same way. Revision03 refused it.
+
+A two-part fix keeps all 116 tests of the containment set green and refuses H1, H1c, f1, f2 and P1 (trial FIX-A, below):
+
+- the loop treats only `FileNotFoundError` and `NotADirectoryError` as missing;
+- the nearest existing entry is resolved with `resolve(strict=True)`.
+
+Neither part alone is enough: FIX-B, the strict resolve alone, still accepts P1.
+
+The rest do not block:
+
+- S63-23 is a `TICKET_DEFECT`. The new acceptance sentence contradicts the S63-13 deferral.
+- S63-24 is an `EVIDENCE_DEFECT`. Two accepted spellings are not named in the STATEMENT.
+- S63-25 is hardening.
+
+This is the initial review of closure revision04, so one correction is available.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/63-short-name-containment.md`, closure revision04, section "Re-plan to closure revision04" (the acceptance sentence and the S63-17 to S63-20 table), with the Revision02 rule and the revision03 rules 1–4, read at `cp/wave2-gates` `bd37ee70`. The dispatch's `ticket_leaf` is `ec6869a5`, which differs only in the status row |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-63e_dispatch.yaml` (implementation 4 on `1103ef13`) |
+| Candidate | `7216af66f9c9ab26c128fc6f6735ebd5a40032fa` on `cp/wave2-63-short-name-containment`. `origin/…` is the same sha. One additive commit whose parent is `1103ef13`. The full ticket diff runs from `92ee3a94` |
+| Commit identity | Johnny Liu is author and committer on every commit from `92ee3a94` to the candidate. The trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` names the seat's model |
+| Changed paths | This commit: `library/local_orchestration/path_containment.py` and `tests/test_path_containment_short_names.py`. From `92ee3a94`: the five declared paths. No `forbid` path is touched, and `ci/` is unchanged in this commit |
+| Review worktree | `.worktrees/63-short-name-containment-review`, detached at the candidate. Porcelain was empty before and after. The main checkout's porcelain was empty after |
+| Receipt | `.worktrees/63-short-name-containment-out-r4/RETURN.md` (LF, 52650 bytes, 0 CR), with `E1.txt` |
+| CI run | 42140315406, event `push`, `headSha` = candidate. `test (windows)` success: 8 failed, 3456 passed, 34 skipped. `test (linux)` success: 351 failed, 3196 passed, 91 skipped. Both "Compare failures with the registered list" steps succeed |
+| References applied | `AGENTS.md` (P0 permissions and ownership: junction and reparse refusal; P0 source type); `CodeReview.md` (whole file, §4 classes, §5 and rule B); `review-checks.md` (path identity/prefix, authorization bypass through an indirect entry, exception behaviour, test truthfulness with reviewer counter-mutation, task/worktree binding); `security-boundary.md` |
+| XSS / secrets / Agent control / profile / POC | Not applicable, for the same reasons as revision01. This is a stdlib path predicate and its tests |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | S63-17: a dangling junction or symlink inside the root refuses at any depth; G1c still refuses; every existence test is link-aware | **FAIL (S63-21, S63-22)** | G1, G1b, G1c refuse. So do the depth and spelling variants G1d–G1l: `J\a\b\c`, `J`'s short name, `J.`, `J `, `J::$INDEX_ALLOCATION`, short base, short-spelt link target, `\\?\`, and a junction 551 characters deep. **H1, H1b–H1e** (dangling junction → in-root junction → outside) and **H1c** (dangling → dangling) are **accepted**. The link-following calls I found: `_identity` uses `os.stat`. That is intended for identity, and the base walk sees any link in the given spelling, so it is not exploitable. The two non-strict `resolve()` calls at lines 232 and 293 are the H1 door on the target side. `lexists` at line 288 is link-aware, but it swallows every error (S63-22). No `exists()`, `is_dir()` or `resolve(strict=…)` remains |
+| 2 | S63-19, S63-20 with a real `os.stat_result` | PASS | I built real results myself: `os.stat_result(tuple(real[:10]))` (`st_file_attributes` is `None`), and `os.stat` returning `st_ino = 0` (probe_r3 G5b/G5c, and the seat's helper). N6 and N6b → `False`, with no exception. G5b and G5c → `False`. My X2 (a missing attribute defaults to 0) turns 3 tests red. My X3 (inode 0 refused only when no component is missing) turns the ancestor assertion red |
+| 3 | S63-18: each named spelling is the root by identity; outside refused through it; unnamed spellings | PASS for the four named; **two unnamed (S63-24)** | `probe_spell.py`: subst `Q:\`, `\\.\`, trailing `.`, ` `, `. ` and `::$INDEX_ALLOCATION` each have `(st_dev, st_ino)` equal to the root's. Each is accepted as a base where `259598d7` (string comparison) refused it. Through each, `outside\victim`, `outside`, the same trick on the outside directory, and `..\outside\victim` are refused. Exception: `Q:\..\…` on the drive root stays inside the real root, as the test notes. Accepted at r3 and r4 but refused at `259598d7`, and **not named**: `:$I30:$INDEX_ALLOCATION`, and `\\.\` + the root's short name. Neither admits an outside target. Accepted at every commit, so not "newly accepted": `\\?\`, `\\localhost\C$`, `\\127.0.0.1\C$`, `\\?\UNC\…`, forward slashes, upper case. Refused: `\\?\GLOBALROOT\Device\…`, `\\.\GLOBALROOT\…`, volume-GUID path |
+| 4 | Own adversarial probes | **FAIL (S63-21, S63-22)** | Tables below |
+| 5 | Over-refusal | PASS | Table below |
+| 6 | No assertion loosened; closed rows hold | PASS except f2 (S63-22) | `git diff 1103ef13 HEAD -- tests/` removes one line, an import widened to `Callable, Iterator`. From `92ee3a94`, the only other removed line is the revision02 fixture line. The file grows from 49 to 61 tests. All earlier probe sets were rerun (88 tags): 85 keep their answer, N6 and N6b now refuse instead of raising, and **f2 changed from refused to accepted** |
+| 7 | Receipt | PASS | `receipt_check.py` → `[ok]` ×6, 0 defects, exit 0. `evidence_gate.py` (three wave-1 tools, P1 T1 M1 C1 F1 P9) → `cells=6 defects=0`, exit 0. The tool digests equal the sha256 of the three scripts at the candidate. `receipt_bytes.py`: 0 CR, every raw block byte-identical to its capture, exit lists equal (M1 `0,0` = clone, checkout). File times: `E1.txt` 09:14:07.71, after `RETURN.md` at 09:13:59.69, and it is the last file. P1, T1 and M1 (08:56:06–08:57:20) follow the commit (08:55:33). Read unfiltered, each M1 mutation is red for its intended reason: M1a → the G1 assertion `True is not false`, and the no-follow test; M1b → `(…, 0, 0) is not None`; M1c → `TypeError` for `None` and for `str`. Each restore leaves an empty porcelain |
+| 8 | P1 skip | PASS | My P1 rerun: 107 passed, 1 skipped (`tests\test_path_containment_short_names.py:819: no symlink can be created here`), exit 0, the same as the seat. CI: Windows +12 passed against `1103ef13` with skips unchanged (34), so the runner made the symlink. Linux +4 passed and +8 skipped. The only four new tests without a Windows-only guard are the dangling-symlink, missing-path, no-follow and inode-0 tests, so the dangling-symlink test passed on Linux. The log carries no per-test lines, so this is inferred from counts |
+| 9 | Boundary, identity, stdlib, `Any`, P0 types, mypy | PASS | Declared paths only; Johnny Liu. Imports are stdlib only. No explicit `Any`, `getattr`, `cast` or `type: ignore`. `--disallow-any-expr` flags only the ctypes call result (line 59), narrowed by `int()`. The finite states stay typed (`_Component` Enum, `_Anchor`/`_Refusal`). `mypy --strict --python-version 3.11 --no-incremental` on the three changed Python files → exit 0, and with `--platform linux` → exit 0 |
+| 10 | Seat F1 | PASS | 8 names, all among the 12 base names. The seat's lock log names only its own runner |
+| 11 | Reviewer F1 under the host lock | PASS | `python -m pytest tests -q -p no:cacheprovider` in the review worktree → 8 failed, 3453 passed, 37 skipped, 6843 subtests passed, exit 1. The 8 names are all among the 12 base names, with zero new red, and they are the same 8 the seat reported |
+
+### Bypass probes
+
+`True` means accepted. r4 = candidate; r3 = `1103ef13`; c2 = `259598d7`. Every junction, the subst drive and the case-sensitive directory were made in fresh `%TEMP%` trees or session mappings and removed afterwards, links first, by explicit list.
+
+**Earlier sets, rerun on r4** (`rerun_old.sh`, compared tag by tag with the revision03 captures by `cmp_runs.py`)
+
+| Probes | r4 | Change against r3 |
+| --- | --- | --- |
+| a1–a7b, a9, a9b, a9c, b1, b2, b4, c10, d1, d2, d5–d9, e2, f3, f4 | refused | none |
+| cs1–cs3 / cs4 | refused / accepted | none |
+| AN1–AN4, N2, N3, N3b, N3c (mount point), N7, N7b, N7c, N8 | refused | none |
+| F1, F1b, F1c, F2, F2b (case-fold sibling), SW1–SW6 | refused | none |
+| A0, A1, b3, c1–c9, c11, d3, d4, e1, N4, N4b, N8b, O1–O5, G2–G2j, G3–G3e, G3g–G3j | accepted (same directory) | none |
+| G2k, G3f | refused | none |
+| f1, N1, N1b (target-side reparse point inside the root) | accepted | none (S63-13, with the owner; see S63-23) |
+| **f2** (a leaf under a third-party reparse point inside the root; `lstat` → 1920) | **accepted** | **was refused (S63-22)** |
+| N6, N6b (attribute `None`) | refused | raised `TypeError` (S63-20 closed) |
+| G1, G1b / G1c | **refused** / refused | were accepted / refused (S63-17, direct shape) |
+| G4, G4b, G5 | refused | none |
+| G5b, G5c (`st_ino = 0`) | **refused** | were accepted (S63-19 closed; G5c is the intended refusal) |
+
+**New probes** (`probe_r4.py`, `probe_spell.py`, `probe_dotdot.py`, `hardlink.txt`)
+
+| Probe | Shape | r4 | r3 | Judgement |
+| --- | --- | --- | --- | --- |
+| H1 / H1b / H1d / H1e | dangling junction `root\J1` → `root\sub\notyet`, where `root\sub` is a junction to outside; target `J1\wt` / `J1` / `J1\a\b\c` / via the short root | **accepted ×4** | accepted | **S63-21.** `os.readlink(J1)` gives `\\?\…\root\sub\notyet`; `resolve()` returns it without following `sub` |
+| H1c | dangling `root\J3` → `root\J2\notyet`, `J2` dangling → `outside\later` | **accepted** | accepted | S63-21 |
+| H1f / escape | `outside\notyet` created: the predicate on `J1\wt` / `os.makedirs(root\J1\wt_made)` | refused / **lands in `outside\notyet\wt_made`** | — | The accepted path leads outside as soon as the target appears |
+| G1d–G1l | G1 at depth, by short name, `J.`, `J `, `J::$INDEX_ALLOCATION`, short base, short-spelt link target, `\\?\` base and target, 551 characters deep | refused ×9 | accepted ×9 | S63-17 holds for the direct shape |
+| f2 | leaf under a third-party reparse point inside the root (real file system, 1920) | **accepted** | refused | **S63-22** |
+| P1 | `root\D\J\wt` where `J` is a junction to outside and `lstat`/`stat` of anything under `D` raise `PermissionError` (mock) / control without the mock | **accepted** / refused | refused / refused | **S63-22**: `lexists` turns "cannot be examined" into "missing" |
+| Z1 | target with an embedded NUL | accepted | accepted | S63-25 (cannot be created) |
+| D1 / D2 | `\\?\` base; target `\\?\…\root\..\outside\made` / `\\?\…\root\.\made2` | accepted / accepted | accepted (c2 too) | D1: `makedirs` → error 123, so nothing is created outside (S63-25). D2: created inside the root |
+| Z2 / Z3 / Z4 | empty target (the cwd is outside the root) / root equal to target / relative base | refused / accepted / refused | same | as intended |
+| Z5 / Z6 | `root\..\outside` / `root\sub\..\x` (sub a junction) | refused / accepted | same | Win32 collapses `..` lexically, so `root\x` is the real path |
+| spellings | see cell 3 | — | — | S63-24 for the two unnamed spellings |
+| hard-linked directory | `os.link` on a directory | not possible | — | The OS refuses it (error 5). NTFS has no directory hard links, so the shape cannot exist |
+| mount point | N3, N3b, N3c rerun | refused | refused | holds |
+| races | by reading | — | — | Between `lexists` and the target's `resolve()`, an entry swapped for an H1-shaped dangling junction is accepted. That is S63-21 again, and the strict resolve closes it. Swapping to a plain junction to outside refuses, because the resolve follows it. Base-side windows (identity before and after, walk, resolve) are unchanged since revision03: SW1–SW6, G4 and G5 refuse. After the predicate returns, a check-then-use gap remains, which is inherent |
+| POSIX | by reading and CI | — | — | `lexists` is `os.lstat`. Non-strict `posixpath.realpath` resolves link chains, including a dangling link's own target, component by component, so H1 is Windows-only. S63-22 applies on POSIX: `EACCES` on a component is swallowed by `lexists`, and non-strict `realpath` also treats an `lstat` failure as "not a link". Revision03's `Path.exists()` raised `PermissionError` and refused. The Linux job ran the dangling-symlink test (cell 8) |
+
+### Over-refusal on Windows
+
+| Setup | r4 | Note |
+| --- | --- | --- |
+| This repository as base; the review worktree; a new `.worktrees\new-ticket` leaf; the repository as its own target | accepted | O1–O1c |
+| Repository spelt in lower case, upper case, target in another case | accepted | O2–O2c, G2–G2f |
+| Short-name repository root (`JOBD88~1`), long and short targets; short-name temporary roots | accepted | O3, O3b, G2h–G2j |
+| `%TEMP%`, its own root, and its short spelling | accepted | O4–O4c |
+| Drive root `C:\` as base, and as base and target | accepted | O5, O5b |
+| Long paths: 620 characters (long and short spelling), 1030 characters, 598 characters | accepted | O6–O6c, e1, N8b; `LongPathsEnabled=1` |
+| Volume with `st_ino = 0` (simulated) | refused | intended by rule 4 (G5c) |
+
+### Status of S63-01 to S63-20
+
+| ID | Status |
+| --- | --- |
+| S63-01 to S63-10 | Closed. Every probe that pins them (cs1–cs3, a9 family, AN1–AN4, N2, retry, ctypes, fixture row) keeps its answer |
+| S63-11 | Closed, with S63-20 |
+| S63-12 | With the owner |
+| S63-13 | With the owner. The revision04 sentence now contradicts the deferral (S63-23) |
+| S63-14, S63-15, S63-16 | Closed (F1, F2, SW4, SW5 refuse) |
+| S63-17 | **Not closed.** The direct shape (G1, G1b, G1d–G1l) refuses, and M1a and my X1 are red. But a dangling junction inside the root is still accepted when its target is spelt through an in-root junction (S63-21). The `lexists` change also introduced S63-22 |
+| S63-18 | Closed in effect. The four named spellings are tested and admit nothing outside. The STATEMENT misses two accepted spellings (S63-24) |
+| S63-19 | Closed (G5b refuses; M1b and X3 red) |
+| S63-20 | Closed (N6 and N6b refuse with a real `os.stat_result`; M1c and X2 red) |
+
+### Reviewer counter-mutations (disposable `git clone --no-hardlinks` copy at `C:/Temp/claude/jas63rev04_mut`, removed)
+
+These doors differ from the seat's three. Output was read unfiltered (`-q -rfEs`, no wrapper), and each restore left an empty porcelain. Baseline (the test file plus the seven containment and consumer test files): 116 passed, 1 skipped, 38 subtests passed.
+
+| ID | Mutation | Result |
+| --- | --- | --- |
+| X1 | existence test `exists() or islink()` (a symlink door blind to junctions) | red: the dangling-junction test (`True is not false`) and the no-follow test |
+| X2 | a non-`int` attribute defaults to 0 ("not a reparse point") | red: 3 tests (the `SimpleNamespace`, non-integer and real `os.stat_result` tests) |
+| X3 | inode 0 refused only when no component is missing | red: `test_an_inode_of_zero_is_an_unreadable_identity` (`(…, 0, 2) is not None`) |
+| X4 | anchor on the given spelling once identity matched | red: 4 tests, among them the subst test |
+| X5 | the resolved identity not compared | red: the SW5 test |
+| FIX-A | loop counts only `FileNotFoundError`/`NotADirectoryError` as missing; nearest entry `resolve(strict=True)` | 116 passed. H1, H1b–H1e, H1c, f1, f2 and P1 refused; G1 family refused; Z3 and Z6 accepted. Z1 (NUL) now raises `ValueError` out of the predicate, so the fix must also refuse on `ValueError` |
+| FIX-B | `resolve(strict=True)` only | 116 passed. H1 and f2 refused, **P1 still accepted** |
+
+No existing test turns red for H1 or f2 on the unmutated candidate. The defect sits in the candidate itself, so no mutation is needed to show the gap. That is a zero-red result for the S63-17 row's shape one hop deeper.
+
+### New findings
+
+| ID | Class | Blocks? | Finding | Route |
+| --- | --- | --- | --- | --- |
+| S63-21 | `IMPLEMENTATION_DEFECT` (confinement; AGENTS.md P0; S63-17 row; TDD 2) | **Yes** | `resolves_within_root` resolves the nearest existing entry with non-strict `Path.resolve()`. On Windows, when `_getfinalpathname` fails (a dangling link), `ntpath` falls back to `readlink` and returns the link's text **without resolving the components inside it**. A dangling junction `root\J1` → `root\sub\notyet`, with `root\sub` a junction to outside, therefore yields `root\sub\notyet\wt`. The exact prefix passes (H1, H1b–H1e), and so does a chain of two dangling junctions (H1c). Once `outside\notyet` exists, a directory made at the accepted path lands outside the root (demonstrated). Present at `1103ef13` and, like G1, since the base. POSIX is not affected, because `realpath` resolves link chains. Fix: resolve the nearest existing entry with `resolve(strict=True)`, and refuse on `OSError` (FIX-A/B). Tests: H1 and H1c | This correction |
+| S63-22 | `IMPLEMENTATION_DEFECT` (confinement; introduced by the candidate; revision02 rule "a component that cannot be examined is refused", revision03 rule 4, the revision04 sentence) | **Yes** | `os.path.lexists` returns `False` for every `OSError` and `ValueError`, so the target loop walks up past a component it cannot examine and treats it as missing. f2, a real leaf under a third-party reparse point inside the root (`lstat` → 1920), was refused at `1103ef13` and is accepted now: a path reached through a reparse point. P1 (a mocked access-denied component in front of a junction to outside) is accepted, where revision03's `Path.exists()` raised and refused. The same holds on POSIX for `EACCES`. The ticket's parenthetical "(`os.path.lexists`)" invited this call. If the control plane reads that parenthetical as prescriptive, this is a `TICKET_DEFECT` of the same blocking class. Fix: an `lstat` loop that counts only `FileNotFoundError` and `NotADirectoryError` as missing and refuses any other error, together with S63-21's strict resolve. FIX-B alone leaves P1 open. Tests: f2 (real tag, where `FSCTL_SET_REPARSE_POINT` works without elevation) and a mocked `PermissionError` component | This correction |
+| S63-23 | `TICKET_DEFECT` | No (the ticket itself reserves S63-13 for the owner) | The revision04 sentence says "no path reached through a reparse point may be accepted". The ticket also keeps S63-13 with the owner, and N1, N1b and f1 (target-side reparse points inside the root that resolve inside it) are still accepted. Read literally, the sentence condemns them. Under FIX-A, f1 refuses but N1 and N1b are still accepted | Control plane: reconcile the sentence with S63-13 when it records the correction |
+| S63-24 | `EVIDENCE_DEFECT` (STATEMENT completeness under the revision04 sentence) | No (neither admits a path outside the root) | Two spellings that `259598d7` refused are accepted at r3 and r4 and are not named in the STATEMENT: `<root>:$I30:$INDEX_ALLOCATION` (the explicit name of the stream behind `::$INDEX_ALLOCATION`), and `\\.\` + the root's 8.3 short name. Through both, every outside target refuses | This correction's STATEMENT (and, optionally, a subtest each) |
+| S63-25 | `OUT_OF_SCOPE_HARDENING` | No | The predicate answers `True` for two targets that cannot be created: one with an embedded NUL (Z1), and one under `\\?\` with a literal `..` (D1, `makedirs` → error 123). Both are pre-existing and fail safe at creation. With FIX-A, Z1 raises `ValueError` instead, so a fix should refuse on `ValueError` too | Follow-up hardening, or fold into the S63-22 fix |
+
+### Commands
+
+From the main checkout unless noted. Python `C:/Temp/claude/jas-venv/Scripts/python.exe` with `PYTHONUTF8=1`. Scratch at `.worktrees/63-short-name-containment-review-scratch/rev04`.
+
+- `git -C <review> rev-parse HEAD` → `7216af66…`. Porcelain empty before and after. `git log --format='%H %P …' 1103ef13..HEAD`; `git log --format='%h %an <%ae> | %cn <%ce>' 92ee3a94..HEAD`; `git diff --stat 1103ef13 HEAD`; `git diff 1103ef13 HEAD -- library/ tests/`; `git diff 92ee3a94 HEAD -- tests/ | grep '^-[^-]'` → two lines (fixture, import); `git diff --name-only 92ee3a94 HEAD` → five paths; `git rev-parse origin/cp/wave2-63-short-name-containment`
+- `gh run view 42140315406 --json headSha,headBranch,conclusion,status,event,url,workflowName,jobs`; `gh run view 42140315406 --log` → `run_log.txt`; `gh run list --branch cp/wave2-63-short-name-containment`; `../rows.py rev04/run_log.txt <review>` → Windows 47 → 8, CI `FAILED` set = registered rows, Linux rows unchanged (234)
+- `receipt_check.py <out-r4>/RETURN.md <review>` → exit 0; `evidence_gate.py … --candidate 7216af66… --tool …dispatch_lint.py --tool …receipt_fence_check.py --tool …index_pins.py --require-cell P1 … P9 --evidence-root <out-r4>` → `cells=6 defects=0`, exit 0; `../receipt_bytes.py <out-r4>`; sha256 of the three scripts at the candidate; `od -c E1.txt`; file times with `ls --time-style=full-iso` → `receipt_checks.txt`
+- `mypy --strict --python-version 3.11 --no-incremental` with `--platform win32` and with `--platform linux` on the three changed Python files → exit 0 both; `--disallow-any-expr --follow-imports=silent` on the module → line 59 only; import and `Any`/`getattr` greps → `mypy.txt`. A link-following call sweep on the module → `followers.txt`
+- `rerun_old.sh path_containment_r4.py r4` (all revision01 to revision03 probe scripts; a fresh case-sensitive directory via `fsutil file setCaseSensitiveInfo`, junction then tree removed) → `probe_*_r4.txt`, `probe_g_r4.txt`; `cmp_runs.py rev03 r3 rev04 r4` → 88 tags, 3 differ
+- `probe_r4.py` on r4 and r3 → `probe_r4_r4.txt`, `probe_r4_r3.txt`; `probe_spell.py` on r4, r3 and c2 (subst `Q:` made and removed) → `probe_spell_*.txt`; `probe_dotdot.py` → `probe_dotdot_r4.txt`; `probe_over.py` → `probe_over_r4.txt`; `os.link` on a directory → `hardlink.txt`
+- `git clone --no-hardlinks <review> C:/Temp/claude/jas63rev04_mut`, `checkout --detach 7216af66…` (`clone_log.txt`), then `mutate5.py` → `mutations5.txt` (X1–X5, FIX-A, FIX-B, with probe_r4 and probe_rp on each trial module). The clone was removed
+- P1 rerun in the review worktree (`-q -rfEs`) → `P1.txt`: 107 passed, 1 skipped, exit 0
+- `locked_f1.py` → host lock `C:/Temp/claude/jas-fullsuite.lock`, free when I asked. Acquired at 2026-11-06T01:22:51Z as `63-rev04-initial-F1`, with `owner.txt` holding the run id and time. At acquisition, `Get-CimInstance Win32_Process` (`procs_at_acquisition.txt`) showed **no other pytest**; the only python processes were my own lock runner and its launcher (PIDs 62980 and 63684). The full suite ran in the review worktree → `F1.txt`, exit 1. Released at 01:33:11Z: after checking that `owner.txt` still named my run, I renamed the directory to `jas-fullsuite.lock.released-63-rev04-initial-F1-<uuid>` and removed it. No mutation worker or other pytest of mine ran while I held the lock. The probes I ran meanwhile import the module only and run no pytest
+
+### Raw-log note
+
+The captures in `rev04/` are unedited tool output: `receipt_checks.txt`, `mypy.txt`, `followers.txt`, `run_log.txt`, `probe_*_r4.txt`, `probe_g_r4.txt`, `probe_r4_r3.txt`, `probe_spell_{r4,r3,c2}.txt`, `probe_dotdot_r4.txt`, `probe_over_r4.txt`, `hardlink.txt`, `rerun_old_r4.log`, `clone_log.txt`, `mutations5.txt`, `P1.txt`, `F1.txt`, `procs_at_acquisition.txt` and `lock_log.txt`. The tables shorten paths for width only. CI was read with `gh run view` only. Nothing was pushed, and no workflow run was triggered. Counter-mutations, the fix trials, P1 and F1 were judged on unfiltered pytest output, with no wrapper. No tracked file was modified anywhere, and no junction, subst drive, case-sensitive directory or clone of mine remains.
+
+### Not verified
+
+- Real Windows symlinks (WinError 1314 on this host). The dangling and chained shapes ran as junctions. A dangling symlink with a *relative* target containing `..` through a junction is resolved lexically by `ntpath._readlink_deep` (`normpath`). By reading, that is another H1-style door, which the strict resolve also closes. I did not run it.
+- POSIX: no POSIX interpreter was run. S63-22's `EACCES` form and the absence of H1 on POSIX are judged by reading `posixpath.realpath` and `os.path.lexists`, together with the Linux CI counts.
+- P1 (access denied) was driven by a mocked `os.lstat`/`os.stat`; I changed no ACL. f2 is the real file-system instance of the same door. What a real filter driver does beneath a non-surrogate tag (for example, a container-isolation tag that redirects to a backing layer) was not observed: no such filter was present.
+- A mapped network drive, FAT/exFAT, an SMB server without file indexes, a host with `LongPathsEnabled=0`, and a running OneDrive client.
+- The swap windows in this revision were judged by reading; the earlier SW and G4/G5 probes were rerun with their patched `resolve`/`stat`.
+
+```review-verdict
+candidate: 7216af66f9c9ab26c128fc6f6735ebd5a40032fa
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/63-rev04-initial
+reviewed_at: 2026-11-06
+```
