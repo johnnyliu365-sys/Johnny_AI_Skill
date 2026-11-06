@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision03 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review CONVERGENCE_REVIEW_REQUIRED on `259598d7`: S63-14 and S63-15 confinement, both from case folding; implementation 3 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision03 after the revision02 correction review CONVERGENCE_REVIEW_REQUIRED on `259598d7`: S63-14 and S63-15 confinement, both from case folding; implementation 3 returned (`51bbb509`, candidate `1103ef13`, CI run 42135324714 green on both jobs); revision03 initial review dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
