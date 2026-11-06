@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision05 / receipt under `.worktrees/63-short-name-containment-out/` / owner implementation seat / worktree `.worktrees/63-short-name-containment` / branch `cp/wave2-63-short-name-containment` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 initial review CHANGES_REQUESTED on `7216af66`: S63-21 dangling-junction chain, S63-22 lexists regression, S63-23 TICKET_DEFECT; the target side is now decided by one strict walk; implementation 5 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision05 after the revision04 initial review CHANGES_REQUESTED on `7216af66`: S63-21 dangling-junction chain, S63-22 lexists regression, S63-23 TICKET_DEFECT; the target side is now decided by one strict walk; implementation 5 returned (`8e6aed94`, CI run 42145605778 green on both jobs); revision05 initial review dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/63-short-name-containment` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/63-short-name-containment-review` |
