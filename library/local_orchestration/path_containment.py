@@ -29,7 +29,6 @@ _FILE_ATTRIBUTE_REPARSE_POINT = 0x400
 _INITIAL_BUFFER_CHARACTERS = 1024
 
 
-
 class _LookupState(threading.local):
     """The Windows error code of the last long-name lookup, kept per thread."""
 
@@ -263,14 +262,62 @@ def _base_refusal_reason(base: Path) -> str | None:
     return outcome.reason if isinstance(outcome, _Refusal) else None
 
 
-def resolves_within_root(target: Path, base: Path) -> bool:
-    """Reject a target whose own path or any ancestor redirects elsewhere.
+def _target_spelling_is_refused(target: Path) -> bool:
+    """Whether the spelling of ``target`` alone is refused, before any file-system call.
 
-    Checking only an existing leaf misses two cases: a not-yet-created leaf
-    under a redirected parent, and a redirected ancestor above it. The nearest
-    existing ancestor is therefore resolved and required to stay inside the
-    resolved base, with the unresolved remainder appended unchanged. A link
-    whose target does not exist yet is still a link, not a missing component.
+    A NUL cannot name anything. A ``..`` or ``.`` component is a lexical step
+    that the file system may or may not honour (a verbatim path passes it on
+    literally), so it is never walked. On Windows a ``:`` after the drive names
+    a stream, not a directory.
+    """
+
+    if "\x00" in os.fspath(target):
+        return True
+    parts = target.parts
+    if ".." in parts or "." in parts:
+        return True
+    return sys.platform == "win32" and any(":" in part for part in parts[1:])
+
+
+def _resolve_target(target: Path) -> Path | None:
+    """The resolved location of ``target``, or None when it must be refused.
+
+    One strict walk, asking the file system and never the path text. Every
+    component is examined from the root of its volume downward with ``lstat``;
+    a redirect, or any error other than "not there", refuses. The deepest
+    component that exists is resolved with ``strict=True``, so a link that
+    leads nowhere is an error and not a string; the components that do not
+    exist yet are appended unchanged.
+    """
+
+    if _target_spelling_is_refused(target):
+        return None
+    if not target.is_absolute():
+        target = Path(os.path.abspath(os.fspath(target)))
+    parts = target.parts
+    existing = 0
+    for count in range(1, len(parts) + 1):
+        result = _examine_component(Path(*parts[:count]))
+        if result.state is _Component.REFUSE:
+            return None
+        if result.state is _Component.MISSING:
+            break
+        existing = count
+    if existing == 0:
+        return None
+    resolved = Path(*parts[:existing]).resolve(strict=True)
+    return resolved.joinpath(*parts[existing:])
+
+
+def resolves_within_root(target: Path, base: Path) -> bool:
+    """Whether ``target`` lies inside ``base``; a redirect, or doubt, is a refusal.
+
+    The base is checked and resolved once (``_anchor_for``). The target is
+    walked component by component (``_resolve_target``): a symbolic link or
+    reparse point anywhere on it refuses, even one that points back inside the
+    root, and so does a component that cannot be examined. Containment is an
+    exact, component-by-component prefix of the two resolved paths. The
+    predicate never raises; any failure of a file-system call is a refusal.
     """
 
     try:
@@ -281,21 +328,14 @@ def resolves_within_root(target: Path, base: Path) -> bool:
             # 8.3 short-name spelling of the same directory is not a redirect.
             return False
         resolved_base = outcome.resolved
-        existing = target
-        remainder: list[str] = []
-        # ``lexists`` does not follow links: a dangling junction or symlink
-        # exists as the link it is, and the resolution below follows it.
-        while not os.path.lexists(existing):
-            if os.fspath(existing.parent) == os.fspath(existing):
-                return False
-            remainder.append(existing.name)
-            existing = existing.parent
-        resolved = existing.resolve().joinpath(*reversed(remainder))
+        resolved = _resolve_target(target)
+        if resolved is None:
+            return False
         # Both paths come from ``resolve()`` and carry the on-disk spelling, so
         # containment is an exact prefix of components; no case folding.
         count = len(resolved_base.parts)
         return resolved.parts[:count] == resolved_base.parts
-    except OSError:
+    except Exception:  # noqa: BLE001 - fail closed: the predicate never raises
         return False
 
 

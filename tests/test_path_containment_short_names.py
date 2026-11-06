@@ -1025,5 +1025,188 @@ class SameDirectorySpellingTests(unittest.TestCase):
                 self.assertTrue(resolves_within_root(root / _LONG_CHILD_NAME, drive))
 
 
+class StrictTargetWalkTests(unittest.TestCase):
+    """Revision05: the target side asks the file system, component by component."""
+
+    def test_a_dangling_junction_through_an_in_root_junction_is_refused(self) -> None:
+        # The reviewer's H1, H1b, H1d: J1 -> root/sub/notyet, and root/sub -> outside.
+        if sys.platform != "win32":
+            self.skipTest("a junction is the Windows shape under test")
+        with _layout() as (_, root, outside):
+            sub = root / "sub"
+            link = root / "J1"
+            with _junction(sub, outside) as made_sub:
+                if not made_sub:
+                    self.skipTest("no junction can be created here")
+                with _junction(link, sub / "notyet") as made:
+                    if not made:
+                        self.skipTest("no junction can be created here")
+                    self.assertFalse(resolves_within_root(link / "wt", root))
+                    self.assertFalse(resolves_within_root(link, root))
+                    self.assertFalse(resolves_within_root(link / "a" / "b" / "c", root))
+                    (outside / "notyet").mkdir()
+                    self.assertFalse(resolves_within_root(link / "wt", root))
+
+    def test_a_chain_of_dangling_junctions_is_refused(self) -> None:
+        # The reviewer's H1c: J3 -> root/J2/notyet, J2 -> parent/later (missing).
+        if sys.platform != "win32":
+            self.skipTest("a junction is the Windows shape under test")
+        with _layout() as (parent, root, _outside):
+            with _junction(root / "J2", parent / "later") as made2:
+                if not made2:
+                    self.skipTest("no junction can be created here")
+                with _junction(root / "J3", root / "J2" / "notyet") as made3:
+                    if not made3:
+                        self.skipTest("no junction can be created here")
+                    self.assertFalse(resolves_within_root(root / "J3" / "wt", root))
+                    self.assertFalse(resolves_within_root(root / "J3", root))
+
+    def test_a_junction_inside_the_root_pointing_inside_the_root_is_refused(self) -> None:
+        # S63-23: N1, N1b and f1. P0 refuses every reparse point.
+        if sys.platform != "win32":
+            self.skipTest("a junction is the Windows shape under test")
+        with _layout() as (_, root, _outside):
+            link = root / "inner_link"
+            with _junction(link, root / _LONG_CHILD_NAME) as made:
+                if not made:
+                    self.skipTest("no junction can be created here")
+                self.assertFalse(resolves_within_root(link, root))
+                self.assertFalse(resolves_within_root(link / "leaf", root))
+                self.assertFalse(resolves_within_root(link / "a" / "b", root))
+                self.assertTrue(resolves_within_root(root / _LONG_CHILD_NAME / "leaf", root))
+
+    def test_a_symlink_inside_the_root_pointing_inside_the_root_is_refused(self) -> None:
+        with _layout() as (_, root, _outside):
+            link = root / "inner_symlink"
+            try:
+                os.symlink(root / _LONG_CHILD_NAME, link, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("no symlink can be created here")
+            try:
+                self.assertFalse(resolves_within_root(link, root))
+                self.assertFalse(resolves_within_root(link / "leaf", root))
+            finally:
+                os.unlink(link)
+
+    def test_a_component_that_fails_with_a_reparse_error_is_refused(self) -> None:
+        # The reviewer's f2: lstat under a third-party reparse point gives error 1920.
+        with _layout() as (_, root, _outside):
+            real_lstat = os.lstat
+            bad = root / "unreadable"
+
+            def lstat(path: str | os.PathLike[str]) -> os.stat_result:
+                if Path(path) == bad:
+                    raise OSError(1920, "the file cannot be accessed by the system")
+                return real_lstat(path)
+
+            with mock.patch.object(os, "lstat", side_effect=lstat):
+                self.assertFalse(resolves_within_root(bad / "leaf", root))
+                self.assertFalse(resolves_within_root(bad, root))
+
+    def test_an_access_denied_component_before_a_junction_is_refused(self) -> None:
+        # The reviewer's P1: only "not found" means missing.
+        with _layout() as (_, root, _outside):
+            real_lstat = os.lstat
+            denied = root / "D"
+
+            def lstat(path: str | os.PathLike[str]) -> os.stat_result:
+                if Path(path) == denied:
+                    raise PermissionError(13, "denied")
+                if denied in Path(path).parents:
+                    raise FileNotFoundError(2, "not found")
+                return real_lstat(path)
+
+            with mock.patch.object(os, "lstat", side_effect=lstat):
+                self.assertFalse(resolves_within_root(denied / "J" / "wt", root))
+
+    def test_only_not_found_and_not_a_directory_mean_missing(self) -> None:
+        with _layout() as (_, root, _outside):
+            real_lstat = os.lstat
+            for error in (FileNotFoundError(2, "x"), NotADirectoryError(20, "x")):
+                missing = root / "gone"
+
+                def lstat(
+                    path: str | os.PathLike[str], raised: OSError = error, gone: Path = missing
+                ) -> os.stat_result:
+                    if Path(path) == gone:
+                        raise raised
+                    return real_lstat(path)
+
+                with mock.patch.object(os, "lstat", side_effect=lstat):
+                    self.assertTrue(resolves_within_root(missing / "x", root))
+
+    def test_a_file_with_a_remainder_below_it_is_not_an_error(self) -> None:
+        with _layout() as (_, root, _outside):
+            (root / "file.txt").write_text("x", encoding="utf-8")
+            self.assertTrue(resolves_within_root(root / "file.txt" / "x", root))
+
+    def test_the_nearest_existing_component_is_resolved_strictly(self) -> None:
+        with _layout() as (_, root, _outside):
+            real_resolve = Path.resolve
+            seen: list[bool] = []
+
+            def resolve(self: Path, strict: bool = False) -> Path:
+                if self != root:
+                    seen.append(strict)
+                return real_resolve(self, strict=strict)
+
+            with mock.patch.object(Path, "resolve", resolve):
+                self.assertTrue(resolves_within_root(root / _LONG_CHILD_NAME / "x", root))
+            self.assertEqual([True], seen)
+
+    def test_a_failed_strict_resolution_is_a_refusal(self) -> None:
+        with _layout() as (_, root, _outside):
+            real_resolve = Path.resolve
+
+            def resolve(self: Path, strict: bool = False) -> Path:
+                if strict:
+                    raise FileNotFoundError(2, "dangling")
+                return real_resolve(self, strict=strict)
+
+            with mock.patch.object(Path, "resolve", resolve):
+                self.assertIs(False, resolves_within_root(root / "x", root))
+
+    def test_any_exception_from_a_file_system_call_is_a_refusal(self) -> None:
+        with _layout() as (_, root, _outside):
+            real_resolve = Path.resolve
+
+            def resolve(self: Path, strict: bool = False) -> Path:
+                if strict:
+                    raise RuntimeError("symlink loop")
+                return real_resolve(self, strict=strict)
+
+            with mock.patch.object(Path, "resolve", resolve):
+                self.assertIs(False, resolves_within_root(root / "x", root))
+
+    def test_a_nul_in_the_target_is_a_refusal_and_does_not_raise(self) -> None:
+        # The reviewer's Z1.
+        with _layout() as (_, root, _outside):
+            self.assertIs(False, resolves_within_root(Path(str(root) + os.sep + "a\x00b"), root))
+
+    def test_a_literal_parent_component_is_a_refusal(self) -> None:
+        # The reviewer's D1, D2, Z6: no ".." and no "." is ever walked.
+        with _layout() as (_, root, outside):
+            self.assertFalse(resolves_within_root(root / ".." / outside.name, root))
+            self.assertFalse(resolves_within_root(root / "sub" / ".." / "x", root))
+            if sys.platform == "win32":
+                verbatim = Path("\\\\?\\" + str(root) + "\\..\\" + outside.name + "\\made")
+                self.assertIn("..", verbatim.parts)
+                self.assertIs(False, resolves_within_root(verbatim, root))
+
+    def test_a_stream_separator_after_the_drive_is_a_refusal(self) -> None:
+        if sys.platform != "win32":
+            self.skipTest("streams exist on NTFS only")
+        with _layout() as (_, root, _outside):
+            self.assertIs(False, resolves_within_root(Path(str(root) + "\\x:stream"), root))
+            self.assertIs(
+                False, resolves_within_root(Path(str(root) + "::$INDEX_ALLOCATION") / "x", root)
+            )
+
+    def test_the_old_target_side_calls_are_gone(self) -> None:
+        source = Path(path_containment.__file__).read_text(encoding="utf-8")
+        self.assertNotIn("lexists", source)
+        self.assertNotIn(".resolve()", source.split("def _resolve_target")[1])
+
+
 if __name__ == "__main__":
     unittest.main()
