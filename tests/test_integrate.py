@@ -979,6 +979,34 @@ class LandBounceTests(LandCase):
         self.assertEqual(self.rig.land(approving=records).code, 0)
         self.assertEqual({key: value for key, value in self.rig.refs().items() if key not in (f"refs/heads/{BRANCH}", f"refs/heads/{QUEUE_BRANCH}")}, refs)
 
+    def test_every_bounce_reason_is_a_reason_the_queue_file_accepts_and_the_old_one_is_not(self) -> None:
+        self.assertEqual(
+            set(integrate.BOUNCE_REASONS),
+            {"REVIEW_MISMATCH", "ALREADY_LANDED", "MERGE_CONFLICT", "SPEC_RED", "INVARIANT_RED", "TIP_MOVED"},
+        )
+        for reason in sorted(integrate.BOUNCE_REASONS):
+            with self.subTest(reason):
+                self.rig.write_queue([self.rig.row("T1", self.rig.base, state="BOUNCED", reason=reason)])
+                result = self.rig.land()
+                self.assertEqual((result.code, result.err), (0, ""), result.text)
+        self.rig.write_queue([self.rig.row("T1", self.rig.base, state="BOUNCED", reason="NOT_FAST_FORWARD")])
+        result = self.rig.land()
+        self.assertEqual(result.code, 2, result.text)
+        self.assertIn("field reason", result.err)
+
+    def test_a_bounce_for_each_new_reason_can_be_read_by_the_next_run(self) -> None:
+        cand, records = self.queued(files={"src/a.py": "a = 'k'\n"})
+        tip = self.rig.publish({"src/a.py": "a = 'tip'\n"})
+        self.bounced_with(self.rig.land(approving=records), "MERGE_CONFLICT")
+        self.assertEqual(self.rig.land(approving=records).code, 0)
+        self.assertEqual(self.rig.readback().code, 0)
+        self.assertEqual(self.rig.tip(), tip)
+        contained = self.rig.tip()
+        self.rig.write_queue([self.rig.row("T2", contained)])
+        self.bounced_with(self.rig.land(approving={REVIEW: record_text(contained)}), "ALREADY_LANDED", ticket="T2")
+        self.assertEqual(self.rig.land().code, 0)
+        self.assertEqual(self.rig.readback().code, 0)
+
     def test_a_red_spec_is_spec_red_and_the_invariants_still_run(self) -> None:
         cand, records = self.queued(files={"src/a.py": "a = 3\n"})
         self.rig.control("spec.exit", "1")
