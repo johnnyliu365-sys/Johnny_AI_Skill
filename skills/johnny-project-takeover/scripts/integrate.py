@@ -17,12 +17,12 @@ landed_sha, reason and clears, all text. States: QUEUED, LANDED_PENDING_CI, LAND
 CLEARED and BOUNCED (terminal: all but QUEUED and LANDED_PENDING_CI).
 
 Every run works in a fresh integration clone: an empty repository in a temporary directory,
-filled by one fetch of the remote's branches with `transfer.fsckObjects=true` and
+filled by verified fetches of the integration branch, the queue branch and the one candidate being landed, with `transfer.fsckObjects=true` and
 `fetch.fsckObjects=true`, so that no object of the run comes from a store a seat can write. The
 clone is removed afterwards, also on failure. Every git child runs with `--no-replace-objects`,
 `GIT_NO_REPLACE_OBJECTS=1`, `GIT_NO_LAZY_FETCH=1`, `GIT_GRAFT_FILE` at a fresh path that does not
 exist and `-c core.commitGraph=false`, without the repository-selecting `GIT_*` variables and
-without any `GIT_CONFIG*` variable, and is looked up in the absolute `PATH` entries only.
+without any `GIT_CONFIG*` or `GIT_TEST_*` variable, with `GIT_CONFIG_NOSYSTEM=1` and `GIT_CONFIG_GLOBAL` at a path that does not exist, and is looked up in the absolute `PATH` entries only.
 
 submit: reads the review record as the blob at the current remote tip of the branch (never from
 the candidate), refuses a key that exists in any state (KEY_EXISTS), refuses a record that does
@@ -30,8 +30,11 @@ not approve the candidate (REVIEW_MISMATCH), then writes one QUEUED entry as one
 queue branch, pushed with a lease on the queue-branch sha it read (QUEUE_MOVED when the lease is
 lost; nothing is written). land: BLOCKED_BY_CI while an entry is LANDED_PENDING_CI or a
 LANDED_CI_RED entry is not cleared by a queued one; otherwise the oldest admissible QUEUED entry
-is checked (NOT_FAST_FORWARD, REVIEW_MISMATCH, SPEC_RED, INVARIANT_RED) and pushed to the branch
-together with its queue commit in one atomic push with a lease on each sha read (TIP_MOVED,
+is handled in this order: the record at the tip must admit it (else REVIEW_MISMATCH, and no
+configured command runs), the candidate must not be contained in the tip (ALREADY_LANDED), it is
+merged into the tip as one merge commit, tip first parent (MERGE_CONFLICT; nothing runs), the specs
+and invariants run on the merged tree (SPEC_RED, INVARIANT_RED), and the merge commit is pushed to the
+branch together with its queue commit in one atomic push with a lease on each sha read (TIP_MOVED,
 QUEUE_MOVED). A bounce is written to the queue branch only. readback: asks `ci_status_command`
 about every LANDED_PENDING_CI entry (`green`, `red` or `pending`) and writes the result as one
 queue commit pushed with a lease.
@@ -84,11 +87,12 @@ LANDED_STATES = (LANDED_PENDING_CI, LANDED, LANDED_CI_RED, CLEARED)
 
 # Reds (exit 1). The first five are written to the queue as the reason of a BOUNCED entry.
 REVIEW_MISMATCH = "REVIEW_MISMATCH"
-NOT_FAST_FORWARD = "NOT_FAST_FORWARD"
+MERGE_CONFLICT = "MERGE_CONFLICT"
+ALREADY_LANDED = "ALREADY_LANDED"
 SPEC_RED = "SPEC_RED"
 INVARIANT_RED = "INVARIANT_RED"
 TIP_MOVED = "TIP_MOVED"
-BOUNCE_REASONS = (NOT_FAST_FORWARD, REVIEW_MISMATCH, SPEC_RED, INVARIANT_RED, TIP_MOVED)
+BOUNCE_REASONS = (REVIEW_MISMATCH, ALREADY_LANDED, MERGE_CONFLICT, SPEC_RED, INVARIANT_RED, TIP_MOVED)
 # Reds that write nothing.
 KEY_EXISTS = "KEY_EXISTS"
 QUEUE_MOVED = "QUEUE_MOVED"
@@ -129,7 +133,8 @@ FENCE_CLOSE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
 BLOCK_LINE = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*):[ \t]*(.*?)[ \t]*$")
 SPEC_BASENAME = re.compile(rb"(?:^|/)test_[^/]*\.py$")
 PAGES_PATH = "pages.json"
-# Variables that select another repository, history, objects or settings than the clone itself holds.
+# Variables that select another repository, history, objects or settings than the clone itself holds
+# (the shared list of the evidence gate: its thirteen names, every GIT_CONFIG* and every GIT_TEST_* name).
 GIT_REMOVED = frozenset(
     (
         "GIT_DIR",
@@ -144,10 +149,10 @@ GIT_REMOVED = frozenset(
         "GIT_REPLACE_REF_BASE",
         "GIT_GRAFT_FILE",
         "GIT_PREFIX",
-        "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+        "GIT_QUARANTINE_PATH",
     )
 )
-GIT_REMOVED_PREFIX = "GIT_CONFIG"
+GIT_REMOVED_PREFIXES = ("GIT_CONFIG", "GIT_TEST_")
 IDENTITY = {
     "GIT_AUTHOR_NAME": "merge-queue",
     "GIT_AUTHOR_EMAIL": "merge-queue@integrate.invalid",
@@ -255,8 +260,18 @@ def branch_problem(name: str) -> str | None:
 # ----------------------------------------------------------------------------- JSON
 
 
-def parse_json(raw: str) -> object:
-    """Parse `raw`; a repeated key, NaN, Infinity, a number out of range or too deep nesting is a JsonInputError."""
+@dataclass(frozen=True)
+class Refused:
+    """Stands in a parsed document for a value JSON text may not hold (NaN, Infinity, a number out of range)."""
+
+    why: str
+
+
+def parse_json(raw: str, mark_refused: bool = False) -> object:
+    """Parse `raw`; a repeated key, NaN, Infinity, a number out of range or too deep nesting is a JsonInputError.
+
+    With `mark_refused` a NaN, an Infinity or a number out of range is left in the document as a `Refused`
+    value instead, so that the caller can name the key that holds it."""
 
     def pairs(items: list[tuple[str, object]]) -> dict[str, object]:
         result: dict[str, object] = {}
@@ -267,11 +282,15 @@ def parse_json(raw: str) -> object:
         return result
 
     def refuse_constant(name: str) -> object:
+        if mark_refused:
+            return Refused(f"{name}, which is not allowed")
         raise JsonInputError(f"{name} is not allowed")
 
     def finite_float(text: str) -> object:
         value = float(text)
         if not math.isfinite(value):
+            if mark_refused:
+                return Refused("a number out of range")
             raise JsonInputError("a number is out of range")
         return value
 
@@ -287,10 +306,13 @@ def parse_json(raw: str) -> object:
 
 
 def first_bad_text(value: object) -> str | None:
-    """The first lone surrogate or control character in any string (key or value) of a parsed JSON value."""
+    """The first lone surrogate or control character in any string (key or value) of a parsed JSON value,
+    or the reason of the first `Refused` value."""
     stack: list[object] = [value]
     while stack:
         item = stack.pop()
+        if isinstance(item, Refused):
+            return item.why
         if isinstance(item, str):
             bad = bad_character(item)
             if bad is not None:
@@ -455,14 +477,20 @@ def parse_config(raw: bytes) -> Config:
     except UnicodeDecodeError:
         raise UsageError("config is not UTF-8 text") from None
     try:
-        document = parse_json(text)
+        document = parse_json(text, mark_refused=True)
     except JsonInputError as exc:
         raise UsageError(f"config: {exc}") from None
+    if isinstance(document, Refused):
+        raise UsageError(f"config: {document.why}")
     if not isinstance(document, dict):
         raise UsageError("config must be one JSON object")
-    bad = first_bad_text(document)
-    if bad is not None:
-        raise UsageError(f"config holds {bad}")
+    for name, value in document.items():
+        bad = first_bad_text(name)
+        if bad is not None:
+            raise _config_error(name, f"the key holds {bad}")
+        bad = first_bad_text(value)
+        if bad is not None:
+            raise _config_error(name, f"the value holds {bad}")
     for key in document:
         if key not in REQUIRED_CONFIG_KEYS and key not in OPTIONAL_CONFIG_KEYS:
             raise _config_error(key, "unknown key")
@@ -832,7 +860,7 @@ class PagesError(ValueError):
 def parse_pages(raw: bytes) -> list[Page]:
     """Read the page registry: a list of page objects, or an object holding that list under `pages`."""
     try:
-        document = parse_json(raw.decode("utf-8"))
+        document = parse_json(raw.decode("utf-8-sig"))
     except UnicodeDecodeError:
         raise PagesError("not UTF-8 text") from None
     except JsonInputError as exc:
@@ -1076,8 +1104,10 @@ def git_environment(graft_path: str, extra: Mapping[str, str] | None = None) -> 
     environment = {
         name: value
         for name, value in os.environ.items()
-        if name.upper() not in GIT_REMOVED and not name.upper().startswith(GIT_REMOVED_PREFIX)
+        if name.upper() not in GIT_REMOVED and not name.upper().startswith(GIT_REMOVED_PREFIXES)
     }
+    environment["GIT_CONFIG_NOSYSTEM"] = "1"
+    environment["GIT_CONFIG_GLOBAL"] = graft_path + ".global-config"
     environment["GIT_NO_REPLACE_OBJECTS"] = "1"
     environment["GIT_NO_LAZY_FETCH"] = "1"
     environment["GIT_GRAFT_FILE"] = graft_path
@@ -1228,14 +1258,17 @@ class Clone:
         root = os.path.join(scratch, "clone")
         os.mkdir(root)
         outside = Git(exe, scratch, scratch)
-        listed = outside.run(["ls-remote", "--", remote, f"refs/heads/{config.branch}"], check=False)
+        listed = outside.run(["ls-remote", "--", remote, f"refs/heads/{config.branch}", f"refs/heads/{config.queue_branch}"], check=False)
         if listed.code != 0:
             raise Fault(f"the remote cannot be reached: {Git.message(listed)}")
         width = 0
+        wanted = [f"refs/heads/{config.branch}"]
         for line in listed.stdout.decode("utf-8", errors="replace").splitlines():
             sha, _, ref = line.partition("\t")
             if ref == f"refs/heads/{config.branch}" and SHA_TEXT.fullmatch(sha) is not None:
                 width = len(sha)
+            elif ref == f"refs/heads/{config.queue_branch}" and SHA_TEXT.fullmatch(sha) is not None:
+                wanted.append(ref)
         if not width:
             raise Fault(f"the remote has no branch {shown(config.branch)}")
         outside.run(
@@ -1244,7 +1277,7 @@ class Clone:
         )
         git = Git(exe, root, scratch)
         fetched = git.run(
-            ["fetch", "--quiet", "--no-tags", "--no-recurse-submodules", "--no-write-fetch-head", "--", remote, "+refs/heads/*:refs/remotes/origin/*"],
+            ["fetch", "--quiet", "--no-tags", "--no-recurse-submodules", "--no-write-fetch-head", "--", remote, *(f"+{ref}:refs/remotes/origin/{ref.removeprefix('refs/heads/')}" for ref in wanted)],
             options=("-c", "transfer.fsckObjects=true", "-c", "fetch.fsckObjects=true"),
             check=False,
         )
@@ -1264,6 +1297,29 @@ class Clone:
         if done.code == 1:
             return None
         raise Fault(f"git rev-parse failed with exit {done.code}: {Git.message(done)}")
+
+    def fetch_candidate(self, sha: str) -> None:
+        """Bring the commit `sha` of a queued candidate into the clone through a verified fetch; a remote that offers none leaves the clone as it is.
+
+        Only that commit is fetched, through the remote branch that points at it when there is one, else by its sha.
+        An object that fails the check of the fetch is a Fault, never a silent skip."""
+        remote = local_remote(self.config.remote)
+        listed = self.git.run(["ls-remote", "--", remote], check=False)
+        if listed.code != 0:
+            raise Fault(f"the remote cannot be reached: {Git.message(listed)}")
+        heads: list[str] = []
+        for line in listed.stdout.decode("utf-8", errors="replace").splitlines():
+            found, _, ref = line.partition("\t")
+            if found == sha and ref.startswith("refs/heads/"):
+                heads.append(ref)
+        target = sorted(heads)[0] if heads else sha
+        fetched = self.git.run(
+            ["fetch", "--quiet", "--no-tags", "--no-recurse-submodules", "--no-write-fetch-head", "--", remote, target],
+            options=("-c", "transfer.fsckObjects=true", "-c", "fetch.fsckObjects=true"),
+            check=False,
+        )
+        if fetched.code != 0 and heads:
+            raise Fault(f"the verified fetch failed: {Git.message(fetched)}")
 
     def close(self) -> str | None:
         """Remove the clone; the reason when that fails."""
@@ -1484,7 +1540,7 @@ class Integrator:
             self.report.note("NOTHING_TO_LAND no admissible QUEUED entry")
             return
         entry = admissible[0]
-        bounces, faults = self._judge(clone, entry)
+        bounces, faults, merged = self._judge(clone, entry)
         for bounce in bounces:
             self.report.red(bounce.reason, entry.key, bounce.detail)
         for text in faults:
@@ -1494,30 +1550,15 @@ class Integrator:
             return
         if faults:
             return
-        self._push_landing(clone, entries, entry)
+        self._push_landing(clone, entries, entry, merged)
 
-    def _judge(self, clone: Clone, entry: QueueEntry) -> tuple[list[Bounce], list[str]]:
-        """Every red and every fault found for `entry`; the reds come in the order of the reasons written."""
+    def _judge(self, clone: Clone, entry: QueueEntry) -> tuple[list[Bounce], list[str], str]:
+        """Every red and every fault found for `entry`, and the merge commit the checks ran on ("" when none was made).
+
+        The order is the ticket's: the record must admit the entry before anything else is done; then the
+        candidate is merged into the tip; only then do the configured commands run, on the merged tree."""
         bounces: list[Bounce] = []
         faults: list[str] = []
-        fast_forward = False
-        try:
-            kinds = clone.git.run(["cat-file", "--batch-check"], stdin=f"{entry.candidate}\n".encode("ascii")).stdout.decode("utf-8", errors="replace").split()
-            present = len(kinds) == 3 and kinds[1] == "commit"
-            if not present:
-                bounces.append(Bounce(NOT_FAST_FORWARD, "the candidate is not a commit the remote's branches hold"))
-            elif entry.candidate == clone.tip:
-                bounces.append(Bounce(NOT_FAST_FORWARD, "the candidate is the current tip; it advances nothing"))
-            else:
-                ancestry = clone.git.run(["merge-base", "--is-ancestor", clone.tip, entry.candidate], check=False)
-                if ancestry.code == 0:
-                    fast_forward = True
-                elif ancestry.code == 1:
-                    bounces.append(Bounce(NOT_FAST_FORWARD, "the current tip is not an ancestor of the candidate"))
-                else:
-                    raise Fault(f"git merge-base failed with exit {ancestry.code}: {Git.message(ancestry)}")
-        except Fault as exc:
-            faults.append(str(exc))
         try:
             check = check_review(self._record(clone, entry.review), entry.candidate, entry.submitter, entry.review_candidate, entry.reviewer)
             for problem in check.problems:
@@ -1526,21 +1567,63 @@ class Integrator:
                 bounces.append(Bounce(REVIEW_MISMATCH, "the row's review_candidate differs from the candidate"))
         except Fault as exc:
             faults.append(str(exc))
-        if fast_forward:
-            self._run_checks(clone, entry, bounces, faults)
-        # The reds were found in the order of the ticket (fast-forward, review, spec, invariant); the first is recorded.
-        return bounces, faults
-
-    def _run_checks(self, clone: Clone, entry: QueueEntry, bounces: list[Bounce], faults: list[str]) -> None:
+        if bounces or faults:
+            return bounces, faults, ""
         try:
-            specs, problems = self._affected(clone, entry)
+            merged = self._merge(clone, entry, bounces)
+        except Fault as exc:
+            faults.append(str(exc))
+            return bounces, faults, ""
+        if merged is None:
+            return bounces, faults, ""
+        self._run_checks(clone, entry, merged, bounces, faults)
+        return bounces, faults, merged
+
+    def _merge(self, clone: Clone, entry: QueueEntry, bounces: list[Bounce]) -> str | None:
+        """Make one merge commit of the candidate into the tip (tip first parent, candidate second); nothing is checked out yet.
+
+        The sha of the merge commit; None, with the bounce added, when the candidate is not offered, is already
+        contained in the tip, shares no history with it or conflicts with it."""
+        clone.fetch_candidate(entry.candidate)
+        kinds = clone.git.run(["cat-file", "--batch-check"], stdin=f"{entry.candidate}\n".encode("ascii")).stdout.decode("utf-8", errors="replace").split()
+        if len(kinds) != 3 or kinds[1] != "commit":
+            bounces.append(Bounce(MERGE_CONFLICT, "the candidate is not a commit the remote offers; there is nothing to merge"))
+            return None
+        contained = clone.git.run(["merge-base", "--is-ancestor", entry.candidate, clone.tip], check=False)
+        if contained.code == 0:
+            bounces.append(Bounce(ALREADY_LANDED, "the candidate is already contained in the current tip"))
+            return None
+        if contained.code != 1:
+            raise Fault(f"git merge-base failed with exit {contained.code}: {Git.message(contained)}")
+        shared = clone.git.run(["merge-base", clone.tip, entry.candidate], check=False)
+        if shared.code == 1:
+            bounces.append(Bounce(MERGE_CONFLICT, "the candidate shares no history with the current tip"))
+            return None
+        if shared.code != 0:
+            raise Fault(f"git merge-base failed with exit {shared.code}: {Git.message(shared)}")
+        merge = clone.git.run(["merge-tree", "--write-tree", "--no-messages", clone.tip, entry.candidate], check=False)
+        if merge.code == 1:
+            bounces.append(Bounce(MERGE_CONFLICT, "the candidate does not merge into the current tip without a conflict"))
+            return None
+        lines = merge.stdout.decode("ascii", errors="replace").split()
+        if merge.code != 0 or not lines or SHA_TEXT.fullmatch(lines[0]) is None:
+            raise Fault(f"git merge-tree failed with exit {merge.code}: {Git.message(merge)}")
+        made = clone.git.run(
+            ["commit-tree", lines[0], "-p", clone.tip, "-p", entry.candidate, "-m", f"merge-queue: land {entry.key}"],
+            extra_env=IDENTITY,
+        )
+        return made.stdout.decode("ascii", errors="replace").strip()
+
+    def _run_checks(self, clone: Clone, entry: QueueEntry, merged: str, bounces: list[Bounce], faults: list[str]) -> None:
+        try:
+            specs, problems = self._affected(clone, merged)
         except Fault as exc:
             faults.append(str(exc))
             return
         for problem in problems:
             bounces.append(Bounce(SPEC_RED, problem))
         try:
-            clone.git.run(["checkout", "--quiet", "--detach", "--force", entry.candidate])
+            clone.git.run(["checkout", "--quiet", "--detach", "--force", merged])
         except Fault as exc:
             faults.append(str(exc))
             return
@@ -1568,11 +1651,11 @@ class Integrator:
         if code != 0:
             bounces.append(Bounce(reason, f"{label} exited with code {code}"))
 
-    def _affected(self, clone: Clone, entry: QueueEntry) -> tuple[list[str], list[str]]:
-        """The affected spec paths of the candidate, and the reds that stop them from being known."""
+    def _affected(self, clone: Clone, merged: str) -> tuple[list[str], list[str]]:
+        """The affected spec paths of the landing (the paths the merge commit changes in the tip), and the reds that stop them from being known."""
         problems: list[str] = []
-        changed_raw = clone.git.run(["diff-tree", "-r", "-z", "--name-only", "--no-renames", clone.tip, entry.candidate]).stdout
-        tree_raw = clone.git.run(["ls-tree", "-r", "-z", "--name-only", entry.candidate]).stdout
+        changed_raw = clone.git.run(["diff-tree", "-r", "-z", "--name-only", "--no-renames", clone.tip, merged]).stdout
+        tree_raw = clone.git.run(["ls-tree", "-r", "-z", "--name-only", merged]).stdout
         changed: list[str] = []
         for item in changed_raw.split(b"\0"):
             if item:
@@ -1584,10 +1667,10 @@ class Integrator:
         if problems:
             return [], sorted(set(problems))
         texts: dict[str, str] = {}
-        for path, read in clone.git.read_blobs(entry.candidate, spec_paths).items():
+        for path, read in clone.git.read_blobs(merged, spec_paths).items():
             texts[path] = read.data.decode("utf-8", errors="replace") if read.kind == "blob" else ""
         pages: list[Page] = []
-        registry = clone.git.read_blobs(entry.candidate, [PAGES_PATH])[PAGES_PATH]
+        registry = clone.git.read_blobs(merged, [PAGES_PATH])[PAGES_PATH]
         if registry.kind == "other":
             return [], ["pages.json is not a file"]
         if registry.kind == "blob":
@@ -1618,17 +1701,17 @@ class Integrator:
         except Fault as exc:
             self.report.fault(str(exc))
 
-    def _push_landing(self, clone: Clone, entries: Sequence[QueueEntry], entry: QueueEntry) -> None:
+    def _push_landing(self, clone: Clone, entries: Sequence[QueueEntry], entry: QueueEntry, merged: str) -> None:
         updated = [
-            replace(item, state=LANDED_PENDING_CI, landed_sha=entry.candidate, reason="") if item.key == entry.key else item
+            replace(item, state=LANDED_PENDING_CI, landed_sha=merged, reason="") if item.key == entry.key else item
             for item in entries
         ]
         commit = clone.queue_commit(updated, f"merge-queue: land {entry.key}")
         done = clone.push(
-            [(self.config.branch, entry.candidate, clone.tip), (self.config.queue_branch, commit, clone.queue_sha)]
+            [(self.config.branch, merged, clone.tip), (self.config.queue_branch, commit, clone.queue_sha)]
         )
         if done.code == 0:
-            self.report.note(f"LANDED_PENDING_CI {escape(entry.key)} landed_sha={entry.candidate}")
+            self.report.note(f"LANDED_PENDING_CI {escape(entry.key)} landed_sha={merged}")
             return
         now = clone.remote_refs()
         if now.get(self.config.queue_branch) != clone.queue_sha:

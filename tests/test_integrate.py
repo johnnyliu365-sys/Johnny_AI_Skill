@@ -5,11 +5,13 @@ clone plays the seat that writes candidates, and the configured commands are sma
 test writes. Nothing is ever pushed to a real remote. Expected values are derived from what a fixture
 wrote or from what the tool printed, never copied from the script.
 
-The ticket demands that the review record is read at the current tip of the integration branch and that
-the candidate fast-forwards that tip. A record names its candidate by sha, so a record committed to the
-tip can never name a descendant of that tip (the sha would have to contain itself). The tests therefore
-exercise the record checks against real git wherever that is possible (submit, and every refusal of land)
-and replace only the one method that fetches the record (`Integrator._record`) where a land must succeed.
+The ticket (revision02) demands that the review record is read at the current tip of the integration
+branch and that the candidate is merged into that tip as one merge commit. A record names its candidate
+by sha, so a record committed to the tip can never name a descendant of that tip; the candidate is
+therefore a sibling of the record's commit, and the merge lands it. Every test of a land runs against
+real git. A few tests still replace the one method that fetches the record (`Integrator._record`) to
+hand the script a record text directly; none of the tests that show a land succeeding or a record being
+refused for its place does so (`RealLandTests`, `AdmissionTests`).
 """
 from __future__ import annotations
 
@@ -41,6 +43,24 @@ BRANCH = "main"
 QUEUE_BRANCH = "main-queue"
 QUEUE_PATH = "state/queue.json"
 REVIEW = "records/r1.md"
+# The shared removed-variable list: the thirteen names of the evidence gate (every GIT_CONFIG* and GIT_TEST_* name besides).
+EVIDENCE_GATE_REMOVED = frozenset(
+    {
+        "GIT_DIR",
+        "GIT_WORK_TREE",
+        "GIT_INDEX_FILE",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_NAMESPACE",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_COMMON_DIR",
+        "GIT_PREFIX",
+        "GIT_QUARANTINE_PATH",
+        "GIT_REPLACE_REF_BASE",
+        "GIT_GRAFT_FILE",
+        "GIT_SHALLOW_FILE",
+    }
+)
 SUBMITTER = "seat:impl/run-1"
 REVIEWER = "seat:review/run-9"
 LINE_SEPARATOR = chr(0x2028)
@@ -410,6 +430,13 @@ class Rig:
     def tmp_left(self) -> list[str]:
         return sorted(os.listdir(self.tmp))
 
+    def parents(self, sha: str) -> list[str]:
+        return git(self.remote, "rev-list", "--parents", "-n", "1", sha).split()[1:]
+
+    def assert_merge_of(self, merged: str, first: str, second: str) -> None:
+        """`merged` is a commit on the remote with exactly the parents `first` (the tip read) and `second` (the candidate)."""
+        self.case.assertEqual(self.parents(merged), [first, second])
+
 
 class RigCase(unittest.TestCase):
     def setUp(self) -> None:
@@ -470,16 +497,18 @@ class NormalFlowTests(RigCase):
         self.assertEqual(sorted(git(self.rig.remote, "ls-tree", "-r", "--name-only", queue).splitlines()), sorted(["NOTES.txt", QUEUE_PATH]))
         self.assertEqual(git(self.rig.remote, "rev-parse", f"{queue}^"), commit)
 
-    def test_land_fast_forwards_runs_specs_and_invariants_on_the_new_tree_and_records_pending(self) -> None:
+    def test_land_merges_runs_specs_and_invariants_on_the_merged_tree_and_records_pending(self) -> None:
         cand, records = self.prepare(files={"src/a.py": "a = 2\n"})
         self.assertEqual(self.rig.submit("T1", cand, approving=records).code, 0)
         other_refs = {key: value for key, value in self.rig.refs().items() if key.startswith("refs/heads/cand-")}
+        old_tip = self.rig.tip()
         result = self.rig.land(approving=records)
         self.assertEqual((result.code, result.err), (0, ""), result.text)
-        self.assertEqual(result.out_lines, [f"LANDED_PENDING_CI T1@{cand} landed_sha={cand}"])
-        self.assertEqual(self.rig.tip(), cand)
+        merged = self.rig.tip()
+        self.assertEqual(result.out_lines, [f"LANDED_PENDING_CI T1@{cand} landed_sha={merged}"])
+        self.rig.assert_merge_of(merged, old_tip, cand)
         entry = self.rig.entry("T1")
-        self.assertEqual((entry["state"], entry["landed_sha"], entry["reason"]), ("LANDED_PENDING_CI", cand, ""))
+        self.assertEqual((entry["state"], entry["landed_sha"], entry["reason"]), ("LANDED_PENDING_CI", merged, ""))
         self.assertEqual(self.rig.calls("spec"), [["specs/test_a.py"]])
         self.assertEqual(self.rig.calls("invariant"), [[]])
         for name in ("spec", "invariant"):
@@ -490,14 +519,16 @@ class NormalFlowTests(RigCase):
     def test_readback_green_records_landed_and_asks_about_the_landed_sha(self) -> None:
         cand, records = self.prepare()
         self.rig.submit("T1", cand, approving=records)
-        self.rig.land(approving=records)
+        self.assertEqual(self.rig.land(approving=records).code, 0)
+        landed = self.rig.tip()
         self.rig.control("ci.answer", "green\n")
         result = self.rig.readback()
         self.assertEqual((result.code, result.err), (0, ""), result.text)
         self.assertEqual(self.rig.states(), {"T1": "LANDED"})
-        self.assertEqual(self.rig.calls("ci"), [[cand]])
+        self.assertEqual(self.rig.entry("T1")["landed_sha"], landed)
+        self.assertEqual(self.rig.calls("ci"), [[landed]])
         self.assertIn(f"READBACK T1@{cand} LANDED_PENDING_CI -> LANDED", result.out_lines)
-        self.assertEqual(self.rig.tip(), cand)
+        self.assertEqual(self.rig.tip(), landed)
         self.assertClean(result)
 
     def test_a_convergence_disposition_record_lands_like_an_approved_one(self) -> None:
@@ -532,10 +563,11 @@ class NormalFlowTests(RigCase):
         self.rig.submit("T2", second, approving=records)
         self.assertEqual(self.rig.land(approving=records).code, 0)
         self.assertEqual(self.rig.states(), {"T1": "LANDED_PENDING_CI", "T2": "QUEUED"})
-        self.assertEqual(self.rig.tip(), first)
+        landed = self.rig.tip()
+        self.assertEqual(self.rig.parents(landed)[1], first)
         blocked = self.rig.land(approving=records)
         self.assertEqual(blocked.code, 1)
-        self.assertEqual(self.rig.tip(), first)
+        self.assertEqual(self.rig.tip(), landed)
 
     def test_a_queue_write_never_moves_the_integration_tip(self) -> None:
         cand, records = self.prepare()
@@ -811,7 +843,7 @@ class SubmitRefusalTests(RigCase):
 
 
 class LandCase(RigCase):
-    def racing(self, action: Callable[[], None]) -> contextlib.AbstractContextManager[None]:
+    def racing(self, action: Callable[[], object]) -> contextlib.AbstractContextManager[object]:
         """Run `action` once, between the reads of a run and its first push."""
         original = integrate.Clone.push
         fired: list[bool] = []
@@ -880,39 +912,72 @@ class LandBounceTests(LandCase):
         self.bounced_with(result, "REVIEW_MISMATCH")
         self.assertEqual(self.rig.tip(), self.rig.base)
 
-    def test_a_record_at_the_tip_is_what_land_reads_not_the_candidates_tree(self) -> None:
-        # The record sits at the tip and names the candidate; the candidate (a sibling of the tip) is not a descendant.
-        cand = self.rig.candidate()
-        self.rig.publish_record(cand)
-        self.rig.write_queue([self.rig.row("T1", cand)])
-        result = self.rig.land()
-        self.assertEqual(result.code, 1, result.text)
-        self.assertEqual(result.codes, ["NOT_FAST_FORWARD"], result.text)
-
-    def test_a_candidate_that_does_not_descend_from_the_tip_is_not_fast_forward_and_no_command_runs(self) -> None:
+    def test_a_candidate_that_does_not_descend_from_the_tip_is_merged_not_bounced(self) -> None:
         cand, records = self.queued()
-        self.rig.publish({"docs/newer.md": "newer\n"})
+        newer = self.rig.publish({"docs/newer.md": "newer\n"})
         result = self.rig.land(approving=records)
-        self.bounced_with(result, "NOT_FAST_FORWARD")
-        self.assertEqual((self.rig.calls("spec"), self.rig.calls("invariant")), ([], []))
+        self.assertEqual((result.code, result.err), (0, ""), result.text)
+        merged = self.rig.tip()
+        self.rig.assert_merge_of(merged, newer, cand)
+        self.assertEqual(git(self.rig.remote, "show", f"{merged}:docs/newer.md"), "newer")
+        self.assertEqual(git(self.rig.remote, "show", f"{merged}:src/c1.py"), "c = 1")
+        self.assertEqual(self.rig.entry("T1")["landed_sha"], merged)
 
-    def test_a_candidate_the_remote_does_not_hold_is_not_fast_forward(self) -> None:
+    def test_a_candidate_the_remote_does_not_hold_is_merge_conflict_and_no_command_runs(self) -> None:
         cand = self.rig.commit({"src/never.py": "x\n"}, "never pushed", self.rig.tip())
         self.rig.write_queue([self.rig.row("T1", cand)])
         result = self.rig.land(approving={REVIEW: record_text(cand)})
-        self.bounced_with(result, "NOT_FAST_FORWARD")
+        self.bounced_with(result, "MERGE_CONFLICT")
+        self.assertEqual((self.rig.calls("spec"), self.rig.calls("invariant")), ([], []))
 
-    def test_a_candidate_that_is_the_current_tip_advances_nothing_and_is_not_fast_forward(self) -> None:
+    def test_a_candidate_that_is_the_current_tip_is_already_landed(self) -> None:
         tip = self.rig.tip()
         self.rig.write_queue([self.rig.row("T1", tip)])
         result = self.rig.land(approving={REVIEW: record_text(tip)})
-        self.bounced_with(result, "NOT_FAST_FORWARD")
+        self.bounced_with(result, "ALREADY_LANDED")
         self.assertEqual(self.rig.tip(), tip)
+        self.assertEqual((self.rig.calls("spec"), self.rig.calls("invariant")), ([], []))
 
-    def test_an_object_that_is_not_a_commit_is_not_fast_forward(self) -> None:
+    def test_a_candidate_contained_in_the_tip_is_already_landed_and_nothing_is_pushed(self) -> None:
+        cand = self.rig.candidate()
+        git(self.rig.seat, "checkout", "-q", "--detach", "--force", self.rig.tip())
+        git(self.rig.seat, "merge", "-q", "--no-ff", "-m", "merge", cand)
+        self.rig.push_seat(f"{self.rig.rev_seat('HEAD')}:refs/heads/{BRANCH}")
+        before = self.rig.refs()
+        self.rig.write_queue([self.rig.row("T1", cand)])
+        result = self.rig.land(approving={REVIEW: record_text(cand)})
+        self.bounced_with(result, "ALREADY_LANDED")
+        after = self.rig.refs()
+        self.assertEqual({k: v for k, v in after.items() if k != f"refs/heads/{QUEUE_BRANCH}"}, {k: v for k, v in before.items() if k != f"refs/heads/{QUEUE_BRANCH}"})
+        self.assertEqual((self.rig.calls("spec"), self.rig.calls("invariant")), ([], []))
+
+    def test_a_conflicting_candidate_is_merge_conflict_nothing_runs_and_the_tip_stays(self) -> None:
+        cand, records = self.queued(files={"src/a.py": "a = 'candidate'\n"})
+        tip = self.rig.publish({"src/a.py": "a = 'tip'\n"})
+        result = self.rig.land(approving=records)
+        self.bounced_with(result, "MERGE_CONFLICT")
+        self.assertEqual(self.rig.tip(), tip)
+        self.assertEqual((self.rig.calls("spec"), self.rig.calls("invariant")), ([], []))
+        self.assertClean(result)
+
+    def test_a_candidate_that_shares_no_history_with_the_tip_is_merge_conflict(self) -> None:
+        orphan = subprocess.run(["git", "-C", str(self.rig.seat), "commit-tree", git(self.rig.seat, "rev-parse", "HEAD^{tree}"), "-m", "orphan"], capture_output=True, check=True, env={**_clean_environment(), **GIT_IDENTITY}).stdout.decode().strip()
+        self.rig.push_seat(f"{orphan}:refs/heads/orphan")
+        self.rig.write_queue([self.rig.row("T1", orphan)])
+        result = self.rig.land(approving={REVIEW: record_text(orphan)})
+        self.bounced_with(result, "MERGE_CONFLICT")
+        self.assertEqual((self.rig.calls("spec"), self.rig.calls("invariant")), ([], []))
+
+    def test_an_object_that_is_not_a_commit_is_merge_conflict(self) -> None:
         blob = git(self.rig.seat, "rev-parse", "HEAD:src/a.py")
         self.rig.write_queue([self.rig.row("T1", blob)])
-        self.bounced_with(self.rig.land(approving={REVIEW: record_text(blob)}), "NOT_FAST_FORWARD")
+        self.bounced_with(self.rig.land(approving={REVIEW: record_text(blob)}), "MERGE_CONFLICT")
+
+    def test_the_merge_does_not_change_the_working_copy_of_the_seat_or_the_other_branches(self) -> None:
+        cand, records = self.queued()
+        refs = {key: value for key, value in self.rig.refs().items() if key not in (f"refs/heads/{BRANCH}", f"refs/heads/{QUEUE_BRANCH}")}
+        self.assertEqual(self.rig.land(approving=records).code, 0)
+        self.assertEqual({key: value for key, value in self.rig.refs().items() if key not in (f"refs/heads/{BRANCH}", f"refs/heads/{QUEUE_BRANCH}")}, refs)
 
     def test_a_red_spec_is_spec_red_and_the_invariants_still_run(self) -> None:
         cand, records = self.queued(files={"src/a.py": "a = 3\n"})
@@ -939,14 +1004,15 @@ class LandBounceTests(LandCase):
         self.bounced_with(result, "SPEC_RED")
         self.assertEqual(result.codes, ["SPEC_RED", "INVARIANT_RED"])
 
-    def test_every_red_before_the_commands_is_printed_with_the_command_reds(self) -> None:
+    def test_a_review_red_stops_the_run_before_any_configured_command(self) -> None:
         other = self.rig.candidate()
         cand, records = self.queued(files={"src/a.py": "a = 5\n"}, review_candidate=other)
         self.rig.control("invariant.exit", "1")
+        self.rig.control("spec.exit", "1")
         result = self.rig.land(approving=records)
         self.bounced_with(result, "REVIEW_MISMATCH")
-        self.assertEqual([line.split(" ")[0] for line in result.out_lines if "REVIEW_MISMATCH" in line or "INVARIANT_RED" in line][-1], "INVARIANT_RED")
-        self.assertIn("INVARIANT_RED", result.out)
+        self.assertEqual(set(result.codes), {"REVIEW_MISMATCH"})
+        self.assertEqual((self.rig.calls("spec"), self.rig.calls("invariant")), ([], []))
 
     def test_a_red_and_a_fault_in_one_run_exit_one_with_the_fault_on_stderr_and_the_bounce_written(self) -> None:
         cand, records = self.queued(files={"src/a.py": "a = 6\n"})
@@ -972,14 +1038,15 @@ class LandBounceTests(LandCase):
         self.assertEqual(self.rig.states(), {"T1": "QUEUED"})
         self.assertClean(result)
 
-    def test_a_fault_in_the_review_read_does_not_hide_a_red_found_elsewhere(self) -> None:
+    def test_a_fault_in_the_review_read_runs_no_command_and_is_exit_two(self) -> None:
         cand, records = self.queued()
         self.rig.control("invariant.exit", "1")
         with mock.patch.object(integrate.Integrator, "_record", side_effect=integrate.Fault("the record cannot be read")):
             result = self.rig.main("land", "--config", str(self.rig.config_path))
-        self.assertEqual(result.code, 1, result.text)
-        self.assertIn("INVARIANT_RED", result.out)
+        self.assertEqual((result.code, result.out), (2, ""), result.text)
         self.assertIn("the record cannot be read", result.err)
+        self.assertEqual((self.rig.calls("spec"), self.rig.calls("invariant")), ([], []))
+        self.assertEqual(self.rig.states(), {"T1": "QUEUED"})
 
 
 class LandRaceTests(LandCase):
@@ -1049,6 +1116,189 @@ class LandRaceTests(LandCase):
         self.assertEqual(self.rig.tip(), self.rig.base)
 
 
+class RealLandTests(LandCase):
+    """A land that succeeds against real git: the record is committed on the tip, the candidate is its sibling.
+
+    Nothing here replaces `Integrator._record`; the record is read from the clone of the remote's tip.
+    """
+
+    def test_the_record_is_not_patched_in_these_tests(self) -> None:
+        self.assertEqual(integrate.Integrator._record.__qualname__, "Integrator._record")
+        self.assertNotIsInstance(integrate.Integrator.__dict__["_record"], mock.Mock)
+
+    def test_a_sibling_of_the_record_commit_lands_as_a_merge_commit_and_readback_marks_it_landed(self) -> None:
+        cand = self.rig.candidate({"src/a.py": "a = 2\n"})
+        record_commit = self.rig.publish_record(cand)
+        self.assertEqual(self.rig.parents(cand), [self.rig.base])
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        result = self.rig.land()
+        self.assertEqual((result.code, result.err), (0, ""), result.text)
+        merged = self.rig.tip()
+        self.rig.assert_merge_of(merged, record_commit, cand)
+        self.assertEqual(result.out_lines, [f"LANDED_PENDING_CI T1@{cand} landed_sha={merged}"])
+        entry = self.rig.entry("T1")
+        self.assertEqual((entry["state"], entry["landed_sha"], entry["parent"]), ("LANDED_PENDING_CI", merged, record_commit))
+        self.assertEqual(git(self.rig.remote, "show", f"{merged}:src/a.py"), "a = 2")
+        self.assertEqual(git(self.rig.remote, "show", f"{merged}:{REVIEW}").splitlines()[0], "# Review")
+        self.assertEqual(self.rig.calls("spec"), [["specs/test_a.py"]])
+        for name in ("spec", "invariant"):
+            self.assertEqual([row["a"] for row in self.rig.seen(name)], ["a = 2\n"])
+        self.rig.control("ci.answer", "green\n")
+        read = self.rig.readback()
+        self.assertEqual((read.code, read.err), (0, ""), read.text)
+        self.assertEqual(self.rig.states(), {"T1": "LANDED"})
+        self.assertEqual(self.rig.calls("ci"), [[merged]])
+        self.assertEqual(self.rig.tip(), merged)
+        self.assertClean(read)
+
+    def test_the_tip_that_moved_after_submit_is_not_a_bounce_reason(self) -> None:
+        cand = self.rig.candidate()
+        self.rig.publish_record(cand)
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        recorded_parent = self.rig.entry("T1")["parent"]
+        later = self.rig.publish({"docs/later.md": "later\n"})
+        self.assertNotEqual(recorded_parent, later)
+        result = self.rig.land()
+        self.assertEqual((result.code, result.err), (0, ""), result.text)
+        self.rig.assert_merge_of(self.rig.tip(), later, cand)
+
+    def test_the_merge_commit_is_made_by_the_script_with_the_tip_first(self) -> None:
+        cand = self.rig.candidate()
+        record_commit = self.rig.publish_record(cand)
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        self.assertEqual(self.rig.land().code, 0)
+        merged = self.rig.tip()
+        self.assertEqual(self.rig.parents(merged), [record_commit, cand])
+        self.assertEqual(git(self.rig.remote, "log", "-1", "--format=%an <%ae>", merged), "merge-queue <merge-queue@integrate.invalid>")
+
+    def test_a_convergence_disposition_record_lands_against_real_git(self) -> None:
+        cand = self.rig.candidate()
+        self.rig.publish_record(cand, record_text(cand, verdict="CONVERGENCE_REVIEW_REQUIRED", disposition="APPROVED"))
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        result = self.rig.land()
+        self.assertEqual((result.code, result.err), (0, ""), result.text)
+        self.assertEqual(self.rig.states(), {"T1": "LANDED_PENDING_CI"})
+
+    def test_a_candidate_that_is_not_a_branch_tip_is_fetched_by_its_sha(self) -> None:
+        first = self.rig.candidate()
+        second = self.rig.commit({"src/more.py": "m\n"}, "more on the same branch", first)
+        self.rig.push_seat(f"{second}:refs/heads/cand-1")
+        record_commit = self.rig.publish_record(first)
+        self.assertEqual(self.rig.submit("T1", first).code, 0)
+        result = self.rig.land()
+        self.assertEqual((result.code, result.err), (0, ""), result.text)
+        self.rig.assert_merge_of(self.rig.tip(), record_commit, first)
+        self.assertEqual(git(self.rig.remote, "ls-tree", "-r", "--name-only", self.rig.tip(), "src/more.py"), "")
+
+
+class AdmissionTests(LandCase):
+    """No configured command runs on a candidate that the record does not admit (finding S50-02)."""
+
+    def marker_commands(self) -> Path:
+        marker = self.rig.root / "ran.marker"
+        script = self.rig.tools / "marker.py"
+        script.write_text(f"import sys\nopen({str(marker)!r}, 'a').write(' '.join(sys.argv[1:]) + chr(10))\n", encoding="utf-8", newline="\n")
+        self.rig.config["spec_command"] = [PY, str(script), "spec"]
+        self.rig.config["invariant_command"] = [PY, str(script), "invariant"]
+        self.rig.write_config()
+        return marker
+
+    def test_a_queued_row_written_directly_with_no_record_runs_no_command(self) -> None:
+        marker = self.marker_commands()
+        cand = self.rig.candidate({"src/a.py": "a = 'hostile'\n", "specs/test_hostile.py": "# covers src/a.py\n"})
+        self.rig.write_queue([self.rig.row("T1", cand)])
+        tip = self.rig.tip()
+        result = self.rig.land()
+        self.bounced_with(result, "REVIEW_MISMATCH")
+        self.assertFalse(marker.exists(), "a configured command ran on a candidate the record does not admit")
+        self.assertEqual(self.rig.tip(), tip)
+        self.assertClean(result)
+
+    def test_every_way_the_record_can_fail_to_admit_runs_no_command(self) -> None:
+        marker = self.marker_commands()
+        cand = self.rig.candidate({"src/a.py": "a = 'x'\n"})
+        other = self.rig.candidate()
+        variants = {
+            "changes-requested": record_text(cand, verdict="CHANGES_REQUESTED"),
+            "other-candidate": record_text(other),
+            "same-seat": record_text(cand, reviewer=SUBMITTER),
+            "convergence-without-disposition": record_text(cand, verdict="CONVERGENCE_REVIEW_REQUIRED"),
+            "no-block": "# nothing\n",
+        }
+        for name, text in variants.items():
+            with self.subTest(name):
+                self.rig.publish({REVIEW: text}, name)
+                self.rig.write_queue([self.rig.row("T1", cand)])
+                tip = self.rig.tip()
+                result = self.rig.land()
+                self.bounced_with(result, "REVIEW_MISMATCH")
+                self.assertFalse(marker.exists(), name)
+                self.assertEqual(self.rig.tip(), tip)
+
+    def test_a_missing_record_runs_no_command(self) -> None:
+        marker = self.marker_commands()
+        cand = self.rig.candidate({"src/a.py": "a = 'y'\n"})
+        self.rig.write_queue([self.rig.row("T1", cand, review="records/none.md")])
+        self.bounced_with(self.rig.land(), "REVIEW_MISMATCH")
+        self.assertFalse(marker.exists())
+
+    def test_a_row_whose_copies_differ_from_the_record_runs_no_command(self) -> None:
+        marker = self.marker_commands()
+        cand = self.rig.candidate({"src/a.py": "a = 'z'\n"})
+        self.rig.publish_record(cand)
+        self.rig.write_queue([self.rig.row("T1", cand, reviewer="seat:review/run-10")])
+        self.bounced_with(self.rig.land(), "REVIEW_MISMATCH")
+        self.assertFalse(marker.exists())
+
+    def test_a_conflicting_candidate_runs_no_command_even_with_an_approving_record(self) -> None:
+        marker = self.marker_commands()
+        cand = self.rig.candidate({"src/a.py": "a = 'candidate'\n"})
+        self.rig.publish({"src/a.py": "a = 'tip'\n", REVIEW: record_text(cand)}, "conflicting tip with the record")
+        self.rig.write_queue([self.rig.row("T1", cand)])
+        self.bounced_with(self.rig.land(), "MERGE_CONFLICT")
+        self.assertFalse(marker.exists())
+
+    def test_an_admitted_candidate_does_run_the_commands(self) -> None:
+        marker = self.marker_commands()
+        cand = self.rig.candidate({"src/a.py": "a = 'ok'\n"})
+        self.rig.publish_record(cand)
+        self.rig.write_queue([self.rig.row("T1", cand)])
+        self.assertEqual(self.rig.land().code, 0)
+        self.assertEqual(marker.read_text(encoding="utf-8").splitlines(), ["spec specs/test_a.py", "invariant"])
+
+    def test_a_record_that_only_a_seat_branch_holds_is_review_mismatch_at_land(self) -> None:
+        # Finding S50-03: the approving record sits only on a seat branch that descends from the candidate.
+        marker = self.marker_commands()
+        cand = self.rig.candidate({"src/a.py": "a = 'seat'\n"})
+        forged = self.rig.commit({REVIEW: record_text(cand)}, "forged record on the seat branch", cand)
+        self.rig.push_seat(f"{forged}:refs/heads/seat-forged")
+        self.rig.write_queue([self.rig.row("T1", cand)])
+        tip = self.rig.tip()
+        refs = {key: value for key, value in self.rig.refs().items() if key != f"refs/heads/{QUEUE_BRANCH}"}
+        result = self.rig.land()
+        self.bounced_with(result, "REVIEW_MISMATCH")
+        self.assertEqual(self.rig.tip(), tip)
+        self.assertEqual({key: value for key, value in self.rig.refs().items() if key != f"refs/heads/{QUEUE_BRANCH}"}, refs)
+        self.assertFalse(marker.exists())
+
+    def test_a_record_that_only_the_candidates_own_tree_holds_is_review_mismatch_at_land(self) -> None:
+        marker = self.marker_commands()
+        stand_in = "1" * 40
+        cand = self.rig.candidate({REVIEW: record_text(stand_in)})
+        self.rig.write_queue([self.rig.row("T1", cand)])
+        self.bounced_with(self.rig.land(), "REVIEW_MISMATCH")
+        self.assertFalse(marker.exists())
+
+    def test_a_record_that_the_tip_lost_is_review_mismatch(self) -> None:
+        marker = self.marker_commands()
+        cand = self.rig.candidate()
+        self.rig.publish_record(cand)
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        self.rig.publish({REVIEW: None}, "record removed")
+        self.bounced_with(self.rig.land(), "REVIEW_MISMATCH")
+        self.assertFalse(marker.exists())
+
+
 class BlockedByCiTests(LandCase):
     def test_a_pending_entry_blocks_every_landing_and_pushes_nothing(self) -> None:
         cand, records = self.queued(ticket="Q1")
@@ -1096,7 +1346,7 @@ class BlockedByCiTests(LandCase):
         result = self.rig.land(approving=records)
         self.assertEqual((result.code, result.err), (0, ""), result.text)
         self.assertEqual(self.rig.states(), {"R1": "LANDED_CI_RED", "OLD": "QUEUED", "FIX": "LANDED_PENDING_CI"})
-        self.assertEqual(self.rig.tip(), clearing)
+        self.assertEqual(self.rig.parents(self.rig.tip())[1], clearing)
         self.assertEqual(self.rig.land(approving=records).code, 1)
         self.rig.control("ci.answer", "green\n")
         self.assertEqual(self.rig.readback().code, 0)
@@ -1654,9 +1904,10 @@ class RemoteFaultTests(LandCase):
             self.assertEqual(self.rig.land(approving=records).code, 0)
         fetches = [argv for argv in seen if "fetch" in argv]
         pushes = [argv for argv in seen if "push" in argv]
-        self.assertEqual(len(fetches), 1)
-        for option in ("transfer.fsckObjects=true", "fetch.fsckObjects=true"):
-            self.assertIn(option, fetches[0])
+        self.assertEqual(len(fetches), 2, "one fetch of the two branches and one of the candidate")
+        for fetch in fetches:
+            for option in ("transfer.fsckObjects=true", "fetch.fsckObjects=true"):
+                self.assertIn(option, fetch)
         self.assertIn("transfer.fsckObjects=true", pushes[0])
         self.assertIn("--atomic", pushes[0])
         leases = [argument for argument in pushes[0] if argument.startswith("--force-with-lease=")]
@@ -1679,6 +1930,117 @@ class RemoteFaultTests(LandCase):
             self.rig.land(approving=records)
         self.assertEqual(len(set(clones)), 2)
         self.assertTrue(all(not os.path.exists(path) for path in clones))
+
+
+class FetchScopeTests(LandCase):
+    """The fetch takes the integration branch, the queue branch and the candidate being landed (finding S50-08)."""
+
+    def bad_commit(self, parent: str) -> str:
+        tree = git(self.rig.remote, "rev-parse", f"{parent}^{{tree}}")
+        body = f"tree {tree}\nparent {parent}\ncommitter c <c@c> 1 +0000\n\nno author\n".encode()
+        return subprocess.run(
+            ["git", "-C", str(self.rig.remote), "hash-object", "-t", "commit", "--literally", "-w", "--stdin"],
+            input=body,
+            capture_output=True,
+            check=True,
+        ).stdout.decode().strip()
+
+    def test_a_malformed_object_on_an_unrelated_branch_stops_no_subcommand(self) -> None:
+        cand = self.rig.candidate()
+        self.rig.publish_record(cand)
+        git(self.rig.remote, "update-ref", "refs/heads/seat-bad", self.bad_commit(self.rig.base))
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        landed = self.rig.land()
+        self.assertEqual((landed.code, landed.err), (0, ""), landed.text)
+        self.rig.control("ci.answer", "green\n")
+        read = self.rig.readback()
+        self.assertEqual((read.code, read.err), (0, ""), read.text)
+        self.assertEqual(self.rig.states(), {"T1": "LANDED"})
+
+    def test_a_malformed_object_on_the_candidate_branch_is_a_fault_and_nothing_is_pushed(self) -> None:
+        bad = self.bad_commit(self.rig.tip())
+        git(self.rig.remote, "update-ref", "refs/heads/cand-bad", bad)
+        self.rig.write_queue([self.rig.row("T1", bad)])
+        record = record_text(bad)
+        self.rig.publish({REVIEW: record}, "record of the bad candidate")
+        before = (self.rig.refs(), self.rig.queue_sha())
+        result = self.rig.land()
+        self.assertEqual((result.code, result.out), (2, ""), result.text)
+        self.assertIn("verified fetch failed", result.err)
+        self.assertEqual((self.rig.refs(), self.rig.queue_sha()), before)
+        self.assertClean(result)
+
+    def test_the_fetches_name_their_refs_and_never_a_wildcard(self) -> None:
+        cand = self.rig.candidate()
+        self.rig.publish_record(cand)
+        self.rig.write_queue([self.rig.row("T1", cand)])
+        seen: list[list[str]] = []
+        original = integrate.run_process
+
+        def spy(argv: Sequence[str], cwd: str, env: Mapping[str, str], timeout: float, stdin: bytes | None = None) -> integrate.Completed:
+            seen.append(list(argv))
+            return original(argv, cwd, env, timeout, stdin)
+
+        with mock.patch.object(integrate, "run_process", spy):
+            self.assertEqual(self.rig.land().code, 0)
+        fetches = [argv for argv in seen if "fetch" in argv]
+        self.assertEqual(len(fetches), 2)
+        for argv in fetches:
+            tail = argv[argv.index("--", argv.index("fetch")) + 2 :]
+            self.assertFalse([item for item in tail if "*" in item], argv)
+        self.assertEqual(
+            fetches[0][fetches[0].index("--", fetches[0].index("fetch")) + 2 :],
+            [f"+refs/heads/{BRANCH}:refs/remotes/origin/{BRANCH}", f"+refs/heads/{QUEUE_BRANCH}:refs/remotes/origin/{QUEUE_BRANCH}"],
+        )
+        self.assertEqual(fetches[1][-1], "refs/heads/cand-1")
+
+    def test_a_run_without_a_queue_branch_fetches_only_the_integration_branch(self) -> None:
+        seen: list[list[str]] = []
+        original = integrate.run_process
+
+        def spy(argv: Sequence[str], cwd: str, env: Mapping[str, str], timeout: float, stdin: bytes | None = None) -> integrate.Completed:
+            seen.append(list(argv))
+            return original(argv, cwd, env, timeout, stdin)
+
+        with mock.patch.object(integrate, "run_process", spy):
+            self.assertEqual(self.rig.land().code, 0)
+        fetches = [argv for argv in seen if "fetch" in argv]
+        self.assertEqual(len(fetches), 1)
+        self.assertEqual(fetches[0][-1], f"+refs/heads/{BRANCH}:refs/remotes/origin/{BRANCH}")
+
+    def test_a_global_git_configuration_cannot_weaken_the_verified_fetch(self) -> None:
+        # Finding S50-07: with the message class downgraded in a global config, a malformed tip would pass the fetch.
+        self.queued()
+        home = self.rig.root / "home"
+        home.mkdir()
+        (home / ".gitconfig").write_text("[fetch \"fsck\"]\n\tmissingAuthor = ignore\n[transfer \"fsck\"]\n\tmissingAuthor = ignore\n", encoding="utf-8", newline="\n")
+        git(self.rig.remote, "update-ref", f"refs/heads/{BRANCH}", self.bad_commit(self.rig.tip()))
+        before = (self.rig.refs(), self.rig.queue_sha())
+        inherited = {"HOME": str(home), "USERPROFILE": str(home), "XDG_CONFIG_HOME": str(home)}
+        for run in ("land", "readback"):
+            with self.subTest(run):
+                result = self.rig.cli(run, "--config", str(self.rig.config_path), extra_env=inherited)
+                self.assertEqual((result.code, result.out), (2, ""), result.text)
+                self.assertIn("verified fetch failed", result.err)
+                self.assertEqual((self.rig.refs(), self.rig.queue_sha()), before)
+
+    def test_the_global_configuration_is_what_would_have_weakened_it(self) -> None:
+        # The control for the test above: the same configuration does make a plain git fetch accept the object.
+        self.rig.candidate()
+        home = self.rig.root / "home"
+        home.mkdir()
+        (home / ".gitconfig").write_text("[fetch \"fsck\"]\n\tmissingAuthor = ignore\n", encoding="utf-8", newline="\n")
+        git(self.rig.remote, "update-ref", f"refs/heads/{BRANCH}", self.bad_commit(self.rig.tip()))
+        target = self.rig.root / "control"
+        target.mkdir()
+        env = {**_clean_environment(), "HOME": str(home), "USERPROFILE": str(home), "XDG_CONFIG_HOME": str(home)}
+        subprocess.run(["git", "init", "-q", str(target)], check=True, env=env)
+        done = subprocess.run(
+            ["git", "-C", str(target), "-c", "transfer.fsckObjects=true", "-c", "fetch.fsckObjects=true", "fetch", "-q", str(self.rig.remote), f"refs/heads/{BRANCH}"],
+            capture_output=True,
+            env=env,
+        )
+        self.assertEqual(done.returncode, 0, done.stderr.decode("utf-8", "replace"))
 
 
 class ConfigTests(RigCase):
@@ -1721,6 +2083,34 @@ class ConfigTests(RigCase):
             with self.subTest(name):
                 self.usage(self.changed(timeout_seconds=0).replace('"timeout_seconds": 0', f'"timeout_seconds": {literal}'))
                 self.usage(self.changed(extra=0).replace('"extra": 0', f'"extra": {literal}'))
+
+    def test_non_finite_numbers_name_the_key_that_holds_them(self) -> None:
+        for name, literal in (("nan", "NaN"), ("inf", "Infinity"), ("minus-inf", "-Infinity"), ("overflow", "1e999")):
+            with self.subTest(name):
+                result = self.usage(self.changed(timeout_seconds=0).replace('"timeout_seconds": 0', f'"timeout_seconds": {literal}'), "timeout_seconds")
+                self.assertIn("holds", result.err)
+                result = self.usage(self.changed(extra=0).replace('"extra": 0', f'"extra": {literal}'), "extra")
+                result = self.usage(self.changed(spec_command=["x"]).replace('["x"]', f'["x", {literal}]'), "spec_command")
+
+    def test_control_characters_and_lone_surrogates_name_the_key_that_holds_them(self) -> None:
+        for name, value, needle in (("tab", "a\\u0009b", "U+0009"), ("nul", "a\\u0000b", "U+0000"), ("delete", "a\\u007fb", "U+007F"), ("surrogate", "a\\ud800b", "U+D800")):
+            with self.subTest(name):
+                raw = self.changed().replace(f'"remote": {json.dumps(str(self.rig.remote))}', f'"remote": "{value}"')
+                result = self.usage(raw, "remote")
+                self.assertIn(needle, result.err)
+                raw = self.changed(queue_path="x").replace('"queue_path": "x"', f'"queue_path": "{value}"')
+                self.usage(raw, "queue_path")
+                raw = self.changed(spec_command=["x"]).replace('["x"]', f'["x", "{value}"]')
+                self.usage(raw, "spec_command")
+
+    def test_a_key_that_holds_a_control_character_is_named_escaped(self) -> None:
+        result = self.usage(self.changed(extra="x").replace('"extra"', '"ex\\u0009tra"'))
+        self.assertIn("ex\\x09tra", result.err)
+        self.assertIn("control character", result.err)
+
+    def test_a_non_finite_number_outside_an_object_is_still_exit_three(self) -> None:
+        result = self.usage("NaN")
+        self.assertIn("NaN", result.err)
 
     def test_a_file_that_is_not_one_json_object_is_refused(self) -> None:
         for name, raw in (("empty", ""), ("list", "[]"), ("string", '"x"'), ("null", "null"), ("truncated", '{"remote": '), ("too-deep", '{"x": ' + "[" * 100000 + "}")):
@@ -1892,6 +2282,10 @@ class GitEnvironmentTests(LandCase):
             "GIT_SHALLOW_FILE": "x",
             "GIT_REPLACE_REF_BASE": "x",
             "GIT_GRAFT_FILE": "inherited",
+            "GIT_PREFIX": "x",
+            "GIT_QUARANTINE_PATH": "x",
+            "GIT_TEST_FSMONITOR": "x",
+            "GIT_TEST_SOMETHING_NEW": "x",
             "GIT_CONFIG": "x",
             "GIT_CONFIG_COUNT": "1",
             "GIT_CONFIG_KEY_0": "core.bare",
@@ -1908,9 +2302,15 @@ class GitEnvironmentTests(LandCase):
         with mock.patch.dict(os.environ, inherited):
             first = integrate.git_environment("C:/fresh/one")
             second = integrate.git_environment("C:/fresh/two")
+        forced = {"GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL", "GIT_GRAFT_FILE"}
         for name in inherited:
-            if name.startswith("GIT_CONFIG") or name in {"GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_COMMON_DIR", "GIT_NAMESPACE", "GIT_CEILING_DIRECTORIES", "GIT_SHALLOW_FILE", "GIT_REPLACE_REF_BASE"}:
-                self.assertNotIn(name, first, name)
+            if name.startswith(("GIT_CONFIG", "GIT_TEST_")) or name in EVIDENCE_GATE_REMOVED:
+                if name not in forced:
+                    self.assertNotIn(name, first, name)
+        self.assertEqual(first["GIT_CONFIG_NOSYSTEM"], "1")
+        self.assertNotEqual(first["GIT_CONFIG_GLOBAL"], "x")
+        self.assertFalse(os.path.exists(first["GIT_CONFIG_GLOBAL"]))
+        self.assertNotEqual(first["GIT_CONFIG_GLOBAL"], second["GIT_CONFIG_GLOBAL"])
         self.assertEqual((first["GIT_NO_REPLACE_OBJECTS"], first["GIT_NO_LAZY_FETCH"]), ("1", "1"))
         self.assertEqual((first["GIT_GRAFT_FILE"], second["GIT_GRAFT_FILE"]), ("C:/fresh/one", "C:/fresh/two"))
         self.assertEqual((first["GIT_AUTHOR_NAME"], first["PATH_KEPT"]), ("kept", "kept"))
@@ -1992,24 +2392,26 @@ class GitEnvironmentTests(LandCase):
         self.assertEqual(git(self.rig.seat, "status", "--porcelain"), "")
         self.assertFalse((self.rig.root / "foreign-index").exists())
 
-    def test_a_graft_file_in_the_environment_cannot_make_a_sibling_a_descendant(self) -> None:
+    def test_a_graft_file_in_the_environment_cannot_make_a_new_candidate_look_landed(self) -> None:
         cand, records = self.queued()
         self.rig.publish({"docs/newer.md": "newer\n"})
         tip = self.rig.tip()
         grafts = self.rig.root / "grafts"
-        grafts.write_text(f"{cand} {tip}\n", encoding="utf-8")
+        grafts.write_text(f"{tip} {cand}\n", encoding="utf-8")
         with mock.patch.dict(os.environ, {"GIT_GRAFT_FILE": str(grafts)}):
             result = self.rig.land(approving=records)
-        self.bounced_with(result, "NOT_FAST_FORWARD")
+        self.assertEqual((result.code, result.err), (0, ""), result.text)
+        self.rig.assert_merge_of(self.rig.tip(), tip, cand)
 
     def test_a_replace_ref_in_the_remote_changes_nothing(self) -> None:
         cand, records = self.queued()
         decoy = self.rig.commit({"src/decoy.py": "d\n"}, "decoy", self.rig.base)
         self.rig.push_seat(f"{decoy}:refs/heads/decoy")
         git(self.rig.remote, "update-ref", f"refs/replace/{cand}", decoy)
+        old_tip = self.rig.tip()
         result = self.rig.land(approving=records)
         self.assertEqual((result.code, result.err), (0, ""), result.text)
-        self.assertEqual(self.rig.tip(), cand)
+        self.rig.assert_merge_of(self.rig.tip(), old_tip, cand)
 
 
 class AffectedSpecTests(LandCase):
@@ -2085,6 +2487,22 @@ class AffectedSpecTests(LandCase):
         self.assertEqual(self.rig.land(approving=records).code, 0)
         self.assertEqual(self.rig.calls("spec"), [["specs/test_a.py", "specs/test_s.py"]])
 
+    def test_a_registry_with_a_utf8_byte_order_mark_is_read(self) -> None:
+        self.assertEqual(integrate.parse_pages(b"\xef\xbb\xbf" + b'[{"paths": ["a/", "b.py"]}]'), [integrate.Page(("a/", "b.py"))])
+        with self.assertRaises(integrate.PagesError):
+            integrate.parse_pages(b"\xef\xbb\xbf\xff")
+
+    def test_a_candidate_whose_registry_starts_with_a_byte_order_mark_is_not_spec_red(self) -> None:
+        self.rig.publish({"specs/test_b.py": "# no path named\n", "src/b.py": "b\n"})
+        registry = "﻿" + json.dumps({"pages": [{"page_id": "b", "paths": ["src/b.py", "specs/test_b.py"]}]})
+        cand = self.rig.candidate({"src/b.py": "b2\n", "pages.json": registry})
+        self.rig.publish_record(cand)
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        result = self.rig.land()
+        self.assertEqual((result.code, result.err), (0, ""), result.text)
+        self.assertEqual(self.rig.calls("spec"), [["specs/test_b.py"]])
+        self.assertEqual(self.rig.states(), {"T1": "LANDED_PENDING_CI"})
+
     def test_a_malformed_registry_in_the_candidate_is_spec_red(self) -> None:
         cand, records = self.queued(files={"pages.json": '[{"paths": ["../x"]}]'})
         result = self.rig.land(approving=records)
@@ -2130,9 +2548,13 @@ class RecordedBehaviourTests(RigCase):
         self.assertIn("hex digits", wrong.err)
         self.assertEqual([row["ticket"] for row in rig.entries()], ["T1"])
         records = {REVIEW: record_text(cand)}
+        tip = rig.tip()
         landed = rig.land(approving=records)
-        self.assertEqual(landed.code, 1, landed.text)  # the record commit moved the tip: the candidate is a sibling
-        self.assertEqual(rig.entry("T1")["reason"], "NOT_FAST_FORWARD")
+        self.assertEqual((landed.code, landed.err), (0, ""), landed.text)  # the record commit moved the tip: the candidate is a sibling, merged
+        merged = rig.tip()
+        self.assertEqual(len(merged), 64)
+        rig.assert_merge_of(merged, tip, cand)
+        self.assertEqual((rig.entry("T1")["state"], rig.entry("T1")["landed_sha"]), ("LANDED_PENDING_CI", merged))
         self.assertEqual(rig.tmp_left(), [])
 
 
@@ -2343,13 +2765,14 @@ class ReadmeTests(unittest.TestCase):
             "TIP_MOVED",
             "BLOCKED_BY_CI",
             "KEY_EXISTS",
-            "NOT_FAST_FORWARD",
+            "MERGE_CONFLICT",
+            "ALREADY_LANDED",
             "git push --atomic",
             "transfer.fsckObjects=true",
             "fetch.fsckObjects=true",
             "LANDED_PENDING_CI",
             "--no-replace-objects",
-            "Open conflict",
+            "Merge landing",
         ):
             with self.subTest(phrase):
                 self.assertIn(phrase, section)
