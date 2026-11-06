@@ -43,7 +43,7 @@ them.
 
 ### Registered counts
 
-Windows runner 44 rows, Linux runner 228 rows (ticket 62 removed 3 and 6 rows that its fixes turned green; the earlier counts, 47 and 234, were read from CI runs 42009508339 and 42011080430).
+Windows runner 5 rows, Linux runner 228 rows. The earlier counts, 47 and 234, were read from CI runs 42009508339 and 42011080430; ticket 62 removed 3 Windows and 6 Linux rows that its fixes turned green, and ticket 63 removed all 39 Windows short-name rows (the 39th, the bundle builder's symlink test, was a test fixture spelling defect and is fixed in the test).
 
 ### Host failures that do not fail on a runner
 
@@ -55,7 +55,7 @@ These four failed in the base capture (`C:/Temp/claude/jas48_F1_base.txt`, a ful
 
 ### Windows runner failures that do not fail on the host
 
-The 39 rows of `test_dispatch_authority`, `test_dispatch_session`, `test_parallel_worker_dispatch`, `test_review_return` and `test_plugin_distribution_bundle`: the runner's temp directory is the 8.3 short path `C:/Users/RUNNER~1/...`. `path_containment.resolves_within_root` returns `False` whenever `base.resolve() != base`, so it treats the short-name alias of the repository root as a redirect and the worktree is refused. That is a product defect on a supported platform, not a capability the runner lacks; the host's temp path has no short name. Follow-up: `modules/tickets/workflow-governance/63-short-name-containment.md`. `test_acr2_linux_requires_an_actual_linux_kernel_and_backend` fails on the Windows runner because it has no WSL Linux backend (`_PlatformProofUnavailable: LINUX`); on the host the WSL proof does not run either.
+The 39 rows of `test_dispatch_authority`, `test_dispatch_session`, `test_parallel_worker_dispatch`, `test_review_return` and `test_plugin_distribution_bundle` were registered because the runner's temp directory is the 8.3 short path `C:/Users/RUNNER~1/...` and `path_containment.resolves_within_root` treated the short-name alias of the repository root as a redirect. Ticket 63 fixed that (the alias is the same directory; a redirect is decided from the file system, by examining every existing component of the base with `lstat`, so junctions, symlinks and reparse points are still refused) and removed all 39 rows. The 39th, `test_plugin_distribution_bundle.py::PluginBundleBuilderTests::test_missing_changed_and_symlink_entries_block_with_finite_failures`, failed on the runner only because the test spelt its patched path from the unresolved short temp name while the builder walks the resolved root; the fixture now resolves the temporary root. `test_acr2_linux_requires_an_actual_linux_kernel_and_backend` fails on the Windows runner because it has no WSL Linux backend (`_PlatformProofUnavailable: LINUX`); on the host the WSL proof does not run either.
 
 ### Line endings (checkout configuration)
 
