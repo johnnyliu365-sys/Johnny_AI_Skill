@@ -717,28 +717,29 @@ class FileIdentityTests(unittest.TestCase):
             (base / "x").mkdir(parents=True)
             held = parent / "held_real_A"
             real_resolve = Path.resolve
-            calls: list[Path] = []
             made: list[bool] = []
+            outcomes: list[bool] = []
+            for target in (twin / "x", base / "x"):
+                calls: list[Path] = []
 
-            def resolve(self: Path, strict: bool = False) -> Path:
-                calls.append(self)
-                if len(calls) != 1:
-                    return real_resolve(self, strict=strict)
-                os.rename(base, held)
-                made.append(_make_junction(base, twin))
-                result = real_resolve(self, strict=strict)
-                if made[0]:
-                    os.rmdir(base)
-                os.rename(held, base)
-                return result
+                def resolve(self: Path, strict: bool = False) -> Path:
+                    calls.append(self)
+                    if len(calls) != 1:
+                        return real_resolve(self, strict=strict)
+                    os.rename(base, held)
+                    made.append(_make_junction(base, twin))
+                    result = real_resolve(self, strict=strict)
+                    if made[-1]:
+                        os.rmdir(base)
+                    os.rename(held, base)
+                    return result
 
-            with mock.patch.object(Path, "resolve", resolve):
-                contained = resolves_within_root(base / "x", base)
-                contained_twin = resolves_within_root(twin / "x", base)
-            if made != [True]:
+                with mock.patch.object(Path, "resolve", resolve):
+                    outcomes.append(resolves_within_root(target, base))
+            if made != [True, True]:
                 self.skipTest("no junction can be created here")
-            self.assertFalse(contained)
-            self.assertFalse(contained_twin)
+            # The twin is the anchor of the first call; its own child is then "inside".
+            self.assertEqual([False, False], outcomes)
 
     def test_a_base_replaced_by_another_directory_after_the_resolve_is_refused(self) -> None:
         with _layout() as (parent, _root, _outside):
