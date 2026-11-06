@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import ctypes
 import os
+import stat
 import subprocess
 import sys
+import types
 import unittest
 from collections.abc import Iterator
 from contextlib import contextmanager
@@ -648,6 +650,150 @@ class LongNameLookupTests(unittest.TestCase):
         self.assertIs(wintypes.DWORD, function.restype)
         self.assertIsInstance(path_containment._kernel32, ctypes.WinDLL)
         self.assertIs(path_containment._kernel32.GetLongPathNameW, function)
+
+
+class CaseExactContainmentTests(unittest.TestCase):
+    """Revision03 rule 1: containment folds no case (S63-14)."""
+
+    def test_a_sibling_whose_name_pathlib_folds_to_the_roots_is_refused(self) -> None:
+        # The reviewer's F1: U+212A folds to "k" under str.lower, not on NTFS.
+        if sys.platform != "win32":
+            self.skipTest("the fold of U+212A by pathlib equality is the Windows behaviour")
+        with TemporaryDirectory() as temporary:
+            parent = Path(temporary).resolve()
+            root = parent / "\u212aroot"
+            sibling = parent / "kroot"
+            try:
+                root.mkdir()
+                sibling.mkdir()
+            except OSError:
+                self.skipTest("this volume cannot hold both spellings")
+            if os.path.samefile(root, sibling):
+                self.skipTest("this volume folds U+212A onto k")
+            (sibling / "victim").mkdir()
+            self.assertEqual(root, sibling)
+            self.assertFalse(resolves_within_root(sibling / "victim", root))
+            self.assertFalse(resolves_within_root(sibling / "new" / "leaf", root))
+            self.assertFalse(resolves_within_root(sibling, root))
+            (root / "inside").mkdir()
+            self.assertTrue(resolves_within_root(root / "inside", root))
+
+    def test_a_case_variant_sibling_in_a_case_sensitive_directory_is_refused(self) -> None:
+        # The reviewer's F2.
+        with _case_sensitive_parent() as parent:
+            if parent is None:
+                self.skipTest("a case-sensitive directory cannot be created on this host")
+            assert parent is not None
+            root = parent / "Root"
+            sibling = parent / "root"
+            (sibling / "victim").mkdir(parents=True)
+            root.mkdir()
+            self.assertFalse(resolves_within_root(sibling / "victim", root))
+            self.assertFalse(resolves_within_root(sibling / "new" / "leaf", root))
+            self.assertFalse(resolves_within_root(sibling, root))
+            self.assertTrue(resolves_within_root(root / "new", root))
+
+    def test_the_final_check_is_an_exact_component_prefix(self) -> None:
+        with _layout() as (_, root, _outside):
+            with mock.patch.object(Path, "resolve", lambda self, strict=False: self):
+                self.assertTrue(resolves_within_root(root / "x", root))
+                self.assertFalse(resolves_within_root(Path(str(root).upper()) / "x", root))
+
+
+class FileIdentityTests(unittest.TestCase):
+    """Revision03 rules 2 to 4: same directory by identity, held across the walk."""
+
+    def test_a_case_twin_present_at_the_resolve_and_gone_at_the_walk_is_refused(self) -> None:
+        # The reviewer's SW5: junction A to a at the resolve, the real A back for the walk.
+        if sys.platform != "win32":
+            self.skipTest("a junction swap is the Windows shape under test")
+        with _case_sensitive_parent() as parent:
+            if parent is None:
+                self.skipTest("a case-sensitive directory cannot be created on this host")
+            assert parent is not None
+            twin = parent / "a"
+            (twin / "x").mkdir(parents=True)
+            base = parent / "A"
+            (base / "x").mkdir(parents=True)
+            held = parent / "held_real_A"
+            real_resolve = Path.resolve
+            calls: list[Path] = []
+            made: list[bool] = []
+
+            def resolve(self: Path, strict: bool = False) -> Path:
+                calls.append(self)
+                if len(calls) != 1:
+                    return real_resolve(self, strict=strict)
+                os.rename(base, held)
+                made.append(_make_junction(base, twin))
+                result = real_resolve(self, strict=strict)
+                if made[0]:
+                    os.rmdir(base)
+                os.rename(held, base)
+                return result
+
+            with mock.patch.object(Path, "resolve", resolve):
+                contained = resolves_within_root(base / "x", base)
+                contained_twin = resolves_within_root(twin / "x", base)
+            if made != [True]:
+                self.skipTest("no junction can be created here")
+            self.assertFalse(contained)
+            self.assertFalse(contained_twin)
+
+    def test_a_base_replaced_by_another_directory_after_the_resolve_is_refused(self) -> None:
+        with _layout() as (parent, _root, _outside):
+            base = parent / "replaced_base_with_a_long_name"
+            base.mkdir()
+            held = parent / "held_original_base"
+            real_resolve = Path.resolve
+            calls: list[Path] = []
+
+            def resolve(self: Path, strict: bool = False) -> Path:
+                calls.append(self)
+                result = real_resolve(self, strict=strict)
+                if len(calls) == 1:
+                    os.rename(base, held)
+                    os.mkdir(base)
+                return result
+
+            with mock.patch.object(Path, "resolve", resolve):
+                self.assertFalse(resolves_within_root(base / "x", base))
+
+    def test_an_identity_that_cannot_be_read_is_a_refusal(self) -> None:
+        with _layout() as (_, root, _outside):
+            real_stat = os.stat
+
+            def stat(path: str | os.PathLike[str], *args: object, **kwargs: object) -> os.stat_result:
+                if os.fspath(path) == str(root):
+                    raise PermissionError(13, "denied")
+                return real_stat(path, *args, **kwargs)  # type: ignore[arg-type]
+
+            with mock.patch.object(os, "stat", side_effect=stat):
+                self.assertFalse(resolves_within_root(root / "x", root))
+                reason = path_containment._base_refusal_reason(root)
+            self.assertIsNotNone(reason)
+            assert reason is not None
+            self.assertIn("identity", reason)
+
+    def test_the_identity_of_a_missing_path_counts_the_missing_components(self) -> None:
+        with _layout() as (_, root, _outside):
+            here = path_containment._identity(root)
+            assert here is not None
+            self.assertEqual(0, here[2])
+            self.assertEqual(
+                (here[0], here[1], 2), path_containment._identity(root / "a" / "b")
+            )
+
+    def test_an_lstat_result_without_file_attributes_is_a_refusal(self) -> None:
+        # S63-11: refuse rather than raise.
+        if sys.platform != "win32":
+            self.skipTest("the reparse attribute exists only on Windows")
+        with _layout() as (_, root, _outside):
+            bare = types.SimpleNamespace(st_mode=stat.S_IFDIR | 0o755)
+            with mock.patch.object(os, "lstat", return_value=bare):
+                result = path_containment._examine_component(root)
+                self.assertIs(path_containment._Component.REFUSE, result.state)
+                self.assertFalse(resolves_within_root(root / "x", root))
 
 
 if __name__ == "__main__":

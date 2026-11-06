@@ -9,6 +9,10 @@ Case folding, in particular, is not the file system's identity: a directory
 with per-directory case sensitivity keeps ``A`` and ``a`` distinct, and a
 junction can be named so that its name folds to its target's name. So every
 existing component of the base is examined with ``os.lstat`` first.
+
+No containment decision folds case. Two spellings name one directory only when
+``(st_dev, st_ino)`` from ``os.stat`` agrees, and the final test is an exact,
+component-by-component prefix of the two resolved paths.
 """
 
 from __future__ import annotations
@@ -86,19 +90,29 @@ def _last_lookup_error() -> int:
     return _lookup_state.error
 
 
-def _is_same_directory_alias(base: Path, resolved_base: Path) -> bool:
-    """True only when ``base`` differs from its resolution by short names alone.
+def _identity(path: Path) -> tuple[int, int, int] | None:
+    """The file identity of ``path``, or of its nearest existing ancestor.
 
-    This runs only after the base has been shown to hold no redirect, so it
-    decides spelling and nothing else.
+    The result is ``(st_dev, st_ino, missing)``, where ``missing`` counts the
+    trailing components that do not exist yet. None means the identity cannot
+    be read, and the caller refuses. No spelling is compared.
     """
 
-    if ".." in base.parts:
-        return False
-    long_base = _long_name(base)
-    if long_base is None:
-        return False
-    return os.path.normcase(str(long_base)) == os.path.normcase(str(resolved_base))
+    current = path
+    missing = 0
+    while True:
+        try:
+            status = os.stat(current)
+        except (FileNotFoundError, NotADirectoryError):
+            parent = current.parent
+            if os.fspath(parent) == os.fspath(current):
+                return None
+            current = parent
+            missing += 1
+            continue
+        except OSError:
+            return None
+        return (int(status.st_dev), int(status.st_ino), missing)
 
 
 class _Component(Enum):
@@ -135,7 +149,12 @@ def _examine_component(component: Path) -> _ComponentResult:
         reason = f"component {component} is a symbolic link"
         return _ComponentResult(_Component.REFUSE, reason)
     if sys.platform == "win32":
-        if status.st_file_attributes & _FILE_ATTRIBUTE_REPARSE_POINT:
+        try:
+            attributes = status.st_file_attributes
+        except AttributeError:
+            reason = f"component {component} has no file attributes to examine"
+            return _ComponentResult(_Component.REFUSE, reason)
+        if attributes & _FILE_ATTRIBUTE_REPARSE_POINT:
             reason = f"component {component} is a reparse point"
             return _ComponentResult(_Component.REFUSE, reason)
     return _PASSED
@@ -180,14 +199,24 @@ class _Refusal:
 def _anchor_for(base: Path) -> _Anchor | _Refusal:
     """Check ``base`` and return the one resolution that was checked.
 
-    The base is resolved once. The components of the given spelling and of the
-    resolved path are both examined after that resolution, so a component
-    swapped for a redirect before or during it is seen, and the anchor of the
-    containment check is the very path that was examined.
+    The file identity of the base is taken before anything else. The base is
+    then resolved once, and the components of the given spelling and of the
+    resolved path are both examined. The identity is read again afterwards: if
+    the base changed meanwhile, or if the resolution is not the directory the
+    base names (a case-twin junction that was in place at the resolve and is
+    gone at the walk, which no spelling comparison can tell), the base is
+    refused. Only a redirect that is still in place when it is examined is seen
+    by the walk; a swap that leaves the base the same directory by identity is
+    not a change of the anchor, and the anchor is the very path examined. A
+    spelling that differs (a short name) must also have a long-name lookup
+    that succeeds and names the same directory. Nothing here folds case.
     """
 
     if not base.is_absolute():
         return _Refusal(f"base {base} is not an absolute path")
+    before = _identity(base)
+    if before is None:
+        return _Refusal(f"the identity of base {base} cannot be read")
     try:
         resolved_base = base.resolve()
     except OSError as error:
@@ -196,16 +225,24 @@ def _anchor_for(base: Path) -> _Anchor | _Refusal:
         redirect = _redirected_component(spelling)
         if redirect is not None:
             return _Refusal(redirect)
-    if resolved_base == base:
+    after = _identity(base)
+    if after is None or after != before:
+        return _Refusal(f"base {base} changed while it was being checked")
+    if _identity(resolved_base) != after:
+        return _Refusal(f"base {base} resolves to {resolved_base}, which is not the same directory")
+    if os.fspath(base) == os.fspath(resolved_base):
         return _Anchor(resolved_base)
-    if _is_same_directory_alias(base, resolved_base):
-        return _Anchor(resolved_base)
-    if sys.platform == "win32" and _long_name(base) is None:
+    if ".." in base.parts:
+        return _Refusal(f"base {base} holds a parent-directory component")
+    long_base = _long_name(base)
+    if long_base is None:
         return _Refusal(
             f"the long-name lookup of base {base} failed "
             f"(Windows error {_last_lookup_error()})"
         )
-    return _Refusal(f"base {base} resolves to {resolved_base}, which is not the same spelling")
+    if _identity(long_base) != after:
+        return _Refusal(f"the long name {long_base} of base {base} is not the same directory")
+    return _Anchor(resolved_base)
 
 
 def _base_refusal_reason(base: Path) -> str | None:
@@ -235,12 +272,15 @@ def resolves_within_root(target: Path, base: Path) -> bool:
         existing = target
         remainder: list[str] = []
         while not existing.exists():
-            if existing.parent == existing:
+            if os.fspath(existing.parent) == os.fspath(existing):
                 return False
             remainder.append(existing.name)
             existing = existing.parent
         resolved = existing.resolve().joinpath(*reversed(remainder))
-        return resolved == resolved_base or resolved_base in resolved.parents
+        # Both paths come from ``resolve()`` and carry the on-disk spelling, so
+        # containment is an exact prefix of components; no case folding.
+        count = len(resolved_base.parts)
+        return resolved.parts[:count] == resolved_base.parts
     except OSError:
         return False
 
