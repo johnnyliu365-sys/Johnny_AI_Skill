@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/50-merge-queue-integration-out/` / owner implementation seat / worktree `.worktrees/50-merge-queue-integration` / branch `cp/wave2-50-merge-queue-integration` / baseline the wave-2 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/50-merge-queue-integration-out/` / owner implementation seat / worktree `.worktrees/50-merge-queue-integration` / branch `cp/wave2-50-merge-queue-integration` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `BLOCKED`（revision01 initial review CHANGES_REQUESTED on `37bacce9`: S50-01 TICKET_DEFECT (the record at the tip can never name a fast-forward candidate) awaiting the owner; S50-02 safety (configured commands run on an unapproved candidate); revision02 follows the owner decision） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `37bacce9`: S50-01 TICKET_DEFECT resolved by the owner on 2026-11-07 (merge landing, option A); implementation 2 dispatched, new review cadence） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/50-merge-queue-integration` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/50-merge-queue-integration-review` |
@@ -141,3 +141,34 @@ Tests build a bare repository as the remote (a local path) and real clones in te
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Revision02 (after the revision01 initial review `CHANGES_REQUESTED` and the owner decision of 2026-11-07)
+
+Review record section "Revision01 initial review".
+
+S50-01 is a `TICKET_DEFECT`. The record is read at the tip, and the candidate had to fast-forward that tip, so nothing could ever land. The owner decided "1.A" on 2026-11-07: a candidate lands as a merge commit into the current tip. Spec R4-2, R4-4, R4-7 and R4-8 now say so (signature row 2026-11-07). In this ticket, revision02 replaces every statement about fast-forwarding:
+
+- `land`, in a fresh verified integration clone, does these steps in order:
+  1. Re-reads the review record at the current tip. If the record does not admit the entry, the entry is `BOUNCED REVIEW_MISMATCH`, and no configured command runs.
+  2. Checks that the candidate is not already contained in the tip. If it is, the entry is `BOUNCED ALREADY_LANDED`.
+  3. Makes one merge commit, with the tip as first parent and the candidate as second. A conflict is `BOUNCED MERGE_CONFLICT`, and nothing runs.
+  4. Runs `spec_command` with the affected specs, then `invariant_command`, on the merged tree.
+  5. Pushes the merge commit to `branch` and the queue commit to `queue_branch` in one `git push --atomic`, with a lease on each sha it read. `landed_sha` is the merge commit.
+- `NOT_FAST_FORWARD` is gone from the bounce reasons, and `MERGE_CONFLICT` and `ALREADY_LANDED` join them.
+- `submit` still records `parent` as the tip it read. A later tip is not a bounce reason.
+
+| Finding | Class | Work in implementation 2 |
+| --- | --- | --- |
+| S50-01 | TICKET_DEFECT | the merge landing above; a successful-land test against real git with no patch of `Integrator._record`: the record is committed on the tip, the candidate is a sibling of it, `land` lands a merge commit, readback marks `LANDED` |
+| S50-02 | IMPLEMENTATION_DEFECT (safety) | no configured command runs on a candidate that the record does not admit, or that conflicts; the reviewer's `unapproved` probe is a test whose marker file is never written |
+| S50-03 | EVIDENCE_DEFECT | a land test with the approving record only on a seat branch that descends from the candidate: `REVIEW_MISMATCH`, tip unchanged; the reviewer's CM-A3 turns it red |
+| S50-04 | IMPLEMENTATION_DEFECT | NaN, Infinity, control-character and lone-surrogate errors in the config name the key; tests pin each |
+| S50-05 | EVIDENCE_DEFECT | M1 is rerun one pytest at a time with `-rfE`, failing names kept; a mutation whose run crashed is rerun, never counted red |
+| S50-06 | IMPLEMENTATION_DEFECT | `pages.json` is read with `utf-8-sig`, so a BOM is not a red |
+| S50-07 | OUT_OF_SCOPE_HARDENING, closed here | git children run with `GIT_CONFIG_NOSYSTEM=1` and `GIT_CONFIG_GLOBAL` set to a path that does not exist, so a global config cannot weaken the verified fetch |
+| S50-08 | OUT_OF_SCOPE_HARDENING, closed here | the fetch takes only `branch`, `queue_branch` and the candidates of queued entries |
+| S50-09 | OUT_OF_SCOPE_HARDENING, closed here | `mypy --strict` on the test file exit 0 |
+| S58-04, S60-01 | routed from tickets 58 and 60 | the removed-variable list is the shared one: the thirteen names of `evidence_gate.py`, every `GIT_CONFIG*` name and every `GIT_TEST_*` name |
+| S57-05 | routed from ticket 57 | the configuration cross-check in `tests/test_state_file_templates.py` runs the template's own list shapes through the real parser. That file is outside this boundary, so the cross-check is pinned by a test in this ticket's test file that reads the template |
+
+The work is additive commits on `37bacce9`. The next review is the revision02 initial review.

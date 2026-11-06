@@ -110,3 +110,7 @@ A row whose test now passes is removed (the checker's `REGISTERED_NOW_PASSING` m
 ### Correction 1 (after the revision01 initial review `CHANGES_REQUESTED`)
 
 No code defect and no ticket defect was found; the candidate `bb9c4502` stands and needs no new commit or CI run. S62-01: the receipt's M1 `exit:` list follows the capture in order, P9 is rerun, and `evidence_gate.py` gives `defects=0`. S62-02: the two mutations that ran with `-k` are rerun with the full test file, and every supporting capture is LF. S62-03: the STATEMENT says what the acr6 change does to the rule and names the right origin commit for each enum. Carried: S62-04 (boundary tests that read HEAD go stale after integration) and S62-06 to a later hardening change; S62-05 with S62-06; S62-07 (an explicit `Any` already in three test files) to a P0 cleanup ticket; S62-08 to the owner's publication step: re-pinning turns the four rows green only if the pinned publication commit is also reachable from a ref in this repository, as `publication-0.4.9` is now.
+
+### Owner decision (2026-11-07)
+
+"2.B": the marketplace re-pin (S62-08) waits for the wave-3 publication. There, the publication commit is regenerated from the declared payload and made reachable from a ref in this repository, and the four pin rows are then removed.

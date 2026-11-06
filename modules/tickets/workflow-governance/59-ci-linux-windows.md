@@ -139,3 +139,7 @@ A CI run on the correction commit with both jobs `success` is part of the eviden
 | S59-12 | the next change of this gate: pin that the job has no `if:`, that the default shell is exactly `bash`, and the exact step sequence |
 | S59-13 | the next change of this gate: pin the pytest line exactly, so no `-k`, `--ignore` or narrower path can drop tests |
 | S59-14 | evidence only: the next receipt from a seat records its clone command |
+
+### Owner decision (2026-11-07)
+
+"3.算": a registered failure with a confirmed cause and an open follow-up meets readiness criterion 2. CI on the integrated branch is green on Linux and Windows apart from those rows.

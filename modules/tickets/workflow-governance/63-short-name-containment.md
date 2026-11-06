@@ -209,3 +209,7 @@ The revision04 acceptance sentence still holds: no path outside the root, and no
 | S63-27 | the next change of this gate (a gap that would let a regression through): f2 with a real third-party reparse tag, P1 on an existing directory, Q3b with a subst drive |
 | S63-28 | hardening: a typed refusal reason on the target side |
 | S63-12 | the owner's question 4 (cloud-file reparse tags); until decided, every reparse point refuses as AGENTS.md P0 is written |
+
+### Owner decision (2026-11-07)
+
+"4.A": every reparse point refuses, as AGENTS.md P0 is written. Cloud-file reparse tags such as OneDrive's are included. A repository in a synced folder works only while Python disguises placeholders; this is documented, not exempted. S63-12 is closed by this decision.
