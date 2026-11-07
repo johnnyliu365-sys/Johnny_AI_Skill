@@ -35,7 +35,7 @@ configured command runs), the candidate must not be contained in the tip (ALREAD
 merged into the tip as one merge commit, tip first parent (MERGE_CONFLICT; nothing runs), the specs
 and invariants run on the merged tree (SPEC_RED, INVARIANT_RED), and the merge commit is pushed to the
 branch together with its queue commit in one atomic push with a lease on each sha read (TIP_MOVED,
-QUEUE_MOVED). A bounce is written to the queue branch only. readback: asks `ci_status_command`
+QUEUE_MOVED). A bounce is written to the queue branch only. Land needs git 2.38 or later (`git merge-tree --write-tree`); an older git is a fault that says so. A candidate fetch that fails is a fault unless the remote states it does not hold the object. readback: asks `ci_status_command`
 about every LANDED_PENDING_CI entry (`green`, `red` or `pending`) and writes the result as one
 queue commit pushed with a lease.
 
@@ -133,6 +133,8 @@ FENCE_CLOSE = re.compile(r"^ {0,3}(`{3,}|~{3,})[ \t]*$")
 BLOCK_LINE = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*):[ \t]*(.*?)[ \t]*$")
 SPEC_BASENAME = re.compile(rb"(?:^|/)test_[^/]*\.py$")
 PAGES_PATH = "pages.json"
+GIT_VERSION = re.compile(r"git version (\d+)\.(\d+)")
+MIN_GIT_VERSION = (2, 38)
 # Variables that select another repository, history, objects or settings than the clone itself holds
 # (the shared list of the evidence gate: its thirteen names, every GIT_CONFIG* and every GIT_TEST_* name).
 GIT_REMOVED = frozenset(
@@ -1299,10 +1301,12 @@ class Clone:
         raise Fault(f"git rev-parse failed with exit {done.code}: {Git.message(done)}")
 
     def fetch_candidate(self, sha: str) -> None:
-        """Bring the commit `sha` of a queued candidate into the clone through a verified fetch; a remote that offers none leaves the clone as it is.
+        """Bring the commit `sha` of a queued candidate into the clone through a verified fetch.
 
         Only that commit is fetched, through the remote branch that points at it when there is one, else by its sha.
-        An object that fails the check of the fetch is a Fault, never a silent skip."""
+        A remote that says it does not hold the object (`not our ref <sha>`) leaves the clone as it is; every other
+        failure (an object that fails the check of the fetch, a dropped connection, a remote that refuses an
+        unadvertised want) is a Fault, never a bounce."""
         remote = local_remote(self.config.remote)
         listed = self.git.run(["ls-remote", "--", remote], check=False)
         if listed.code != 0:
@@ -1318,8 +1322,12 @@ class Clone:
             options=("-c", "transfer.fsckObjects=true", "-c", "fetch.fsckObjects=true"),
             check=False,
         )
-        if fetched.code != 0 and heads:
-            raise Fault(f"the verified fetch failed: {Git.message(fetched)}")
+        if fetched.code == 0:
+            return
+        said = fetched.stderr.decode("utf-8", errors="replace")
+        if not heads and f"not our ref {sha}" in said:
+            return
+        raise Fault(f"the verified fetch failed for the candidate: {Git.message(fetched)}")
 
     def close(self) -> str | None:
         """Remove the clone; the reason when that fails."""
@@ -1601,18 +1609,29 @@ class Integrator:
             return None
         if shared.code != 0:
             raise Fault(f"git merge-base failed with exit {shared.code}: {Git.message(shared)}")
+        self._require_merge_tree(clone)
         merge = clone.git.run(["merge-tree", "--write-tree", "--no-messages", clone.tip, entry.candidate], check=False)
         if merge.code == 1:
             bounces.append(Bounce(MERGE_CONFLICT, "the candidate does not merge into the current tip without a conflict"))
             return None
         lines = merge.stdout.decode("ascii", errors="replace").split()
         if merge.code != 0 or not lines or SHA_TEXT.fullmatch(lines[0]) is None:
-            raise Fault(f"git merge-tree failed with exit {merge.code}: {Git.message(merge)}")
+            hint = " (git merge-tree --write-tree needs git 2.38 or later)" if merge.code == 129 else ""
+            raise Fault(f"git merge-tree failed with exit {merge.code}{hint}: {Git.message(merge)}")
         made = clone.git.run(
             ["commit-tree", lines[0], "-p", clone.tip, "-p", entry.candidate, "-m", f"merge-queue: land {entry.key}"],
             extra_env=IDENTITY,
         )
         return made.stdout.decode("ascii", errors="replace").strip()
+
+    def _require_merge_tree(self, clone: Clone) -> None:
+        """Land needs `git merge-tree --write-tree`, which exists from git 2.38; an older or unreadable git is a Fault that says so."""
+        said = clone.git.text(["version"])
+        found = GIT_VERSION.search(said)
+        if found is None:
+            raise Fault(f"git 2.38 or later is required and the version cannot be read from {shown(said)}")
+        if (int(found.group(1)), int(found.group(2))) < MIN_GIT_VERSION:
+            raise Fault(f"git 2.38 or later is required for land (git merge-tree --write-tree); this is {shown(said)}")
 
     def _run_checks(self, clone: Clone, entry: QueueEntry, merged: str, bounces: list[Bounce], faults: list[str]) -> None:
         try:

@@ -2092,6 +2092,218 @@ class FetchScopeTests(LandCase):
         self.assertEqual(done.returncode, 0, done.stderr.decode("utf-8", "replace"))
 
 
+class CorrectionOneTests(LandCase):
+    """Correction 1 under revision02: findings S50-10 to S50-14."""
+
+    def bad_commit(self, parent: str) -> str:
+        tree = git(self.rig.remote, "rev-parse", f"{parent}^{{tree}}")
+        body = f"tree {tree}\nparent {parent}\ncommitter c <c@c> 1 +0000\n\nno author\n".encode()
+        return subprocess.run(
+            ["git", "-C", str(self.rig.remote), "hash-object", "-t", "commit", "--literally", "-w", "--stdin"],
+            input=body,
+            capture_output=True,
+            check=True,
+        ).stdout.decode().strip()
+
+    def rewriting(self, rewrite: Callable[[Sequence[str]], integrate.Completed | None]) -> contextlib.AbstractContextManager[object]:
+        """Run the script with `rewrite(argv)` free to answer a child process itself (None lets it run)."""
+        original = integrate.run_process
+
+        def wrapper(argv: Sequence[str], cwd: str, env: Mapping[str, str], timeout: float, stdin: bytes | None = None) -> integrate.Completed:
+            answer = rewrite(argv)
+            return answer if answer is not None else original(argv, cwd, env, timeout, stdin)
+
+        return mock.patch.object(integrate, "run_process", wrapper)
+
+    def unchanged(self) -> tuple[dict[str, str], str | None]:
+        return (self.rig.refs(), self.rig.queue_sha())
+
+    def assert_fault_and_nothing_written(self, result: Result, before: tuple[dict[str, str], str | None]) -> None:
+        self.assertEqual((result.code, result.out), (2, ""), result.text)
+        self.assertEqual(len(result.err_lines), 1, result.err)
+        self.assertEqual(self.unchanged(), before)
+        self.assertEqual(self.rig.states(), {"T1": "QUEUED"})
+        self.assertEqual((self.rig.calls("spec"), self.rig.calls("invariant")), ([], []))
+        self.assertClean(result)
+
+    # ------------------------------------------------------------------ S50-10
+
+    def test_a_malformed_candidate_that_is_the_parent_of_a_branch_tip_is_a_fault_not_a_bounce(self) -> None:
+        tip = self.rig.tip()
+        bad = self.bad_commit(tip)
+        tree = git(self.rig.remote, "rev-parse", f"{tip}^{{tree}}")
+        child = subprocess.run(
+            ["git", "-C", str(self.rig.remote), "commit-tree", tree, "-p", bad, "-m", "child"],
+            capture_output=True,
+            check=True,
+            env={**_clean_environment(), **GIT_IDENTITY},
+        ).stdout.decode().strip()
+        git(self.rig.remote, "update-ref", "refs/heads/cand-child", child)
+        self.rig.publish({REVIEW: record_text(bad)}, "record of the bad candidate")
+        self.rig.write_queue([self.rig.row("T1", bad)])
+        before = self.unchanged()
+        result = self.rig.land()
+        self.assertIn("verified fetch failed for the candidate", result.err)
+        self.assert_fault_and_nothing_written(result, before)
+
+    def test_a_malformed_candidate_that_is_a_branch_tip_is_a_fault_not_a_bounce(self) -> None:
+        bad = self.bad_commit(self.rig.tip())
+        git(self.rig.remote, "update-ref", "refs/heads/cand-bad", bad)
+        self.rig.publish({REVIEW: record_text(bad)}, "record of the bad candidate")
+        self.rig.write_queue([self.rig.row("T1", bad)])
+        before = self.unchanged()
+        result = self.rig.land()
+        self.assertIn("verified fetch", result.err)
+        self.assert_fault_and_nothing_written(result, before)
+
+    def test_every_other_failure_of_the_fetch_by_sha_is_a_fault_and_only_not_our_ref_is_a_bounce(self) -> None:
+        first = self.rig.candidate()
+        second = self.rig.commit({"src/more.py": "m\n"}, "more on the same branch", first)
+        self.rig.push_seat(f"{second}:refs/heads/cand-1")
+        self.rig.publish_record(first)
+        self.rig.write_queue([self.rig.row("T1", first)])
+        said = {
+            "refused-unadvertised": f"error: Server does not allow request for unadvertised object {first}\n",
+            "dropped": "fatal: unable to access: connection reset\n",
+            "empty": "",
+            "other-sha": f"fatal: remote error: upload-pack: not our ref {'0' * 40}\n",
+        }
+        for name, text in said.items():
+            with self.subTest(name):
+
+                def rewrite(argv: Sequence[str], text: str = text) -> integrate.Completed | None:
+                    if "fetch" in argv and argv[-1] == first:
+                        return integrate.Completed(128, b"", text.encode("utf-8"), False, None)
+                    return None
+
+                before = self.unchanged()
+                with self.rewriting(rewrite):
+                    result = self.rig.land()
+                self.assert_fault_and_nothing_written(result, before)
+
+    def test_the_remote_saying_it_does_not_hold_the_object_is_the_one_bounce(self) -> None:
+        first = self.rig.candidate()
+        second = self.rig.commit({"src/more.py": "m\n"}, "more on the same branch", first)
+        self.rig.push_seat(f"{second}:refs/heads/cand-1")
+        self.rig.publish_record(first)
+        self.rig.write_queue([self.rig.row("T1", first)])
+
+        def rewrite(argv: Sequence[str]) -> integrate.Completed | None:
+            if "fetch" in argv and argv[-1] == first:
+                return integrate.Completed(128, b"", f"fatal: remote error: upload-pack: not our ref {first}\n".encode("utf-8"), False, None)
+            return None
+
+        with self.rewriting(rewrite):
+            result = self.rig.land()
+        self.bounced_with(result, "MERGE_CONFLICT")
+
+    # ------------------------------------------------------------------ S50-11
+
+    def test_a_merge_tree_failure_other_than_a_conflict_is_a_fault_not_merge_conflict(self) -> None:
+        cand = self.rig.candidate()
+        self.rig.publish_record(cand)
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        for code, text in ((129, "usage: git merge-tree <base-tree> <branch1> <branch2>\n"), (128, "fatal: something else\n"), (2, "")):
+            with self.subTest(code):
+
+                def rewrite(argv: Sequence[str], code: int = code, text: str = text) -> integrate.Completed | None:
+                    if "merge-tree" in argv:
+                        return integrate.Completed(code, b"", text.encode("utf-8"), False, None)
+                    return None
+
+                before = self.unchanged()
+                with self.rewriting(rewrite):
+                    result = self.rig.land()
+                self.assert_fault_and_nothing_written(result, before)
+                self.assertIn("merge-tree failed", result.err)
+                if code == 129:
+                    self.assertIn("2.38", result.err)
+
+    # ------------------------------------------------------------------ S50-12
+
+    def test_a_record_that_does_not_admit_is_decided_before_a_candidate_the_tip_already_holds(self) -> None:
+        cand = self.rig.candidate()
+        git(self.rig.seat, "checkout", "-q", "--detach", "--force", self.rig.tip())
+        git(self.rig.seat, "merge", "-q", "--no-ff", "-m", "merge", cand)
+        self.rig.push_seat(f"{self.rig.rev_seat('HEAD')}:refs/heads/{BRANCH}")
+        self.rig.publish({REVIEW: record_text(cand, verdict="CHANGES_REQUESTED")}, "record that does not approve")
+        self.rig.write_queue([self.rig.row("T1", cand)])
+        result = self.rig.land()
+        self.bounced_with(result, "REVIEW_MISMATCH")
+        self.assertNotIn("ALREADY_LANDED", result.out)
+
+    def test_a_record_that_admits_a_candidate_the_tip_already_holds_is_already_landed(self) -> None:
+        cand = self.rig.candidate()
+        git(self.rig.seat, "checkout", "-q", "--detach", "--force", self.rig.tip())
+        git(self.rig.seat, "merge", "-q", "--no-ff", "-m", "merge", cand)
+        self.rig.push_seat(f"{self.rig.rev_seat('HEAD')}:refs/heads/{BRANCH}")
+        self.rig.publish_record(cand)
+        self.rig.write_queue([self.rig.row("T1", cand)])
+        self.bounced_with(self.rig.land(), "ALREADY_LANDED")
+
+    # ------------------------------------------------------------------ S50-13
+
+    def test_an_unadmitted_entry_with_a_malformed_candidate_is_review_mismatch_and_the_candidate_is_not_fetched(self) -> None:
+        bad = self.bad_commit(self.rig.tip())
+        git(self.rig.remote, "update-ref", "refs/heads/cand-bad", bad)
+        self.rig.write_queue([self.rig.row("T1", bad)])
+        seen: list[list[str]] = []
+
+        def rewrite(argv: Sequence[str]) -> integrate.Completed | None:
+            seen.append(list(argv))
+            return None
+
+        with self.rewriting(rewrite):
+            result = self.rig.land()
+        self.bounced_with(result, "REVIEW_MISMATCH")
+        self.assertEqual(result.err, "")
+        fetches = [argv for argv in seen if "fetch" in argv]
+        self.assertEqual(len(fetches), 1, "only the branch and the queue branch are fetched before admission")
+        self.assertFalse([argv for argv in fetches if "refs/heads/cand-bad" in argv or bad in argv])
+
+    # ------------------------------------------------------------------ S50-14
+
+    def version(self, text: str) -> contextlib.AbstractContextManager[object]:
+        def rewrite(argv: Sequence[str]) -> integrate.Completed | None:
+            if argv and argv[-1] == "version":
+                return integrate.Completed(0, text.encode("utf-8"), b"", False, None)
+            return None
+
+        return self.rewriting(rewrite)
+
+    def test_a_git_older_than_2_38_is_a_fault_that_names_the_requirement(self) -> None:
+        cand = self.rig.candidate()
+        self.rig.publish_record(cand)
+        self.assertEqual(self.rig.submit("T1", cand).code, 0)
+        for text in ("git version 2.37.9.windows.1\n", "git version 1.99.0\n", "git version 2.9.5\n", "no version here\n", ""):
+            with self.subTest(text):
+                before = self.unchanged()
+                with self.version(text):
+                    result = self.rig.land()
+                self.assert_fault_and_nothing_written(result, before)
+                self.assertIn("git 2.38 or later", result.err)
+
+    def test_git_2_38_and_later_pass_the_check_and_the_minor_number_is_compared_as_a_number(self) -> None:
+        for index, text in enumerate(("git version 2.38.0\n", "git version 2.100.1\n", "git version 3.0.0\n")):
+            with self.subTest(text):
+                git(self.rig.seat, "fetch", "-q", str(self.rig.remote), f"refs/heads/{BRANCH}")
+                cand = self.rig.candidate()
+                self.rig.publish_record(cand, record_text(cand))
+                self.assertEqual(self.rig.submit(f"V{index}", cand).code, 0)
+                with self.version(text):
+                    result = self.rig.land()
+                self.assertEqual((result.code, result.err), (0, ""), result.text)
+                self.rig.control("ci.answer", "green\n")
+                self.assertEqual(self.rig.readback().code, 0)
+
+    def test_the_version_is_not_asked_for_when_land_is_blocked_before_any_merge(self) -> None:
+        self.rig.write_queue([self.rig.row("P1", self.rig.base, state="LANDED_PENDING_CI", landed_sha=self.rig.base)])
+        with self.version("git version 1.0.0\n"):
+            result = self.rig.land()
+        self.assertEqual((result.code, result.err), (1, ""), result.text)
+        self.assertEqual(result.codes, ["BLOCKED_BY_CI"])
+
+
 class ConfigTests(RigCase):
     """Every configuration error is exit 3 naming the key; nothing is read from the remote."""
 

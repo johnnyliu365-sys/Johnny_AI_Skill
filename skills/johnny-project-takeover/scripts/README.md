@@ -696,7 +696,7 @@ nothing is red, the merge commit and the queue commit that records `LANDED_PENDI
 `landed_sha` (the merge commit) go out in one `git push --atomic`, each branch with a lease on the
 sha read. A lost lease on the queue is `QUEUE_MOVED` (nothing written, both branches unchanged); a
 lost lease on the tip is `TIP_MOVED`, a bounce, and the submitter resubmits under a new key. A tip
-that moved since `submit` is not a bounce reason. One entry is landed per run. With no admissible
+that moved since `submit` is not a bounce reason. One entry is landed per run. The candidate is fetched only after the record admitted the entry. A failed fetch of the candidate is a fault (exit `2`, nothing written) unless the remote states that it does not hold the object (`not our ref`), which is `MERGE_CONFLICT`; an fsck refusal, a dropped connection and a remote that refuses unadvertised wants are all faults. `land` needs git 2.38 or later (`git merge-tree --write-tree`): the version is checked once before the merge, and an older git is a fault that names the requirement. With no admissible
 entry the run is exit `0`.
 
 **Affected specs.** The specs are the files named `test_*.py` in the merged tree, and the changed paths are the paths the merge changes in the tip. A spec is
