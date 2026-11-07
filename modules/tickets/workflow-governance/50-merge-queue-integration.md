@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/50-merge-queue-integration-out/` / owner implementation seat / worktree `.worktrees/50-merge-queue-integration` / branch `cp/wave2-50-merge-queue-integration` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `37bacce9`: S50-01 TICKET_DEFECT resolved by the owner on 2026-11-07 (merge landing, option A); implementation 2 dispatched, new review cadence） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `37bacce9`: S50-01 TICKET_DEFECT resolved by the owner on 2026-11-07 (merge landing, option A); implementation 2 returned (`5eccf309`, candidate `26b6cc9a`); revision02 initial review dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/50-merge-queue-integration` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/50-merge-queue-integration-review` |
