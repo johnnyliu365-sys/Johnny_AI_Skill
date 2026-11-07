@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/64-integrate-hook-tests-posix-out/` / owner implementation seat / worktree `.worktrees/64-integrate-hook-tests-posix` / branch `cp/wave2-64-integrate-hook-tests-posix` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（revision01 initial review APPROVED on `4283a006`; CI run 42340707693 green on both jobs; record `doc/reviews/workflow-governance/64-integrate-hook-tests-posix-code-review.md`; ready for integration） |
+| 狀態 | `INTEGRATED`（candidate `4283a006` integrated on `cp/wave2-gates` at `70a741f7` on 2026-11-07; CI run 42348718522 green on both jobs, clearing the red readback of `b95b4acd`; record `doc/reviews/workflow-governance/wave2-integration-2026-11-06.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/64-integrate-hook-tests-posix` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/64-integrate-hook-tests-posix-review` |

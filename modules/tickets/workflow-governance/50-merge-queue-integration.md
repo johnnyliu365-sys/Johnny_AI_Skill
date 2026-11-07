@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/50-merge-queue-integration-out/` / owner implementation seat / worktree `.worktrees/50-merge-queue-integration` / branch `cp/wave2-50-merge-queue-integration` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `INTEGRATED`（candidate `64010e6e` integrated on `cp/wave2-gates` at `b95b4acd` on 2026-11-07; CI run 42338591673 green on Windows, red on Linux: two tests of this ticket write a non-executable git hook that POSIX ignores; follow-up ticket 64） |
+| 狀態 | `INTEGRATED`（candidate `64010e6e` integrated on `cp/wave2-gates` at `b95b4acd` on 2026-11-07; the red Linux readback (run 42338591673) was cleared by ticket 64 at `70a741f7`, CI run 42348718522 green on both jobs） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/50-merge-queue-integration` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/50-merge-queue-integration-review` |

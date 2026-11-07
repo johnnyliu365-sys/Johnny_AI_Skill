@@ -93,3 +93,17 @@ The script cannot land itself before it is on the branch, so this was a hand int
 | Full suite in the integration clone under the host lock | 5 failed, 3755 passed, 37 skipped; every failure is a base name; zero new red |
 | Pushed | `cp/wave2-gates` at `b95b4acd` (fast-forward from `1571bf72`) |
 | CI readback | run 42338591673 on `b95b4acd`: `test (windows)` `success`, `test (linux)` `failure` with two `UNREGISTERED_FAILURE` lines, both in `tests/test_integrate.py`. Both tests write a `pre-receive` hook without its executable bit; POSIX git ignores such a hook, so the refusal they test never happens on Linux. Every review of ticket 50 ran on Windows. Under R4-7 a red readback needs a follow-up ticket, which is ticket 64 |
+
+## Ticket 64 (2026-11-07): the red readback of ticket 50 cleared
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 64 integration-script hook tests on POSIX | `4283a006` | revision01 initial review `APPROVED` | `70a741f7` |
+
+A fresh verified integration clone (`C:/Temp/claude/jas-integ8`) was made from `de4e9d09`. The tip was checked equal to the candidate, and the merge had no conflict.
+
+| Check | Result |
+| --- | --- |
+| Full suite in the integration clone under the host lock | 5 failed, 3757 passed, 38 skipped; every failure is a base name; zero new red |
+| Pushed | `cp/wave2-gates` at `70a741f7` (fast-forward from `de4e9d09`) |
+| CI readback | run 42348718522 on `70a741f7`: `test (linux)` and `test (windows)` both `success`. The red Linux readback of `b95b4acd` (run 42338591673) is cleared |
