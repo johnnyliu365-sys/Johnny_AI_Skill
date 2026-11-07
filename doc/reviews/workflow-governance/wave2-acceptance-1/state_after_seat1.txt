@@ -1,0 +1,12 @@
+== git log --all --graph
+* bd3e756 feat(calc): subtract(a, b) returns a - b (REQ-CALC-002)
+* 02ba789 docs(governance): REQ-CALC-002 snapshot v1, ticket 01 subtract and its dispatch
+* 8e6ae01 fixture: target project skeleton for the ticket 61 acceptance run
+== branches
+* main                02ba789 docs(governance): REQ-CALC-002 snapshot v1, ticket 01 subtract and its dispatch
++ seat/calc-subtract  bd3e756 (C:/Temp/claude/jas61/fixture/.worktrees/calc-subtract) feat(calc): subtract(a, b) returns a - b (REQ-CALC-002)
+  remotes/origin/main 02ba789 docs(governance): REQ-CALC-002 snapshot v1, ticket 01 subtract and its dispatch
+== worktrees
+C:/Temp/claude/jas61/fixture                          02ba789 [main]
+C:/Temp/claude/jas61/fixture/.worktrees/calc-subtract bd3e756 [seat/calc-subtract]
+== status

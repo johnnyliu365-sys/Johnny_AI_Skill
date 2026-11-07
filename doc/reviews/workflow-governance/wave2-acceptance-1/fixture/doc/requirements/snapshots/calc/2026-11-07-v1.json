@@ -1,0 +1,27 @@
+{
+  "source": "calc",
+  "taken_at": "2026-11-07T04:31:23Z",
+  "source_sha256": "82106c3ff82bbee85f9df05bae9b89de54dc42461d9703c1ce5dbdba0e98bbd8",
+  "rows": [
+    {
+      "requirement_id": "REQ-CALC-001",
+      "page_id": "calc-rows",
+      "title": "add(a, b) returns a + b",
+      "type": "requirement",
+      "source_ref": "doc/requirements/sources/calc-rows.json",
+      "source_sha256": "0d0669c0763427f070c122fc6f82f00cf2ee5bb302028cd4e65442f1b5e26ea7",
+      "status": "active",
+      "version": 1
+    },
+    {
+      "requirement_id": "REQ-CALC-002",
+      "page_id": "calc-rows",
+      "title": "subtract(a, b) returns a - b for any two integers",
+      "type": "requirement",
+      "source_ref": "doc/requirements/sources/calc-rows.json",
+      "source_sha256": "0d0669c0763427f070c122fc6f82f00cf2ee5bb302028cd4e65442f1b5e26ea7",
+      "status": "active",
+      "version": 1
+    }
+  ]
+}

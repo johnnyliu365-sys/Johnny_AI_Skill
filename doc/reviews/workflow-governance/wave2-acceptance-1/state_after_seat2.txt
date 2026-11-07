@@ -1,0 +1,9 @@
+== git log --all --graph
+* 545adb3 docs(governance): ticket 01 DONE; receipt with tests, smoke and reverse-mutation cells at bd3e756
+* bd3e756 feat(calc): subtract(a, b) returns a - b (REQ-CALC-002)
+* 02ba789 docs(governance): REQ-CALC-002 snapshot v1, ticket 01 subtract and its dispatch
+* 8e6ae01 fixture: target project skeleton for the ticket 61 acceptance run
+== ls-remote
+02ba789acc01d680433896efd8b05a41a8318b6d	HEAD
+02ba789acc01d680433896efd8b05a41a8318b6d	refs/heads/main
+545adb36f1196a6462718361fc7b101d07517c11	refs/heads/seat/calc-subtract

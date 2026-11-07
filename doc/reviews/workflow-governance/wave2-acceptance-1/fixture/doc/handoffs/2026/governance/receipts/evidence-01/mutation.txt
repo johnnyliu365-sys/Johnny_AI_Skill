@@ -1,0 +1,36 @@
+.FFF                                                                     [100%]
+================================== FAILURES ===================================
+_________________________ SubtractTests.test_subtract _________________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract>
+
+    def test_subtract(self) -> None:
+>       self.assertEqual(subtract(5, 3), 2)
+E       AssertionError: 8 != 2
+
+tests\test_calc.py:13: AssertionError
+_________________ SubtractTests.test_subtract_negative_result _________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_negative_result>
+
+    def test_subtract_negative_result(self) -> None:
+>       self.assertEqual(subtract(3, 5), -2)
+E       AssertionError: 8 != -2
+
+tests\test_calc.py:16: AssertionError
+_______________ SubtractTests.test_subtract_zero_and_negatives ________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_zero_and_negatives>
+
+    def test_subtract_zero_and_negatives(self) -> None:
+        self.assertEqual(subtract(0, 0), 0)
+>       self.assertEqual(subtract(-4, -6), 2)
+E       AssertionError: -10 != 2
+
+tests\test_calc.py:20: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_calc.py::SubtractTests::test_subtract - AssertionError: 8 != 2
+FAILED tests/test_calc.py::SubtractTests::test_subtract_negative_result - Ass...
+FAILED tests/test_calc.py::SubtractTests::test_subtract_zero_and_negatives - ...
+3 failed, 1 passed in 0.07s
+exit=1

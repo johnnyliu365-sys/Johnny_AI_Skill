@@ -1,0 +1,18 @@
+* 7868360 ebb7708 Johnny Liu docs(governance): ticket 01 INTEGRATED (merge commit ebb77083, queue entry LANDED)
+*   ebb7708 8d3ab40 45fc387 merge-queue merge-queue: land 01-subtract@45fc3873bb002d2dfd3fecd52eee31ad92de5f20
+|\  
+| * 45fc387 b00b521 Johnny Liu docs(governance): ticket 01 revision02 receipt 01-subtract-c1 with cells at b00b521c23f6f8b6ec863cbae0509f93ddca4e52
+| * b00b521 007d1e7 Johnny Liu fix(calc): bind REQ-CALC-001/002 for the contract gate, ledger expected values, beyond-64-bit case (ticket 01 revision02 correction)
+| *   007d1e7 545adb3 285843e Johnny Liu merge origin/main (review record and ticket revision02) into seat/calc-subtract
+| |\  
+| * | 545adb3 bd3e756 Johnny Liu docs(governance): ticket 01 DONE; receipt with tests, smoke and reverse-mutation cells at bd3e756
+| * | bd3e756 02ba789 Johnny Liu feat(calc): subtract(a, b) returns a - b (REQ-CALC-002)
+* | | 8d3ab40 4c39170 Johnny Liu docs(review): ticket 01 convergence disposition APPROVED under CodeReview §5 rule B (control plane)
+* | | 4c39170 285843e Johnny Liu docs(review): ticket 01 correction review CONVERGENCE_REVIEW_REQUIRED on 45fc3873
+| |/  
+|/|   
+* | 285843e 5a51205 Johnny Liu docs(governance): ticket 01 revision02 after review CHANGES_REQUESTED — contract binding, Profile, XSS, closure revision; correction dispatch
+* | 5a51205 02ba789 Johnny Liu docs(review): ticket 01 subtract initial review CHANGES_REQUESTED on 545adb36
+|/  
+* 02ba789 8e6ae01 Johnny Liu docs(governance): REQ-CALC-002 snapshot v1, ticket 01 subtract and its dispatch
+* 8e6ae01  Johnny Liu fixture: target project skeleton for the ticket 61 acceptance run

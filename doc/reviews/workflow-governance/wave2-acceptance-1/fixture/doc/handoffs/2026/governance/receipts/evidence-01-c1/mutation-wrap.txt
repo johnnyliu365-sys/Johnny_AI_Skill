@@ -1,0 +1,17 @@
+..F..                                                                    [100%]
+================================== FAILURES ===================================
+_________________ SubtractTests.test_subtract_beyond_64_bits __________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_beyond_64_bits>
+
+    def test_subtract_beyond_64_bits(self) -> None:
+        for a, b, expected in LEDGER["subtract"][4:]:
+>           assert subtract(a, b) == expected
+E           assert 0 == 36893488147419103232
+E            +  where 0 = subtract(18446744073709551616, -18446744073709551616)
+
+tests\test_calc.py:49: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_calc.py::SubtractTests::test_subtract_beyond_64_bits - asse...
+1 failed, 4 passed in 0.08s
+exit=1

@@ -1,0 +1,53 @@
+.FFFF                                                                    [100%]
+================================== FAILURES ===================================
+_________________________ SubtractTests.test_subtract _________________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract>
+
+    def test_subtract(self) -> None:
+        for a, b, expected in LEDGER["subtract"][:1]:
+>           assert subtract(a, b) == expected
+E           assert 8 == 2
+E            +  where 8 = subtract(5, 3)
+
+tests\test_calc.py:37: AssertionError
+_________________ SubtractTests.test_subtract_beyond_64_bits __________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_beyond_64_bits>
+
+    def test_subtract_beyond_64_bits(self) -> None:
+        for a, b, expected in LEDGER["subtract"][4:]:
+>           assert subtract(a, b) == expected
+E           assert 0 == 36893488147419103232
+E            +  where 0 = subtract(18446744073709551616, -18446744073709551616)
+
+tests\test_calc.py:49: AssertionError
+_________________ SubtractTests.test_subtract_negative_result _________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_negative_result>
+
+    def test_subtract_negative_result(self) -> None:
+        for a, b, expected in LEDGER["subtract"][1:2]:
+>           assert subtract(a, b) == expected
+E           assert 8 == -2
+E            +  where 8 = subtract(3, 5)
+
+tests\test_calc.py:41: AssertionError
+_______________ SubtractTests.test_subtract_zero_and_negatives ________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_zero_and_negatives>
+
+    def test_subtract_zero_and_negatives(self) -> None:
+        for a, b, expected in LEDGER["subtract"][2:4]:
+>           assert subtract(a, b) == expected
+E           assert -10 == 2
+E            +  where -10 = subtract(-4, -6)
+
+tests\test_calc.py:45: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_calc.py::SubtractTests::test_subtract - assert 8 == 2
+FAILED tests/test_calc.py::SubtractTests::test_subtract_beyond_64_bits - asse...
+FAILED tests/test_calc.py::SubtractTests::test_subtract_negative_result - ass...
+FAILED tests/test_calc.py::SubtractTests::test_subtract_zero_and_negatives - ...
+4 failed, 1 passed in 0.09s
+exit=1

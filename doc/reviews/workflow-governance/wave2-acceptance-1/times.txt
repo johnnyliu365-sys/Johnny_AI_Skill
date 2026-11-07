@@ -1,0 +1,8 @@
+seat1_end 2026-11-07T04:32:00Z
+seat1_start 2026-11-07T04:30:39Z
+seat2_end 2026-11-07T04:34:34Z
+seat2_round3_end 2026-11-07T04:47:58Z
+seat2_start 2026-11-07T04:32:10Z
+seat3_end 2026-11-07T04:41:29Z
+seat3_round2_end 2026-11-07T04:47:01Z
+seat3_start 2026-11-07T04:34:50Z

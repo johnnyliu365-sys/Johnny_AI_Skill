@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "ticket": "01-subtract",
+      "candidate": "45fc3873bb002d2dfd3fecd52eee31ad92de5f20",
+      "parent": "8d3ab4083ed19730bceb25da3dc22aa7240adf77",
+      "review": "doc/reviews/calc/01-subtract-code-review.md",
+      "review_candidate": "45fc3873bb002d2dfd3fecd52eee31ad92de5f20",
+      "reviewer": "seat:ticket-review/61b-review",
+      "submitter": "seat:implementation-standard/61c-resume3",
+      "state": "LANDED",
+      "landed_sha": "ebb77083f8b6ad0e6095e0bb2dbc597249501e3a",
+      "reason": "",
+      "clears": ""
+    }
+  ]
+}

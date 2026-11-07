@@ -1,0 +1,17 @@
+F....                                                                    [100%]
+================================== FAILURES ===================================
+______________________________ AddTests.test_add ______________________________
+
+self = <tests.test_calc.AddTests testMethod=test_add>
+
+    def test_add(self) -> None:
+        for a, b, expected in LEDGER["add"]:
+>           assert add(a, b) == expected
+E           assert -1 == 5
+E            +  where -1 = add(2, 3)
+
+tests\test_calc.py:31: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_calc.py::AddTests::test_add - assert -1 == 5
+1 failed, 4 passed in 0.08s
+exit=1
