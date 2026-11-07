@@ -79,3 +79,17 @@ The merge conflicted with ticket 62 in `ci/registered-failures.json` and `ci/REA
 | Full suite in the integration clone under the host lock | 5 failed, 3549 passed, 38 skipped; every failure is a base name; zero new red. No other pytest was running at acquisition |
 | Pushed | `cp/wave2-gates` at `5c704541`, fast-forward from `802b1cbe` |
 | CI readback | run 42150728351 on `5c704541`: `test (linux)` and `test (windows)` both `success`, with the registered lists at Linux 228 and Windows 5 rows |
+
+## Ticket 50 (2026-11-07)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 50 merge-queue integration script | `64010e6e` | revision02 correction review `APPROVED` | `b95b4acd` |
+
+The script cannot land itself before it is on the branch, so this was a hand integration in a fresh verified clone (`C:/Temp/claude/jas-integ7`) made from `1571bf72`. The tip was checked equal to the candidate, and the merge had no conflict. The template cross-check of ticket 57, which skipped while `integrate.py` was absent, ran in the clone for the first time and passed (49 passed).
+
+| Check | Result |
+| --- | --- |
+| Full suite in the integration clone under the host lock | 5 failed, 3755 passed, 37 skipped; every failure is a base name; zero new red |
+| Pushed | `cp/wave2-gates` at `b95b4acd` (fast-forward from `1571bf72`) |
+| CI readback | run 42338591673 on `b95b4acd`: `test (windows)` `success`, `test (linux)` `failure` with two `UNREGISTERED_FAILURE` lines, both in `tests/test_integrate.py`. Both tests write a `pre-receive` hook without its executable bit; POSIX git ignores such a hook, so the refusal they test never happens on Linux. Every review of ticket 50 ran on Windows. Under R4-7 a red readback needs a follow-up ticket, which is ticket 64 |
