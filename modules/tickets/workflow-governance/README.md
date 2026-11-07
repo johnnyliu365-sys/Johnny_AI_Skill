@@ -33,7 +33,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [61-wave2-end-to-end](61-wave2-end-to-end.md) | One ticket goes from a requirement snapshot to a landed merge commit on a fixture project, and a fresh session finishes it from the ticket, receipt and queue files alone | `IN_PROGRESS` (part A `4215b980`, part B recorded; initial review dispatched) | Wave 2 acceptance; readiness criterion 1 |
 | [62-registered-known-failures](62-registered-known-failures.md) | Every failure CI registers that is not an environment failure is fixed in its test or carries a confirmed cause and an open follow-up | `INTEGRATED` (`bb9c4502` at `68c318a5`, CI green) | Wave 2 acceptance follow-up; ticket 59 S59-02, S59-03, S59-05 |
 | [63-short-name-containment](63-short-name-containment.md) | A Windows 8.3 short-name alias of the repository root is the same path for containment, while junctions and reparse points stay refused | `INTEGRATED` (`8e6aed94` at `5c704541`, CI green) | Wave 2 acceptance follow-up; ticket 59 S59-04; AGENTS.md P0 |
-| [64-integrate-hook-tests-posix](64-integrate-hook-tests-posix.md) | The two integration-script tests that make the remote refuse a push write their hook executable, so they fail closed on Linux as on Windows | `PLANNED` | Wave 2; red CI readback of `b95b4acd` (R4-7 follow-up) |
+| [64-integrate-hook-tests-posix](64-integrate-hook-tests-posix.md) | The two integration-script tests that make the remote refuse a push write their hook executable, so they fail closed on Linux as on Windows | `IN_PROGRESS` (revision01 returned, `4283a006`, CI green; initial review dispatched) | Wave 2; red CI readback of `b95b4acd` (R4-7 follow-up) |
 
 ## Shared baseline
 
