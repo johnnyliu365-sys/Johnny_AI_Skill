@@ -257,3 +257,134 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/50-rev02-initial
 reviewed_at: 2026-11-07
 ```
+
+## Revision02 correction review
+
+**Verdict: APPROVED.** Correction 1 closes S50-10 to S50-14. Every revision02 rule and every earlier S50 row still holds against real git. My counter-mutations CM-Q, CM-R and CM-G2 are now red for the intended reason. No new finding blocks approval: the one new finding, S50-15, is `OUT_OF_SCOPE_HARDENING`.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/50-merge-queue-integration.md` at `374dad6f`, section "Correction 1 under revision02" (and the Revision02 section it builds on) |
+| Closure revision | revision02, the one correction review (CodeReview §5; no automatic third correction) |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-50c_dispatch.yaml` |
+| Candidate | `64010e6e88bc6af176f113e86fea615b36ed0b05`, one additive commit on `26b6cc9a` |
+| Author / trailer | `Johnny Liu <johnny.liu365@gmail.com>` on every commit `37bacce9..64010e6e`; the trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` names the model that did the work, so it is correct |
+| Paths changed (`9a26eeb1..64010e6e`) | `skills/johnny-project-takeover/scripts/README.md` (M), `skills/johnny-project-takeover/scripts/integrate.py` (A), `tests/test_integrate.py` (A); the correction commit touches only these three |
+| Receipt | `.worktrees/50-merge-queue-integration-out-r2c1/RETURN.md` (cells STATEMENT, P1, T1, M1, F1, P9), with `E1.txt` |
+| Script digest at the candidate | `integrate.py` sha256 `125573d541c812597c0249d823b8b841f48b67fd283b610f655402a8c288f199`, equal to every capture's first line and to `tool_digest` |
+| Reviewer worktree | `.worktrees/50-merge-queue-integration-review`, detached at the candidate; porcelain empty before and after |
+| Reviewer | `seat:ticket-review/50-rev02-correction` |
+| Environment | Windows 11, git 2.54.0.windows.1, `C:/Temp/claude/jas-venv` (Python 3.11), `PYTHONUTF8=1` |
+
+## Cell results
+
+| # | Check | Result |
+| --- | --- | --- |
+| 1 | S50-10 | `fetch_candidate` now lets a failed fetch pass in one case only: no branch points at the candidate, and git's stderr contains `not our ref <this sha>`. The candidate then stays missing and is bounced. Every other failure raises `the verified fetch failed for the candidate: …`. **badsha**, against real git: the malformed candidate as the parent of a branch tip, and as a branch tip, each gives exit 2, nothing written, entry still `QUEUED`. **The one bounce**: a real missing sha gives `MERGE_CONFLICT` (probe `bounces.missing`). **Faults:** five shapes are each exit 2 with nothing written and no command. A dropped connection (the remote removed between `ls-remote` and the candidate fetch, real git). An empty answer (exit 128 or 1, no stderr; simulated). A protocol-v0 refusal of an unadvertised object, real git with `protocol.version=0` forced on the candidate fetch, both for a missing sha and for a present non-tip sha; the client refuses with `Server does not allow request for unadvertised object` and never states absence. An fsck refusal (badsha). And `not our ref` naming another sha. **Locale.** The child locale is not pinned: `git_environment` sets no `LC_ALL`, `LANG` or `LANGUAGE`. On this host Git for Windows shows no translation under `LANG`/`LC_ALL` `de_DE`, `fr_FR` or `zh_TW` (even an unrelated error stays English), and land with those variables still bounces a real absence `MERGE_CONFLICT`. Two things make the match safe. First, `not our ref <sha>` is the upload-pack server's own text sent over the wire; only the client's prefix (`remote error:`) is a translatable string. Second, a translated statement (simulated: `nicht unsere Referenz <sha>`) does not match, so it is a fault: exit 2, nothing written. A translated git can therefore only turn a real absence into a fault, never a fault into a bounce. That is the safe direction. Pinning `LC_ALL=C` for the git children would remove even that (S50-15, hardening). |
+| 2 | S50-11, S50-12, S50-13 | My counter-mutations rerun against the candidate: **CM-Q** is RED (`test_a_merge_tree_failure_other_than_a_conflict_is_a_fault_not_merge_conflict`, subtests 129, 128 and 2). **CM-R** is RED (`test_a_record_that_does_not_admit_is_decided_before_a_candidate_the_tip_already_holds`, plus the unadmitted-malformed test). **CM-G2** is RED (`test_an_unadmitted_entry_with_a_malformed_candidate_is_review_mismatch_and_the_candidate_is_not_fetched`). The seat's own C06 and C07 were stopped first by the fetch-count spy (`3 != 2`). That is the incidental reason I flagged for CM-G in revision02, so I judged the two rules on CM-R and CM-G2, which keep the fetch count. |
+| 3 | S50-14 | `_require_merge_tree` runs `git version` once per land, on the merge path only. My probe saw no `version` call on a review bounce or on readback. A run blocked by CI returns before the merge path, so it is not asked either (from the code; not probed). It compares integers: `2.100.0` lands, and `2.37.9` gives exit 2 with `git 2.38 or later is required for land (git merge-tree --write-tree); this is git version 2.37.9`, nothing written. An unreadable version line is a fault with the same requirement named. A `merge-tree` exit 129 adds the hint `(git merge-tree --write-tree needs git 2.38 or later)`. **oldgit** rerun: exit 2 with the hint, queue and tip unchanged, no command. The README and the script docstring state the requirement. |
+| 4 | The seat's mutation scope | The correction changes `fetch_candidate` (the failure branch) and `_merge` (the version check before `merge-tree`, the 129 hint); `_judge`'s order is unchanged. The seat reran C01–C13, and N03–N13, N33 and N34. N35 no longer exists (its line was replaced). The earlier mutations it did not rerun mutate code this commit leaves unchanged, with tests only added and no assertion edited (STATEMENT 7), so their earlier reds stand. One borderline mutation was N22: it drops the fsck options on the candidate fetch, which sits inside the changed function. My **CM-N22** is RED, on the fsck-options spy, the candidate-branch fault test and both new badsha tests, so no further rerun is needed. I also reran **CM-A3r** (RED on the S50-03 land test and three correction tests), **CM-B2r** (RED on the forged-object, malformed-object, global-config and both badsha tests) and the copy door **CM-X** (stderr read from stdout; RED on the missing-candidate and the one-bounce tests). |
+| 5 | Every revision02 rule and closed row | All earlier probes rerun at the candidate with no patch of `_record`, each with the same result as at `26b6cc9a`. land: merge commit with parents (tip, candidate), the tree of `merge-tree`, the `merge-queue` identity, `landed_sha` the merge, readback `LANDED`, then `ALREADY_LANDED` for a new key. seatrec and unapproved: `REVIEW_MISMATCH`, no command. bounces: 4 `MERGE_CONFLICT` and 2 `ALREADY_LANDED`, no command. race: `TIP_MOVED` and `QUEUE_MOVED` with both branches unchanged by the atomic push. fsck: unrelated branch 0, malformed tip 2, malformed tip with global and XDG `badEmail=ignore` 2; a child reads no global or system config. merge-driver: the driver never runs. bysha: lands. unadm-bad: `REVIEW_MISMATCH`, no fault. |
+| 6 | Receipt | `receipt_check.py`: 0 defects, exit 0. `evidence_gate.py` with the four tools and `--require-cell` P1, T1, M1, F1 and P9: `cells=5 defects=0`, exit 0 (`E1.txt` holds the same result). The seat's M1 capture: 26 mutations, all red, no crash; I read each diff and first failing name. On C06 and C07, see cell 2. **E1 was written last**: `E1.txt` at 11:15:14.46, after `RETURN.md` 11:15:14.15, P9 11:15:13 and P1 11:14:57; every capture is later than the commit (09:49:17). `RETURN.md` and the six captures contain 0 CR. Every raw block is byte-identical to its capture. Every `exit:` equals the capture's `exit=` lines. The seat's F1 has 8 failures, all in the base list. |
+| 7 | Boundary, types | Only the three declared paths. Johnny Liu on every commit. Stdlib-only imports. No `Any`, no `type: ignore`. No target-project or vendor name in the added lines. `mypy --strict --python-version 3.11` on the script and the test file: no issues in 2 files, exit 0. |
+| 8 | Suites | P1 (`tests/test_integrate.py -rfEs`): 205 passed, 359 subtests, exit 0. F1 under the host lock (run id `50-rev02-correction`, acquired 2026-11-07T03:52:48Z with no other pytest running, released 04:08:06Z by renaming the lock and then removing it, after checking owner.txt): 8 failed, 3465 passed, 35 skipped, exit 1. All 8 failures are in the base list (`LC_ALL=C comm -23`): zero new red. My counter-mutations ran before the lock was taken. |
+
+### Probe table (real git, local bare remotes, no patch of `Integrator._record`; "simulated" means only the git child's answer was replaced at `run_process`)
+
+| Probe | Result |
+| --- | --- |
+| badsha, parent of a branch tip | exit 2 `the verified fetch failed for the candidate: fatal: index-pack failed`; nothing written; `QUEUED` |
+| badsha, branch tip | exit 2, the same; nothing written; `QUEUED` |
+| real missing sha (`not our ref <sha>`) | exit 1 `MERGE_CONFLICT`, bounce written, no command: the one permitted bounce |
+| `not our ref` naming another sha (simulated) | exit 2, nothing written |
+| dropped connection (real: remote removed before the candidate fetch; and simulated `hung up unexpectedly`) | exit 2, nothing written |
+| empty answer (simulated: exit 128 or 1, no stderr) | exit 2 (`no message`), nothing written |
+| protocol v0, real git, missing sha and present non-tip sha | exit 2 `Server does not allow request for unadvertised object`, nothing written |
+| translated statement (simulated `nicht unsere Referenz <sha>`) | exit 2, nothing written: the safe direction |
+| `LANG`/`LC_ALL` de_DE, fr_FR, zh_TW, real missing sha | `MERGE_CONFLICT` as in English (no translation active on this host) |
+| version 2.37.9 / 2.100.0 / unreadable (simulated `git version` answer) | exit 2 naming 2.38 / lands / exit 2 naming 2.38; `version` asked once, before `merge-tree` |
+| version on a review bounce and on readback | not asked |
+| oldgit (`merge-tree` exit 129, simulated) | exit 2 with the 2.38 hint; queue and tip unchanged |
+| land, seatrec, unapproved, bounces, race ×2, fsck ×4, driver ×3, bysha, unadm-bad | as at `26b6cc9a` (cell 5) |
+
+### Reviewer counter-mutations (one disposable copy each, full file, `-rfE`, one pytest at a time, none while I held the lock)
+
+| ID | Mutation | Result |
+| --- | --- | --- |
+| CM-Q | any `merge-tree` failure becomes `MERGE_CONFLICT` | RED: the S50-11 test, subtests 129, 128, 2 |
+| CM-R | for a non-admitting record, `ALREADY_LANDED` is decided first | RED: `test_a_record_that_does_not_admit_is_decided_before_a_candidate_the_tip_already_holds` |
+| CM-G2 | the one candidate fetch is moved before the record read | RED: `test_an_unadmitted_entry_with_a_malformed_candidate_is_review_mismatch_and_the_candidate_is_not_fetched` |
+| CM-A3r | every branch fetched, and land alone takes the record from any branch | RED: `AdmissionTests::test_a_record_that_only_a_seat_branch_holds_is_review_mismatch_at_land` and others (7) |
+| CM-B2r | the clone borrows the remote's store through alternates | RED: forged-object, malformed-object, global-config, candidate-branch and both badsha tests (10) |
+| CM-X | the `not our ref` statement is looked for on stdout | RED: `test_a_candidate_the_remote_does_not_hold_is_merge_conflict_and_no_command_runs`, `test_the_remote_saying_it_does_not_hold_the_object_is_the_one_bounce` |
+| CM-N22 | the candidate fetch without the fsck options | RED: the fsck-options spy, the candidate-branch fault test and both badsha tests (4) |
+
+### Status of S50-01 to S50-14
+
+| ID | Class | Status | Evidence at `64010e6e` |
+| --- | --- | --- | --- |
+| S50-01 | TICKET_DEFECT | closed (rev02), holds | probe land: merge landing with no patch |
+| S50-02 | IMPLEMENTATION_DEFECT (safety) | closed (rev02), holds | probes unapproved, bounces, driver; no command before admission and a clean merge |
+| S50-03 | EVIDENCE_DEFECT | closed (rev02), holds | CM-A3r RED on its land test |
+| S50-04 | IMPLEMENTATION_DEFECT | closed (rev02), holds | config code unchanged; seat N29–N32 red at `26b6cc9a` |
+| S50-05 | EVIDENCE_DEFECT | closed (rev02), holds | M1 one pytest at a time, unfiltered, crash rule applied |
+| S50-06 | IMPLEMENTATION_DEFECT | closed (rev02), holds | `utf-8-sig` unchanged |
+| S50-07 | OUT_OF_SCOPE_HARDENING | closed (rev02), holds | probe fsck with global and XDG `badEmail=ignore`: exit 2 |
+| S50-08 | OUT_OF_SCOPE_HARDENING | closed (rev02), holds | probe fsck unrelated branch: exit 0 |
+| S50-09 | OUT_OF_SCOPE_HARDENING | closed (rev02), holds | mypy strict clean on both files |
+| S50-10 | IMPLEMENTATION_DEFECT (exit class) | **closed** | badsha both shapes exit 2; only `not our ref <this sha>` with no branch bounces; dropped, empty, v0 and fsck are faults |
+| S50-11 | EVIDENCE_DEFECT | **closed** | CM-Q red on its test |
+| S50-12 | EVIDENCE_DEFECT | **closed** | CM-R red on its test |
+| S50-13 | EVIDENCE_DEFECT | **closed** | CM-G2 RED on its test |
+| S50-14 | OUT_OF_SCOPE_HARDENING | **closed** | one version check naming 2.38; README and docstring; oldgit gives the hint |
+
+## New findings
+
+| ID | Class | Rule B | Closure item | Finding |
+| --- | --- | --- | --- | --- |
+| S50-15 | `OUT_OF_SCOPE_HARDENING` | does not block | S50-10 (the absence statement is matched on git's text) | The git children's locale is not pinned. The match is safe today: the text is the server's untranslated `not our ref <sha>`; no translation is active on this host; and a translated statement fails to match, which is a fault, so it errs safe. But a git build that translated the line, or a wrapper that rewrote stderr, would turn every real absence into a fault, and the queue entry would never be bounced. Suggest setting `LC_ALL=C` (and dropping `LANGUAGE`) in the environment of the git children only, not of the configured commands, and pinning it with a test. |
+
+Note, not a finding: on a dropped connection the fault line is git's last stderr line (`and the repository exists.`), which says little by itself. It is still exit 2 with nothing written.
+
+## Commands
+
+```text
+git -C <repo> show 374dad6f:modules/tickets/workflow-governance/50-merge-queue-integration.md ; cat JAS-50c_dispatch.yaml
+git log/diff 26b6cc9a..64010e6e ; git diff --name-status 9a26eeb1 64010e6e ; git cat-file blob HEAD:<script> | sha256sum
+python -m mypy --strict --python-version 3.11 skills/johnny-project-takeover/scripts/integrate.py tests/test_integrate.py      -> no issues in 2 files, exit 0
+python -m pytest tests/test_integrate.py -q -p no:cacheprovider -rfEs                                                           -> 205 passed, 359 subtests, exit=0
+python -I -X utf8 doc/reviews/workflow-governance/evidence/48/receipt_check.py <out-r2c1>/RETURN.md <review worktree>            -> 0 defects, exit 0
+python -I -X utf8 skills/johnny-project-takeover/scripts/evidence_gate.py <out-r2c1>/RETURN.md --repo <review worktree> --candidate 64010e6e88bc6af176f113e86fea615b36ed0b05 \
+  --tool dispatch_lint.py --tool receipt_fence_check.py --tool index_pins.py --tool integrate.py \
+  --require-cell P1 --require-cell T1 --require-cell M1 --require-cell F1 --require-cell P9 --evidence-root <out-r2c1>             -> cells=5 defects=0, exit 0
+# own byte checks (CR, raw block == capture, exit lists, file times); M1 audit (each "=== <id>" diff and first failing name)
+# probes: rev02/probe2.py against rev02c/base (land seatrec unapproved bounces race fsck driver bysha oldgit badsha unadmbad); rev02c/probe3.py (failure modes, real v0, real dropped, locale, version)
+# counter-mutations: rev02c/cm3_driver.py CM-Q CM-R CM-G2 CM-A3r CM-B2r CM-X CM-N22 (full file, -rfE, sequential)
+# F1: rev02c/f1_locked.sh (mkdir lock; owner.txt run=50-rev02-correction; pytest list at acquisition; release by rename then remove after checking owner.txt)
+python -m pytest tests -q -p no:cacheprovider -rfE                                                                                 -> 8 failed, 3465 passed, 35 skipped, exit=1; new vs base: none
+```
+
+## Raw-log note
+
+The reviewer captures are in `.worktrees/50-merge-queue-integration-review-scratch/rev02c/` and are not committed:
+
+- `P1.txt`, `F1.txt` and `F1.wait` (lock log, with the pytest list at acquisition);
+- `probe-a.txt` and `probe-b.txt`;
+- `cm/<ID>.txt` and `cm-run.log`.
+
+pytest ran directly with `-rfE`, with no output-reducing wrapper. Every verdict above was read from the full output.
+
+## Not verified
+
+- A git build with active message translations. None is active on this host; that case was simulated (S50-15).
+- A network remote (ssh or https). Their refusal texts were simulated or reasoned from the real protocol-v0 run.
+- A real git older than 2.38. Simulated at the `git version` and `merge-tree` answers.
+- POSIX: the `killpg` tree kill and the executable bit. Linux CI was not run.
+- The S57-05 cross-check, carried to after integration as the ticket says.
+
+```review-verdict
+candidate: 64010e6e88bc6af176f113e86fea615b36ed0b05
+verdict: APPROVED
+reviewer: seat:ticket-review/50-rev02-correction
+reviewed_at: 2026-11-07
+```

@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/50-merge-queue-integration-out/` / owner implementation seat / worktree `.worktrees/50-merge-queue-integration` / branch `cp/wave2-50-merge-queue-integration` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02; revision02 initial review CHANGES_REQUESTED on `26b6cc9a` (S50-10: a failed candidate fetch reported as a red); correction 1 returned (`64010e6e`); correction review dispatched） |
+| 狀態 | `REVIEW_APPROVED`（closure revision02, candidate `64010e6e`: revision02 correction review APPROVED; record `doc/reviews/workflow-governance/50-merge-queue-integration-code-review.md`; ready for integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/50-merge-queue-integration` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/50-merge-queue-integration-review` |
@@ -184,3 +184,10 @@ No ticket defect was found, so revision02 stands. Work in correction 1:
 - **S50-14**: the script checks the git version once and reports a fault that names the requirement (git 2.38 or later). The README states it.
 
 The next review is the one correction review of revision02.
+
+### Carried after approval (CodeReview §5 rule B)
+
+| Finding | Route |
+| --- | --- |
+| S50-15 | hardening, with the next change of this script: `LC_ALL=C` for the git children only, so that a translating git build cannot turn a real absence into a fault; a clearer fault line on a dropped connection |
+| S57-05 | the configuration cross-check once the template and the script share a tree |
