@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/64-integrate-hook-tests-posix-out/` / owner implementation seat / worktree `.worktrees/64-integrate-hook-tests-posix` / branch `cp/wave2-64-integrate-hook-tests-posix` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（revision01 implementation returned (candidate `4283a006`, CI run 42340707693 green on both jobs); initial review dispatched） |
+| 狀態 | `REVIEW_APPROVED`（revision01 initial review APPROVED on `4283a006`; CI run 42340707693 green on both jobs; record `doc/reviews/workflow-governance/64-integrate-hook-tests-posix-code-review.md`; ready for integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/64-integrate-hook-tests-posix` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/64-integrate-hook-tests-posix-review` |
@@ -93,3 +93,10 @@ R4-7 says a red readback blocks further landings until a follow-up clears it. Th
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+### Carried after approval (CodeReview §5 rule B)
+
+| Finding | Route |
+| --- | --- |
+| S64-01 | the next change of the hook guard: `test_no_hook_is_written_around_the_helper` reads the file as a whole, so the two-line `write_text` shape that caused this ticket turns it red |
+| S64-02 | evidence only: the seat's receipt overstates three points; no result changes |
