@@ -115,3 +115,145 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/50-rev01-initial
 reviewed_at: 2026-11-06
 ```
+
+## Revision02 initial review
+
+**Verdict: CHANGES_REQUESTED.** The revision02 work does what it set out to do. Merge landing works against real git with no patch of `Integrator._record`. No configured command runs before admission, before a clean merge, or for an entry that is `ALREADY_LANDED`. S50-01 to S50-09, S58-04 and S60-01 are closed.
+
+One new finding blocks approval under CodeReview §5 rule B: **S50-10**, an `IMPLEMENTATION_DEFECT` that misclassifies the exit code. When a candidate is fetched by its sha and that verified fetch fails, the script ignores the failure, so a fault is reported as a `MERGE_CONFLICT` red and a bounce is written. The other new findings do not block approval.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/50-merge-queue-integration.md` at `5cb8efef`; its Revision02 section replaces every fast-forward statement above it |
+| Closure revision | revision02 (initial review; new cadence after the owner decision "1.A" of 2026-11-07) |
+| Spec | `modules/spec/workflow-governance.md` at `5cb8efef`: R4-2, R4-4, R4-7 and R4-8 as amended, signature row 2026-11-07 |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-50b_dispatch.yaml` |
+| Candidate | `26b6cc9a04eb0b4d46296528679bcd8887a63cac`: three additive commits on `37bacce9`. `5eccf309` changes the script, README and tests; `0ebcbcb8` and `26b6cc9a` change tests only. |
+| Author / trailer | All three commits are by `Johnny Liu <johnny.liu365@gmail.com>`. Each carries `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`, which names the model that did the work, so the trailer is correct. |
+| Paths changed (`9a26eeb1..26b6cc9a`) | `skills/johnny-project-takeover/scripts/README.md` (M), `skills/johnny-project-takeover/scripts/integrate.py` (A), `tests/test_integrate.py` (A). These are exactly the three declared paths. |
+| Receipt | `.worktrees/50-merge-queue-integration-out-r2/RETURN.md` (cells STATEMENT, P1, T1, M1, M1B, F1, P9), with `E1.txt` |
+| Script digest at candidate | `integrate.py` sha256 `08ac7a3fab751016c508794a6b977970b4e61cab94219d585c57b88b4f5a8f91`, equal to every capture's first line and to `tool_digest` |
+| Reviewer worktree | `.worktrees/50-merge-queue-integration-review`, detached at the candidate; porcelain empty before and after |
+| Reviewer | `seat:ticket-review/50-rev02-initial` |
+| Environment | Windows 11, git 2.54.0.windows.1, `C:/Temp/claude/jas-venv` (Python 3.11), `PYTHONUTF8=1` |
+
+## Cell results
+
+| # | Check | Result |
+| --- | --- | --- |
+| 1 | Land order, `landed_sha`, reasons, real-git land | `_judge` follows the order the dispatch asks for. (1) The record is read at the tip; any review red or record-read fault returns at once. (2) The candidate is fetched (only now). (3) An object that is not a commit gives `MERGE_CONFLICT`. (4) `merge-base --is-ancestor candidate tip` gives `ALREADY_LANDED`. (5) A candidate with no shared history gives `MERGE_CONFLICT`. (6) `merge-tree --write-tree` exit 1 gives `MERGE_CONFLICT`. (7) `commit-tree` with the tip as first parent. (8) Specs, then invariants, on the merged tree. (9) One atomic push with two leases. `landed_sha` is the merge commit. `NOT_FAST_FORWARD` is gone from the code, the queue schema and the README; `MERGE_CONFLICT` and `ALREADY_LANDED` are bounce reasons the queue accepts. Probe `land` used real git and no patch: the record sits on the tip and the candidate is a sibling. `submit` exits 0; `land` exits 0 with `LANDED_PENDING_CI`; the merge commit's parents are (tip, candidate); its tree equals `git merge-tree --write-tree tip cand`; `landed_sha` is the merge; the commands saw `specs/test_a.py`; `readback` gives `LANDED`. A new key for the same candidate then gives `ALREADY_LANDED` with no command. |
+| 2 | S50-02: no candidate code before admission | Probe `unapproved` writes a QUEUED row with no record; the candidate's spec would write a file. Result: exit 1 `REVIEW_MISMATCH`, no configured command, the candidate's code never runs, tip unchanged. Probe `bounces` covers six cases: a conflicting candidate, an unrelated-history candidate, a blob, a missing sha, an ancestor of the tip and the tip itself. Each gives `MERGE_CONFLICT` or `ALREADY_LANDED` with the commands not run and the tip unchanged. **Merge drivers and attributes.** In a plain non-bare repository whose worktree holds the candidate's `.gitattributes` (`* merge=evil filter=evil`) and whose `HOME` config defines `merge.evil.driver`, `git merge-tree --write-tree` *does* run the driver (positive control: the driver ran and resolved the conflict). In the script both preconditions are missing. `merge-tree` runs in a fresh clone before any checkout, so no worktree attributes exist. Every git child has `GIT_CONFIG_NOSYSTEM=1` and a `GIT_CONFIG_GLOBAL` that does not exist, so no driver or filter is defined; `git config --list --show-origin` under the script's environment shows no global, XDG or system file. Probe `driver`: the same candidate, the same `HOME` driver and a `.gitconfig` inside the candidate tree give `MERGE_CONFLICT`, and the driver never runs. The checkout of the merged tree, where filters could apply, happens only after admission and a clean merge. |
+| 3 | Merge mechanics | `merge-tree --write-tree --no-messages tip cand`, then `commit-tree <tree> -p tip -p cand -m "merge-queue: land <key>"`. Parents and tree are verified (probe `land`). **Identity** comes only from the script's `IDENTITY` table, passed in the environment of the `commit-tree` child (`merge-queue <merge-queue@integrate.invalid>`, author and committer). With it removed (CM-I) git has no identity, because global and system config are not read, and every land faults: red. Inherited `GIT_AUTHOR_DATE` and `GIT_COMMITTER_DATE` would pass through, which is harmless. **A missing candidate, a non-commit, or unrelated history** each give `MERGE_CONFLICT` and nothing runs (probe `bounces`). **Fetch by sha** is confined: it has no destination refspec, so objects land only in the clone's store, under both fsck options. Probe `bysha`: a candidate that is not a branch tip lands; the seat branch's later commit is not landed; every other remote ref is unchanged; the scratch area is empty afterwards. **The failure path of that fetch is not confined to faults (S50-10).** **git < 2.38**: the script has no version check and the README does not state the requirement; only STATEMENT 2 does. Simulated at the process boundary (merge-tree exiting 129 with its old usage line), the run exits 2 with `git merge-tree failed with exit 129: usage: git merge-tree <base-tree> <branch1> <branch2>`; the queue and tip are unchanged and nothing runs. It fails closed, but the message does not name the requirement (S50-14), and no test pins it (S50-11). |
+| 4 | The seat's other choices | A fault while reading the record now ends the run with exit 2, nothing is written and no command runs. This replaces old test 975 (`test_a_fault_in_the_review_read_runs_no_command_and_is_exit_two`; seat N04 is red). I accept it: nothing is admitted, so nothing may run, and red before fault still holds because no red was found. `GIT_DISCOVERY_ACROSS_FILESYSTEM` is no longer removed. The removed list is now exactly the thirteen names of `evidence_gate.py` `GIT_REMOVED_VARIABLES`, plus every `GIT_CONFIG*` and `GIT_TEST_*` name, which matches the Revision02 row for S58-04 and S60-01. The variable only widens repository discovery, and every child runs with `-C` into the clone, so dropping it from the list is harmless. Accepted. |
+| 5 | Closure of S50-03..09, S58-04, S60-01 | See the status table. Probe `fsck`, every result read from unfiltered output. A malformed commit on an unrelated seat branch: `readback` exit 0, `land` exit 0. A malformed tip: exit 2. A malformed tip with `HOME/.gitconfig` and `XDG_CONFIG_HOME/git/config` both setting `fetch.fsck.badEmail = ignore`: still exit 2. Control: a plain `git fetch` with that `HOME` exits 0, so the configuration really would weaken the fetch. The narrowed fetch takes `refs/heads/<branch>` and, when it exists, `refs/heads/<queue_branch>`. The record is a blob on the tip, so it is fetched (probe `land` reads it with no patch). The candidate is fetched after admission. Nothing land needs is missing. |
+| 6 | M1 | 60 mutations at the candidate in a `git clone --no-hardlinks` copy, one pytest per run, the full file with `-rfE --tb=line --maxfail=1`. I read every mutation's diff and its first failing test or subtest in the unfiltered capture; all 57 reds are red for the intended reason (table below). `--maxfail=1` shortens each run but does not filter its output: the failing name and its assertion are kept. **N02** (land-time `review_candidate` vs candidate removed) is equivalent, the same argument as R10: the selected block's candidate equals the candidate and `check_review` compares the row copy with that block; N02b (both removed) is red. Accepted. **O2** (`printable_line` dropped) is equivalent: every string is escaped where it is built (`escape`, `shown`, `_config_error`), as my RE-O2 found in revision01, and O1 (the escaper itself) is red. Accepted as defence in depth. **O5** (`except KeyboardInterrupt` removed) lets the interrupt escape the mutant, and pytest aborts the session in the interrupt test after 181 passed, three times. Not counting it, and adding O5b (caught but not reported; red in `M1B.txt` at the interrupt test), is correct. No run crashed. |
+| 7 | Receipt | `receipt_check.py RETURN.md <review worktree>`: 0 defects, exit 0. `evidence_gate.py` with `--tool` for the three wave-1 scripts and `integrate.py`, and `--require-cell` P1, T1, M1, M1B, F1 and P9: `cells=6 defects=0`, exit 0. `RETURN.md` and all seven captures (P1, T1, M1, M1B, F1, P9, E1) contain 0 CR. Every raw block is byte-identical to its capture. Every `exit:` equals the capture's `exit=` lines in order. **E1 was written last**: `E1.txt` at 08:44:51, after `RETURN.md` at 08:44:41 and P9 at 08:44:40, and every capture is later than the last commit (05:33:44). The seat's F1 holds 8 failures, all in the base list. The M1 cell's `exit: 0,0` records the clone and checkout; the mutation verdicts are in the capture body. That is how the cell is defined, and I note it only so the 0 is not read as "no red". |
+| 8 | Boundary, types | Only the three declared paths are changed. All commits are by Johnny Liu. Imports are stdlib only. There is no `Any` and no `type: ignore` in the script, and the added lines name no target project and no vendor. `mypy --strict --python-version 3.11` on the script and the test file: `Success: no issues found in 2 source files`, exit 0. |
+| 9 | Suites | P1 (`tests/test_integrate.py -rfEs`): 194 passed, 344 subtests, exit 0, 270 s. F1 under the host lock (run id `50-rev02-initial`, acquired 2026-11-07T01:19:40Z with no other pytest running, released 01:33:44Z by renaming the lock and then removing it, after checking owner.txt): 8 failed, 3454 passed, 35 skipped, exit 1. All 8 failures are in the base list (`LC_ALL=C comm -23` against the normalised `^FAILED` names): zero new red. My counter-mutations ran before and after the lock, never while I held it. |
+
+### Probe table (real git, local bare remotes; no patch of `Integrator._record` except where stated)
+
+| Probe | Setup | Result |
+| --- | --- | --- |
+| land | record on the tip, candidate a sibling; `submit`, `land`, `readback`, then a new key for the same candidate | submit 0; land 0 `LANDED_PENDING_CI` with landed_sha = merge; parents (tip, cand); tree = `merge-tree` tree; identity `merge-queue`; commands ran on the merge; readback `LANDED`; new key `ALREADY_LANDED`, no command |
+| seatrec | approving record only on a seat branch descending from the candidate | exit 1 `REVIEW_MISMATCH`, tip unchanged, no command, entry `BOUNCED REVIEW_MISMATCH` |
+| unapproved | QUEUED row written directly, no record anywhere, candidate spec writes a file | exit 1 `REVIEW_MISMATCH`, no command, candidate code not run, tip unchanged |
+| bounces | conflict, unrelated history, blob, missing sha, ancestor, the tip itself (each with an approving record) | `MERGE_CONFLICT` ×4, `ALREADY_LANDED` ×2; each exit 1, no command, tip unchanged |
+| race (main) | `pre-receive` hook moves `main` after the advertisement | exit 1 `TIP_MOVED`; atomic transaction refused; `main` keeps the hook's value; bounce written on the queue branch only |
+| race (queue) | the hook rewinds the queue branch | exit 1 `QUEUE_MOVED`; `main` unchanged; entry stays `QUEUED`; nothing written |
+| fsck | malformed commit on an unrelated seat branch / on the tip / on the tip with global and XDG `badEmail=ignore` | readback 0 and land 0 / exit 2 / exit 2 (control: a plain fetch with that config exits 0); a git child reads no global, XDG or system config |
+| driver | candidate `.gitattributes` `merge=evil filter=evil`; driver defined in `HOME` config / in the candidate's own `.gitconfig` | the driver never runs; `MERGE_CONFLICT`; positive control in a plain worktree repository runs the driver |
+| bysha | candidate is an ancestor of its seat branch's tip | lands by sha; parents (tip, cand); the later seat commit is not landed; other refs unchanged; clone removed |
+| badsha | malformed candidate commit, (a) not a branch tip, (b) a branch tip | **(a) exit 1 `MERGE_CONFLICT`, bounce written**; (b) exit 2 fault, nothing written (S50-10) |
+| unadm-bad | no record; the candidate's branch tip is malformed | exit 1 `REVIEW_MISMATCH`; the candidate is not fetched before admission |
+| oldgit | `merge-tree` answers exit 129 with the pre-2.38 usage line (simulated at `run_process`) | exit 2, one fault line; queue and tip unchanged; no command |
+| config | NaN, Infinity, TAB, U+0000, a lone surrogate in values | exit 3, each message `config key `<key>`: …` |
+| pagesbom | `pages.json` with a UTF-8 BOM | accepted |
+
+### Reviewer counter-mutations (one disposable copy each, full file, `-rfE`, one pytest at a time)
+
+| ID | Door | Mutation | Result |
+| --- | --- | --- | --- |
+| CM-A3r | land location (first match) | the clone fetches every branch again, and land alone takes the record from whichever branch holds it | **RED**: `AdmissionTests::test_a_record_that_only_a_seat_branch_holds_is_review_mismatch_at_land` (plus three fetch-scope tests). S50-03 is pinned. |
+| CM-B2r | trust boundary | the clone borrows the remote's store through alternates (LF) | RED: forged-object, malformed-object, global-config and candidate-branch fsck tests (7) |
+| CM-G | order | the candidate is fetched (again) before the record is read | RED, but only through the fetch-count spies (3 != 2); not judged as pinning the order, see CM-G2 |
+| CM-G2 | order / exit code | the one candidate fetch is moved before the record read (same count) | **SURVIVED** (194 passed). See S50-13. |
+| CM-I | identity | `commit-tree` without the script's identity | RED: every successful land faults (`git commit-tree` has no identity) |
+| CM-Q | exit-code class | any `merge-tree` failure (an old git's exit 129 included) becomes `MERGE_CONFLICT` | **SURVIVED** (194 passed). See S50-11. |
+| CM-R | order (step 1 before step 2) | for a record that does not admit, `ALREADY_LANDED` is decided first and replaces `REVIEW_MISMATCH` | **SURVIVED** (194 passed). See S50-12. No command runs in either order. |
+
+### Status of the revision01 findings
+
+| ID | Class | Status | Evidence |
+| --- | --- | --- | --- |
+| S50-01 | TICKET_DEFECT | **closed** | Owner decision "1.A" and the spec amendments; probe `land` lands a sibling of the record commit with no patch; `RealLandTests` asserts the method is unpatched |
+| S50-02 | IMPLEMENTATION_DEFECT (safety) | **closed** | `_judge` returns before fetch, merge or command on any review red or record fault; probes `unapproved`, `bounces`, `driver`; seat N03 and N04 are red |
+| S50-03 | EVIDENCE_DEFECT | **closed** | `test_a_record_that_only_a_seat_branch_holds_is_review_mismatch_at_land`; my CM-A3r is red on it |
+| S50-04 | IMPLEMENTATION_DEFECT | **closed** | probe `config` names the key for every case; seat N29–N32 are red |
+| S50-05 | EVIDENCE_DEFECT | **closed** | M1 rerun one pytest at a time, unfiltered; the crash rule was applied (O5 not counted, O5b red); every red read for its reason |
+| S50-06 | IMPLEMENTATION_DEFECT | **closed** | `utf-8-sig`; probe `pagesbom` accepted; seat N17 is red |
+| S50-07 | OUT_OF_SCOPE_HARDENING | **closed** | `GIT_CONFIG_NOSYSTEM=1` and a fresh `GIT_CONFIG_GLOBAL` per child; probe `fsck` with global and XDG `badEmail=ignore` still exits 2; seat N24 and N25 are red |
+| S50-08 | OUT_OF_SCOPE_HARDENING | **closed** | fetch of branch and queue branch by name, candidate after admission; probe `fsck` unrelated branch: exit 0; seat N23b is red |
+| S50-09 | OUT_OF_SCOPE_HARDENING | **closed** | mypy strict clean on both files |
+| S58-04, S60-01 | routed | **closed** | removed list = the evidence gate's 13 names + `GIT_CONFIG*` + `GIT_TEST_*`; seat N26–N28 are red |
+| S57-05 | routed | carried, as the ticket says | (not in this candidate's tree) |
+
+## New findings
+
+| ID | Class | Rule B | Closure item | Finding |
+| --- | --- | --- | --- | --- |
+| S50-10 | `IMPLEMENTATION_DEFECT` | **blocks** (exit-code misclassification: a fault reported as a red) | R4-2 "a tool fault is never reported as a red"; ticket TDD 3 "a forged object … makes the fsck clone fail → exit 2, nothing pushed"; R4-4 verified fetch | `Clone.fetch_candidate` raises a fault for a failed fetch only when a branch points at the candidate (`if fetched.code != 0 and heads`). When the candidate is fetched by its sha, any failure is ignored, fsck failure included. The candidate is then missing and the entry is bounced `MERGE_CONFLICT`. Probe `badsha` used the same malformed candidate commit twice. As a branch tip it gives exit 2 (`the verified fetch failed: fatal: index-pack failed`), nothing written, entry still `QUEUED`. As the parent of a branch tip it gives exit 1 `MERGE_CONFLICT`, and a permanent `BOUNCED` entry is written on the queue branch. Any other failure of the by-sha fetch is turned into the same red: a dropped connection, a timeout below the git limit, or a remote that refuses unadvertised wants (STATEMENT 6 names that last case). Fix: treat a failed by-sha fetch as a fault unless the remote says it does not hold the object. Pin both shapes. |
+| S50-11 | `EVIDENCE_DEFECT` | does not block (the code is right today; but a regression here would turn a fault into a red) | R4-2 exit classes; ticket "every git … failure caught → exit 2" | CM-Q, which makes any `merge-tree` failure a `MERGE_CONFLICT` (an old git's usage exit 129 included), passes all 194 tests. The real code faults (probe `oldgit`: exit 2, nothing written). Needed: a test where `merge-tree` fails with an exit other than 0 or 1 and the run exits 2 with nothing written. |
+| S50-12 | `EVIDENCE_DEFECT` | does not block | ticket Revision02 land steps 1 then 2 | CM-R passes all 194 tests. In CM-R a candidate the record does not admit, but which the tip already contains, is recorded `ALREADY_LANDED` instead of `REVIEW_MISMATCH`. No command runs in either order, so this is the recorded reason only. Needed: a land test with a non-admitting record for a candidate the tip contains, expecting `REVIEW_MISMATCH`. |
+| S50-13 | `EVIDENCE_DEFECT` | does not block (the code is right today; but a regression here would turn a red into a fault) | ticket Revision02 step 1 ("no configured command runs" — the candidate is touched only after admission); R4-2 exit classes | CM-G2 moves the single candidate fetch in front of the record read and passes all 194 tests. Nothing pins that the candidate is touched only after admission. The real code is right (probe `unadm-bad`): with no record and a malformed object at the candidate's branch tip, the run exits 1 `REVIEW_MISMATCH`. Under CM-G2 the same entry would be an exit-2 fault and the record red would not be found. Needed: that probe as a test (unadmitted entry, malformed candidate branch, expect `REVIEW_MISMATCH` and no fault). |
+| S50-14 | `OUT_OF_SCOPE_HARDENING` | does not block | not in the ticket | `git merge-tree --write-tree` needs git 2.38 or later. Only STATEMENT 2 says so; the README and the script docstring do not, and nothing checks the version. On an older git the run fails closed (exit 2), but the message is git's own usage line. Suggest stating the requirement in the README and the docstring, and naming it in the fault (for example, when `merge-tree` exits 129). |
+
+Notes, not findings:
+
+- A missing candidate, a non-commit and an unrelated-history candidate are all `MERGE_CONFLICT`. The ticket names none of these cases; this fails closed to a bounce with no command run. Accepted.
+- An inherited `GIT_ATTR_SOURCE`, `GIT_AUTHOR_DATE` or `GIT_COMMITTER_DATE` passes through to the children. These come from the runner's own environment, not from a seat, and cannot run code without a driver definition, which no config the children read can hold.
+
+## Commands
+
+```text
+git -C <repo> show 5cb8efef:modules/tickets/workflow-governance/50-merge-queue-integration.md ; ... show 5cb8efef:modules/spec/workflow-governance.md
+git log/diff 37bacce9..26b6cc9a ; git diff --name-status 9a26eeb1 26b6cc9a ; git cat-file blob HEAD:<script> | sha256sum
+python -m mypy --strict --python-version 3.11 skills/johnny-project-takeover/scripts/integrate.py tests/test_integrate.py      -> no issues in 2 files, exit 0
+python -m pytest tests/test_integrate.py -q -p no:cacheprovider -rfEs                                                           -> 194 passed, 344 subtests, exit=0
+python -I -X utf8 doc/reviews/workflow-governance/evidence/48/receipt_check.py <out-r2>/RETURN.md <review worktree>              -> 0 defects, exit 0
+python -I -X utf8 skills/johnny-project-takeover/scripts/evidence_gate.py <out-r2>/RETURN.md --repo <review worktree> --candidate 26b6cc9a04eb0b4d46296528679bcd8887a63cac \
+  --tool dispatch_lint.py --tool receipt_fence_check.py --tool index_pins.py --tool integrate.py \
+  --require-cell P1 --require-cell T1 --require-cell M1 --require-cell M1B --require-cell F1 --require-cell P9 --evidence-root <out-r2>   -> cells=6 defects=0, exit 0
+# own byte checks: CR count of RETURN.md and every capture; raw block == capture; exit: == capture exit= lines; file times (E1 last)
+# M1 audit: every "=== <id>" section's diff and first FAILED/SUBFAILED name read from M1.txt and M1B.txt
+# probes: rev02/probe2.py (land seatrec unapproved bounces race fsck driver bysha oldgit badsha unadmbad), probe.py (config pagesbom); plain-git control for the merge driver
+# counter-mutations: rev02/cm2_driver.py, one copy each, python -m pytest tests/test_integrate.py -q -p no:cacheprovider -rfE, sequential, none during the lock
+# F1 under the host lock (mkdir C:/Temp/claude/jas-fullsuite.lock; owner.txt run=50-rev02-initial; released by rename then remove after checking owner.txt)
+python -m pytest tests -q -p no:cacheprovider -rfE                                                                                 -> 8 failed, 3454 passed, 35 skipped, exit=1; new vs base: none
+```
+
+## Raw-log note
+
+The reviewer captures are in `.worktrees/50-merge-queue-integration-review-scratch/rev02/` and are not committed:
+
+- `P1.txt` and `F1.txt`;
+- `F1.wait` (lock log, with the list of other pytest processes at acquisition);
+- `probe-a.txt` to `probe-f.txt`;
+- `cm/<ID>.txt` (diff and full pytest output for each counter-mutation) and `cm-run*.log`.
+
+pytest ran directly with `-rfE`, with no output-reducing wrapper. Every verdict above was read from the full output.
+
+## Not verified
+
+- A network remote (ssh or https). The behaviour of a remote that refuses unadvertised wants was not run; it is reasoned from the code (S50-10).
+- A real git older than 2.38. That case was simulated at the process boundary.
+- POSIX: the `killpg` tree kill and the executable bit. Linux CI was not run.
+- A SHA-256 remote with merge landing. I rely on the seat's `RecordedBehaviourTests`, which pass in my P1.
+- The S57-05 cross-check, which is carried to after integration, as the ticket says.
+
+```review-verdict
+candidate: 26b6cc9a04eb0b4d46296528679bcd8887a63cac
+verdict: CHANGES_REQUESTED
+reviewer: seat:ticket-review/50-rev02-initial
+reviewed_at: 2026-11-07
+```

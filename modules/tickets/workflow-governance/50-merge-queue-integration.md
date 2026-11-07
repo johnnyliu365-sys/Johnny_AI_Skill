@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/50-merge-queue-integration-out/` / owner implementation seat / worktree `.worktrees/50-merge-queue-integration` / branch `cp/wave2-50-merge-queue-integration` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02 after the revision01 initial review CHANGES_REQUESTED on `37bacce9`: S50-01 TICKET_DEFECT resolved by the owner on 2026-11-07 (merge landing, option A); implementation 2 returned (`5eccf309`, candidate `26b6cc9a`); revision02 initial review dispatched） |
+| 狀態 | `CONVERGENCE_REPLANNED`（closure revision02; revision02 initial review CHANGES_REQUESTED on `26b6cc9a` (S50-10: a failed candidate fetch reported as a red); correction 1 dispatched） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/50-merge-queue-integration` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/50-merge-queue-integration-review` |
@@ -172,3 +172,15 @@ S50-01 is a `TICKET_DEFECT`. The record is read at the tip, and the candidate ha
 | S57-05 | routed from ticket 57, carried | the template's configuration cross-check needs both the template (ticket 57) and `integrate.py` on one tree. This ticket's branch starts before ticket 57, so the cross-check is pinned after integration, in the first change that touches either |
 
 The work is additive commits on `37bacce9`. The next review is the revision02 initial review.
+
+### Correction 1 under revision02 (after the revision02 initial review `CHANGES_REQUESTED`)
+
+No ticket defect was found, so revision02 stands. Work in correction 1:
+
+- **S50-10**: fetching a candidate by sha is a fault (exit 2, nothing written) unless the remote states that it does not hold the object, which is the only case that may bounce. An fsck refusal, a dropped connection and a remote that refuses unadvertised wants are all faults. Tests pin both shapes of the reviewer's `badsha` probe, the malformed candidate as a branch tip and as the parent of one: each is exit 2 with nothing written.
+- **S50-11**: a test pins that a `merge-tree` failure other than a conflict is a fault, not `MERGE_CONFLICT`. The reviewer's CM-Q turns it red.
+- **S50-12**: a test pins that the record check comes before `ALREADY_LANDED`. CM-R turns it red.
+- **S50-13**: a test pins that the candidate is fetched only after admission. CM-G2 turns it red.
+- **S50-14**: the script checks the git version once and reports a fault that names the requirement (git 2.38 or later). The README states it.
+
+The next review is the one correction review of revision02.
