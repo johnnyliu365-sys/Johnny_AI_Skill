@@ -100,6 +100,16 @@ def _force_remove(path: Path) -> None:
     shutil.rmtree(path, onerror=writable)
 
 
+def write_hook(path: Path, text: str) -> None:
+    """Write a git hook with LF line ends and the owner's executable bit.
+
+    Git on POSIX runs a hook only when its file is executable, and silently ignores it otherwise.
+    Git for Windows runs the file whatever its mode. Every hook this file writes goes through here.
+    """
+    path.write_text(text, encoding="utf-8", newline="\n")
+    path.chmod(path.stat().st_mode | stat.S_IXUSR)
+
+
 def record_text(
     candidate: str,
     verdict: str = "APPROVED",
@@ -831,8 +841,7 @@ class SubmitRefusalTests(RigCase):
     def test_a_push_the_remote_refuses_for_another_reason_is_a_fault_not_queue_moved(self) -> None:
         cand = self.rig.candidate()
         self.rig.publish_record(cand)
-        hook = self.rig.remote / "hooks" / "pre-receive"
-        hook.write_text("#!/bin/sh\necho no >&2\nexit 1\n", encoding="utf-8", newline="\n")
+        write_hook(self.rig.remote / "hooks" / "pre-receive", "#!/bin/sh\necho no >&2\nexit 1\n")
         result = self.rig.submit("T1", cand)
         self.assertEqual(result.code, 2, result.text)
         self.assertEqual(result.out, "")
@@ -1137,7 +1146,7 @@ class LandRaceTests(LandCase):
 
     def test_a_remote_that_refuses_the_push_for_another_reason_is_a_fault(self) -> None:
         cand, records = self.queued()
-        (self.rig.remote / "hooks" / "pre-receive").write_text("#!/bin/sh\nexit 1\n", encoding="utf-8", newline="\n")
+        write_hook(self.rig.remote / "hooks" / "pre-receive", "#!/bin/sh\nexit 1\n")
         result = self.rig.land(approving=records)
         self.assertEqual(result.code, 2, result.text)
         self.assertIn("git push failed", result.err)
@@ -3013,6 +3022,33 @@ class SourceRuleTests(unittest.TestCase):
         imports = {alias.name.split(".")[0] for node in ast.walk(ast.parse(SCRIPT.read_text(encoding="utf-8"))) if isinstance(node, ast.Import) for alias in node.names}
         imports |= {node.module.split(".")[0] for node in ast.walk(ast.parse(SCRIPT.read_text(encoding="utf-8"))) if isinstance(node, ast.ImportFrom) and node.module}
         self.assertLessEqual(imports, set(sys.stdlib_module_names) | {"__future__"})
+
+
+class HookWriterTests(unittest.TestCase):
+    def test_the_helper_writes_a_hook_with_lf_line_ends(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            hook = Path(raw) / "pre-receive"
+            write_hook(hook, "#!/bin/sh\nexit 1\n")
+            self.assertEqual(hook.read_bytes(), b"#!/bin/sh\nexit 1\n")
+
+    @unittest.skipIf(
+        os.name == "nt",
+        "Windows keeps no POSIX mode bits (chmod there only toggles read-only) and Git for Windows runs a hook whatever its mode, "
+        "so there is nothing to assert; the Linux job asserts the bit",
+    )
+    def test_the_helper_sets_the_owners_executable_bit_on_posix(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            hook = Path(raw) / "pre-receive"
+            write_hook(hook, "#!/bin/sh\nexit 1\n")
+            self.assertTrue(hook.stat().st_mode & stat.S_IXUSR, oct(hook.stat().st_mode))
+
+    def test_no_hook_is_written_around_the_helper(self) -> None:
+        offenders = [
+            f"line {number}: {line.strip()}"
+            for number, line in enumerate(Path(__file__).read_text(encoding="utf-8").splitlines(), 1)
+            if "hoo" + "ks" in line and any(call in line for call in ("write" + "_text", "write" + "_bytes", "op" + "en("))
+        ]
+        self.assertEqual(offenders, [])
 
 
 class ReadmeTests(unittest.TestCase):
