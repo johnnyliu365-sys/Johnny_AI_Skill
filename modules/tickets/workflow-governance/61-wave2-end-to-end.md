@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/61-wave2-end-to-end-out/` / owner implementation seat / worktree `.worktrees/61-wave2-end-to-end` / branch `cp/wave2-61-wave2-end-to-end` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the test（CONTEXT.md Implementation language）; Markdown for the run record |
-| 狀態 | `IN_PROGRESS`（part A passes; part B correction 1 done: clean rerun recorded in `doc/reviews/workflow-governance/wave2-acceptance-1/rerun/`; correction review dispatched） |
+| 狀態 | `REVIEW_APPROVED`（revision01 correction review APPROVED on `4215b980`; part B evidence: the clean rerun in `doc/reviews/workflow-governance/wave2-acceptance-1/rerun/`; record `doc/reviews/workflow-governance/61-wave2-end-to-end-code-review.md`; ready for integration） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | part A: `implementation-standard` seat, worktree `.worktrees/61-wave2-end-to-end`; part B: the seats the control plane starts for the run, each named in the run record |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/61-wave2-end-to-end-review` |
@@ -152,3 +152,15 @@ No ticket defect blocks. Part A (`4215b980`) passes. S61-01 (the child's environ
 Reading those excerpts showed a flaw that the summary had hidden. The fresh seat read the plugin's own ticket 61 at 04:33:00Z. That ticket describes the run, including where the first seat stops. The seat read it after it had read the fixture's state and before it acted. RUN.md now says this, and does not count part B as meeting the "files alone" condition.
 
 **Rerun.** Part B is rerun on a new fixture. The fresh seat is pointed at an export of the plugin payload that does not hold the acceptance ticket, its review or this run's record. The rerun's record replaces part B's evidence.
+
+### Carried after approval (CodeReview §5 rule B)
+
+| Finding | Route |
+| --- | --- |
+| S61-01 | the next change of `tests/test_wave2_end_to_end.py`: an allow-listed environment and the fixture as working directory for the second process; the script bytes and environment keys pinned |
+| S61-02 | follow-up ticket: a committed script that decides the next step from the state files |
+| S61-03 | follow-up ticket: resume conventions (where the dispatch file lives, who submits, who owns the worktree, the review record path) |
+| S61-04 | the next change of the test: the mislabelled subtest and the untested child paths |
+| S61-06 | done in the record; the wave-3 Codex rerun starts seats in the fixture with their own scratch area |
+| S61-07 | follow-up: CodeReview §5 says that a new closure revision's first review is its initial review and that the control plane labels a review before dispatching it |
+| S61-08 | done in the record (counts and the LF note) |

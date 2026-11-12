@@ -120,3 +120,89 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/61-rev01-initial
 reviewed_at: 2026-11-07
 ```
+
+## Revision01 correction review
+
+**Verdict: `APPROVED`.** S61-05, the only finding that blocked, is closed. The clean rerun of part B is backed by verbatim prompts, round times, and transcript excerpts whose hashes match the copies kept on the run host. I read the raw subagent transcripts myself, including the whole of seat 2's first round. No seat read this repository, ticket 61, its review or the first run's record, and nothing the harness injected carried fixture state. The landed merge, the queue entry and the byte copies all match the fixture. Part A is unchanged at `4215b980`. Every finding still open is in a class that does not block approval under §5 rule B, and each is carried below.
+
+| Field | Value |
+| --- | --- |
+| Ticket | `modules/tickets/workflow-governance/61-wave2-end-to-end.md`, revision01, section "Correction 1" (added at `943004ac`), read at `f6c33831` |
+| Candidate (part A) | `4215b980bb3dc19dee5c7563f7ed412c97f08464`; `cp/wave2-61-wave2-end-to-end` locally and on origin still name it |
+| Record (part B) | `doc/reviews/workflow-governance/wave2-acceptance-1/rerun/` (RUN.md, prompts.md, rounds.txt, fixture byte copies, git logs, landed commit, state at the cut) at `f6c33831`; the first run's `RUN.md` is marked superseded |
+| Owner decision | "A", 2026-11-12: transcripts stay off the public repository; the record holds prompts verbatim, round times, and the sha256 of unedited excerpts kept on the run host |
+| Fixture | `C:/Temp/claude/jas61r/fixture`, origin `C:/Temp/claude/jas61r/remote.git`: `main` `090bee6`, `main-queue` `cb2c4a2`, `seat/calc-subtract` `4d68e3b` (remote refs equal the local `origin/*`) |
+| Plugin copy given to the seats | `C:/Temp/claude/jas61r/plugin`, a `git archive` of `943004ac` (923 files, no `.git`) |
+| Excerpts on the run host | `C:/Temp/claude/jas61r/run/transcripts/` |
+| Raw transcripts read | the subagent transcripts of seat 1 `aa3d5234fa1730a2c`, seat 2 `a35b1380a9374e0fa` and seat 3 `a231e7c4b9e248e43`, read locally; no content copied into the repository |
+| Reviewer | `seat:ticket-review/61-rev01-correction` |
+| Full suite | not rerun: part A's candidate is unchanged since the initial review, whose full suite ran on it (5 failed, all in the base list, zero new red) |
+
+### Cell results
+
+| # | Check | Result |
+| --- | --- | --- |
+| C1 | Excerpt hashes equal RUN.md | **PASS.** sha256 of `seat1.md` `13078669…3f41d`, `seat2.md` `420fca2a…be1dc`, `seat3.md` `548d5b5a…f633` and `rounds.txt` `652f168e…1027` equal the table in `rerun/RUN.md`. `rerun/rounds.txt` in the repository equals the run-host copy byte for byte. |
+| C2 | Excerpts match the raw transcripts | **PASS, with one normalisation (S61-08).** I compared every fenced block of the three excerpts (5, 54 and 5 blocks) with the raw transcripts. Tool calls match the indent-1 JSON of the raw `tool_use` inputs. Tool results and prompts match the raw strings. Each "context the harness injected" block equals the five text items of the seat's first request, joined by line feeds. The only difference: the excerpts are LF only, so one tool result (`LINT PASS\r\n`, seat 2, 09:08:02Z) lost its CR. |
+| C3 | Every prompt in prompts.md is verbatim | **PASS.** All 8 rounds are verbatim (seat 1 ×1, seat 2 ×4, seat 3 ×3); the resumed rounds include the harness's "coordinator sent a message" prefix. Each round's start and end equal the first and last timestamped record of that round in the raw transcript. |
+| C4 | No seat read this repository, ticket 61, its review or the first run's record | **PASS.** The raw transcripts hold 114 tool calls (15, 41 and 58 by unique id), and I listed every one with every path it names. Each Bash call starts with `cd` into `C:/Temp/claude/jas61r/…` or only writes there. Read, Grep, Write and Edit target the fixture or the plugin copy. The exceptions are the seats' own files: seat 2 wrote and ran its own `mk.py`, `mk2.py` and `mk3.py` in the session scratchpad and stopped its own background task, and seat 3 read its own persisted tool output. One seat 2 call tried `cd C:/Temp/claude/plugin` (no such directory, error suppressed) and then changed into the copy. I read seat 2's first round in full, every call and every result, 09:04:47 to 09:08:35Z. It read the fixture's `AGENTS.md`, git state and files, then the copy's `AGENTS.md`, `Workflow.md` router, `implementation-tdd.md`, `implementation-authority.md`, `CodeReview.md`, the scripts README and the template. It concluded from the fixture alone: the ticket is `PLANNED` with a pending dispatch, the seat branch is unpushed, and there is no receipt, review or queue. A keyword scan of the round found no text describing the test. |
+| C5 | What the harness injected, and whether it carried fixture state | **No fixture state; the record's account is incomplete (S61-06).** Every seat received: the user-level and project `CLAUDE.md` and the memory index; this repository's git status, whose commit subjects include `943004ac` ("… part B is rerun clean"); an environment block naming **this repository as the primary working directory** and the session scratchpad; the model, date, commit-attribution, deferred-tool, skill, agent, MCP and auto-mode notices; and the agent system prompt. Scanned for fixture identifiers (the fixture path name, `calc`, `REQ-CALC`, fixture shas, `seat/calc`, `01-subtract`), none matched. Only the git-status subject mentions ticket 61 or the rerun. RUN.md names only the `CLAUDE.md` files, the memory index and the git status. |
+| C6 | The plugin copy holds no description of the test | **PASS.** The copy holds no match, under any case or spelling, for wave-2 acceptance, the criterion text, ticket 61, `61-wave2`, the fixture path name, `test_wave2_end_to_end`, `REQ-20261103-043` or "Implementation readiness". Nor does it hold "session break", "mid-ticket", "files alone", "fresh session" or "deliberately ended" in this sense. Compared with the tree at `943004ac`, the copy leaves out `modules/tickets/workflow-governance/`, every `doc/reviews/` directory, `doc/requirements/active/2026/workflow-governance/` and `doc/handoffs/`, as RUN.md says. The remaining `PRD/CHG-20261103-043` mentions (a runbook and specs) concern the merge queue, not the criterion. |
+| C7 | Landed commit `d5905ee6`: a merge with parents (`c710d1e`, `4d68e3b`); queue entry `LANDED` | **PASS.** `d5905ee6a828163a85a95d154bbe6df04cbf8835` has parents `c710d1efc04a7955383213ca4d3bd65dbc523cb7` and `4d68e3b1f8ccf22f19ff76a006f7370eb8cf7f0c`, and author `merge-queue`. The queue entry `calc-01-subtract@4d68e3b1…` on `main-queue` is `LANDED`, with `landed_sha d5905ee6…`, reviewer `seat:ticket-review/61r-review` and submitter `seat:implementer/calc-subtract-r3`. `main` `090bee6` differs from `d5905ee6` only in the ticket's state row. |
+| C8 | Byte copies equal `origin/main` / `origin/main-queue` | **PASS.** 25 of 25 files under `rerun/fixture/` equal the fixture blobs (24 on `origin/main`, `MERGE-QUEUE.json` on `origin/main-queue`). `git-log-main.txt`, `git-log-main-queue.txt` and `git-show-landed.txt` equal a fresh run of the commands in the collector. `state_after_seat1.txt` equals the run-host copy, and it shows seat 1 stopped with `e54b8df` pushed, `d4fca80` unpushed, and no receipt, review or queue. |
+| C9 | RUN.md's account matches the fixture history | **PASS, except the tool-call counts (S61-08).** Every sha, step and verdict in "What happened" matches the graph and the review record: `CHANGES_REQUESTED` on `a09a5d9`; `CONVERGENCE_REVIEW_REQUIRED` on `068a570`; the control-plane note `20d7ce4`; `APPROVED` on `4d68e3b` at `c710d1e`. Every commit to the review record is additive. RUN.md counts 17, 43 and 61 tool calls; the raw transcripts hold 15, 41 and 58. |
+| C10 | Rerun review cadence vs CodeReview §5 | **Consistent in count, irregular in labelling (S61-07); landing does not depend on it.** Revision01 got one initial review (`CHANGES_REQUESTED`, with ticket defects). Under §4.3 the ticket defects require a new closure revision before rework, so the first review of the rework (`068a570`) is revision02's initial review, and `c710d1e` is its one correction review. That is within §5's limit of one initial plus one correction per revision. Two things are irregular. First, the control plane dispatched that review as a "correction review", allowing `CONVERGENCE_REVIEW_REQUIRED`, and relabelled it afterwards. Second, its note reads the reviewer's verdict as `CHANGES_REQUESTED`. §5 gives the control plane no such reading: it may only add a rule B `convergence-disposition`, and the reviewer alone owns the conclusion (§2). The note leaves the reviewer's block unchanged. The landed candidate was admitted on the reviewer's own `APPROVED` block for `4d68e3b`, not on the note. |
+| C11 | Part A unchanged | **PASS.** The branch and its origin ref are still `4215b980`. The candidate tree is the one reviewed in the initial review, so its cells, mutations and full suite stand. |
+
+### Finding status
+
+| # | Class | Blocks approval | Status after correction 1 | Route |
+| --- | --- | --- | --- | --- |
+| S61-01 | `EVIDENCE_DEFECT` | no (rule B) | open, carried | Fix at the next change of `tests/test_wave2_end_to_end.py`, as the ticket's Correction 1 records: allow-listed environment, `cwd` = the fixture, a fresh script directory, and pinned script bytes and environment keys |
+| S61-02 | `OUT_OF_SCOPE_HARDENING` | no | open, carried | Follow-up `PLANNED` ticket: a committed next-step reader |
+| S61-03 | `OUT_OF_SCOPE_HARDENING` | no | open, carried; the rerun shows it again (seat 2 had to propose the review-record name and the queue ticket id) | Template follow-up |
+| S61-04 | `OUT_OF_SCOPE_HARDENING` | no | open, carried | With S61-02 |
+| S61-05 | `EVIDENCE_DEFECT` | was yes | **closed.** Prompts verbatim (C3), round times (C3), excerpt hashes (C1), and the resume from the files alone confirmed from the raw transcripts (C4, C5) | — |
+
+### New findings
+
+| # | Class | Blocks approval | Closure item | Finding | Route |
+| --- | --- | --- | --- | --- | --- |
+| S61-06 | `EVIDENCE_DEFECT` | no (rule B: the property holds and was verified from the raw transcripts; the record understates the exposure) | Part B "finished … from the ticket, receipt and queue files alone"; RUN.md "What the harness put in front of every seat" | Two channels were within reach of every seat, and RUN.md mentions neither. (1) The harness named this repository, which holds ticket 61 and both run records, as each seat's primary working directory: a command without an explicit `cd` would have run here. (2) The session scratchpad named to every seat is shared with the control plane. It held the control plane's fixture-building and collection scripts for both runs, and still does. No seat used either channel (C4). | Correct RUN.md's account of the injected context at its next touch. For the wave-3 Codex rerun (criterion 3), start seats with the fixture as working directory and a scratch area of their own. |
+| S61-07 | `OUT_OF_SCOPE_HARDENING` | no | CodeReview §5 cadence | The fixture's revision02 review was dispatched as a correction review and relabelled as an initial review only after the verdict came back. The control-plane note then restated the reviewer's `CONVERGENCE_REVIEW_REQUIRED` as `CHANGES_REQUESTED`. That is consistent with §5's count, but §5 provides no such reinterpretation. §5 also does not say that a ticket-defect revision restarts the review count. | Plugin follow-up: state in CodeReview §5 that a new closure revision's first review is its initial review, and that the control plane labels the review before dispatch. |
+| S61-08 | `EVIDENCE_DEFECT` | no | rerun/RUN.md accuracy | RUN.md's tool-call counts (17, 43, 61) do not match the raw transcripts (15, 41, 58 by unique id). The excerpts, called "unedited", are LF-normalised; one CR in a tool result was dropped. Neither changes what the record shows. | Correct the counts and add an "LF-normalised" note at the record's next touch. |
+
+### Commands
+
+All reads were local; nothing was written to the repository, the fixture or the run host. Git in the fixture ran with `GIT_OPTIONAL_LOCKS=0`.
+
+- **Hashes.** `sha256sum` of the four files under `C:/Temp/claude/jas61r/run/transcripts/`, compared with `rerun/RUN.md`; `git cat-file blob f6c33831:…/rerun/rounds.txt | cmp - <run-host rounds.txt>`.
+- **Transcripts.** The three raw subagent transcripts were parsed with scratch scripts in the session scratchpad (outside the repository):
+  - a full readable dump of each;
+  - a list of every tool call with the paths it names;
+  - a unique-id count of tool calls;
+  - a list of every attachment and request blob, each scanned for fixture identifiers;
+  - an extract of the injected context;
+  - a verbatim and timestamp check of every `prompts.md` block against the round prompts;
+  - a block-by-block check of each excerpt against the raw strings and tool inputs.
+
+  Seat 2's first round was read in full.
+- **Plugin copy.** Recursive `grep -I` for the terms in C6; the export's file list compared with `git ls-tree -r 943004ac`.
+- **Fixture.** `git rev-list --parents -n1 d5905ee6`; `git cat-file blob origin/main-queue:…/MERGE-QUEUE.json`; `for-each-ref` on the bare remote; the review record's history with `git log`, `git diff` and `--numstat`. The sha256 of every `rerun/fixture/` blob at `f6c33831` was compared with `origin/main` or `origin/main-queue`. `git log --graph --format='%h %p %an %s'` and `git show -s --format=…` were compared with the committed text files.
+- **Part A.** `git rev-parse cp/wave2-61-wave2-end-to-end` and `git ls-remote origin cp/wave2-61-wave2-end-to-end`.
+- **Initial record.** The committed `61-wave2-end-to-end-code-review.md` equals the initial review's record.
+
+### Not verified
+
+- **Seat 1's round, seat 2's rounds 2–4 and seat 3's rounds** were checked through the full tool-call list, the path scan and the keyword scan, not read line by line. Seat 2's round 1 was read line by line.
+- **The integrity of the raw transcripts themselves.** They are the harness's files and are taken as raw.
+- **The fixture ticket's code and tests.** I did not review these again; the fixture's own reviewer did. My checks covered the landing facts and the record.
+- **No full suite and no CI run**, because part A is unchanged.
+- **The contents of the control plane's scratch files** in the shared session scratchpad (beyond their names) were not read. My own transcript dumps there were removed at the end of this review, so they cannot become a channel for a later seat.
+
+```review-verdict
+candidate: 4215b980bb3dc19dee5c7563f7ed412c97f08464
+verdict: APPROVED
+reviewer: seat:ticket-review/61-rev01-correction
+reviewed_at: 2026-11-12
+```

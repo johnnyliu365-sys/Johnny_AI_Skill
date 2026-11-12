@@ -57,7 +57,7 @@ All times are UTC on 2026-11-12, taken from the transcripts (`rounds.txt`).
 
 ## Evidence that the resume came from the files alone
 
-The transcripts are held on the run host under `C:/Temp/claude/jas61r/run/transcripts/` and are not committed:
+The transcripts are held on the run host under `C:/Temp/claude/jas61r/run/transcripts/` and are not committed. They are excerpts of the raw transcripts with line ends normalised to LF; otherwise each block is copied unchanged.
 
 | File | sha256 |
 | --- | --- |
@@ -66,9 +66,15 @@ The transcripts are held on the run host under `C:/Temp/claude/jas61r/run/transc
 | `seat3.md` | `548d5b5a21f1f3ebf51193d08e8a940e59d69380fa3aee79e4da5c08fe53f633` |
 | `rounds.txt` | `652f168e6db160e7ee8887b922d72adc6e53cdb97b2485392921cf4a6afe1027` |
 
-The control plane scanned every tool call of every seat in the raw transcripts: seat 1 made 17, seat 2 made 43 across four rounds, and seat 3 made 61. Every command and path names the fixture or the plugin copy under `C:/Temp/claude/jas61r/`, apart from writes to the seat's own scratch directory. None reads this repository, ticket 61, its review or any record of this run.
+Every tool call of every seat was checked in the raw transcripts. The correction review counted seat 1 at 15, seat 2 at 41 across four rounds, and seat 3 at 58; the control plane's own first scan, 17, 43 and 61, also counted harness entries that are not tool calls. Every command and path names the fixture or the plugin copy under `C:/Temp/claude/jas61r/`, apart from writes to the seat's own scratch directory. None reads this repository, ticket 61, its review or any record of this run.
 
 What the harness put in front of every seat cannot be removed from a subagent started in this session, and this record states it plainly. Each seat's context began with this repository's `CLAUDE.md`, the owner's memory index and this repository's git status. That status lists recent commit subjects, among them ticket 61's. No fixture state reached a seat that way: the injected text names no fixture commit, branch, file or requirement.
+
+Two further channels were within reach and went unused (correction review S61-06):
+- The harness made this repository each seat's primary working directory.
+- The session's shared scratch directory held the control plane's fixture-building and collection scripts.
+
+No seat read either; the tool-call listing shows every read under `C:/Temp/claude/jas61r/`. A later rerun, such as the wave-3 Codex run, starts its seats with the fixture as working directory and a scratch area of their own.
 
 ## Result
 
