@@ -135,8 +135,7 @@ What the excerpts show. The round times in `rounds.txt` replace the coarser time
 
 | File | What it is |
 | --- | --- |
-| `fixture/...` | The fixture's ticket, both dispatches, both receipts with their captures, the review record, the snapshot and the integration configuration, as they stood on `origin/main` at the end. They are copied byte for byte |
-| `fixture/main-queue/.../MERGE-QUEUE.json` | The queue file on `origin/main-queue` at the end |
+| `files/` and `files/MANIFEST.tsv` | The project's files as they stood at the end, copied byte for byte. That covers the ticket, the dispatches, every receipt with its captures, the review record, the snapshot and the integration configuration from `origin/main`, and the queue file from `origin/main-queue`. To keep every tracked path short enough for a Windows checkout, each copy is stored under a short numbered name; `MANIFEST.tsv` maps that name to its path in the project and its sha256 |
 | `git-log-main.txt`, `git-log-main-queue.txt` | The graphs of both branches, each line holding the commit, its parents, its author and its subject |
 | `git-show-landed.txt` | The landed merge commit |
 | `state_after_seat1.txt`, `state_after_seat2.txt` | The repository state when seat 1 ended and when seat 2 first stopped |

@@ -93,8 +93,7 @@ What the plugin learns. These are follow-up work, not blockers:
 
 | File | What it is |
 | --- | --- |
-| `fixture/...` | The project's ticket, both dispatches, every receipt with its captures, the review record, the snapshot and the integration configuration, copied byte for byte from `origin/main` at the end |
-| `fixture/main-queue/.../MERGE-QUEUE.json` | The queue file on `origin/main-queue` |
+| `files/` and `files/MANIFEST.tsv` | The project's files as they stood at the end, copied byte for byte. That covers the ticket, the dispatches, every receipt with its captures, the review record, the snapshot and the integration configuration from `origin/main`, and the queue file from `origin/main-queue`. To keep every tracked path short enough for a Windows checkout, each copy is stored under a short numbered name; `MANIFEST.tsv` maps that name to its path in the project and its sha256 |
 | `git-log-main.txt`, `git-log-main-queue.txt`, `git-show-landed.txt` | The branch graphs and the landed merge commit |
 | `state_after_seat1.txt` | The repository at the cut |
 | `prompts.md`, `rounds.txt` | Every prompt, verbatim, and every round's start and end |
