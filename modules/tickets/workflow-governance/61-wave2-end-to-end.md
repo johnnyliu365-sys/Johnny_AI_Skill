@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/61-wave2-end-to-end-out/` / owner implementation seat / worktree `.worktrees/61-wave2-end-to-end` / branch `cp/wave2-61-wave2-end-to-end` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the test（CONTEXT.md Implementation language）; Markdown for the run record |
-| 狀態 | `IN_PROGRESS`（part A returned (candidate `4215b980`); part B run recorded at `ac251c87`; initial review dispatched） |
+| 狀態 | `IN_PROGRESS`（revision01 initial review CHANGES_REQUESTED: part A passes; part B evidence S61-05; correction 1 by the control plane under owner decision "A" (2026-11-12); a clean part B rerun follows） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | part A: `implementation-standard` seat, worktree `.worktrees/61-wave2-end-to-end`; part B: the seats the control plane starts for the run, each named in the run record |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/61-wave2-end-to-end-review` |
@@ -139,3 +139,16 @@ No script is committed under `doc/reviews/`.
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+### Correction 1 (after the revision01 initial review `CHANGES_REQUESTED`)
+
+No ticket defect blocks. Part A (`4215b980`) passes. S61-01 (the child's environment and working directory are not pinned) is carried to the next change of the test. S61-02, S61-03 and S61-04 are follow-up work.
+
+**Part B evidence (S61-05), owner decision "A" (2026-11-12).** The seat transcripts stay off the public repository.
+
+- The record gains `prompts.md`, every round's prompt verbatim with its times.
+- RUN.md gains the sha256 of the unedited transcript excerpts held on the run host under `C:/Temp/claude/jas61/run/transcripts/`.
+
+Reading those excerpts showed a flaw that the summary had hidden. The fresh seat read the plugin's own ticket 61 at 04:33:00Z. That ticket describes the run, including where the first seat stops. The seat read it after it had read the fixture's state and before it acted. RUN.md now says this, and does not count part B as meeting the "files alone" condition.
+
+**Rerun.** Part B is rerun on a new fixture. The fresh seat is pointed at an export of the plugin payload that does not hold the acceptance ticket, its review or this run's record. The rerun's record replaces part B's evidence.

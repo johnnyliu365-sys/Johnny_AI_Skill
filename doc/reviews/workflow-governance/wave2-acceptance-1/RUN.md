@@ -91,7 +91,8 @@ It was resumed twice. Each time it was told only that the review had come back a
 
 ## What this shows
 
-- **The criterion is met.** One ticket went from a requirement snapshot to a merge commit landed by the integration script, through dispatch, implementation, independent review, a correction and merge-queue integration. Its session was ended mid-ticket, and a fresh session finished it. Every handover went through the ticket, the receipt, the review record and the queue, and never through a message.
+- **The loop works end to end.** One ticket went from a requirement snapshot to a merge commit landed by the integration script, through dispatch, implementation, independent review, a correction and merge-queue integration. Its session was ended mid-ticket, and a fresh session finished it. Every handover between seats went through the ticket, the receipt, the review record and the queue, and never through a message.
+- **The "files alone" part is weakened** (see "Evidence of the resume" below): the fresh session also read the plugin's ticket 61, which describes this run. A clean rerun points the fresh session at a plugin checkout that does not hold the acceptance ticket.
 - **The gates caught real defects in a ticket written by an agent:**
   - the contract gate found that no requirement was bound;
   - review found missing ticket fields;
@@ -101,6 +102,32 @@ It was resumed twice. Each time it was told only that the review had come back a
   - A receipt committed beside its candidate cannot name its own commit. The run used "cells at the implementation commit; candidate = the tip that adds only the receipt". The reviewer checked that the two differ only in receipt files. The rule is not written in the plugin.
   - The fixture's requirement source lacked fields the snapshot tool needs. Seat 1 made an uncommitted input file. That is a defect of the fixture the control plane built, not of the seat.
   - A seat set the ticket to `DONE` before review. Nothing in the templates says when `DONE` is set.
+
+## Evidence of the resume (added after the revision01 review, owner decision "A", 2026-11-12)
+
+The revision01 review (S61-05) asked for four things: the exact prompt of every seat round, seat 1's last tool call and its output, seat 2's first reads up to its conclusion, and the start and end of every round. The owner decided that the seat transcripts stay off the public repository. The record therefore holds them in two places:
+
+- **In this directory:** `prompts.md`, every round's prompt copied verbatim from the transcript, with the round's start and end.
+- **On the run host only, not committed:** unedited excerpts of each seat's transcript, made by the control plane. Each excerpt holds every round's prompt, the context the harness injected before the seat's first step, and seat 1's last tool call with its result. For seat 2's first round it holds every tool call and its result up to the first conclusion. The excerpts are under `C:/Temp/claude/jas61/run/transcripts/`:
+
+| File | sha256 |
+| --- | --- |
+| `seat1.md` | `385ba20904876a07b4e3974ff01d953c80dae42f3f87e9ffe371e15e0e8c1ee7` |
+| `seat2.md` | `53fcf067aac3c9d02aad03164002b770d6f80c5504f8cfd2361d38bee3492e99` |
+| `seat3.md` | `21bac603099fe5f53a772255bb9bc6cd2f7da947241a9909c55e96f99e10eee6` |
+| `rounds.txt` | `f05f37d4edcbc7b84dca8244c47efa03c77efdb27b58a3b3ad4a137fc513ba2b` |
+
+What the excerpts show. The round times in `rounds.txt` replace the coarser times in `times.txt`.
+
+- **Seat 1, last step:** a single `SubagentHandback`, at 04:31:54Z. Before it, the last commit is `bd3e756` in the worktree. Nothing was written afterwards.
+- **Seat 2's context before its first step:** besides its prompt, the harness injected the plugin repository's `CLAUDE.md`, the owner's memory index, and the plugin repository's git status. That status lists recent plugin commits, among them the subject of ticket 61, so the seat could tell it was in an acceptance test. No fixture state reached it this way: the injected text names no fixture commit, branch or file, and no requirement.
+- **Seat 2, round 1, from its first step to its conclusion:** 30 tool calls, in this order:
+  - From 04:32:10 to 04:32:18Z it read only fixture files and ran git on the fixture: `AGENTS.md`, `git status`, `branch -a`, `log --all --graph`, `worktree list`, `ls-remote`, `CONTEXT.md`, then the ticket, the dispatch directory, the configuration and the snapshot.
+  - From 04:32:18Z it read the plugin's scripts README, `Workflow.md`, `implementation-tdd.md`, `CodeReview.md`, and the ticket list with ticket 57.
+  - **At 04:33:00Z it read the plugin's own ticket 61** (`sed -n 1,120p modules/tickets/workflow-governance/61-wave2-end-to-end.md`). That ticket describes this run, including that the first seat stops before its receipt.
+  - It wrote the receipt only after that read, from 04:33:19Z on.
+
+  The fixture state it reported had been read by 04:32:18Z. Its reading of where the work stood did not need ticket 61, but it saw ticket 61 before it acted. **The resume was therefore not from the fixture's files alone.** The plugin checkout it was sent to also held the description of the test. This weakens part B's evidence for criterion 1. The control plane reports it to the owner rather than counting it as met.
 
 ## Files in this directory
 
