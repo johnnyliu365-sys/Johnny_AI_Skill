@@ -1,0 +1,27 @@
+{
+  "source": "calc",
+  "taken_at": "2026-11-12T09:03:59Z",
+  "source_sha256": "b781f409e0a0743145343151cca997f9d5a4e5445a15375cf19b8ac80ac3ad8b",
+  "rows": [
+    {
+      "requirement_id": "REQ-CALC-001",
+      "page_id": "calc",
+      "title": "add(a, b) returns a + b",
+      "type": "requirement",
+      "source_ref": "doc/requirements/sources/calc.md",
+      "source_sha256": "251f1368e0f0337359ff107d30c5545ba484773ba607bb7200e9ceaf338e67fa",
+      "status": "active",
+      "version": 1
+    },
+    {
+      "requirement_id": "REQ-CALC-002",
+      "page_id": "calc",
+      "title": "subtract(a, b) returns a - b for any two integers",
+      "type": "requirement",
+      "source_ref": "doc/requirements/sources/calc.md",
+      "source_sha256": "251f1368e0f0337359ff107d30c5545ba484773ba607bb7200e9ceaf338e67fa",
+      "status": "active",
+      "version": 1
+    }
+  ]
+}

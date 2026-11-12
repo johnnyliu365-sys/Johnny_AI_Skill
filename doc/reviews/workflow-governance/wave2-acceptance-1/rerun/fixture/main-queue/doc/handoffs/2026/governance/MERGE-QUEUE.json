@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "ticket": "calc-01-subtract",
+      "candidate": "4d68e3b1f8ccf22f19ff76a006f7370eb8cf7f0c",
+      "parent": "c710d1efc04a7955383213ca4d3bd65dbc523cb7",
+      "review": "doc/reviews/calc/01-subtract-code-review.md",
+      "review_candidate": "4d68e3b1f8ccf22f19ff76a006f7370eb8cf7f0c",
+      "reviewer": "seat:ticket-review/61r-review",
+      "submitter": "seat:implementer/calc-subtract-r3",
+      "state": "LANDED",
+      "landed_sha": "d5905ee6a828163a85a95d154bbe6df04cbf8835",
+      "reason": "",
+      "clears": ""
+    }
+  ]
+}

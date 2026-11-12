@@ -1,0 +1,24 @@
+* 090bee6 d5905ee Johnny Liu docs(calc): ticket 01 INTEGRATED (merge commit d5905ee6, queue entry LANDED; receipts c1 and c2)
+*   d5905ee c710d1e 4d68e3b merge-queue merge-queue: land calc-01-subtract@4d68e3b1f8ccf22f19ff76a006f7370eb8cf7f0c
+|\  
+| * 4d68e3b 92d59c0 Johnny Liu docs(calc): ticket 01 C1 receipt, mutation add-subtracts-operands run (cells ran at 92d59c0)
+| *   92d59c0 068a570 20d7ce4 Johnny Liu merge origin/main (correction review record) into seat/calc-subtract
+| |\  
+| * | 068a570 3c51c45 Johnny Liu docs(calc): ticket 01 correction receipt (cells ran at 3c51c45)
+| * | 3c51c45 b70830c Johnny Liu test(calc): contract declarations, expected-value ledger, large-integer cases (REQ-CALC-001, REQ-CALC-002)
+| * |   b70830c a09a5d9 4868400 Johnny Liu merge origin/main (ticket revision02, review record) into seat/calc-subtract
+| |\ \  
+| * | | a09a5d9 d4fca80 Johnny Liu docs(calc): ticket 01 receipt and DONE state (candidate d4fca80)
+| * | | d4fca80 e54b8df Johnny Liu feat(calc): subtract(a, b) returns a - b (REQ-CALC-002)
+* | | | c710d1e 20d7ce4 Johnny Liu docs(review): calc ticket 01 revision02 correction review — APPROVED on 4d68e3b
+| |_|/  
+|/| |   
+* | | 20d7ce4 54b8309 Johnny Liu docs(review): control-plane note — the correction review of revision02 is its initial review; C1 to be corrected
+* | | 54b8309 4868400 Johnny Liu docs(review): calc ticket 01 correction review — CONVERGENCE_REVIEW_REQUIRED on 068a570
+| |/  
+|/|   
+* | 4868400 3e0fb3a Johnny Liu docs(calc): ticket 01 revision02 after review CHANGES_REQUESTED — closure set, profile, XSS, strict checker, contract binding; correction dispatch with preflight
+* | 3e0fb3a e54b8df Johnny Liu docs(review): calc ticket 01 code review — CHANGES_REQUESTED on a09a5d9
+|/  
+* e54b8df 6796990 Johnny Liu docs(calc): REQ-CALC-002 snapshot v1, ticket 01 and dispatch
+* 6796990  Johnny Liu project skeleton

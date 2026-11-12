@@ -1,0 +1,29 @@
+diff --git a/src/calc.py b/src/calc.py
+index 66ac98b..7844f14 100644
+--- a/src/calc.py
++++ b/src/calc.py
+@@ -3,7 +3,7 @@
+ 
+ def add(a: int, b: int) -> int:
+     """Return a plus b."""
+-    return a + b
++    return a - b
+ 
+ 
+ def subtract(a: int, b: int) -> int:
+F......                                                                  [100%]
+================================== FAILURES ===================================
+______________________________ AddTests.test_add ______________________________
+
+self = <tests.test_calc.AddTests testMethod=test_add>
+
+    def test_add(self) -> None:
+        case = _case("add", "basic")
+>       self.assertEqual(add(case["a"], case["b"]), case["expected"])
+E       AssertionError: -1 != 5
+
+tests\test_calc.py:36: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_calc.py::AddTests::test_add - AssertionError: -1 != 5
+1 failed, 6 passed in 0.14s
+exit=1

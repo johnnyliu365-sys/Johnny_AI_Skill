@@ -1,0 +1,15 @@
+== git log --all --graph
+* d4fca80 feat(calc): subtract(a, b) returns a - b (REQ-CALC-002)
+* e54b8df docs(calc): REQ-CALC-002 snapshot v1, ticket 01 and dispatch
+* 6796990 project skeleton
+== branches
+* main                e54b8df docs(calc): REQ-CALC-002 snapshot v1, ticket 01 and dispatch
++ seat/calc-subtract  d4fca80 (C:/Temp/claude/jas61r/fixture/.worktrees/calc-subtract) feat(calc): subtract(a, b) returns a - b (REQ-CALC-002)
+  remotes/origin/main e54b8df docs(calc): REQ-CALC-002 snapshot v1, ticket 01 and dispatch
+== worktrees
+C:/Temp/claude/jas61r/fixture                          e54b8df [main]
+C:/Temp/claude/jas61r/fixture/.worktrees/calc-subtract d4fca80 [seat/calc-subtract]
+== status
+== ls-remote
+e54b8dfa40befb07f39dcfd6bdd31d3eb8993b55	HEAD
+e54b8dfa40befb07f39dcfd6bdd31d3eb8993b55	refs/heads/main

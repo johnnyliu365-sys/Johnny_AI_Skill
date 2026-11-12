@@ -1,0 +1,5 @@
+?? doc/handoffs/2026/governance/receipts/calc-01-subtract-c1/
+tree clean after restore
+.......                                                                  [100%]
+7 passed in 0.03s
+exit=0

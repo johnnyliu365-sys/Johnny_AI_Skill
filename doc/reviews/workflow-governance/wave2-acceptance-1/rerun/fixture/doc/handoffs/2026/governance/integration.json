@@ -1,0 +1,28 @@
+{
+  "remote": "C:/Temp/claude/jas61r/remote.git",
+  "branch": "main",
+  "queue_branch": "main-queue",
+  "queue_path": "doc/handoffs/2026/governance/MERGE-QUEUE.json",
+  "spec_command": [
+    "C:/Temp/claude/jas-venv/Scripts/python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider"
+  ],
+  "invariant_command": [
+    "C:/Temp/claude/jas-venv/Scripts/python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider"
+  ],
+  "ci_status_command": [
+    "C:/Temp/claude/jas-venv/Scripts/python.exe",
+    "ci_status.py",
+    "{sha}"
+  ],
+  "timeout_seconds": 600
+}

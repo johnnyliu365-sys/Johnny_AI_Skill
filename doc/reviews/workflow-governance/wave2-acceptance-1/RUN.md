@@ -1,5 +1,7 @@
 # Wave-2 acceptance 1, part B: one ticket on a fixture project, finished by a fresh session
 
+> **Superseded as evidence for criterion 1 by the clean rerun in [`rerun/RUN.md`](rerun/RUN.md) (2026-11-12).** This first run is kept as the record of what the rerun fixed.
+
 This is the live run of ticket 61 part B. It took one ticket of a fixture target project from a requirement snapshot to a merge commit landed by `integrate.py`. The first session was ended on purpose mid-ticket, and a new session finished the ticket from the project's files alone.
 
 The control plane (Claude Opus 5.5) conducted the run on 2026-11-07. The plugin tree in use was `cp/wave2-gates` at `b95b4acd` (tickets 50 to 60, 62 and 63 integrated) and later commits that changed no script.

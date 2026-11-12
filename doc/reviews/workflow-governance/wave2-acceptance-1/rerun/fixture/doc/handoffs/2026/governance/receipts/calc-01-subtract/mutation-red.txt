@@ -1,0 +1,27 @@
+ src/calc.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+.FF.                                                                     [100%]
+================================== FAILURES ===================================
+_________________________ SubtractTests.test_subtract _________________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract>
+
+    def test_subtract(self) -> None:
+>       self.assertEqual(subtract(5, 3), 2)
+E       AssertionError: 8 != 2
+
+tests\test_calc.py:13: AssertionError
+_________________ SubtractTests.test_subtract_negative_result _________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_negative_result>
+
+    def test_subtract_negative_result(self) -> None:
+>       self.assertEqual(subtract(3, 5), -2)
+E       AssertionError: 8 != -2
+
+tests\test_calc.py:16: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_calc.py::SubtractTests::test_subtract - AssertionError: 8 != 2
+FAILED tests/test_calc.py::SubtractTests::test_subtract_negative_result - Ass...
+2 failed, 2 passed in 0.09s
+exit=1

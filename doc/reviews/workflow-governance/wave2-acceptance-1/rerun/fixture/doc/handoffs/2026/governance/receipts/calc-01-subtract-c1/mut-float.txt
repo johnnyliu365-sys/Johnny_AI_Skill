@@ -1,0 +1,54 @@
+diff --git a/src/calc.py b/src/calc.py
+index 66ac98b..faf17de 100644
+--- a/src/calc.py
++++ b/src/calc.py
+@@ -8,4 +8,4 @@ def add(a: int, b: int) -> int:
+ 
+ def subtract(a: int, b: int) -> int:
+     """Return a minus b."""
+-    return a - b
++    return int(float(a) - float(b))
+..FFF..                                                                  [100%]
+================================== FAILURES ===================================
+__________________ SubtractTests.test_subtract_beyond_64_bit __________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_beyond_64_bit>
+
+    def test_subtract_beyond_64_bit(self) -> None:
+>       self._check("beyond_64_bit")
+
+tests\test_calc.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_calc.py:42: in _check
+    self.assertEqual(subtract(case["a"], case["b"]), case["expected"])
+E   AssertionError: 36893488147419103232 != 36893488147419103233
+______________ SubtractTests.test_subtract_beyond_float_mantissa ______________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_beyond_float_mantissa>
+
+    def test_subtract_beyond_float_mantissa(self) -> None:
+>       self._check("beyond_float_mantissa")
+
+tests\test_calc.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_calc.py:42: in _check
+    self.assertEqual(subtract(case["a"], case["b"]), case["expected"])
+E   AssertionError: 9007199254740992 != 9007199254740993
+_________________ SubtractTests.test_subtract_large_negative __________________
+
+self = <tests.test_calc.SubtractTests testMethod=test_subtract_large_negative>
+
+    def test_subtract_large_negative(self) -> None:
+>       self._check("large_negative")
+
+tests\test_calc.py:60: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_calc.py:42: in _check
+    self.assertEqual(subtract(case["a"], case["b"]), case["expected"])
+E   AssertionError: -18446744073709551616 != -18446744073709551617
+=========================== short test summary info ===========================
+FAILED tests/test_calc.py::SubtractTests::test_subtract_beyond_64_bit - Asser...
+FAILED tests/test_calc.py::SubtractTests::test_subtract_beyond_float_mantissa
+FAILED tests/test_calc.py::SubtractTests::test_subtract_large_negative - Asse...
+3 failed, 4 passed in 0.12s
+exit=1
