@@ -107,3 +107,19 @@ A fresh verified integration clone (`C:/Temp/claude/jas-integ8`) was made from `
 | Full suite in the integration clone under the host lock | 5 failed, 3757 passed, 38 skipped; every failure is a base name; zero new red |
 | Pushed | `cp/wave2-gates` at `70a741f7` (fast-forward from `de4e9d09`) |
 | CI readback | run 42348718522 on `70a741f7`: `test (linux)` and `test (windows)` both `success`. The red Linux readback of `b95b4acd` (run 42338591673) is cleared |
+
+## Ticket 61 (2026-11-12): wave-2 acceptance 1
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 61 wave-2 end to end | `4215b980` | revision01 correction review `APPROVED` (part B evidence: the clean rerun) | `4f6e1b5a` |
+
+A fresh verified integration clone (`C:/Temp/claude/jas-integ9`) was made from `c2feab70`. The tip was checked equal to the candidate before the merge, and the merge had no conflict. The test passed in the clone before the full suite ran (15 passed).
+
+| Check | Result |
+| --- | --- |
+| Full suite in the integration clone under the host lock | 7 failed, 3770 passed, 38 skipped. Every failure is a base name, so there is zero new red. The two temporal tests fail again on the venv rebuilt on 2026-11-12, where Smart App Control blocks their DLL; they are base names |
+| Pushed | `cp/wave2-gates` at `4f6e1b5a` (fast-forward) |
+| CI readback | Run 43196001399 on `4f6e1b5a`: Linux `success`, Windows `failure`. The one `UNREGISTERED_FAILURE` was `test_acr6_committed_candidate_diff_and_forbidden_paths`: its clone of the repository failed to check out. The control plane's part-B record, committed at `f6c33831`, had tracked paths up to 153 characters, and under the runner's temporary directory they passed the Windows path limit. Windows CI had been red since `f6c33831` |
+| Fix | `15fe6136` stores the record's fixture copies under short numbered names with a `MANIFEST.tsv` (stored name, project path, sha256); the bytes are unchanged. CI run 43200411926 on `15fe6136`: Linux and Windows `success` |
+| Follow-up | A repository hygiene test caps the length of tracked paths, so a long path is red on the host before it reaches CI. Logged with the wave-2 follow-ups |

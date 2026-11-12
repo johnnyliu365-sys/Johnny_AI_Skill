@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/61-wave2-end-to-end-out/` / owner implementation seat / worktree `.worktrees/61-wave2-end-to-end` / branch `cp/wave2-61-wave2-end-to-end` / baseline the wave-2 branch at dispatch |
 | 實作語言 | Python 3.11 for the test（CONTEXT.md Implementation language）; Markdown for the run record |
-| 狀態 | `REVIEW_APPROVED`（revision01 correction review APPROVED on `4215b980`; part B evidence: the clean rerun in `doc/reviews/workflow-governance/wave2-acceptance-1/rerun/`; record `doc/reviews/workflow-governance/61-wave2-end-to-end-code-review.md`; ready for integration） |
+| 狀態 | `INTEGRATED`（candidate `4215b980` integrated on `cp/wave2-gates` at `4f6e1b5a` on 2026-11-12; CI green on Linux and Windows at `15fe6136` after the record paths were shortened; record `doc/reviews/workflow-governance/wave2-integration-2026-11-06.md`） |
 | 共同基準 | the `cp/wave2-gates` commit named in the dispatch |
 | 實作者 | part A: `implementation-standard` seat, worktree `.worktrees/61-wave2-end-to-end`; part B: the seats the control plane starts for the run, each named in the run record |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/61-wave2-end-to-end-review` |
