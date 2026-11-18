@@ -23,6 +23,10 @@ output_tokens: <output-tokens>
 source: <usage-source>
 ````
 
+The `STATEMENT` cell begins with two lines before any prose: `return:` with one of `COMPLETED`,
+`BLOCKED` or `CHANGE_DETECTED`, and `items:` followed by one `- ` line per item, none for
+`COMPLETED`. The template shows `return: COMPLETED`; replace the word when the work is not completed.
+
 | Placeholder | Replaced by |
 | --- | --- |
 | `<cell>` | the cell name, the same text in the heading and in the `cell:` line, unique in the receipt |
@@ -56,5 +60,7 @@ exit: <exit-codes>
 
 ## STATEMENT
 cell: STATEMENT
+return: COMPLETED
+items:
 
 <statement-text>

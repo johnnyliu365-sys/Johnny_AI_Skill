@@ -62,6 +62,17 @@ on the queue branch (by default `<branch>-queue`), never to the integration bran
 write never moves the integration tip. The configuration and the receipt live on the integration
 branch like any other project file.
 
+The ticket template carries four rows that the ticket review requires: `Closure revision` (the revision of the
+finite Acceptance Closure Set), `Strict checker` (the command and version), `Profile / resource` (the semantic profile
+reference and the resource-plan reference) and `XSS classification` (the classification and the exact matrix
+reference, or the reason it does not apply). Its state row lists `INTEGRATED`, which is set when the integration script has
+landed the candidate and its readback matches; `DONE` is for a ticket that closes without an integration candidate. The
+receipt part holds one receipt per closure revision, in revision order, each as receipt `<path>`.
+
+The `STATEMENT` cell of the receipt template begins with two lines, before any prose: `return:` with one of `COMPLETED`,
+`BLOCKED` or `CHANGE_DETECTED`, and `items:` followed by a list of items, which is empty for `COMPLETED`. It is a line pair
+inside the existing informational cell, not a cell of its own, so the evidence gate reads it as it reads any statement.
+
 ## Policy and dispatch safety
 
 Templates keep policy reads metadata-only: raw document text, prompts, paths,
