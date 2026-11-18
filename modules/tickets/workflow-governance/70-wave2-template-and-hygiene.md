@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/70-templates-out/` / owner implementation seat / worktree `.worktrees/70-templates` / branch `cp/wave3-70-templates` / baseline the wave-3 branch after ticket 69 is integrated |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/70-templates-out/` / owner implementation seat / worktree `.worktrees/70-templates` / branch `cp/wave3-70-templates` / baseline the wave-3 branch after ticket 69 is integrated |
 | 實作語言 | Markdown templates; Python 3.11 for the tests（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED`（starts after ticket 69 is `INTEGRATED`: both change the receipt template and its test） |
+| 狀態 | `IN_PROGRESS`（revision02 after the implementation seat returned `CHANGE_DETECTED` on 2026-11-19: the evidence gate reads a `cell: RETURN` section as a run cell） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/70-templates` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/70-templates-review` |
@@ -137,3 +137,20 @@ After this ticket:
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Revision02 (2026-11-19, after `CHANGE_DETECTED`)
+
+The seat stopped before changing anything. `evidence_gate.py` treats only `cell: USAGE` and `cell: STATEMENT` as informational, so a `## RETURN` section with `cell: RETURN` is read as a run cell and refused for lacking `candidate`, `tool_digest:`, `capture` and `exit`. This ticket forbids gate changes.
+
+The smallest fix (lesson L-19) needs no gate change and no new mechanism. The typed return goes into the `STATEMENT` section that every receipt already has, and the gate already treats that section as informational.
+
+**This revision supersedes** the bullet "The receipt template (`RECEIPT.TEMPLATE.md`) gains a typed-return cell, `## RETURN`…" and every mention of a `RETURN` cell in the TDD design and the reverse mutations. Everything else in revision01 stands unchanged. In their place:
+
+- **The `STATEMENT` section of the receipt template** begins with two lines, before any prose:
+  - `return:` with one of `COMPLETED`, `BLOCKED` or `CHANGE_DETECTED`;
+  - `items:` followed by a list of items, which is empty for `COMPLETED`.
+- The template README describes these two lines.
+- `tests/test_state_file_templates.py` pins that the `STATEMENT` section of the template begins with them.
+- The receipt template, filled with a real capture, a `USAGE` cell and a `STATEMENT` that begins with `return: COMPLETED`, passes `evidence_gate.py`.
+- The reverse mutation "remove the `return:` line from the template's `STATEMENT`" replaces any mutation of a `RETURN` cell.
+
