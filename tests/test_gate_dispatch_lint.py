@@ -1,4 +1,4 @@
-"""Behavioural tests for the dispatch_lint gate script (rules R1-R5, exit codes 0/1/3).
+"""Behavioural tests for the dispatch_lint gate script (rules R1-R6, exit codes 0/1/3).
 
 Every fixture is generated in a temporary directory; every expected value is derived
 from the text the fixture wrote.
@@ -19,7 +19,8 @@ sys.path.insert(0, str(_SCRIPTS))
 import dispatch_lint  # noqa: E402
 
 SCRIPT = _SCRIPTS / "dispatch_lint.py"
-LINE_LIMIT = 400
+LINE_LIMIT = 2000
+FULL_WIDTH_SEMICOLON = chr(0xFF1B)
 CHAT_WORDS = ("請", "麻煩", "謝謝")
 TERMINATOR = "。"
 NON_CP950 = chr(0x0E01)  # outside code page 950
@@ -96,23 +97,103 @@ class RuleTests(unittest.TestCase):
         self.assertEqual(rule_ids(dispatch_lint.lint(dispatch(f"note: done{TERMINATOR}"))), ["R4"])
         self.assertEqual(dispatch_lint.lint(dispatch(f'note: "done{TERMINATOR}"')), [])
 
-    def test_r5_line_length_boundary(self) -> None:
+    def test_r6_line_length_boundary(self) -> None:
         prefix = "note: "
         at_limit = prefix + "x" * (LINE_LIMIT - len(prefix))
         over = at_limit + "x"
         self.assertEqual(len(at_limit), LINE_LIMIT)
         self.assertEqual(dispatch_lint.lint(dispatch(at_limit)), [])
         problems = dispatch_lint.lint(dispatch(over))
-        self.assertEqual(rule_ids(problems), ["R5"])
+        self.assertEqual(rule_ids(problems), ["R6"])
         self.assertIn(f"({len(over)})", problems[0])
 
-    def test_r5_applies_to_line_1_of_a_one_line_document(self) -> None:
+    def test_r6_applies_to_line_1_of_a_one_line_document(self) -> None:
         first_line = "ticket: " + "x" * LINE_LIMIT
         for text in (first_line + chr(10), first_line):
             with self.subTest(len(text)):
                 problems = dispatch_lint.lint(text)
-                self.assertEqual(rule_ids(problems), ["R5"])
+                self.assertEqual(rule_ids(problems), ["R6"])
                 self.assertIn("line 1 ", problems[0])
+
+    def test_r6_applies_inside_a_code_fence_too(self) -> None:
+        blob = "x" * (LINE_LIMIT + 1)
+        self.assertEqual(rule_ids(dispatch_lint.lint(dispatch("```", blob, "```"))), ["R6"])
+        self.assertEqual(dispatch_lint.lint(dispatch("```", blob[:-1], "```")), [])
+
+    def test_a_line_between_the_old_and_the_new_limit_is_no_longer_a_problem(self) -> None:
+        line = "note: " + "x" * 600
+        self.assertEqual(dispatch_lint.lint(dispatch(line)), [])
+
+    def test_r5_one_action_passes(self) -> None:
+        self.assertEqual(dispatch_lint.lint(dispatch("note: one action only")), [])
+        self.assertEqual(dispatch_lint.lint(dispatch("note: one action;")), [])
+        self.assertEqual(dispatch_lint.lint(dispatch("note: one action; ")), [])
+
+    def test_r5_two_actions_are_reported_with_the_count_and_line_number(self) -> None:
+        text = dispatch("note: first; second")
+        problems = dispatch_lint.lint(text)
+        self.assertEqual(rule_ids(problems), ["R5"])
+        number = text.splitlines().index("note: first; second") + 1
+        self.assertEqual(problems[0], f"R5 line {number} holds 2 actions; put each on its own list item")
+
+    def test_r5_three_actions_are_counted(self) -> None:
+        problems = dispatch_lint.lint(dispatch("note: a; b; c"))
+        self.assertEqual(rule_ids(problems), ["R5"])
+        self.assertIn("holds 3 actions;", problems[0])
+
+    def test_r5_full_width_separator_counts_with_or_without_a_space(self) -> None:
+        for body in (f"note: first{FULL_WIDTH_SEMICOLON}second", f"note: first{FULL_WIDTH_SEMICOLON} second"):
+            with self.subTest(body):
+                self.assertEqual(rule_ids(dispatch_lint.lint(dispatch(body))), ["R5"])
+
+    def test_r5_separator_inside_backticks_does_not_count(self) -> None:
+        for body in (
+            "note: run `a; b` once",
+            f"note: run `a{FULL_WIDTH_SEMICOLON}b` once",
+            "note: run `a` then `b; c`",
+        ):
+            with self.subTest(body):
+                self.assertEqual(dispatch_lint.lint(dispatch(body)), [])
+
+    def test_r5_an_unbalanced_backtick_does_not_hide_the_rest_of_the_line(self) -> None:
+        self.assertEqual(rule_ids(dispatch_lint.lint(dispatch("note: open ` then a; b"))), ["R5"])
+
+    def test_r5_separator_outside_backticks_still_counts_next_to_a_span(self) -> None:
+        self.assertEqual(rule_ids(dispatch_lint.lint(dispatch("note: `x`; `y`"))), ["R5"])
+
+    def test_r5_separator_in_a_cmd_value_does_not_count(self) -> None:
+        for body in ('cmd: "a; b; c"', "  cmd: a; b", '- cmd: "a; b"', f"cmd: a{FULL_WIDTH_SEMICOLON}b"):
+            with self.subTest(body):
+                self.assertEqual(dispatch_lint.lint(dispatch(body)), [])
+
+    def test_r5_the_cmd_exemption_is_only_for_a_field_named_cmd(self) -> None:
+        for body in ('mycmd: "a; b"', 'note: cmd: a; b', 'cmd2: "a; b"', "- run the cmd: a; b"):
+            with self.subTest(body):
+                self.assertEqual(rule_ids(dispatch_lint.lint(dispatch(body))), ["R5"])
+
+    def test_r5_separator_inside_quotes_counts(self) -> None:
+        for body in ('note: "first; second"', "note: 'first; second'"):
+            with self.subTest(body):
+                self.assertEqual(rule_ids(dispatch_lint.lint(dispatch(body))), ["R5"])
+
+    def test_r5_a_semicolon_without_a_following_space_is_not_a_separator(self) -> None:
+        self.assertEqual(dispatch_lint.lint(dispatch("note: a;b")), [])
+
+    def test_r5_empty_and_blank_lines_are_not_actions(self) -> None:
+        self.assertEqual(dispatch_lint.lint(dispatch("", "     ", "note: x")), [])
+
+    def test_r5_does_not_apply_inside_a_code_fence(self) -> None:
+        self.assertEqual(dispatch_lint.lint(dispatch("```", "a; b; c", "```")), [])
+
+    def test_r5_exits_1_as_a_process_and_names_the_rule(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="dl-") as tmp:
+            path = Path(tmp) / "two.yaml"
+            path.write_text(dispatch("note: first; second"), encoding="utf-8", newline="\n")
+            done = subprocess.run(
+                [sys.executable, "-I", str(SCRIPT), str(path)], capture_output=True, text=True, encoding="utf-8",
+            )
+        self.assertEqual(done.returncode, 1, done.stdout + done.stderr)
+        self.assertIn("R5 line 3 holds 2 actions; put each on its own list item", done.stdout)
 
     def test_independent_violations_are_all_reported(self) -> None:
         text = "not a field\nticket: T\nprose line\n" + f"note: {CHAT_WORDS[0]}{TERMINATOR}\n"
