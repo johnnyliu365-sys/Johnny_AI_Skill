@@ -5,6 +5,10 @@ choice made where the work was silent. Copy this file to the receipt path named 
 state row, repeat the run cell once per command, and replace every placeholder below before any
 gate reads it. A placeholder left in place is a defect.
 
+A `USAGE` cell records the token use of one seat; the control plane appends one per seat after the
+seat returns, and the evidence gate checks its form but never requires it. Repeat the section once
+per seat, and delete it from a receipt that has no seat to record yet.
+
 | Placeholder | Replaced by |
 | --- | --- |
 | `<cell>` | the cell name, the same text in the heading and in the `cell:` line, unique in the receipt |
@@ -14,6 +18,14 @@ gate reads it. A placeholder left in place is a defect.
 | `<capture-path>` | the capture file's path relative to the evidence root |
 | `<exit-codes>` | the exit codes in capture order, comma-separated; each is also a line `exit=N` alone in the capture |
 | `<capture-lines>` | the capture file's lines, byte for byte, with LF line ends only |
+| `<seat>` | the seat id, `seat:` then the profile, a slash and the run id, the same text in the `USAGE` heading and the `seat:` line, unique in the receipt |
+| `<profile>` | the semantic profile reference of the seat, the one `<seat>` names |
+| `<model>` | the model the host reports for the seat |
+| `<input-tokens>` | the seat's input tokens, an integer >= 0 written without a sign or a leading zero |
+| `<cache-write-tokens>` | the seat's cache write tokens, an integer in the same form |
+| `<cache-read-tokens>` | the seat's cache read tokens, an integer in the same form |
+| `<output-tokens>` | the seat's output tokens, an integer in the same form |
+| `<usage-source>` | where the numbers come from, one line, for example `host transcript usage, summed per message` |
 | `<statement-text>` | one or more lines saying what was chosen or left undone; no `capture:`, `exit:` or fenced block |
 
 ## <cell>
@@ -27,6 +39,17 @@ exit: <exit-codes>
 ````
 <capture-lines>
 ````
+
+## USAGE <seat>
+cell: USAGE
+seat: <seat>
+profile: <profile>
+model: <model>
+input_tokens: <input-tokens>
+cache_write_tokens: <cache-write-tokens>
+cache_read_tokens: <cache-read-tokens>
+output_tokens: <output-tokens>
+source: <usage-source>
 
 ## STATEMENT
 cell: STATEMENT

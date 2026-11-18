@@ -27,7 +27,8 @@
    │  └─ <year>/governance/
    │     ├─ integration.json      # from integration.TEMPLATE.json
    │     ├─ MERGE-QUEUE.json      # from MERGE-QUEUE.TEMPLATE.json; lives on the queue branch only
-   │     └─ <receipt>.md          # from RECEIPT.TEMPLATE.md, at the path a ticket's state row names
+   │     ├─ <receipt>.md          # from RECEIPT.TEMPLATE.md, at the path a ticket's state row names
+   │     └─ usage-expectation.json # from usage-expectation.TEMPLATE.json; read by usage_report.py
    ├─ RequirementChangeLog.md
    ├─ WorkProgressReport.md
    └─ security-agent-boundary.md
@@ -45,13 +46,14 @@
 
 ## State files
 
-A project starts with the four files the gates and the integration script read, so the first
+A project starts with the five files the gates and the integration script read, so the first
 ticket needs no hand-made file:
 
 | Template | Copy to | Holds |
 | --- | --- | --- |
 | `modules/tickets/TEMPLATE.md` | `modules/tickets/<feature>/<ticket>.md` | the ticket; its state row reads `<STATE>`; dispatch=sha256:<hex of the dispatch file>; receipt `<path>` |
-| `doc/handoffs/governance/RECEIPT.TEMPLATE.md` | the receipt path the ticket's state row names | one run cell per command, one statement cell per choice made where the work was silent |
+| `doc/handoffs/governance/RECEIPT.TEMPLATE.md` | the receipt path the ticket's state row names | one run cell per command, one statement cell per choice made where the work was silent, one `USAGE` cell per seat |
+| `doc/handoffs/governance/usage-expectation.TEMPLATE.json` | `doc/handoffs/<year>/governance/usage-expectation.json` | the token-use expectation per semantic profile (`output_tokens_max`, `processed_tokens_max`) that `usage_report.py` compares each seat's `USAGE` cell with |
 | `doc/handoffs/governance/integration.TEMPLATE.json` | `doc/handoffs/<year>/governance/integration.json` | the integration configuration: remote, branch, queue branch, queue path, the spec, invariant and CI-status commands, the timeout |
 | `doc/handoffs/governance/MERGE-QUEUE.TEMPLATE.json` | the `queue_path` key of the copied configuration, on the queue branch | the empty merge queue, `{"entries": []}` |
 

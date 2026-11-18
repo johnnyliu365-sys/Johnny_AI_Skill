@@ -31,12 +31,14 @@ TICKET_TEMPLATE = TEMPLATE_DIR / "modules" / "tickets" / "TEMPLATE.md"
 QUEUE_TEMPLATE = GOVERNANCE_DIR / "MERGE-QUEUE.TEMPLATE.json"
 CONFIG_TEMPLATE = GOVERNANCE_DIR / "integration.TEMPLATE.json"
 RECEIPT_TEMPLATE = GOVERNANCE_DIR / "RECEIPT.TEMPLATE.md"
+USAGE_EXPECTATION_TEMPLATE = GOVERNANCE_DIR / "usage-expectation.TEMPLATE.json"
 SCRIPTS_DIR = ROOT / "skills" / "johnny-project-takeover" / "scripts"
 EVIDENCE_GATE = SCRIPTS_DIR / "evidence_gate.py"
+USAGE_REPORT = SCRIPTS_DIR / "usage_report.py"
 INTEGRATE = SCRIPTS_DIR / "integrate.py"
 GITATTRIBUTES = ROOT / ".gitattributes"
 
-NEW_TEMPLATES = (QUEUE_TEMPLATE, CONFIG_TEMPLATE, RECEIPT_TEMPLATE)
+NEW_TEMPLATES = (QUEUE_TEMPLATE, CONFIG_TEMPLATE, RECEIPT_TEMPLATE, USAGE_EXPECTATION_TEMPLATE)
 ALL_TEMPLATES = (*NEW_TEMPLATES, TICKET_TEMPLATE, README)
 
 # ----------------------------------------------------------------------------- expected data
@@ -61,6 +63,18 @@ MAX_PATH_BYTES = 1024
 RUN_FIELDS = ("cell", "candidate", "capture", "exit")
 DIGEST_LABEL = "tool_digest:"
 STATEMENT = "STATEMENT"
+USAGE_CELL = "USAGE"
+USAGE_FIELD_ORDER = (
+    "cell",
+    "seat",
+    "profile",
+    "model",
+    "input_tokens",
+    "cache_write_tokens",
+    "cache_read_tokens",
+    "output_tokens",
+    "source",
+)
 FENCE = "`" * 4
 
 # every placeholder of the receipt template body and the value that replaces it in a filled receipt
@@ -72,6 +86,14 @@ RECEIPT_PLACEHOLDERS = (
     "<capture-path>",
     "<exit-codes>",
     "<capture-lines>",
+    "<seat>",
+    "<profile>",
+    "<model>",
+    "<input-tokens>",
+    "<cache-write-tokens>",
+    "<cache-read-tokens>",
+    "<output-tokens>",
+    "<usage-source>",
     "<statement-text>",
 )
 PLACEHOLDER = re.compile(r"<[a-z0-9-]+>")
@@ -100,8 +122,14 @@ README_FILE_NAMES = (
     "MERGE-QUEUE.TEMPLATE.json",
     "integration.TEMPLATE.json",
     "RECEIPT.TEMPLATE.md",
+    "usage-expectation.TEMPLATE.json",
     "modules/tickets/TEMPLATE.md",
 )
+USAGE_PROFILES = {
+    "implementation-standard": (130000, 24000000),
+    "implementation-elevated": (130000, 24000000),
+    "ticket-review": (110000, 23000000),
+}
 README_QUEUE_BRANCH_SENTENCE = "The queue file lives on the queue branch, not on the integration branch"
 README_STRUCTURE_QUEUE_COMMENT = "lives on the queue branch only"
 README_ROW_QUEUE_PHRASE = "on the queue branch"
@@ -278,10 +306,13 @@ def receipt_problems(text: str) -> list[str]:
     if text.startswith("\ufeff"):
         problems.append("holds a byte order mark")
     _, sections = split_sections(text)
-    runs = [item for item in sections if field_lines(item[1], "cell") != [STATEMENT]]
+    runs = [item for item in sections if field_lines(item[1], "cell") not in ([STATEMENT], [USAGE_CELL])]
     statements = [item for item in sections if field_lines(item[1], "cell") == [STATEMENT]]
+    usages = [item for item in sections if field_lines(item[1], "cell") == [USAGE_CELL]]
     if len(runs) != 1:
         problems.append(f"{len(runs)} run cells, expected 1")
+    if len(usages) != 1:
+        problems.append(f"{len(usages)} usage cells, expected 1")
     if len(statements) != 1:
         problems.append(f"{len(statements)} statement cells, expected 1")
     for heading, lines in runs:
@@ -306,6 +337,14 @@ def receipt_problems(text: str) -> list[str]:
         fences = [line for line in lines if line.rstrip() == FENCE]
         if len(fences) != 2:
             problems.append(f"run cell {heading}: {len(fences)} fence lines, expected 2")
+    for heading, lines in usages:
+        if any(field_lines(lines, name) for name in ("candidate", "capture", "exit", DIGEST_LABEL.rstrip(":"))):
+            problems.append(f"usage {heading} carries a run field")
+        if any(line.rstrip() == FENCE for line in lines):
+            problems.append(f"usage {heading} carries a fence")
+        names = [line.split(":", 1)[0] for line in lines if re.match(r"[a-z_]+:", line)]
+        if names != list(USAGE_FIELD_ORDER):
+            problems.append(f"usage {heading}: fields come as {names}")
     for heading, lines in statements:
         if any(field_lines(lines, name) for name in ("capture", "exit", DIGEST_LABEL.rstrip(":"))):
             problems.append(f"statement {heading} carries a run field")
@@ -404,7 +443,7 @@ class TemplateFileTests(unittest.TestCase):
         self.assertEqual(
             sorted(item.name for item in GOVERNANCE_DIR.iterdir()),
             sorted(item.name for item in NEW_TEMPLATES),
-            "the governance template directory holds exactly the three new templates",
+            "the governance template directory holds exactly the four new templates",
         )
 
     def test_no_template_has_a_byte_order_mark_or_invalid_utf8(self) -> None:
@@ -717,6 +756,21 @@ class ReceiptTemplateTests(unittest.TestCase):
         doubled.insert(index + 1, lines[index + 1])
         self.assertTrue(receipt_problems("\n".join(doubled)))
 
+    def test_a_usage_cell_with_a_run_field_a_missing_or_a_misordered_field_is_a_problem(self) -> None:
+        for extra in ("capture: x", "exit: 0", "candidate: x", f"{FENCE}"):
+            with self.subTest(extra=extra):
+                self.assertTrue(receipt_problems(self.text().replace("model: <model>\n", "model: <model>\n" + extra + "\n")))
+        lines = self.text().split("\n")
+        for name in USAGE_FIELD_ORDER[1:]:
+            with self.subTest(missing=name):
+                kept = [line for line in lines if not line.startswith(f"{name}: ")]
+                self.assertTrue(receipt_problems("\n".join(kept)))
+        swapped = self.text().replace("profile: <profile>\nmodel: <model>\n", "model: <model>\nprofile: <profile>\n")
+        self.assertTrue(receipt_problems(swapped))
+        body = self.text()
+        usage = body[body.index("## USAGE") : body.index("## STATEMENT")]
+        self.assertTrue(receipt_problems(body + "\n" + usage))
+
     def test_a_statement_carrying_run_fields_is_a_problem(self) -> None:
         for extra in ("capture: x", "exit: 0", f"{FENCE}"):
             with self.subTest(extra=extra):
@@ -821,6 +875,21 @@ def fill_receipt(template: str, values: Mapping[str, str]) -> str:
     return body
 
 
+class UsageExpectationTemplateTests(unittest.TestCase):
+    def test_the_expectation_template_holds_the_three_profiles_with_the_proposed_values(self) -> None:
+        value = strict_loads(committed_text(USAGE_EXPECTATION_TEMPLATE))
+        assert isinstance(value, dict)
+        self.assertEqual(set(value), set(USAGE_PROFILES))
+        for profile, (output_max, processed_max) in USAGE_PROFILES.items():
+            with self.subTest(profile=profile):
+                self.assertEqual(value[profile], {"output_tokens_max": output_max, "processed_tokens_max": processed_max})
+
+    def test_the_expectation_template_is_lf_only_with_a_final_newline(self) -> None:
+        data = committed_bytes(USAGE_EXPECTATION_TEMPLATE)
+        self.assertNotIn(b"\r", data)
+        self.assertTrue(data.endswith(b"\n"))
+
+
 @unittest.skipUnless(
     EVIDENCE_GATE.is_file() and git_available(),
     "the evidence gate script or git is absent: the filled receipt cannot be read by it",
@@ -852,6 +921,14 @@ class EvidenceGateCrossCheck(unittest.TestCase):
             "<capture-path>": "C1.txt",
             "<exit-codes>": "0",
             "<capture-lines>": self.capture.rstrip("\n"),
+            "<seat>": "seat:implementation-standard/run-1",
+            "<profile>": "implementation-standard",
+            "<model>": "a-model",
+            "<input-tokens>": "1000",
+            "<cache-write-tokens>": "2000",
+            "<cache-read-tokens>": "3000",
+            "<output-tokens>": "400",
+            "<usage-source>": "host transcript usage, summed per message",
             "<statement-text>": "Nothing was left silent.",
         }
 
@@ -889,6 +966,31 @@ class EvidenceGateCrossCheck(unittest.TestCase):
         self.assertIn("cells=1 defects=0", done.stdout)
         filled = fill_receipt(committed_text(RECEIPT_TEMPLATE), self.values())
         self.assertEqual(PLACEHOLDER.findall(filled), [])
+
+    def test_the_filled_usage_cell_is_read_by_the_gate_and_the_report(self) -> None:
+        done = self.read(self.values())
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        expectation = self.work / "usage-expectation.json"
+        expectation.write_bytes(committed_bytes(USAGE_EXPECTATION_TEMPLATE))
+        report = subprocess.run(
+            [sys.executable, "-I", "-X", "utf8", str(USAGE_REPORT), "--expectation", str(expectation), str(self.evidence / "RETURN.md")],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=clean_environment(),
+        )
+        self.assertEqual(report.returncode, 0, report.stdout + report.stderr)
+        self.assertEqual(
+            report.stdout,
+            "seat:implementation-standard/run-1 implementation-standard output=400 processed=6000 WITHIN\n",
+        )
+
+    def test_a_negative_count_in_the_filled_usage_cell_is_refused_by_the_gate(self) -> None:
+        values = self.values()
+        values["<input-tokens>"] = "-1"
+        done = self.read(values)
+        self.assertEqual(done.returncode, 1, done.stdout + done.stderr)
+        self.assertIn("USAGE_COUNT_INVALID", done.stdout)
 
     def test_the_gate_reads_the_filled_receipt_and_refuses_a_wrong_digest(self) -> None:
         done = self.read(self.values(digest="0" * 64))
