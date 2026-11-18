@@ -85,3 +85,18 @@ The integration clone `C:/Temp/claude/jas-integ-6866` was made from `8b82a2b1`. 
 
 The suite now holds 3140 passed tests, down from 3644 at ticket 72. The tests that ticket 66 retires account for the difference.
 
+## Ticket 70 (2026-11-19)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 70 wave-2 template follow-ups, tracked-path length cap | `548665e5` | revision02 correction review `CONVERGENCE_REVIEW_REQUIRED`, disposition `APPROVED` under rule B (S70-05 to S70-07 carried) | `277aa80b` |
+
+The integration clone `C:/Temp/claude/jas-integ-70` was made from `68ace49c`.
+
+| Check | Result |
+| --- | --- |
+| Full suite under the host lock | 5 failed, 3171 passed, 22 skipped; every failure is a base name, so zero new red |
+| Pushed | `cp/wave3` at `277aa80b`, a fast-forward from `68ace49c` |
+| CI readback | run 44396032169 on `277aa80b`: `test (linux)` and `test (windows)` both `success` |
+| USAGE | `.worktrees/70-templates-out/RETURN.md` (sha256 `de3fb29e913e884922770c02df7d651560acb1d0640ca6ca8fb774d74bf0484c`); E1 gives exit 0 (`cells=6 defects=0`); the implementation seat is `OVER_PROCESSED`, explained in the review record, and the review seat is `WITHIN` |
+

@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/70-templates-out/` / owner implementation seat / worktree `.worktrees/70-templates` / branch `cp/wave3-70-templates` / baseline the wave-3 branch after ticket 69 is integrated |
 | 實作語言 | Markdown templates; Python 3.11 for the tests（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（candidate `548665e5`; correction review `CONVERGENCE_REVIEW_REQUIRED`, disposition APPROVED under rule B; carried S70-05,S70-06,S70-07） |
+| 狀態 | `INTEGRATED`（candidate `548665e5` at `277aa80b`; CI run 44396032169 green; S70-05 to S70-07 carried） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/70-templates` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/70-templates-review` |
