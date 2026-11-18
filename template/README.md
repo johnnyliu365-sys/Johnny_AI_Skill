@@ -67,7 +67,8 @@ finite Acceptance Closure Set), `Strict checker` (the command and version), `Pro
 reference and the resource-plan reference) and `XSS classification` (the classification and the exact matrix
 reference, or the reason it does not apply). Its state row lists `INTEGRATED`, which is set when the integration script has
 landed the candidate and its readback matches; `DONE` is for a ticket that closes without an integration candidate. The
-receipt part holds one receipt per closure revision, in revision order, each as receipt `<path>`.
+receipt part holds one receipt per closure revision, in revision order, written as receipt `<path>`; receipt `<path>`,
+separated by `; ` like the other parts of the row.
 
 The `STATEMENT` cell of the receipt template begins with two lines, before any prose: `return:` with one of `COMPLETED`,
 `BLOCKED` or `CHANGE_DETECTED`, and `items:` followed by a list of items, which is empty for `COMPLETED`. It is a line pair

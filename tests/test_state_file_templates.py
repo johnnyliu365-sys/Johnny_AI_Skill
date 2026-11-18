@@ -122,8 +122,9 @@ ALLOWED_STATES = frozenset(
 INTEGRATED_SENTENCE = "`INTEGRATED` is set when the integration script has landed the candidate and its readback matches."
 DONE_SENTENCE = "`DONE` is set for a ticket that closes without an integration candidate."
 MULTI_RECEIPT_SENTENCE = (
-    "The receipt part holds one receipt per closure revision, in revision order, "
-    "each as receipt `<repository-relative receipt path>`."
+    "The receipt part holds one receipt per closure revision, in revision order; several receipts are written as "
+    "receipt `<repository-relative receipt path>`; receipt `<repository-relative receipt path>`, "
+    "separated by `; `, like the other parts of the row."
 )
 # the four rows ticket 70 added: label, then the placeholder or reason cell it carries
 NEW_TICKET_ROWS = (
@@ -1049,6 +1050,7 @@ class ReadmeTests(unittest.TestCase):
             with self.subTest(state=state):
                 self.assertIn(f"`{state}`", text)
         self.assertIn("one receipt per closure revision, in revision order", flat)
+        self.assertIn("separated by `; `", flat)
         for value in RETURN_VALUES:
             with self.subTest(value=value):
                 self.assertIn(f"`{value}`", text)
