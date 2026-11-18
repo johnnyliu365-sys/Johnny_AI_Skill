@@ -89,7 +89,6 @@ _REFERENCES_OUTSIDE_PAYLOAD: Final[dict[str, str]] = {
     "doc/runbooks/dispatch-model-profile.md": "DEVELOPMENT_ONLY",
     "johnny-install.cmd": "DEVELOPMENT_ONLY",
     "modules/element/": "TARGET_OWNED",
-    "modules/spec/context-load-telemetry.md": "DEVELOPMENT_ONLY",
 }
 
 # Path-shaped tokens that name no repository path at all.  Kept explicit so that a

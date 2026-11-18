@@ -47,11 +47,10 @@ Windows runner 5 rows, Linux runner 228 rows. The earlier counts, 47 and 234, we
 
 ### Host failures that do not fail on a runner
 
-These four failed in the base capture (`C:/Temp/claude/jas48_F1_base.txt`, a full run in the clone `C:/Temp/claude/jas48_base`). None of them failed on the host at the candidate, in either locked full run, so they belong to that base capture and not to the current host. They pass on both runners.
+These two failed in the base capture (`C:/Temp/claude/jas48_F1_base.txt`, a full run in the clone `C:/Temp/claude/jas48_base`). None of them failed on the host at the candidate, in either locked full run, so they belong to that base capture and not to the current host. They pass on both runners.
 
 - `tests/test_atomic_conditional_replace_capability.py::test_acr6_committed_candidate_diff_and_forbidden_paths`: in the base clone `git checkout --detach 6953f1e49bc60e66a5f8a2ce9cfd879f0d606ece` (the ticket authority baseline) failed, so the disposable Git fixture could not be set up (`RuntimeError: disposable Git fixture setup failed`); the runners clone with full history and the baseline exists there.
 - `tests/test_plugin_publication.py::PinnedTreeBindingTests::test_pinning_the_root_commit_is_rejected`: in the base clone `require_existing_commit` raised `PinnedCommitError: the pinned sha names no commit in this repository` for the root commit `fcb4604572e7a325b970c19303829c42226802ed`, which that clone does not hold; the runners fetch full history (`fetch-depth: 0`) and hold it.
-- `tests/test_workflow_router.py::WorkflowRouterTests::test_agents_mcp_and_temporal_adapters_load_without_external_services` and `...::test_temporal_approval_signal_requires_matching_authority_state`: in the base capture Windows application control blocked `temporal_sdk_bridge` (`DLL load failed ... blocked`); the runners load it.
 
 ### Windows runner failures that do not fail on the host
 

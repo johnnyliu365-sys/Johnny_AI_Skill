@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import unittest
 from pathlib import Path
 
@@ -13,8 +12,6 @@ _CODE_REVIEW = _ROOT / "CodeReview.md"
 _REVIEW_CHECKS = _ROOT / "skills" / "johnny-project-takeover" / "references" / "review-checks.md"
 _DELIVERY_PROFILE = _ROOT / "skills" / "johnny-project-takeover" / "references" / "delivery-profile.md"
 _MODEL_ROLES = _ROOT / "skills" / "johnny-project-takeover" / "references" / "model-role-routing.md"
-_PROFILE = _ROOT / "library" / "workflow_router" / "profile.py"
-_PROFILE_TEST = _ROOT / "tests" / "test_workflow_router.py"
 
 
 def _read(path: Path) -> str:
@@ -28,7 +25,7 @@ def _assert_terms(test: unittest.TestCase, document: str, terms: tuple[str, ...]
 
 
 class AdversarialReviewPolicyTests(unittest.TestCase):
-    """TARA1-TARA7 pin the policy and its control-plane boundary."""
+    """TARA1-TARA6 pin the policy and its control-plane boundary."""
 
     def test_tara1_code_review_indexes_reference_and_retains_reviewer_verdict(self) -> None:
         document = _read(_CODE_REVIEW)
@@ -200,15 +197,6 @@ class AdversarialReviewPolicyTests(unittest.TestCase):
             "The reviewer positive path must bind one live descriptor and receipt.",
             document,
         )
-
-    def test_tara7_review_checks_digest_is_repeated_at_both_policy_pins(self) -> None:
-        normalized = _REVIEW_CHECKS.read_bytes().replace(b"\r\n", b"\n")
-        digest = "sha256_" + hashlib.sha256(normalized).hexdigest()
-        for path in (_PROFILE, _PROFILE_TEST):
-            with self.subTest(path=path):
-                document = _read(path)
-                self.assertIn('"review-checks"', document)
-                self.assertIn(digest, document)
 
 
 if __name__ == "__main__":

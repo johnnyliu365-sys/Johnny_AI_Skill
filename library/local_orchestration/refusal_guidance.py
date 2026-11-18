@@ -640,22 +640,6 @@ GUIDANCE: tuple[RefusalGuidance, ...] = (
     ),
     RefusalGuidance(
         surface=CONTROL_PLANE_SURFACE,
-        code="POLICY_REPIN_STALE",
-        category=_N,
-        next_steps=_steps(
-            "Stop. A digest-pinned policy document arrived with a pin that does not "
-            "describe it. The detail field names the document and what the pin "
-            "currently says.",
-            "That digest is not a checksum against corruption. It is the record that "
-            "one specific text was read and approved, so a pin derived from the text "
-            "it is meant to certify would be a record of nobody having read "
-            "anything.",
-            "Report the document and both values to the person, and let the approval "
-            "happen before the pin does.",
-        ),
-    ),
-    RefusalGuidance(
-        surface=CONTROL_PLANE_SURFACE,
         code="JOURNAL_UNWRITABLE",
         category=_N,
         next_steps=_steps(

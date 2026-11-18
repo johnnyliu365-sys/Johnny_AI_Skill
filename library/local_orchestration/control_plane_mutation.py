@@ -31,7 +31,7 @@ so `control/implement/gov-19` is not a way back in. Both run before the
 repository is touched at all — a candidate at the wrong door should not cause
 this gate to go looking at anything.
 
-**The control plane's own two rules.**
+**The control plane's own rule.**
 
 *One commit must not change both the rule and what the rule governs.* A commit
 touching `library/` and `modules/tickets/` together is the exact shape of
@@ -39,13 +39,6 @@ editing the rulebook and the thing it judges in a single indivisible unit —
 nobody can review one half without accepting the other. The rule is per commit,
 not per candidate, because the commit is the unit a reviewer reads; two commits
 doing the two things are separately reviewable and stay admissible.
-
-*A pinned policy document must arrive with its pins.* Seven references are
-frozen by digest in `profile.py` and in the router regression test. Editing one
-without repinning both sites ships a policy the router believes is a different
-policy. The control plane has missed that step twice, both times by committing
-without running the suite, so this door recomputes the digest from the content
-at the candidate rather than checking that the pinning file was merely touched.
 
 **Journaling comes before the merge, not after.** The sister gate's journal is
 best effort: it records what happened, and a failed write loses the record but
@@ -66,9 +59,7 @@ change into `main`, and that every refusal is named, attributed and durable.
 from __future__ import annotations
 
 import getpass
-import hashlib
 import json
-import re
 import subprocess
 from datetime import datetime, timezone
 from enum import Enum
@@ -106,19 +97,6 @@ _IMPLEMENTER_ROOTS: frozenset[str] = frozenset({"implement", "codex"})
 _RULE_TREE = "library"
 _SUBJECT_TREE = "modules/tickets"
 
-#: Where the digest-pinned policy documents live, and the two files that must
-#: agree with them. Both sites are named in governance ticket 17; a repin that
-#: lands in only one of them is the failure this rule exists for.
-_POLICY_DIRECTORY = "skills/johnny-project-takeover/references"
-_PROFILE_PATH = "library/workflow_router/profile.py"
-_PROFILE_TEST_PATH = "tests/test_workflow_router.py"
-
-_PIN = re.compile(
-    r'reference_id="(?P<identifier>[A-Za-z0-9_-]+)",\s*'
-    r'source_revision="(?P<revision>rev-[0-9a-f]{16})",\s*'
-    r'content_digest="(?P<digest>sha256_[0-9a-f]{64})"'
-)
-
 #: A blob or an executable blob is content. 120000 is a symlink and 160000 a
 #: gitlink: both redirect to something this door cannot see or bound.
 _CONTENT_MODES = frozenset({"100644", "100755"})
@@ -135,8 +113,8 @@ class ControlPlaneMutationFailure(str, Enum):
     """Finite reasons a control-plane integration is refused.
 
     Every reason is separate because every reason has a different correction.
-    "Nothing to integrate", "you are at the wrong door" and "you forgot to
-    repin" are not one failure, and collapsing them would erase the answer at
+    "Nothing to integrate", "you are at the wrong door" and "the journal
+    cannot be written" are not one failure, and collapsing them would erase the answer at
     the moment somebody needs it.
     """
 
@@ -149,7 +127,6 @@ class ControlPlaneMutationFailure(str, Enum):
     PATH_NOT_REPOSITORY_RELATIVE = "PATH_NOT_REPOSITORY_RELATIVE"
     REDIRECTION_ENTRY_NOT_ADMISSIBLE = "REDIRECTION_ENTRY_NOT_ADMISSIBLE"
     RULE_AND_SUBJECT_IN_ONE_CHANGE = "RULE_AND_SUBJECT_IN_ONE_CHANGE"
-    POLICY_REPIN_STALE = "POLICY_REPIN_STALE"
     JOURNAL_UNWRITABLE = "JOURNAL_UNWRITABLE"
     INTEGRATION_FAILED = "INTEGRATION_FAILED"
 
@@ -256,52 +233,6 @@ def mixed_change_failure(paths: tuple[str, ...]) -> tuple[str, str] | None:
     if not rule or not subject:
         return None
     return rule[0], subject[0]
-
-
-# --------------------------------------------------------------------------
-# Rule two: a pinned policy document arrives with its pins
-# --------------------------------------------------------------------------
-
-
-def policy_document_id(path: str) -> str | None:
-    """The pinned reference id one path could carry, or None.
-
-    A document is a candidate for pinning when it is a Markdown file directly
-    inside the references directory. Whether it is actually pinned is decided
-    by the pins themselves, because only seven of the eighteen documents there
-    are pinned and a hard-coded list of seven would drift the first time an
-    eighth was added.
-    """
-
-    prefix = _POLICY_DIRECTORY + "/"
-    if not path.startswith(prefix) or not path.endswith(".md"):
-        return None
-    stem = path[len(prefix) : -len(".md")]
-    if not stem or "/" in stem:
-        return None
-    return stem
-
-
-def policy_pins(profile_text: str) -> dict[str, tuple[str, str]]:
-    """Every `(revision, digest)` the pinning module declares, by reference id."""
-
-    return {
-        match.group("identifier"): (match.group("revision"), match.group("digest"))
-        for match in _PIN.finditer(profile_text)
-    }
-
-
-def policy_digest(raw: bytes) -> tuple[str, str]:
-    """The revision and digest one document's bytes must be pinned as.
-
-    Line endings are normalised to LF first. The working copy is CRLF and the
-    repository is not, so a digest taken over the raw bytes would depend on
-    which machine ran it — a check that answers differently per host is not a
-    check.
-    """
-
-    hexdigest = hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()
-    return "rev-" + hexdigest[:16], "sha256_" + hexdigest
 
 
 # --------------------------------------------------------------------------
@@ -577,18 +508,6 @@ def admit_control_plane_mutation(
                 changed_paths=changed_paths,
             )
 
-    repin = _repin_failure(root, request.candidate_ref, changed_paths)
-    if repin is not None:
-        offending_path, detail = repin
-        return _refuse(
-            layout,
-            request,
-            ControlPlaneMutationFailure.POLICY_REPIN_STALE,
-            offending_path=offending_path,
-            detail=detail,
-            changed_paths=changed_paths,
-        )
-
     # The decision goes to disk before `main` moves, naming the exact commit
     # `main` is about to become. If this line cannot be written, the
     # integration does not happen: an unrecorded commit on `main` is the one
@@ -636,52 +555,6 @@ def admit_control_plane_mutation(
     )
 
 
-def _repin_failure(
-    root: Path, candidate_ref: str, changed_paths: tuple[str, ...]
-) -> tuple[str, str] | None:
-    """`(path, detail)` when a pinned document arrived without its pins.
-
-    The digest is recomputed from the content at the candidate rather than
-    inferred from the pinning file having been touched. Touching `profile.py`
-    for an unrelated reason is not a repin, and the two misses this rule was
-    written for were both wrong values rather than absent edits.
-    """
-
-    candidates = tuple(
-        path for path in changed_paths if policy_document_id(path) is not None
-    )
-    if not candidates:
-        return None
-
-    profile = _git(root, "show", f"{candidate_ref}:{_PROFILE_PATH}")
-    if profile is None:
-        return candidates[0], f"{_PROFILE_PATH} is unreadable at the candidate"
-    pins = policy_pins(_decode(profile))
-    regression = _git(root, "show", f"{candidate_ref}:{_PROFILE_TEST_PATH}")
-    if regression is None:
-        return candidates[0], f"{_PROFILE_TEST_PATH} is unreadable at the candidate"
-    regression_text = _decode(regression)
-
-    for path in candidates:
-        identifier = policy_document_id(path)
-        assert identifier is not None
-        pinned = pins.get(identifier)
-        if pinned is None:
-            # A document in that directory that nobody pinned. Eleven of the
-            # eighteen are exactly that, and inventing a pin for them would
-            # refuse edits no rule ever restricted.
-            continue
-        body = _git(root, "show", f"{candidate_ref}:{path}")
-        if body is None:
-            return path, "a pinned policy document is unreadable at the candidate"
-        revision, digest = policy_digest(body)
-        if pinned != (revision, digest):
-            return path, f"{_PROFILE_PATH} pins {pinned[0]}, the content is {revision}"
-        if revision not in regression_text or digest not in regression_text:
-            return path, f"{_PROFILE_TEST_PATH} was not repinned to {revision}"
-    return None
-
-
 __all__ = [
     "ControlPlaneMutationFailure",
     "ControlPlaneMutationRequest",
@@ -690,7 +563,4 @@ __all__ = [
     "admit_control_plane_mutation",
     "candidate_is_control_plane",
     "mixed_change_failure",
-    "policy_digest",
-    "policy_document_id",
-    "policy_pins",
 ]

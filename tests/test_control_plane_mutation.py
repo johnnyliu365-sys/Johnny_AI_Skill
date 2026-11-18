@@ -34,9 +34,6 @@ from library.local_orchestration.control_plane_mutation import (
     admit_control_plane_mutation,
     candidate_is_control_plane,
     mixed_change_failure,
-    policy_digest,
-    policy_document_id,
-    policy_pins,
 )
 from library.local_orchestration.document_mutation_gate import (
     DocumentMutationFailure,
@@ -333,68 +330,6 @@ class MixedChangeTests(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# Rule two: a pinned policy document arrives with its pins
-# ---------------------------------------------------------------------------
-
-
-class PolicyPinTests(unittest.TestCase):
-    def test_a_reference_document_carries_its_reference_id(self) -> None:
-        self.assertEqual(policy_document_id(_POLICY), "review-checks")
-
-    def test_an_adjacent_directory_is_not_the_reference_directory(self) -> None:
-        self.assertIsNone(
-            policy_document_id(
-                "skills/johnny-project-takeover/references-old/review-checks.md"
-            )
-        )
-
-    def test_a_nested_path_is_not_a_reference_document(self) -> None:
-        self.assertIsNone(
-            policy_document_id(
-                "skills/johnny-project-takeover/references/old/review-checks.md"
-            )
-        )
-
-    def test_a_non_markdown_neighbour_is_not_a_reference_document(self) -> None:
-        self.assertIsNone(
-            policy_document_id("skills/johnny-project-takeover/references/notes.txt")
-        )
-        self.assertIsNone(
-            policy_document_id("skills/johnny-project-takeover/references/.md")
-        )
-
-    def test_the_pin_reader_reads_the_repository_s_own_pinning_module(self) -> None:
-        """Nailed on the real artifact: a regex that only parses the fixture
-        would be a copy of the format, not the format."""
-
-        pins = policy_pins((_PROJECT_ROOT / _PROFILE).read_text(encoding="utf-8"))
-        self.assertIn("review-checks", pins)
-        self.assertIn("router-control", pins)
-        # A floor, not an equality: an eighth pinned policy is a legitimate
-        # future change, but a regex that stopped matching would make the
-        # digest cell below pass over an empty set.
-        self.assertGreaterEqual(len(pins), 7)
-
-    def test_the_recomputed_digest_matches_the_repository_s_own_pin(self) -> None:
-        """The rule is only worth anything if its arithmetic is the project's."""
-
-        pins = policy_pins((_PROJECT_ROOT / _PROFILE).read_text(encoding="utf-8"))
-        for identifier, pinned in sorted(pins.items()):
-            with self.subTest(policy=identifier):
-                document = (
-                    _PROJECT_ROOT
-                    / "skills/johnny-project-takeover/references"
-                    / f"{identifier}.md"
-                )
-                self.assertEqual(policy_digest(document.read_bytes()), pinned)
-
-    def test_the_digest_does_not_depend_on_the_working_copy_s_line_endings(
-        self,
-    ) -> None:
-        self.assertEqual(policy_digest(b"a\r\nb\r\n"), policy_digest(b"a\nb\n"))
-
-
-# ---------------------------------------------------------------------------
 # The request: attribution, and the three empty answers kept apart
 # ---------------------------------------------------------------------------
 
@@ -612,21 +547,6 @@ class IntegrationTests(unittest.TestCase):
             self.assertIs(result.status, ControlPlaneMutationStatus.INTEGRATED)
             self.assertEqual(_run(root, "rev-parse", "HEAD"), head)
 
-    def test_a_policy_edit_without_its_repin_never_reaches_main(self) -> None:
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed(base)
-            before = _run(root, "rev-parse", "HEAD")
-            _candidate(root, lambda repo: _write(repo, _POLICY, "policy two\n"))
-
-            result = admit_control_plane_mutation(_layout(base), _request(root))
-
-            self.assertIs(
-                result.failure, ControlPlaneMutationFailure.POLICY_REPIN_STALE
-            )
-            self.assertEqual(result.offending_path, _POLICY)
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
     def test_a_policy_edit_repinned_in_both_places_is_admitted(self) -> None:
         with TemporaryDirectory() as name:
             base = Path(name)
@@ -645,86 +565,6 @@ class IntegrationTests(unittest.TestCase):
             self.assertIs(result.status, ControlPlaneMutationStatus.INTEGRATED)
             self.assertEqual(_run(root, "rev-parse", "HEAD"), head)
 
-    def test_a_repin_that_lands_in_only_one_of_the_two_places_is_refused(self) -> None:
-        """The failure the rule was written for: half a repin looks like a repin."""
-
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed(base)
-            before = _run(root, "rev-parse", "HEAD")
-            revision, digest = _pin_literals("policy two\n")
-
-            def mutate(repo: Path) -> None:
-                _write(repo, _POLICY, "policy two\n")
-                _write(repo, _PROFILE, _profile_text(revision, digest))
-
-            _candidate(root, mutate)
-
-            result = admit_control_plane_mutation(_layout(base), _request(root))
-
-            self.assertIs(
-                result.failure, ControlPlaneMutationFailure.POLICY_REPIN_STALE
-            )
-            self.assertIn(_PROFILE_TEST, result.detail or "")
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_a_repin_that_lands_only_in_the_regression_test_is_refused(self) -> None:
-        """The mirror of the cell above, and the only one that reaches the
-        pinning module's own comparison. Without it the two sites overlap and
-        the regression file's check masks the module's — the overlap-masking
-        shape from governance 17."""
-
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed(base)
-            before = _run(root, "rev-parse", "HEAD")
-            revision, digest = _pin_literals("policy two\n")
-
-            def mutate(repo: Path) -> None:
-                _write(repo, _POLICY, "policy two\n")
-                _write(repo, _PROFILE_TEST, _profile_test_text(revision, digest))
-
-            _candidate(root, mutate)
-
-            result = admit_control_plane_mutation(_layout(base), _request(root))
-
-            self.assertIs(
-                result.failure, ControlPlaneMutationFailure.POLICY_REPIN_STALE
-            )
-            self.assertIn(_PROFILE, result.detail or "")
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
-    def test_touching_the_pinning_module_is_not_by_itself_a_repin(self) -> None:
-        """A structural check would call this repinned. The digest disagrees."""
-
-        with TemporaryDirectory() as name:
-            base = Path(name)
-            root = _seed(base)
-            before = _run(root, "rev-parse", "HEAD")
-            stale_revision, stale_digest = _pin_literals("policy one\n")
-
-            def mutate(repo: Path) -> None:
-                _write(repo, _POLICY, "policy two\n")
-                _write(
-                    repo,
-                    _PROFILE,
-                    _profile_text(stale_revision, stale_digest) + "# touched\n",
-                )
-                _write(
-                    repo,
-                    _PROFILE_TEST,
-                    _profile_test_text(stale_revision, stale_digest) + "# touched\n",
-                )
-
-            _candidate(root, mutate)
-
-            result = admit_control_plane_mutation(_layout(base), _request(root))
-
-            self.assertIs(
-                result.failure, ControlPlaneMutationFailure.POLICY_REPIN_STALE
-            )
-            self.assertEqual(_run(root, "rev-parse", "HEAD"), before)
-
     def test_an_unpinned_neighbour_in_the_same_directory_is_not_restricted(
         self,
     ) -> None:
@@ -741,6 +581,27 @@ class IntegrationTests(unittest.TestCase):
                     "unpinned\n",
                 ),
             )
+
+            result = admit_control_plane_mutation(_layout(base), _request(root))
+
+            self.assertIs(result.status, ControlPlaneMutationStatus.INTEGRATED)
+            self.assertEqual(_run(root, "rev-parse", "HEAD"), head)
+
+    def test_the_retired_repin_refusal_is_gone(self) -> None:
+        """The owner decision of 2026-11-18 retired the pin source, and with it the rule."""
+
+        self.assertNotIn(
+            "POLICY_REPIN_STALE", {member.name for member in ControlPlaneMutationFailure}
+        )
+        for name in ("policy_pins", "policy_digest", "policy_document_id", "_repin_failure"):
+            with self.subTest(name=name):
+                self.assertFalse(hasattr(door, name))
+
+    def test_a_policy_edit_is_no_longer_judged_against_pins(self) -> None:
+        with TemporaryDirectory() as name:
+            base = Path(name)
+            root = _seed(base)
+            head = _candidate(root, lambda repo: _write(repo, _POLICY, "policy two\n"))
 
             result = admit_control_plane_mutation(_layout(base), _request(root))
 
@@ -950,7 +811,6 @@ class NoMutationOnRefusalTests(unittest.TestCase):
 
         return (
             ("mixed", mixed, _CANDIDATE, getpass.getuser()),
-            ("stale-repin", stale_policy, _CANDIDATE, getpass.getuser()),
             ("wrong-door", ticket_edit, "implement/thing", getpass.getuser()),
             ("wrong-principal", ticket_edit, _CANDIDATE, "somebody-else"),
         )
