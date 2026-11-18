@@ -773,7 +773,8 @@ class ReceiptTemplateTests(unittest.TestCase):
         for name in RUN_FIELDS:
             with self.subTest(name=name):
                 lines = self.text().split("\n")
-                index = next(i for i, line in enumerate(lines) if line.startswith(f"{name}:"))
+                first_section = next(i for i, line in enumerate(lines) if line.startswith("## "))
+                index = next(i for i, line in enumerate(lines) if i > first_section and line.startswith(f"{name}:"))
                 lines.insert(index, lines[index])
                 self.assertTrue(receipt_problems("\n".join(lines)))
         body = self.text()
