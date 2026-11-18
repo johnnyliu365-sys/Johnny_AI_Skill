@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/65-retire-engine-and-private-router-out/` / owner implementation seat / worktree `.worktrees/65-retire-engine-and-private-router` / branch `cp/wave3-65-retire-engine` / baseline the wave-3 branch at dispatch |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/65-retire-engine-and-private-router-out/` / owner implementation seat / worktree `.worktrees/65-retire-engine-and-private-router` / branch `cp/wave3-65-retire-engine` / baseline the wave-3 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED` |
+| 狀態 | `IN_PROGRESS`（revision02 after the implementation seat returned `CHANGE_DETECTED` on 2026-11-18: the policy-pin repin rule reads `profile.py`） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/65-retire-engine-and-private-router` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/65-retire-engine-and-private-router-review` |
@@ -173,3 +173,22 @@ A module or test outside the delete list that turns out to depend only on remove
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Revision02 (2026-11-18, after `CHANGE_DETECTED`)
+
+The implementation seat stopped before committing. `library/local_orchestration/control_plane_mutation.py` is outside the delete list, and its repin rule (`_repin_failure`, refusal `POLICY_REPIN_STALE`) reads `library/workflow_router/profile.py` and `tests/test_workflow_router.py` at the candidate. The rule makes sure an edit to a digest-pinned policy document lands together with its pins in both files.
+
+The owner decision of 2026-11-18 retires `profile.py`, including its seven reference-digest pins. After this ticket no pin exists, so the rule has nothing left to govern, and it would refuse every control-plane change to a pinned document as "unreadable at the candidate". Giving it a new pin source would be a new requirement, and no owner decision asks for one. The rule is therefore retired together with the pins.
+
+Added to this ticket, inside the existing boundary (`library/local_orchestration/` and `tests/`):
+
+- **`control_plane_mutation.py`:**
+  - drops the repin step from `admit_control_plane_mutation`;
+  - drops `_repin_failure`, `policy_pins`, `policy_digest` and `policy_document_id`, with the constants and the pattern that only they use;
+  - drops the enum member `POLICY_REPIN_STALE`.
+  - Every other step of the module is unchanged: the control-plane namespace, the mixed rule-and-subject refusal, content modes, the journal and the rest.
+- **`refusal_guidance.py`** drops the `POLICY_REPIN_STALE` entry.
+- **`tests/test_control_plane_mutation.py`** drops `PolicyPinTests` and every test that expects `POLICY_REPIN_STALE`. Every other test of the file passes unchanged.
+- **`tests/test_refusal_guidance.py`** drops the two `POLICY_REPIN_STALE` rows, and its counts follow.
+- **The STATEMENT** names each dropped test and the reason, which is that the pin source was retired by the owner decision of 2026-11-18.
+- **One added reverse mutation** turns a named test red and is then restored: re-add `POLICY_REPIN_STALE` to the enum. The guard that turns red is a test asserting that the member is gone, in `tests/test_control_plane_mutation.py`.
