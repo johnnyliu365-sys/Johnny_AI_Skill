@@ -106,3 +106,108 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/65-rev02-initial
 reviewed_at: 2026-11-18
 ```
+
+## Revision02 correction review
+
+**Verdict: `APPROVED`.** Correction 1 (`b185dea9`) closes S65-01, S65-02 and S65-04 as specified.
+
+- **S65-01.** `WayfinderGapDecision` now carries `next_stage: ProcessStage | None` and `expected_return_events: tuple[RouterEventKind, ...]`, both typed from `contracts.py`. W5 and W6 of the deleted file are carried assertion by assertion, and the values match the retired profile exactly. My four counter-mutations on the two new fields all turn red.
+- **S65-02.** The removed-module guard now accepts only a `ModuleNotFoundError` that names the module or one of its removed parents. My CM7 rerun, which was zero-red at the initial review, is now red for the intended reason. A new door, CM12, which leaves a namespace parent with a restored submodule, is also red.
+- **S65-04.** The `stale_policy` helper is gone. M1 now records each pytest command and keeps pytest's default headers and tracebacks.
+
+The correction touches only three files: the Wayfinder module, its test, and the control-plane mutation test. All three are inside the boundary. By the coordinator's rule, I did not rerun the full suite; the seat's locked F1 at the candidate and CI run 44329348013 cover it. P9 and E1 pass when I rerun them.
+
+Three findings stay open, and none blocks approval under rule B:
+- **S65-03** is out-of-scope hardening, carried to a follow-up.
+- **S65-05** is the control plane's dispatch-identity defect. It has no effect on exit codes, safety, scope or P0.
+- **S65-06** is new hardening: after round two, the owner-input decision still lists `WAYFINDER_INFO_REQUIRED` as an expected return, even though `may_ask_again` is false.
+
+No implementation or evidence defect remains open.
+
+| Field | Value |
+| --- | --- |
+| Ticket | Unchanged: closure revision02 at `e581b037` |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-65_dispatch.yaml`, unchanged since 21:35 and still naming revision01 (S65-05). The coordinator relayed the correction scope |
+| Candidate | `b185dea97b0b4035eacbee9dc5c4dbcbed53899d` on `cp/wave3-65-retire-engine`. `git ls-remote origin` gives the same sha. It is one additive commit whose parent is `1e9f73da`; there was no amend or force |
+| Commit identity | Author and committer are `Johnny Liu <johnny.liu365@gmail.com>`. The trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` matches the seat model in the STATEMENT |
+| Changed paths (`1e9f73da..b185dea9`) | `library/workflow_router/wayfinder_gap.py` (+26/−3), `tests/test_wayfinder_gap.py` (+41/−1), `tests/test_control_plane_mutation.py` (−3). All are inside `create`/`modify`. Nothing forbidden is touched, and no ticket-66 file |
+| Review worktree | `.worktrees/65-retire-engine-and-private-router-review`, detached at `b185dea9`. Porcelain, including ignored files, was empty before and after |
+| Receipt | `.worktrees/65-retire-engine-and-private-router-out/RETURN.md` (69131 bytes, LF, 0 CR). Its candidate is `b185dea9`, as is every cell's |
+| CI run | 44329348013, event `push`, `headSha` = candidate. `test (linux)` success, `test (windows)` success. 0 `UNREGISTERED_FAILURE` and 0 `REGISTERED_NOT_FAILING` lines. Passed counts are 3279 on Linux and 3539 on Windows, each 2 more than at `1e9f73da` (the two new tests). Failures are unchanged: Linux 345 + 2 errors, Windows 5 |
+| References applied | As in the initial review, plus `CodeReview.md` §5 rule B for this correction review |
+| XSS / secrets / Agent control / profile / POC | Not applicable, for the same reasons as the initial review |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | Correction touches only boundary paths | PASS | `git diff --stat 1e9f73da b185dea9` lists exactly the three files above. Each is under `library/workflow_router/` or `tests/`. The full suite was not rerun: the change is limited to the Wayfinder module, its test and the control-plane mutation test, which is the coordinator's no-rerun case |
+| 2 | S65-01: W5 of `c5848465:tests/test_wayfinder_info_gap.py:154-178`, case by case | PASS | `decision.outcome is SUSPEND`, `continuation is WAIT_FOR_HUMAN` and `wait_reason is WAYFINDER_INPUT_GAP` are carried in `test_a_blocking_gap_is_a_declared_owner_wait`. `rule.requires_human_approval` is implied by `WAIT_FOR_HUMAN`. `rule.next_stage is None` is now `assertIsNone(decision.next_stage)` in `test_a_blocking_gap_leaves_the_stage_unchanged`, for one and for two rounds. That test also asserts that the expected return is `(OWNER_INPUT_PROVIDED,)`, and this equals the retired profile's `_PolicyRoute(WAYFINDER, WAYFINDER_INFO_REQUIRED, …, (OWNER_INPUT_PROVIDED,))` (`c5848465:library/workflow_router/profile.py:266-272`) |
+| 3 | S65-01: W6 of `c5848465:…:180-210`, case by case | PASS | `outcome is RETRY` and `continuation is AUTO_CONTINUE` are carried in `test_owner_input_reenters_wayfinder`. `rule.next_stage is WAYFINDER` and `decision.next_stage is WAYFINDER` become `assertIs(decision.next_stage, ProcessStage.WAYFINDER)`. `rule.expected_return.router_events == (WAYFINDER_GO, WAYFINDER_NO_GO, WAYFINDER_INFO_REQUIRED)` becomes an `assertEqual` on `expected_return_events`, with the same three in the same order. Both are in `test_owner_input_reenters_exactly_the_wayfinder_stage`, for one and for two rounds. The values equal the profile route at `profile.py:274-285` and the transition rule at `:645-657` (`next_stage=ProcessStage.WAYFINDER`). The rule and the decision collapse into one function result, which leaves nothing uncarried |
+| 4 | S65-02 | PASS | `tests/test_wayfinder_gap.py:361-374` asserts `caught.exception.name` is in {the module, each removed parent package}. CM7r and CM12 are red (table below) |
+| 5 | S65-03 | CARRIED | STATEMENT item 0 records it as out-of-scope hardening, with its reason |
+| 6 | S65-04 | PASS | `grep -c stale_policy tests/test_control_plane_mutation.py` gives 0. `M1.txt` has a `--- command: python -m pytest <file> -q -rfEs -p no:cacheprovider` line for each mutation, and the full per-test section headers and traceback bodies. The seat adds M05 (owner-input `next_stage` set to `None`) and M06 (my CM7), and both are red |
+| 7 | Receipt | PASS | P9 rerun: `receipt_check.py` on `RETURN_noP9.md` gives 5 `[ok]`, 0 defects, exit 0. On `RETURN.md` it gives 6 `[ok]`, exit 0. E1 rerun with the dispatched arguments, `--candidate b185dea9…`, run from the review worktree, gives `cells=6 defects=0`, exit 0. `blocks.py`: P1, T1, M1, C1, F1 and P9 raw blocks are each byte-identical to their capture. Recomputed sha256: `P1.txt` 2d59f2ef…cd7539d2, `M1.txt` 28c71743…dfd0405, `F1.txt` b40e51aa…d8eef04. `RETURN_noP9.md` equals `RETURN.md` up to `## P9` |
+| 8 | Seat F1 at the candidate | PASS | 5 failed, 3535 passed, 32 skipped, exit 1. The 5 names are a subset of the base names, so there is zero new red. The lock log names one foreign pytest at acquisition, `tests/test_gate_evidence.py` (ticket 69, PIDs 36956/40296), and STATEMENT item 12 names it as the dispatch requires |
+| 9 | Strict type | PASS | `mypy --strict --python-version 3.11` on the four T1 files gives exit 0. Over `tests/test_control_plane_mutation.py` it reports 4 unused `type: ignore` comments (lines 740, 744, 832, 841). Those comments come from older tickets, not this one: the file holds 7 `type: ignore` both at `c5848465` and at the candidate, the ticket's diff adds none, and the file is outside T1 |
+| 10 | Wayfinder function, other cases | PASS (S65-06 noted) | No rounds still gives `ADVANCE` with `next_stage` `None` and `expected_return_events` `()` (dataclass defaults). This case is new and has no counterpart in the old file. After round two, the owner-input decision expects `WAYFINDER_INFO_REQUIRED` while `may_ask_again` is `False` (S65-06) |
+
+### Reviewer counter-mutations (correction)
+
+These ran in the disposable clone `rv2` (`git clone --no-hardlinks <main checkout>`, detached at `b185dea9`), with a `base2` clone at `c5848465` used as the source of restored files. Both were removed afterwards. Baseline: `tests/test_wayfinder_gap.py` plus `tests/test_control_plane_mutation.py` gave 61 passed, 628 subtests passed. Commands were `python -m pytest <target> -q -p no:cacheprovider -rfE` with default tracebacks and no reducer, read unfiltered in `cm/CM7r.txt` and `cm/CM8.txt`–`cm/CM12.txt`. Each was restored with `git checkout -- . && git clean -fd`, and porcelain was empty after each. CM8–CM11 differ from the seat's M05, which set the owner-input `next_stage` to `None`.
+
+| ID | Door | Mutation | Result |
+| --- | --- | --- | --- |
+| CM7r | Wrong-reason pass (rerun of CM7) | Restore `library/workflow_router/telemetry_cli.py`; run `test_removed_modules_raise_module_not_found` alone | red: `SUBFAILED(module='library.workflow_router.telemetry_cli')`, `'library.workflow_router.telemetry' not found in {'library.workflow_router.telemetry_cli'}`. Zero red at the initial review; now red for the intended reason |
+| CM8 | Wrong stage, not absent stage | Owner input re-enters `ProcessStage.ARCHITECTURE` | red: `test_owner_input_reenters_exactly_the_wayfinder_stage[rounds=1]` and `[rounds=2]` |
+| CM9 | Wait contract emptied | Blocking gap `expected_return_events` set to `()` | red: `test_a_blocking_gap_leaves_the_stage_unchanged[rounds=1]` and `[rounds=2]` |
+| CM10 | First match / subset | Drop `WAYFINDER_INFO_REQUIRED` from `WAYFINDER_RETURN_EVENTS` (GO and NO_GO only) | red: `test_owner_input_reenters_exactly_the_wayfinder_stage[rounds=1]` and `[rounds=2]` |
+| CM11 | Stage moves on a wait | Blocking gap `next_stage` set to `ProcessStage.WAYFINDER` | red: `test_a_blocking_gap_leaves_the_stage_unchanged[rounds=1]` and `[rounds=2]` |
+| CM12 | Namespace parent plus restored submodule | Recreate `library/local_orchestration/telemetry_storage/` with only `composition.py` (no `__init__`) | red: the package imports as a namespace (`ModuleNotFoundError not raised`), and `…composition` fails naming `…telemetry_storage.contracts`, which is not in the allowed set |
+
+### Findings (status after correction 1)
+
+| ID | Class | Severity | Status | Blocks? | File:line | Observation / verification | Route |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| S65-01 | `IMPLEMENTATION_DEFECT` | Medium | **Closed** | — | `library/workflow_router/wayfinder_gap.py:40-58, 84-100`; `tests/test_wayfinder_gap.py:261-296` | Every W5/W6 assertion is carried (cells 2–3), with values equal to the retired profile. CM8–CM11 are red | — |
+| S65-02 | `EVIDENCE_DEFECT` | Low | **Closed** | — | `tests/test_wayfinder_gap.py:361-374` | The guard checks `exception.name`. CM7r and CM12 are red | — |
+| S65-03 | `OUT_OF_SCOPE_HARDENING` | Low | Carried | No (hardening) | `tests/test_wayfinder_gap.py` removed-module guards | Unchanged: a leftover ignored `__pycache__/` in a deleted package directory makes both guards falsely red. Neither the host nor CI hits it | Follow-up hardening ticket |
+| S65-04 | `EVIDENCE_DEFECT` | Low | **Closed** | — | `tests/test_control_plane_mutation.py`; `M1.txt` | The helper is removed; M1 records commands and keeps full tracebacks (cell 6) | — |
+| S65-05 | `TICKET_DEFECT` (dispatch identity) | Low | Open, owned by the control plane | No. Under rule B it changes no exit-code classification, breaks no safety or scope boundary, and violates no P0 | `C:/Temp/claude/jas-dispatch/JAS-65_dispatch.yaml:1` | The dispatch still reads "revision01". The receipt binds revision02 at `e581b037`, so the candidate's authority is readable | Control plane |
+| S65-06 | `OUT_OF_SCOPE_HARDENING` | Low | New | No (hardening) | `library/workflow_router/wayfinder_gap.py:84-91`; `tests/test_wayfinder_gap.py:282-296` | After round two, the owner-input decision lists `WAYFINDER_INFO_REQUIRED` as an expected return while `may_ask_again` is `False`, and the function refuses the third round that return would lead to. The two fields of one decision disagree. Behaviour is fail-closed, and the old profile had no round awareness either. The test pins this for `rounds=2`, and the STATEMENT names it as deliberate | Follow-up hardening: drop `INFO_REQUIRED` from the expected returns when `may_ask_again` is false, or document the precedence |
+
+### Commands (correction)
+
+- `git rev-parse b185dea9^` gives `1e9f73da`. `git ls-remote origin cp/wave3-65-retire-engine` gives the candidate. `git diff --stat` and `git diff 1e9f73da b185dea9`
+- `git show c5848465:library/workflow_router/profile.py`, lines 262-290 and 630-660 (the expected-return table and the transition rules)
+- `gh run view 44329348013 --json …` and `gh run view 44329348013 --log`: checker lines and summary counts
+- `receipt_check.py` on `RETURN_noP9.md` and on `RETURN.md`, then `evidence_gate.py … --candidate b185dea9…`, then `blocks.py <out>`
+- `python -m mypy --strict --python-version 3.11 --cache-dir <scratchpad>` on the four T1 files; then the same set plus `tests/test_control_plane_mutation.py` (cell 9)
+- `cm/mut.py rv2 CM8…CM11` and `cm/run.sh` for CM7r–CM12, giving `cm/CM7r.txt`, `cm/CM8.txt`–`cm/CM12.txt`
+
+### Raw-log note (correction)
+
+The `cm/CM7r.txt` and `cm/CM8.txt`–`cm/CM12.txt` captures are unedited pytest output. CI was read with `gh run view` only. Nothing was pushed, and no run was triggered. No tracked file was modified. Both clones were made with `--no-hardlinks` and were removed afterwards. The host lock was not taken, because no full suite was needed. I did not touch the seat's worktree or ticket 69's worktree.
+
+### Not verified (correction)
+
+- A reviewer full suite at `b185dea9`. It was not required for this file set. The seat's locked F1 and both CI jobs cover it, and my targeted baseline over the two changed test files was green.
+- Linux behaviour of the two new tests, beyond the CI Linux job's +2 passed.
+
+```review-verdict
+candidate: b185dea97b0b4035eacbee9dc5c4dbcbed53899d
+verdict: APPROVED
+reviewer: seat:ticket-review/65-rev02-correction
+reviewed_at: 2026-11-18
+```
+
+## Seat token use (readiness criterion 5)
+
+Host-reported usage per seat, summed per unique message id, compared with the expectation the owner confirmed on 2026-11-18 ("1A"). The same values go into the receipt as `USAGE` cells once ticket 69 is integrated.
+
+| Seat | Model | input | cache write | cache read | output | processed | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `seat:implementation-standard/65-impl` | claude-sonnet-5-5 | 292 | 461156 | 22802522 | 88467 | 23263970 | WITHIN |
+| `seat:ticket-review/65-rev02` | claude-opus-5-5 | 254 | 756021 | 23390088 | 91014 | 24146363 | OVER_PROCESSED |
+
+The implementation seat covers revision01 (returned `CHANGE_DETECTED`), revision02 and correction 1. The review seat covers the initial and the correction review. It is over its processed expectation by 1146363 tokens (5.0 %), because one seat held both reviews and re-read its first context for the second; the two reviews together stay below two expectations. Over is explained here and does not block integration (owner decision 2026-11-18 "1A").
