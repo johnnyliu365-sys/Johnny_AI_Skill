@@ -82,7 +82,7 @@ seat and compares it with the model-tier expectation.
 - The control plane appends each seat's `USAGE` cell (receipt grammar in
   `skills/johnny-project-takeover/scripts/README.md`) from the host's report after the seat
   returns; a seat does not write its own. `evidence_gate.py` checks the cell's form and never
-  requires it. `usage_report.py --expectation <file> <receipt>...` enforces presence and prints
+  requires it. `skills/johnny-project-takeover/scripts/usage_report.py --expectation <file> <receipt>...` enforces presence and prints
   one verdict per seat.
 - A seat over its expectation is a fact to explain in the review record. It is not a block on
   integration.
