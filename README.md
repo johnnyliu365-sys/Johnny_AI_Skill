@@ -1,4 +1,7 @@
 A local-first control plane for structured, traceable and safer AI-assisted software development with Codex and Claude Code.
+
+作者：Johnny Liu（[@johnnyliu365-sys](https://github.com/johnnyliu365-sys)）。授權：Apache License 2.0，見 [`LICENSE`](LICENSE) 與 [`NOTICE`](NOTICE)。
+
 ## 它會對你的 repository 做什麼、不做什麼
 
 **Router 是 metadata-only 的控制平面。** 政策來源文字以型別化 metadata 進入一個暫時
@@ -123,3 +126,9 @@ powershell -ExecutionPolicy Bypass -File "$env:LOCALAPPDATA\JohnnyRouter\launche
 | `DIGEST_MISMATCH`                   | 檔案可能不完整，重新下載                        |
 | `USER_DECLINED`                     | 需要手動輸入 `INSTALL`                    |
 | `VENV_ALREADY_PRESENT`              | 已經安裝過，先 uninstall 再重裝               |
+
+## 作者與授權
+
+- 作者：Johnny Liu（GitHub [@johnnyliu365-sys](https://github.com/johnnyliu365-sys)）
+- 版本庫：<https://github.com/johnnyliu365-sys/Johnny_AI_Skill>
+- 授權：Apache License 2.0，全文見 [`LICENSE`](LICENSE)；著作權與歸屬聲明見 [`NOTICE`](NOTICE)。再散布或衍生作品須依 Apache 2.0 第 4(d) 條保留 `NOTICE` 的歸屬內容。
