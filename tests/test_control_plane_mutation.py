@@ -803,9 +803,6 @@ class NoMutationOnRefusalTests(unittest.TestCase):
             _write(repo, "library/local_orchestration/thing.py", "changed\n")
             _write(repo, _TICKET, "# edited\n")
 
-        def stale_policy(repo: Path) -> None:
-            _write(repo, _POLICY, "policy two\n")
-
         def ticket_edit(repo: Path) -> None:
             _write(repo, _TICKET, "# edited\n")
 

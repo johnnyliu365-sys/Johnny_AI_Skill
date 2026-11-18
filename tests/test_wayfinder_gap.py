@@ -23,6 +23,8 @@ import library.workflow_router as workflow_router
 from library.workflow_router.contracts import (
     ContinuationDirective,
     HumanWaitReason,
+    ProcessStage,
+    RouterEventKind,
     RouterOutcome,
     WayfinderBlockKind,
     WayfinderInfoRequest,
@@ -256,6 +258,18 @@ class WayfinderGapDecisionTests(unittest.TestCase):
         self.assertIs(decision.wait_reason, HumanWaitReason.WAYFINDER_INPUT_GAP)
         self.assertTrue(decision.may_ask_again)
 
+    def test_a_blocking_gap_leaves_the_stage_unchanged(self) -> None:
+        """W5: the gap round declares no next stage and waits for the owner's input."""
+
+        for rounds in ((_round_one(),), (_round_one(), _round_two())):
+            with self.subTest(rounds=len(rounds)):
+                decision = decide_wayfinder_gap(rounds)
+                self.assertIsNone(decision.next_stage)
+                self.assertEqual(
+                    decision.expected_return_events,
+                    (RouterEventKind.OWNER_INPUT_PROVIDED,),
+                )
+
     def test_owner_input_reenters_wayfinder(self) -> None:
         """W6: committed answers re-enter Wayfinder with an automatic continuation."""
 
@@ -264,6 +278,22 @@ class WayfinderGapDecisionTests(unittest.TestCase):
         self.assertIs(decision.continuation, ContinuationDirective.AUTO_CONTINUE)
         self.assertIsNone(decision.wait_reason)
         self.assertTrue(decision.may_ask_again)
+
+    def test_owner_input_reenters_exactly_the_wayfinder_stage(self) -> None:
+        """W6: no other stage is reachable, and exactly three returns are expected."""
+
+        for rounds in ((_round_one(),), (_round_one(), _round_two())):
+            with self.subTest(rounds=len(rounds)):
+                decision = decide_wayfinder_gap(rounds, owner_input_provided=True)
+                self.assertIs(decision.next_stage, ProcessStage.WAYFINDER)
+                self.assertEqual(
+                    decision.expected_return_events,
+                    (
+                        RouterEventKind.WAYFINDER_GO,
+                        RouterEventKind.WAYFINDER_NO_GO,
+                        RouterEventKind.WAYFINDER_INFO_REQUIRED,
+                    ),
+                )
 
     def test_after_the_second_round_wayfinder_may_not_ask_again(self) -> None:
         waiting = decide_wayfinder_gap((_round_one(), _round_two()))
@@ -331,8 +361,17 @@ class RemovedRouterLibraryTests(unittest.TestCase):
     def test_removed_modules_raise_module_not_found(self) -> None:
         for name in _REMOVED_MODULES:
             with self.subTest(module=name):
-                with self.assertRaises(ModuleNotFoundError):
+                with self.assertRaises(ModuleNotFoundError) as caught:
                     importlib.import_module(name)
+                # The error must be about this module, or about a removed parent
+                # package of it; a restored file whose own import of another
+                # removed module fails is not "absent".
+                allowed = {
+                    parent
+                    for parent in _REMOVED_MODULES
+                    if name == parent or name.startswith(parent + ".")
+                }
+                self.assertIn(caught.exception.name, allowed)
 
     def test_no_removed_name_is_in_either_all(self) -> None:
         for package in (workflow_router, local_orchestration):

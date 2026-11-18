@@ -12,8 +12,10 @@ Rules carried over from the retired RouterEngine profile:
 
 * no round at all means no blocking gap, so Wayfinder advances;
 * a round with its gaps is a declared owner wait (``SUSPEND`` /
-  ``WAIT_FOR_HUMAN`` / ``WAYFINDER_INPUT_GAP``);
-* committed owner input re-enters Wayfinder (``RETRY`` / ``AUTO_CONTINUE``);
+  ``WAIT_FOR_HUMAN`` / ``WAYFINDER_INPUT_GAP``) that leaves the stage unchanged
+  (``next_stage`` is None) and expects ``OWNER_INPUT_PROVIDED``;
+* committed owner input re-enters exactly ``ProcessStage.WAYFINDER`` (``RETRY`` /
+  ``AUTO_CONTINUE``) and expects exactly GO, NO_GO and INFO_REQUIRED;
   after the second round it may not ask again, so the next return is terminal;
 * a third round, a round out of order, or a second round that asks a field the
   first round never listed is refused with ``ValueError``.
@@ -27,11 +29,20 @@ from dataclasses import dataclass
 from .contracts import (
     ContinuationDirective,
     HumanWaitReason,
+    ProcessStage,
+    RouterEventKind,
     RouterOutcome,
     WayfinderInfoRequest,
 )
 
 MAX_WAYFINDER_ROUNDS = 2
+
+#: The only returns Wayfinder may make after owner input re-enters it.
+WAYFINDER_RETURN_EVENTS: tuple[RouterEventKind, ...] = (
+    RouterEventKind.WAYFINDER_GO,
+    RouterEventKind.WAYFINDER_NO_GO,
+    RouterEventKind.WAYFINDER_INFO_REQUIRED,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -42,6 +53,8 @@ class WayfinderGapDecision:
     continuation: ContinuationDirective
     wait_reason: HumanWaitReason | None
     may_ask_again: bool
+    next_stage: ProcessStage | None = None
+    expected_return_events: tuple[RouterEventKind, ...] = ()
 
 
 def decide_wayfinder_gap(
@@ -70,11 +83,18 @@ def decide_wayfinder_gap(
     may_ask_again = len(rounds) < MAX_WAYFINDER_ROUNDS
     if owner_input_provided:
         return WayfinderGapDecision(
-            RouterOutcome.RETRY, ContinuationDirective.AUTO_CONTINUE, None, may_ask_again
+            RouterOutcome.RETRY,
+            ContinuationDirective.AUTO_CONTINUE,
+            None,
+            may_ask_again,
+            ProcessStage.WAYFINDER,
+            WAYFINDER_RETURN_EVENTS,
         )
     return WayfinderGapDecision(
         RouterOutcome.SUSPEND,
         ContinuationDirective.WAIT_FOR_HUMAN,
         HumanWaitReason.WAYFINDER_INPUT_GAP,
         may_ask_again,
+        None,
+        (RouterEventKind.OWNER_INPUT_PROVIDED,),
     )
