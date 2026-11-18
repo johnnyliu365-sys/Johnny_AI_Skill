@@ -107,3 +107,129 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/70-rev02-initial
 reviewed_at: 2026-11-19
 ```
+
+## Revision02 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`. Every open finding is non-blocking under rule B.** Correction 1 closes S70-01 to S70-04 as the coordinator's correction message asks.
+- The real-tree check now skips only when neither the root nor any parent has a `.git` entry. A broken `.git/config` fails the test.
+- A three-offender fixture names all three paths.
+- `offences()` reports any component of more than 255 UTF-8 bytes.
+- The state row states the `; ` separator, and a test pins it.
+
+My CM1, CM2 and CM2b, which were zero-red at `1ed245a2`, are now red. So is CM12, which swallows the git failure in the new function. CM10 and CM11, aimed at the new component clause, are red too.
+
+Three of my new counter-mutations stay zero-red, and they show two properties of the correction that hold but are not pinned:
+- the skip rule's "any parent" walk and its `.git`-file form (CM7, CM8; S70-06);
+- the component clause on a directory component rather than the leaf (CM9; S70-07).
+
+Both are `EVIDENCE_DEFECT`s on a correct candidate. Under rule B they do not block, but a regression in either would let a change pass that should not: one would turn a real check into a skip, the other would admit a >255-byte directory component. So rule B requires both to be closed in the next change of this test. S70-05 stays with the control plane. It does not change an exit-code classification, a safety or scope boundary, or P0, so it does not block either.
+
+| Field | Value |
+| --- | --- |
+| Candidate | `548665e5b0936b767c0108b57feec644a3bf3d08` on `cp/wave3-70-templates`, the same sha on `origin`. It is one additive commit on `1ed245a2` ("fix(template): correction 1 of ticket 70 (S70-01 to S70-04)"). Author `Johnny Liu <johnny.liu365@gmail.com>`, trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`. There is no reset, amend or force: `1ed245a2` is its parent |
+| Correction scope | `git diff --name-only 1ed245a2 548665e5`: `template/README.md`, `template/modules/tickets/TEMPLATE.md`, `tests/test_state_file_templates.py`, `tests/test_tracked_path_length.py`. In the ticket template, only the `狀態` row changed. `96f095a9..548665e5` still touches exactly the boundary block's five paths. The receipt is in `.worktrees/70-templates-out`, outside the repository |
+| Correction authority | The coordinator's correction message (S70-01 to S70-04, with S70-05 kept by the control plane), as relayed to this seat |
+| Review worktree | `.worktrees/70-templates-review`, detached at the candidate. Porcelain `--ignored` was empty before. My mypy run left an ignored `.mypy_cache/` there, which I removed, and porcelain `--ignored` is empty again |
+| Receipt | `.worktrees/70-templates-out/RETURN.md`, rebuilt (LF, 157350 bytes, 0 CR). Every run cell names candidate `548665e5…`. Cells: P1, T1, M1 (9 mutations), C1, F1, P9, STATEMENT (`return: COMPLETED`, `items:`) |
+| CI run | 44381551978, event `push`, `headSha` = candidate. `test (windows)` success and `test (linux)` success. I read it with `gh run view` and `gh run list` only, and `C1.txt` names the same run and sha |
+| References applied | As in the initial review, plus `CodeReview.md` §5 rule B for the disposition of what remains open |
+
+### Cell results (correction)
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| C1 | S70-01: skip only with no `.git` entry anywhere; git failure is a failure | PASS (closed), with S70-06 | `has_git_entry` checks `(candidate / ".git").exists()` for the root and every parent, without git. `real_tree_offences` raises `NotAWorkTree` only in that case, and `RealTreeTests` skips only on `NotAWorkTree`. A new fixture breaks `.git/config` and asserts `GitListError` through `real_tree_offences`, the same function the real-tree test calls. CM2 is now red: `RealTreeTests` fails with `GitListError: git ls-files exited 128: fatal: bad config line 14`. CM2b is red: `… fatal: not a git repository: (NULL)`. CM12 is red. In the review worktree, which is a linked worktree with a `.git` file, `RealTreeTests` PASSES and is not skipped (`-v` run) |
+| C2 | S70-02: every offender named | PASS (closed) | `test_every_offender_is_named_not_only_the_first` (two long paths and one undecodable path, in memory) and `test_a_tree_with_three_offending_paths_names_all_three` (a real index). CM1 is now red on both |
+| C3 | S70-03: 255-byte component clause, with its own fixture | PASS (closed), with S70-07 | `offences()` computes `max(len(component.encode("utf-8")) for component in text.split("/"))` and reports `component of N bytes, cap 255: <escaped>` on one line. Fixtures: the 97-character path with a 273-byte component, exactly 255 bytes passing and 256 failing, and two 120-byte components in one path passing. CM10 (`>=`) and CM11 (characters instead of bytes) are red. The real tree passes: no component is longer than 78 bytes (measured in the initial review, and the correction adds no path) |
+| C4 | S70-03 deviation: no README cap sentence, docstring instead | Accepted | `template/README.md` describes the target-project templates that the plugin ships. The cap is a hygiene test of the plugin repository, it is not a template, and the ticket requires no README text for it (revision01 "The template README describes the new rows …", revision02 "describes these two lines"). The module docstring states both limits and the skip rule, and anyone reading a failure of this test sees it first. A README sentence would describe something the README's reader never receives |
+| C5 | Changed `CapTests` wide-character fixtures | Accepted: equivalent and necessary | `test_the_length_is_counted_in_characters_not_bytes`. Before, `"字"*117+".md"` (120 characters, a single 354-byte component) and `"字"+that` (121 characters, 357 bytes). After, `spread("字", 120)` (120 characters, 350 bytes, components of 147 bytes or fewer) and `spread("字", 121)` (121 characters, 353 bytes). I measured all four. It is the same character, the same 120/121 boundary and the same assertions (`== []`, `len(...) == 1`, and `len(bytes) > cap`). The `é` case is unchanged (234 bytes in one component). Under the new clause the old pair would report a component offence: the old 120-character path gives 1 line and breaks `== []`, and the old 121-character path gives 2 lines and breaks `== 1`. The change is therefore required, and the bytes-not-characters property still discriminates, because 350 bytes is far above the 120 cap. The seat's mutation 4 (bytes counted) is red, now with 5 failures |
+| C6 | S70-04: separator stated and pinned | PASS (closed) | `TEMPLATE.md:17`: "…in revision order; several receipts are written as receipt `<…>`; receipt `<…>`, separated by `; `, like the other parts of the row." `MULTI_RECEIPT_SENTENCE` pins it exactly (`tests/test_state_file_templates.py:124-128`), and the README test pins "separated by `; `" (`:1053`). The seat's mutation 8 (sentence removed) is red with 4 failures. The revision01 wording "one receipt per closure revision, in revision order" survives. `MULTI_RECEIPT_SENTENCE` is a pin this ticket added, so changing it weakens no pre-existing pin |
+| C7 | Tests and types at the candidate | PASS | Review worktree: P1 set 341 passed, 1 skipped (symlinks), 553 subtests passed, the same counts as `P1.txt`. `tests/test_tracked_path_length.py` `-v` gives 19 PASSED, 0 skipped. `mypy --strict --python-version 3.11` on both test files reports no issues |
+| C8 | Receipt honest (P9, E1) | PASS | P9 rerun: `receipt_check.py` on the receipt cut before `## P9`, with the captures beside it, gives 5 `[ok]`, 0 defects, exit 0, and its output equals `P9.txt` once my shell's CR is removed. On `RETURN.md`, 6 `[ok]` and 0 defects. The E1 rerun with the dispatched arguments and `--candidate 548665e5…` gives `cells=6 defects=0`, exit 0. All six raw blocks are byte-identical to their capture files. Recomputed sha256: `P1.txt` c3cdf013…15dd2d9f, `M1.txt` 1edbb057…5e9780a84, `F1.txt` b76902e8…ee541e1dd. Each of the four `tool_digest` values equals the blob sha256 at the candidate and appears in all 6 run cells. F1 has 5 failed names, a subset of the 12 base names (`comm -23` empty). STATEMENT S2 counts 19 tests in the path file, which is correct. S7 gives one disposition for each finding, and S8 lists nine mutations, each red, matching `M1.txt` |
+
+### Reviewer counter-mutations (correction)
+
+These ran in the disposable clone `.worktrees/70-templates-review-scratch/70-rev02-correction-cm` (`git clone -q --no-hardlinks <main checkout>`, then `checkout --detach 548665e5…`), with `python -m pytest tests/test_tracked_path_length.py -p no:cacheprovider -rfEs`. I used default verbosity and tracebacks, put no reducer in between, and read the whole capture of each run. Each mutation was restored with `git checkout -f --detach 548665e5 && git clean -fd`, and porcelain was 0 after each. CM2's config was restored from a byte copy. The linked worktrees `70-rev02-correction-wt` and `-wt2` were removed with `git worktree remove --force` and `git worktree prune`. For CM2b, the moved admin dir `70-rev02-correction-wtadmin` was moved back first.
+
+| ID | Door | Mutation | Result |
+| --- | --- | --- | --- |
+| CM1 (rerun) | First match | `break` after the first over-length path in `offences()` | red: `test_every_offender_is_named_not_only_the_first`, `test_a_tree_with_three_offending_paths_names_all_three` |
+| CM2 (rerun) | Environment, real-tree path | `[core` appended to the clone's `.git/config` | red: `RealTreeTests::test_no_tracked_path_…` fails with `GitListError: git ls-files exited 128: fatal: bad config line 14 in file .git/config` |
+| CM2b (rerun) | Environment, linked worktree | The admin dir of linked worktree `70-rev02-correction-wt` moved away | red: `RealTreeTests` fails with `GitListError: … fatal: not a git repository: (NULL)` |
+| CM7 | S70-01 skip rule: the parent walk | `has_git_entry` checks only `root`, not `root.parents` | **zero red**: 19 passed. Every fixture has `.git` at its root, so the "any parent" half of the rule is not pinned (S70-06) |
+| CM8 | S70-01 skip rule: the `.git`-file form | `.exists()` replaced by `.is_dir()` | **zero red**: 19 passed in the clone. Also **zero red** in the linked worktree `70-rev02-correction-wt2`, whose `.git` is a file: overlap-masking, because the walk reaches the main checkout's `.git` directory above `.worktrees/`. Outside such a nesting, the real-tree check would skip a linked worktree, and nothing fails (S70-06) |
+| CM9 | S70-03 clause: which component | Only the last component is measured (`text.split("/")[-1:]`) | **zero red**: 19 passed. Every over-255 fixture has the wide component as the leaf, so a >255-byte directory component is not pinned (S70-07) |
+| CM10 | S70-03 clause: edge | `widest >= MAX_COMPONENT_BYTES` | red: `test_a_component_of_exactly_255_bytes_passes_and_256_fails` |
+| CM11 | S70-03 clause: unit | Component length counted in characters | red: `test_a_component_of_273_bytes_in_a_short_path_is_reported`, `test_a_component_of_exactly_255_bytes_passes_and_256_fails` |
+| CM12 | S70-01: swallowed fault in the new function | `real_tree_offences` returns `[]` on `GitListError` | red: `test_a_broken_git_config_makes_the_real_tree_check_fail_not_skip` |
+
+### Findings (status after correction 1)
+
+| ID | Class | Severity | Status | Blocks? | File:line | Observation | Verification | Route |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| S70-01 | `IMPLEMENTATION_DEFECT` | Low | **Closed** | — | `tests/test_tracked_path_length.py:61-66, 80-87, 289-295` | The skip is decided from the file system. A git failure inside a work tree is `GitListError` on the real-tree path | CM2, CM2b and CM12 red; C1 | — |
+| S70-02 | `EVIDENCE_DEFECT` | Low | **Closed** | — | `tests/test_tracked_path_length.py:197-205, 279-286` | Multi-offender fixtures, in memory and in a real index | CM1 red | — |
+| S70-03 | `OUT_OF_SCOPE_HARDENING` (done in this correction at the coordinator's request) | Low | **Closed** | — | `tests/test_tracked_path_length.py:28, 116-118, 207-225` | 255-byte component clause with fixtures. The README sentence was replaced by the docstring, and I accept that (C4) | CM10, CM11 red | — |
+| S70-04 | `TICKET_DEFECT` | Low | **Closed** | — | `template/modules/tickets/TEMPLATE.md:17`; `tests/test_state_file_templates.py:124-128, 1053` | The separator is stated and pinned in the row and the README | Seat mutation 8 red | — |
+| S70-05 | `TICKET_DEFECT` (control plane: dispatch identity) | Low | **Open**, control plane | No (no exit-code classification, safety/scope boundary or P0 involved) | `C:/Temp/claude/jas-dispatch/JAS-70_dispatch.yaml:1` | The dispatch still names revision01 and a `RETURN` cell. The correction went out as a coordinator message | Unchanged | Control plane, as the coordinator stated |
+| S70-06 | `EVIDENCE_DEFECT` | Low | **Open, new** | No (rule B: the candidate behaves correctly). A regression would turn the real-tree check into a skip, which lets a change pass, so rule B requires it to be fixed in the next change of this test | `tests/test_tracked_path_length.py:61-66`; fixtures `:254-277` | Two halves of the skip rule are unpinned. "Any parent" is unpinned because every fixture has `.git` at its root. The `.git`-file form of a linked worktree is unpinned because every fixture is a `git init` directory, and in this repository the main checkout's `.git` above `.worktrees/` masks it | CM7, CM8 zero red | Next change of this test. Smallest fix, two fixtures: (a) `real_tree_offences(repo / "sub")` on a tracked subdirectory that has no `.git` of its own returns `[]` and does not raise `NotAWorkTree`; (b) a temp directory outside any repository, holding only a `.git` file `gitdir: <missing path>`, raises `GitListError`, not `NotAWorkTree` |
+| S70-07 | `EVIDENCE_DEFECT` | Low | **Open, new** | No (rule B: the candidate behaves correctly). A regression would admit a >255-byte directory component, so rule B requires it to be fixed in the next change of this test | `tests/test_tracked_path_length.py:116-118, 207-225` | Every over-limit fixture puts the wide component in the leaf, so a clause that measures only the last component passes | CM9 zero red | Next change of this test. Smallest fix: one in-memory case, `"字" * 86 + "/a.md"`, expecting exactly one `component of 258 bytes` line |
+
+### Commands (correction)
+
+These ran from the main checkout unless noted, with `C:/Temp/claude/jas-venv/Scripts/python.exe` and `PYTHONUTF8=1`.
+
+- `git ls-remote origin cp/wave3-70-templates`; `git log --format=… 1ed245a2..548665e5`; `git diff --stat` and `git diff --name-only 1ed245a2 548665e5`; `git diff 1ed245a2 548665e5 -- template/ tests/`
+- Review worktree, with `PYTHONDONTWRITEBYTECODE=1`: the P1 test set (`-q -rfEs -p no:cacheprovider`); `tests/test_tracked_path_length.py -v`; `mypy --strict --python-version 3.11 --no-incremental` on both test files
+- `gh run view 44381551978 --json headSha,conclusion,event,headBranch,jobs`; `gh run list --branch cp/wave3-70-templates`
+- Fixture equivalence: `spread()` and `offences()` imported with `-B` from the clone, measuring characters, bytes, the character count and the widest component of the old and new fixtures
+- P9: `receipt_check.py <RETURN cut before ## P9> .worktrees/70-templates-review`, and the same on `RETURN.md`. E1: `evidence_gate.py .worktrees/70-templates-out/RETURN.md --repo .worktrees/70-templates-review --candidate 548665e5… --tool …/evidence_gate.py --tool …/index_pins.py --evidence-root .worktrees/70-templates-out --require-cell P1 --require-cell T1 --require-cell M1 --require-cell F1`
+- sha256 of `P1.txt`, `M1.txt` and `F1.txt`; raw block against capture for every run cell; the four tool blob digests at `548665e5`; F1 names compared with `comm -23` against `jas48_F1_base.txt`
+
+### Not verified (correction)
+
+- I did not run a full-suite F1 of my own. As instructed, I relied on the seat's locked F1 (5 base failures) and on CI.
+- CI's `-rf` output does not show skips. With the new rule, a skip on CI is only possible without any `.git` entry, and `actions/checkout` creates one.
+- `test_a_directory_with_no_git_entry_anywhere_is_the_only_skip` still assumes that the system temp directory and all its parents hold no `.git`. I did not check the runners.
+- I did not re-measure the 120-character maximum. The correction adds no tracked path.
+
+### Residue (correction)
+
+Everything I created carried the run id `70-rev02-correction`, and I removed it all before returning:
+- the clone `70-rev02-correction-cm`;
+- the capture and script directory `70-rev02-correction-out`, with its `p9/` copy and `config.orig`;
+- the linked worktrees `70-rev02-correction-wt` and `70-rev02-correction-wt2`, removed and pruned;
+- the temporarily moved admin dir `70-rev02-correction-wtadmin`, moved back before the worktree was removed.
+
+All of these were in `.worktrees/70-templates-review-scratch/`. One ignored `.mypy_cache/` did not carry the run id. My mypy run created it in the review worktree, where nothing had been before, and I removed it. No process of mine is left. I did not touch any tracked file, the seat's worktree, the out directory or another seat's directory. I did not push, and I triggered no CI.
+
+```review-verdict
+candidate: 548665e5b0936b767c0108b57feec644a3bf3d08
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/70-rev02-correction
+reviewed_at: 2026-11-19
+```
+
+## Convergence disposition (control plane, 2026-11-19)
+
+The correction review returned `CONVERGENCE_REVIEW_REQUIRED`: every blocking finding is closed and the open findings are non-blocking under CodeReview §5 rule B. Each carried finding keeps the smallest fix the reviewer named (lesson L-19).
+
+```convergence-disposition
+candidate: 548665e5b0936b767c0108b57feec644a3bf3d08
+reviewer_verdict: CONVERGENCE_REVIEW_REQUIRED
+disposition: APPROVED
+rule: CodeReview §5 rule B (owner-approved 2026-11-05)
+carried:
+  - S70-05
+  - S70-06
+  - S70-07
+```
+
+## Seat token use (readiness criterion 5)
+
+Host-reported usage per seat, summed per unique message id, against the expectation the owner confirmed on 2026-11-18 ("1A"); appended to the receipt as `USAGE` cells at integration.
+
+| Seat | Model | input | cache write | cache read | output | processed | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `seat:implementation-standard/70-impl` | claude-sonnet-5-5 | 360 | 406527 | 30496495 | 99442 | 30903382 | OVER_PROCESSED |
+| `seat:ticket-review/70-rev02` | claude-opus-5-5 | 162 | 403116 | 11259717 | 84228 | 11662995 | WITHIN |
