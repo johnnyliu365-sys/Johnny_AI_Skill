@@ -88,12 +88,10 @@ _REFERENCES_OUTSIDE_PAYLOAD: Final[dict[str, str]] = {
     "PRD.md": "TARGET_OWNED",
     "ProjectSchedule.md": "TARGET_OWNED",
     "doc/RequirementChangeLog.md": "TARGET_OWNED",
-    "doc/archive/specs/": "TARGET_OWNED",
     "doc/archive/specs/README.md": "TARGET_OWNED",
     "doc/runbooks/dispatch-model-profile.md": "DEVELOPMENT_ONLY",
     "johnny-install.cmd": "DEVELOPMENT_ONLY",
     "modules/element/": "TARGET_OWNED",
-    "modules/spec/": "TARGET_OWNED",
     "modules/spec/README.md": "TARGET_OWNED",
 }
 

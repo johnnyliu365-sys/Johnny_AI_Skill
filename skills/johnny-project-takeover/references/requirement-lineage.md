@@ -40,8 +40,6 @@ the content is not edited.
 - Active documents that cite an archived SPEC cite its archive path.
 - Historical records keep the path they were written with. These are review records, tickets,
   handoffs and feature Context files. Git history is the evidence for that path.
-- An archived SPEC keeps its precedence note, and the governance-consistency test reads
-  `doc/archive/specs/` as it reads `modules/spec/`.
 
 The validation rules below apply to SPEC archive IDs as they apply to `ARCH-REQ` bundles.
 
