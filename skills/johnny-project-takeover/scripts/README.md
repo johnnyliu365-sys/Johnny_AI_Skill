@@ -811,6 +811,17 @@ Exit 0: every seat is within its expectation. Exit 1: a receipt has no USAGE cel
 unknown, or a seat is over its expectation; every one is listed. Exit 2: the expectation file or
 a receipt cannot be read, is not UTF-8, is not accepted JSON, or breaks its schema (a USAGE
 cell with a missing, repeated, misordered or malformed field, a run field, or two cells for one
-seat; a profile without one of its two keys); each fault is one line on standard error and exit 2
-wins over exit 1. Exit 3: a missing `--expectation`, no receipt, a repeated or unknown option.
-Every printed subject is escaped to one line.
+seat; a profile without one of its two keys); each fault is one line on standard error. Red before
+fault, as R4-2 sets it for every gate: when one run meets both a red and a fault, the report
+prints every red it can find, puts each fault on standard error, and exits 1; it exits 2 only
+when it found no red. A fault in the expectation file leaves the `NO_USAGE` reds of the receipts
+standing, and the verdicts that need the expectation are not computed. Exit 3: a missing
+`--expectation`, no receipt, a repeated or unknown option. Every printed subject is escaped to one
+line.
+
+A count is compared as a decimal string (no integer conversion), so a count of any length that
+the gate accepts is a value in the report too, and an over by value is exit 1, never a fault. A
+section is a USAGE cell exactly as `evidence_gate.py` reads it: its `cell:` line says `USAGE`, or
+it has no `cell:` line and its heading is `USAGE` or starts with `USAGE `. A section headed USAGE
+whose `cell:` line says anything else, or is absent, breaks the schema (exit 2, or exit 1 beside a
+red) and is never skipped.

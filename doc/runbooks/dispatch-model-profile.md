@@ -84,13 +84,16 @@ seat and compares it with the model-tier expectation.
   returns; a seat does not write its own. `evidence_gate.py` checks the cell's form and never
   requires it. `skills/johnny-project-takeover/scripts/usage_report.py --expectation <file> <receipt>...` enforces presence and prints
   one verdict per seat.
+- Order of the receipt checks: P9 judges the receipt as the seat returned it, before the control
+  plane appends any `USAGE` cell. After appending them, the control plane reruns E1 only. P9 is
+  not rerun on a receipt that holds `USAGE` cells, because its checker reads every section but
+  `STATEMENT` as a run cell.
 - A seat over its expectation is a fact to explain in the review record. It is not a block on
   integration.
 - The values in the template are a proposal taken from wave 2 (the 90th percentile per role over
   129 seat runs, rounded up): `implementation-standard` 130000 output and 24000000 processed,
   `implementation-elevated` the same until measured, `ticket-review` 110000 output and 23000000
-  processed. **The owner has not yet confirmed these values**; they are confirmed before ticket 69
-  is integrated, and until then a verdict compares against an unconfirmed proposal.
+  processed. The owner confirmed these values on 2026-11-18 ("1A", `REQ-20261103-043`).
 
 ## 最小派工訊息
 

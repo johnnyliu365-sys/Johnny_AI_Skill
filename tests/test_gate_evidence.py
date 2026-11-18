@@ -2145,7 +2145,7 @@ class UsageCellTests(GateTestCase):
                 self.assertEqual(self.codes_of(usage_cell(replace={name: "-1"})), ["USAGE_COUNT_INVALID"])
 
     def test_a_non_integer_count_is_a_red(self) -> None:
-        for bad in ("1.5", "1e3", "abc", "", "0x10", "01", "+5", "1_000", "١", "NaN"):
+        for bad in ("1.5", "1e3", "abc", "", "0x10", "01", "+5", "1_000", "\u0661", "NaN", "1\u0662", "5\u0662", "\uff11\uff12", "\u0967", "\u00b2", "1\u00b2"):
             with self.subTest(bad=bad):
                 self.assertEqual(self.codes_of(usage_cell(replace={"output_tokens": bad})), ["USAGE_COUNT_INVALID"])
 
@@ -2177,6 +2177,16 @@ class UsageCellTests(GateTestCase):
         for name in ("model", "source"):
             with self.subTest(name=name):
                 self.assertEqual(self.codes_of(usage_cell(replace={name: ""})), ["USAGE_FIELD_INVALID"])
+
+    def test_a_control_character_in_model_or_source_is_a_red(self) -> None:
+        for name in ("model", "source"):
+            for char in ("\x0b", "\x00", "\x7f", "\x1b"):
+                with self.subTest(name=name, char=char):
+                    self.assertEqual(self.codes_of(usage_cell(replace={name: f"a{char}b"})), ["USAGE_FIELD_INVALID"])
+
+    def test_a_count_of_any_length_is_valid(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts(), usage_cell(replace={"output_tokens": "9" * 5000, "input_tokens": "1" + "0" * 4999}))
+        self.assertEqual(self.fx.run()[0], 0)
 
     def test_an_unknown_field_or_a_stray_line_is_a_red(self) -> None:
         self.assertEqual(self.codes_of(usage_cell(extra=["note: x"])), ["USAGE_FIELD_INVALID"])

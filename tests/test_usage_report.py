@@ -207,7 +207,7 @@ class ReceiptSchemaTests(ReportCase):
         self.assertIn("out of order", self.fault("\n".join(lines)))
 
     def test_a_negative_or_non_integer_count_is_exit_two(self) -> None:
-        for bad in ("-1", "1.5", "abc", "", "01", "1e3", "NaN"):
+        for bad in ("-1", "1.5", "abc", "", "01", "1e3", "NaN", "\u0662", "1\u0662", "5\u0662", "\uff11\uff12", "\u0967", "\u00b2", "1\u00b2"):
             with self.subTest(bad=bad):
                 self.assertIn("output_tokens", self.fault(usage(replace={"output_tokens": bad})))
 
@@ -238,11 +238,12 @@ class ReceiptSchemaTests(ReportCase):
         self.assertEqual(len(err.splitlines()), 1)
         self.assertIn("not UTF-8", err)
 
-    def test_a_fault_wins_over_a_red_and_the_good_receipts_print_nothing_wrong(self) -> None:
+    def test_a_red_and_a_fault_in_one_run_print_the_red_and_exit_one(self) -> None:
         red = self.receipt(usage(counts=(1, 1, 1, 9999)), name="red.md")
         broken = self.receipt(usage(drop=["model"]), name="broken.md")
-        code, _, err = self.report(red, broken)
-        self.assertEqual(code, 2)
+        code, out, err = self.report(red, broken)
+        self.assertEqual(code, 1)
+        self.assertTrue(out.endswith("OVER_OUTPUT\n"), out)
         self.assertIn("model", err)
 
     def test_a_control_character_in_a_printed_subject_stays_on_one_line(self) -> None:
@@ -383,6 +384,156 @@ class ProcessTests(ReportCase):
         source = SCRIPT.read_text(encoding="utf-8")
         for banned in ("import requests", "import yaml", "# type: ignore", "typing import Any", ": Any", "-> Any"):
             self.assertNotIn(banned, source)
+
+
+
+class RedBeforeFaultTests(ReportCase):
+    """R4-2: every red the run can find is printed; the exit is 1 with a red, else 2 with a fault."""
+
+    def test_an_over_seat_and_a_missing_receipt_print_the_red_and_exit_one(self) -> None:
+        over = self.receipt(usage(counts=(1, 1, 1, 9999)), name="over.md")
+        code, out, err = self.report(over, self.base / "no-such-receipt.md")
+        self.assertEqual(code, 1)
+        self.assertEqual(out, f"seat:{IMPLEMENTATION}/run-1 {IMPLEMENTATION} output=9999 processed=3 OVER_OUTPUT\n")
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("cannot read receipt", err)
+
+    def test_a_receipt_without_usage_and_a_broken_one_print_no_usage_and_exit_one(self) -> None:
+        bare = self.receipt(name="bare.md")
+        broken = self.receipt(usage(drop=["model"]), name="broken.md")
+        code, out, err = self.report(bare, broken)
+        self.assertEqual(code, 1)
+        self.assertEqual(out, f"NO_USAGE {usage_report.printable(str(bare))}\n")
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("model", err)
+
+    def test_no_usage_stands_when_the_expectation_file_cannot_be_read(self) -> None:
+        bare = self.receipt(name="bare.md")
+        code, out, err = self.report(bare, expectation=self.base / "none.json")
+        self.assertEqual(code, 1)
+        self.assertEqual(out, f"NO_USAGE {usage_report.printable(str(bare))}\n")
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("expectation file", err)
+
+    def test_the_verdicts_that_need_the_expectation_are_not_computed_without_it(self) -> None:
+        code, out, err = self.report(self.receipt(usage()), expectation=self.base / "none.json")
+        self.assertEqual((code, out), (2, ""))
+        self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_a_fault_alone_is_exit_two(self) -> None:
+        code, out, err = self.report(self.base / "no-such-receipt.md", self.receipt(usage(), name="good.md"))
+        self.assertEqual(code, 2)
+        self.assertEqual(out, f"seat:{IMPLEMENTATION}/run-1 {IMPLEMENTATION} output=400 processed=600 WITHIN\n")
+        self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_an_unknown_profile_beside_a_broken_receipt_is_exit_one(self) -> None:
+        unknown = self.receipt(usage("made-up"), name="unknown.md")
+        broken = self.receipt(usage(replace={"output_tokens": "-1"}), name="broken.md")
+        code, out, err = self.report(broken, unknown)
+        self.assertEqual(code, 1)
+        self.assertTrue(out.endswith("UNKNOWN_PROFILE\n"), out)
+        self.assertEqual(len(err.splitlines()), 1, err)
+
+
+class DecimalCountTests(ReportCase):
+    """A count of any length is a value: compared as text, never converted, never an error."""
+
+    def line(self, counts: tuple[str, str, str, str], limits: dict[str, dict[str, int]] | None = None) -> tuple[int, str, str]:
+        names = ("input_tokens", "cache_write_tokens", "cache_read_tokens", "output_tokens")
+        path = self.receipt(usage(replace=dict(zip(names, counts))))
+        expectation = self.write_json(limits, "big.json") if limits is not None else None
+        return self.report(path, expectation=expectation)
+
+    def test_a_huge_output_count_is_over_output_and_exit_one(self) -> None:
+        huge = "9" * 5000
+        code, out, err = self.line(("1", "1", "1", huge))
+        self.assertEqual((code, err), (1, ""))
+        self.assertEqual(out, f"seat:{IMPLEMENTATION}/run-1 {IMPLEMENTATION} output={huge} processed=3 OVER_OUTPUT\n")
+
+    def test_a_huge_input_count_is_over_processed_and_exit_one(self) -> None:
+        huge = "1" + "0" * 4999
+        code, out, err = self.line((huge, "1", "1", "1"))
+        self.assertEqual((code, err), (1, ""))
+        self.assertTrue(out.endswith("OVER_PROCESSED\n"), out[-40:])
+        self.assertIn("processed=" + "1" + "0" * 4998 + "2 ", out)
+
+    def test_a_count_equal_to_a_long_limit_is_within_and_one_more_is_over(self) -> None:
+        limit = 10**400
+        limits = {IMPLEMENTATION: {"output_tokens_max": limit, "processed_tokens_max": limit}}
+        self.assertEqual(self.line(("1", "1", "1", str(limit)), limits)[0], 0)
+        code, out, _ = self.line(("1", "1", "1", str(limit + 1)), limits)
+        self.assertEqual((code, out.split(" ")[-1].strip()), (1, "OVER_OUTPUT"))
+
+    def test_the_processed_sum_carries_across_the_three_counts(self) -> None:
+        limit = 10**400
+        limits = {IMPLEMENTATION: {"output_tokens_max": 10, "processed_tokens_max": limit}}
+        self.assertEqual(self.line((str(limit - 1), "1", "0", "1"), limits)[0], 0)
+        code, out, _ = self.line((str(limit - 1), "1", "1", "1"), limits)
+        self.assertEqual((code, out.split(" ")[-1].strip()), (1, "OVER_PROCESSED"))
+        self.assertEqual(self.line(("999", "999", "999", "1"), {IMPLEMENTATION: {"output_tokens_max": 1, "processed_tokens_max": 2997}})[0], 0)
+        self.assertEqual(self.line(("999", "999", "999", "1"), {IMPLEMENTATION: {"output_tokens_max": 1, "processed_tokens_max": 2996}})[0], 1)
+
+    def test_the_decimal_helpers(self) -> None:
+        self.assertEqual(usage_report.add_decimal("999", "1"), "1000")
+        self.assertEqual(usage_report.add_decimal("0", "0"), "0")
+        self.assertEqual(usage_report.add_decimal("5", "12345"), "12350")
+        self.assertTrue(usage_report.is_greater("10", "9"))
+        self.assertFalse(usage_report.is_greater("9", "10"))
+        self.assertFalse(usage_report.is_greater("12", "12"))
+        self.assertTrue(usage_report.is_greater("13", "12"))
+
+
+class RecognitionTests(ReportCase):
+    """A USAGE cell is recognised exactly as evidence_gate.py recognises it; none is skipped."""
+
+    def fault_with(self, *parts: str) -> tuple[int, str, str]:
+        return self.report(self.receipt(*parts))
+
+    def test_a_usage_section_without_its_cell_line_is_not_skipped(self) -> None:
+        code, out, err = self.fault_with(usage(), usage(REVIEW, "run-2", (1, 1, 1, 9999), drop=["cell"]))
+        self.assertEqual(code, 2)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("cell", err)
+        self.assertIn(f"seat:{REVIEW}/run-2", err)
+
+    def test_a_misspelt_cell_line_under_a_usage_heading_is_not_skipped(self) -> None:
+        for spelling in ("usage", "Usage", "USAGES", ""):
+            with self.subTest(spelling=spelling):
+                code, out, err = self.fault_with(usage(replace={"cell": spelling}))
+                self.assertEqual((code, out), (2, ""))
+                self.assertEqual(len(err.splitlines()), 1, err)
+                self.assertIn("cell: line says", err)
+
+    def test_a_bare_usage_heading_without_a_cell_line_is_not_skipped(self) -> None:
+        code, _, err = self.fault_with("## USAGE\nseat: x\n")
+        self.assertEqual(code, 2)
+        self.assertIn("cell", err)
+
+    def test_such_a_section_beside_a_red_still_lets_the_red_stand(self) -> None:
+        bare = self.receipt(name="bare.md")
+        broken = self.receipt(usage(drop=["cell"]), name="broken.md")
+        code, out, err = self.report(bare, broken)
+        self.assertEqual(code, 1)
+        self.assertTrue(out.startswith("NO_USAGE"), out)
+        self.assertEqual(len(err.splitlines()), 1, err)
+
+    def test_a_section_with_another_heading_and_no_cell_line_is_not_a_usage_cell(self) -> None:
+        code, out, _ = self.fault_with("## Notes\nseat: x\n", usage())
+        self.assertEqual((code, len(out.splitlines())), (0, 1))
+        code, out, _ = self.fault_with("## USAGEX\nseat: x\n", usage())
+        self.assertEqual((code, len(out.splitlines())), (0, 1))
+
+    def test_the_cell_line_alone_decides_for_any_heading(self) -> None:
+        code, _, err = self.fault_with(usage(heading="Other name"))
+        self.assertEqual(code, 2)
+        self.assertIn("heading", err)
+
+
+class PrintedSubjectTests(unittest.TestCase):
+    def test_the_no_usage_subject_is_escaped_on_every_platform(self) -> None:
+        self.assertEqual(usage_report.no_usage_line(Path("a b")), "NO_USAGE a\\u2028b")
+        self.assertEqual(usage_report.no_usage_line(Path("x\ny")), "NO_USAGE x\\ny")
+        self.assertEqual(usage_report.no_usage_line(Path("a\x0bb")), "NO_USAGE a\\x0bb")
 
 
 if __name__ == "__main__":

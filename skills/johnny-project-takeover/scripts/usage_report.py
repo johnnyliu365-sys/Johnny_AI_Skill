@@ -18,9 +18,16 @@ A receipt without a USAGE cell prints `NO_USAGE <receipt>`.
 
 Exit codes: 0 every seat is within its expectation; 1 a receipt has no USAGE cell, a profile is
 unknown, or a seat is over its expectation (every one is listed); 2 a receipt or the expectation
-file cannot be read or breaks its schema (each fault is one line on standard error, and 2 wins
-over 1); 3 usage error. JSON input refuses repeated keys, NaN and Infinity. Every printed subject
-is escaped to one line. Standard library only. Output uses LF.
+file cannot be read or breaks its schema (each fault is one line on standard error). Red before
+fault, as R4-2 sets it for every gate: the report prints every red it can find even when a fault
+was met on the way, and exits 1 if it found a red, else 2 if it met a fault. A fault in the
+expectation file leaves the `NO_USAGE` reds of the receipts standing; the verdicts that need the
+expectation are not computed. 3 usage error. JSON input refuses repeated keys, NaN and Infinity.
+Every printed subject is escaped to one line. A count is compared as a decimal string (no
+integer conversion), so a count of any length is a value, never an error. A section is a USAGE
+cell exactly as evidence_gate.py reads it: `cell: USAGE`, or no `cell:` line and a heading that is
+`USAGE` or starts with `USAGE `; a section headed USAGE whose `cell:` line says anything else is a
+schema break (exit 2), never skipped. Standard library only. Output uses LF.
 """
 from __future__ import annotations
 
@@ -87,16 +94,16 @@ def has_bad_text(text: str) -> bool:
 
 @dataclass(frozen=True)
 class Limits:
-    output_tokens_max: int
-    processed_tokens_max: int
+    output_tokens_max: str  # decimal digits, compared as text
+    processed_tokens_max: str
 
 
 @dataclass(frozen=True)
 class Seat:
     seat: str
     profile: str
-    output_tokens: int
-    processed_tokens: int
+    output_tokens: str  # decimal digits without a leading zero
+    processed_tokens: str
 
 
 @dataclass(frozen=True)
@@ -198,11 +205,33 @@ def load_expectation(path: Path) -> dict[str, Limits]:
             raise InputFault(f"{origin}: profile {printable(profile)} {LIMIT_KEYS[0]} is not an integer >= 0")
         if not isinstance(processed_max, int) or isinstance(processed_max, bool) or processed_max < 0:
             raise InputFault(f"{origin}: profile {printable(profile)} {LIMIT_KEYS[1]} is not an integer >= 0")
-        limits[profile] = Limits(output_max, processed_max)
+        limits[profile] = Limits(str(output_max), str(processed_max))
     return limits
 
 
 # ----------------------------------------------------------------------------- receipts
+
+
+def add_decimal(left: str, right: str) -> str:
+    """The sum of two non-negative decimal strings, as a decimal string; no integer conversion of the whole."""
+    digits: list[str] = []
+    carry = 0
+    for index in range(1, max(len(left), len(right)) + 1):
+        a = int(left[-index]) if index <= len(left) else 0
+        b = int(right[-index]) if index <= len(right) else 0
+        total = a + b + carry
+        digits.append(str(total % 10))
+        carry = total // 10
+    if carry:
+        digits.append(str(carry))
+    return "".join(reversed(digits))
+
+
+def is_greater(left: str, right: str) -> bool:
+    """left > right for decimal strings without leading zeros (a longer string is greater, then by text)."""
+    if len(left) != len(right):
+        return len(left) > len(right)
+    return left > right
 
 
 def split_usage_sections(text: str) -> list[tuple[str, list[str]]]:
@@ -225,12 +254,20 @@ def split_usage_sections(text: str) -> list[tuple[str, list[str]]]:
             current[1].append(line)
     found: list[tuple[str, list[str]]] = []
     for heading, lines in sections:
+        cell: str | None = None
         for line in lines:
             matched = FIELD_LINE.fullmatch(line.rstrip(HORIZONTAL_SPACE))
             if matched is not None and matched.group(1) == "cell":
-                if matched.group(2).strip(HORIZONTAL_SPACE) == USAGE_CELL:
-                    found.append((heading, lines))
+                cell = matched.group(2).strip(HORIZONTAL_SPACE)
                 break
+        if cell == USAGE_CELL:
+            found.append((heading, lines))
+        elif cell is None and (heading == USAGE_CELL or heading.startswith(USAGE_CELL + " ")):
+            found.append((heading, lines))  # the gate reads it as a USAGE cell too; parse_usage names the missing field
+        elif cell is not None and (heading == USAGE_CELL or heading.startswith(USAGE_CELL + " ")):
+            raise InputFault(
+                f"section {printable(heading)} is headed USAGE but its cell: line says {printable(cell)}"
+            )
     return found
 
 
@@ -276,8 +313,8 @@ def parse_usage(heading: str, lines: Sequence[str], origin: str) -> Seat:
         raise refuse("profile is not the profile the seat names")
     if heading != f"{USAGE_CELL} {values['seat']}":
         raise refuse(f"heading must be '{USAGE_CELL} {printable(values['seat'])}'")
-    processed = int(values["input_tokens"]) + int(values["cache_write_tokens"]) + int(values["cache_read_tokens"])
-    return Seat(values["seat"], values["profile"], int(values["output_tokens"]), processed)
+    processed = add_decimal(add_decimal(values["input_tokens"], values["cache_write_tokens"]), values["cache_read_tokens"])
+    return Seat(values["seat"], values["profile"], values["output_tokens"], processed)
 
 
 def load_receipt(path: Path) -> list[Seat]:
@@ -292,7 +329,11 @@ def load_receipt(path: Path) -> list[Seat]:
     text = text.replace("\r\n", "\n")
     seats: list[Seat] = []
     seen: set[str] = set()
-    for heading, lines in split_usage_sections(text):
+    try:
+        found = split_usage_sections(text)
+    except InputFault as error:
+        raise InputFault(f"{origin}: {error}") from error
+    for heading, lines in found:
         seat = parse_usage(heading, lines, origin)
         if seat.seat in seen:
             raise InputFault(f"{origin}: seat {printable(seat.seat)} has two USAGE cells")
@@ -309,20 +350,25 @@ def verdict(seat: Seat, limits: dict[str, Limits]) -> str:
     if expected is None:
         return UNKNOWN_PROFILE
     over: list[str] = []
-    if seat.output_tokens > expected.output_tokens_max:
+    if is_greater(seat.output_tokens, expected.output_tokens_max):
         over.append(OVER_OUTPUT)
-    if seat.processed_tokens > expected.processed_tokens_max:
+    if is_greater(seat.processed_tokens, expected.processed_tokens_max):
         over.append(OVER_PROCESSED)
     return ",".join(over) if over else WITHIN
 
 
+def no_usage_line(path: Path) -> str:
+    return f"{NO_USAGE} {printable(str(path))}"
+
+
 def execute(args: Arguments) -> int:
     faults: list[str] = []
+    limits: dict[str, Limits] | None
     try:
         limits = load_expectation(args.expectation)
     except InputFault as error:
         faults.append(str(error))
-        limits = {}
+        limits = None  # no verdict can be computed; the NO_USAGE reds still stand
     red = False
     lines: list[str] = []
     for path in args.receipts:
@@ -332,8 +378,10 @@ def execute(args: Arguments) -> int:
             faults.append(str(error))
             continue
         if not seats:
-            lines.append(f"{NO_USAGE} {printable(str(path))}")
+            lines.append(no_usage_line(path))
             red = True
+            continue
+        if limits is None:
             continue
         for seat in seats:
             result = verdict(seat, limits)
@@ -343,13 +391,13 @@ def execute(args: Arguments) -> int:
                 f"{printable(seat.seat)} {printable(seat.profile)} "
                 f"output={seat.output_tokens} processed={seat.processed_tokens} {result}"
             )
-    if faults:
-        for message in faults:
-            print(f"input fault: {message}", file=sys.stderr)
-        return EXIT_FAULT
     for line in lines:
         print(line)
-    return EXIT_RED if red else EXIT_PASS
+    for message in faults:
+        print(f"input fault: {message}", file=sys.stderr)
+    if red:
+        return EXIT_RED
+    return EXIT_FAULT if faults else EXIT_PASS
 
 
 def main(argv: Sequence[str]) -> int:
