@@ -1,11 +1,11 @@
 # Gate scripts
 
-Ten stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `preflight.py`, `repair_guard.py` and `integrate.py`) that decide a workflow transition, keep a versioned record or move a reviewed candidate onto the integration branch mechanically.
+Eleven stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `preflight.py`, `repair_guard.py`, `integrate.py` and `usage_report.py`) that decide a workflow transition, keep a versioned record or move a reviewed candidate onto the integration branch mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
 usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). `preflight.py` has no red (`0`, `2`, `3`). `integrate.py` reads `0` as landed, recorded or nothing to do and `1` as an entry bounced or a precondition red. In
-`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `repair_guard.py` and `integrate.py` an unexpected error is also a tool fault
+`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `repair_guard.py`, `integrate.py` and `usage_report.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red; the wave-2 gates
 report every red they can find even when a fault was met on the way (see each section). The console
@@ -122,7 +122,8 @@ lines `cell: <name>`, `candidate: <full sha>`, `tool_digest:` followed by
 `- <repository-relative path>=<sha256>` lines, `capture: <path relative to the evidence
 root>` and `exit: <comma-separated exit codes in capture order>`, then the capture in one
 four-backtick fence. A section with `cell: STATEMENT` is informational and has no
-`capture:`, `exit:` or fence. `--candidate` is the full lower-case commit sha every cell must
+`capture:`, `exit:` or fence. A section with `cell: USAGE` is the token-use record of one seat
+(see "The USAGE cell" below). `--candidate` is the full lower-case commit sha every cell must
 name; each `--tool` path must be listed in every run cell with the sha256 of
 the blob at `<candidate>:<path>` in `--repo`. `--evidence-root` defaults to the receipt's
 directory. The receipt's own CRLF line endings are normalised; captures are not.
@@ -175,6 +176,33 @@ not present as a blob, whatever value is listed). The exit is always 1 with the 
 standard error, never 2. Exit 3: a missing or unknown
 argument, no `--tool`, a blank `--tool` or `--require-cell`, a `--tool` path that is not canonical, a `--candidate` that is not a
 full 40-character lower-case sha. Output uses LF line endings.
+
+### The USAGE cell
+
+A receipt holds one `## USAGE <seat>` section per seat that worked on the candidate. It is
+informational like `STATEMENT`: no `capture:`, `exit:`, `candidate:`, `tool_digest:` or fence,
+and it does not count in `cells=N`. Its fields come one per line, in this order:
+
+    cell: USAGE
+    seat: seat:<profile>/<run-id>
+    profile: <semantic profile reference>
+    model: <the model the host reports>
+    input_tokens: <integer >= 0>
+    cache_write_tokens: <integer >= 0>
+    cache_read_tokens: <integer >= 0>
+    output_tokens: <integer >= 0>
+    source: <where the numbers come from>
+
+A count is decimal digits without a sign or a leading zero. The gate accepts any number of
+USAGE cells and never requires one (a receipt is written before the review seats exist;
+`usage_report.py` enforces presence). Defect codes: `USAGE_FIELD_MISSING` (a field is absent),
+`USAGE_FIELD_REPEATED`, `USAGE_FIELD_ORDER` (the fields present are not in the order above),
+`USAGE_FIELD_INVALID` (an unknown field or a line that is not `name: value`; an empty or
+control-character `model` or `source`; a `seat` that is not `seat:<profile>/<run-id>`, a
+`profile` that is not the profile the seat names, or a heading other than `USAGE <seat>`),
+`USAGE_COUNT_INVALID` (a count that is not an integer >= 0), `USAGE_HAS_RUN_FIELDS` (the cell
+carries `candidate:`, `capture:`, `exit:`, `tool_digest:` or a fence) and `USAGE_DUPLICATE_SEAT`
+(two USAGE cells for one seat). Every printed subject is escaped to one line.
 
 ## requirement_snapshot.py
 
@@ -762,3 +790,38 @@ variable and any `GIT_TEST_*` variable (the removed-variable list of the evidenc
 `GIT_CONFIG_NOSYSTEM=1` and `GIT_CONFIG_GLOBAL` at a path that does not exist, so that a global or
 system git configuration cannot weaken the verified fetch. `git` is looked up in
 absolute `PATH` entries only. The configured commands get the same environment.
+
+## usage_report.py
+
+    python usage_report.py --expectation FILE RECEIPT [RECEIPT ...]
+
+Reads each receipt and the expectation file and prints, for every USAGE cell, one line
+`<seat> <profile> output=<n> processed=<n> <verdict>`; processed is input + cache write + cache
+read. The verdict is `WITHIN`, `OVER_OUTPUT` (output above `output_tokens_max`),
+`OVER_PROCESSED` (processed above `processed_tokens_max`; both words joined by a comma when both
+hold) or `UNKNOWN_PROFILE`. A value equal to its maximum is `WITHIN`. A receipt without a USAGE
+cell prints `NO_USAGE <receipt>`.
+
+The expectation file is a JSON object with one entry per semantic profile, each an object with
+exactly `output_tokens_max` and `processed_tokens_max` (integers >= 0); the project template is
+`template/doc/handoffs/governance/usage-expectation.TEMPLATE.json`. Repeated keys, `NaN` and
+`Infinity` are refused.
+
+Exit 0: every seat is within its expectation. Exit 1: a receipt has no USAGE cell, a profile is
+unknown, or a seat is over its expectation; every one is listed. Exit 2: the expectation file or
+a receipt cannot be read, is not UTF-8, is not accepted JSON, or breaks its schema (a USAGE
+cell with a missing, repeated, misordered or malformed field, a run field, or two cells for one
+seat; a profile without one of its two keys); each fault is one line on standard error. Red before
+fault, as R4-2 sets it for every gate: when one run meets both a red and a fault, the report
+prints every red it can find, puts each fault on standard error, and exits 1; it exits 2 only
+when it found no red. A fault in the expectation file leaves the `NO_USAGE` reds of the receipts
+standing, and the verdicts that need the expectation are not computed. Exit 3: a missing
+`--expectation`, no receipt, a repeated or unknown option. Every printed subject is escaped to one
+line.
+
+A count is compared as a decimal string (no integer conversion), so a count of any length that
+the gate accepts is a value in the report too, and an over by value is exit 1, never a fault. A
+section is a USAGE cell exactly as `evidence_gate.py` reads it: its `cell:` line says `USAGE`, or
+it has no `cell:` line and its heading is `USAGE` or starts with `USAGE `. A section headed USAGE
+whose `cell:` line says anything else, or is absent, breaks the schema (exit 2, or exit 1 beside a
+red) and is never skipped.

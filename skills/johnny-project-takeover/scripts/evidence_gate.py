@@ -10,10 +10,20 @@ A run cell is a `## <name>` section of the receipt holding the lines `cell: <nam
 capture order>`, then the capture in one four-backtick fence. A section with `cell: STATEMENT`
 is informational and carries none of `capture:`, `exit:` or a fence.
 
+A section with `cell: USAGE` is the token-use record of one seat. It is informational too: no
+capture, exit, candidate, tool_digest or fence. Its fields come one per line in this order:
+`cell`, `seat` (`seat:<profile>/<run-id>`, equal in `profile`), `profile`, `model`,
+`input_tokens`, `cache_write_tokens`, `cache_read_tokens`, `output_tokens` (each an integer
+>= 0 written in decimal without a sign or a leading zero) and `source`; its heading is
+`USAGE <seat>`. Any number of USAGE cells is accepted, none is ever required (usage_report.py
+enforces presence), and a USAGE cell is not a run cell, so it does not count in `cells=N`.
+
 Defect codes (exit 1, one line `<code> <section>: <detail>` each): NO_CELLS, NOT_RUN,
 CELL_FIELD_MISSING, STATEMENT_HAS_RUN_FIELDS, DUPLICATE_CELL, CANDIDATE_MISMATCH,
 TOOL_DIGEST_MISSING, TOOL_DIGEST_STALE, CAPTURE_MISSING, CAPTURE_CR, BLOCK_MISMATCH,
-EXIT_MISMATCH, FIELD_REPEATED, CELL_NAME_MISMATCH. The last line is `cells=N defects=M`.
+EXIT_MISMATCH, FIELD_REPEATED, CELL_NAME_MISMATCH and, for a USAGE cell, USAGE_FIELD_MISSING,
+USAGE_FIELD_REPEATED, USAGE_FIELD_ORDER, USAGE_FIELD_INVALID, USAGE_COUNT_INVALID,
+USAGE_HAS_RUN_FIELDS, USAGE_DUPLICATE_SEAT. The last line is `cells=N defects=M`.
 
 A `tool_digest` path is judged in two steps, and neither can turn a red into a tool fault.
 First its form: a canonical path is non-empty, at most 1024 bytes in UTF-8, holds no control
@@ -78,6 +88,24 @@ USAGE = (
 
 FENCE = "`" * 4
 STATEMENT = "STATEMENT"
+USAGE_CELL = "USAGE"
+USAGE_FIELDS = (
+    "cell",
+    "seat",
+    "profile",
+    "model",
+    "input_tokens",
+    "cache_write_tokens",
+    "cache_read_tokens",
+    "output_tokens",
+    "source",
+)
+USAGE_COUNT_FIELDS = ("input_tokens", "cache_write_tokens", "cache_read_tokens", "output_tokens")
+USAGE_RUN_FIELDS = ("candidate", "capture", "exit", "tool_digest")
+USAGE_LINE = re.compile(r"([A-Za-z_]+):[ \t]*(.*)")
+USAGE_COUNT = re.compile(r"0|[1-9][0-9]*")
+USAGE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
+USAGE_SEAT = re.compile(r"seat:([A-Za-z0-9][A-Za-z0-9._-]*)/([A-Za-z0-9][A-Za-z0-9._-]*)")
 CR = b"\r"
 FULL_SHA = re.compile(r"[0-9a-fA-F]{40}")
 LOWER_FULL_SHA = re.compile(r"[0-9a-f]{40}")
@@ -147,6 +175,18 @@ class DefectCode(Enum):
     CELL_NAME_MISMATCH = "CELL_NAME_MISMATCH"
 
 
+class UsageCode(Enum):
+    """The defect codes of a USAGE cell."""
+
+    USAGE_FIELD_MISSING = "USAGE_FIELD_MISSING"
+    USAGE_FIELD_REPEATED = "USAGE_FIELD_REPEATED"
+    USAGE_FIELD_ORDER = "USAGE_FIELD_ORDER"
+    USAGE_FIELD_INVALID = "USAGE_FIELD_INVALID"
+    USAGE_COUNT_INVALID = "USAGE_COUNT_INVALID"
+    USAGE_HAS_RUN_FIELDS = "USAGE_HAS_RUN_FIELDS"
+    USAGE_DUPLICATE_SEAT = "USAGE_DUPLICATE_SEAT"
+
+
 def has_bad_text(text: str) -> bool:
     """True when `text` holds a control character (U+0000-U+001F, U+007F) or a lone surrogate."""
     return any(ord(ch) < 0x20 or ord(ch) == 0x7F or 0xD800 <= ord(ch) <= 0xDFFF for ch in text)
@@ -159,7 +199,7 @@ def printable(text: str) -> str:
 
 @dataclass(frozen=True)
 class Defect:
-    code: DefectCode
+    code: DefectCode | UsageCode
     section: str
     detail: str
 
@@ -189,6 +229,7 @@ class Section:
     block_lines: list[str] = field(default_factory=list)
     block_closed: bool = False
     repeated: list[str] = field(default_factory=list)
+    plain_lines: list[str] = field(default_factory=list)  # every line outside a fence, as read
 
     def note_repeat(self, name: str) -> None:
         if name not in self.repeated:
@@ -201,6 +242,11 @@ class Section:
     @property
     def is_statement(self) -> bool:
         return self.fields.get("cell") == STATEMENT
+
+    @property
+    def is_usage(self) -> bool:
+        value = self.fields.get("cell")
+        return value == USAGE_CELL or (value is None and (self.heading == USAGE_CELL or self.heading.startswith(USAGE_CELL + " ")))
 
 
 @dataclass(frozen=True)
@@ -612,6 +658,7 @@ def parse_sections(text: str) -> list[Section]:
             if capturing:
                 current.block_lines.append(line)
             continue
+        current.plain_lines.append(line)
         if collecting_digests:
             if line.startswith("- "):
                 current.digest_lines.append(line[2:])
@@ -700,6 +747,87 @@ def check_statement(section: Section, require_cells: Sequence[str]) -> list[Defe
         defects.append(
             Defect(DefectCode.STATEMENT_HAS_RUN_FIELDS, section.heading, "statement uses a required cell name")
         )
+    return defects
+
+
+def usage_defect(code: UsageCode, section: Section, detail: str) -> Defect:
+    return Defect(code, section.heading, detail)
+
+
+def check_usage(section: Section, seats: dict[str, str]) -> list[Defect]:
+    """Judge one USAGE cell; `seats` maps each seat already seen to its heading."""
+    defects: list[Defect] = []
+    values: dict[str, str] = {}
+    order: list[str] = []
+    repeated: list[str] = []
+    ran: list[str] = []
+    for raw in section.plain_lines:
+        line = raw.rstrip(HORIZONTAL_SPACE)
+        if not line.strip(HORIZONTAL_SPACE):
+            continue
+        matched = USAGE_LINE.fullmatch(line)
+        if matched is None:
+            if section.has_digest_label and line.startswith("- "):
+                continue  # a digest line, judged below as a run field
+            defects.append(usage_defect(UsageCode.USAGE_FIELD_INVALID, section, f"line is not `name: value`: '{line}'"))
+            continue
+        name, value = matched.group(1), matched.group(2).strip(HORIZONTAL_SPACE)
+        if name in USAGE_RUN_FIELDS:
+            if name not in ran:
+                ran.append(name)
+            continue
+        if name not in USAGE_FIELDS:
+            defects.append(usage_defect(UsageCode.USAGE_FIELD_INVALID, section, f"unknown field {name}:"))
+            continue
+        if name in values:
+            if name not in repeated:
+                repeated.append(name)
+            continue
+        values[name] = value
+        order.append(name)
+    for name in ran:
+        defects.append(usage_defect(UsageCode.USAGE_HAS_RUN_FIELDS, section, f"usage carries {name}:"))
+    if section.fence_count > 0:
+        defects.append(usage_defect(UsageCode.USAGE_HAS_RUN_FIELDS, section, "usage carries a fenced block"))
+    for name in repeated:
+        defects.append(usage_defect(UsageCode.USAGE_FIELD_REPEATED, section, f"{name}: given more than once"))
+    for name in USAGE_FIELDS:
+        if name not in values:
+            defects.append(usage_defect(UsageCode.USAGE_FIELD_MISSING, section, name))
+    wanted = [name for name in USAGE_FIELDS if name in values]
+    if order != wanted:
+        defects.append(
+            usage_defect(UsageCode.USAGE_FIELD_ORDER, section, f"fields come as {','.join(order)}, expected {','.join(wanted)}")
+        )
+    for name in ("model", "source"):
+        if name in values and (not values[name] or has_bad_text(values[name])):
+            defects.append(usage_defect(UsageCode.USAGE_FIELD_INVALID, section, f"{name} is empty or holds a control character"))
+    for name in USAGE_COUNT_FIELDS:
+        if name in values and USAGE_COUNT.fullmatch(values[name]) is None:
+            defects.append(
+                usage_defect(UsageCode.USAGE_COUNT_INVALID, section, f"{name} is not an integer >= 0: '{values[name]}'")
+            )
+    profile = values.get("profile")
+    if profile is not None and USAGE_NAME.fullmatch(profile) is None:
+        defects.append(usage_defect(UsageCode.USAGE_FIELD_INVALID, section, f"profile is not a profile reference: '{profile}'"))
+    seat = values.get("seat")
+    if seat is not None:
+        form = USAGE_SEAT.fullmatch(seat)
+        if form is None:
+            defects.append(usage_defect(UsageCode.USAGE_FIELD_INVALID, section, f"seat is not seat:<profile>/<run-id>: '{seat}'"))
+        else:
+            if profile is not None and form.group(1) != profile:
+                defects.append(
+                    usage_defect(UsageCode.USAGE_FIELD_INVALID, section, f"seat names profile {form.group(1)}, profile: says {profile}")
+                )
+            if section.heading != f"{USAGE_CELL} {seat}":
+                defects.append(usage_defect(UsageCode.USAGE_FIELD_INVALID, section, f"heading must be '{USAGE_CELL} {seat}'"))
+            if seat in seats:
+                defects.append(
+                    usage_defect(UsageCode.USAGE_DUPLICATE_SEAT, section, f"seat {seat} already has the usage cell of section {seats[seat]}")
+                )
+            else:
+                seats[seat] = section.heading
     return defects
 
 
@@ -841,12 +969,16 @@ def check_receipt(text: str, args: Arguments, git: GitView, evidence_root: Path 
     """Judge every section; the reds and the run-cell count go into `report` as they are found."""
     defects = report.defects
     run_names: dict[str, str] = {}
+    usage_seats: dict[str, str] = {}
     for section in parse_sections(text):
         value = section.cell_value
         if has_bad_text(section.heading) or (value is not None and has_bad_text(value)):
             defects.append(
                 Defect(DefectCode.NOT_RUN, section.heading, "section name or cell name holds a control character or a lone surrogate")
             )
+            continue
+        if section.is_usage:
+            defects.extend(check_usage(section, usage_seats))
             continue
         if value is None:
             defects.append(Defect(DefectCode.NOT_RUN, section.heading, "section has no cell: line"))

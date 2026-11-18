@@ -31,12 +31,14 @@ TICKET_TEMPLATE = TEMPLATE_DIR / "modules" / "tickets" / "TEMPLATE.md"
 QUEUE_TEMPLATE = GOVERNANCE_DIR / "MERGE-QUEUE.TEMPLATE.json"
 CONFIG_TEMPLATE = GOVERNANCE_DIR / "integration.TEMPLATE.json"
 RECEIPT_TEMPLATE = GOVERNANCE_DIR / "RECEIPT.TEMPLATE.md"
+USAGE_EXPECTATION_TEMPLATE = GOVERNANCE_DIR / "usage-expectation.TEMPLATE.json"
 SCRIPTS_DIR = ROOT / "skills" / "johnny-project-takeover" / "scripts"
 EVIDENCE_GATE = SCRIPTS_DIR / "evidence_gate.py"
+USAGE_REPORT = SCRIPTS_DIR / "usage_report.py"
 INTEGRATE = SCRIPTS_DIR / "integrate.py"
 GITATTRIBUTES = ROOT / ".gitattributes"
 
-NEW_TEMPLATES = (QUEUE_TEMPLATE, CONFIG_TEMPLATE, RECEIPT_TEMPLATE)
+NEW_TEMPLATES = (QUEUE_TEMPLATE, CONFIG_TEMPLATE, RECEIPT_TEMPLATE, USAGE_EXPECTATION_TEMPLATE)
 ALL_TEMPLATES = (*NEW_TEMPLATES, TICKET_TEMPLATE, README)
 
 # ----------------------------------------------------------------------------- expected data
@@ -61,6 +63,18 @@ MAX_PATH_BYTES = 1024
 RUN_FIELDS = ("cell", "candidate", "capture", "exit")
 DIGEST_LABEL = "tool_digest:"
 STATEMENT = "STATEMENT"
+USAGE_CELL = "USAGE"
+USAGE_FIELD_ORDER = (
+    "cell",
+    "seat",
+    "profile",
+    "model",
+    "input_tokens",
+    "cache_write_tokens",
+    "cache_read_tokens",
+    "output_tokens",
+    "source",
+)
 FENCE = "`" * 4
 
 # every placeholder of the receipt template body and the value that replaces it in a filled receipt
@@ -73,6 +87,17 @@ RECEIPT_PLACEHOLDERS = (
     "<exit-codes>",
     "<capture-lines>",
     "<statement-text>",
+)
+# the placeholders of the USAGE block the preamble shows; it is not part of the receipt body
+USAGE_PLACEHOLDERS = (
+    "<seat>",
+    "<profile>",
+    "<model>",
+    "<input-tokens>",
+    "<cache-write-tokens>",
+    "<cache-read-tokens>",
+    "<output-tokens>",
+    "<usage-source>",
 )
 PLACEHOLDER = re.compile(r"<[a-z0-9-]+>")
 
@@ -100,8 +125,14 @@ README_FILE_NAMES = (
     "MERGE-QUEUE.TEMPLATE.json",
     "integration.TEMPLATE.json",
     "RECEIPT.TEMPLATE.md",
+    "usage-expectation.TEMPLATE.json",
     "modules/tickets/TEMPLATE.md",
 )
+USAGE_PROFILES = {
+    "implementation-standard": (130000, 24000000),
+    "implementation-elevated": (130000, 24000000),
+    "ticket-review": (110000, 23000000),
+}
 README_QUEUE_BRANCH_SENTENCE = "The queue file lives on the queue branch, not on the integration branch"
 README_STRUCTURE_QUEUE_COMMENT = "lives on the queue branch only"
 README_ROW_QUEUE_PHRASE = "on the queue branch"
@@ -278,8 +309,9 @@ def receipt_problems(text: str) -> list[str]:
     if text.startswith("\ufeff"):
         problems.append("holds a byte order mark")
     _, sections = split_sections(text)
-    runs = [item for item in sections if field_lines(item[1], "cell") != [STATEMENT]]
+    runs = [item for item in sections if field_lines(item[1], "cell") not in ([STATEMENT], [USAGE_CELL])]
     statements = [item for item in sections if field_lines(item[1], "cell") == [STATEMENT]]
+    usages = [item for item in sections if field_lines(item[1], "cell") == [USAGE_CELL]]
     if len(runs) != 1:
         problems.append(f"{len(runs)} run cells, expected 1")
     if len(statements) != 1:
@@ -306,11 +338,51 @@ def receipt_problems(text: str) -> list[str]:
         fences = [line for line in lines if line.rstrip() == FENCE]
         if len(fences) != 2:
             problems.append(f"run cell {heading}: {len(fences)} fence lines, expected 2")
+    for heading, lines in usages:
+        if any(field_lines(lines, name) for name in ("candidate", "capture", "exit", DIGEST_LABEL.rstrip(":"))):
+            problems.append(f"usage {heading} carries a run field")
+        if any(line.rstrip() == FENCE for line in lines):
+            problems.append(f"usage {heading} carries a fence")
+        names = [line.split(":", 1)[0] for line in lines if re.match(r"[a-z_]+:", line)]
+        if names != list(USAGE_FIELD_ORDER):
+            problems.append(f"usage {heading}: fields come as {names}")
     for heading, lines in statements:
         if any(field_lines(lines, name) for name in ("capture", "exit", DIGEST_LABEL.rstrip(":"))):
             problems.append(f"statement {heading} carries a run field")
         if any(line.rstrip() == FENCE for line in lines):
             problems.append(f"statement {heading} carries a fence")
+    return problems
+
+
+def usage_example(text: str) -> list[str]:
+    """The lines of the fenced USAGE block in the preamble, before the first section."""
+    preamble, _ = split_sections(text)
+    inside: list[str] = []
+    opened = False
+    for line in preamble:
+        if line.rstrip() == FENCE:
+            if opened:
+                return inside
+            opened = True
+            continue
+        if opened:
+            inside.append(line)
+    raise AssertionError("the preamble holds no closed fenced USAGE block")
+
+
+def usage_block_problems(lines: Sequence[str]) -> list[str]:
+    """Every way the lines of one USAGE block depart from the cell form."""
+    problems: list[str] = []
+    body = list(lines)
+    if any(line.startswith("## ") for line in body):
+        problems.append("a line of the block starts a section")
+    if any(line.rstrip() == FENCE for line in body):
+        problems.append("the block carries a fence")
+    names = [line.split(":", 1)[0] for line in body if line.strip()]
+    if names != list(USAGE_FIELD_ORDER):
+        problems.append(f"fields come as {names}")
+    if any(name in ("candidate", "capture", "exit", "tool_digest") for name in names):
+        problems.append("the block carries a run field")
     return problems
 
 
@@ -404,7 +476,7 @@ class TemplateFileTests(unittest.TestCase):
         self.assertEqual(
             sorted(item.name for item in GOVERNANCE_DIR.iterdir()),
             sorted(item.name for item in NEW_TEMPLATES),
-            "the governance template directory holds exactly the three new templates",
+            "the governance template directory holds exactly the four new templates",
         )
 
     def test_no_template_has_a_byte_order_mark_or_invalid_utf8(self) -> None:
@@ -701,7 +773,8 @@ class ReceiptTemplateTests(unittest.TestCase):
         for name in RUN_FIELDS:
             with self.subTest(name=name):
                 lines = self.text().split("\n")
-                index = next(i for i, line in enumerate(lines) if line.startswith(f"{name}:"))
+                first_section = next(i for i, line in enumerate(lines) if line.startswith("## "))
+                index = next(i for i, line in enumerate(lines) if i > first_section and line.startswith(f"{name}:"))
                 lines.insert(index, lines[index])
                 self.assertTrue(receipt_problems("\n".join(lines)))
         body = self.text()
@@ -717,6 +790,27 @@ class ReceiptTemplateTests(unittest.TestCase):
         doubled.insert(index + 1, lines[index + 1])
         self.assertTrue(receipt_problems("\n".join(doubled)))
 
+    def test_the_preamble_shows_one_usage_block_in_the_cell_form(self) -> None:
+        self.assertEqual(usage_block_problems(usage_example(self.text())), [])
+        self.assertNotIn("\n## USAGE", "\n" + "\n".join("\n".join(lines) for _, lines in split_sections(self.text())[1]))
+
+    def test_a_usage_block_with_a_run_field_a_missing_or_a_misordered_field_is_a_problem(self) -> None:
+        lines = usage_example(self.text())
+        for extra in ("capture: x", "exit: 0", "candidate: x", "tool_digest:", FENCE):
+            with self.subTest(extra=extra):
+                self.assertTrue(usage_block_problems([*lines, extra]))
+        for name in USAGE_FIELD_ORDER:
+            with self.subTest(missing=name):
+                self.assertTrue(usage_block_problems([line for line in lines if not line.startswith(f"{name}:")]))
+        swapped = list(lines)
+        swapped[3], swapped[4] = swapped[4], swapped[3]
+        self.assertTrue(usage_block_problems(swapped))
+        self.assertTrue(usage_block_problems(["## USAGE <seat>", *lines]))
+
+    def test_a_usage_section_in_a_receipt_is_not_a_run_cell(self) -> None:
+        usage = "## USAGE <seat>\n" + "\n".join(usage_example(self.text())) + "\n"
+        self.assertEqual(receipt_problems(self.text() + "\n" + usage), [])
+
     def test_a_statement_carrying_run_fields_is_a_problem(self) -> None:
         for extra in ("capture: x", "exit: 0", f"{FENCE}"):
             with self.subTest(extra=extra):
@@ -728,7 +822,13 @@ class ReceiptTemplateTests(unittest.TestCase):
         in_body = set(PLACEHOLDER.findall(body))
         self.assertEqual(in_body, set(RECEIPT_PLACEHOLDERS))
         listed = set(PLACEHOLDER.findall("\n".join(line for line in preamble if line.startswith("| `<"))))
-        self.assertEqual(listed, set(RECEIPT_PLACEHOLDERS), "the preamble names the placeholders a run replaces")
+        self.assertEqual(
+            listed,
+            set(RECEIPT_PLACEHOLDERS) | set(USAGE_PLACEHOLDERS),
+            "the preamble names the placeholders a run replaces",
+        )
+        in_usage = set(PLACEHOLDER.findall("\n".join(usage_example(self.text()))))
+        self.assertEqual(in_usage, set(USAGE_PLACEHOLDERS))
 
 
 # ----------------------------------------------------------------------------- ticket state row and README
@@ -813,12 +913,35 @@ class ReadmeTests(unittest.TestCase):
 # ----------------------------------------------------------------------------- cross-checks against the gate scripts
 
 
+def fill_usage(template: str, values: Mapping[str, str]) -> str:
+    """The USAGE block of the template preamble with every placeholder replaced."""
+    body = "## USAGE <seat>\n" + "\n".join(usage_example(template)) + "\n"
+    for token, value in values.items():
+        body = body.replace(token, value)
+    return body
+
+
 def fill_receipt(template: str, values: Mapping[str, str]) -> str:
     """The sections of the receipt template with every placeholder replaced; the preamble is dropped."""
     body = template[template.index("\n## ") + 1 :]
     for token, value in values.items():
         body = body.replace(token, value)
     return body
+
+
+class UsageExpectationTemplateTests(unittest.TestCase):
+    def test_the_expectation_template_holds_the_three_profiles_with_the_proposed_values(self) -> None:
+        value = strict_loads(committed_text(USAGE_EXPECTATION_TEMPLATE))
+        assert isinstance(value, dict)
+        self.assertEqual(set(value), set(USAGE_PROFILES))
+        for profile, (output_max, processed_max) in USAGE_PROFILES.items():
+            with self.subTest(profile=profile):
+                self.assertEqual(value[profile], {"output_tokens_max": output_max, "processed_tokens_max": processed_max})
+
+    def test_the_expectation_template_is_lf_only_with_a_final_newline(self) -> None:
+        data = committed_bytes(USAGE_EXPECTATION_TEMPLATE)
+        self.assertNotIn(b"\r", data)
+        self.assertTrue(data.endswith(b"\n"))
 
 
 @unittest.skipUnless(
@@ -855,9 +978,23 @@ class EvidenceGateCrossCheck(unittest.TestCase):
             "<statement-text>": "Nothing was left silent.",
         }
 
-    def read(self, values: Mapping[str, str]) -> subprocess.CompletedProcess[str]:
+    def usage_values(self) -> dict[str, str]:
+        return {
+            "<seat>": "seat:implementation-standard/run-1",
+            "<profile>": "implementation-standard",
+            "<model>": "a-model",
+            "<input-tokens>": "1000",
+            "<cache-write-tokens>": "2000",
+            "<cache-read-tokens>": "3000",
+            "<output-tokens>": "400",
+            "<usage-source>": "host transcript usage, summed per message",
+        }
+
+    def read(self, values: Mapping[str, str], usage: bool = False) -> subprocess.CompletedProcess[str]:
         receipt = self.evidence / "RETURN.md"
         filled = fill_receipt(committed_text(RECEIPT_TEMPLATE), values)
+        if usage:
+            filled = filled.rstrip("\n") + "\n\n" + fill_usage(committed_text(RECEIPT_TEMPLATE), values)
         receipt.write_bytes(filled.encode("utf-8"))
         return subprocess.run(
             [
@@ -889,6 +1026,33 @@ class EvidenceGateCrossCheck(unittest.TestCase):
         self.assertIn("cells=1 defects=0", done.stdout)
         filled = fill_receipt(committed_text(RECEIPT_TEMPLATE), self.values())
         self.assertEqual(PLACEHOLDER.findall(filled), [])
+
+    def test_the_filled_usage_cell_is_read_by_the_gate_and_the_report(self) -> None:
+        self.assertEqual(set(self.usage_values()), set(USAGE_PLACEHOLDERS))
+        done = self.read({**self.values(), **self.usage_values()}, usage=True)
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        self.assertIn("cells=1 defects=0", done.stdout)
+        expectation = self.work / "usage-expectation.json"
+        expectation.write_bytes(committed_bytes(USAGE_EXPECTATION_TEMPLATE))
+        report = subprocess.run(
+            [sys.executable, "-I", "-X", "utf8", str(USAGE_REPORT), "--expectation", str(expectation), str(self.evidence / "RETURN.md")],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            env=clean_environment(),
+        )
+        self.assertEqual(report.returncode, 0, report.stdout + report.stderr)
+        self.assertEqual(
+            report.stdout,
+            "seat:implementation-standard/run-1 implementation-standard output=400 processed=6000 WITHIN\n",
+        )
+
+    def test_a_negative_count_in_the_filled_usage_cell_is_refused_by_the_gate(self) -> None:
+        values = {**self.values(), **self.usage_values()}
+        values["<input-tokens>"] = "-1"
+        done = self.read(values, usage=True)
+        self.assertEqual(done.returncode, 1, done.stdout + done.stderr)
+        self.assertIn("USAGE_COUNT_INVALID", done.stdout)
 
     def test_the_gate_reads_the_filled_receipt_and_refuses_a_wrong_digest(self) -> None:
         done = self.read(self.values(digest="0" * 64))

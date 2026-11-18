@@ -70,6 +70,31 @@ values above; the values belong in injected profile data.
 - A provider credential or host execution failure is a named capability result. It is neither
   permission to substitute another profile nor evidence that a selected profile ran.
 
+## Token use per seat and the expectation
+
+Wave-3 acceptance criterion 5 (`REQ-20261103-043`): every ticket receipt records its token use per
+seat and compares it with the model-tier expectation.
+
+- The expectation file is `usage-expectation.json`, copied from
+  `template/doc/handoffs/governance/usage-expectation.TEMPLATE.json`. It holds one object per
+  semantic profile with `output_tokens_max` and `processed_tokens_max` (processed is input plus
+  cache write plus cache read tokens).
+- The control plane appends each seat's `USAGE` cell (receipt grammar in
+  `skills/johnny-project-takeover/scripts/README.md`) from the host's report after the seat
+  returns; a seat does not write its own. `evidence_gate.py` checks the cell's form and never
+  requires it. `skills/johnny-project-takeover/scripts/usage_report.py --expectation <file> <receipt>...` enforces presence and prints
+  one verdict per seat.
+- Order of the receipt checks: P9 judges the receipt as the seat returned it, before the control
+  plane appends any `USAGE` cell. After appending them, the control plane reruns E1 only. P9 is
+  not rerun on a receipt that holds `USAGE` cells, because its checker reads every section but
+  `STATEMENT` as a run cell.
+- A seat over its expectation is a fact to explain in the review record. It is not a block on
+  integration.
+- The values in the template are a proposal taken from wave 2 (the 90th percentile per role over
+  129 seat runs, rounded up): `implementation-standard` 130000 output and 24000000 processed,
+  `implementation-elevated` the same until measured, `ticket-review` 110000 output and 23000000
+  processed. The owner confirmed these values on 2026-11-18 ("1A", `REQ-20261103-043`).
+
 ## 最小派工訊息
 
 同生命週期訊息只傳一次性的 `ACTION_REQUIRED`、精確 ticket、reviewer-established baseline

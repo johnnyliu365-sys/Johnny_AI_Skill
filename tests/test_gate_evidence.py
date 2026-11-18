@@ -2058,5 +2058,154 @@ class ProcessTests(GateTestCase):
             self.assertNotIn(banned, source)
 
 
+
+USAGE_SEAT = "seat:implementation-standard/run-1"
+USAGE_LINES = (
+    ("cell", "USAGE"),
+    ("seat", USAGE_SEAT),
+    ("profile", "implementation-standard"),
+    ("model", "a-model"),
+    ("input_tokens", "1000"),
+    ("cache_write_tokens", "2000"),
+    ("cache_read_tokens", "3000"),
+    ("output_tokens", "400"),
+    ("source", "host transcript usage, summed per message"),
+)
+
+
+def usage_cell(
+    seat: str = USAGE_SEAT,
+    replace: dict[str, str] | None = None,
+    drop: Sequence[str] = (),
+    extra: Sequence[str] = (),
+    swap: tuple[str, str] | None = None,
+    heading: str | None = None,
+) -> str:
+    """One USAGE section; each keyword builds one defect at a time."""
+    pairs = [(name, seat if name == "seat" else value) for name, value in USAGE_LINES if name not in drop]
+    for name, value in (replace or {}).items():
+        pairs = [(key, value if key == name else old) for key, old in pairs]
+    if swap is not None:
+        names = [name for name, _ in pairs]
+        first, second = names.index(swap[0]), names.index(swap[1])
+        pairs[first], pairs[second] = pairs[second], pairs[first]
+    lines = [f"## {heading if heading is not None else 'USAGE ' + seat}"]
+    lines.extend(f"{name}: {value}" for name, value in pairs)
+    lines.extend(extra)
+    return "\n".join(lines) + "\n"
+
+
+class UsageCellTests(GateTestCase):
+    def codes_of(self, *usage: str) -> list[str]:
+        return self.red(*self.fx.good_parts(), *usage)
+
+    def test_a_valid_usage_cell_passes_and_is_not_a_run_cell(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts(), usage_cell())
+        code, out, err = self.fx.run()
+        self.assertEqual((code, out, err), (0, "cells=2 defects=0\n", ""))
+
+    def test_any_number_of_usage_cells_for_distinct_seats_passes(self) -> None:
+        review = {"profile": "ticket-review"}
+        self.fx.write_receipt(
+            *self.fx.good_parts(),
+            usage_cell(),
+            usage_cell("seat:ticket-review/run-2", review),
+            usage_cell("seat:ticket-review/run-3", review),
+        )
+        self.assertEqual(self.fx.run()[:2], (0, "cells=2 defects=0\n"))
+
+    def test_a_usage_cell_is_never_required(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts())
+        self.assertEqual(self.fx.run()[0], 0)
+
+    def test_zero_counts_are_valid(self) -> None:
+        zeros = {"input_tokens": "0", "cache_write_tokens": "0", "cache_read_tokens": "0", "output_tokens": "0"}
+        self.fx.write_receipt(*self.fx.good_parts(), usage_cell(replace=zeros))
+        self.assertEqual(self.fx.run()[0], 0)
+
+    def test_a_missing_field_is_named_for_each_field(self) -> None:
+        for name, _ in USAGE_LINES:
+            with self.subTest(name=name):
+                codes = self.codes_of(usage_cell(drop=[name]))
+                self.assertEqual(codes[0], "USAGE_FIELD_MISSING")
+                self.assertEqual(codes.count("USAGE_FIELD_MISSING"), 1)
+
+    def test_a_repeated_field_is_a_red(self) -> None:
+        for name, value in USAGE_LINES:
+            with self.subTest(name=name):
+                self.assertEqual(self.codes_of(usage_cell(extra=[f"{name}: {value}"])), ["USAGE_FIELD_REPEATED"])
+
+    def test_fields_out_of_order_are_a_red(self) -> None:
+        self.assertEqual(self.codes_of(usage_cell(swap=("model", "profile"))), ["USAGE_FIELD_ORDER"])
+        self.assertEqual(self.codes_of(usage_cell(swap=("input_tokens", "output_tokens"))), ["USAGE_FIELD_ORDER"])
+
+    def test_a_negative_count_is_a_red(self) -> None:
+        for name in ("input_tokens", "cache_write_tokens", "cache_read_tokens", "output_tokens"):
+            with self.subTest(name=name):
+                self.assertEqual(self.codes_of(usage_cell(replace={name: "-1"})), ["USAGE_COUNT_INVALID"])
+
+    def test_a_non_integer_count_is_a_red(self) -> None:
+        for bad in ("1.5", "1e3", "abc", "", "0x10", "01", "+5", "1_000", "\u0661", "NaN", "1\u0662", "5\u0662", "\uff11\uff12", "\u0967", "\u00b2", "1\u00b2"):
+            with self.subTest(bad=bad):
+                self.assertEqual(self.codes_of(usage_cell(replace={"output_tokens": bad})), ["USAGE_COUNT_INVALID"])
+
+    def test_each_run_field_inside_usage_is_a_red(self) -> None:
+        for extra in ("candidate: " + "a" * 40, "capture: A.txt", "exit: 0", "tool_digest:"):
+            with self.subTest(extra=extra):
+                self.assertEqual(self.codes_of(usage_cell(extra=[extra])), ["USAGE_HAS_RUN_FIELDS"])
+
+    def test_a_digest_line_and_a_fence_inside_usage_are_a_red(self) -> None:
+        extra = ["tool_digest:", f"- {TOOL_PATH}={sha256(TOOL_BODY)}"]
+        self.assertEqual(self.codes_of(usage_cell(extra=extra)), ["USAGE_HAS_RUN_FIELDS"])
+        self.assertEqual(self.codes_of(usage_cell(extra=["", FENCE, "exit=0", FENCE])), ["USAGE_HAS_RUN_FIELDS"])
+
+    def test_two_usage_cells_for_one_seat_are_a_red(self) -> None:
+        self.assertEqual(self.codes_of(usage_cell(), usage_cell()), ["USAGE_DUPLICATE_SEAT"])
+
+    def test_a_seat_not_in_the_seat_form_is_a_red(self) -> None:
+        for bad in ("implementation-standard/run-1", "seat:implementation-standard", "seat:/run-1", "seat:a b/run-1", "seat:implementation-standard/"):
+            with self.subTest(bad=bad):
+                self.assertIn("USAGE_FIELD_INVALID", self.codes_of(usage_cell(seat=bad)))
+
+    def test_a_seat_that_names_another_profile_is_a_red(self) -> None:
+        self.assertEqual(self.codes_of(usage_cell(replace={"profile": "ticket-review"})), ["USAGE_FIELD_INVALID"])
+
+    def test_a_heading_that_is_not_the_seat_is_a_red(self) -> None:
+        self.assertEqual(self.codes_of(usage_cell(heading="USAGE other")), ["USAGE_FIELD_INVALID"])
+
+    def test_an_empty_model_or_source_is_a_red(self) -> None:
+        for name in ("model", "source"):
+            with self.subTest(name=name):
+                self.assertEqual(self.codes_of(usage_cell(replace={name: ""})), ["USAGE_FIELD_INVALID"])
+
+    def test_a_control_character_in_model_or_source_is_a_red(self) -> None:
+        for name in ("model", "source"):
+            for char in ("\x0b", "\x00", "\x7f", "\x1b"):
+                with self.subTest(name=name, char=char):
+                    self.assertEqual(self.codes_of(usage_cell(replace={name: f"a{char}b"})), ["USAGE_FIELD_INVALID"])
+
+    def test_a_count_of_any_length_is_valid(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts(), usage_cell(replace={"output_tokens": "9" * 5000, "input_tokens": "1" + "0" * 4999}))
+        self.assertEqual(self.fx.run()[0], 0)
+
+    def test_an_unknown_field_or_a_stray_line_is_a_red(self) -> None:
+        self.assertEqual(self.codes_of(usage_cell(extra=["note: x"])), ["USAGE_FIELD_INVALID"])
+        self.assertEqual(self.codes_of(usage_cell(extra=["free text"])), ["USAGE_FIELD_INVALID"])
+
+    def test_a_defect_subject_with_a_control_character_stays_on_one_line(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts(), usage_cell(replace={"output_tokens": "a\x0bbก"}))
+        code, out, err = self.fx.run()
+        self.assertEqual(code, 1, out + err)
+        lines = [line for line in out.splitlines() if line.startswith("USAGE_COUNT_INVALID")]
+        self.assertEqual(len(lines), 1)
+        self.assertIn("\\x0b", lines[0])
+        self.assertNotIn("\x0b", out)
+
+    def test_a_usage_cell_does_not_stand_for_a_run_cell(self) -> None:
+        self.fx.write_receipt(self.fx.statement(), usage_cell())
+        code, out, _ = self.fx.run()
+        self.assertEqual((code, self.fx.codes(out)), (1, ["NO_CELLS"]))
+
+
 if __name__ == "__main__":
     unittest.main()
