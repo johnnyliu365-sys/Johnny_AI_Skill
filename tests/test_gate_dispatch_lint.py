@@ -127,6 +127,7 @@ class RuleTests(unittest.TestCase):
     def test_r5_one_action_passes(self) -> None:
         self.assertEqual(dispatch_lint.lint(dispatch("note: one action only")), [])
         self.assertEqual(dispatch_lint.lint(dispatch("note: one action;")), [])
+        self.assertEqual(dispatch_lint.lint(dispatch("note: one action; ")), [])
 
     def test_r5_two_actions_are_reported_with_the_count_and_line_number(self) -> None:
         text = dispatch("note: first; second")
@@ -146,7 +147,11 @@ class RuleTests(unittest.TestCase):
                 self.assertEqual(rule_ids(dispatch_lint.lint(dispatch(body))), ["R5"])
 
     def test_r5_separator_inside_backticks_does_not_count(self) -> None:
-        for body in ("note: run `a; b` once", f"note: run `a{FULL_WIDTH_SEMICOLON}b` once"):
+        for body in (
+            "note: run `a; b` once",
+            f"note: run `a{FULL_WIDTH_SEMICOLON}b` once",
+            "note: run `a` then `b; c`",
+        ):
             with self.subTest(body):
                 self.assertEqual(dispatch_lint.lint(dispatch(body)), [])
 
@@ -162,7 +167,7 @@ class RuleTests(unittest.TestCase):
                 self.assertEqual(dispatch_lint.lint(dispatch(body)), [])
 
     def test_r5_the_cmd_exemption_is_only_for_a_field_named_cmd(self) -> None:
-        for body in ('mycmd: "a; b"', 'note: cmd: a; b', 'cmd2: "a; b"'):
+        for body in ('mycmd: "a; b"', 'note: cmd: a; b', 'cmd2: "a; b"', "- run the cmd: a; b"):
             with self.subTest(body):
                 self.assertEqual(rule_ids(dispatch_lint.lint(dispatch(body))), ["R5"])
 

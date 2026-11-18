@@ -23,7 +23,8 @@ chat word outside quotes or backticks; R4 no full-width sentence terminator outs
 quotes or backticks; R5 one action per line (a half-width `;` followed by a space, or a
 full-width `；`, outside backticks starts a second action, quotes do not hide it, and the
 value of a `cmd:` field is one action however many shell statements it holds); R6 no line
-over 2000 characters, inside a code fence or outside. Prints one line per violation,
+over 2000 characters, inside a code fence or outside. A `cmd:` value is a single line, so
+a multi-line block is refused on its continuation line. Prints one line per violation,
 then `LINT PASS` (exit 0) or `LINT FAIL (n)` (exit 1). The default chat-word list is
 Chinese politeness and filler words; replace it with `--chat-words`, which needs at
 least one non-blank word. Exit 3: missing or extra argument, unknown option, a file that
