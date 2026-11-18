@@ -10,7 +10,11 @@ Rules (each problem line starts with its rule id):
   R3  no chat word outside quotes or backticks (default list is the Chinese
       politeness and filler words below; override with --chat-words)
   R4  no sentence terminator (the full-width period) outside quotes or backticks
-  R5  no line longer than 400 characters
+  R5  one action per line: a line outside a code fence holds at most one action; a clause
+      separator (a half-width `;` followed by a space, or a full-width `；`) outside
+      backticks starts a second action; quotes do not hide it; the value of a `cmd:` field
+      is one action however many shell statements it holds
+  R6  no line longer than 2000 characters, inside a code fence or outside (runaway cap)
 
 Exit codes: 0 LINT PASS, 1 one or more rule violations, 3 usage error
 (missing or extra argument, unreadable or non-UTF-8 file, unknown option, a
@@ -31,7 +35,17 @@ FIELD = re.compile(r"^\s*[A-Za-z_][A-Za-z0-9_.\- ]*:(\s|$)")
 FIRST_FIELD = re.compile(r"^[A-Za-z_][A-Za-z0-9_.-]*:")
 LIST = re.compile(r"^\s*- ")
 DEFAULT_CHAT_WORDS: tuple[str, ...] = ("請", "你", "我們", "注意", "謝謝", "先做", "再做", "麻煩", "辛苦")
-MAX_LINE = 400
+MAX_LINE = 2000
+CMD_FIELD = re.compile(r"^\s*(?:-\s+)?cmd:(\s|$)")
+SEPARATOR = re.compile(r"; |；")
+
+
+def count_actions(line: str) -> int:
+    """Number of non-blank clauses in a line; backtick spans never split, quotes do."""
+    if CMD_FIELD.match(line):
+        return 1
+    bare = re.sub(r"`[^`]*`", "``", line)
+    return max(1, sum(1 for part in SEPARATOR.split(bare) if part.strip()))
 
 
 def strip_quoted(line: str) -> str:
@@ -51,6 +65,8 @@ def lint(text: str, chat_words: Sequence[str] | None = None) -> list[str]:
         problems.append(f"R1 first line is not a field: {first[:80]!r}")
     in_fence = False
     for number, line in enumerate(lines, 1):
+        if len(line) > MAX_LINE:
+            problems.append(f"R6 line {number} too long ({len(line)})")
         if line.strip().startswith("```"):
             in_fence = not in_fence
             continue
@@ -64,8 +80,9 @@ def lint(text: str, chat_words: Sequence[str] | None = None) -> list[str]:
             problems.append(f"R3 line {number} chat word {match.group(1)!r} outside quotes: {line.strip()[:80]!r}")
         if "。" in bare:
             problems.append(f"R4 line {number} sentence terminator outside quotes: {line.strip()[:80]!r}")
-        if len(line) > MAX_LINE:
-            problems.append(f"R5 line {number} too long ({len(line)})")
+        actions = count_actions(line)
+        if actions > 1:
+            problems.append(f"R5 line {number} holds {actions} actions; put each on its own list item")
     return problems
 
 

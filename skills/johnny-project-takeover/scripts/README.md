@@ -20,7 +20,10 @@ text holds such a character still exits `1` under a cp950 console.
 Checks that a dispatch is machine-form. Rules: R1 first line is a field; R2 every line
 outside a code fence is a field, list item, table row or indented continuation; R3 no
 chat word outside quotes or backticks; R4 no full-width sentence terminator outside
-quotes or backticks; R5 no line over 400 characters. Prints one line per violation,
+quotes or backticks; R5 one action per line (a half-width `;` followed by a space, or a
+full-width `；`, outside backticks starts a second action, quotes do not hide it, and the
+value of a `cmd:` field is one action however many shell statements it holds); R6 no line
+over 2000 characters, inside a code fence or outside. Prints one line per violation,
 then `LINT PASS` (exit 0) or `LINT FAIL (n)` (exit 1). The default chat-word list is
 Chinese politeness and filler words; replace it with `--chat-words`, which needs at
 least one non-blank word. Exit 3: missing or extra argument, unknown option, a file that
