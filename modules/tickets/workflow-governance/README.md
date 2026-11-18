@@ -39,6 +39,9 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [68-archive-router-specs-and-adrs](68-archive-router-specs-and-adrs.md) | The seven router-era SPECs move to a SPEC archive with a lineage rule, and the nine router-era ADRs are marked superseded in place | `PLANNED` (after 65; beside 66) | Wave 3; owner decision 2026-11-18 "3A 4A" |
 | [69-token-use-per-seat](69-token-use-per-seat.md) | Every receipt records the token use of each seat in a USAGE cell, and a report compares it with the expectation per model profile | `IN_PROGRESS` (correction 1) | Wave 3 acceptance; readiness criterion 5 |
 | [70-wave2-template-and-hygiene](70-wave2-template-and-hygiene.md) | The ticket template gains the rows review requires, INTEGRATED and one receipt per closure revision; the receipt template gains a typed-return cell; no tracked path may exceed 120 characters | `PLANNED` (after 69) | Wave 3; wave-2 completion follow-ups |
+| [71-publication-0-5](71-publication-0-5.md) | Version 0.5.0 with Apache-2.0 and the author in every manifest; the publication commit built by the committed generator, reachable from an anchor ref, and the marketplace re-pinned | `PLANNED` (last; outward pushes after owner confirmation) | Wave 3; owner decisions 2026-11-07 "2.B", 2026-11-18 "2A" |
+| [72-dispatch-lint-one-action-per-line](72-dispatch-lint-one-action-per-line.md) | Dispatch lint R5 refuses a line that holds more than one action, instead of a 400-character cap; a 2000-character runaway cap stays as R6 | `PLANNED` (after 69) | Wave 3; owner decision 2026-11-18 "B" (L-10) |
+| [73-review-rounds-and-rework-cause](73-review-rounds-and-rework-cause.md) | Every review section ends with a rework-record block (round, kind, verdict, causes) and a report sums rounds and causes per ticket | `PLANNED` (after 67 and 72) | Wave 3; owner decision 2026-11-18 "B" (L-12) |
 
 ## Shared baseline
 
