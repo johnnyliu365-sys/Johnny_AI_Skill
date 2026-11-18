@@ -132,3 +132,108 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/68-rev01-initial
 reviewed_at: 2026-11-19
 ```
+
+## Revision01 correction review
+
+**Verdict: `APPROVED`.** Correction 1 (`c3ecdd6b`) applies the coordinator's dispositions exactly:
+- **S68-01.** `requirement-lineage.md` loses the two bullet lines and nothing else. `tests/test_plugin_payload_boundary.py` loses the `doc/archive/specs/` and `modules/spec/` entries and nothing else. Both new regression doors, CM8 and CM9, are red.
+- **S68-07.** The executor-routing replacement now reads "none (the semantic profile data stays in doc/runbooks/dispatch-model-profile.md)".
+- **S68-05.** L1 is now a receipt cell with a capture, and E1 requires it. CM7 shows that E1 refuses a receipt without it.
+- **S68-08.** The seat's untagged helpers are gone from both locations.
+
+My L1, P9 and E1 reruns pass at the candidate. CM1, CM2 and CM5 are still red. I did not rerun the full suite, as the coordinator directed. The seat's locked F1 at the candidate and CI run 44367305470 cover it.
+
+Four findings stay open, and none blocks approval under rule B. None of them changes an exit-code classification, breaks a safety or scope boundary, or violates P0:
+- **S68-02** is a control-plane ticket defect: ADR-019:7 goes to ticket 67.
+- **S68-03** and **S68-04** are hardening, carried as known debt.
+- **S68-06** is a stale ticket clause that needs no change.
+
+No implementation or evidence defect remains open.
+
+| Field | Value |
+| --- | --- |
+| Ticket | Unchanged: closure revision01 at `96f095a9` |
+| Correction authority | The coordinator's correction message, as relayed: S68-01, S68-07, S68-05 and S68-08 fixed; S68-02, S68-03, S68-04 and S68-06 left unchanged |
+| Candidate | `c3ecdd6b761d3ad994a828090ab856163ead9f14` on `cp/wave3-68-archive-specs`. `git ls-remote origin` gives the same sha. It is one additive commit whose parent is `ef990688` (`git rev-list --count ef990688..c3ecdd6b` = 1), with no amend or force |
+| Commit identity | Author `Johnny Liu <johnny.liu365@gmail.com>`; trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` |
+| Changed paths (`ef990688..c3ecdd6b`) | `doc/archive/specs/2026/README.md` (+1/−1), `skills/johnny-project-takeover/references/requirement-lineage.md` (−2), `tests/test_plugin_payload_boundary.py` (−2). All three are inside the boundary. Nothing forbidden is touched, and the gate scripts are unchanged (`git diff --quiet ef990688 c3ecdd6b -- skills/johnny-project-takeover/scripts`) |
+| Review worktree | `.worktrees/68-archive-specs-review`, detached at `c3ecdd6b`. `git status --porcelain --ignored` was empty before and after |
+| Receipt | `.worktrees/68-archive-specs-out/RETURN.md` (LF, 0 CR). Cells P1, T1, M1, L1, C1, F1, P9, STATEMENT and E1 each name candidate `c3ecdd6b` |
+| CI run | 44367305470, event `push`, `headSha` = candidate. `test (linux)` success, `test (windows)` success. The log has 0 `UNREGISTERED_FAILURE` and 0 `REGISTERED_NOT_FAILING` lines. Read with `gh run view` only |
+| References applied | As in the initial review, plus `CodeReview.md` §5 rule B for this correction review |
+| XSS / secrets / Agent control / profile / POC | Not applicable, for the same reasons as the initial review |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | S68-01: bullet and two entries gone, nothing else changed in those files | PASS | `git diff ef990688 c3ecdd6b -- skills/…/requirement-lineage.md` removes exactly the two lines of the bullet. `-- tests/test_plugin_payload_boundary.py` removes exactly `"doc/archive/specs/": "TARGET_OWNED"` and `"modules/spec/": "TARGET_OWNED"`. `doc/archive/specs/README.md` and `modules/spec/README.md` stay declared. The SPEC archive section now holds the four ticket bullets plus the validation sentence. P1 has 331 subtests where it had 333, which matches the two fewer `TARGET_OWNED` subtests |
+| 2 | S68-07 cell | PASS | `doc/archive/specs/2026/README.md:9` replacement cell is "none (the semantic profile data stays in doc/runbooks/dispatch-model-profile.md)". This is the only changed cell in the file. The runbook path is plain text, not a link, so the L1 count is unchanged |
+| 3 | S68-05: L1 is real and E1 requires it | PASS, with an observation | The receipt has an `## L1` cell (candidate `c3ecdd6b`, exit 0). Its raw block is byte-identical to `L1.txt` (sha256 `cc5531a6…d06f1e`). The E1 cell's command and capture include `--require-cell L1`. CM7: the same gate on a copy of the receipt with the L1 section removed gives `NOT_RUN L1: required cell has no run cell`, `cells=7 defects=1`, exit 1, which is contract red and not fault 2. Observation: `L1.txt` is a one-line summary (`links_checked=59 dangling=0`) with no per-link listing. The script it names (`l1_68.py`) was deleted under S68-08, so the capture cannot be recomputed from the receipt alone. My independent L1 (cell 4) reproduces the totals, so I record this only as advice: keep the L1 script beside the captures in future receipts |
+| 4 | Reviewer L1 rerun | PASS | My checker reads candidate blobs: files=30, links=59, dangling=0, exit 0 (`L1_68-rev01-correction.txt`) |
+| 5 | P9 / E1 rerun | PASS | `receipt_check.py <out>/RETURN.md <review worktree>`: 7 `[ok]` (P1 T1 M1 L1 C1 F1 P9) plus E1, 0 defects, exit 0. `evidence_gate.py` with `--candidate c3ecdd6b…` and `--require-cell P1 T1 M1 L1 F1`: `cells=8 defects=0`, exit 0. The tool_digest values recompute from the candidate blobs, for example `evidence_gate.py` = `89f8839b…f54afd` and `index_pins.py` = `63eff436…7b7ccf`. The P1 raw block is byte-identical to `P1.txt` (sha256 `de069cb9…b1b67d`). P1 has 1 failed (the allowed pinned sha), 98 passed. T1: "Success: no issues found in 2 source files", exit 0 |
+| 6 | S68-08: the seat's residue is gone (by listing) | PASS | `ls C:/Users/User/AppData/Local/Temp` shows none of `e68a`–`e68f.py`, `gen68.py`, `base68.txt` or `now68.txt`. The only name containing `68` is the unrelated `339d3453-…ade68.tmp`. `.worktrees/68-archive-specs-scratch` is empty. `.worktrees/68-archive-specs-out/prev` does not exist. The host lock is held by `J70-r1`, not by `JAS68R1` |
+| 7 | STATEMENT updated | PASS | It names correction 1, its dispositions, the two remaining `TARGET_OWNED` entries, replacement "none" for 005, the L1 cell and the removed residue. The out-of-boundary and PRD/CHG lists are unchanged and still match my grep from the initial review (no referencing file changed) |
+| 8 | Seat F1 | PASS | Per the STATEMENT: 5 failed, all within the base names. That count matches CI Windows (5 failed) and the 0 unregistered failures on both jobs. Not rerun, by direction |
+
+### Reviewer counter-mutations (correction)
+
+These ran in the disposable clone `.worktrees/68-archive-specs-review-scratch/clone-68-rev01-correction`. I made it with `git clone --no-hardlinks --no-checkout <main checkout>` and then `checkout --detach c3ecdd6b…`, and removed it afterwards. Each run used `python -m pytest <full file> -q -rfE -p no:cacheprovider`, with no wrapper. The output in `CM_68-rev01-correction.txt` is unfiltered and records the diff and command of each run. After each run, `git checkout -- .` restored the clone, and porcelain was `[]` each time. CM7 ran on a copy of the receipt in the scratch directory, with output in `CM7_68-rev01-correction.txt`.
+
+| ID | Door | Mutation | Result |
+| --- | --- | --- | --- |
+| CM1 (rerun) | Sweep half of the archive read | Remove `specs += archived_specs(...)` from `historical_files()` | red ×5, the same tests as at the initial review |
+| CM2 (rerun) | Token exactness | `ARCHIVE_ID.fullmatch` → `.match` | red: `SUBFAILED(bad='ARCH-SPEC-20261118-0011')` |
+| CM5 (rerun) | Path prefix | `SPEC_ARCHIVE_DIRECTORY = "doc/archive"` | red ×17 tests (plus the five `test_an_archive_id_must_have_the_exact_format` subtests) |
+| CM7 (new) | The gate, not the test | E1 with `--require-cell L1` on the receipt minus its `## L1` section | red: `NOT_RUN L1: required cell has no run cell`, exit 1 |
+| CM8 (new) | S68-01 regression: the prose comes back | Restore the deleted bullet in `requirement-lineage.md` without the entries | red: `test_every_reference_that_escapes_is_a_declared_exception` (`'doc/archive/specs/'` and `'modules/spec/'`), `test_no_skill_or_command_points_at_our_own_development_material`, `test_the_committed_payload_is_closed` (plus the pinned sha) |
+| CM9 (new) | S68-01 regression: the declarations come back | Restore the two `TARGET_OWNED` entries without the bullet | red: `test_every_reference_that_escapes_is_a_declared_exception` (plus the pinned sha) |
+
+### Findings (status after correction 1)
+
+| ID | Class | Severity | Status | Blocks? | File:line | Observation / verification | Route |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| S68-01 | `IMPLEMENTATION_DEFECT` | Medium | **Closed** | — | `requirement-lineage.md:40-44`; `tests/test_plugin_payload_boundary.py:88-96` | Bullet and both entries are removed and nothing else changed (cell 1). CM8 and CM9 are red | — |
+| S68-02 | `TICKET_DEFECT` (boundary) | Low | Open, owned by the control plane | No. Under rule B it changes no exit code, breaks no safety or scope boundary, and violates no P0 | `doc/adr/ADR-20260824-019-provider-usage-telemetry-evidence.md:7` | Unchanged: a dangling link to the old context-load-telemetry path, listed in the STATEMENT | Ticket 67 boundary |
+| S68-03 | `OUT_OF_SCOPE_HARDENING` | Low | Carried | No (hardening) | `tests/test_governance_consistency.py:567-571` | Unchanged: mixed references are checked only in the SPEC index (initial CM3) | Known debt. It would let a regression pass, so it should land with the next change to this check |
+| S68-04 | `OUT_OF_SCOPE_HARDENING` | Low | Carried | No (hardening) | `tests/test_governance_consistency.py:541-542, 557` | Unchanged: one leaf can be indexed under two IDs, and the archive root can list a non-year row (initial CM4, CM6) | Known debt |
+| S68-05 | `EVIDENCE_DEFECT` | Low | **Closed** | — | `RETURN.md` `## L1`; E1 cell | The L1 cell is present and required by E1. CM7 is red. The summary-only capture is noted as advice (cell 3) | — |
+| S68-06 | `TICKET_DEFECT` (stale clause) | Low | Open, no change needed | No | ticket, payload-test bullet | The candidate handled it correctly | Control plane, completion write-back |
+| S68-07 | `TICKET_DEFECT` (replacement cell) | Low | **Closed** | — | `doc/archive/specs/2026/README.md:9` | The cell reads "none (…dispatch-model-profile.md)", as dispositioned | — |
+| S68-08 | Process / residue | Low | **Closed** | — | `C:/Users/User/AppData/Local/Temp`; `.worktrees/68-archive-specs-scratch` | Listings show the files are gone (cell 6) | — |
+
+### Commands (correction)
+
+- `git rev-parse c3ecdd6b^`; `git rev-list --count ef990688..c3ecdd6b`; `git ls-remote origin refs/heads/cp/wave3-68-archive-specs`; `git diff -M --stat` and `git diff ef990688 c3ecdd6b`; `git diff --quiet ef990688 c3ecdd6b -- skills/johnny-project-takeover/scripts`
+- `l1_68-rev01-correction.py <main> 96f095a9… c3ecdd6b…` → `L1_68-rev01-correction.txt`
+- `receipt_check.py <out>/RETURN.md <review worktree>` → exit 0; `evidence_gate.py <out>/RETURN.md --repo <review worktree> --candidate c3ecdd6b… --tool …/index_pins.py --tool …/receipt_fence_check.py --evidence-root <out> --require-cell P1 --require-cell T1 --require-cell M1 --require-cell L1 --require-cell F1` → `cells=8 defects=0`, exit 0
+- `git show c3ecdd6b:<script> | sha256sum` for the four tool_digest scripts; the L1 and P1 raw blocks extracted and compared with `cmp`; `sha256sum L1.txt P1.txt`
+- `gh run view 44367305470 --json …` and `--log` (0/0 checker lines)
+- `ls` of the user temp directory, `.worktrees/68-archive-specs-scratch` and `.worktrees/68-archive-specs-out`; `cat C:/Temp/claude/jas-fullsuite.lock/owner.txt`
+- `cm_68-rev01-correction.py <clone> <out>` → `CM_68-rev01-correction.txt`; CM7 gate run → `CM7_68-rev01-correction.txt`
+
+### Raw-log note (correction)
+
+`L1_68-rev01-correction.txt`, `CM_68-rev01-correction.txt` and `CM7_68-rev01-correction.txt` were unedited tool output. I read them in full before judging, and the results quoted above are taken from them. The coordinator's residue rule for this run required removing every file I created, so they were removed before return. CI was read with `gh run view` only. Nothing was pushed, and no run was triggered. No tracked file was modified anywhere. The clone was made with `--no-hardlinks` and removed afterwards. So were the helper scripts `l1_68-rev01-correction.py` and `cm_68-rev01-correction.py` and the receipt copy `RETURN_noL1_68-rev01-correction.md`. The host lock was not taken, because no full suite was run. I did not touch the seat's worktree, out directory or scratch directory, or any other seat's worktree.
+
+### Not verified (correction)
+
+- A reviewer full suite at `c3ecdd6b`. It was not run, by direction. The seat's locked F1 and both CI jobs cover it.
+- The seat's rerun M1a–M1c at `c3ecdd6b`. My CM1, CM2 and CM5 reruns are independent of them.
+- The per-link content behind the seat's `L1.txt`, because its script was removed. My own L1 gives the same totals.
+
+```review-verdict
+candidate: c3ecdd6b761d3ad994a828090ab856163ead9f14
+verdict: APPROVED
+reviewer: seat:ticket-review/68-rev01-correction
+reviewed_at: 2026-11-19
+```
+
+## Seat token use (readiness criterion 5)
+
+Host-reported usage per seat, summed per unique message id, against the expectation the owner confirmed on 2026-11-18 ("1A"); appended to the receipt as `USAGE` cells at integration.
+
+| Seat | Model | input | cache write | cache read | output | processed | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `seat:implementation-standard/68-impl` | claude-sonnet-5-5 | 252 | 1313245 | 21814895 | 89071 | 23128392 | WITHIN |
+| `seat:ticket-review/68-rev01` | claude-opus-5-5 | 156 | 438736 | 12192988 | 77680 | 12631880 | WITHIN |
