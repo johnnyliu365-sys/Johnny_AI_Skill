@@ -2,7 +2,9 @@
 
 ## Status
 
-`ACCEPTED / ROUTER_PHASE_AUTHORIZED`
+`SUPERSEDED` (previous status: `ACCEPTED / ROUTER_PHASE_AUTHORIZED`)
+
+Superseded by: `REQ-20261103-043` (owner decision 2026-11-18 "3A 4A") and workflow-governance Revision 04 (`SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`). The router library that this decision describes was retired by tickets 65 and 66. The decision text is unchanged.
 
 ## Context
 

@@ -1,8 +1,9 @@
 # ADR-20260823-014 — The runner is a cross-lifetime handoff bridge, not a dispatch precondition
 
 - Date: `2026-08-23 (Asia/Taipei)`
-- Status: `ACCEPTED` — the owner has explicitly accepted Decision 3, which reverses the
+- Status: `SUPERSEDED` (previous status: `ACCEPTED`) — the owner has explicitly accepted Decision 3, which reverses the
   same-turn-wait alternative recorded as owner-rejected in ADR-20260815-012.
+- Superseded by: `REQ-20261103-043` (owner decision 2026-11-18 "3A 4A") and workflow-governance Revision 04 (`SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`). The router library that this decision describes was retired by tickets 65 and 66. The decision text is unchanged.
 - Decision makers: project owner and architecture owner
 - Related specification: `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2`
 - Related change: pending

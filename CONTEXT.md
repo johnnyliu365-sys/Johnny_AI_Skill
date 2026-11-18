@@ -51,18 +51,18 @@ or review. This index records identity and location only.
 | Feature | SPEC ID / path | Feature Context |
 | --- | --- | --- |
 | Reusable module library | `SPEC-AI-WORKFLOW-REUSABLE-MODULE-LIBRARY-20260801-01KYYV8YJFZ467BC1RGDNY64QP` / `modules/spec/reusable-module-library.md` | `doc/context/reusable-module-library/main.md` |
-| Router framework | `SPEC-AI-WORKFLOW-ROUTER-FRAMEWORK-20260802-01KZ2M4P6R8T0V2X4Z6B8D0F2H` / `modules/spec/router-framework.md` | `doc/context/router-framework/main.md` |
+| Router framework | `SPEC-AI-WORKFLOW-ROUTER-FRAMEWORK-20260802-01KZ2M4P6R8T0V2X4Z6B8D0F2H` / `doc/archive/specs/2026/router-framework.md` | `doc/context/router-framework/main.md` |
 | Module application skill | `SPEC-AI-WORKFLOW-MODULE-APPLICATION-SKILL-20260802-01KZ2Q8V4N6R9T1X3Z5B7C9D1F3H` / `modules/spec/module-application-skill.md` | `doc/context/module-application-skill/main.md` |
 | Project authority integration | `SPEC-AI-WORKFLOW-PROJECT-AUTHORITY-INTEGRATION-20260824-01M2A4C6E8G0I2K4M6O8Q0S2U4` / `modules/spec/project-authority-integration.md` | `doc/context/project-authority-integration/main.md` |
 | Plugin distribution | `SPEC-AI-WORKFLOW-PLUGIN-DISTRIBUTION-20260802-01KZ3N5P7R9T1V3X5Z7B9D1F3H` / `modules/spec/plugin-distribution.md` | `doc/context/plugin-distribution/main.md` |
 | Claude plugin distribution | `SPEC-AI-WORKFLOW-CLAUDE-CODE-PLUGIN-DISTRIBUTION-20260802-01KZ4C6D8E0F2G4H6J8K0M2N4P` / `modules/spec/claude-code-plugin-distribution.md` | `doc/context/claude-code-plugin-distribution/main.md` |
-| Context telemetry | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` / `modules/spec/context-load-telemetry.md` | `doc/context/context-load-telemetry/main.md` |
+| Context telemetry | `SPEC-AI-WORKFLOW-CONTEXT-LOAD-TELEMETRY-20260803-01KZ5E7F9G1H3J5K7M9N1P3Q5R` / `doc/archive/specs/2026/context-load-telemetry.md` | `doc/context/context-load-telemetry/main.md` |
 | Review assurance | `SPEC-AI-WORKFLOW-REVIEW-ASSURANCE-20260827-01KZ9A1B2C3D4E5F6G7H8J9K0L` / `modules/spec/review-assurance.md` | `doc/context/review-assurance/main.md` |
-| Plugin release telemetry | `SPEC-AI-WORKFLOW-PLUGIN-RELEASE-TELEMETRY-20260803-01KZ6F8G0H2J4K6M8N0P2Q4R6S` / `modules/spec/plugin-release-telemetry.md` | `doc/context/plugin-release-telemetry/main.md` |
-| Private Router POC | `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` / `modules/spec/private-router-saas.md` | `doc/context/private-router-saas/main.md` |
+| Plugin release telemetry | `SPEC-AI-WORKFLOW-PLUGIN-RELEASE-TELEMETRY-20260803-01KZ6F8G0H2J4K6M8N0P2Q4R6S` / `doc/archive/specs/2026/plugin-release-telemetry.md` | `doc/context/plugin-release-telemetry/main.md` |
+| Private Router POC | `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` / `doc/archive/specs/2026/private-router-saas.md` | `doc/context/private-router-saas/main.md` |
 | Workflow governance | `SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P` / `modules/spec/workflow-governance.md` | `doc/context/workflow-governance/main.md` |
-| Collaboration audit | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / `modules/spec/autonomous-collaboration-audit.md` | `doc/context/autonomous-collaboration-audit/main.md` |
+| Collaboration audit | `SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T` / `doc/archive/specs/2026/autonomous-collaboration-audit.md` | `doc/context/autonomous-collaboration-audit/main.md` |
 | Local orchestration installer | `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` / `modules/spec/local-orchestration-installer.md` | `doc/context/local-orchestration-installer/msix.md` |
 | Adaptive project orchestration | `SPEC-AI-WORKFLOW-ADAPTIVE-PROJECT-ORCHESTRATION-20260813-01M0A2C4E6G8J0L2N4P6R8T0V2` / `modules/spec/adaptive-project-orchestration.md` | `doc/context/adaptive-project-orchestration/main.md` |
-| Receipt-bound role supervision | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` / `modules/spec/receipt-bound-role-supervision.md` | `doc/context/receipt-bound-role-supervision/main.md` |
+| Receipt-bound role supervision | `SPEC-AI-WORKFLOW-RECEIPT-BOUND-ROLE-SUPERVISION-20260815-01M0R2S4T6V8X0Z2B4D6F8H0J2` / `doc/archive/specs/2026/receipt-bound-role-supervision.md` | `doc/context/receipt-bound-role-supervision/main.md` |
 | Environment capability bootstrap | `SPEC-AI-WORKFLOW-ENVIRONMENT-CAPABILITY-BOOTSTRAP-20260815-01M0E2C4B6S8T0R2A4P6D8F0H2` / `modules/spec/environment-capability-bootstrap.md` | `doc/context/environment-capability-bootstrap/main.md` |

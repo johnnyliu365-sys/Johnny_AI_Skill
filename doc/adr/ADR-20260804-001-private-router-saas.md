@@ -1,7 +1,8 @@
 # ADR-20260804-001｜Private Router SaaS control plane
 
 - Date: `2026-08-04 (Asia/Taipei)`
-- State: `ACCEPTED`
+- State: `SUPERSEDED` (previous state: `ACCEPTED`)
+- Superseded by: `REQ-20261103-043` (owner decision 2026-11-18 "3A 4A") and workflow-governance Revision 04 (`SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`). The router library that this decision describes was retired by tickets 65 and 66. The decision text is unchanged.
 - Decision maker: project owner
 - Related specification: `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` (`APPROVED`)
 - Related change: `CHG-20260804-008`

@@ -1,9 +1,10 @@
 # ADR-20260823-016｜Codex CLI 跨生命週期喚醒橋接
 
 - 日期：`2026-08-23（Asia/Taipei）`
-- 狀態：`ACCEPTED`
+- 狀態：`SUPERSEDED`（先前狀態：`ACCEPTED`）
+- 被取代：`REQ-20261103-043`（owner 2026-11-18 決定「3A 4A」）與 workflow-governance Revision 04（`SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`）；本 ADR 所述的 router library 已由 ticket 65、66 退役。決策內文不變。
 - 決策者：`owner`
-- 關聯規格：[`modules/spec/receipt-bound-role-supervision.md`](../../modules/spec/receipt-bound-role-supervision.md)；任何實作前必須先以新的受管制需求變更擴充其 host 範圍。
+- 關聯規格：[`doc/archive/specs/2026/receipt-bound-role-supervision.md`](../../doc/archive/specs/2026/receipt-bound-role-supervision.md)（`ARCH-SPEC-20261118-004`）；任何實作前必須先以新的受管制需求變更擴充其 host 範圍。
 - 關聯需求變更：不適用（本 ADR 只記錄架構決策，不授權 source mutation 或 provider effect）
 
 ## 背景與問題

@@ -4,18 +4,20 @@
 
 | ADR | 狀態 | 用途 |
 | --- | --- | --- |
-| [ADR-20260804-001-private-router-saas.md](ADR-20260804-001-private-router-saas.md) | `SUPERSEDED` for future direction | 保留歷史 private Router SaaS POC 的決策與邊界。 |
-| [ADR-20260805-002-autonomous-collaboration-control-plane.md](ADR-20260805-002-autonomous-collaboration-control-plane.md) | `ACCEPTED — Grill converged` | 定義非商用多 AI 協作／稽核控制平面的高階架構。 |
+| [ADR-20260804-001-private-router-saas.md](ADR-20260804-001-private-router-saas.md) | `SUPERSEDED` | 保留歷史 private Router SaaS POC 的決策與邊界。 |
+| [ADR-20260805-002-autonomous-collaboration-control-plane.md](ADR-20260805-002-autonomous-collaboration-control-plane.md) | `SUPERSEDED` | 定義非商用多 AI 協作／稽核控制平面的高階架構。 |
+| [ADR-20260808-003-local-orchestration-installer.md](ADR-20260808-003-local-orchestration-installer.md) | `SUPERSEDED` | Installer-owned local orchestration 與可還原的 host lifecycle 架構（歷史決策）。 |
 | [ADR-20260811-004-safe-codex-compensation-boundary.md](ADR-20260811-004-safe-codex-compensation-boundary.md) | `ACCEPTED` | 將任意 callable 邊界收斂為零副作用 capability、純 reducer 與薄 composition。 |
 | [ADR-20260812-005-codex-registration-transaction-boundary.md](ADR-20260812-005-codex-registration-transaction-boundary.md) | `ACCEPTED` | 將 process-local 一次性交易 authority、forward effects、settlement 與 disposable lifecycle acceptance 分開驗收。 |
 | [ADR-20260812-006-version-one-staging-and-package-convergence.md](ADR-20260812-006-version-one-staging-and-package-convergence.md) | `ACCEPTED` | 以遠端 staging 溫備、串行小工單與不可變 evidence record 收斂第一版打包／系統整合。 |
 | [ADR-20260813-008-guided-project-bootstrap-and-adaptive-delivery.md](ADR-20260813-008-guided-project-bootstrap-and-adaptive-delivery.md) | `PARTIALLY_SUPERSEDED` | Adaptive delivery 保留；target-local Johnny ignore/worktree 決策由 `ADR-20260815-013` 取代。 |
-| [ADR-20260814-011-tiered-model-router-lifecycle.md](ADR-20260814-011-tiered-model-router-lifecycle.md) | `ACCEPTED / ROUTER_PHASE_AUTHORIZED` | 定義 architecture owner、supervisor、implementer 的 readiness／sleep／wake，以及低階 ticket admission 與選配 design source。 |
-| [ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md](ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md) | `ACCEPTED` | 以 Git ref 事件、receipt-bound handoff、一次性 role wake 與模型分級期限監督實作；永不隱含 heartbeat，且插件可無條件拔除。（同步派工的部分由 `ADR-20260823-014` 收窄） |
+| [ADR-20260814-010-reviewer-owned-orchestration-gateway.md](ADR-20260814-010-reviewer-owned-orchestration-gateway.md) | `SUPERSEDED` | Reviewer-owned orchestration gateway 的歷史決策。 |
+| [ADR-20260814-011-tiered-model-router-lifecycle.md](ADR-20260814-011-tiered-model-router-lifecycle.md) | `SUPERSEDED` | 定義 architecture owner、supervisor、implementer 的 readiness／sleep／wake，以及低階 ticket admission 與選配 design source。 |
+| [ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md](ADR-20260815-012-receipt-bound-event-driven-completion-supervision.md) | `SUPERSEDED` | 以 Git ref 事件、receipt-bound handoff、一次性 role wake 與模型分級期限監督實作；永不隱含 heartbeat，且插件可無條件拔除。（同步派工的部分由 `ADR-20260823-014` 收窄） |
 | [ADR-20260815-013-isolated-environment-capability-bootstrap.md](ADR-20260815-013-isolated-environment-capability-bootstrap.md) | `ACCEPTED` | 優先重用相容使用者工具，將控制 Python、side-by-side 環境、資源限制與可移除狀態隔離在 Johnny per-user root。 |
-| [ADR-20260823-014-cross-lifetime-handoff-bridge.md](ADR-20260823-014-cross-lifetime-handoff-bridge.md) | `ACCEPTED` | 把 runner／gateway 定義為跨生命週期的交接橋接器，收窄 `ADR-20260815-012`：同步派工不需要橋；並定義三類審查與能力三態。Decision 3 已經 owner 明示接受。 |
+| [ADR-20260823-014-cross-lifetime-handoff-bridge.md](ADR-20260823-014-cross-lifetime-handoff-bridge.md) | `SUPERSEDED` | 把 runner／gateway 定義為跨生命週期的交接橋接器，收窄 `ADR-20260815-012`：同步派工不需要橋；並定義三類審查與能力三態。Decision 3 已經 owner 明示接受。 |
 | [ADR-20260823-015-dedicated-plugin-publication-repository.md](ADR-20260823-015-dedicated-plugin-publication-repository.md) | `ACCEPTED` | 將 Claude marketplace descriptor 與實際 plugin source 分離；後者改由只含 parentless payload commits 的獨立 publication repository 提供，並以 CAS 發布與真實 CLI object-graph closure 驗證守住。 |
-| [ADR-20260823-016-codex-cli-cross-lifetime-wake-bridge.md](ADR-20260823-016-codex-cli-cross-lifetime-wake-bridge.md) | `ACCEPTED` | Codex 跨生命週期以 one-shot CLI actor 交接 artifact，不復原 Desktop parent；同步 `wait_agent` 不需 bridge，且 capability 保留 `NOT_REQUIRED`／`AVAILABLE`／`UNAVAILABLE` 三態。 |
+| [ADR-20260823-016-codex-cli-cross-lifetime-wake-bridge.md](ADR-20260823-016-codex-cli-cross-lifetime-wake-bridge.md) | `SUPERSEDED` | Codex 跨生命週期以 one-shot CLI actor 交接 artifact，不復原 Desktop parent；同步 `wait_agent` 不需 bridge，且 capability 保留 `NOT_REQUIRED`／`AVAILABLE`／`UNAVAILABLE` 三態。 |
 | [ADR-20260823-017-level-one-payload-topology.md](ADR-20260823-017-level-one-payload-topology.md) | `ACCEPTED` | 將 Claude Level 1 payload 收斂為可達 reusable surface，排除 host-local publication/cache/installer tooling。 |
 | [ADR-20260823-018-version-specific-publication-tag-payloads.md](ADR-20260823-018-version-specific-publication-tag-payloads.md) | `ACCEPTED` | 保留 immutable multi-release tags：current root 對候選 payload 驗證，歷史 tag 對其自身的 in-tree declaration、版本與樹形狀驗證，且不虛稱 current blob 比對。 |
 | [ADR-20260824-019-provider-usage-telemetry-evidence.md](ADR-20260824-019-provider-usage-telemetry-evidence.md) | `ACCEPTED` | 區分載入估算、一次 host usage 觀測與可比較的實際 token reduction，並將 provider usage 保持 metadata-only。 |
@@ -28,7 +30,7 @@
 | [ADR-20260827-026-per-stream-ownership-ledger-readiness.md](ADR-20260827-026-per-stream-ownership-ledger-readiness.md) | `ACCEPTED` | 將私有 ledger 分割為 exact-stream entry，令 per-stream lock 真正序列化 CAS；另提供 recovery-only immutable-identity lookup。 |
 | [ADR-20260827-027-lock-bound-telemetry-transaction-protocol.md](ADR-20260827-027-lock-bound-telemetry-transaction-protocol.md) | `ACCEPTED` | 封閉私有 journal/recovery、deterministic revision 與五項 storage operation adapter 協定，不改公開 contracts。 |
 | [ADR-20260827-028-private-telemetry-storage-composition.md](ADR-20260827-028-private-telemetry-storage-composition.md) | `ACCEPTED` | 將已交付的 private ledger、lock 與 transaction adapter 綁入唯一 no-effect composition factory，不擴張公開 surface。 |
-| [ADR-20260827-029-host-bootstrap-router-provisioning-and-composition.md](ADR-20260827-029-host-bootstrap-router-provisioning-and-composition.md) | `ACCEPTED` | 將 root readiness、runtime owned-entry delegation 與 storage composition 收斂為三個不可互換的私有責任。 |
+| [ADR-20260827-029-host-bootstrap-router-provisioning-and-composition.md](ADR-20260827-029-host-bootstrap-router-provisioning-and-composition.md) | `SUPERSEDED` | 將 root readiness、runtime owned-entry delegation 與 storage composition 收斂為三個不可互換的私有責任。 |
 | [ADR-20260827-030-adversarial-review-and-deployment-readiness.md](ADR-20260827-030-adversarial-review-and-deployment-readiness.md) | `ACCEPTED` | 將 ticket-level adversarial audit 與 deployment-readiness matrix 收斂為 reviewer-owned、risk-scaled、effect-neutral 的證據控制。 |
 | [ADR-20260828-031-procedural-managed-artifact-behavior.md](ADR-20260828-031-procedural-managed-artifact-behavior.md) | `ACCEPTED` | 將文件與直接父索引收斂為單一受管操作，以 host behavior adapter 建立回饋迴圈，並保留 repository gate 為最終 authority。 |
 | [ADR-20260828-032-recoverable-managed-artifact-runtime.md](ADR-20260828-032-recoverable-managed-artifact-runtime.md) | `ACCEPTED` | 將 R09B 的失敗收斂為 runtime 自驗、可恢復的 fail-closed state 與 canonical-only resolution；不把 plugin/CLI 當成 authority。 |
@@ -38,3 +40,5 @@
 | [ADR-20260829-036-project-scoped-workflow-activation-and-admission.md](ADR-20260829-036-project-scoped-workflow-activation-and-admission.md) | `ACCEPTED` | 將模型預設路由、project host gate、repository 可執行閘門與 host 派遣證據分層，讓文件索引與程式責任可被拒絕，且不虛稱 instruction、hook 或 Git 具有更高權威。 |
 | [ADR-20260829-037-designerless-ui-codesign.md](ADR-20260829-037-designerless-ui-codesign.md) | `ACCEPTED` | 以 owner 選擇與 canonical CONTEXT sealed UI regime 建立無設計師共創流程；Figma、image generation、craft 與 renderer 能力均誠實分類。 |
 | [ADR-20260905-038-msix-delivery-boundary.md](ADR-20260905-038-msix-delivery-boundary.md) | `ACCEPTED / JOHNNY_COMPLETE_REMOVAL / CAPABILITY_FIRST` | MSIX 取代 Inno；owner 已接受 Johnny 一鍵完整移除與直接 Windows 移除的較窄保證，先證明實際 package lifecycle 能力。 |
+
+`SUPERSEDED` 的 ADR 留在原處、決策內文不變；取代依據為 `REQ-20261103-043`（owner 2026-11-18 決定「3A 4A」）與 workflow-governance Revision 04。

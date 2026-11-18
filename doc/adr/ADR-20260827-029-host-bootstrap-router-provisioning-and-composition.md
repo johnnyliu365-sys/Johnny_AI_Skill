@@ -1,7 +1,8 @@
 # ADR-20260827-029 — Host-bootstrap root, Router-owned provisioning, and composition consumption
 
 - Date: `2026-08-27 (Asia/Taipei)`
-- Status: `ACCEPTED`
+- Status: `SUPERSEDED` (previous status: `ACCEPTED`)
+- Superseded by: `REQ-20261103-043` (owner decision 2026-11-18 "3A 4A") and workflow-governance Revision 04 (`SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`). The router library that this decision describes was retired by tickets 65 and 66. The decision text is unchanged.
 - Decision makers: project owner and architecture owner
 - Related change: `PRD-20260827-041` / `CHG-20260827-041`
 - Refines: `ADR-20260827-025` through `ADR-20260827-028`; it authorizes no durable ledger write,

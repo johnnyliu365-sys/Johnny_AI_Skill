@@ -18,7 +18,10 @@ additions ticket 58 lists:
   mask such a sentence; the Chinese 代為 commit form and the queue-row dispatch form are patterns;
 * N9-04: the absence of the precedence note on `modules/spec/TEMPLATE.md` and `README.md` is
   checked with the regular expression that checks presence;
-* N9-05: the precedence sentence is pinned by rule and by place.
+* N9-05: the precedence sentence is pinned by rule and by place;
+* ticket 68: the SPECs archived under `doc/archive/specs/` are read as `modules/spec/` is read, so an
+  archived SPEC keeps its precedence note; a SPEC present at both paths, a repeated archive ID, a
+  malformed archive ID and a dangling or unindexed archive leaf are red (`archive_defects`).
 
 Every pattern is data (see PATTERNS and the tables after it), one comment per source finding, and has
 an injection case below: a copy of the routed documents in a temporary directory with one retired
@@ -48,6 +51,7 @@ ROUTED_ROOTS: tuple[str, ...] = (
     "template",
 )
 SPEC_DIRECTORY = "modules/spec"
+SPEC_ARCHIVE_DIRECTORY = "doc/archive/specs"
 RUNBOOK_DIRECTORY = "doc/runbooks"
 ROUTED_RUNBOOK = "doc/runbooks/dispatch-model-profile.md"
 GOVERNANCE_SPEC = "modules/spec/workflow-governance.md"
@@ -461,9 +465,17 @@ def routed_files(base: Path, defects: list[str]) -> list[str]:
     return sorted(set(files))
 
 
+def archived_specs(base: Path, defects: list[str]) -> list[str]:
+    """Every archived SPEC leaf under doc/archive/specs/: the partition and year indexes are not SPECs."""
+    return [
+        p for p in markdown_under(base, SPEC_ARCHIVE_DIRECTORY, defects) if Path(p).name != "README.md"
+    ]
+
+
 def historical_files(base: Path, defects: list[str]) -> list[str]:
-    """Every SPEC under modules/spec/ and every runbook under doc/runbooks/ that the routed set does not cover."""
+    """Every SPEC under modules/spec/ and doc/archive/specs/ and every runbook under doc/runbooks/ that the routed set does not cover."""
     specs = [p for p in markdown_under(base, SPEC_DIRECTORY, defects) if p not in SPEC_NOT_HISTORICAL]
+    specs += archived_specs(base, defects)
     runbooks = [p for p in markdown_under(base, RUNBOOK_DIRECTORY, defects) if p != ROUTED_RUNBOOK]
     return sorted(set(specs + runbooks))
 
@@ -498,6 +510,7 @@ def note_defects(base: Path) -> list[str]:
     """Every historical SPEC and every dated handover runbook opens with the note; the template and the index carry none."""
     defects: list[str] = []
     covered = [p for p in markdown_under(base, SPEC_DIRECTORY, defects) if p not in SPEC_NOT_HISTORICAL]
+    covered += archived_specs(base, defects)
     covered += [p for p in markdown_under(base, RUNBOOK_DIRECTORY, defects) if Path(p).name.startswith("handover-")]
     for path in covered:
         text = read_strict(base, path, defects)
@@ -507,6 +520,55 @@ def note_defects(base: Path) -> list[str]:
         text = read_strict(base, path, defects)
         if text is not None and note_anywhere(text):
             defects.append(f"NOTE_PRESENT_BUT_EXCLUDED {path}")
+    return defects
+
+
+# ----------------------------------------- ticket 68: the SPEC archive (requirement-lineage, "SPEC archive")
+
+ARCHIVE_ID = re.compile(r"ARCH-SPEC-\d{8}-\d{3}")
+# A year-index row: | `ARCH-SPEC-YYYYMMDD-NNN` | [`leaf.md`](leaf.md) | ...
+ARCHIVE_ROW = re.compile(r"^\|\s*`(?P<id>[^`]*)`\s*\|\s*\[`[^`]*`\]\((?P<leaf>[^)\s]+)\)")
+
+
+def archive_defects(base: Path) -> list[str]:
+    """`HALT / REQUIREMENT_LINEAGE_INVALID` causes for SPEC archive IDs, as for `ARCH-REQ` bundles."""
+    defects: list[str] = []
+    leaves = archived_specs(base, defects)
+    indexed: dict[str, str] = {}
+    seen: dict[str, str] = {}
+    markdown = markdown_under(base, SPEC_ARCHIVE_DIRECTORY, defects)
+    for index in sorted(p for p in markdown if Path(p).name == "README.md"):
+        if index == f"{SPEC_ARCHIVE_DIRECTORY}/README.md":
+            continue  # the root lists only year partitions
+        text = read_strict(base, index, defects)
+        if text is None:
+            continue
+        for line in text.split("\n"):
+            row = ARCHIVE_ROW.match(line)
+            if row is None:
+                continue
+            archive_id = row.group("id")
+            if not ARCHIVE_ID.fullmatch(archive_id):
+                defects.append(f"ARCHIVE_ID_MALFORMED {index}: {archive_id}")
+            if archive_id in seen:
+                defects.append(f"DUPLICATE_ARCHIVE_ID {archive_id}: {seen[archive_id]} and {index}")
+            seen[archive_id] = index
+            leaf = (Path(index).parent / row.group("leaf")).as_posix()
+            indexed[leaf] = archive_id
+            if leaf not in leaves:
+                defects.append(f"ARCHIVE_LEAF_MISSING {archive_id}: {leaf}")
+    for leaf in leaves:
+        name = Path(leaf).name
+        if leaf not in indexed:
+            defects.append(f"ARCHIVE_LEAF_NOT_INDEXED {leaf}")
+        if (base / SPEC_DIRECTORY / name).exists():
+            defects.append(f"SPEC_AT_BOTH_PATHS {name}")
+    index_text = read_strict(base, SPEC_INDEX, defects)
+    if index_text is not None:
+        for leaf in leaves:
+            name = Path(leaf).name
+            if f"]({name})" in index_text or f"{SPEC_DIRECTORY}/{name}" in index_text:
+                defects.append(f"MIXED_ACTIVE_ARCHIVE_REFERENCE {SPEC_INDEX}: {name}")
     return defects
 
 
@@ -661,7 +723,7 @@ def handover_citation_defects(base: Path) -> list[str]:
 
 def copy_documents(destination: Path) -> None:
     """The routed and historical documents (Markdown only) of this checkout, in the same layout."""
-    wanted = list(ROUTED_ROOTS) + [SPEC_DIRECTORY, RUNBOOK_DIRECTORY]
+    wanted = list(ROUTED_ROOTS) + [SPEC_DIRECTORY, SPEC_ARCHIVE_DIRECTORY, RUNBOOK_DIRECTORY]
     for root in wanted:
         source = REPO / root
         if source.is_file():
@@ -709,13 +771,17 @@ class TemporaryDocuments(unittest.TestCase):
 
 # ================================================================ the real tree
 
+ARCHIVED_SPEC = f"{SPEC_ARCHIVE_DIRECTORY}/2026/router-framework.md"
+ARCHIVE_YEAR_INDEX = f"{SPEC_ARCHIVE_DIRECTORY}/2026/README.md"
+ACTIVE_SPEC = "modules/spec/review-assurance.md"
+
 # S58-05: the tolerated hits of the real tree, by file and count. A change here is a decision: read the new
 # sentences, then update this list in the same commit.
 EXPECTED_TOLERATED: list[str] = [
+    "tolerated under the precedence note: doc/archive/specs/2026/executor-routing.md: 2 hit(s)",
     "tolerated under the precedence note: doc/runbooks/handover-2026-08-22-plugin-distribution.md: 3 hit(s)",
     "tolerated under the precedence note: modules/spec/adaptive-project-orchestration.md: 1 hit(s)",
     "tolerated under the precedence note: modules/spec/claude-code-plugin-distribution.md: 1 hit(s)",
-    "tolerated under the precedence note: modules/spec/executor-routing.md: 2 hit(s)",
     "tolerated under the precedence note: modules/spec/project-authority-integration.md: 1 hit(s)",
 ]
 
@@ -761,6 +827,14 @@ class RealTreeTests(unittest.TestCase):
 
     def test_every_historical_spec_and_dated_runbook_carries_the_note_and_the_template_and_index_carry_none(self) -> None:
         self.assertEqual(note_defects(REPO), [])
+
+    def test_the_spec_archive_is_consistent(self) -> None:
+        self.assertEqual(archive_defects(REPO), [])
+
+    def test_the_archive_tree_is_in_the_sweep(self) -> None:
+        archived = archived_specs(REPO, [])
+        self.assertEqual(len(archived), 7)
+        self.assertTrue(set(archived) <= set(historical_files(REPO, [])))
 
     def test_agents_workflow_section_zero_and_the_spec_state_both_halves_of_r4_1(self) -> None:
         self.assertEqual(r41_defects(REPO), [])
@@ -964,6 +1038,10 @@ class InjectionTests(TemporaryDocuments):
         return lambda text: cls.removed(text, phrase)
 
     @staticmethod
+    def replacer(old: str, new: str) -> Callable[[str], str]:
+        return lambda text: text.replace(old, new, 1)
+
+    @staticmethod
     def prefixer(line: str) -> Callable[[str], str]:
         return lambda text: line + "\n\n" + text
 
@@ -1002,7 +1080,7 @@ class InjectionTests(TemporaryDocuments):
 
     # ---- row 13: the widened sweep, tolerated hits, the note
     def test_a_retired_sentence_in_a_historical_spec_without_the_note_is_red(self) -> None:
-        spec = "modules/spec/router-framework.md"
+        spec = ARCHIVED_SPEC
         self.edit(spec, lambda text: re.sub(r"^>\s*Precedence note[^\n]*\n", "", text, count=1, flags=re.M))
         self.append(spec, "The reviewer integrates the candidate by hand.")
         live = [h for h in sweep(self.base).live() if h.path == spec]
@@ -1010,7 +1088,7 @@ class InjectionTests(TemporaryDocuments):
         self.assertIn(f"NOTE_MISSING {spec}", note_defects(self.base))
 
     def test_the_same_sentence_under_the_note_is_tolerated_and_reported_with_its_count(self) -> None:
-        spec = "modules/spec/router-framework.md"
+        spec = ARCHIVED_SPEC
         self.append(spec, "The reviewer integrates the candidate by hand.")
         self.append(spec, "The reviewer merges the candidate by hand.")
         result = sweep(self.base)
@@ -1037,8 +1115,12 @@ class InjectionTests(TemporaryDocuments):
         self.assertIn(f"NOTE_MISSING {spec}", note_defects(self.base))
 
     def test_an_undecodable_or_missing_or_empty_document_is_red_not_skipped(self) -> None:
-        (self.base / "modules/spec/router-framework.md").write_bytes(b"\xff\xfe\x00bad")
-        self.assertTrue(any(d.startswith("UNDECODABLE modules/spec/router-framework.md") for d in sweep(self.base).defects))
+        (self.base / ARCHIVED_SPEC).write_bytes(b"\xff\xfe\x00bad")
+        self.assertTrue(any(d.startswith(f"UNDECODABLE {ARCHIVED_SPEC}") for d in sweep(self.base).defects))
+        self.assertTrue(any(d.startswith(f"UNDECODABLE {ARCHIVED_SPEC}") for d in note_defects(self.base)))
+        self.setUp()
+        (self.base / ACTIVE_SPEC).write_bytes(b"\xff\xfe\x00bad")
+        self.assertTrue(any(d.startswith(f"UNDECODABLE {ACTIVE_SPEC}") for d in sweep(self.base).defects))
         self.setUp()
         (self.base / "AGENTS.md").unlink()
         self.assertTrue(any("AGENTS.md" in d for d in sweep(self.base).defects))
@@ -1046,8 +1128,73 @@ class InjectionTests(TemporaryDocuments):
         shutil.rmtree(self.base / "template")
         self.assertIn("MISSING_ROOT template", sweep(self.base).defects)
         self.setUp()
-        (self.base / "modules/spec/router-framework.md").write_bytes(b"")
-        self.assertIn("NOTE_MISSING modules/spec/router-framework.md", note_defects(self.base))
+        (self.base / ARCHIVED_SPEC).write_bytes(b"")
+        self.assertIn(f"NOTE_MISSING {ARCHIVED_SPEC}", note_defects(self.base))
+        self.setUp()
+        (self.base / ACTIVE_SPEC).write_bytes(b"")
+        self.assertIn(f"NOTE_MISSING {ACTIVE_SPEC}", note_defects(self.base))
+
+    # ---- ticket 68: the SPEC archive
+    def test_an_archived_spec_without_its_precedence_note_is_red(self) -> None:
+        self.edit(ARCHIVED_SPEC, lambda text: re.sub(r"^>\s*Precedence note[^\n]*\n", "", text, count=1, flags=re.M))
+        self.assertIn(f"NOTE_MISSING {ARCHIVED_SPEC}", note_defects(self.base))
+
+    def test_a_spec_present_at_both_its_active_and_its_archive_path_is_red(self) -> None:
+        self.assertEqual(archive_defects(self.base), [])
+        active = self.base / SPEC_DIRECTORY / "router-framework.md"
+        shutil.copyfile(self.base / ARCHIVED_SPEC, active)
+        self.assertIn("SPEC_AT_BOTH_PATHS router-framework.md", archive_defects(self.base))
+
+    def test_the_active_index_naming_an_archived_spec_by_its_active_path_is_red(self) -> None:
+        self.append(SPEC_INDEX, "| x | [`router-framework.md`](router-framework.md) |")
+        self.assertIn(f"MIXED_ACTIVE_ARCHIVE_REFERENCE {SPEC_INDEX}: router-framework.md", archive_defects(self.base))
+
+    def test_a_repeated_archive_id_is_red(self) -> None:
+        self.edit(ARCHIVE_YEAR_INDEX, lambda text: text.replace("ARCH-SPEC-20261118-002", "ARCH-SPEC-20261118-001", 1))
+        defects = archive_defects(self.base)
+        self.assertTrue(any(d.startswith("DUPLICATE_ARCHIVE_ID ARCH-SPEC-20261118-001") for d in defects), defects)
+
+    def test_a_repeated_archive_id_across_two_year_indexes_is_red(self) -> None:
+        other = self.base / SPEC_ARCHIVE_DIRECTORY / "2027"
+        other.mkdir()
+        (other / "README.md").write_text("| `ARCH-SPEC-20261118-001` | [`x.md`](x.md) |\n", encoding="utf-8", newline="\n")
+        (other / "x.md").write_text("> Precedence note (`CHG-20261103-043`): R4-1 and R4-4.\n", encoding="utf-8", newline="\n")
+        defects = archive_defects(self.base)
+        self.assertTrue(any(d.startswith("DUPLICATE_ARCHIVE_ID ARCH-SPEC-20261118-001") for d in defects), defects)
+
+    def test_an_archive_id_must_have_the_exact_format(self) -> None:
+        for bad in ("ARCH-SPEC-2026118-001", "ARCH-SPEC-20261118-01", "ARCH-SPEC-20261118-0011", "ARCH-REQ-20261118-001", "arch-spec-20261118-001"):
+            with self.subTest(bad=bad):
+                self.setUp()
+                self.edit(ARCHIVE_YEAR_INDEX, self.replacer("ARCH-SPEC-20261118-003", bad))
+                defects = archive_defects(self.base)
+                self.assertTrue(any(d.startswith(f"ARCHIVE_ID_MALFORMED {ARCHIVE_YEAR_INDEX}: {bad}") for d in defects), defects)
+
+    def test_a_dangling_or_unindexed_archive_leaf_is_red(self) -> None:
+        (self.base / ARCHIVED_SPEC).unlink()
+        self.assertTrue(any(d.startswith("ARCHIVE_LEAF_MISSING ARCH-SPEC-20261118-001") for d in archive_defects(self.base)))
+        self.setUp()
+        stray = self.base / SPEC_ARCHIVE_DIRECTORY / "2026" / "stray.md"
+        stray.write_text("> Precedence note (`CHG-20261103-043`): R4-1 and R4-4.\n", encoding="utf-8", newline="\n")
+        self.assertIn(f"ARCHIVE_LEAF_NOT_INDEXED {SPEC_ARCHIVE_DIRECTORY}/2026/stray.md", archive_defects(self.base))
+
+    def test_a_similarly_named_archive_directory_is_not_the_spec_archive(self) -> None:
+        self.assertTrue(under(ARCHIVED_SPEC, SPEC_ARCHIVE_DIRECTORY))
+        self.assertFalse(under("doc/archive/specs-old/x.md", SPEC_ARCHIVE_DIRECTORY))
+        self.assertFalse(under("doc/archive/specsx/x.md", SPEC_ARCHIVE_DIRECTORY))
+        self.assertFalse(under(ARCHIVED_SPEC, SPEC_DIRECTORY))
+        self.assertFalse(under("modules/spec/x.md", SPEC_ARCHIVE_DIRECTORY))
+        stray = self.base / "doc/archive/specs-old"
+        stray.mkdir()
+        (stray / "x.md").write_text("The reviewer integrates the candidate.\n", encoding="utf-8")
+        self.assertNotIn("doc/archive/specs-old/x.md", {h.path for h in sweep(self.base).hits})
+        self.assertNotIn("doc/archive/specs-old/x.md", archived_specs(self.base, []))
+
+    def test_the_archive_indexes_are_not_spec_leaves(self) -> None:
+        archived = archived_specs(self.base, [])
+        self.assertNotIn(f"{SPEC_ARCHIVE_DIRECTORY}/README.md", archived)
+        self.assertNotIn(ARCHIVE_YEAR_INDEX, archived)
+        self.assertEqual(note_defects(self.base), [])
 
     def test_a_missing_routed_directory_is_red_and_an_empty_one_too(self) -> None:
         for path in list((self.base / "doc/runbooks").glob("*.md")):

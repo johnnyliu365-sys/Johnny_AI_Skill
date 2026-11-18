@@ -82,7 +82,7 @@
 | Milestone | State | Evidence |
 | --- | --- | --- |
 | Wayfinder, Architecture, Grill, and ADR | DONE | `doc/context/private-router-saas/main.md`; `doc/adr/ADR-20260804-001-private-router-saas.md` |
-| Change and specification draft | DONE | `CHG-20260804-008`; `modules/spec/private-router-saas.md` |
+| Change and specification draft | DONE | `CHG-20260804-008`; `doc/archive/specs/2026/private-router-saas.md` |
 | Product-owner specification approval | DONE | Owner approved `SPEC-AI-WORKFLOW-PRIVATE-ROUTER-SAAS-20260804-01KZ49YM6HA658QF7ME2A5BR26` on `2026-08-04` |
 | Ticket planning and second approval | DONE | Project owner approved `01-private-router-metadata-gate` on `2026-08-04` |
 | Implementation, test, review, and release | DONE | 64 tests, strict type check, compile, plugin validation, Code Review, and handoff completed for `01-private-router-metadata-gate` |
@@ -103,7 +103,7 @@
 | Milestone | State | Evidence |
 | --- | --- | --- |
 | Requirement change and Grill | DONE | `CHG-20260805-010`; `doc/context/autonomous-collaboration-audit/main.md` |
-| Specification | DONE | `modules/spec/autonomous-collaboration-audit.md` (`APPROVED` on `2026-08-05`) |
+| Specification | DONE | `doc/archive/specs/2026/autonomous-collaboration-audit.md` (`APPROVED` on `2026-08-05`) |
 | Ticket 01 dispatch | IN_PROGRESS | Owner selected `ONE_IMPLEMENTATION_AGENT` and confirmed `01-topology-dispatch-lanes` as delivered to the named existing implementation worktree; planning lane moved to Grill for ticket 02. |
 | Ticket 02 / 03 | PLANNED | Ticket 02 is in planning-lane Grill; ticket 03 remains planned. Each receives authority only from its own future delivery confirmation. |
 | Implementation, review, and handoff | IN_PROGRESS | Ticket 01 implementation owner synchronizes its own worktree, performs TDD and returns typed evidence. |
