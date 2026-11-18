@@ -99,6 +99,20 @@ def offences(paths: Sequence[bytes], cap: int = MAX_PATH_CHARACTERS) -> list[str
     return lines
 
 
+def spread(filler: str, total: int) -> str:
+    """A path of exactly `total` characters made of `filler` in directories of at most 50 characters and a `.md` leaf.
+
+    A file name is limited to 255 bytes on Linux, so a wide path is split into several short segments.
+    """
+    body = total - len(".md")
+    segments: list[str] = []
+    while body > 0:
+        take = min(body, 50)
+        segments.append(filler * (take - 1 if body - take > 0 else take))
+        body -= take
+    return "/".join(segments) + ".md"
+
+
 class FixtureRepository(unittest.TestCase):
     """A scratch Git work tree whose index holds the paths a test names; no commit is needed."""
 
@@ -177,13 +191,14 @@ class FixtureTreeTests(FixtureRepository):
         self.assertEqual(offences(tracked_paths(repo)), [])
 
     def test_a_non_ascii_tracked_path_is_counted_in_characters(self) -> None:
-        name = "字" * (MAX_PATH_CHARACTERS - 3) + ".md"
+        name = spread("字", MAX_PATH_CHARACTERS)
+        self.assertEqual(len(name), MAX_PATH_CHARACTERS)
         repo = self.make_repo(name)
         paths = tracked_paths(repo)
         self.assertEqual(len(paths), 1)
         self.assertGreater(len(paths[0]), MAX_PATH_CHARACTERS)
         self.assertEqual(offences(paths), [])
-        over = "字" * (MAX_PATH_CHARACTERS - 2) + ".md"
+        over = spread("字", MAX_PATH_CHARACTERS + 1)
         repo_over = self.make_repo(over)
         self.assertEqual(len(offences(tracked_paths(repo_over))), 1)
 
