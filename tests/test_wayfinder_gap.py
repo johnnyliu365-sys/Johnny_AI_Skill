@@ -550,7 +550,7 @@ class RemovedRouterLibraryTests(unittest.TestCase):
             "print(json.dumps([m for m in removed if m in sys.modules]))\n"
         )
         completed = subprocess.run(
-            [sys.executable, "-I", "-X", "utf8", "-c", probe],
+            [sys.executable, "-I", "-B", "-X", "utf8", "-c", probe],
             capture_output=True,
             text=True,
             encoding="utf-8",

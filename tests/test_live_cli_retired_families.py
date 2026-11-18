@@ -8,6 +8,7 @@ import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest import mock
 
 from library.local_orchestration.johnny_live_cli import run_live_cli
 
@@ -20,6 +21,32 @@ _RETIRED_FAMILIES: tuple[str, ...] = (
 )
 
 _UNKNOWN_LINE = '{"status":"CAPABILITY_UNAVAILABLE","code":"UNKNOWN_COMMAND"}\n'
+
+# What the base 96f095a9 printed, for the same empty temporary root, byte for byte.
+_STATUS_EMPTY_LINE = (
+    '{"launcher_present": false, "ledger_present": false, "plugin_version": null, '
+    '"status": "CAPABILITY_UNAVAILABLE", "venv_present": false}\n'
+)
+_UNINSTALL_EMPTY_LINE = (
+    '{"failure": null, "remaining": [], "removed": [], "root_deleted": false, '
+    '"status": "NOT_INSTALLED"}\n'
+)
+_STATUS_INSTALLED_LINE = (
+    '{"launcher_present": false, "ledger_present": false, "plugin_version": "9.9.9", '
+    '"status": "OK", "venv_present": false}\n'
+)
+
+# Spellings of the two kept commands that are not exactly the kept command.
+_KEPT_COMMAND_SPELLINGS: tuple[str, ...] = (
+    "UNINSTALL",
+    "Uninstall",
+    " uninstall",
+    "uninstall ",
+    "STATUS",
+    "Status",
+    " status",
+    "status ",
+)
 
 
 def _run(argv: tuple[str, ...], root: Path) -> tuple[int, str]:
@@ -72,6 +99,51 @@ class RetiredFamiliesAreUnknownTests(unittest.TestCase):
             json.loads(out),
             {"status": "CAPABILITY_UNAVAILABLE", "code": "UNKNOWN_COMMAND"},
         )
+
+
+class KeptCommandsAreMatchedExactlyTests(unittest.TestCase):
+    def test_a_respelled_kept_command_is_unknown_and_never_uninstalls(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            with mock.patch(
+                "library.local_orchestration.live_uninstall_composition.run_live_uninstall"
+            ) as uninstall:
+                for spelling in _KEPT_COMMAND_SPELLINGS:
+                    with self.subTest(spelling=spelling):
+                        self.assertEqual(_run((spelling,), root), (3, _UNKNOWN_LINE))
+                uninstall.assert_not_called()
+
+    def test_the_exact_kept_commands_still_reach_their_branches(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            with mock.patch(
+                "library.local_orchestration.live_uninstall_composition.run_live_uninstall",
+                return_value=0,
+            ) as uninstall:
+                self.assertEqual(_run(("uninstall",), root), (0, ""))
+                uninstall.assert_called_once_with(root)
+
+
+class KeptCommandBytesTests(unittest.TestCase):
+    def test_status_line_bytes_equal_what_the_base_printed(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            self.assertEqual(_run(("status",), root), (3, _STATUS_EMPTY_LINE))
+            self.assertEqual(_run((), root), (3, _STATUS_EMPTY_LINE))
+
+    def test_installed_status_line_bytes(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            (root / "plugin").mkdir()
+            (root / "plugin" / "payload-manifest.json").write_text(
+                json.dumps({"plugin_version": "9.9.9"}), encoding="utf-8"
+            )
+            self.assertEqual(_run(("status",), root), (0, _STATUS_INSTALLED_LINE))
+
+    def test_uninstall_result_line_bytes_equal_what_the_base_printed(self) -> None:
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary).resolve()
+            self.assertEqual(_run(("uninstall",), root), (0, _UNINSTALL_EMPTY_LINE))
 
 
 class StatusIsUnchangedTests(unittest.TestCase):
