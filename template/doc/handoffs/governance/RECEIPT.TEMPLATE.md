@@ -5,9 +5,23 @@ choice made where the work was silent. Copy this file to the receipt path named 
 state row, repeat the run cell once per command, and replace every placeholder below before any
 gate reads it. A placeholder left in place is a defect.
 
-A `USAGE` cell records the token use of one seat; the control plane appends one per seat after the
-seat returns, and the evidence gate checks its form but never requires it. Repeat the section once
-per seat, and delete it from a receipt that has no seat to record yet.
+A `USAGE` cell records the token use of one seat. The control plane appends one per seat, after the
+seat returns, below the last cell of the receipt; the evidence gate checks its form and never
+requires it, and a `USAGE` cell has no capture, exit, candidate, tool_digest or fence. The block
+below is the form of one cell, to be placed under the heading `## USAGE <seat>`; it is not part of
+the receipt body, so a receipt that has no seat to record yet simply holds none.
+
+````
+cell: USAGE
+seat: <seat>
+profile: <profile>
+model: <model>
+input_tokens: <input-tokens>
+cache_write_tokens: <cache-write-tokens>
+cache_read_tokens: <cache-read-tokens>
+output_tokens: <output-tokens>
+source: <usage-source>
+````
 
 | Placeholder | Replaced by |
 | --- | --- |
@@ -39,17 +53,6 @@ exit: <exit-codes>
 ````
 <capture-lines>
 ````
-
-## USAGE <seat>
-cell: USAGE
-seat: <seat>
-profile: <profile>
-model: <model>
-input_tokens: <input-tokens>
-cache_write_tokens: <cache-write-tokens>
-cache_read_tokens: <cache-read-tokens>
-output_tokens: <output-tokens>
-source: <usage-source>
 
 ## STATEMENT
 cell: STATEMENT

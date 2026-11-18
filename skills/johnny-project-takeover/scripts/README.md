@@ -5,7 +5,7 @@ They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
 usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). `preflight.py` has no red (`0`, `2`, `3`). `integrate.py` reads `0` as landed, recorded or nothing to do and `1` as an entry bounced or a precondition red. In
-`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `repair_guard.py` and `integrate.py` an unexpected error is also a tool fault
+`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `repair_guard.py`, `integrate.py` and `usage_report.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red; the wave-2 gates
 report every red they can find even when a fault was met on the way (see each section). The console
