@@ -77,6 +77,8 @@ _SCANNED_SUFFIXES: Final[frozenset[str]] = frozenset({".md", ".yaml", ".yml"})
 #
 #   TARGET_OWNED     the path names an artifact in the *user's* project, not ours;
 #                    the workflow tells the agent where to write, it does not ship it.
+#                    (ticket 68: the SPEC archive rule of the requirement-lineage reference
+#                    names the user's `doc/archive/specs/` and `modules/spec/README.md`.)
 #   DEVELOPMENT_ONLY a link into Johnny's own development material.  These are dead
 #                    links in published prose and belong on the reviewer's list for
 #                    the README/Workflow pass that lands with this mechanism.
@@ -86,9 +88,11 @@ _REFERENCES_OUTSIDE_PAYLOAD: Final[dict[str, str]] = {
     "PRD.md": "TARGET_OWNED",
     "ProjectSchedule.md": "TARGET_OWNED",
     "doc/RequirementChangeLog.md": "TARGET_OWNED",
+    "doc/archive/specs/README.md": "TARGET_OWNED",
     "doc/runbooks/dispatch-model-profile.md": "DEVELOPMENT_ONLY",
     "johnny-install.cmd": "DEVELOPMENT_ONLY",
     "modules/element/": "TARGET_OWNED",
+    "modules/spec/README.md": "TARGET_OWNED",
 }
 
 # Path-shaped tokens that name no repository path at all.  Kept explicit so that a
@@ -375,8 +379,20 @@ class PayloadPathMatchingTests(unittest.TestCase):
         """The exclusion mechanism can name modules/tickets without naming modules/spec."""
 
         self.assertTrue(_is_forbidden(("modules", "tickets", "TEMPLATE.md")))
-        self.assertFalse(_is_forbidden(("modules", "spec", "router-framework.md")))
+        self.assertFalse(_is_forbidden(("modules", "spec", "workflow-governance.md")))
         self.assertFalse(_is_forbidden(("modules-archive", "tickets", "x.md")))
+
+    def test_the_spec_archive_is_not_a_payload_path(self) -> None:
+        """Ticket 68: archived SPECs are development material; no similar name joins the payload either."""
+
+        for archived in (
+            "doc/archive/specs/README.md",
+            "doc/archive/specs/2026/README.md",
+            "doc/archive/specs/2026/router-framework.md",
+            "doc/archive/specs-old/x.md",
+        ):
+            with self.subTest(path=archived):
+                self.assertFalse(is_payload_path(archived, self.payload))
 
     def test_excluded_segments_and_suffixes_are_honoured(self) -> None:
         self.assertFalse(is_payload_path("library/__pycache__/x.pyc", self.payload))

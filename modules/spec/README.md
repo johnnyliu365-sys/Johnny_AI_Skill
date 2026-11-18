@@ -6,7 +6,6 @@
 
 | 功能集群 | 規格 | 狀態 |
 | --- | --- | --- |
-| Receipt-bound role supervision | [`receipt-bound-role-supervision.md`](receipt-bound-role-supervision.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch 或啟用 heartbeat。 |
 | Environment capability bootstrap | [`environment-capability-bootstrap.md`](environment-capability-bootstrap.md) | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；reviewer 可拆票／開票，仍不得自行 dispatch、安裝工具或執行外部 effect。 |
 | Local orchestration installer | [`local-orchestration-installer.md`](local-orchestration-installer.md), revision `04`, SHA-256 `c2af8d8b3a10418a1450ef44eaf3ee89c6494311ceb68f543a4ef7e0e75de0af` | `APPROVED / BOUNDED_TICKETING_AUTHORIZED` |
 
@@ -15,7 +14,20 @@
 | 功能集群 | 規格 | 狀態 |
 | --- | --- | --- |
 | Adaptive project orchestration | [`adaptive-project-orchestration.md`](adaptive-project-orchestration.md) Revision 10 | `APPROVED / R09A_TICKET_OPENING_AUTHORIZED`；absent/delete 與祖先 digest cascade 契約已閉合，R09A ticket 仍需另行核准才可 dispatch。 |
-| Context-load telemetry | [`context-load-telemetry.md`](context-load-telemetry.md) Revision 11 | `APPROVED / REVIEWER_DECOMPOSITION_AUTHORIZED`；既有 opaque storage、per-stream ledger/CAS、lock-bound transaction adapter 與 no-effect private composition binding 已交付；新增 Host Bootstrap root、Router runtime delegation、composition consumption 的責任拓撲，且僅授權第一張 source-only Router grant/denial contract 票。 |
+
+## 已歸檔 SPEC
+
+只保留歸檔 ID 與歸檔參照；歸檔規則見 `skills/johnny-project-takeover/references/requirement-lineage.md` 的「SPEC archive」。
+
+| 歸檔 ID | 歸檔參照 |
+| --- | --- |
+| `ARCH-SPEC-20261118-001` | [`doc/archive/specs/2026/router-framework.md`](../../doc/archive/specs/2026/router-framework.md) |
+| `ARCH-SPEC-20261118-002` | [`doc/archive/specs/2026/private-router-saas.md`](../../doc/archive/specs/2026/private-router-saas.md) |
+| `ARCH-SPEC-20261118-003` | [`doc/archive/specs/2026/autonomous-collaboration-audit.md`](../../doc/archive/specs/2026/autonomous-collaboration-audit.md) |
+| `ARCH-SPEC-20261118-004` | [`doc/archive/specs/2026/receipt-bound-role-supervision.md`](../../doc/archive/specs/2026/receipt-bound-role-supervision.md) |
+| `ARCH-SPEC-20261118-005` | [`doc/archive/specs/2026/executor-routing.md`](../../doc/archive/specs/2026/executor-routing.md) |
+| `ARCH-SPEC-20261118-006` | [`doc/archive/specs/2026/plugin-release-telemetry.md`](../../doc/archive/specs/2026/plugin-release-telemetry.md) |
+| `ARCH-SPEC-20261118-007` | [`doc/archive/specs/2026/context-load-telemetry.md`](../../doc/archive/specs/2026/context-load-telemetry.md) |
 
 ## 已核准的功能集群架構
 

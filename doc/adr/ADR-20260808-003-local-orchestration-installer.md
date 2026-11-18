@@ -1,7 +1,8 @@
 # ADR-20260808-003｜Installer-owned local orchestration with reversible host lifecycle
 
 - Date: `2026-08-08（Asia/Taipei）`
-- Status: `ACCEPTED for POC architecture; implementation remains subject to SPEC approval`
+- Status: `SUPERSEDED` (previous status: `ACCEPTED for POC architecture; implementation remains subject to SPEC approval`)
+- Superseded by: `REQ-20261103-043` (owner decision 2026-11-18 "3A 4A") and workflow-governance Revision 04 (`SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`). The router library that this decision describes was retired by tickets 65 and 66. The decision text is unchanged.
 - Decision maker: Project owner
 - Related specification: `SPEC-AI-WORKFLOW-LOCAL-ORCHESTRATION-INSTALLER-20260808-01KZ8L0C2E4G6J8M0P2R4T6V8X` (`DRAFT`)
 - Related change: `CHG-20260808-011`

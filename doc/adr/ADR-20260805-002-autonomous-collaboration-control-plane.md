@@ -1,7 +1,8 @@
 # ADR-20260805-002｜Autonomous multi-AI collaboration control-plane architecture
 
 - 日期：`2026-08-05（Asia/Taipei）`
-- 狀態：`ACCEPTED — Grill converged`
+- 狀態：`SUPERSEDED`（先前狀態：`ACCEPTED — Grill converged`）
+- 被取代：`REQ-20261103-043`（owner 2026-11-18 決定「3A 4A」）與 workflow-governance Revision 04（`SPEC-AI-WORKFLOW-WORKFLOW-GOVERNANCE-20260805-01KZ6T8V2R4Y6B8D0F2H4J6M8P`）；本 ADR 所述的 router library 已由 ticket 65、66 退役。決策內文不變。
 - 架構產出者：Codex control plane
 - 決策授權：`CHG-20260805-010`；Grill 已於 `2026-08-05` 收斂
 - 關聯規格：`SPEC-AI-WORKFLOW-AUTONOMOUS-COLLABORATION-AUDIT-20260805-01KZ7A2C4E6G8J0L2N4P6R8T`
