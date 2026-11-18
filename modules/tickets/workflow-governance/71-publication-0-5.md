@@ -27,7 +27,7 @@ modify = .codex-plugin/plugin.json
 modify = tests/test_plugin_publication.py
 modify = tests/test_plugin_payload_boundary.py
 modify = ci/registered-failures.json
-modify = HARNESS-CHANGELOG.md
+modify = doc/HARNESS-CHANGELOG.md
 forbid = library/
 forbid = skills/johnny-project-takeover/scripts/
 forbid = Workflow.md
@@ -61,7 +61,7 @@ After this ticket:
   - The STATEMENT records the commit id, its tree id and the file count. The run is repeated once, and the second run must give the same commit id.
   - The seat creates the local ref `refs/heads/publication-0.5.0` and pushes nothing.
 - **The publication tests:** `_RELEASE_VERSION` is `0.5.0`. The four base failures pass on the host once the anchor ref exists locally. On CI they pass once the control plane has pushed the anchor ref, so until then they stay registered. Each changed constant is named in the STATEMENT.
-- **The changelog:** `HARNESS-CHANGELOG.md` gains a 0.5.0 entry naming:
+- **The changelog:** `doc/HARNESS-CHANGELOG.md` gains a 0.5.0 entry naming:
   - the router library retirement (tickets 65, 66, 68);
   - the gate scripts as the default path;
   - the `USAGE` cell (ticket 69);
