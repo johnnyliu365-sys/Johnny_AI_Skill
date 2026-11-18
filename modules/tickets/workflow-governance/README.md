@@ -38,6 +38,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [66-retire-bridge](66-retire-bridge.md) | The cross-lifetime bridge is removed: the live CLI keeps status and uninstall, and dispatch, review, runner and the wake families answer as unknown commands | `PLANNED` (after 65) | Wave 3; owner decision 2026-11-18 "1A" |
 | [68-archive-router-specs-and-adrs](68-archive-router-specs-and-adrs.md) | The seven router-era SPECs move to a SPEC archive with a lineage rule, and the nine router-era ADRs are marked superseded in place | `PLANNED` (after 65; beside 66) | Wave 3; owner decision 2026-11-18 "3A 4A" |
 | [69-token-use-per-seat](69-token-use-per-seat.md) | Every receipt records the token use of each seat in a USAGE cell, and a report compares it with the expectation per model profile | `PLANNED` | Wave 3 acceptance; readiness criterion 5 |
+| [70-wave2-template-and-hygiene](70-wave2-template-and-hygiene.md) | The ticket template gains the rows review requires, INTEGRATED and one receipt per closure revision; the receipt template gains a typed-return cell; no tracked path may exceed 120 characters | `PLANNED` (after 69) | Wave 3; wave-2 completion follow-ups |
 
 ## Shared baseline
 
