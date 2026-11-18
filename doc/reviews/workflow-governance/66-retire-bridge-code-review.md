@@ -138,3 +138,119 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/66-rev01-initial
 reviewed_at: 2026-11-19
 ```
+
+## Revision01 correction review
+
+**Verdict: `APPROVED`.** Correction 1 (`2d11118c`) closes S66-02, S66-04 and S66-05 as asked, and records S66-01 in the STATEMENT.
+
+- **S66-02.** The new tests pin the exact bytes and exit of `status` (empty root, with no argument and with `status`; and an installed root) and of the `uninstall` result line. I ran base `96f095a9` and the candidate on the same temporary roots, and each pinned line equals what the base prints. Eight spellings of the two kept commands are now pinned as `UNKNOWN_COMMAND` exit 3, with the uninstall transaction patched and asserted never called. My CM1 and CM2 were zero-red at the initial review; both are now red. So are five new doors aimed at the new pins.
+- **S66-04.** The README says "kept modules use".
+- **S66-05.** The probe runs with `-I -B`, and a run of `tests/test_wayfinder_gap.py` now leaves ignored porcelain empty.
+- **S66-01.** STATEMENT item 8 now names `doc/runbooks/e7_owner_smoke.py:35-56` (and line 201), its six stale imports, and ticket 67 as the sweep.
+
+The correction touches exactly three files plus the receipt. P9 and E1 pass when I rerun them.
+
+Two findings stay open, both for the control plane, and neither blocks under rule B:
+- the deletion half of S66-01;
+- S66-03.
+
+Both are `TICKET_DEFECT`s routed to ticket 67. Neither changes an exit-code classification, breaks a safety or scope boundary, or violates P0. No implementation or evidence defect remains open, so no convergence disposition is needed. Ticket 65's S65-05 was handled the same way.
+
+| Field | Value |
+| --- | --- |
+| Ticket | Unchanged: closure revision01 at `cf7528c0`, with its control-plane note |
+| Correction scope | The coordinator's correction message: S66-02 bytes and spellings, with CM1 and CM2 added to M1; S66-04 one README phrase; S66-05 `-B`; S66-01 a STATEMENT line only; S66-03 to ticket 67 |
+| Candidate | `2d11118c10da4a57e769cafe09d310e64be66070` on `cp/wave3-66-retire-bridge`. `git ls-remote origin` gives the same sha. It is one additive commit whose parent is `c9af7725`; there was no amend or force |
+| Commit identity | Author and committer are `Johnny Liu <johnny.liu365@gmail.com>`, committed 2026-11-19 02:33:00 +0800. The trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>` matches the seat model |
+| Changed paths (`c9af7725..2d11118c`) | `library/workflow_router/README.md` (+1/−1), `tests/test_live_cli_retired_families.py` (+72), `tests/test_wayfinder_gap.py` (+1/−1). All three are inside `modify`. No library module, `ci/` file, `requirements-dev.txt` or `forbid` path changed |
+| Review worktree | `.worktrees/66-retire-bridge-review`, detached at `2d11118c`. Porcelain, including ignored files, was empty, and I ran nothing in it |
+| Receipt | `.worktrees/66-retire-bridge-out/RETURN.md` (208959 bytes, LF, 0 CR). The header and every cell name candidate `2d11118c`. M1's clone HEAD is `2d11118c` |
+| CI run | 44370936415, event `push`, `headSha` = candidate. `test (linux)` success, `test (windows)` success. 0 `UNREGISTERED_FAILURE`, 0 `REGISTERED_NOT_FAILING` and 0 `REGISTERED_NOW_PASSING` lines. Linux: 298 failed + 2 errors, 2892 passed. Windows: 5 failed, 3116 passed. Each has 5 more passed than at `c9af7725` (the 5 new tests), and the failures are unchanged |
+| References applied | As in the initial review, plus `CodeReview.md` §5 rule B for this correction review |
+| XSS / secrets / Agent control / profile / POC | Not applicable, for the same reasons as the initial review |
+
+### Cell results (correction)
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | The correction touches only the three named files and the receipt | PASS | `git diff --name-only c9af7725 2d11118c` lists exactly the three files. The full suite was not rerun, as the coordinator instructed. The seat's locked F1 at `2d11118c` and CI cover it |
+| 2 | S66-02: the pinned bytes equal base output on the same root | PASS | `bytes_probe.py` (`-I -B`) imports `run_live_cli` from the base clone and from the candidate clone. It extracts the `*_LINE` constants from the candidate test with `ast.literal_eval`. Then it runs each pinned case on a fresh temporary root. `_STATUS_EMPTY_LINE` for `status` and for no argument (exit 3), `_STATUS_INSTALLED_LINE` (manifest version `9.9.9`, exit 0) and `_UNINSTALL_EMPTY_LINE` (exit 0) give bytes equal to the constants at base and at candidate, with the pinned exits. `UNINSTALL` prints `_UNKNOWN_LINE` at both; the exit is 2 at base and 3 at candidate, the change the control-plane note authorises |
+| 3 | S66-02: kept-command spellings | PASS | `KeptCommandsAreMatchedExactlyTests` sends `UNINSTALL`, `Uninstall`, ` uninstall`, `uninstall `, `STATUS`, `Status`, ` status` and `status `, each expecting `(3, _UNKNOWN_LINE)`, under `mock.patch("…live_uninstall_composition.run_live_uninstall")` with `assert_not_called()`. A second test checks that the exact `uninstall` still reaches the patched transaction once with the root. The patch works because the CLI imports the transaction lazily inside the branch. That lazy import is already a pinned property: CM11 also turns `test_live_registration_readback` red |
+| 4 | S66-04 | PASS | `README.md:4-5` reads "What stays is the typed vocabulary kept modules use." |
+| 5 | S66-05 | PASS | `tests/test_wayfinder_gap.py:553` is `[sys.executable, "-I", "-B", "-X", "utf8", "-c", probe]`. In my candidate clone, `python -m pytest tests/test_wayfinder_gap.py -q -p no:cacheprovider -rfE` gave 16 passed and 789 subtests, and `git status --porcelain --ignored` was empty afterwards. Before the fix this run left `__pycache__/` in three directories |
+| 6 | S66-01 (STATEMENT part) | PASS | STATEMENT item 8 names the script, its four removed modules and two deleted tests, and "ticket 67 sweeps it". Item 0 lists every finding's disposition. The deletion itself stays with the control plane |
+| 7 | Receipt | PASS | P9 rerun: `receipt_check.py` on `RETURN_noP9.md` gives 5 `[ok]`, 0 defects, exit 0, identical to `P9.txt` apart from its sha line and CR. On `RETURN.md` it gives 6 `[ok]`, exit 0. `RETURN_noP9.md` is a byte prefix of `RETURN.md`. E1 rerun with the dispatched arguments, `--candidate 2d11118c…`, run from the review worktree: `cells=6 defects=0`, exit 0. `blocks.py`: 0 CR, and the P1, T1, M1, C1, F1 and P9 raw blocks are each byte-identical to their capture, each naming candidate `2d11118c`. Recomputed sha256: `P1.txt` 56e9bbd04f9b09c3…, `M1.txt` 372c3bf10f750f8c…, `F1.txt` 1d685fcb35106235…, `C1.txt` 0d46b2940d4afee6…. M1 adds the reviewer's CM1 and CM2, each with its pytest command and full tracebacks |
+| 8 | Seat F1 at the candidate | PASS | 5 failed, 3112 passed, 22 skipped, exit 1. The 5 names are all among the 12 base names (`comm -23` is empty), so there is zero new red. The 3112 passed are 3107 plus the 5 new tests. `pytest_at_acquisition.txt` lists no pytest but the seat's own process probe |
+| 9 | Strict type | PASS | `mypy --strict --python-version 3.11` on the five T1 files plus `tests/test_live_cli_retired_families.py` gives exit 0. The correction adds no `Any` and no `type: ignore` |
+
+### Reviewer counter-mutations (correction)
+
+These ran in the disposable clone `.worktrees/66-retire-bridge-review-scratch/66-rev01-correction-cand` (`git clone --no-hardlinks <main checkout>`, detached at `2d11118c…`, `core.autocrlf=false`). A base clone, `66-rev01-correction-base`, was at `96f095a9` and used for cell 2. I removed both afterwards.
+
+Each mutation ran over the same 13 live/installer test files as the initial CM1b and CM2b, using `python -m pytest <13 files> -q -p no:cacheprovider -rfE` with default tracebacks and no output reducer. I read the unfiltered output. Each was restored with `git checkout -- . && git clean -fd`, and porcelain, including ignored files, was empty after each. The baseline gave 113 passed, 5 skipped, 247 subtests: the initial 108 plus the 5 new tests, with the qualification file included.
+
+| ID | Door | Mutation | Result |
+| --- | --- | --- | --- |
+| CM1r | Rerun of CM1 | `command = (argv[0] if argv else "status").strip().casefold()` | red: all 8 spellings, `SUBFAILED(spelling='UNINSTALL')` … `(spelling='status ')`, in `test_a_respelled_kept_command_is_unknown_and_never_uninstalls`. The uninstall subtests show the patched transaction answering in place of `UNKNOWN_COMMAND`. Zero red at the initial review |
+| CM2r | Rerun of CM2 | Status line with `separators=(",", ":")` | red: `test_status_line_bytes_equal_what_the_base_printed` and `test_installed_status_line_bytes`. Zero red at the initial review |
+| CM7 | Uninstall bytes, other module | `separators=(",", ":")` in the result `json.dumps` of `live_uninstall_composition.py` (unchanged since the base) | red: `test_uninstall_result_line_bytes_equal_what_the_base_printed` |
+| CM8 | One-sided whitespace on the destructive command | `if command.rstrip() == "uninstall":` | red: `SUBFAILED(spelling='uninstall ')`. The other seven spellings stay green, as they should |
+| CM9 | Case only, status only | `if command.lower() == "status":` | red: `SUBFAILED(spelling='STATUS')` and `(spelling='Status')` |
+| CM10 | Key order of the status line | `print(json.dumps(payload))` (drop `sort_keys`) | red: both status-bytes tests (`'{"status": "OK", "plugin_version": …'` against the sorted line) |
+| CM11 | Behaviour-preserving refactor (hoist the lazy uninstall import) | Import `run_live_uninstall` at module top | red: `test_the_exact_kept_commands_still_reach_their_branches` (the module-attribute patch is bypassed) and `test_live_registration_readback.py::…test_assembled_runtime_reads_back_true_through_the_real_chain` (`False is not true`). The second shows the lazy import is already a pinned property of the live CLI, so the new test's coupling to it is consistent rather than brittle |
+
+### Findings (status after correction 1)
+
+| ID | Class | Severity | Status | Blocks? | File:line | Observation / verification | Route |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| S66-01 | `TICKET_DEFECT` (delete list scope) plus a STATEMENT omission | Low | STATEMENT part **closed**; deletion carried | No. Under rule B it changes no exit-code classification, breaks no safety or scope boundary, and violates no P0 | `doc/runbooks/e7_owner_smoke.py:35-56, 201` | STATEMENT item 8 names it (cell 6). The script still fails with `ModuleNotFoundError` at line 35, as expected, because `doc/` is outside this boundary | Control plane: ticket 67 deletes it and its two prose references |
+| S66-02 | `EVIDENCE_DEFECT` | Low | **Closed** | — | `tests/test_live_cli_retired_families.py:25-49, 104-146` | Bytes equal base output (cell 2). CM1r, CM2r and CM7–CM10 are red | — |
+| S66-03 | `TICKET_DEFECT` (ticket-67 sweep list) | Low | Carried | No. It fails safe, and under rule B it changes no exit-code classification, breaks no safety or scope boundary, and violates no P0 | `skills/johnny-project-takeover/SKILL.md:105-129` | Unchanged and forbidden here | Control plane: ticket 67 |
+| S66-04 | `OUT_OF_SCOPE_HARDENING` | Low | **Closed** | — | `library/workflow_router/README.md:4-5` | Cell 4 | — |
+| S66-05 | `OUT_OF_SCOPE_HARDENING` | Low | **Closed** | — | `tests/test_wayfinder_gap.py:553` | Cell 5 | — |
+
+No new finding.
+
+### Commands (correction)
+
+- `git rev-parse 2d11118c^` gives `c9af7725`. `git ls-remote origin cp/wave3-66-retire-bridge` gives the candidate. `git log -1 --format=…`; `git diff --stat` and `git diff c9af7725 2d11118c`
+- `bytes_probe.py <base clone> <candidate test>` and `bytes_probe.py <candidate clone> <candidate test>` (cell 2)
+- `run_cm.sh BASE CM1r CM2r CM7 CM8 CM9 CM10 CM11` with `mutate.py` (table above)
+- `python -m pytest tests/test_wayfinder_gap.py -q -p no:cacheprovider -rfE`, then `git status --porcelain --ignored` (cell 5)
+- `receipt_check.py` on `RETURN_noP9.md` and on `RETURN.md`; `evidence_gate.py … --candidate 2d11118c…` from the review worktree; `blocks.py <out>`
+- `python -m mypy --strict --python-version 3.11 --cache-dir <work>` on six files
+- `gh run view 44370936415 --json …` and `--log`: checker lines and summary counts
+
+### Raw-log note (correction)
+
+The captures I read were unedited pytest output. CI was read with `gh run view` only. Nothing was pushed, and no run was triggered. No tracked file was modified. Both clones were made with `--no-hardlinks`.
+
+The host lock was not taken, because no full suite was run. I ran nothing in the review worktree, the seat's worktree or the worktrees of tickets 68, 70 and 72.
+
+Everything I created carried the run id `66-rev01-correction`, and I removed all of it before returning:
+- the work directory `66-rev01-correction-work`, which held the scripts, captures, mypy cache and CI log;
+- the clones `66-rev01-correction-cand` and `66-rev01-correction-base`;
+- the `66-rev01-correction-*` temporary roots of the probe, which removed themselves.
+
+One stray file did not carry the run id: a temporary `/tmp/66c_f1` that I wrote by mistake and deleted at once. The only file I changed is this record.
+
+### Not verified (correction)
+
+- A reviewer full suite at `2d11118c`. The coordinator excluded it. The seat's locked F1 and both CI jobs cover it, and my 13-file baseline was green.
+- Linux behaviour of the five new tests, beyond the CI Linux job's +5 passed.
+
+```review-verdict
+candidate: 2d11118c10da4a57e769cafe09d310e64be66070
+verdict: APPROVED
+reviewer: seat:ticket-review/66-rev01-correction
+reviewed_at: 2026-11-19
+```
+
+## Seat token use (readiness criterion 5)
+
+Host-reported usage per seat, summed per unique message id, against the expectation the owner confirmed on 2026-11-18 ("1A"); appended to the receipt as `USAGE` cells at integration.
+
+| Seat | Model | input | cache write | cache read | output | processed | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `seat:implementation-standard/66-impl` | claude-sonnet-5-5 | 390 | 469840 | 33604969 | 95396 | 34075199 | OVER_PROCESSED |
+| `seat:ticket-review/66-rev01` | claude-opus-5-5 | 260 | 576220 | 25511981 | 110208 | 26088461 | OVER_OUTPUT,OVER_PROCESSED |
