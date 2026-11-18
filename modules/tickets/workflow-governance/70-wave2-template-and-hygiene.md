@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/70-templates-out/` / owner implementation seat / worktree `.worktrees/70-templates` / branch `cp/wave3-70-templates` / baseline the wave-3 branch after ticket 69 is integrated |
 | 實作語言 | Markdown templates; Python 3.11 for the tests（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（revision02 after the implementation seat returned `CHANGE_DETECTED` on 2026-11-19: the evidence gate reads a `cell: RETURN` section as a run cell） |
+| 狀態 | `IN_PROGRESS`（revision02; initial review `CHANGES_REQUESTED` on 2026-11-19 (S70-01), correction 1 dispatched to the same seat） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/70-templates` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/70-templates-review` |
