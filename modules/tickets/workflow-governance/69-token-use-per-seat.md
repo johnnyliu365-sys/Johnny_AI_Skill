@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/69-token-use-per-seat-out/` / owner implementation seat / worktree `.worktrees/69-token-use-per-seat` / branch `cp/wave3-69-token-use` / baseline the wave-3 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（candidate `7cc0e08f`; revision01 correction review `CONVERGENCE_REVIEW_REQUIRED`, disposition APPROVED under rule B; S69-07, S69-08 carried） |
+| 狀態 | `INTEGRATED`（candidate `7cc0e08f` at `9b746c97`; CI run 44342660977 green; S69-07, S69-08 carried） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/69-token-use-per-seat` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/69-token-use-per-seat-review` |

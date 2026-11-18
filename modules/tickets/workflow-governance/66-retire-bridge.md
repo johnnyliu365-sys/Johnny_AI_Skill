@@ -15,7 +15,7 @@
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/66-retire-bridge` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/66-retire-bridge-review` |
 | 責任邊界 | removal of the cross-lifetime bridge from `library/`: the live CLI `dispatch`, `review`, `runner`, `wake-inbox` and `wake-capability` families and everything only they reach; their tests and registered-failure rows; the refusal-guidance entries of removed codes |
-| 禁止修改 | the gate scripts, the installer chain, `contracts.py`, the governance documents (ticket 67), the SPEC and ADR archive (ticket 68) |
+| 禁止修改 | the gate scripts, the installer chain, `contracts.py`, the governance documents (ticket 67), the SPEC and ADR archive (ticket 68), and the test files tickets 68, 70 and 72 change in parallel (a needed change there is a `CHANGE_DETECTED` return) |
 | 環境 | `LOCAL` and GitHub Actions on the plugin repository |
 
 ## 邊界宣告（機器可讀，整合前由閘門讀取）
@@ -122,6 +122,10 @@ forbid = library/local_orchestration/plugin_install_transaction.py
 forbid = library/local_orchestration/plugin_uninstall_transaction.py
 forbid = library/local_orchestration/runtime_dependency_lock.py
 forbid = tests/test_governance_consistency.py
+forbid = tests/test_plugin_payload_boundary.py
+forbid = tests/test_state_file_templates.py
+forbid = tests/test_gate_dispatch_lint.py
+forbid = tests/test_wave2_end_to_end.py
 forbid = skills/
 forbid = Workflow.md
 forbid = AGENTS.md

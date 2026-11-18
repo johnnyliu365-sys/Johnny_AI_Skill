@@ -25,7 +25,6 @@ modify = template/modules/tickets/TEMPLATE.md
 modify = template/doc/handoffs/governance/RECEIPT.TEMPLATE.md
 modify = template/README.md
 modify = tests/test_state_file_templates.py
-modify = ci/registered-failures.json
 create = tests/test_tracked_path_length.py
 forbid = library/
 forbid = skills/
