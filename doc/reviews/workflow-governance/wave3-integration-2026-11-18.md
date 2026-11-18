@@ -48,3 +48,21 @@ After integration, the control plane appended one `USAGE` cell per seat to each 
   ```
 
   Each seat over its expectation is explained in its review record. Being over does not block integration (owner decision 2026-11-18 "1A").
+
+## Ticket 72 (2026-11-19)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 72 dispatch lint: one action per line | `8c770265` | revision01 correction review `CONVERGENCE_REVIEW_REQUIRED`, disposition `APPROVED` under rule B (S72-05, S72-06 carried) | `fa4019fa` |
+
+The integration clone `C:/Temp/claude/jas-integ-72` was made from `1d4145ea`, using the integration script `integ_one.sh`.
+
+| Check | Result |
+| --- | --- |
+| Full suite in the integration clone under the host lock | 5 failed, 3644 passed, 32 skipped; every failure is a base name, so zero new red |
+| Pushed | `cp/wave3` at `fa4019fa`, a fast-forward from `1d4145ea` |
+| CI readback | run 44381596401 on `fa4019fa`: `test (linux)` and `test (windows)` both `success` |
+| USAGE | two cells were appended to `.worktrees/72-lint-out/RETURN.md` (sha256 `d3919b8941fef7e8502b0574078ca373509019464b42a4c29739c12c5f8c893d`); E1 gives exit 0 (`cells=7 defects=0`); `usage_report.py` gives exit 0 with both seats `WITHIN` |
+
+From this integration onward, the control plane writes dispatches to the new R5: one action per line, with literal payloads in backticks and each enumerated item as its own list item (S72-05).
+
