@@ -5,6 +5,4 @@
 #   not a runtime dependency). See governance ticket 13.
 mypy==2.3.0
 pydantic>=2.12.2,<3
-pywin32==311; sys_platform == "win32"
-types-pywin32>=311,<313
 pytest==9.1.1

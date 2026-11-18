@@ -1,36 +1,6 @@
 {
   "linux": [
     {
-      "test": "tests/test_antigravity_wake_command.py::DiscoveryTests::test_discovery_returns_the_first_proven_candidate",
-      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_antigravity_wake_command.py::DiscoveryTests::test_the_probe_separates_the_authenticated_endpoint",
-      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_antigravity_wake_command.py::SendTests::test_a_failing_send_is_a_typed_refusal",
-      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_antigravity_wake_command.py::SendTests::test_a_successful_send_happens_exactly_once",
-      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_antigravity_wake_command.py::SendTests::test_the_message_never_carries_the_payload_body",
-      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_antigravity_wake_command.py::WakePortIntegrationTests::test_the_port_reports_host_accepted_when_the_send_succeeds",
-      "reason": "the fake agentapi client is a Windows batch file (agentapi.bat, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so discovery finds no language server and sends are refused",
-      "follow_up": "environment"
-    },
-    {
       "test": "tests/test_atomic_conditional_replace_capability.py::test_acr1_windows_movefileex_final_window_qualifies_no",
       "reason": "the test needs the Windows MoveFileEx proof environment; on the Linux runner the platform proof is unavailable (_PlatformProofUnavailable: WINDOWS)",
       "follow_up": "environment"
@@ -98,76 +68,6 @@
     {
       "test": "tests/test_bounded_child_process_runner.py::BoundedChildProcessRunnerTests::test_t4_every_outcome_has_exact_invocation_and_no_raw_output",
       "reason": "tests/staging environment_core _is_reparse_point reads os.stat_result.st_file_attributes, which exists only on Windows; on the Linux runner it raises AttributeError (junction and reparse-point detection is Windows-only)",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::AppTabClaimTests::test_a_conversation_an_app_tab_wraps_is_refused_without_any_process",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::AppTabClaimTests::test_an_unrelated_tab_does_not_block_the_wake",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::AuthenticationGateTests::test_unauthenticated_host_refuses_and_never_drives",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::CommandEntryTests::test_delivered_wake_exits_zero_through_the_module_entry",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::DeliveryTests::test_a_payload_without_the_protocol_line_is_refused",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::DeliveryTests::test_two_reviewers_reach_two_different_branches",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::DeliveryTests::test_unmapped_reviewer_is_refused_by_name_not_delivered_elsewhere",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::DeliveryTests::test_wake_resumes_the_mapped_branch_and_names_only_the_payload_path",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::LiveSessionGuardTests::test_a_branch_held_by_a_live_session_is_refused_not_driven",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::LiveSessionGuardTests::test_an_unreadable_inventory_refuses_rather_than_assuming_free",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::LiveSessionGuardTests::test_an_unrelated_live_session_does_not_block_the_wake",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::LiveSessionGuardTests::test_inventory_reads_every_live_session_id",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::ProbeHonestyTests::test_exit_zero_without_a_completed_turn_is_refused",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_claude_wake_command.py::ProbeHonestyTests::test_probe_drives_a_throwaway_branch_and_reports_capability",
-      "reason": "the fake claude client is a Windows batch shim (claude.cmd, run through cmd.exe with %VAR% expansion); it cannot execute on the Linux runner, so the stub records no call and the wake reports NOT_AUTHENTICATED or REFUSED",
       "follow_up": "environment"
     },
     {
@@ -886,36 +786,6 @@
       "follow_up": "environment"
     },
     {
-      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_exact_directory_and_readback_create_metadata_only_receipt_binding",
-      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_exact_duplicate_directory_rows_are_deduplicated",
-      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_missing_ambiguous_project_host_and_activity_cells_are_finite",
-      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_readback_unavailable_invalid_mismatch_and_not_ready_fail_closed",
-      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_codex_thread_host_binding.py::CodexThreadHostBindingTests::test_workspace_requires_exact_existing_root_and_accepts_slash_variation",
-      "reason": "codex_thread_host_binding parses the workspace with PureWindowsPath; the POSIX temp directory the test supplies is not a Windows absolute path, so the binding reports WORKSPACE_MISMATCH (or a readback variant) instead of RESOLVED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_dispatch_authority.py::ContainmentGateTests::test_a_junctioned_worktree_refuses_identically",
-      "reason": "the test launches cmd.exe, which does not exist on the Linux runner (FileNotFoundError)",
-      "follow_up": "environment"
-    },
-    {
       "test": "tests/test_disposable_environment_core.py::DisposableEnvironmentCoreTests::test_05_r1_a_transient_rename_block_leaves_no_orphan",
       "reason": "the expected Windows error text ('WinError 5') and an empty error list come from the Windows environment; on Linux the same module's provisioning raises AttributeError on os.stat_result.st_file_attributes, which appears in the reported errors",
       "follow_up": "environment"
@@ -996,21 +866,6 @@
       "follow_up": "environment"
     },
     {
-      "test": "tests/test_event_runner_cli.py::RefWatchCapabilityNeverInferredFromAnEmptyQueueTests::test_real_and_forced_unavailable_capability_are_told_apart",
-      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_event_runner_cli.py::RunEventRunnerGateTests::test_a_gate_failure_names_capability_unavailable_when_forced",
-      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_event_runner_cli.py::RunEventRunnerGateTests::test_a_gate_failure_still_names_the_real_ref_watch_capability",
-      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
-      "follow_up": "environment"
-    },
-    {
       "test": "tests/test_live_install_root.py::JohnnyRootLayoutTests::test_every_owned_path_derives_from_base",
       "reason": "the pydantic model JohnnyRootLayout validates a Windows-form absolute path (drive letter, backslashes, %LOCALAPPDATA%) which the Linux runner's POSIX path handling rejects",
       "follow_up": "environment"
@@ -1086,58 +941,8 @@
       "follow_up": "modules/tickets/workflow-governance/62-registered-known-failures.md"
     },
     {
-      "test": "tests/test_ref_watch_capability.py::ImportSafetyTests::test_the_module_itself_imports_cleanly_without_pywin32",
-      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_ref_watch_capability.py::RealProbeOnThisMachineTests::test_this_windows_machine_reports_available",
-      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_ref_watch_capability.py::SimulatedDegradationTests::test_windows_without_the_native_binding_is_named_differently",
-      "reason": "the ref-watch capability needs the Windows native binding (pywin32); on the Linux runner it reports UNAVAILABLE or PLATFORM_UNSUPPORTED where the test expects AVAILABLE or NATIVE_BINDING_UNAVAILABLE, and importing the module without pywin32 exits 1",
-      "follow_up": "environment"
-    },
-    {
       "test": "tests/test_refusal_guidance.py::InstallScriptTests::test_a_real_refusal_keeps_status_and_code_where_they_were",
       "reason": "the test launches powershell.exe, which does not exist on the Linux runner (FileNotFoundError)",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_wake_delivery.py::WakeCommandConfigTests::test_rendering_substitutes_only_declared_placeholders",
-      "reason": "the test expects the queue path rendered with Windows backslashes; on POSIX the rendered path keeps forward slashes (C:/jr/queue/p.json)",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_windows_native_git_ref_notification.py::WindowsNativeGitRefNotificationTests::test_callback_can_cancel_its_own_subscription_without_deadlock",
-      "reason": "native git ref notification is a Windows-only facility; registration returns UNAVAILABLE on the Linux runner where the test expects REGISTERED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_windows_native_git_ref_notification.py::WindowsNativeGitRefNotificationTests::test_exact_loose_ref_change_signals_but_sibling_ref_does_not",
-      "reason": "native git ref notification is a Windows-only facility; registration returns UNAVAILABLE on the Linux runner where the test expects REGISTERED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_windows_native_git_ref_notification.py::WindowsNativeGitRefNotificationTests::test_packed_refs_replacement_signals_and_cancel_is_idempotent",
-      "reason": "native git ref notification is a Windows-only facility; registration returns UNAVAILABLE on the Linux runner where the test expects REGISTERED",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_worker_assignment.py::WorktreePathMatchingTests::test_a_case_variant_of_a_contained_worktree_is_still_contained",
-      "reason": "the case-variant containment check relies on Windows case-insensitive paths; on the case-sensitive Linux filesystem the worktree is refused as WORKTREE_OUTSIDE_REPOSITORY_ROOT",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_worktree_containment.py::ReparseEvasionTests::test_r4_a_junctioned_repository_root_is_refused",
-      "reason": "the test launches cmd.exe, which does not exist on the Linux runner (FileNotFoundError)",
-      "follow_up": "environment"
-    },
-    {
-      "test": "tests/test_worktree_containment.py::ReparseEvasionTests::test_r4_a_worktree_reached_through_a_junction_is_refused",
-      "reason": "the test launches cmd.exe, which does not exist on the Linux runner (FileNotFoundError)",
       "follow_up": "environment"
     }
   ],

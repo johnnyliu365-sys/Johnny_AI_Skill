@@ -86,13 +86,13 @@ quiet answer were the permissive category, forgetting would mean admitting.
 
 **The enums nobody has classified yet are reported, not hidden.** This module
 covers five surfaces: the two installer entry points, the two mutation gates,
-and its own lookup failures. That leaves forty-five of the forty-eight
+and its own lookup failures. That leaves ten of the thirteen
 `Failure` enums under `library/` for later batches. The audit accounts for
 every one of them as covered or uncovered and refuses to balance if one is
 neither, so an empty uncovered list cannot be arranged -- it can only be true.
 
 **Sources are read as text, never imported.** A checker that had to import
-forty-seven modules to count their failure codes would fail whenever any of
+a dozen modules to count their failure codes would fail whenever any of
 them failed to import, and would fail in a way that looks like a
 classification problem.
 """
@@ -796,7 +796,7 @@ def guidance_for(
     """Look one refusal up. Fails closed, and closed is never a category.
 
     The surface is part of the key because a bare code is ambiguous across the
-    forty-seven failure enums in this repository: `REQUEST_INVALID` alone names
+    thirteen failure enums in this repository: `REQUEST_INVALID` alone names
     a code in both mutation gates, and `INTEGRATION_FAILED` names one in each
     as well. Answering from the wrong surface would be worse than answering
     nothing, because it would look like an answer.
@@ -1096,8 +1096,8 @@ class ClassificationAudit(BaseModel):
     """What is classified, what is not, and what could not be read.
 
     `uncovered_enums` is a first-class field rather than a remainder somebody
-    can compute. Ticket 22 covers five surfaces and leaves forty-five enums for
-    later batches; those forty-five are a known state, and a known state has to
+    can compute. Ticket 22 covers five surfaces and leaves ten enums for
+    later batches; those ten are a known state, and a known state has to
     be printable. `unaccounted_enums` is what stops the list from being emptied
     instead of shrunk.
     """

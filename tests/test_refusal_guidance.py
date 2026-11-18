@@ -65,16 +65,6 @@ _INSTALL_WRAPPER = _REPO_ROOT / "johnny-install.cmd"
 _UNCOVERED_ROSTER: frozenset[str] = frozenset(
     {
         "library/local_orchestration/antigravity_registration.py::SkillRegistrationFailure",
-        "library/local_orchestration/antigravity_wake_command.py::WakeSendFailure",
-        "library/local_orchestration/claude_wake_command.py::ClaudeWakeFailure",
-        "library/local_orchestration/commit_trigger_intake.py::CommitTriggerFailure",
-        "library/local_orchestration/dispatch_authority.py::DispatchAdmissionFailure",
-        "library/local_orchestration/dispatch_authority.py::ReceiptRevocationFailure",
-        "library/local_orchestration/dispatch_session.py::WorkIntegrationFailure",
-        "library/local_orchestration/dispatch_session.py::WorkerDispatchFailure",
-        "library/local_orchestration/dispatch_session.py::WorkerRedispatchFailure",
-        "library/local_orchestration/dispatch_session.py::WorkerReturnFailure",
-        "library/local_orchestration/live_dispatch_metadata_boundary.py::ReceiptRevokeFailure",
         "library/local_orchestration/plugin_bundle_builder.py::PluginBundleBuildFailure",
         "library/local_orchestration/plugin_install_transaction.py::PluginInstallFailure",
         "library/local_orchestration/plugin_uninstall_transaction.py::PluginUninstallFailure",
@@ -84,37 +74,12 @@ _UNCOVERED_ROSTER: frozenset[str] = frozenset(
         "library/local_orchestration/project_authority/contracts.py::_LifecycleFailure",
         # Project-authority finalization failures (same feature, same reason).
         "library/local_orchestration/project_authority/integration.py::AuthorityFinalizationFailure",
-        "library/local_orchestration/project_subscription_runtime.py::ProjectSubscriptionFailure",
         "library/local_orchestration/release_pin_guard.py::ReleasePinFailure",
-        "library/local_orchestration/review_return.py::ReviewReturnFailure",
-        "library/local_orchestration/review_return_consumption.py::ConsumptionFailure",
-        "library/local_orchestration/runner_receipt_seeding.py::ReceiptVerificationFailure",
-        "library/local_orchestration/subscription_builder.py::SubscriptionBuildFailure",
-        "library/local_orchestration/wake_capability.py::WakeCapabilityFailure",
-        "library/local_orchestration/windows_native_git_ref.py::RefWatchCapabilityFailure",
-        "library/local_orchestration/work_queue.py::WorkEnqueueFailure",
-        "library/local_orchestration/work_queue.py::WorkPullFailure",
-        "library/local_orchestration/worker_assignment.py::WorkerClaimFailure",
-        "library/local_orchestration/worker_assignment.py::WorkerSettlementFailure",
-        "library/local_orchestration/worktree_containment.py::WorktreeContainmentFailure",
-        "library/workflow_router/execution_replacement.py::ExecutionReplacementFailure",
-        "library/workflow_router/git_handoff_contracts.py::GitEventAdapterFailure",
-        "library/workflow_router/live_dispatch_contracts.py::ArtifactReadFailure",
-        "library/workflow_router/live_dispatch_contracts.py::ArtifactRegistrationFailure",
-        "library/workflow_router/live_dispatch_contracts.py::ReceiptIssueFailure",
-        "library/workflow_router/live_dispatch_contracts.py::ReceiptReadFailure",
         "library/workflow_router/role_supervision_contracts.py::HandoffValidationFailure",
-        "library/workflow_router/role_wake_contracts.py::RoleWakeChainFailure",
-        "library/workflow_router/supervision_runtime_contracts.py::SupervisionRuntimeFailure",
         "library/workflow_router/target_document_contracts.py::DocumentWriteFailure",
         # Managed-artifact write failures (feat 1bca660f, 2026-08-28): a sibling of
         # DocumentWriteFailure added after the classification batch.
         "library/workflow_router/target_document_contracts.py::ManagedArtifactWriteFailure",
-        "library/workflow_router/thread_dispatch_contracts.py::CodexThreadDispatchFailure",
-        "library/workflow_router/thread_dispatch_contracts.py::DispatchClaimFailure",
-        "library/workflow_router/thread_dispatch_contracts.py::DispatchSettlementFailure",
-        "library/workflow_router/thread_host_contracts.py::ThreadHostBindingFailure",
-        "library/workflow_router/thread_host_contracts.py::ThreadHostResolutionFailure",
     }
 )
 
@@ -450,8 +415,8 @@ class ClassificationAuditTests(unittest.TestCase):
             set(audit.discovered_enums),
             _COVERED_ENUM_ROSTER | _UNCOVERED_ROSTER,
         )
-        self.assertEqual(len(audit.discovered_enums), 48)
-        self.assertEqual(len(audit.uncovered_enums), 45)
+        self.assertEqual(len(audit.discovered_enums), 13)
+        self.assertEqual(len(audit.uncovered_enums), 10)
 
     def test_the_uncovered_list_is_read_from_the_sources_not_recited(self) -> None:
         # Nailed on a tree this cell wrote, so a constant returned in place of
