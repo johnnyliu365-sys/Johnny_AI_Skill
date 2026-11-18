@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/66-retire-bridge-out/` / owner implementation seat / worktree `.worktrees/66-retire-bridge` / branch `cp/wave3-66-retire-bridge` / baseline the wave-3 branch after ticket 65 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`（candidate `2d11118c`; correction review `APPROVED`; S66-01 (delete `doc/runbooks/e7_owner_smoke.py`) and S66-03 to ticket 67） |
+| 狀態 | `INTEGRATED`（candidate `2d11118c` at `cded7a27`; CI run 44390034272 green; S66-01 and S66-03 to ticket 67） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/66-retire-bridge` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/66-retire-bridge-review` |

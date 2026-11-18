@@ -66,3 +66,22 @@ The integration clone `C:/Temp/claude/jas-integ-72` was made from `1d4145ea`, us
 
 From this integration onward, the control plane writes dispatches to the new R5: one action per line, with literal payloads in backticks and each enumerated item as its own list item (S72-05).
 
+## Tickets 68 and 66 (2026-11-19)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 68 archive the router-era SPECs, SPEC archive rule, ADRs superseded | `c3ecdd6b` | revision01 correction review `APPROVED` | `8c4e9a77` |
+| 66 retire the cross-lifetime bridge | `2d11118c` | revision01 correction review `APPROVED` | `cded7a27` |
+
+The integration clone `C:/Temp/claude/jas-integ-6866` was made from `8b82a2b1`. Both candidates were merged in order. `REQ-20261103-043.md` merged automatically, without a conflict.
+
+| Check | Result |
+| --- | --- |
+| Full suite on `cded7a27` in the integration clone under the host lock | 5 failed, 3140 passed, 22 skipped; every failure is a base name, so zero new red |
+| Pushed | `cp/wave3` at `cded7a27`, a fast-forward from `8b82a2b1` |
+| CI readback | run 44390034272 on `cded7a27`: `test (linux)` and `test (windows)` both `success` |
+| USAGE, ticket 68 | `.worktrees/68-archive-specs-out/RETURN.md` (sha256 `61da8e6790ca0334f6b3d7c2b6b938c766f1b6223eb483f02fbd8d755371c2a5`); E1 with L1 required gives exit 0 (`cells=8 defects=0`); both seats `WITHIN` |
+| USAGE, ticket 66 | `.worktrees/66-retire-bridge-out/RETURN.md` (sha256 `91b44069dd9251f760194cfbea21c0b50a20c7d4132c30bafe64a57d13625365`); E1 gives exit 0 (`cells=6 defects=0`); the implementation seat is `OVER_PROCESSED` and the review seat is `OVER_OUTPUT,OVER_PROCESSED`, both explained in the review record |
+
+The suite now holds 3140 passed tests, down from 3644 at ticket 72. The tests that ticket 66 retires account for the difference.
+
