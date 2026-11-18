@@ -19,12 +19,6 @@ from tempfile import TemporaryDirectory
 from pydantic import ValidationError
 
 from library.local_orchestration import document_mutation_gate as gate
-from library.local_orchestration.dispatch_authority import (
-    DispatchAdmissionFailure,
-    DispatchAdmissionStatus,
-    admit_dispatch,
-    create_dispatch_grant,
-)
 from library.local_orchestration.document_mutation_gate import (
     BoundaryReadStatus,
     ChangeKind,
@@ -876,48 +870,6 @@ class IntegrationTests(unittest.TestCase):
             self.assertEqual(entry["offending_path"], "library/untouchable.py")
             self.assertEqual(entry["ticket_path"], _TICKET)
             self.assertTrue(entry["principal"])
-
-
-# ---------------------------------------------------------------------------
-# Regression: this gate is not an issuance route, and does not become one
-# ---------------------------------------------------------------------------
-
-
-class IssuanceSeparationTests(unittest.TestCase):
-    def test_the_gate_holds_no_issuance_capability(self) -> None:
-        """Identity, not names: an aliased import is family C5's bypass."""
-
-        from library.local_orchestration import dispatch_authority
-        from library.local_orchestration import issuance_scoped_boundary
-
-        forbidden = {
-            id(dispatch_authority.admit_dispatch),
-            id(dispatch_authority.create_dispatch_grant),
-            id(dispatch_authority.read_dispatch_grant),
-            id(issuance_scoped_boundary.IssuanceScopedDispatchBoundary),
-        }
-        held = {id(value) for value in vars(gate).values()}
-        self.assertEqual(forbidden & held, set())
-
-    def test_dispatch_admission_still_refuses_without_a_grant(self) -> None:
-        with TemporaryDirectory() as name:
-            layout = _layout(Path(name))
-            result = admit_dispatch(layout, object())  # type: ignore[arg-type]
-            self.assertIs(result.status, DispatchAdmissionStatus.REFUSED)
-            self.assertIs(
-                result.failure, DispatchAdmissionFailure.DISPATCH_AUTHORITY_ABSENT
-            )
-
-    def test_a_grant_is_still_what_dispatch_admission_reads(self) -> None:
-        with TemporaryDirectory() as name:
-            layout = _layout(Path(name))
-            status, grant = create_dispatch_grant(layout)
-            self.assertEqual(status.value, "GRANTED")
-            assert grant is not None
-            # The document gate must not be able to satisfy this gate's
-            # precondition, and does not touch its grant file.
-            result = admit_dispatch(layout, object())  # type: ignore[arg-type]
-            self.assertIs(result.failure, DispatchAdmissionFailure.REQUEST_INVALID)
 
 
 if __name__ == "__main__":

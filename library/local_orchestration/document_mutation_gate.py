@@ -1,9 +1,8 @@
 """Refuse a change that touches what its ticket never declared, before main.
 
-This is `dispatch_authority` wearing a second face. That gate decides which
-requests may become receipts; this one decides which changes may become shared
-truth. Both run fail-closed in a fixed order, both refuse with a finite named
-reason, and both journal every outcome with the host principal.
+This gate decides which changes may become shared truth. It runs fail-closed in
+a fixed order, refuses with a finite named reason, and journals every outcome
+with the host principal.
 
 **Where the gate sits, and why not earlier.** The Router is a Python library,
 not a filesystem hook. It cannot stop an agent that holds a write tool from
@@ -43,8 +42,8 @@ merge base and the candidate is the same list a reviewer would see.
 `doc/a.md` are one file. Matching the allow lists case-insensitively would
 admit paths the ticket did not write; matching the forbid list
 case-sensitively would let `Dispatch_Authority.py` walk past a rule naming
-`dispatch_authority.py`. Both directions therefore fail closed: allow lists
-compare exactly, the forbid list compares case-folded.
+`dispatch_authority.py` (a path in a ticket's boundary, not a module here). Both directions
+therefore fail closed: allow lists compare exactly, the forbid list compares case-folded.
 
 **Nothing is decoded and nothing is guessed.** `%2F` is a character in a file
 name, not a separator, and a path is normalised lexically *before* it is

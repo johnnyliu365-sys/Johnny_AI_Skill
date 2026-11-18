@@ -9,12 +9,10 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
-import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from library.local_orchestration import windows_supervision_composition
 from library.local_orchestration.bootstrap_install import (
     _APPROVED_LOCK_DIGEST,
     _render_requirements,
@@ -37,44 +35,7 @@ from library.local_orchestration.plugin_uninstall_transaction import (
 from library.local_orchestration.runtime_dependency_lock import (
     build_approved_runtime_lock,
 )
-from library.local_orchestration.wake_capability import (
-    WakeCapabilityFailure,
-    WakeCapabilityStatus,
-    WakeCommandConfig,
-    probe_wake_capability,
-    wake_config_path,
-)
-from library.local_orchestration import event_runner
-from library.local_orchestration.event_runner import (
-    RunnerSubscriptionFile,
-    RunnerSubscriptionSpec,
-    subscriptions_path,
-)
-from library.local_orchestration.role_wake_composition import (
-    DurableRoleWakeAttemptStore,
-    RoleWakeAttemptBoundaryPort,
-)
-from library.local_orchestration.runner_receipt_seeding import (
-    ReceiptVerificationFailure,
-    ReceiptVerificationStatus,
-)
-from library.local_orchestration.wake_scoped_boundary import (
-    WakeScopedDispatchBoundary,
-)
-from library.workflow_router.live_dispatch_contracts import TicketReceipt
-from library.workflow_router.supervision_policy import SupervisionClass
-from library.workflow_router.supervision_runtime_contracts import (
-    SupervisionPreparationRequest,
-    SupervisionStartRequest,
-)
-from tests.test_git_handoff_event_adapter import _admission, _registration_request
 from tests.test_live_payload_ports import _write_bundle
-from tests.test_receipt_bound_supervision import _started
-from tests.test_role_wake_composition import (
-    _deadline_capability,
-    _receipt,
-    _wake_capability,
-)
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -210,7 +171,6 @@ class P1ReparsePayloadRootTests(unittest.TestCase):
             self.assertEqual(list(outside.iterdir()), [])
 
 
-
     def test_redirected_base_itself_is_refused(self) -> None:
         """Round three P1: a junction at the Johnny base defeats containment
         anchored to the resolved base. The bundle is real and extractable, so
@@ -233,70 +193,6 @@ class P1ReparsePayloadRootTests(unittest.TestCase):
             self.assertEqual(list(outside.iterdir()), [])
 
 
-class P1ProbeExercisesTheWakeCommandTests(unittest.TestCase):
-    """P1: PROVEN must mean the declared wake command itself succeeded."""
-
-    def test_a_failing_wake_command_cannot_be_proven(self) -> None:
-        with TemporaryDirectory() as temporary:
-            layout = JohnnyRootLayout(base=Path(temporary).resolve())
-            wake_config_path(layout).write_text(
-                WakeCommandConfig(
-                    command=(
-                        sys.executable,
-                        "-c",
-                        "import sys; sys.exit(9)",
-                        "{payload_file}",
-                    ),
-                    reviewer_ref="role-supervisor-reviewer",
-                ).model_dump_json(),
-                encoding="utf-8",
-            )
-            result = probe_wake_capability(layout)
-            self.assertIs(result.status, WakeCapabilityStatus.UNAVAILABLE)
-            self.assertIs(result.failure, WakeCapabilityFailure.PROBE_FAILED)
-
-    def test_the_probe_hands_the_command_a_real_payload_file(self) -> None:
-        with TemporaryDirectory() as temporary:
-            layout = JohnnyRootLayout(base=Path(temporary).resolve())
-            wake_config_path(layout).write_text(
-                WakeCommandConfig(
-                    command=(
-                        sys.executable,
-                        "-c",
-                        "import pathlib,sys;"
-                        "sys.exit(0 if pathlib.Path(sys.argv[1]).is_file() else 5)",
-                        "{payload_file}",
-                    ),
-                    reviewer_ref="role-supervisor-reviewer",
-                ).model_dump_json(),
-                encoding="utf-8",
-            )
-            result = probe_wake_capability(layout)
-            self.assertIs(result.status, WakeCapabilityStatus.PROVEN)
-            self.assertFalse(
-                (layout.queue_root / "wake-capability-probe.json").exists()
-            )
-
-
-class P1UnbatchedBypassIsNamedTests(unittest.TestCase):
-    """P1: skipping FIFO batching must be an explicit, named composition."""
-
-    def test_canonical_builder_keeps_requiring_the_inbox_coordinator(self) -> None:
-        annotations = (
-            windows_supervision_composition.build_windows_receipt_bound_supervision.__annotations__
-        )
-        self.assertIn(
-            "SeniorReviewInboxCoordinator", str(annotations["wake_coordinator"])
-        )
-
-    def test_the_bypass_declares_what_it_omits(self) -> None:
-        documentation = (
-            windows_supervision_composition.build_windows_supervision_without_review_batching.__doc__
-            or ""
-        )
-        self.assertIn("NO FIFO batching", documentation)
-
-
 class P2ResidueWithoutLedgerTests(unittest.TestCase):
     """P2: owned residue must be reported even when the ledger is gone."""
 
@@ -309,118 +205,6 @@ class P2ResidueWithoutLedgerTests(unittest.TestCase):
             )
             port = LiveOwnedStatePort(layout, "receipt-live-absent-probe")
             self.assertTrue(port.has_owned_state("receipt-live-absent-probe"))
-
-
-
-class P0RunnerBindingIdentityTests(unittest.TestCase):
-    """Round five P0: observe the object the runner actually binds.
-
-    Name-based namespace checks stay green under alias or factory reflow, so
-    this cell records every boundary object the untouched production line
-    hands to the wake chain (the attempt store and the verification call) and
-    requires each to be exactly the canonical facade with no issuance
-    attribute. Any mutation that routes an issuance-capable object into the
-    runner turns this red, whatever it is named.
-    """
-
-    def test_the_runner_binds_exactly_the_wake_scoped_facade(self) -> None:
-        captured: list[object] = []
-
-        def recording_verify(
-            boundary: object, receipt: TicketReceipt
-        ) -> tuple[ReceiptVerificationStatus, ReceiptVerificationFailure | None]:
-            captured.append(boundary)
-            return (
-                ReceiptVerificationStatus.BLOCKED,
-                ReceiptVerificationFailure.RECEIPT_NOT_FOUND,
-            )
-
-        class RecordingStore(DurableRoleWakeAttemptStore):
-            def __init__(self, boundary: RoleWakeAttemptBoundaryPort) -> None:
-                captured.append(boundary)
-                super().__init__(boundary)
-
-        with TemporaryDirectory() as temporary:
-            layout = JohnnyRootLayout(base=Path(temporary).resolve())
-            layout.queue_root.mkdir(parents=True)
-            baseline = "c" * 40
-            receipt = _receipt().model_copy(update={"baseline_commit": baseline})
-            specification = RunnerSubscriptionSpec(
-                repository_root=str(layout.base),
-                preparation=SupervisionPreparationRequest(
-                    receipt=receipt,
-                    registration_request=_registration_request(baseline),
-                    handoff_context=_admission(
-                        baseline=baseline, observed_handoff_commit=baseline
-                    ),
-                    reviewer_ref="role-supervisor-reviewer",
-                    implementation_task_ref="task-vita-implementation",
-                    wake_capability=_wake_capability(receipt),
-                    deadline_capability=_deadline_capability(receipt),
-                ),
-                start=SupervisionStartRequest(
-                    subscription_id=_registration_request(
-                        baseline
-                    ).subscription_id,
-                    lease_id="lease-p0-binding-001",
-                    supervision_class=SupervisionClass.LUNA_XHIGH_DEFAULT,
-                    execution_started=_started(baseline),
-                ),
-            )
-            subscriptions_path(layout).write_text(
-                RunnerSubscriptionFile(
-                    subscriptions=(specification,)
-                ).model_dump_json(),
-                encoding="utf-8",
-            )
-            original_verify = getattr(event_runner, "verify_receipt_claimable")
-            original_store = getattr(event_runner, "DurableRoleWakeAttemptStore")
-            setattr(event_runner, "verify_receipt_claimable", recording_verify)
-            setattr(event_runner, "DurableRoleWakeAttemptStore", RecordingStore)
-            try:
-                exit_code = event_runner.run_event_runner(layout)
-            finally:
-                setattr(event_runner, "verify_receipt_claimable", original_verify)
-                setattr(event_runner, "DurableRoleWakeAttemptStore", original_store)
-
-        self.assertEqual(exit_code, 2)
-        self.assertGreaterEqual(len(captured), 2)
-        for bound in captured:
-            self.assertIs(type(bound), WakeScopedDispatchBoundary)
-            for forbidden in ("issue_receipt", "register_artifact"):
-                self.assertFalse(hasattr(bound, forbidden))
-
-
-class P0RunnerHoldsNoIssuanceTests(unittest.TestCase):
-    """Round four P0: no issuance-capable object flows through the runner."""
-
-    def test_event_runner_namespace_has_no_issuance_names(self) -> None:
-        from library.local_orchestration import event_runner
-
-        for forbidden in (
-            "LiveDispatchMetadataBoundary",
-            "LiveDispatchMetadataStore",
-            "JohnnyMetadataRoot",
-        ):
-            self.assertFalse(hasattr(event_runner, forbidden))
-
-    def test_the_wake_scoped_surface_is_exactly_three_methods(self) -> None:
-        from library.local_orchestration.wake_scoped_boundary import (
-            WakeScopedDispatchBoundary,
-        )
-
-        surface = sorted(
-            name
-            for name in vars(WakeScopedDispatchBoundary)
-            if not name.startswith("_")
-        )
-        self.assertEqual(
-            surface,
-            ["claim_role_wake_attempt", "read_receipt", "settle_role_wake_attempt"],
-        )
-        for forbidden in ("issue_receipt", "register_artifact"):
-            self.assertNotIn(forbidden, surface)
-
 
 
 if __name__ == "__main__":

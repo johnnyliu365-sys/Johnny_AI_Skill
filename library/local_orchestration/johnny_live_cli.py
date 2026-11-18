@@ -2,7 +2,9 @@
 
 `status` reads back the installed state; `uninstall` composes the real
 receipt-owned uninstall transaction (wired in the live-install line's L6
-ticket). Unknown commands return a typed capability result and no effect.
+ticket). Every other command, including the retired `dispatch`, `review`,
+`runner`, `wake-inbox` and `wake-capability` families, returns the typed
+`UNKNOWN_COMMAND` result with exit 3 and no effect.
 """
 
 from __future__ import annotations
@@ -44,20 +46,8 @@ def run_live_cli(argv: tuple[str, ...], johnny_root: Path) -> int:
         from .live_uninstall_composition import run_live_uninstall
 
         return run_live_uninstall(johnny_root)
-    if command in ("runner", "wake-inbox", "wake-capability"):
-        from .runner_cli import run_runner_command
-
-        return run_runner_command(command, argv[1:], johnny_root)
-    if command == "dispatch":
-        from .dispatch_cli import run_dispatch_family
-
-        return run_dispatch_family(argv[1:], johnny_root)
-    if command == "review":
-        from .review_cli import run_review_family
-
-        return run_review_family(argv[1:], johnny_root)
     print('{"status":"CAPABILITY_UNAVAILABLE","code":"UNKNOWN_COMMAND"}')
-    return 2
+    return 3
 
 
 __all__ = ["run_live_cli"]
