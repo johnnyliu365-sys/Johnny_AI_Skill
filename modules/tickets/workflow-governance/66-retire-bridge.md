@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/66-retire-bridge-out/` / owner implementation seat / worktree `.worktrees/66-retire-bridge` / branch `cp/wave3-66-retire-bridge` / baseline the wave-3 branch after ticket 65 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED`（starts after ticket 65 is `INTEGRATED`: both change the package `__init__` files, the registered-failure list and the refusal-guidance test） |
+| 狀態 | `IN_PROGRESS`（revision01 returned `COMPLETED` on 2026-11-19, candidate `c9af7725`; initial review dispatched） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/66-retire-bridge` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/66-retire-bridge-review` |
@@ -232,3 +232,10 @@ When this ticket is done:
 - 實際檔案：`<paths>`
 - commit：`<SHA>`
 - WorkProgress：不適用
+
+## Control-plane note before review (2026-11-19)
+
+The ticket says unknown commands exit 3 "as before". That is a factual error of the ticket (lesson L-8): at the base `run_live_cli` returned **2** for an unknown command. The seat made every unknown command exit 3, as the ticket asked, and named the change.
+The control plane keeps exit 3. It is the usage-error code of R4-2, it matches the `CAPABILITY_UNAVAILABLE` exit 3 of `status` and of the runtime entry, and no file in the repository reads the old value 2. This note is the authority for that one behaviour change; every other statement of revision01 stands.
+
+Prose outside the boundary that still names deleted files (for ticket 67): `.agents/plugins/johnny-ai-skill/rules/worktree-containment.md` line 9 (`worktree_containment.py`); `library/功能集群/python/exclusive_file_lock/README.md` (`file_lock.py`, `tests/test_file_lock.py` as contract source and evidence).
