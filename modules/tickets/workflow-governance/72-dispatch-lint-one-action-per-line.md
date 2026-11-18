@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/72-lint-out/` / owner implementation seat / worktree `.worktrees/72-lint` / branch `cp/wave3-72-lint` / baseline the wave-3 branch after ticket 69 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（revision01; initial review `CHANGES_REQUESTED` on 2026-11-19 (S72-01 to S72-03, three zero-red counter-mutations), correction 1 dispatched to the same seat） |
+| 狀態 | `REVIEW_APPROVED`（candidate `8c770265`; correction review `CONVERGENCE_REVIEW_REQUIRED`, disposition APPROVED under rule B; carried S72-05, S72-06） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/72-lint` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/72-lint-review` |

@@ -133,3 +133,115 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/72-rev01-initial
 reviewed_at: 2026-11-19
 ```
+
+## Revision01 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`. Every open finding is non-blocking under rule B.** Correction 1 (`8c770265`) closes S72-01, S72-02 and S72-03 as specified. Each pin is the smallest fix the initial review named, and my RM1, RM2 and RM3 reruns now each turn the new subtest red for the intended reason. The S72-04 README sentence is there. S72-05 is unchanged, on the coordinator's instruction. The correction touches only the test file and the README; the receipt was rebuilt outside the tree. The script and `tests/test_wave2_end_to_end.py` are byte-identical to `fe9b0256`. No existing assertion changed. P9 and E1 pass when I rerun them, and CI run 44369248294 is green on both jobs at the candidate.
+
+One of my three new counter-mutations turns nothing red: RM11, which makes the `cmd:` exemption case-insensitive. That is a new evidence gap, S72-06. The candidate behaves correctly (`Cmd: a; b` is refused), so the finding is an `EVIDENCE_DEFECT` and does not block approval under rule B. But a regression through it would let a multi-action line pass. Rule B therefore requires the pin at the next change of this gate, and this review is the second of the closure revision with an evidence defect open. That is what puts the verdict at `CONVERGENCE_REVIEW_REQUIRED` rather than `APPROVED`. No finding changes an exit-code classification, breaks a safety or scope boundary, or violates P0, so the control plane may record a rule B `convergence-disposition`.
+
+| Field | Value |
+| --- | --- |
+| Ticket | Unchanged: closure revision01 at `96f095a9` |
+| Dispatch | `C:/Temp/claude/jas-dispatch/JAS-72_dispatch.yaml`, unchanged. The coordinator relayed the correction scope |
+| Candidate | `8c770265818bc986a20ca9ea50accc16ad56da06` on `cp/wave3-72-lint`. `git ls-remote origin` gives the same sha. It is one additive commit whose parent is `fe9b0256`; there was no amend or force |
+| Commit identity | Author `Johnny Liu <johnny.liu365@gmail.com>`. Trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`. The seat run id is `r72b` |
+| Changed paths (`fe9b0256..8c770265`) | `M skills/johnny-project-takeover/scripts/README.md` (+2/−1) and `M tests/test_gate_dispatch_lint.py` (+7/−2). Both are `modify` lines. `git diff --quiet fe9b0256 8c770265 -- …/dispatch_lint.py tests/test_wave2_end_to_end.py` holds |
+| Review worktree | `.worktrees/72-lint-review`, detached at `8c770265`. Porcelain, including ignored files, was empty before and after |
+| Receipt | `.worktrees/72-lint-out/RETURN.md` (59531 bytes, LF, 0 CR). Every cell's candidate is `8c770265` |
+| CI run | 44369248294, `headSha` = candidate. `test (linux)` success, `test (windows)` success. Read with `gh run view` only |
+| References applied | As in the initial review, plus `CodeReview.md` §5 rule B for this correction review |
+| XSS / secrets / Agent control / profile / POC | Not applicable, for the same reasons as the initial review |
+
+### Cell results (correction)
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | The correction touches only the test file, the README and the receipt | PASS | `git diff --name-status fe9b0256 8c770265` lists two `M` paths, both inside the boundary. The receipt and captures are under `.worktrees/72-lint-out`, outside the tree. The script is unchanged, so there is no behaviour change |
+| 2 | No existing assertion changed | PASS | `git diff -U0 fe9b0256 8c770265 -- tests/test_gate_dispatch_lint.py` removes two lines, the two `for body in (…)` tuples. Each is rewritten with all of its original values and one value appended: ``"note: run `a` then `b; c`"`` and `"- run the cmd: a; b"`. One assertion is added, `note: one action; ` passes. Every other line is untouched. The STATEMENT says the correction adds three values and one assertion and changes or removes none, and the diff agrees |
+| 3 | S72-01 | CLOSED | `tests/test_gate_dispatch_lint.py:170` adds `- run the cmd: a; b` and expects `["R5"]`. RM2r is red: `SUBFAILED[- run the cmd: a; b] …test_r5_the_cmd_exemption_is_only_for_a_field_named_cmd` |
+| 4 | S72-02 | CLOSED | `:130` asserts that `note: one action; ` passes. RM1r is red: `FAILED …test_r5_one_action_passes`. The STATEMENT convention paragraph now says that inside quotes, `note: "do a; "` counts as two actions (stricter, never more lenient). That matches my initial probe |
+| 5 | S72-03 | CLOSED | `:150-154` adds ``note: run `a` then `b; c` `` to the exempt tuple. RM3r is red: ``SUBFAILED[note: run `a` then `b; c`] …test_r5_separator_inside_backticks_does_not_count`` |
+| 6 | S72-04 | CLOSED (hardening note taken) | README line 26: "A `cmd:` value is a single line, so a multi-line block is refused on its continuation line". This is accurate for a continuation line that holds a separator; one without a separator passes. "Refused" is slightly broad, but it describes a false red, never a pass, so I leave it as is |
+| 7 | S72-05 | CARRIED | No change, by the coordinator's instruction. It is a control-plane matter (dispatch authoring) outside this boundary |
+| 8 | P1 and strict type | PASS | In the review worktree: `pytest tests/test_gate_dispatch_lint.py tests/test_wave2_end_to_end.py -q -rfEs -p no:cacheprovider` gives 55 passed, 58 subtests passed (two more subtests than at `fe9b0256`). `mypy --strict --python-version 3.11` on the script and its test gives `Success: no issues found in 2 source files` |
+| 9 | Receipt: P9, E1, digests, raw blocks | PASS | P9 rerun on the full `RETURN.md` against the review worktree: 8 `[ok]` and 1 `[statement]`, `receipt defects: 0`, exit 0. E1 rerun on the receipt as returned, with the dispatched arguments and `--candidate 8c770265…`: `cells=7 defects=0`, exit 0. All four `tool_digest` values recompute from the `8c770265` blobs. The P1, T1, M1, C1, F1, P9 and E1 raw blocks are each byte-identical to their capture. One recomputed capture digest is `sha256(M1.txt) = dfc17c829555cc64b70679e7eb9caf60b8d69ca16302c8d488b1d82ca7e9611d`. M1 now holds seven mutations, including my RM1 to RM3 as M1-e to M1-g, each red with full FAILURES sections |
+| 10 | Seat F1 at the candidate | PASS (not rerun) | 5 failed, 3644 passed. Each of the five names is in `C:/Temp/claude/jas48_F1_base.txt`. The STATEMENT names the other python processes found at lock acquisition, none of which had a pytest child |
+| 11 | Reviewer counter-mutations | 6 run; 5 red, RM11 zero red (S72-06) | Table below |
+| 12 | Seat CI | PASS | Both jobs `success` on `8c770265` |
+
+### Reviewer counter-mutations (correction)
+
+All six ran in `git clone --no-hardlinks` of the review worktree, checked out at `8c770265` (`.worktrees/72-lint-review-scratch/72-rev01-correction-clone`; porcelain `''` before). Each ran the whole `tests/test_gate_dispatch_lint.py` without `-x`, using `python -m pytest tests/test_gate_dispatch_lint.py -q -rfE -p no:cacheprovider` directly with no output-reducing wrapper. I read the unfiltered output. Each was restored with `git checkout -- .`, and porcelain was `''` after every one. Baseline at the candidate: 40 passed, 51 subtests passed.
+
+| ID | Door | Mutation | Result |
+| --- | --- | --- | --- |
+| RM1r | Rerun of RM1 (empty clause counted) | `max(1, len(SEPARATOR.split(bare)))` | red: `test_r5_one_action_passes`. Zero red at the initial review |
+| RM2r | Rerun of RM2 (exemption widened to a list item that only contains `cmd:`) | `^\s*(?:-\s+[^:]*?)?cmd:(\s\|$)` | red: `test_r5_the_cmd_exemption_is_only_for_a_field_named_cmd[- run the cmd: a; b]`. Zero red at the initial review |
+| RM3r | Rerun of RM3 (first span only) | `re.sub(…, line, count=1)` | red: ``test_r5_separator_inside_backticks_does_not_count[note: run `a` then `b; c`]``. Zero red at the initial review |
+| RM11 | New: the exact name, by case | `CMD_FIELD = re.compile(…, re.IGNORECASE)`, so `Cmd:` and `CMD:` become exempt | **zero red**: 40 passed, 51 subtests passed. The candidate refuses `Cmd: a; b` (initial probe; the script is unchanged), the mutant admits it (S72-06) |
+| RM12 | New: the exact name, by prefix | `CMD_FIELD = ^\s*(?:-\s+)?cmd` (colon and boundary dropped) | red: `test_r5_the_cmd_exemption_is_only_for_a_field_named_cmd[cmd2: "a; b"]` |
+| RM13 | New: the exit-code door (R4-2 classification) | `main` returns 0 when every problem is an R5 line | red: `test_r5_exits_1_as_a_process_and_names_the_rule` |
+
+### Findings (status after correction 1)
+
+| ID | Class | Severity | Status | Blocks? | File:line | Observation / verification | Route |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| S72-01 | `EVIDENCE_DEFECT` | Low | **Closed** | — | `tests/test_gate_dispatch_lint.py:170` | `- run the cmd: a; b` is pinned as R5. RM2r is red | — |
+| S72-02 | `EVIDENCE_DEFECT` | Low | **Closed** | — | `tests/test_gate_dispatch_lint.py:130`; STATEMENT | The trailing `; ` convention is pinned and the quoted case is stated. RM1r is red | — |
+| S72-03 | `EVIDENCE_DEFECT` | Low | **Closed** | — | `tests/test_gate_dispatch_lint.py:150-154` | A second span is pinned. RM3r is red | — |
+| S72-04 | `OUT_OF_SCOPE_HARDENING` | Low | **Closed** (README note) | — | `skills/johnny-project-takeover/scripts/README.md:26` | The single-line `cmd:` limit is documented. A real multi-line exemption is still a possible follow-up, but it is not needed | — |
+| S72-05 | `OUT_OF_SCOPE_HARDENING` (dispatch authoring) | Low | Carried | No (hardening) | `C:/Temp/claude/jas-dispatch/JAS-65_dispatch.yaml:30, 58` | Unchanged, by the coordinator's instruction | Control plane: dispatch authoring guidance (backtick literal payloads, drop or comma-join rationale clauses, emit enumerations as list items) |
+| S72-06 | `EVIDENCE_DEFECT` (row "the value of a `cmd:` field"; the exemption is for a field named exactly `cmd`) | Low | New, open | No. The candidate is correct. It changes no exit-code classification, breaks no safety or scope boundary, and violates no P0. Under rule B it is a gap that would let a regression pass, so it must be pinned at the next change of this gate | `tests/test_gate_dispatch_lint.py:169-172`; `dispatch_lint.py:39` | The negative cases differ from `cmd` by prefix, suffix or position, never by case. A case-insensitive `CMD_FIELD` changes no test result. YAML keys are case-sensitive, so `Cmd:` is a different field. RM11: zero red | Next change of `dispatch_lint.py` (rule B carry). Smallest fix: add `'Cmd: "a; b"'` to the subtest tuple of `test_r5_the_cmd_exemption_is_only_for_a_field_named_cmd` |
+
+### Commands (correction)
+
+- `git log -1 --format='%H %P …'`, `git diff --name-status fe9b0256 8c770265`, `git diff fe9b0256 8c770265`, `git diff -U0 … | grep '^-[^-]'`, `git diff --quiet fe9b0256 8c770265 -- <script> <e2e test>`, `git ls-remote origin cp/wave3-72-lint`
+- `python -m pytest tests/test_gate_dispatch_lint.py tests/test_wave2_end_to_end.py -q -rfEs -p no:cacheprovider` (review worktree, `PYTHONDONTWRITEBYTECODE=1`) gives 55 passed, 58 subtests passed
+- `python -m mypy --strict --python-version 3.11 <script> <test> --cache-dir <scratch>/72-rev01-correction-mypycache` gives exit 0
+- `python -I -X utf8 72-rev01-correction-tools/mutate.py <clone> 72-rev01-correction-M.txt` runs RM1r to RM3r and RM11 to RM13
+- `python -I -X utf8 doc/reviews/workflow-governance/evidence/48/receipt_check.py .worktrees/72-lint-out/RETURN.md .worktrees/72-lint-review` gives exit 0
+- `python -I -X utf8 skills/johnny-project-takeover/scripts/evidence_gate.py .worktrees/72-lint-out/RETURN.md --repo .worktrees/72-lint-review --candidate 8c770265… --tool …/dispatch_lint.py --tool …/evidence_gate.py --evidence-root .worktrees/72-lint-out --require-cell P1 --require-cell T1 --require-cell M1 --require-cell F1` gives `cells=7 defects=0`, exit 0
+- A block-versus-capture comparison and sha256 for every cell; `git show 8c770265:<tool>` hashed for the four tools
+- `grep -c <name> C:/Temp/claude/jas48_F1_base.txt` for F1's five failures
+- `gh run view 44369248294 --json headSha,conclusion,jobs,url`
+
+### Raw-log note (correction)
+
+The counter-mutation results above are copied from the unedited capture `72-rev01-correction-M.txt`. That capture, the clone, the runner and the mypy cache all carry this run id, and I removed them before returning, as the coordinator asked. The files of run `72-rev01-initial` are left in place. CI was read with `gh run view` only. Nothing was pushed, and no run was triggered. No tracked file was modified. The host lock was not taken, because no full suite was run. I did not touch the seat's worktree, its scratch or clones, or any other seat's worktree.
+
+### Not verified (correction)
+
+- A reviewer full suite at `8c770265`. It is not required for a test-and-README correction. The seat's locked F1 and both CI jobs cover it.
+- The seat's M1-a to M1-g were not rerun as its runs. My RM1r to RM3r reproduce M1-e to M1-g independently.
+- The trailer's model against the profile table, as in the initial review.
+
+```review-verdict
+candidate: 8c770265818bc986a20ca9ea50accc16ad56da06
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/72-rev01-correction
+reviewed_at: 2026-11-19
+```
+
+## Convergence disposition (control plane, 2026-11-19)
+
+The correction review returned `CONVERGENCE_REVIEW_REQUIRED`: every blocking finding is closed and the open findings are non-blocking under CodeReview §5 rule B. Each carried finding keeps the smallest fix the reviewer named (lesson L-19).
+
+```convergence-disposition
+candidate: 8c770265818bc986a20ca9ea50accc16ad56da06
+reviewer_verdict: CONVERGENCE_REVIEW_REQUIRED
+disposition: APPROVED
+rule: CodeReview §5 rule B (owner-approved 2026-11-05)
+carried:
+  - S72-05
+  - S72-06
+```
+
+## Seat token use (readiness criterion 5)
+
+Host-reported usage per seat, summed per unique message id, against the expectation the owner confirmed on 2026-11-18 ("1A"); appended to the receipt as `USAGE` cells at integration.
+
+| Seat | Model | input | cache write | cache read | output | processed | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `seat:implementation-standard/72-impl` | claude-sonnet-5-5 | 180 | 277222 | 10460409 | 52502 | 10737811 | WITHIN |
+| `seat:ticket-review/72-rev01` | claude-opus-5-5 | 110 | 334089 | 7027312 | 70157 | 7361511 | WITHIN |
