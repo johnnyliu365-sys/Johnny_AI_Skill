@@ -183,3 +183,148 @@ verdict: CHANGES_REQUESTED
 reviewer: seat:ticket-review/69-rev01-initial
 reviewed_at: 2026-11-18
 ```
+
+## Revision01 correction review
+
+**Verdict: `CONVERGENCE_REVIEW_REQUIRED`, with every open finding non-blocking under CodeReview §5 rule B. No blocking finding remains: no exit-code misclassification, no safety or confinement issue and no P0 issue. The only open finding is S69-08. It is an evidence residue of S69-06: the candidate behaves correctly, but on POSIX the tests do not pin it, and a regression would not let a change pass. It therefore goes to a follow-up hardening ticket. S69-07 is answered by a runbook rule, and the P9 checker itself stays a control-plane follow-up. The control plane may record the rule B convergence disposition (`carried: S69-07, S69-08`).** Correction 1 (`7cc0e08f`) closes every blocking finding of the initial review:
+
+- S69-01: `usage_report.py` now prints every red it finds before any fault, puts each fault on standard error, and exits 1 when it found a red and 2 only when it met a fault and no red. That is R4-2.
+- S69-02: a count of any length is a value.
+- S69-03: the report reads USAGE sections exactly as the gate does and never skips one.
+- S69-04: the runbook records the owner's confirmation.
+
+S69-05 is closed, and S69-06 is closed apart from one environment-scoped residue (S69-08). S69-07 is answered by a runbook rule. `evidence_gate.py` is byte-unchanged. CI run 44331023638 is green on both jobs at the candidate. The receipt passes P9 and E1 on my rerun.
+
+The coordinator's correction message said "exit is 2 if any fault occurred". Under L-20 that sentence is superseded, and I judged the candidate against R4-2 and this record, as the coordinator directs. The seat's STATEMENT records that it followed R4-2.
+
+| Field | Value |
+| --- | --- |
+| Ticket | Unchanged: revision01 at `c4ec636a` (see the initial review) |
+| Candidate | `7cc0e08fa5cdf2d573c6c00806d59f09d1778d98` on `cp/wave3-69-token-use`; `git ls-remote` returns the same sha. It is one commit on `393a0e80`, which is an ancestor, so the change is additive. Author `Johnny Liu <johnny.liu365@gmail.com>`, trailer `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`. The remote tip moved from `393a0e80` to its child `7cc0e08f`, with no amend, rebase or force |
+| Changed paths (`393a0e80..7cc0e08f`) | `doc/runbooks/dispatch-model-profile.md`, `skills/johnny-project-takeover/scripts/README.md`, `skills/johnny-project-takeover/scripts/usage_report.py`, `tests/test_gate_evidence.py`, `tests/test_usage_report.py`. All are in the boundary. `git diff --quiet 393a0e80 HEAD -- skills/johnny-project-takeover/scripts/evidence_gate.py` succeeds, so the gate is unchanged. No `forbid` path is touched. None of these paths changed on `cp/wave3` between `c5848465` and its tip `369d6844` |
+| Review worktree | `.worktrees/69-token-use-per-seat-review`, detached at the candidate; porcelain was empty before and after |
+| Receipt | `.worktrees/69-token-use-per-seat-out/RETURN.md`, rebuilt for `7cc0e08f` (LF, 83702 bytes, 0 CR). Cells: P1, T1, M1 (8 mutations), C1, F1, P9, STATEMENT, E1 |
+| CI run | 44331023638, https://github.com/johnnyliu365-sys/Johnny_AI_Skill/actions/runs/44331023638, event `push`, `headSha` = candidate. `test (linux)` success, `test (windows)` success (read with `gh run view` only) |
+| References applied | As in the initial review, plus CodeReview §5 rule B for classifying what remains open |
+| P0 source type | `mypy --strict --python-version 3.11` on both scripts gives `Success: no issues found in 2 source files`. No `Any`, no `type: ignore`, stdlib only. `Limits` and `Seat` now carry decimal strings, as their comments say. `int()` is applied only to single ASCII digits inside `add_decimal`, after the `COUNT` regex has admitted the text |
+
+### Finding dispositions
+
+| ID | Initial class / blocks | Seat's disposition | Verification | Status |
+| --- | --- | --- | --- | --- |
+| S69-01 | `IMPLEMENTATION_DEFECT`, R4-2 / yes | Every red printed, faults on stderr, exit 1 with a red, else 2 | **Code:** `execute` prints the red lines first, then every fault on stderr. It returns `EXIT_RED` if any red, else `EXIT_FAULT` if any fault, else 0. An unreadable expectation sets `limits = None`: `NO_USAGE` still counts and no verdict is computed. **Probes:** over + missing receipt gives 1, the over line and one stderr line. `NO_USAGE` + broken receipt gives 1. `NO_USAGE` + unreadable expectation gives 1. Over + unknown + broken + missing gives 1 with both red lines and two stderr lines. Broken expectation + receipt with seats + `NO_USAGE` gives 1 with only `NO_USAGE`. Seats without an expectation give 2 with empty stdout. A fault alone gives 2. **Docs and tests:** the README, the docstring and the old test are corrected. **Counter-mutations:** CM9 and CM10 red | **Closed** |
+| S69-02 | `IMPLEMENTATION_DEFECT`, R4-2 / yes | Counts compared as decimal text, no `int()` | **Code:** `add_decimal` adds digit by digit with carry. `is_greater` compares by length, then by text. That is sound because `COUNT` admits no leading zero, limits come from `str(int)`, and `add_decimal` never makes one. **Probes:** 4301-digit and 20000-digit output counts and a 4301-digit input count give 1 (`OVER_OUTPUT` / `OVER_PROCESSED`); they gave 2 `unexpected ValueError` before. A 4300-digit count gives 1. A 400-digit limit reads fine. **Pins:** `DecimalCountTests` (5000-digit counts, a 10^400 limit equal and one over, a carry across the three counts, the helpers) and, in the gate, `test_a_count_of_any_length_is_valid`. **Counter-mutation:** CM14 red. **Property check:** 20000 random pairs of integers below 10^40 give `add_decimal` = `str(a+b)` and `is_greater` = `a > b` on every pair. An expectation limit above 4300 digits is still exit 2 (`not accepted JSON`). That is an input refusal of the expectation file, judged acceptable in the initial review | **Closed** |
+| S69-03 | `IMPLEMENTATION_DEFECT` / yes | Recognised exactly as the gate | **Code:** `split_usage_sections` takes the first `cell:` line, like the gate's `fields["cell"]`. `cell: USAGE` makes a USAGE cell. A heading `USAGE` or `USAGE <…>` with no `cell:` line makes a USAGE cell too, and `parse_usage` names the missing field. A USAGE heading with any other `cell:` value raises `InputFault`. That is stricter than the gate, which reads such a section as a run cell and reds it; neither passes it. **Probes:** an over review cell without `cell:` gives gate 1 `USAGE_FIELD_MISSING cell` and report 2 (it was 0). `cell: usage` gives gate 1 and report 2 (was 0). `cell: P1` under a USAGE heading gives gate 1 and report 2. An intact over cell gives report 1. **Pins:** `RecognitionTests`. The seat's M1 drops both new branches (red). **Counter-mutations:** CM11 and CM12 red | **Closed** |
+| S69-04 | `IMPLEMENTATION_DEFECT`, conformity / yes | Runbook records the confirmation | `dispatch-model-profile.md` now says "The owner confirmed these values on 2026-11-18 ("1A", `REQ-20261103-043`)". The "not yet confirmed" sentence is gone. The values still equal the ticket table and the template | **Closed** |
+| S69-05 | `EVIDENCE_DEFECT` / no | Non-ASCII digit pins | The gate's list adds `1٢`, `5٢`, `１２`, `१`, `²` and `1²`. The report's list adds `٢`, `1٢`, `5٢`, `１２`, `१`, `²` and `1²`. CM1 and CM2 (`\d`) are now both red (`1٢`, `5٢`); both were zero red before | **Closed** |
+| S69-06 | `EVIDENCE_DEFECT` / no | Control-character pins; `NO_USAGE` escape through `no_usage_line` | **(b)** `test_a_control_character_in_model_or_source_is_a_red` covers VT, NUL, DEL and ESC in both fields. CM8 is now red: 8 subtests, where it was zero red before. **(a)** `PrintedSubjectTests` calls `no_usage_line` with U+2028, LF and VT paths and checks literal expected escapes on every OS. CM7 is red, including on `PrintedSubjectTests`. **Residue (S69-08):** the `NO_USAGE` line that `execute` prints is not pinned to the helper on POSIX. CM7b is red here only | **Closed** apart from the residue, which stays open as S69-08 (`EVIDENCE_DEFECT`, non-blocking) |
+| S69-07 | `OUT_OF_SCOPE_HARDENING` / no | Runbook rule: P9 before the append, E1 alone after | The runbook gains the order of the receipt checks. P9 judges the receipt as returned. After appending USAGE cells, the control plane reruns E1 only. P9 is not rerun on such a receipt, and the reason is stated. `receipt_check.py` is unchanged (it is outside the boundary). My rerun matches the rule: P9 as returned gives 0; P9 with the item-6 cell gives 1 (7 defects); E1 with the item-6 cell gives 0 | **Answered** by a process rule in this ticket. Retiring P9, or teaching it USAGE, stays a control-plane follow-up |
+
+### Cell results
+
+| # | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| 1 | Boundary | PASS | Five boundary paths; the gate is unchanged; no forbidden path |
+| 2 | P1 test files and strict type | PASS | In the review worktree, `tests/test_gate_evidence.py tests/test_usage_report.py tests/test_state_file_templates.py tests/test_ci_registered_failures.py` gives 399 passed, 1 skipped (symlink privilege), 562 subtests passed, exit 0 (scratch `corr_P1.txt`). mypy --strict: Success |
+| 3 | Existing assertions | PASS | **`tests/test_gate_evidence.py`:** one ticket-69 test's case list is longer (`١` is respelt `١`, the same character) and two tests are added. No line from before ticket 69 changed. **`tests/test_usage_report.py`:** one assertion is reversed on purpose, as S69-01 requires: `test_a_fault_wins_over_a_red…` becomes `test_a_red_and_a_fault_in_one_run_print_the_red_and_exit_one`, and the STATEMENT names it. One case list is longer and four classes are added. **`tests/test_state_file_templates.py`:** unchanged in this commit |
+| 4 | Exit classification (R4-2), re-probed | PASS | Every probe of the initial review reran against `7cc0e08f` (scratch `corr/probe_out.txt`, `corr/probe2_out.txt`, `corr/probe3_out.txt`). Compared with the initial run, only the six intended exits changed: three counts over 4300 digits (2 to 1) and three red-plus-fault cases (2 to 1). The S69-03 cases go from 0 to 2. The undecodable, BOM, CRLF, lone CR, sign, leading-zero, non-ASCII and directory probes are unchanged |
+| 5 | Receipt honest | PASS | **P9 and E1:** P9 on the receipt as returned gives 7 `[ok]`, 1 `[statement]`, 0 defects, exit 0. E1 as returned gives `cells=7 defects=0`, exit 0. **Tool digests,** recomputed from `git show 7cc0e08f:<path>`: `dispatch_lint` `3f5730c9…`, `receipt_fence_check` `8b3f845c…`, `index_pins` `63eff436…`, `evidence_gate` `89f8839b…` (unchanged), `usage_report` `63d25443…`. Each is listed in all 7 run cells. **Captures:** the raw blocks of P1, T1, C1, F1 and M1 are byte-equal to their captures, with no CR. **F1:** 5 failures, all in `jas48_F1_base.txt`. **M1:** the clone command and HEAD `7cc0e08f` are recorded; 8 mutations, each `exit=1`, with porcelain empty after each restore. **C1** matches my `gh run view` |
+| 6 | Item 6 | PASS (OVER_PROCESSED, exit 1, as expected) | See the next section |
+| 7 | Counter-mutations | Done | See the table below |
+
+### usage_report on the real receipt (item 6, rerun at `7cc0e08f`)
+
+The receipt is the rebuilt `RETURN.md` with the same implementation-seat cell appended (scratch `corr/item6/RETURN-with-usage.md`):
+
+```text
+## USAGE seat:implementation-standard/69-impl-rev01
+cell: USAGE
+seat: seat:implementation-standard/69-impl-rev01
+profile: implementation-standard
+model: claude-sonnet-5-5
+input_tokens: 276
+cache_write_tokens: 271788
+cache_read_tokens: 26475429
+output_tokens: 111397
+source: host transcript usage, summed per unique message id
+```
+
+```text
+$ python -I -X utf8 skills/johnny-project-takeover/scripts/usage_report.py --expectation template/doc/handoffs/governance/usage-expectation.TEMPLATE.json corr/item6/RETURN-with-usage.md
+seat:implementation-standard/69-impl-rev01 implementation-standard output=111397 processed=26747493 OVER_PROCESSED
+exit=1
+```
+
+The verdict is the same as at `393a0e80`, now computed by the decimal-text path. The implementation seat is over its processed expectation by 2747493 tokens (11.4 %). Under the owner's decision this is a fact recorded here, not a block on integration. On the same receipt, `evidence_gate.py` gives `cells=7 defects=0`, exit 0. `receipt_check.py` gives exit 1, which is what the S69-07 rule expects.
+
+### Reviewer counter-mutations
+
+All ran in a disposable `git clone --no-hardlinks --no-checkout` of the review worktree at scratch `corr/cmclone`, detached at `7cc0e08f`. Each run used its full test file and was restored, with porcelain empty afterwards. The clone was removed after the run. Output was read unfiltered from `subprocess`; the log is `corr/counter_out.txt`.
+
+| ID | Aimed at | Mutation | Result |
+| --- | --- | --- | --- |
+| CM1 (rerun) | S69-05, gate | `USAGE_COUNT` `[0-9]` → `\d` | red: `test_a_non_integer_count_is_a_red` (`1٢`, `5٢`). It was zero red |
+| CM2 (rerun) | S69-05, report | `COUNT` `[0-9]` → `\d` | red: `test_a_negative_or_non_integer_count_is_exit_two` (`1٢`, `5٢`). It was zero red |
+| CM7 (rerun) | S69-06 | `no_usage_line` without `printable` | red: `test_the_no_usage_subject_is_escaped_on_every_platform` (platform-independent), plus three `NO_USAGE` output tests |
+| CM7b (new) | S69-06, environment-scoped door | `execute` appends an inline `NO_USAGE` line, bypassing the helper | red only here, in three tests, through Windows backslashes. It would stay green on Linux (S69-08) |
+| CM8 (rerun) | S69-06, gate | control-character check on `model`/`source` dropped | red: `test_a_control_character_in_model_or_source_is_a_red`, all 8 subtests (VT, NUL, DEL and ESC in `model` and `source`). It was zero red |
+| CM9 (new) | S69-01, ordering door | `if red:` → `if red and not faults:` (the fault wins again) | red: 6 tests (`test_a_red_and_a_fault_in_one_run…`, four `RedBeforeFaultTests`, `test_such_a_section_beside_a_red_still_lets_the_red_stand`). This goes in the same direction as the seat's S69-01 mutation, spelt differently. CM10 is the independent door |
+| CM10 (new) | S69-01, fault-as-red door | an unreadable expectation sets `limits = {}`, so every seat turns into an `UNKNOWN_PROFILE` red | red: 24 (every `ExpectationSchemaTests` fault case and `test_the_verdicts_that_need_the_expectation_are_not_computed_without_it`) |
+| CM11 (new) | S69-03, prefix door | the heading rule uses `startswith("USAGE")` without the space | red: `test_a_section_with_another_heading_and_no_cell_line_is_not_a_usage_cell` |
+| CM12 (new) | S69-03, case-fold door | `cell.upper() == "USAGE"` | red: `test_a_misspelt_cell_line_under_a_usage_heading_is_not_skipped` (`usage`, `Usage`) |
+| CM14 (new) | S69-02, comparison door | `is_greater` without the length step (text order only) | red: 12 tests, including `test_the_decimal_helpers` and `test_a_count_equal_to_a_long_limit_is_within_and_one_more_is_over` |
+
+### Findings of this review
+
+| ID | Class | Blocks? | Severity | File:line | Observation | Verification | Route |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| S69-08 | `EVIDENCE_DEFECT` (residue of S69-06, still open after the correction) | No. Rule B: the candidate's behaviour is correct and only unpinned. A regression would break the one-line output but would not let a change pass, so this goes to a follow-up hardening ticket | Low | `tests/test_usage_report.py:173-177` and `RedBeforeFaultTests` | The tests check the `NO_USAGE` line that `execute` prints against `usage_report.printable(str(path))` of a plain temp path. Only Windows backslashes make `repr` change that path, so on POSIX nothing pins that `execute` goes through the escaping helper. `PrintedSubjectTests` pins only the helper itself | CM7b is red on this Windows host only | Follow-up hardening ticket (rule B carry): run `execute` on a receipt whose path holds a character that `repr` changes on every OS (for example U+2028), and compare against a literal expected line |
+Not raised, but recorded:
+
+- A section headed `Usage <seat>`, or `USAGE\t<seat>`, with no `cell:` line is not a USAGE cell for the gate either. The gate reds it as `NOT_RUN`, while the report skips it and exits 0 when another cell is valid (probe 3 additions). That is consistent with the S69-03 rule "exactly as the gate reads it", and the gate is where such a section is caught.
+- U+2028 and U+0085 in `model`/`source` are still accepted by both scripts, under the pre-existing `has_bad_text` (noted in the initial review).
+
+### Not verified
+
+- I did not run the full suite. The coordinator said not to, because ticket 65's integration holds the host lock, and I did not take the lock. The full-suite evidence is the seat's F1 at `7cc0e08f` (5 failures, all in the base list) and CI run 44331023638.
+- CM7b's Linux result is reasoned, not run; I triggered no CI.
+- I checked the seat's eight M1 mutations from the capture (diffs, exits, porcelain) but did not rerun them. They come in through different doors from mine (CM9 to CM14).
+
+```review-verdict
+candidate: 7cc0e08fa5cdf2d573c6c00806d59f09d1778d98
+verdict: CONVERGENCE_REVIEW_REQUIRED
+reviewer: seat:ticket-review/69-rev01-correction
+reviewed_at: 2026-11-18
+```
+
+## Convergence disposition (control plane, 2026-11-18)
+
+The revision01 correction review returned `CONVERGENCE_REVIEW_REQUIRED`: every blocking finding (S69-01 to S69-04) is closed, and the open findings are non-blocking under CodeReview §5 rule B.
+
+| Finding | Class | Carried to |
+| --- | --- | --- |
+| S69-07 | OUT_OF_SCOPE_HARDENING | the runbook rule (P9 before USAGE is appended, E1 alone after) answers it for wave 3; making the wave-1 receipt checker read informational cells is the wave-4 item "isolated parse failures in the wave-1 scripts" |
+| S69-08 | EVIDENCE_DEFECT | the next change of `usage_report.py`: pin on POSIX that the NO_USAGE line goes through the escaping helper |
+
+The control plane notes one error of its own: the correction message said "exit is 2 if any fault occurred", which contradicts R4-2. The seat followed R4-2 and the reviewer judged against it; the sentence is superseded (lesson L-20).
+
+```convergence-disposition
+candidate: 7cc0e08fa5cdf2d573c6c00806d59f09d1778d98
+reviewer_verdict: CONVERGENCE_REVIEW_REQUIRED
+disposition: APPROVED
+rule: CodeReview §5 rule B (owner-approved 2026-11-05)
+carried:
+  - S69-07
+  - S69-08
+```
+
+## Seat token use (readiness criterion 5)
+
+Host-reported usage per seat, summed per unique message id, against the expectation the owner confirmed on 2026-11-18 ("1A"). These values become the receipt's `USAGE` cells once this ticket is integrated.
+
+| Seat | Model | input | cache write | cache read | output | processed | Verdict |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `seat:implementation-standard/69-impl` | claude-sonnet-5-5 | 374 | 570152 | 41242772 | 149575 | 41813298 | OVER_OUTPUT,OVER_PROCESSED |
+| `seat:ticket-review/69-rev01` | claude-opus-5-5 | 176 | 471742 | 16572474 | 97780 | 17044392 | WITHIN |
+
+The implementation seat covers the first implementation and correction 1, in one seat; the review seat covers both reviews. The implementation seat is over both expectations: output by 19575 tokens (15.1 %) and processed by 17813298 tokens (74.2 %). Facts on record: the seat ran two rounds (185 host messages), the correction reran every cell including the full suite, after the initial review returned four blocking findings. The first round alone was within output (111397) and over processed by 2747493. Over is explained here and does not block integration (owner decision 2026-11-18 "1A"); the rework rounds behind it are what ticket 73 records.
