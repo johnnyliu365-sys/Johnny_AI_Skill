@@ -115,9 +115,33 @@ ALLOWED_STATES = frozenset(
         "DONE",
         "SUPERSEDED",
         "REVIEW_APPROVED",
+        "INTEGRATED",
         "CONVERGENCE_REPLANNED",
     }
 )
+INTEGRATED_SENTENCE = "`INTEGRATED` is set when the integration script has landed the candidate and its readback matches."
+DONE_SENTENCE = "`DONE` is set for a ticket that closes without an integration candidate."
+MULTI_RECEIPT_SENTENCE = (
+    "The receipt part holds one receipt per closure revision, in revision order; several receipts are written as "
+    "receipt `<repository-relative receipt path>`; receipt `<repository-relative receipt path>`, "
+    "separated by `; `, like the other parts of the row."
+)
+# the four rows ticket 70 added: label, then the placeholder or reason cell it carries
+NEW_TICKET_ROWS = (
+    ("Closure revision", "`<revision of the finite Acceptance Closure Set>`"),
+    ("Strict checker", "`<command and version>`"),
+    ("Profile / resource", "`<semantic profile reference / resource-plan reference>`"),
+    ("XSS classification", "`<classification and the exact xss-review.md matrix reference>`／`不適用：<reason>`"),
+)
+DEFECT_HEADING = (
+    "### 適用的缺陷類別（依 `CodeReview.md` §2 與 `skills/johnny-project-takeover/references/review-checks.md` 的「Defect categories」表，"
+    "逐一列出必要案例，不適用者寫明理由）"
+)
+STALE_SECTION_CITATION = "§2.1"
+RETURN_VALUES = ("COMPLETED", "BLOCKED", "CHANGE_DETECTED")
+RETURN_LINE = "return: COMPLETED"
+ITEMS_LINE = "items:"
+HEAD_ANCHOR = "## STATEMENT\ncell: STATEMENT\n"  # the preamble also mentions return: COMPLETED, so anchor on the section
 PENDING_SENTENCE = "The `dispatch=` and receipt parts are present while a dispatch is pending"
 DIGEST_SENTENCE = "the sha256 of the dispatch file's bytes"
 
@@ -409,6 +433,46 @@ def state_row_problems(text: str) -> list[str]:
         problems.append("state row does not say the parts are present while a dispatch is pending")
     if DIGEST_SENTENCE not in row:
         problems.append("state row does not say how the digest is computed")
+    for sentence in (INTEGRATED_SENTENCE, DONE_SENTENCE, MULTI_RECEIPT_SENTENCE):
+        if sentence not in row:
+            problems.append(f"state row lacks the sentence {sentence!r}")
+    return problems
+
+
+def ticket_row_problems(text: str) -> list[str]:
+    """Every way the ticket template departs from the four review-required rows, the heading and the section 2 citation."""
+    problems: list[str] = []
+    for label, cell in NEW_TICKET_ROWS:
+        rows = [line for line in text.split("\n") if line.startswith(f"| {label} |")]
+        if rows != [f"| {label} | {cell} |"]:
+            problems.append(f"row {label} is absent, repeated or changed: {rows}")
+    if DEFECT_HEADING not in text.split("\n"):
+        problems.append("the defect-class heading does not cite CodeReview.md section 2 and the Defect categories table")
+    if STALE_SECTION_CITATION in text:
+        problems.append(f"the template still cites {STALE_SECTION_CITATION}")
+    return problems
+
+
+def statement_head(text: str) -> list[str]:
+    """The two lines that follow `cell: STATEMENT` in the template's STATEMENT section."""
+    _, sections = split_sections(text)
+    statements = [lines for heading, lines in sections if heading == STATEMENT]
+    if len(statements) != 1:
+        raise AssertionError(f"{len(statements)} STATEMENT sections")
+    lines = statements[0]
+    if lines[:1] != [f"cell: {STATEMENT}"]:
+        raise AssertionError("the STATEMENT section does not begin with its cell line")
+    return lines[1:3]
+
+
+def statement_head_problems(text: str) -> list[str]:
+    """Every way the STATEMENT section departs from beginning with `return:` and `items:` before any prose."""
+    head = statement_head(text)
+    problems: list[str] = []
+    if len(head) != 2 or not head[0].startswith("return: ") or head[0][len("return: ") :] not in RETURN_VALUES:
+        problems.append(f"the first line is not return: with one of {RETURN_VALUES}: {head[:1]}")
+    if head[1:] != [ITEMS_LINE]:
+        problems.append(f"the second line is not items: alone: {head[1:]}")
     return problems
 
 
@@ -811,6 +875,37 @@ class ReceiptTemplateTests(unittest.TestCase):
         usage = "## USAGE <seat>\n" + "\n".join(usage_example(self.text())) + "\n"
         self.assertEqual(receipt_problems(self.text() + "\n" + usage), [])
 
+    def test_the_statement_begins_with_the_return_and_items_lines(self) -> None:
+        self.assertEqual(statement_head(self.text()), [RETURN_LINE, ITEMS_LINE])
+        self.assertEqual(statement_head_problems(self.text()), [])
+
+    def test_an_empty_items_list_under_completed_is_followed_by_no_list_line(self) -> None:
+        _, sections = split_sections(self.text())
+        lines = next(lines for heading, lines in sections if heading == STATEMENT)
+        self.assertEqual(lines[1:3], [RETURN_LINE, ITEMS_LINE])
+        self.assertFalse(lines[3].startswith("- "), "COMPLETED carries no item")
+
+    def broken_head(self, new_head: str) -> list[str]:
+        """The head problems of the template whose STATEMENT head (the two lines after cell:) is replaced by `new_head`."""
+        text = self.text()
+        old_head = f"{HEAD_ANCHOR}{RETURN_LINE}\n{ITEMS_LINE}\n"
+        self.assertEqual(text.count(old_head), 1)
+        return statement_head_problems(text.replace(old_head, HEAD_ANCHOR + new_head, 1))
+
+    def test_a_statement_without_the_return_line_or_with_another_value_is_a_problem(self) -> None:
+        for head in (f"{ITEMS_LINE}\n\n", f"return: DONE\n{ITEMS_LINE}\n", f"return:\n{ITEMS_LINE}\n", f"Return: COMPLETED\n{ITEMS_LINE}\n"):
+            with self.subTest(head=head):
+                self.assertTrue(self.broken_head(head))
+
+    def test_a_statement_with_the_items_line_missing_swapped_or_after_prose_is_a_problem(self) -> None:
+        for head in (f"{RETURN_LINE}\n\n", f"{ITEMS_LINE}\n{RETURN_LINE}\n", f"prose first\n{RETURN_LINE}\n{ITEMS_LINE}\n"):
+            with self.subTest(head=head):
+                self.assertTrue(self.broken_head(head))
+
+    def test_the_return_cell_is_not_a_cell_of_the_template(self) -> None:
+        _, sections = split_sections(self.text())
+        self.assertNotIn("RETURN", [heading for heading, _ in sections])
+
     def test_a_statement_carrying_run_fields_is_a_problem(self) -> None:
         for extra in ("capture: x", "exit: 0", f"{FENCE}"):
             with self.subTest(extra=extra):
@@ -840,7 +935,17 @@ class StateRowTests(unittest.TestCase):
 
     def test_dropping_a_part_of_the_state_row_is_a_problem(self) -> None:
         text = normalised_text(TICKET_TEMPLATE)
-        for dropped in (f"{DISPATCH_PART}; ", RECEIPT_PART, "dispatch=", "sha256:", PENDING_SENTENCE, DIGEST_SENTENCE):
+        for dropped in (
+            f"{DISPATCH_PART}; ",
+            RECEIPT_PART,
+            "dispatch=",
+            "sha256:",
+            PENDING_SENTENCE,
+            DIGEST_SENTENCE,
+            INTEGRATED_SENTENCE,
+            DONE_SENTENCE,
+            MULTI_RECEIPT_SENTENCE,
+        ):
             with self.subTest(dropped=dropped):
                 self.assertIn(dropped, text)
                 self.assertTrue(state_row_problems(text.replace(dropped, "", 1)))
@@ -857,6 +962,42 @@ class StateRowTests(unittest.TestCase):
         for wrong in ("dispatch=sha1:", "dispatch: sha256:", "Dispatch=sha256:", "dispatch=sha256 "):
             with self.subTest(wrong=wrong):
                 self.assertTrue(state_row_problems(text.replace("dispatch=sha256:", wrong, 1)))
+
+
+class TicketRowTests(unittest.TestCase):
+    def text(self) -> str:
+        return normalised_text(TICKET_TEMPLATE)
+
+    def test_the_ticket_template_carries_the_four_review_required_rows_and_the_current_heading(self) -> None:
+        self.assertEqual(ticket_row_problems(self.text()), [])
+
+    def test_a_template_without_one_of_the_four_rows_is_a_problem(self) -> None:
+        for label, _ in NEW_TICKET_ROWS:
+            with self.subTest(label=label):
+                kept = [line for line in self.text().split("\n") if not line.startswith(f"| {label} |")]
+                self.assertTrue(ticket_row_problems("\n".join(kept)))
+
+    def test_a_repeated_row_is_a_problem(self) -> None:
+        lines = self.text().split("\n")
+        index = next(i for i, line in enumerate(lines) if line.startswith("| Strict checker |"))
+        lines.insert(index, lines[index])
+        self.assertTrue(ticket_row_problems("\n".join(lines)))
+
+    def test_a_template_that_cites_section_2_1_is_a_problem(self) -> None:
+        text = self.text()
+        self.assertNotIn(STALE_SECTION_CITATION, text)
+        cited = text.replace("`CodeReview.md` §2 與", f"`CodeReview.md` {STALE_SECTION_CITATION} 與", 1)
+        self.assertNotEqual(cited, text)
+        self.assertTrue(ticket_row_problems(cited))
+        self.assertTrue(ticket_row_problems(text + f"\n{STALE_SECTION_CITATION}\n"))
+
+    def test_the_four_rows_come_after_the_implementation_language_row_inside_the_table(self) -> None:
+        lines = self.text().split("\n")
+        language = next(i for i, line in enumerate(lines) if line.startswith("| 實作語言 |"))
+        status = next(i for i, line in enumerate(lines) if line.startswith("| 狀態 |"))
+        positions = [next(i for i, line in enumerate(lines) if line.startswith(f"| {label} |")) for label, _ in NEW_TICKET_ROWS]
+        self.assertEqual(positions, list(range(language + 1, language + 1 + len(NEW_TICKET_ROWS))))
+        self.assertLess(positions[-1], status)
 
 
 class ReadmeTests(unittest.TestCase):
@@ -898,6 +1039,24 @@ class ReadmeTests(unittest.TestCase):
         rows = self.state_files_rows()
         self.assertEqual(rows["`modules/tickets/TEMPLATE.md`"][1], README_TICKET_COPY_TO)
         self.assertNotIn(README_OLD_TICKET_COPY_TO, normalised_text(README))
+
+    def test_the_readme_describes_the_new_rows_the_state_and_the_return_lines(self) -> None:
+        text = normalised_text(README)
+        flat = " ".join(text.split())
+        for label, _ in NEW_TICKET_ROWS:
+            with self.subTest(row=label):
+                self.assertIn(f"`{label}`", text)
+        for state in ("INTEGRATED", "DONE"):
+            with self.subTest(state=state):
+                self.assertIn(f"`{state}`", text)
+        self.assertIn("one receipt per closure revision, in revision order", flat)
+        self.assertIn("separated by `; `", flat)
+        for value in RETURN_VALUES:
+            with self.subTest(value=value):
+                self.assertIn(f"`{value}`", text)
+        self.assertIn("`return:`", text)
+        self.assertIn("`items:`", text)
+        self.assertIn("which is empty for `COMPLETED`", flat)
 
     def test_the_readme_puts_the_state_files_in_the_structure_and_the_build_order(self) -> None:
         text = normalised_text(README)
@@ -1053,6 +1212,42 @@ class EvidenceGateCrossCheck(unittest.TestCase):
         done = self.read(values, usage=True)
         self.assertEqual(done.returncode, 1, done.stdout + done.stderr)
         self.assertIn("USAGE_COUNT_INVALID", done.stdout)
+
+    def test_a_statement_that_begins_with_each_return_value_passes_the_gate(self) -> None:
+        template = committed_text(RECEIPT_TEMPLATE)
+        for value, items in (("COMPLETED", ""), ("BLOCKED", "- a blocker\n"), ("CHANGE_DETECTED", "- one item\n- another item\n")):
+            with self.subTest(value=value):
+                filled = fill_receipt(template, self.values())
+                head = f"{RETURN_LINE}\n{ITEMS_LINE}\n"
+                self.assertIn(head, filled)
+                filled = filled.replace(head, f"return: {value}\n{ITEMS_LINE}\n{items}", 1)
+                filled = filled.rstrip("\n") + "\n\n" + fill_usage(template, {**self.values(), **self.usage_values()})
+                receipt = self.evidence / "RETURN.md"
+                receipt.write_bytes(filled.encode("utf-8"))
+                done = subprocess.run(
+                    [
+                        sys.executable,
+                        "-I",
+                        "-X",
+                        "utf8",
+                        str(EVIDENCE_GATE),
+                        str(receipt),
+                        "--repo",
+                        str(self.repo),
+                        "--candidate",
+                        self.sha,
+                        "--tool",
+                        self.tool_path,
+                        "--evidence-root",
+                        str(self.evidence),
+                    ],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    env=clean_environment(),
+                )
+                self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+                self.assertIn("cells=1 defects=0", done.stdout)
 
     def test_the_gate_reads_the_filled_receipt_and_refuses_a_wrong_digest(self) -> None:
         done = self.read(self.values(digest="0" * 64))
