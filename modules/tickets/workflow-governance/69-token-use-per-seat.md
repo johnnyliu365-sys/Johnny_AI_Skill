@@ -89,7 +89,7 @@ The JSON input rules of the wave-2 gates apply: repeated keys, NaN and Infinity 
 
 ### The expectation (`usage-expectation.TEMPLATE.json`; the runbook section)
 
-One object per semantic profile, with `output_tokens_max` and `processed_tokens_max`. The plugin's own values are the proposal below. They are taken from wave 2, as the 90th percentile per role over this session's 129 seat runs, and rounded up. The owner confirms them before ticket 69 is integrated:
+One object per semantic profile, with `output_tokens_max` and `processed_tokens_max`. The plugin's own values are the proposal below. They are taken from wave 2, as the 90th percentile per role over this session's 129 seat runs, and rounded up. The owner confirmed them on 2026-11-18 ("1A", REQ-20261103-043):
 
 | Profile | `output_tokens_max` | `processed_tokens_max` | Wave-2 basis (median / p90 / max) |
 | --- | --- | --- | --- |
@@ -110,7 +110,7 @@ One object per semantic profile, with `output_tokens_max` and `processed_tokens_
 - 流程／Grill／ticket owner：control plane.
 - implementation owner：`implementation-standard` seat in `.worktrees/69-token-use-per-seat`.
 - reviewer：`ticket-review` seat in `.worktrees/69-token-use-per-seat-review`.
-- **Owner override record**：`N/A`；the expectation values wait for the owner's confirmation.
+- **Owner override record**：`N/A`；the expectation values were confirmed by the owner on 2026-11-18 ("1A").
 - `ImplementationHandoff`：this ticket; REQ-20261103-043 criterion 5; ticket 51 (evidence gate grammar); ticket 57 (receipt template).
 - `ImplementationReturn`：`COMPLETED → ACTION_COMPLETED`／`BLOCKED → HALT`／`CHANGE_DETECTED → REQUIREMENT_CHANGED → Grill`。
 
