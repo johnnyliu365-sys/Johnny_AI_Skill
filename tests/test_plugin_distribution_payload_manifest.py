@@ -329,7 +329,3 @@ class PayloadManifestTests(TestCase):
                 router_file = router.__file__
                 self.assertIsNotNone(router_file)
                 self.assertTrue(str(Path(router_file).resolve()).startswith(str(fixture_root.resolve())))
-                self.assertIn("build_router_graph", router.__all__)
-                self.assertNotIn("library.workflow_router.graph", sys.modules)
-                with self.assertRaises(ModuleNotFoundError):
-                    getattr(router, "build_router_graph")

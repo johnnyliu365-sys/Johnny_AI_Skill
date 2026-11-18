@@ -74,7 +74,6 @@ _UNCOVERED_ROSTER: frozenset[str] = frozenset(
         "library/local_orchestration/dispatch_session.py::WorkerDispatchFailure",
         "library/local_orchestration/dispatch_session.py::WorkerRedispatchFailure",
         "library/local_orchestration/dispatch_session.py::WorkerReturnFailure",
-        "library/local_orchestration/johnny_router_composition.py::JohnnyRouterCompositionFailure",
         "library/local_orchestration/live_dispatch_metadata_boundary.py::ReceiptRevokeFailure",
         "library/local_orchestration/plugin_bundle_builder.py::PluginBundleBuildFailure",
         "library/local_orchestration/plugin_install_transaction.py::PluginInstallFailure",
@@ -98,7 +97,6 @@ _UNCOVERED_ROSTER: frozenset[str] = frozenset(
         "library/local_orchestration/worker_assignment.py::WorkerClaimFailure",
         "library/local_orchestration/worker_assignment.py::WorkerSettlementFailure",
         "library/local_orchestration/worktree_containment.py::WorktreeContainmentFailure",
-        "library/workflow_router/context_load_report.py::ContextLoadReportFailure",
         "library/workflow_router/execution_replacement.py::ExecutionReplacementFailure",
         "library/workflow_router/git_handoff_contracts.py::GitEventAdapterFailure",
         "library/workflow_router/live_dispatch_contracts.py::ArtifactReadFailure",
@@ -112,7 +110,6 @@ _UNCOVERED_ROSTER: frozenset[str] = frozenset(
         # Managed-artifact write failures (feat 1bca660f, 2026-08-28): a sibling of
         # DocumentWriteFailure added after the classification batch.
         "library/workflow_router/target_document_contracts.py::ManagedArtifactWriteFailure",
-        "library/workflow_router/telemetry.py::TelemetryReportFailure",
         "library/workflow_router/thread_dispatch_contracts.py::CodexThreadDispatchFailure",
         "library/workflow_router/thread_dispatch_contracts.py::DispatchClaimFailure",
         "library/workflow_router/thread_dispatch_contracts.py::DispatchSettlementFailure",
@@ -351,7 +348,6 @@ class NeverAutoResolveGuidanceTests(unittest.TestCase):
     def test_the_codes_the_ticket_names_are_in_the_third_category(self) -> None:
         named = (
             (INSTALL_WRAPPER_SURFACE, "DIGEST_MISMATCH"),
-            (CONTROL_PLANE_SURFACE, "POLICY_REPIN_STALE"),
             (DOCUMENT_GATE_SURFACE, "PATH_FORBIDDEN"),
             (DOCUMENT_GATE_SURFACE, "MODIFICATION_OUTSIDE_BOUNDARY"),
             (DOCUMENT_GATE_SURFACE, "CREATION_NOT_AUTHORIZED"),
@@ -454,8 +450,8 @@ class ClassificationAuditTests(unittest.TestCase):
             set(audit.discovered_enums),
             _COVERED_ENUM_ROSTER | _UNCOVERED_ROSTER,
         )
-        self.assertEqual(len(audit.discovered_enums), 51)
-        self.assertEqual(len(audit.uncovered_enums), 48)
+        self.assertEqual(len(audit.discovered_enums), 48)
+        self.assertEqual(len(audit.uncovered_enums), 45)
 
     def test_the_uncovered_list_is_read_from_the_sources_not_recited(self) -> None:
         # Nailed on a tree this cell wrote, so a constant returned in place of
@@ -707,7 +703,6 @@ class DecisionLogicIsUnchangedTests(unittest.TestCase):
                 "PATH_NOT_REPOSITORY_RELATIVE",
                 "REDIRECTION_ENTRY_NOT_ADMISSIBLE",
                 "RULE_AND_SUBJECT_IN_ONE_CHANGE",
-                "POLICY_REPIN_STALE",
                 "JOURNAL_UNWRITABLE",
                 "INTEGRATION_FAILED",
             ),

@@ -1,9 +1,4 @@
-"""Reusable, profile-driven project workflow router POC."""
-
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from .graph import build_router_graph
+"""Workflow receipt and dispatch contracts; the Wayfinder gap rule lives in wayfinder_gap."""
 
 from .contracts import (
     AgentContextActorRole,
@@ -100,67 +95,9 @@ from .contracts import (
     SpecificationReadinessRequest,
     SpecificationWakeReason,
 )
-from .guarded_integration import (
-    AuditDecision,
-    AuditDeliveryState,
-    AuditDisposition,
-    AuditRequest,
-    CoordinatorOutcome,
-    CorrectionRoute,
-    DependentProposal,
-    GuardedIntegrationCoordinator,
-    GuardedIntegrationDecision,
-    GuardedIntegrationError,
-    GuardedIntegrationRouterAdapter,
-    ImplementationReturnEvent,
-    IntegrationResult,
-    IntegrationStatus,
-    MainSnapshot,
-    PendingAudit,
-    ProposalState,
-)
-from .collaboration import CollaborationTopologyResolver
 from .artifact_tree import ArtifactTreeResolver
 from .library_selection import LibrarySelectionGate
 from .requirement_lineage import RequirementLineageGate
-from .model_role_readiness import ModelRoleReadinessGate
-from .profile import build_router_poc_profile
-from .private_router import (
-    AutomaticContinuationRunner,
-    ContinuationMode,
-    EntitlementGrant,
-    EntitlementMode,
-    FakeEntitlementProvider,
-    FakePrivateRouterService,
-    LocalContextGate,
-    LocalMetadataNormalizer,
-    PrivateRouterClient,
-    ProductActionLabel,
-    RedactedSummary,
-    RouterRequestEnvelope,
-    RouterResponseEnvelope,
-    RouterServiceErrorCode,
-)
-from .policy_response import (
-    ApprovedDispatchArtifact,
-    ApprovedDispatchArtifactRegistry,
-    CommittedDispatchArtifacts,
-    DispatchResponseFormatter,
-    FixedDispatchResponse,
-    PolicyDocumentMetadata,
-    PolicyDocumentResult,
-    PolicyReadError,
-    PolicyReadOutcome,
-    RenderError,
-    RenderOutcome,
-    RenderedDispatchResponse,
-    StaticApprovedDispatchArtifactRegistry,
-    render_dispatch_response,
-    resolve_approved_dispatch_artifact,
-    read_policy_document,
-)
-from .router import CitationLedger, ContextResolver, InMemorySourceGateway, RouterEngine
-from .review_admission import ReviewAdmissionGate
 from .test_engineer_contracts import (
     CandidateSha,
     IndependentTestReport,
@@ -178,19 +115,6 @@ from .test_engineer_contracts import (
     TestReviewAuthority,
     TestVerdict,
     UnavailableTestEvidence,
-)
-from .telemetry import (
-    AgentUsage,
-    ContextLoadComparison,
-    ContextLoadMeasurement,
-    ContextLoadValidationReport,
-    ContextSourceUsage,
-    ContextUsageRecord,
-    ContextUsageValidator,
-    JsonlContextUsageStore,
-    RunAcceptance,
-    TelemetryIssueCode,
-    TelemetryMode,
 )
 from .thread_host_contracts import (
     CodexHostId,
@@ -253,14 +177,6 @@ from .supervision_runtime_contracts import (
     SupervisionStartStatus,
 )
 
-def __getattr__(name: str) -> object:
-    if name == "build_router_graph":
-        from .graph import build_router_graph
-
-        return build_router_graph
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-
 __all__ = (
     "ContinuationAcceptedEvidence",
     "ContinuationResult",
@@ -295,22 +211,11 @@ __all__ = (
     "LibrarySelectionRequest",
     "ModelRole",
     "ModelRoleAssignment",
-    "ModelRoleReadinessGate",
-    "AutomaticContinuationRunner",
-    "ApprovedDispatchArtifact",
-    "ApprovedDispatchArtifactRegistry",
-    "AgentUsage",
     "AuthorityState",
-    "AuditDecision",
-    "AuditDeliveryState",
-    "AuditDisposition",
-    "AuditRequest",
     "CapabilityRef",
     "CollaborationDispatchPlan",
     "CollaborationTopology",
     "CollaborationTopologyPlan",
-    "CollaborationTopologyResolver",
-    "CitationLedger",
     "CandidateSha",
     "CodexHostId",
     "CodexProjectId",
@@ -340,15 +245,6 @@ __all__ = (
     "CompletionActionKind",
     "CompletionEvidence",
     "ContinuationDirective",
-    "ContinuationMode",
-    "CommittedDispatchArtifacts",
-    "ContextResolver",
-    "ContextLoadComparison",
-    "ContextLoadMeasurement",
-    "ContextLoadValidationReport",
-    "ContextSourceUsage",
-    "ContextUsageRecord",
-    "ContextUsageValidator",
     "DeliveryStage",
     "DeliveryReference",
     "DispatchAttemptId",
@@ -357,52 +253,19 @@ __all__ = (
     "DispatchSettlementFailure",
     "DispatchSettlementStatus",
     "ExpectedReturnContract",
-    "DispatchResponseFormatter",
-    "DependentProposal",
     "FrontendCompositionContract",
-    "FixedDispatchResponse",
-    "CoordinatorOutcome",
-    "CorrectionRoute",
-    "GuardedIntegrationCoordinator",
-    "GuardedIntegrationDecision",
-    "GuardedIntegrationError",
-    "GuardedIntegrationRouterAdapter",
     "HandoffArtifactReference",
     "HandoffConsumerFingerprint",
     "HumanWaitReason",
     "HostObservationDigest",
     "ImplementationHandoff",
     "ImplementationReturn",
-    "ImplementationReturnEvent",
     "ImplementationReturnStatus",
-    "EntitlementGrant",
-    "EntitlementMode",
-    "FakeEntitlementProvider",
-    "FakePrivateRouterService",
-    "InMemorySourceGateway",
-    "IntegrationResult",
-    "IntegrationStatus",
     "IndependentTestReport",
-    "JsonlContextUsageStore",
-    "LocalContextGate",
-    "LocalMetadataNormalizer",
-    "MainSnapshot",
-    "PendingAudit",
     "ProcessStage",
     "ProjectId",
-    "PolicyDocumentMetadata",
-    "PolicyDocumentResult",
-    "PolicyReadError",
-    "PolicyReadOutcome",
     "PlanningLaneState",
     "PendingDispatchDescriptor",
-    "PrivateRouterClient",
-    "ProposalState",
-    "ProductActionLabel",
-    "RedactedSummary",
-    "RenderError",
-    "RenderOutcome",
-    "RenderedDispatchResponse",
     "RequirementArchiveBundle",
     "RequirementArchiveId",
     "RequirementChangeId",
@@ -418,22 +281,16 @@ __all__ = (
     "RequirementLineageValidationDecision",
     "RequirementLineageValidationRequest",
     "ReviewAdmissionDecision",
-    "ReviewAdmissionGate",
     "ReviewAdmissionReason",
     "ReviewAdmissionRequest",
     "ReviewAdmissionStatus",
     "ResolvedTestEvidence",
-    "StaticApprovedDispatchArtifactRegistry",
     "ReferenceStatus",
     "ReturnContractKind",
     "RoleActivityState",
-    "RouterEngine",
     "RouterEvent",
     "RouterEventKind",
-    "RouterRequestEnvelope",
-    "RouterResponseEnvelope",
     "RouterOutcome",
-    "RouterServiceErrorCode",
     "RouterState",
     "SharedContextAccessDecision",
     "SharedContextAccessRequest",
@@ -460,7 +317,6 @@ __all__ = (
     "SupervisionStartRequest",
     "SupervisionStartResult",
     "SupervisionStartStatus",
-    "RunAcceptance",
     "SourceSnippet",
     "TicketDispatchConfirmation",
     "TicketDispatchReceipt",
@@ -479,20 +335,13 @@ __all__ = (
     "TestVerdict",
     "UnavailableTestEvidence",
     "LaneKind",
-    "TelemetryIssueCode",
-    "TelemetryMode",
     "TicketScope",
     "ThreadHostBindingFailure",
     "ThreadHostBindingStatus",
     "ThreadHostResolutionFailure",
     "ThreadHostResolutionStatus",
-    "build_router_graph",
-    "build_router_poc_profile",
     "derive_thread_host_binding_digest",
     "dispatch_claim_identity",
     "derive_dispatch_payload_digest",
     "derive_ticket_receipt_digest",
-    "read_policy_document",
-    "render_dispatch_response",
-    "resolve_approved_dispatch_artifact",
 )
