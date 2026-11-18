@@ -233,3 +233,5 @@ Host-reported usage per seat, summed per unique message id, against the expectat
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `seat:implementation-standard/70-impl` | claude-sonnet-5-5 | 360 | 406527 | 30496495 | 99442 | 30903382 | OVER_PROCESSED |
 | `seat:ticket-review/70-rev02` | claude-opus-5-5 | 162 | 403116 | 11259717 | 84228 | 11662995 | WITHIN |
+
+The implementation seat is over its processed expectation (30903382, 28.8 % over); over is explained here and does not block integration (owner decision 2026-11-18 "1A"). Facts on record: the seat ran three rounds in one seat (the `CHANGE_DETECTED` return of revision01, revision02 with two red Linux CI runs before the green one, and correction 1), and it ran the full suite under the host lock in each of the last two rounds. The review seat is within its expectation.
