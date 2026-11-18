@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/65-retire-engine-and-private-router-out/` / owner implementation seat / worktree `.worktrees/65-retire-engine-and-private-router` / branch `cp/wave3-65-retire-engine` / baseline the wave-3 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `IN_PROGRESS`（revision02 after the implementation seat returned `CHANGE_DETECTED` on 2026-11-18: the policy-pin repin rule reads `profile.py`） |
+| 狀態 | `IN_PROGRESS`（revision02; initial review `CHANGES_REQUESTED` on 2026-11-18 (S65-01), correction 1 dispatched to the same seat） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/65-retire-engine-and-private-router` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/65-retire-engine-and-private-router-review` |
