@@ -140,6 +140,7 @@ STALE_SECTION_CITATION = "§2.1"
 RETURN_VALUES = ("COMPLETED", "BLOCKED", "CHANGE_DETECTED")
 RETURN_LINE = "return: COMPLETED"
 ITEMS_LINE = "items:"
+HEAD_ANCHOR = "## STATEMENT\ncell: STATEMENT\n"  # the preamble also mentions return: COMPLETED, so anchor on the section
 PENDING_SENTENCE = "The `dispatch=` and receipt parts are present while a dispatch is pending"
 DIGEST_SENTENCE = "the sha256 of the dispatch file's bytes"
 
@@ -883,21 +884,22 @@ class ReceiptTemplateTests(unittest.TestCase):
         self.assertEqual(lines[1:3], [RETURN_LINE, ITEMS_LINE])
         self.assertFalse(lines[3].startswith("- "), "COMPLETED carries no item")
 
-    def test_a_statement_without_the_return_line_or_with_another_value_is_a_problem(self) -> None:
+    def broken_head(self, new_head: str) -> list[str]:
+        """The head problems of the template whose STATEMENT head (the two lines after cell:) is replaced by `new_head`."""
         text = self.text()
-        self.assertTrue(statement_head_problems(text.replace(RETURN_LINE + "\n", "", 1)))
-        self.assertTrue(statement_head_problems(text.replace(RETURN_LINE, "return: DONE", 1)))
-        self.assertTrue(statement_head_problems(text.replace(RETURN_LINE, "return:", 1)))
-        self.assertTrue(statement_head_problems(text.replace(RETURN_LINE, "Return: COMPLETED", 1)))
+        old_head = f"{HEAD_ANCHOR}{RETURN_LINE}\n{ITEMS_LINE}\n"
+        self.assertEqual(text.count(old_head), 1)
+        return statement_head_problems(text.replace(old_head, HEAD_ANCHOR + new_head, 1))
 
-    def test_a_statement_with_the_items_line_missing_or_after_prose_is_a_problem(self) -> None:
-        text = self.text()
-        self.assertTrue(statement_head_problems(text.replace(ITEMS_LINE + "\n", "", 1)))
-        swapped = text.replace(f"{RETURN_LINE}\n{ITEMS_LINE}\n", f"{ITEMS_LINE}\n{RETURN_LINE}\n", 1)
-        self.assertNotEqual(swapped, text)
-        self.assertTrue(statement_head_problems(swapped))
-        prose = text.replace("cell: STATEMENT\n", "cell: STATEMENT\nprose first\n", 1)
-        self.assertTrue(statement_head_problems(prose))
+    def test_a_statement_without_the_return_line_or_with_another_value_is_a_problem(self) -> None:
+        for head in (f"{ITEMS_LINE}\n\n", f"return: DONE\n{ITEMS_LINE}\n", f"return:\n{ITEMS_LINE}\n", f"Return: COMPLETED\n{ITEMS_LINE}\n"):
+            with self.subTest(head=head):
+                self.assertTrue(self.broken_head(head))
+
+    def test_a_statement_with_the_items_line_missing_swapped_or_after_prose_is_a_problem(self) -> None:
+        for head in (f"{RETURN_LINE}\n\n", f"{ITEMS_LINE}\n{RETURN_LINE}\n", f"prose first\n{RETURN_LINE}\n{ITEMS_LINE}\n"):
+            with self.subTest(head=head):
+                self.assertTrue(self.broken_head(head))
 
     def test_the_return_cell_is_not_a_cell_of_the_template(self) -> None:
         _, sections = split_sections(self.text())
