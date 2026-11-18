@@ -254,3 +254,7 @@ Host-reported usage per seat, summed per unique message id, against the expectat
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `seat:implementation-standard/66-impl` | claude-sonnet-5-5 | 390 | 469840 | 33604969 | 95396 | 34075199 | OVER_PROCESSED |
 | `seat:ticket-review/66-rev01` | claude-opus-5-5 | 260 | 576220 | 25511981 | 110208 | 26088461 | OVER_OUTPUT,OVER_PROCESSED |
+
+Both seats are over their expectations; over is explained here and does not block integration (owner decision 2026-11-18 "1A"). Facts on record:
+- The implementation seat (processed 34075199, 42.0 % over) covered the first implementation and correction 1. The ticket deleted 88 files across two packages, the seat ran the full suite under the host lock twice (once per round), and it waited on the host lock while three other seats and one integration held it in turn.
+- The review seat (output 110208, 208 tokens or 0.2 % over; processed 26088461, 13.4 % over) covered both reviews: it compared base and candidate over 1081 CLI runs, ran the full suite under the host lock once, and built two clones per review.
