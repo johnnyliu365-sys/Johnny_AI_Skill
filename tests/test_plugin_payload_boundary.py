@@ -111,7 +111,6 @@ _UNRESOLVED_REFERENCE_TOKENS: Final[dict[str, str]] = {
     "identity_resolution/": "PROSE",
     "reconciliation/": "PROSE",
     "router-control.md": "PROSE",
-    "runner-subscriptions.json": "PROSE",
     "subscription_ledger/": "PROSE",
 }
 

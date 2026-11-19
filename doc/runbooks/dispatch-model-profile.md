@@ -53,15 +53,10 @@ values above; the values belong in injected profile data.
   model setting is never dispatch authority.
 - **Same-lifetime synchronous dispatch** is `reviewer -> wait_agent -> review -> gate`. Its
   admission evidence is the exact ticket, any ticket-declared handoff, a reviewer-established
-  clean baseline, and the repository-contained worktree/branch binding. A live descriptor,
-  receipt, runner, queue, host gateway, task/workspace/profile readback and automatic wake are
+  clean baseline, and the repository-contained worktree/branch binding. Receipt, runner, queue,
+  host gateway, task/workspace/profile readback and automatic wake are
   `NOT_REQUIRED`; their absence must not block this path or be reported as a delivery failure.
-- **Cross-lifetime receipt-bound dispatch** is the bridge route, available until wave 3 and not the
-  default (workflow-governance Revision 04 R4-1); the default cross-lifetime route is the ticket's
-  state row plus the dispatch-file digest (R4-1). On the bridge route (not the default, R4-1) it requires the live descriptor, exact
-  ticket/handoff artifacts, matching unconsumed receipt, verified task/workspace/worktree/branch/
-  baseline binding and the host gateway. A stopped or unarmed runner means no automatic wake may
-  be claimed; an owner may relay the artifact, but that does not change delivery status to sent.
+- the default cross-lifetime route is the ticket's state row plus the dispatch-file digest (R4-1).
 - The implementation owner receives identifier-only dispatch, modifies only its declared
   boundary, and returns a typed result. The P8R owner directive that the reviewer alone submits the
   candidate is superseded by Revision 04 R4-4 (`CHG-20261103-043`): the candidate is submitted to

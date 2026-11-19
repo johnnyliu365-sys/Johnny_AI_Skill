@@ -19,25 +19,16 @@ Agent-to-Agent orchestrator.
 
 ## Orchestration gateway
 
-For a cross-lifetime handoff on the receipt-bound route (not the default since workflow-governance
-Revision 04 R4-1), Johnny's reviewer-owned gateway is the only Agent-control effect
-entry. A reviewer capability bound to the exact project, ticket, reviewed handoff, unconsumed
-receipt and target owner may create/fork the implementation task, send/follow up/steer, wait,
-interrupt or close it. This gateway, its receipt and its host readback are not prerequisites for a
-same-lifetime synchronous lane: the reviewer directly dispatches, waits and receives the owner,
-and an unavailable bridge must not halt that lane.
+This gateway, its receipt and its host readback are not prerequisites for a
+same-lifetime synchronous lane: the reviewer directly dispatches, waits and receives the owner.
 
 The implementation owner receives no gateway port/credential and no multi-agent or thread-control
 tool in either path. Direct or indirect spawn/delegate/send/follow-up/steer/wait/interrupt/close
 returns `HALT / ROLE_FORBIDDEN` before effect.
 
 Prompt text, model name, role name, configuration, `CapabilityRef`, MCP alias and indirect
-adapter are not authority. Each cross-lifetime gateway effect on that route validates reviewer role/capability,
-project, ticket, handoff, unconsumed receipt, target owner, worktree, branch, baseline, action and
-correlation against the live pending descriptor. Copy, forgery, replay or substitution fails
-closed. Effective-session tool absence and gateway unreachability require supported host readback only on that cross-lifetime bridge path (not the default since
-R4-1); source/config inspection alone is insufficient. A missing bridge
-is `UNAVAILABLE`, not evidence that a wake was delivered.
+adapter are not authority. Copy, forgery, replay or substitution fails
+closed.
 
 ## Task/worktree admission
 
@@ -54,14 +45,14 @@ and `cd` into the implementation worktree. Do not create a replacement worktree 
 admission.
 
 Missing/unreadable/mismatched identity returns `HALT / TASK_WORKSPACE_MISMATCH` before question,
-pending descriptor, receipt, branch, source access or host/Git effect. Persist only opaque
+receipt, branch, source access or host/Git effect. Persist only opaque
 project/task/workspace/worktree references, evidence digest, revision and verification-time
 reference, never raw paths.
 
 For a same-lifetime synchronous lane, the reviewer directly allocates a repository-contained
 worktree and binds the owner to its exact ticket, branch and baseline. The reviewer validates the
 worktree's Git metadata and containment as part of that allocation, but absent product/task host
-readback, a receipt or a live descriptor may not block the lane. The three-way normalized-root,
+readback or a receipt may not block the lane. The three-way normalized-root,
 filesystem-identity and Git-metadata proof above remains required whenever a task is resumed
 across lifetimes.
 

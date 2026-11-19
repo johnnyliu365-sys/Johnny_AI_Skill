@@ -161,6 +161,8 @@ Source: `PRD-20261103-043` / `CHG-20261103-043`. This revision changes how trans
 
 ### R4-1 State lives in files
 
+Status (wave 3): the cross-lifetime live descriptor that R4-1 keeps as a transitional path was retired in wave 3 (tickets 65 and 66, REQ-20261103-043); no dispatch route uses it.
+
 - A ticket leaf, its receipt and the merge queue (`MERGE-QUEUE.json`) are the only state. Nothing an agent holds in memory is authoritative. A pending dispatch is the ticket's state row plus the digest of its dispatch file: the dispatch file is the machine-form dispatch that dispatch lint admits (R4-2), kept in the target project at `doc/handoffs/<year>/governance/dispatch/<ticket>-<n>.yaml` (path parameterised) so any host can recompute its digest, and while the dispatch is pending the State row carries `dispatch=sha256:<hex>` of it (the template field arrives with the wave-2 state-file templates ticket); the merge queue holds integration candidates only. The live `PendingDispatchDescriptor` of the cross-lifetime bridge is retained as a transitional path until wave 3, not as the default; the single-consume and anti-replay guarantees it gave at integration are carried by the queue (R4-7). Any session, on any host, resumes from these files.
 - `ACTION_COMPLETED`, `ImplementationReturn`, `ImplementationHandoff`, `WAIT_FOR_HUMAN` and `HALT` remain the vocabulary of receipts and return records. They are written into the receipt by the agent that finished the action; no Router process has to be re-entered for them to count.
 

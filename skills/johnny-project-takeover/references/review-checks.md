@@ -61,16 +61,13 @@ implementer already reported. Apply all four points below whenever this row is i
 
 ## Multi-Agent authority review
 
-For a cross-lifetime implementation or review handoff on the receipt-bound route (available until
-wave 3, not the default since workflow-governance Revision 04 R4-1), enumerate actual
-thread-control tools and the Johnny gateway caller surface. That route (not the default, R4-1) must bind one live descriptor and receipt, and the
-implementation session must prove both built-in tool absence and gateway unreachability. Direct
+Direct
 tool, MCP alias, indirect adapter, forged identity, replay and every wrong
 project/ticket/handoff/target/worktree/branch/baseline/action/correlation combination must fail
 before host effect.
 
 A same-lifetime reviewer-owned helper is a direct call followed by one finite completion wait.
-Its runner, queue, receipt, live descriptor and host readback are `NOT_REQUIRED`; the reviewer
+Its runner, queue, receipt and host readback are `NOT_REQUIRED`; the reviewer
 still binds the candidate identity and independently checks the source and behavior before using
 the helper's evidence. Same-lifetime direct use never widens Agent, host or external-effect
 authority.

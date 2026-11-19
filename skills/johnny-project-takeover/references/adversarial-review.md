@@ -9,9 +9,8 @@ descriptor, host gateway or external-effect authority.
 The reviewer may create one bounded, same-lifetime `RESEARCH_HELPER` audit after binding the exact
 candidate commit and approved Closure Set. The helper is read-only/no-code and tries to disprove
 the candidate; it is not a co-reviewer. The same-lifetime route is direct: the reviewer invokes the
-helper and waits once for its finite return. A runner, queue, receipt, live descriptor and host readback
-are `NOT_REQUIRED` for this route. A cross-lifetime handoff that takes the receipt-bound route (available until wave 3, not the
-default since R4-1) keeps the separate receipt and live-descriptor controls from `review-checks.md`.
+helper and waits once for its finite return. A runner, queue, receipt and host readback
+are `NOT_REQUIRED` for this route.
 
 The closed `AdversarialReviewPlan` binds:
 
