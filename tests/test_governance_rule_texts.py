@@ -12,7 +12,6 @@ copy must stay green. A named file that is missing or not UTF-8 is a defect that
 from __future__ import annotations
 
 import re
-import shutil
 import tempfile
 import unittest
 from collections.abc import Callable
@@ -178,11 +177,13 @@ def find_defects(root: Path) -> list[str]:
     return defects
 
 
-def copy_documents(destination: Path) -> None:
+def copy_documents(destination: Path, line_end: bytes = b"\n") -> None:
+    """Copy the named documents with one line ending, so a checkout that converts them changes nothing."""
     for relative in DOCUMENT_PATHS:
         target = destination / relative
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(REPO / relative, target)
+        raw = (REPO / relative).read_bytes().replace(b"\r\n", b"\n")
+        target.write_bytes(raw.replace(b"\n", line_end))
 
 
 def anchor_line(rule_id: str) -> str:
@@ -233,6 +234,11 @@ class RuleTextsInjection(unittest.TestCase):
 
     def test_the_clean_copy_is_green(self) -> None:
         self.assertEqual(find_defects(self.root), [])
+
+    def test_a_copy_with_crlf_line_ends_is_green(self) -> None:
+        with tempfile.TemporaryDirectory() as other:
+            copy_documents(Path(other), b"\r\n")
+            self.assertEqual(find_defects(Path(other)), [])
 
     def test_removed_anchor_is_red(self) -> None:
         line = anchor_line("rule-content-digest-only")
