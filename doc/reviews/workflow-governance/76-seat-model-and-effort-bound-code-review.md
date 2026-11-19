@@ -57,6 +57,14 @@ reviewer: ticket-review seat R76-1 (claude-opus-5-5, high)
 reviewed_at: 2026-11-19
 ```
 
+```rework-record
+candidate: 78810fa6ca29fe6463efadc530547c52d93b4916
+round: 1
+kind: INITIAL
+verdict: APPROVED
+causes:
+```
+
 ## Seat token use (readiness criterion 5)
 
 Host-reported usage per seat, summed per unique message id, against the expectation the owner confirmed on 2026-11-18 ("1A"); appended to the receipt as `USAGE` cells at integration.

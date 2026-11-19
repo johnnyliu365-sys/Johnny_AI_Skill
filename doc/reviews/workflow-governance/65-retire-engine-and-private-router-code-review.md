@@ -1,5 +1,17 @@
 # REVIEW — ticket 65 Router library retirement (1): the flow engine, the private router, the profile and the router telemetry
 
+## Revision01 returned before review
+
+Revision01 returned `CHANGE_DETECTED` before any review (see "Seat token use" below). No commit was reviewed, so the block has no candidate.
+
+```rework-record
+candidate: none
+round: 1
+kind: RETURN
+verdict: CHANGE_DETECTED
+causes: DESIGN_UNFORESEEN
+```
+
 ## Revision02 initial review
 
 **Verdict: `CHANGES_REQUESTED`.** The retirement itself is clean. Exactly the 45 files of the delete list are deleted, and nothing else is. Every changed or added path is inside the boundary block, and no `forbid` path is touched. All 88 files that ticket 66 retires are byte-identical to the base. Both packages, and all 125 of their modules, import in a fresh isolated interpreter with `langgraph`, `temporalio`, `mcp`, `agents` and `openai` blocked, and no removed module is loaded. The repin rule is retired and nothing else: 11 hand-built admission fixtures give the same result at base and candidate on every non-repin step. CI run 44316784756 is green on both jobs at the candidate. CI installed `requirements-dev.txt` without the four dropped packages, and its failure counts equal the base run's. P9 and E1 pass when I rerun them, and every raw block is byte-identical to its capture.
@@ -107,6 +119,14 @@ reviewer: seat:ticket-review/65-rev02-initial
 reviewed_at: 2026-11-18
 ```
 
+```rework-record
+candidate: 1e9f73dab720501e38844bd44ec3d8c83383c1b0
+round: 2
+kind: INITIAL
+verdict: CHANGES_REQUESTED
+causes: CONTROL_PLANE_RULE,RETURN_UNTRUE,IMPLEMENTATION_DETAIL
+```
+
 ## Revision02 correction review
 
 **Verdict: `APPROVED`.** Correction 1 (`b185dea9`) closes S65-01, S65-02 and S65-04 as specified.
@@ -199,6 +219,14 @@ candidate: b185dea97b0b4035eacbee9dc5c4dbcbed53899d
 verdict: APPROVED
 reviewer: seat:ticket-review/65-rev02-correction
 reviewed_at: 2026-11-18
+```
+
+```rework-record
+candidate: b185dea97b0b4035eacbee9dc5c4dbcbed53899d
+round: 3
+kind: CORRECTION
+verdict: APPROVED
+causes:
 ```
 
 ## Seat token use (readiness criterion 5)

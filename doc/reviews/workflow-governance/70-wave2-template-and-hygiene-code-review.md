@@ -1,5 +1,17 @@
 # REVIEW — ticket 70 Wave-2 follow-ups: ticket and receipt templates, and a cap on tracked path length
 
+## Revision01 returned before review
+
+Revision01 returned `CHANGE_DETECTED` before any review (see "Seat token use" below). No commit was reviewed, so the block has no candidate.
+
+```rework-record
+candidate: none
+round: 1
+kind: RETURN
+verdict: CHANGE_DETECTED
+causes: DESIGN_UNFORESEEN
+```
+
 ## Revision02 initial review
 
 **Verdict: `CHANGES_REQUESTED`.** The template work is done as revision02 asks. Every changed path is inside the boundary block, and no `forbid` path is touched. The four new ticket-template rows, the `INTEGRATED` state and its sentences, the multi-receipt sentence, the corrected defect-class heading and the `return:`/`items:` head of the receipt `STATEMENT` are all present and pinned. The README describes each of them, and the ticket-69 `USAGE` example is byte-identical to the base. I filled the receipt template myself, with a real capture, a `USAGE` cell and a `STATEMENT` that begins `return: COMPLETED`, and `evidence_gate.py` accepts it (`cells=1 defects=0`, exit 0). The only existing pins that changed are the state-list pin (`ALLOWED_STATES`) and the dropped-part tuple of the state-row test, and both are stronger than before. There was no heading pin at the base. The longest tracked path is 120 characters at the base, at the candidate and at today's `cp/wave3`. CI run 44361589539 is green on both jobs at the candidate. P9 and E1 pass when I rerun them.
@@ -108,6 +120,14 @@ reviewer: seat:ticket-review/70-rev02-initial
 reviewed_at: 2026-11-19
 ```
 
+```rework-record
+candidate: 1ed245a296cd56c8910e5c28888d588e0a5a213b
+round: 2
+kind: INITIAL
+verdict: CHANGES_REQUESTED
+causes: CONTROL_PLANE_RULE,IMPLEMENTATION_DETAIL
+```
+
 ## Revision02 correction review
 
 **Verdict: `CONVERGENCE_REVIEW_REQUIRED`. Every open finding is non-blocking under rule B.** Correction 1 closes S70-01 to S70-04 as the coordinator's correction message asks.
@@ -208,6 +228,14 @@ candidate: 548665e5b0936b767c0108b57feec644a3bf3d08
 verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/70-rev02-correction
 reviewed_at: 2026-11-19
+```
+
+```rework-record
+candidate: 548665e5b0936b767c0108b57feec644a3bf3d08
+round: 3
+kind: CORRECTION
+verdict: CONVERGENCE_REVIEW_REQUIRED
+causes:
 ```
 
 ## Convergence disposition (control plane, 2026-11-19)

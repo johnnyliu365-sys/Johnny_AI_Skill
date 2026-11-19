@@ -133,6 +133,14 @@ reviewer: seat:ticket-review/68-rev01-initial
 reviewed_at: 2026-11-19
 ```
 
+```rework-record
+candidate: ef99068858f8be9dea770f099af0e80af1f4631c
+round: 1
+kind: INITIAL
+verdict: CHANGES_REQUESTED
+causes: CONTROL_PLANE_RULE,IMPLEMENTATION_DETAIL
+```
+
 ## Revision01 correction review
 
 **Verdict: `APPROVED`.** Correction 1 (`c3ecdd6b`) applies the coordinator's dispositions exactly:
@@ -227,6 +235,14 @@ candidate: c3ecdd6b761d3ad994a828090ab856163ead9f14
 verdict: APPROVED
 reviewer: seat:ticket-review/68-rev01-correction
 reviewed_at: 2026-11-19
+```
+
+```rework-record
+candidate: c3ecdd6b761d3ad994a828090ab856163ead9f14
+round: 2
+kind: CORRECTION
+verdict: APPROVED
+causes:
 ```
 
 ## Seat token use (readiness criterion 5)

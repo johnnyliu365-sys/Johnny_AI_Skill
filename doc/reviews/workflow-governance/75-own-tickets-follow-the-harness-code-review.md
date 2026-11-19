@@ -73,6 +73,14 @@ blocking_findings: none
 carried: S75-01 (OUT_OF_SCOPE_HARDENING, Info), S75-02 (OUT_OF_SCOPE_HARDENING, Info)
 ```
 
+```rework-record
+candidate: dd10fca6720d61e81adde7c8cd9cc8879815c6f6
+round: 1
+kind: INITIAL
+verdict: APPROVED
+causes:
+```
+
 ## Seat token use (readiness criterion 5)
 
 Host-reported usage per seat, summed per unique message id, against the expectation the owner confirmed on 2026-11-18 ("1A"); appended to the receipt as `USAGE` cells at integration.
