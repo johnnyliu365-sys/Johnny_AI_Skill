@@ -2065,6 +2065,7 @@ USAGE_LINES = (
     ("seat", USAGE_SEAT),
     ("profile", "implementation-standard"),
     ("model", "a-model"),
+    ("effort", "high"),
     ("input_tokens", "1000"),
     ("cache_write_tokens", "2000"),
     ("cache_read_tokens", "3000"),
@@ -2125,6 +2126,8 @@ class UsageCellTests(GateTestCase):
 
     def test_a_missing_field_is_named_for_each_field(self) -> None:
         for name, _ in USAGE_LINES:
+            if name == "effort":
+                continue  # optional: a cell without it stays valid
             with self.subTest(name=name):
                 codes = self.codes_of(usage_cell(drop=[name]))
                 self.assertEqual(codes[0], "USAGE_FIELD_MISSING")
@@ -2173,16 +2176,47 @@ class UsageCellTests(GateTestCase):
     def test_a_heading_that_is_not_the_seat_is_a_red(self) -> None:
         self.assertEqual(self.codes_of(usage_cell(heading="USAGE other")), ["USAGE_FIELD_INVALID"])
 
-    def test_an_empty_model_or_source_is_a_red(self) -> None:
-        for name in ("model", "source"):
+    def test_an_empty_model_effort_or_source_is_a_red(self) -> None:
+        for name in ("model", "effort", "source"):
             with self.subTest(name=name):
                 self.assertEqual(self.codes_of(usage_cell(replace={name: ""})), ["USAGE_FIELD_INVALID"])
 
-    def test_a_control_character_in_model_or_source_is_a_red(self) -> None:
-        for name in ("model", "source"):
+    def test_a_control_character_in_model_effort_or_source_is_a_red(self) -> None:
+        for name in ("model", "effort", "source"):
             for char in ("\x0b", "\x00", "\x7f", "\x1b"):
                 with self.subTest(name=name, char=char):
                     self.assertEqual(self.codes_of(usage_cell(replace={name: f"a{char}b"})), ["USAGE_FIELD_INVALID"])
+
+    def test_a_cell_without_the_effort_line_stays_valid_and_prints_nothing_new(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts(), usage_cell(drop=["effort"]))
+        self.assertEqual(self.fx.run(), (0, "cells=2 defects=0\n", ""))
+
+    def test_a_valid_value_list_in_model_or_effort_passes(self) -> None:
+        for name, value in (("model", "a,b"), ("model", "claude-sonnet-5-5"), ("effort", "high"), ("effort", "a.b_c-d,e"), ("effort", "High"), ("model", "a-model-fast")):
+            with self.subTest(name=name, value=value):
+                self.fx.write_receipt(*self.fx.good_parts(), usage_cell(replace={name: value}))
+                self.assertEqual(self.fx.run()[:2], (0, "cells=2 defects=0\n"))
+
+    def test_a_model_or_effort_that_breaks_the_value_grammar_is_a_red(self) -> None:
+        bad_values = ("a b", "a, b", "a ,b", "a,", ",a", "a,,b", "a,a", "a,b,a", "-a", ".a", "_a", "a/b", "a:b", "a\u0e01", "a,\u00e9", "\uff21")
+        for name in ("model", "effort"):
+            for bad in bad_values:
+                with self.subTest(name=name, bad=bad):
+                    self.assertEqual(self.codes_of(usage_cell(replace={name: bad})), ["USAGE_FIELD_INVALID"])
+
+    def test_the_effort_line_is_accepted_only_directly_after_the_model_line(self) -> None:
+        self.assertEqual(self.codes_of(usage_cell(swap=("model", "effort"))), ["USAGE_FIELD_ORDER"])
+        self.assertEqual(self.codes_of(usage_cell(swap=("effort", "input_tokens"))), ["USAGE_FIELD_ORDER"])
+        self.assertEqual(self.codes_of(usage_cell(swap=("effort", "source"))), ["USAGE_FIELD_ORDER"])
+        self.assertEqual(self.codes_of(usage_cell(drop=["effort"], extra=["effort: high"])), ["USAGE_FIELD_ORDER"])
+
+    def test_the_effort_defect_line_names_the_field(self) -> None:
+        self.fx.write_receipt(*self.fx.good_parts(), usage_cell(replace={"effort": "a, b"}))
+        code, out, _ = self.fx.run()
+        self.assertEqual(code, 1)
+        lines = [line for line in out.splitlines() if line.startswith("USAGE_FIELD_INVALID")]
+        self.assertEqual(len(lines), 1, out)
+        self.assertIn("effort", lines[0])
 
     def test_a_count_of_any_length_is_valid(self) -> None:
         self.fx.write_receipt(*self.fx.good_parts(), usage_cell(replace={"output_tokens": "9" * 5000, "input_tokens": "1" + "0" * 4999}))
