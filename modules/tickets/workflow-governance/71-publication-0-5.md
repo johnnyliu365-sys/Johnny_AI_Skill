@@ -60,6 +60,14 @@ After this ticket:
   - The generator repins `marketplace.json` to the new commit.
   - The STATEMENT records the commit id, its tree id and the file count. The run is repeated once, and the second run must give the same commit id.
   - The seat creates the local ref `refs/heads/publication-0.5.0` and pushes nothing.
+- **The package carries the new gates.** The seat checks the publication commit, not the development tree:
+  - it extracts the publication commit's tree into an empty directory;
+  - it runs the gate scripts from that directory: `dispatch_lint.py` with `--ticket` (R7) and R8, `evidence_gate.py` on a receipt with an `effort:` line, and `usage_report.py` with an expectation that names a model and an effort;
+  - the sha256 of every gate script in the package equals that of the same file on the development branch;
+  - all three manifests in the package say `0.5.0`;
+  - the marketplace pin names this publication commit.
+
+  The STATEMENT records each result.
 - **The publication tests:** `_RELEASE_VERSION` is `0.5.0`. The four base failures pass on the host once the anchor ref exists locally. On CI they pass once the control plane has pushed the anchor ref, so until then they stay registered. Each changed constant is named in the STATEMENT.
 - **The changelog:** `doc/HARNESS-CHANGELOG.md` gains a 0.5.0 entry naming:
   - the router library retirement (tickets 65, 66, 68), and the governance documents cleared of retired surfaces (ticket 67);
