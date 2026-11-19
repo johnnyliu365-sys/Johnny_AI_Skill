@@ -113,10 +113,7 @@ ticket, handoff, owner, task, worktree, branch, baseline, action, question or co
 before source, capability, receipt, branch or host effect. Caller-provided commits are assertions
 to compare, never authority sources.
 
-Wake capability has exactly three finite dispositions: `NOT_REQUIRED` when the host delivers
-natively (including a same-lifetime synchronous lane), `AVAILABLE` when a cross-lifetime bridge is
-present and actual delivery is proved, and `UNAVAILABLE` when that bridge is absent. These states
-must not be folded together; only a person may relay an `UNAVAILABLE` completion.
+Wake capability has two dispositions: `NOT_REQUIRED` when the host delivers natively (including a same-lifetime synchronous lane), and `UNAVAILABLE` otherwise. These states must not be folded together; only a person may relay an `UNAVAILABLE` completion. The cross-lifetime bridge that an `AVAILABLE` disposition described was retired in wave 3 (tickets 65 and 66).
 
 `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` is a retired transition and always halts. A ticket
 dispatch confirmation is asked once; `ACTION_COMPLETED` must not create a second ceremonial
