@@ -57,12 +57,12 @@ The process tier is decided by the kind of change. When a ticket carries several
 - **standard**: code, tests or documents changed within the existing rules. It takes one implementation seat and reviews as `CodeReview.md` §5 sets out.
 - **strict**: a change to a governance rule, to a gate's verdict, grammar or exit codes, or to a security or confinement boundary. Rule-bearing files include:
   - `AGENTS.md`, `Workflow.md`, `CodeReview.md`;
-  - `skills/johnny-project-takeover/SKILL.md`, its references, `scripts/` and `scripts/README.md`;
+  - `skills/johnny-project-takeover/SKILL.md`, its references, scripts/ and scripts/README.md;
   - the dispatch runbook;
-  - `modules/tickets/TEMPLATE.md` and `template/`;
-  - `.agents/` rules;
-  - `ci/registered-failures.json`;
-  - `modules/spec/workflow-governance.md`;
+  - modules/tickets/TEMPLATE.md and `template/`;
+  - .agents/ rules;
+  - ci/registered-failures.json;
+  - modules/spec/workflow-governance.md;
   - any test that pins a governance rule.
 
   A strict ticket takes the standard tier plus an independent rule-only review of the ticket before dispatch.
