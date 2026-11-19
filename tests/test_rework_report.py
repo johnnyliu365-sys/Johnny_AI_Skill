@@ -277,11 +277,30 @@ class RedTests(ReportCase):
                 self.assertEqual(code, 1, reds)
 
     def test_candidate_values_outside_the_grammar_are_a_red(self) -> None:
-        for value in ("a" * 39, "a" * 41, "A" * 40, "g" * 40, "none", "NONE", "", "a" * 64):
+        for value in ("a" * 39, "a" * 41, "A" * 40, "g" * 40, "NONE", "", "a" * 64):
             with self.subTest(value):
                 text = record(verdict_block(CANDIDATES[0]), fenced("rework-record", rework_lines(candidate=value)))
                 code, reds, _ = self.reds(text)
                 self.assertEqual(code, 1, reds)
+                self.assertTrue(any("VALUE_INVALID" in line and "is not 40 lower-case hex" in line for line in reds), reds)
+        code, reds, _ = self.reds(record(verdict_block(CANDIDATES[0]), fenced("rework-record", rework_lines(candidate="none"))))
+        self.assertEqual(code, 1, reds)
+        self.assertTrue(any("VALUE_INVALID" in line and "candidate none" in line for line in reds), reds)
+
+    def test_a_return_block_candidate_outside_the_grammar_is_a_red_with_its_reason(self) -> None:
+        # A RETURN block is paired with no review-verdict, so only the grammar can turn these red.
+        for value in ("a" * 39, "a" * 41, "A" * 40, "g" * 40, "NONE", "", "a" * 64):
+            with self.subTest(value):
+                code, reds, _ = self.reds(record(returned(candidate=value)))
+                self.assertEqual(code, 1, reds)
+                self.assertEqual(len(reds), 1, reds)
+                self.assertIn("VALUE_INVALID", reds[0])
+                self.assertIn("is not 40 lower-case hex", reds[0])
+
+    def test_a_return_block_candidate_of_forty_lower_case_hex_digits_or_none_is_accepted(self) -> None:
+        for value in ("a" * 40, "0123456789abcdef" * 2 + "01234567", "none"):
+            with self.subTest(value):
+                self.assertEqual(self.reds(record(returned(candidate=value)))[0], 0)
 
     def test_candidate_none_outside_a_return_block_is_a_red(self) -> None:
         text = record(verdict_block(), fenced("rework-record", rework_lines(candidate="none")))
