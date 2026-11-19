@@ -166,3 +166,19 @@ The integration clone `C:/Temp/claude/jas-integ-76` was made from `ecb66083`.
 | USAGE | `.worktrees/76-seat-binding-out/RETURN.md` (sha256 `15119b07b26f8b5dfdb3a448381f0ccd4cf520dc01a76c51310bba292df467c6`) with both seats' cells, each with an `effort:` line read from the host transcript. E1 with the integrated gate gives exit 0 (`cells=7 defects=0`). The integrated `usage_report.py`, run with the repository's own `doc/handoffs/2026/workflow-governance/usage-expectation.json`, gives `model=claude-sonnet-5-5 effort=high … WITHIN` and `model=claude-opus-5-5 effort=high … WITHIN`, exit 0. |
 
 From this integration on, every USAGE cell the control plane appends carries the seat's effort, and every usage report runs with the repository's own expectation file.
+
+## Ticket 73 (2026-11-20)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 73 rework-record block and `rework_report.py`; the wave-3 code-review records backfilled | `b5121ee0` | revision03 correction review `APPROVED` (S73-01 and S73-03 carried to wave 4) | `3cd4bf5d` |
+
+The integration clone `C:/Temp/claude/jas-integ-73` was made from `7b25dabd`.
+
+| Check | Result |
+| --- | --- |
+| Full suite under the host lock | 5 failed, 3398 passed, 22 skipped; every failure is a base name, so zero new red |
+| Pushed | `cp/wave3` at `3cd4bf5d`, a fast-forward from `7b25dabd` |
+| CI readback | run 44608980985 on `3cd4bf5d`: `test (linux)` and `test (windows)` both `success` |
+| USAGE | `.worktrees/73-rework-out-c1/RETURN.md` (sha256 `a98b9bb4711f9484bb6311cf618ed4bf87e4d8958fecac4973edc0137b5f624a`) with both seats' cells and `effort:` lines; E1 gives exit 0 (`cells=8 defects=0`); `usage_report.py` with the repository's expectation gives the implementation seat `OVER_PROCESSED` and the review seat `WITHIN`, explained in the review record |
+| Rework report, first run on the integrated tree | over the wave-3 code-review records: `TOTAL tickets=11 rounds=21 CONTROL_PLANE_RULE=5 RETURN_UNTRUE=2 DESIGN_UNFORESEEN=2 IMPLEMENTATION_DETAIL=8`, exit 0 |
