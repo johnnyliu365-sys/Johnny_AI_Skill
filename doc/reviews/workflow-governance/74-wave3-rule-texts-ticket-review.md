@@ -42,9 +42,26 @@ All 15 revision01 findings are CLOSED (S74R-04 and S74R-11 with new findings). T
 | S74R-21 | Low | Undecided where appended `USAGE` cells go | Rule 1: appended after the candidate is set, in a record commit |
 | S74R-22 | Low | The repository puts anchors above headings, which would empty a new section's block | In a new section, the anchor goes below the heading |
 
+## Revision03 (commit `48f8b91d`), narrow check by the same seat
+
+**verdict: CHANGES_REQUESTED**
+
+S74R-16 to S74R-22 are CLOSED. The edits introduced one Medium finding and two notes, each with an exact replacement phrase.
+
+| id | severity | finding | revision04 |
+| --- | --- | --- | --- |
+| S74R-23 | Medium | The closed list of control-plane transitions omitted `BLOCKED` and `SUPERSEDED` (discovery-change.md) | "They include …", plus `BLOCKED` or `SUPERSEDED` under a requirement change |
+| S74R-24 | Low | The Workflow §3 sentence was stricter than rule 3 | "Every ticket opened after this rule names its process tier." |
+| S74R-25 | Low | Caches versus "no seat removes an untagged one" | "… an untagged one outside its allocated worktree" |
+
+### Control-plane disposition
+
+Revision04 applies the reviewer's exact phrases and changes nothing else. Under the smallest-fix practice (L-19), it is not sent for a fourth rule-only round. Ticket 74 is ready for dispatch once ticket 67 is integrated and the post-67 placement check named in the ticket passes. The implementation review then judges the rule texts under `CodeReview.md`.
+
 ## Seat token use
 
 | seat | model | input | cache write | cache read | output |
 | --- | --- | --- | --- | --- | --- |
 | rule-only review, revision01 | claude-opus-5-5 | 74 | 107376 | 3880208 | 35183 |
 | correction rule-only review, revision02 | claude-opus-5-5 | 12 | 135594 | 679821 | 12656 |
+| narrow check, revision03 | claude-opus-5-5 | 10 | 15110 | 726438 | 4161 |
