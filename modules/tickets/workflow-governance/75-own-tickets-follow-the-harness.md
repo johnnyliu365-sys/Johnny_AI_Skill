@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/75-own-tickets-out/` / owner implementation seat / worktree `.worktrees/75-own-tickets` / branch `cp/wave3-75-own-tickets` / baseline the wave-3 branch after ticket 74 is integrated |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/75-own-tickets-out/` / owner implementation seat / worktree `.worktrees/75-own-tickets` / branch `cp/wave3-75-own-tickets` / baseline the wave-3 branch after ticket 74 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED`（strict tier; rule-only review before dispatch; after ticket 74） |
+| 狀態 | `PLANNED`（revision02; strict tier; rule-only review of revision01 CHANGES_REQUESTED; after ticket 74） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/75-own-tickets` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/75-own-tickets-review` |
@@ -50,21 +50,42 @@ On 2026-11-19 the owner chose "A":
 
 The owner also asked for the old template to be updated.
 
+**Revision02** answers the rule-only review of revision01 (`doc/reviews/workflow-governance/75-own-tickets-follow-the-harness-ticket-review.md`).
+
 After this ticket:
 
 1. **`modules/tickets/TEMPLATE.md` carries the target rows.**
    - It gains the rows `Closure revision`, `Strict checker`, `Profile / resource` and `XSS classification`, worded as in `template/modules/tickets/TEMPLATE.md`.
-   - Its 狀態 row takes the target grammar: `<STATE>; dispatch=sha256:<64 lower-case hex of the dispatch file> (<repository-relative dispatch path>)`. The note under it says the digest is written when the ticket is dispatched, and that a ticket never dispatched carries none.
+   - Its 狀態 row takes exactly this repository form: `` `<STATE>`; dispatch=sha256:<64 lower-case hex> (`<repository-relative dispatch path>`)（<optional note>） ``.
+     - `<STATE>` is one of the target's eight states: `PLANNED`, `IN_PROGRESS`, `BLOCKED`, `DONE`, `SUPERSEDED`, `REVIEW_APPROVED`, `INTEGRATED` and `CONVERGENCE_REPLANNED`.
+     - The digest is written when the ticket is dispatched. A ticket never dispatched carries none.
+   - The note under the row states two deliberate deviations from the target grammar:
+     - the digest is kept after `INTEGRATED` (owner decision 2026-11-19 "A");
+     - the receipt path stays in the Agent Context binding row.
    - The defect-category heading cites `CodeReview.md` §2 and the "Defect categories" table of `review-checks.md`, as the target template does.
-   - It gains the line `Process tier: <standard|strict>` as the first line of the section 使用者拍板與可觀察結果, as ticket 74's `rule-process-tier` requires for new tickets.
-   - Its machine-readable boundary block, role assignment and frontend sections stay as they are; the target template lacks them, and this ticket does not change `template/`.
-2. **Dispatch lint R7 checks the digest.**
-   - `dispatch_lint.py` gains an option `--ticket <ticket-file>`. With it, R7 reads the ticket's 狀態 row and requires `dispatch=sha256:<hex>`, where `<hex>` equals the sha256 of the dispatch file's bytes.
-   - A missing digest, a malformed digest and a mismatched digest each give exit 1, with a problem line starting `R7`. The line names the expected and the found digest.
-   - An unreadable or non-UTF-8 ticket, or a ticket with no 狀態 row, gives exit 3.
-   - Without `--ticket`, the lint behaves exactly as before.
-   - The module docstring and the README section describe R7 and the option.
-3. **Order of dispatch (README section).** The control plane writes the dispatch file, then writes its digest into the ticket's state row, then runs `dispatch_lint.py <dispatch> --ticket <ticket>`, and dispatches only on exit 0.
+   - The 完成定義 section keeps its reverse-mutation wording. It does not take the target's "紅燈輸出" slot, which contradicts `implementation-tdd.md`.
+   - Its machine-readable boundary block, role assignment and frontend sections stay as they are. The target template lacks them, and this ticket does not change `template/`.
+   - The `Process tier:` template line is not added here. Ticket 74's `rule-process-tier` leaves it to wave 4.
+2. **Dispatch lint R7 checks the digest.** `dispatch_lint.py` gains an option `--ticket <ticket-file>`. Without it, the lint behaves exactly as before. With it, R7 works as follows:
+   - **Which cell.** R7 takes the first table row whose first cell is exactly `狀態`.
+   - **The digest.** That cell must hold exactly one `dispatch=sha256:`. The run of `[0-9A-Za-z]` after it must be exactly 64 characters, all in `[0-9a-f]`, and equal to the sha256 of the dispatch file's bytes. Text after that run is ignored, whether it is a space, `(`, `;` or the end of the cell.
+   - **Red, exit 1, each with a problem line starting `R7` that names the expected and the found digest:**
+     - no 狀態 row;
+     - an empty 狀態 cell;
+     - no `dispatch=sha256:`;
+     - two `dispatch=sha256:` in the cell;
+     - a run of a length other than 64;
+     - upper-case hex;
+     - a digest that does not match the file.
+   - **Usage, exit 3.** An unreadable or non-UTF-8 ticket file gives exit 3, as dispatch_lint already classifies an unreadable dispatch file (`scripts/README.md:7`, `:30`). It prints nothing on stdout and is decided before R1 to R7 run.
+   - **The script's own text.** The module docstring, the `USAGE` string, the `## dispatch_lint.py` usage line and the README section describe R7 and the option. The README's line 7 sentence, that dispatch_lint "reads one file", is updated.
+   - The spec's exit list for dispatch lint (`modules/spec/workflow-governance.md:171`, `0 / 1 / 2 / 3`) differs from README:7, which says it has no tool fault. That difference is older than this ticket, and goes to wave 4.
+3. **Order and naming of dispatch files.** These go in the README section.
+   - The control plane writes the dispatch file. The file names a base that precedes the commit that records the file and its digest.
+   - The control plane then writes the digest into the ticket's state row, in the control-plane checkout. The ticket leaf in the worktree, at the base, has no digest.
+   - It then runs `dispatch_lint.py <dispatch> --ticket <control-plane ticket>`, and dispatches only on exit 0.
+   - A new dispatch file is named `JAS-<NN>-<n>.yaml`, where `<n>` is the dispatch revision. A file whose digest is recorded is never rewritten. The seven existing `JAS-<NN>.yaml` files keep their names.
+   - Ticket 75's own dispatch is linted without `--ticket`, because R7 does not exist before it lands.
 
 ## 實作範圍、依賴與 ticket elements
 
@@ -89,14 +110,13 @@ After this ticket:
 
 1. 正常行為:
    - a ticket whose state row carries the dispatch file's digest passes R7;
-   - the seven dispatch files under `doc/handoffs/2026/workflow-governance/dispatch/` each pass R7 against their tickets, as an observation run listed in the capture.
-2. 規則違反／輸入錯誤:
-   - no digest;
-   - a digest of 63 hex characters;
-   - upper-case hex;
+   - an observation run, listed in the capture, runs the lint with `--ticket` on each of the seven dispatch files under `doc/handoffs/2026/workflow-governance/dispatch/` against its ticket. Each run prints no `R7` line. JAS-67 exits 0. The other six exit 1 on R5 only, which is expected because they predate R5 (ticket 72).
+2. 規則違反／輸入錯誤: each red case of item 2 has its own test, and so do these two:
    - a digest of another file;
    - the dispatch file changed by one byte after the digest was written.
-3. 外部失敗／fail-closed: an unreadable ticket, a non-UTF-8 ticket and a ticket with no 狀態 row each give exit 3.
+
+   A digest followed by ` (`, by `; ` or by the end of the cell passes.
+3. 外部失敗／fail-closed: an unreadable ticket and a non-UTF-8 ticket each give exit 3, with empty stdout.
 4. 回歸保護: every R1 to R6 test passes unchanged, and a run without `--ticket` gives the same output as before on the same file.
 
 ### 適用的缺陷類別
@@ -104,10 +124,10 @@ After this ticket:
 | # | 類別 | 是否適用 | 本工單的必要案例 |
 | --- | --- | --- | --- |
 | 1 | 路徑前綴誤匹配 | 否 | no path rule |
-| 2 | null／空字串／陣列 | 是 | an empty state row; `dispatch=sha256:` with nothing after it |
+| 2 | null／空字串／陣列 | 是 | an empty 狀態 cell (exit 1); `dispatch=sha256:` with nothing after it (exit 1) |
 | 3 | 權限繞過 | 否 | no permission path |
-| 4 | Token 格式與比較 | 是 | 63 and 65 hex characters; upper-case hex; a digest followed by other text in the same row |
-| 5 | 錯誤碼是否一致 | 是 | 1 for R7, 3 for an unreadable ticket, as R4-2 sets |
+| 4 | Token 格式與比較 | 是 | 63 and 65 characters (exit 1); upper-case hex (exit 1); `<hex>x` (exit 1); two `dispatch=` tokens (exit 1); a digest followed by ` (` or `; ` (pass) |
+| 5 | 錯誤碼是否一致 | 是 | 1 for R7; 3 for an unreadable ticket, as dispatch_lint classifies an unreadable dispatch file |
 | 6 | 例外是否會拋出 | 是 | the unreadable-ticket case |
 
 ## 完成定義與證據
