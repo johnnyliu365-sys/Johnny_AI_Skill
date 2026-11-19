@@ -27,7 +27,7 @@ modify = skills/johnny-project-takeover/scripts/evidence_gate.py
 modify = skills/johnny-project-takeover/scripts/dispatch_lint.py
 modify = skills/johnny-project-takeover/scripts/README.md
 modify = doc/runbooks/dispatch-model-profile.md
-modify = tests/test_gate_usage_report.py
+modify = tests/test_usage_report.py
 modify = tests/test_gate_evidence.py
 modify = tests/test_gate_dispatch_lint.py
 modify = tests/test_state_file_templates.py
@@ -129,7 +129,7 @@ After this ticket:
 ## 完成定義與證據
 
 - The tests:
-  - `python -m pytest tests/test_gate_usage_report.py tests/test_gate_evidence.py tests/test_gate_dispatch_lint.py tests/test_state_file_templates.py -q` exits 0, apart from base failures, each named.
+  - `python -m pytest tests/test_usage_report.py tests/test_gate_evidence.py tests/test_gate_dispatch_lint.py tests/test_state_file_templates.py -q` exits 0, apart from base failures, each named.
   - `mypy --strict --python-version 3.11` on the three scripts and their tests exits 0.
 - **反向突變證據**, each restored after it turns a named test red:
   - ignore the model;
