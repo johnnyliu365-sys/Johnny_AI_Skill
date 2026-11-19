@@ -43,6 +43,7 @@ Deliver one control-plane policy vertical slice: completion evidence must re-ent
 | [71-publication-0-5](71-publication-0-5.md) | Version 0.5.0 with Apache-2.0 and the author in every manifest; the publication commit built by the committed generator, reachable from an anchor ref, and the marketplace re-pinned | `PLANNED` (last; outward pushes after owner confirmation) | Wave 3; owner decisions 2026-11-07 "2.B", 2026-11-18 "2A" |
 | [72-dispatch-lint-one-action-per-line](72-dispatch-lint-one-action-per-line.md) | Dispatch lint R5 refuses a line that holds more than one action, instead of a 400-character cap; a 2000-character runaway cap stays as R6 | `INTEGRATED` (`8c770265` at `fa4019fa`, CI green) | Wave 3; owner decision 2026-11-18 "B" (L-10) |
 | [73-review-rounds-and-rework-cause](73-review-rounds-and-rework-cause.md) | Every review section ends with a rework-record block (round, kind, verdict, causes) and a report sums rounds and causes per ticket | `PLANNED` (after 67 and 72) | Wave 3; owner decision 2026-11-18 "B" (L-12) |
+| [74-wave3-rule-texts](74-wave3-rule-texts.md) | Seven rule texts stand at named anchors: content digests only, seat residue by run id, process tiers, the smallest fix, one consolidated correction, review labels before dispatch, and dispatch authoring and resume conventions | `PLANNED` (after 67; rule-only review before dispatch) | Wave 3; owner decision 2026-11-18 "B"; control-plane dispositions 2026-11-18 and 2026-11-19 |
 
 ## Shared baseline
 
