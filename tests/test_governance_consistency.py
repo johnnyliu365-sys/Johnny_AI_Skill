@@ -1580,6 +1580,59 @@ class RetiredSurfaceTests(TemporaryDocuments):
         shutil.rmtree(self.base / "library/功能集群")
         self.assertIn("EMPTY_ROOT library/功能集群/*/*/README.md", retired_surface(self.base).defects)
 
+    # ---- correction 1, S67-04 R1: every term of the closed list is pinned on its own
+    ONE_TERM_SAMPLES: dict[str, str] = {
+        r"RouterEngine": "The RouterEngine decides each transition.",
+        r"LangGraph": "LangGraph composes the transitions.",
+        r"\bTemporal\b": "Temporal persists the events.",
+        r"profile\.py": "Read profile.py first.",
+        r"telemetry_cli": "Run telemetry_cli now.",
+        r"TelemetryStorageLockPort": "The adapter serves TelemetryStorageLockPort.",
+        r"Private Router": "The Private Router owns it.",
+        r"pending descriptor": "The lane creates a pending descriptor.",
+        r"live[- ]descriptor": "The lane binds a live-descriptor.",
+        r"PendingDispatchDescriptor": "The PendingDispatchDescriptor binds it.",
+        r"\brunner (start|stop|status|subscribe)\b": "Call runner subscribe first.",
+        r"runner-subscriptions": "Read runner-subscriptions now.",
+        r"event_runner": "The event_runner wakes it.",
+        r"\b(armed|unarmed) (runner|wake)\b": "An unarmed wake is reported.",
+        r"wake-inbox": "Read the wake-inbox.",
+        r"wake-capability": "Run the wake-capability probe.",
+        r"dispatch_cli": "Call dispatch_cli now.",
+        r"review_cli": "Call review_cli now.",
+        r"johnny_router_cli": "Call johnny_router_cli now.",
+        r"worktree_containment\.py": "Read worktree_containment.py first.",
+        r"local_orchestration/file_lock": "Import local_orchestration/file_lock here.",
+    }
+
+    def test_the_closed_list_is_exactly_the_ticket_list_and_each_term_alone_is_red(self) -> None:
+        self.assertEqual(set(self.ONE_TERM_SAMPLES), set(RETIRED_TERMS))
+        self.assertEqual(len(RETIRED_TERMS), len(set(RETIRED_TERMS)))
+        for term, sentence in self.ONE_TERM_SAMPLES.items():
+            with self.subTest(term=term):
+                others = [other for other in RETIRED_TERMS if other != term and re.search(other, sentence)]
+                self.assertEqual(others, [], "the sample must hold only its own term")
+                self.assertIsNotNone(re.search(term, sentence))
+                self.assertEqual(len(retired_surface_hits("a.md", sentence + "\n")), 1)
+
+    def test_a_sentence_whose_only_listed_term_is_pending_descriptor_is_red_in_a_swept_file(self) -> None:
+        sentence = self.ONE_TERM_SAMPLES[r"pending descriptor"]
+        self.append(SKILL, sentence)
+        self.assertIn(SKILL, self.retired_paths())
+
+    # ---- correction 1, S67-04 R3: an exempt sentence does not end the scan of its unit
+    def test_a_live_sentence_after_a_completed_retirement_in_one_unit_is_red(self) -> None:
+        for unit in (
+            "The live descriptor was retired in wave 3. Run the `wake-capability` probe first.",
+            "The live descriptor was retired in wave 3. The live descriptor still binds the dispatch.",
+            "live descriptor 已移除。`event_runner` 仍會喚醒它。",
+        ):
+            with self.subTest(unit=unit):
+                hits = retired_surface_hits("a.md", unit + "\n")
+                self.assertEqual(len(hits), 1, hits)
+                self.assertNotIn("retired", hits[0].sentence)
+                self.assertNotIn("已移除", hits[0].sentence)
+
     # ---- item 3: the exemptions are gone, so a transitional bridge sentence is red again
     def test_a_transitional_cross_lifetime_route_goes_red_on_pattern_b2(self) -> None:
         self.append(WORKFLOW, "Cross-lifetime handoffs must use the transitional receipt-bound route.")
@@ -1597,6 +1650,19 @@ class RetiredSurfaceTests(TemporaryDocuments):
         self.edit(GOVERNANCE_SPEC, lambda text: InjectionTests.removed(text, SPEC_STATUS_NOTE + "\n\n", ""))
         live = [h for h in sweep(self.base).live() if h.path == GOVERNANCE_SPEC]
         self.assertTrue(live and all(SPEC_R41_FROZEN in h.sentence for h in live), live)
+
+    def test_the_frozen_sentence_under_the_status_note_is_red_in_any_file_but_the_spec(self) -> None:
+        """Correction 1, S67-04 R2: SPEC_R41_FROZEN is scoped by path, not only by the note and the heading."""
+        sentence = spec_r41_sentence((self.base / GOVERNANCE_SPEC).read_text(encoding="utf-8"))
+        text = "### R4-1 State lives in files\n\n" + SPEC_STATUS_NOTE + "\n\n- " + sentence + ".\n"
+        self.assertTrue(spec_status_note_present(text))
+        self.assertEqual(classify(GOVERNANCE_SPEC, text, historical=False), [])
+        for relative in (AGENTS, WORKFLOW, "modules/spec/review-assurance.md", "doc/archive/specs/2026/workflow-governance.md"):
+            with self.subTest(file=relative):
+                hits = classify(relative, text, historical=False)
+                self.assertTrue(hits and all(SPEC_R41_FROZEN in h.sentence for h in hits), hits)
+        self.append(AGENTS, "### R4-1 State lives in files\n\n" + SPEC_STATUS_NOTE + "\n\n- " + sentence + ".")
+        self.assertIn(AGENTS, {hit.path for hit in sweep(self.base).live()})
 
     def test_the_status_note_counts_only_directly_under_the_r41_heading(self) -> None:
         self.edit(GOVERNANCE_SPEC, lambda text: InjectionTests.removed(text, SPEC_STATUS_NOTE + "\n\n", ""))
