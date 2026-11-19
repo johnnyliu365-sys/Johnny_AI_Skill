@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision03 / receipt under `.worktrees/67-doc-sweep-out/` / owner implementation seat / worktree `.worktrees/67-doc-sweep` / branch `cp/wave3-67-doc-sweep` / baseline the wave-3 branch named in the dispatch |
+| Agent Context binding | ticket revision04 / receipt under `.worktrees/67-doc-sweep-out/` / owner implementation seat / worktree `.worktrees/67-doc-sweep` / branch `cp/wave3-67-doc-sweep` / baseline the wave-3 branch named in the dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）for the module, the tests and the sweep pattern; the documents stay in their current language |
-| 狀態 | `PLANNED`（revision03; strict tier; rule-only reviews: revision01 and revision02 CHANGES_REQUESTED; revision03 applies the fixes the reviewer named） |
+| 狀態 | `PLANNED`（revision04; strict tier; rule-only reviews: revision01 and revision02 CHANGES_REQUESTED, revision03 APPROVED; revision04 keeps the launcher rules of S67R-24） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/67-doc-sweep` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/67-doc-sweep-review` |
@@ -115,7 +115,7 @@ After this ticket:
    - A constant `SPEC_R41_FROZEN` holds that phrase. The sweep honours it only in `modules/spec/workflow-governance.md`, and only while the status note is present.
 5. **Specific items.** Deletion is the default. New text is allowed only where it is given here.
    - `AGENTS.md`: delete the last sentence of the state paragraph ("跨生命週期的 live descriptor 是第三波退場前的過渡路徑，不是預設。"). Nothing else in the paragraph changes.
-   - `SKILL.md`, readiness check: the text from "The mechanism that performs it is the installed Johnny runtime" through the honest statement "…so the owner must notify the reviewer.*" is replaced by exactly: "No runner, subscription or wake capability exists: they were retired in wave 3 (tickets 65 and 66). No automatic effect may be stated. The honest statement is: *the handoff is committed; no automation is armed for this project, so the owner must notify the reviewer.*" The rest of the section stays.
+   - `SKILL.md`, readiness check: the text from "The mechanism that performs it is the installed Johnny runtime" through the honest statement "…so the owner must notify the reviewer.*" is replaced by exactly: "No runner, subscription or wake capability exists: they were retired in wave 3 (tickets 65 and 66). No automatic effect may be stated. The honest statement is: *the handoff is committed; no automation is armed for this project, so the owner must notify the reviewer.* The kept launcher commands `status` and `uninstall` run through the exact launcher path `<runtime root>\launcher\johnny-router.ps1`, where `<runtime root>` is `JOHNNY_ROOT` when set, else `%LOCALAPPDATA%\JohnnyRouter`; never invoke a bare `johnny-router` name." The rest of the section stays.
    - `Workflow.md:22`: delete "；descriptor 僅限過渡 bridge（R4-1）" from the flow-chart node label.
    - `doc/runbooks/dispatch-model-profile.md`:
      - Delete the "Cross-lifetime receipt-bound dispatch" bullet except its clause "the default cross-lifetime route is the ticket's state row plus the dispatch-file digest (R4-1)". That clause becomes the bullet.

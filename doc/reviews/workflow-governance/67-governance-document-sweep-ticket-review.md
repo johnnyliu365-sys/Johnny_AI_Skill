@@ -49,9 +49,30 @@ The seat re-ran its simulations with the revision02 rules:
 | S67R-22 | Low | Line versus sentence | The check reports a sentence, with the units and `sentence_of` of `PATTERNS` |
 | S67R-23 | Low | "Delete the retired names" was undecidable in the runbook | The exact words are named; 最小派工訊息 is unchanged |
 
+## Revision03 (commit `7f8781a0`), narrow check by the same seat
+
+**verdict: APPROVED**
+
+The seat re-ran the sweep simulation with the revision03 edits applied to a temporary copy, which it then deleted:
+- every remaining `RETIRED_SURFACE` hit has an authorized edit;
+- the two edited spots produce no hit;
+- `EXPECTED_TOLERATED` is unchanged;
+- the payload test loses only the token item 5 already expects.
+
+S67R-07 and S67R-17 to S67R-23 are CLOSED.
+
+| id | severity | finding | revision04 |
+| --- | --- | --- | --- |
+| S67R-24 | Low (note) | The SKILL.md replacement also deleted two rules that still govern the kept `status` and `uninstall` commands: how the runtime root resolves, and never to invoke a bare `johnny-router` name | The replacement text keeps both, in one sentence |
+
+### Control-plane disposition
+
+Revision04 adds one sentence to the exact SKILL.md replacement. The sentence restates the two existing rules the reviewer named; it writes no new rule. Under the smallest-fix practice (L-19), it does not go to another rule-only round. The ticket is ready for dispatch.
+
 ## Seat token use
 
 | seat | model | input | cache write | cache read | output |
 | --- | --- | --- | --- | --- | --- |
 | rule-only review, revision01 | claude-opus-5-5 | 98 | 194381 | 6657194 | 53235 |
 | correction rule-only review, revision02 | claude-opus-5-5 | 28 | 41148 | 2851565 | 22631 |
+| narrow check, revision03 | claude-opus-5-5 | 14 | 23213 | 1481624 | 8137 |
