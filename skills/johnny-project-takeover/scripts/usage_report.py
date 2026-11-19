@@ -3,24 +3,33 @@
 Usage:
   usage_report.py --expectation FILE RECEIPT [RECEIPT ...]
 
+A value of `model` or `effort` is one item matching `[A-Za-z0-9][A-Za-z0-9._-]*`; a list of
+values joins items with `,`, with no blanks and no repeats. Comparison is case-sensitive.
+
 The expectation file is a JSON object with one entry per semantic profile; an entry is an object
-with exactly `output_tokens_max` and `processed_tokens_max`, two integers >= 0. A receipt holds
-`## USAGE <seat>` sections (the grammar evidence_gate.py validates): the lines `cell: USAGE`,
-`seat`, `profile`, `model`, `input_tokens`, `cache_write_tokens`, `cache_read_tokens`,
-`output_tokens` and `source`, in this order, one per line.
+with exactly `model` and `effort` (each one item), `output_tokens_max` and
+`processed_tokens_max` (two integers >= 0). A receipt holds `## USAGE <seat>` sections (the
+grammar evidence_gate.py validates): the lines `cell: USAGE`, `seat`, `profile`, `model`, an
+optional `effort` directly after `model`, `input_tokens`, `cache_write_tokens`,
+`cache_read_tokens`, `output_tokens` and `source`, in this order, one per line.
 
 For every USAGE cell one line is printed:
-  `<seat> <profile> output=<n> processed=<n> <verdict>`
-where processed is input + cache write + cache read and the verdict is WITHIN, OVER_OUTPUT
-(output > output_tokens_max), OVER_PROCESSED (processed > processed_tokens_max), both of the last
-two joined by a comma when both hold, or UNKNOWN_PROFILE. A value equal to its maximum is WITHIN.
+  `<seat> <profile> model=<value list> effort=<value list|UNRECORDED> output=<n> processed=<n> <verdict>`
+where processed is input + cache write + cache read and the verdict is a comma-joined list of
+words in this fixed order: MODEL_MISMATCH (the cell's model list is not exactly the profile's one
+model), EFFORT_MISMATCH (the cell's effort list is not exactly the profile's one effort),
+OVER_OUTPUT (output > output_tokens_max), OVER_PROCESSED (processed > processed_tokens_max),
+EFFORT_UNRECORDED (the cell has no `effort:` line). WITHIN is printed only when none of the other
+words applies, and UNKNOWN_PROFILE stands alone. A value equal to its maximum is not over.
 A receipt without a USAGE cell prints `NO_USAGE <receipt>`.
 
-Exit codes: 0 every seat is within its expectation; 1 a receipt has no USAGE cell, a profile is
-unknown, or a seat is over its expectation (every one is listed); 2 a receipt or the expectation
+Exit codes: 0 every seat is within its expectation (an unrecorded effort alone is not a red); 1 a
+receipt has no USAGE cell, a profile is unknown, or a seat has MODEL_MISMATCH, EFFORT_MISMATCH,
+OVER_OUTPUT or OVER_PROCESSED (every one is listed); 2 a receipt or the expectation
 file cannot be read or breaks its schema (each fault is one line on standard error). Red before
 fault, as R4-2 sets it for every gate: the report prints every red it can find even when a fault
-was met on the way, and exits 1 if it found a red, else 2 if it met a fault. A fault in the
+was met on the way, and exits 1 if it found a red, else 2 if it met a fault. A model or effort
+value that breaks the grammar, and an expectation entry without `model` or `effort`, are faults. A fault in the
 expectation file leaves the `NO_USAGE` reds of the receipts standing; the verdicts that need the
 expectation are not computed. 3 usage error. JSON input refuses repeated keys, NaN and Infinity.
 Every printed subject is escaped to one line. A count is compared as a decimal string (no
@@ -55,19 +64,28 @@ FIELDS = (
     "seat",
     "profile",
     "model",
+    "effort",
     "input_tokens",
     "cache_write_tokens",
     "cache_read_tokens",
     "output_tokens",
     "source",
 )
+OPTIONAL_FIELDS = ("effort",)
 COUNT_FIELDS = ("input_tokens", "cache_write_tokens", "cache_read_tokens", "output_tokens")
 FIELD_LINE = re.compile(r"([A-Za-z_]+):[ \t]*(.*)")
 COUNT = re.compile(r"0|[1-9][0-9]*")
 NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 SEAT = re.compile(r"seat:([A-Za-z0-9][A-Za-z0-9._-]*)/([A-Za-z0-9][A-Za-z0-9._-]*)")
 LIMIT_KEYS = ("output_tokens_max", "processed_tokens_max")
+BINDING_KEYS = ("model", "effort")
+ENTRY_KEYS = (*BINDING_KEYS, *LIMIT_KEYS)
+ITEM = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 
+MODEL_MISMATCH = "MODEL_MISMATCH"
+EFFORT_MISMATCH = "EFFORT_MISMATCH"
+EFFORT_UNRECORDED = "EFFORT_UNRECORDED"
+UNRECORDED = "UNRECORDED"
 WITHIN = "WITHIN"
 OVER_OUTPUT = "OVER_OUTPUT"
 OVER_PROCESSED = "OVER_PROCESSED"
@@ -92,8 +110,20 @@ def has_bad_text(text: str) -> bool:
     return any(ord(ch) < 0x20 or ord(ch) == 0x7F or 0xD800 <= ord(ch) <= 0xDFFF for ch in text)
 
 
+def is_value_list(text: str) -> bool:
+    """True when `text` is one item, or items joined by `,` with no blanks and no repeats."""
+    items = text.split(",")
+    return all(ITEM.fullmatch(item) is not None for item in items) and len(set(items)) == len(items)
+
+
+def is_item(text: str) -> bool:
+    return ITEM.fullmatch(text) is not None
+
+
 @dataclass(frozen=True)
 class Limits:
+    model: str  # one item
+    effort: str  # one item
     output_tokens_max: str  # decimal digits, compared as text
     processed_tokens_max: str
 
@@ -102,6 +132,8 @@ class Limits:
 class Seat:
     seat: str
     profile: str
+    model: str  # a value list
+    effort: str | None  # a value list, None when the cell has no effort: line
     output_tokens: str  # decimal digits without a leading zero
     processed_tokens: str
 
@@ -193,19 +225,27 @@ def load_expectation(path: Path) -> dict[str, Limits]:
             raise InputFault(f"{origin}: {printable(profile)} is not a profile reference")
         if not isinstance(entry, dict):
             raise InputFault(f"{origin}: profile {printable(profile)} is not an object")
-        for key in LIMIT_KEYS:
+        for key in ENTRY_KEYS:
             if key not in entry:
                 raise InputFault(f"{origin}: profile {printable(profile)} lacks {key}")
         for key in entry:
-            if key not in LIMIT_KEYS:
+            if key not in ENTRY_KEYS:
                 raise InputFault(f"{origin}: profile {printable(profile)} has the unknown key {printable(str(key))}")
+        binding: list[str] = []
+        for key in BINDING_KEYS:
+            value: object = entry[key]
+            if not isinstance(value, str) or not is_item(value):
+                raise InputFault(
+                    f"{origin}: profile {printable(profile)} {key} is not one item of [A-Za-z0-9][A-Za-z0-9._-]*: {printable(str(value))}"
+                )
+            binding.append(value)
         output_max: object = entry[LIMIT_KEYS[0]]
         processed_max: object = entry[LIMIT_KEYS[1]]
         if not isinstance(output_max, int) or isinstance(output_max, bool) or output_max < 0:
             raise InputFault(f"{origin}: profile {printable(profile)} {LIMIT_KEYS[0]} is not an integer >= 0")
         if not isinstance(processed_max, int) or isinstance(processed_max, bool) or processed_max < 0:
             raise InputFault(f"{origin}: profile {printable(profile)} {LIMIT_KEYS[1]} is not an integer >= 0")
-        limits[profile] = Limits(str(output_max), str(processed_max))
+        limits[profile] = Limits(binding[0], binding[1], str(output_max), str(processed_max))
     return limits
 
 
@@ -296,13 +336,17 @@ def parse_usage(heading: str, lines: Sequence[str], origin: str) -> Seat:
         values[name] = value
         order.append(name)
     for name in FIELDS:
-        if name not in values:
+        if name not in values and name not in OPTIONAL_FIELDS:
             raise refuse(f"field {name} is missing")
-    if order != list(FIELDS):
+    if order != [name for name in FIELDS if name in values]:
         raise refuse(f"fields are out of order: {','.join(order)}")
-    for name in ("model", "source"):
-        if not values[name] or has_bad_text(values[name]):
-            raise refuse(f"{name} is empty or holds a control character")
+    if not values["source"] or has_bad_text(values["source"]):
+        raise refuse("source is empty or holds a control character")
+    for name in ("model", "effort"):
+        if name in values and not is_value_list(values[name]):
+            raise refuse(
+                f"{name} is not a value list of [A-Za-z0-9][A-Za-z0-9._-]* items without blanks or repeats: {printable(values[name])}"
+            )
     for name in COUNT_FIELDS:
         if COUNT.fullmatch(values[name]) is None:
             raise refuse(f"{name} is not an integer >= 0: {printable(values[name])}")
@@ -314,7 +358,7 @@ def parse_usage(heading: str, lines: Sequence[str], origin: str) -> Seat:
     if heading != f"{USAGE_CELL} {values['seat']}":
         raise refuse(f"heading must be '{USAGE_CELL} {printable(values['seat'])}'")
     processed = add_decimal(add_decimal(values["input_tokens"], values["cache_write_tokens"]), values["cache_read_tokens"])
-    return Seat(values["seat"], values["profile"], values["output_tokens"], processed)
+    return Seat(values["seat"], values["profile"], values["model"], values.get("effort"), values["output_tokens"], processed)
 
 
 def load_receipt(path: Path) -> list[Seat]:
@@ -349,12 +393,23 @@ def verdict(seat: Seat, limits: dict[str, Limits]) -> str:
     expected = limits.get(seat.profile)
     if expected is None:
         return UNKNOWN_PROFILE
-    over: list[str] = []
+    words: list[str] = []
+    if seat.model != expected.model:
+        words.append(MODEL_MISMATCH)
+    if seat.effort is not None and seat.effort != expected.effort:
+        words.append(EFFORT_MISMATCH)
     if is_greater(seat.output_tokens, expected.output_tokens_max):
-        over.append(OVER_OUTPUT)
+        words.append(OVER_OUTPUT)
     if is_greater(seat.processed_tokens, expected.processed_tokens_max):
-        over.append(OVER_PROCESSED)
-    return ",".join(over) if over else WITHIN
+        words.append(OVER_PROCESSED)
+    if seat.effort is None:
+        words.append(EFFORT_UNRECORDED)
+    return ",".join(words) if words else WITHIN
+
+
+def is_red(result: str) -> bool:
+    """A verdict is red unless it is WITHIN or EFFORT_UNRECORDED alone."""
+    return result not in (WITHIN, EFFORT_UNRECORDED)
 
 
 def no_usage_line(path: Path) -> str:
@@ -385,10 +440,11 @@ def execute(args: Arguments) -> int:
             continue
         for seat in seats:
             result = verdict(seat, limits)
-            if result != WITHIN:
+            if is_red(result):
                 red = True
+            effort = UNRECORDED if seat.effort is None else printable(seat.effort)
             lines.append(
-                f"{printable(seat.seat)} {printable(seat.profile)} "
+                f"{printable(seat.seat)} {printable(seat.profile)} model={printable(seat.model)} effort={effort} "
                 f"output={seat.output_tokens} processed={seat.processed_tokens} {result}"
             )
     for line in lines:

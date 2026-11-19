@@ -16,6 +16,7 @@ cell: USAGE
 seat: <seat>
 profile: <profile>
 model: <model>
+effort: <effort>
 input_tokens: <input-tokens>
 cache_write_tokens: <cache-write-tokens>
 cache_read_tokens: <cache-read-tokens>
@@ -38,7 +39,8 @@ The `STATEMENT` cell begins with two lines before any prose: `return:` with one 
 | `<capture-lines>` | the capture file's lines, byte for byte, with LF line ends only |
 | `<seat>` | the seat id, `seat:` then the profile, a slash and the run id, the same text in the `USAGE` heading and the `seat:` line, unique in the receipt |
 | `<profile>` | the semantic profile reference of the seat, the one `<seat>` names |
-| `<model>` | the model the host reports for the seat |
+| `<model>` | the model the host reports for the seat: one item of `[A-Za-z0-9][A-Za-z0-9._-]*`, or items joined by `,` with no blanks and no repeats |
+| `<effort>` | the effort the host reports for the seat, in the same form as `<model>`; the line is optional, and a receipt without it is read as `UNRECORDED` |
 | `<input-tokens>` | the seat's input tokens, an integer >= 0 written without a sign or a leading zero |
 | `<cache-write-tokens>` | the seat's cache write tokens, an integer in the same form |
 | `<cache-read-tokens>` | the seat's cache read tokens, an integer in the same form |

@@ -1,0 +1,5 @@
+{
+  "implementation-standard": {"model": "claude-sonnet-5-5", "effort": "high", "output_tokens_max": 130000, "processed_tokens_max": 24000000},
+  "implementation-elevated": {"model": "claude-opus-5-5", "effort": "high", "output_tokens_max": 130000, "processed_tokens_max": 24000000},
+  "ticket-review": {"model": "claude-opus-5-5", "effort": "high", "output_tokens_max": 110000, "processed_tokens_max": 23000000}
+}

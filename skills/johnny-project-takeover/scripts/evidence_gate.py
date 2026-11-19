@@ -12,10 +12,12 @@ is informational and carries none of `capture:`, `exit:` or a fence.
 
 A section with `cell: USAGE` is the token-use record of one seat. It is informational too: no
 capture, exit, candidate, tool_digest or fence. Its fields come one per line in this order:
-`cell`, `seat` (`seat:<profile>/<run-id>`, equal in `profile`), `profile`, `model`,
-`input_tokens`, `cache_write_tokens`, `cache_read_tokens`, `output_tokens` (each an integer
+`cell`, `seat` (`seat:<profile>/<run-id>`, equal in `profile`), `profile`, `model`, `effort`
+(optional, only directly after `model`), `input_tokens`, `cache_write_tokens`, `cache_read_tokens`, `output_tokens` (each an integer
 >= 0 written in decimal without a sign or a leading zero) and `source`; its heading is
-`USAGE <seat>`. Any number of USAGE cells is accepted, none is ever required (usage_report.py
+`USAGE <seat>`. A `model` or `effort` value is one item matching `[A-Za-z0-9][A-Za-z0-9._-]*`, or
+items joined by `,` with no blanks and no repeats; any other value is USAGE_FIELD_INVALID. A cell
+without the `effort:` line stays valid, and the gate prints nothing about it. Any number of USAGE cells is accepted, none is ever required (usage_report.py
 enforces presence), and a USAGE cell is not a run cell, so it does not count in `cells=N`.
 
 Defect codes (exit 1, one line `<code> <section>: <detail>` each): NO_CELLS, NOT_RUN,
@@ -94,17 +96,20 @@ USAGE_FIELDS = (
     "seat",
     "profile",
     "model",
+    "effort",
     "input_tokens",
     "cache_write_tokens",
     "cache_read_tokens",
     "output_tokens",
     "source",
 )
+USAGE_OPTIONAL_FIELDS = ("effort",)
 USAGE_COUNT_FIELDS = ("input_tokens", "cache_write_tokens", "cache_read_tokens", "output_tokens")
 USAGE_RUN_FIELDS = ("candidate", "capture", "exit", "tool_digest")
 USAGE_LINE = re.compile(r"([A-Za-z_]+):[ \t]*(.*)")
 USAGE_COUNT = re.compile(r"0|[1-9][0-9]*")
 USAGE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
+USAGE_VALUE_ITEM = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 USAGE_SEAT = re.compile(r"seat:([A-Za-z0-9][A-Za-z0-9._-]*)/([A-Za-z0-9][A-Za-z0-9._-]*)")
 CR = b"\r"
 FULL_SHA = re.compile(r"[0-9a-fA-F]{40}")
@@ -750,6 +755,12 @@ def check_statement(section: Section, require_cells: Sequence[str]) -> list[Defe
     return defects
 
 
+def is_usage_value_list(value: str) -> bool:
+    """One item, or items joined by `,` with no blanks and no repeats."""
+    items = value.split(",")
+    return all(USAGE_VALUE_ITEM.fullmatch(item) is not None for item in items) and len(set(items)) == len(items)
+
+
 def usage_defect(code: UsageCode, section: Section, detail: str) -> Defect:
     return Defect(code, section.heading, detail)
 
@@ -792,16 +803,24 @@ def check_usage(section: Section, seats: dict[str, str]) -> list[Defect]:
     for name in repeated:
         defects.append(usage_defect(UsageCode.USAGE_FIELD_REPEATED, section, f"{name}: given more than once"))
     for name in USAGE_FIELDS:
-        if name not in values:
+        if name not in values and name not in USAGE_OPTIONAL_FIELDS:
             defects.append(usage_defect(UsageCode.USAGE_FIELD_MISSING, section, name))
     wanted = [name for name in USAGE_FIELDS if name in values]
     if order != wanted:
         defects.append(
             usage_defect(UsageCode.USAGE_FIELD_ORDER, section, f"fields come as {','.join(order)}, expected {','.join(wanted)}")
         )
-    for name in ("model", "source"):
-        if name in values and (not values[name] or has_bad_text(values[name])):
-            defects.append(usage_defect(UsageCode.USAGE_FIELD_INVALID, section, f"{name} is empty or holds a control character"))
+    if "source" in values and (not values["source"] or has_bad_text(values["source"])):
+        defects.append(usage_defect(UsageCode.USAGE_FIELD_INVALID, section, "source is empty or holds a control character"))
+    for name in ("model", "effort"):
+        if name in values and not is_usage_value_list(values[name]):
+            defects.append(
+                usage_defect(
+                    UsageCode.USAGE_FIELD_INVALID,
+                    section,
+                    f"{name} is not a value list of [A-Za-z0-9][A-Za-z0-9._-]* items without blanks or repeats: '{values[name]}'",
+                )
+            )
     for name in USAGE_COUNT_FIELDS:
         if name in values and USAGE_COUNT.fullmatch(values[name]) is None:
             defects.append(

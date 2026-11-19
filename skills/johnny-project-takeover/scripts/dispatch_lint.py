@@ -22,7 +22,14 @@ Rules (each problem line starts with its rule id):
       bytes. What follows the run (a space, `(`, `;` or the end of the cell) is ignored.
       A missing row, an empty cell, a missing or doubled `dispatch=sha256:`, a run of
       another length, upper-case hex or a different digest is a violation; the line names
-      the expected and the found digest. Without --ticket the lint is exactly R1 to R6.
+      the expected and the found digest. Without --ticket the lint is R1 to R6 and R8.
+  R8  a dispatch with a top-level `profile:` field also carries top-level `model:` and
+      `effort:` fields. Top-level means a field at column 0 outside a code fence. Each of
+      the two holds one non-empty item matching `[A-Za-z0-9][A-Za-z0-9._-]*`, optionally
+      inside one pair of double quotes; a list is invalid, and so is a field given twice.
+      After the per-line rules the lines are, each printed when it applies and in this
+      order: `R8 profile: without model:`, `R8 profile: without effort:`,
+      `R8 model: invalid`, `R8 effort: invalid`. R8 runs with or without --ticket.
 
 Exit codes: 0 LINT PASS, 1 one or more rule violations, 3 usage error
 (missing or extra argument, unreadable or non-UTF-8 dispatch or ticket file, unknown
@@ -53,6 +60,8 @@ DIGEST_TOKEN = "dispatch=sha256:"
 DIGEST_RUN = re.compile(r"[0-9A-Za-z]*")
 DIGEST_LENGTH = 64
 LOWER_HEX = frozenset("0123456789abcdef")
+TOP_FIELD = re.compile(r"(profile|model|effort):(.*)")
+ITEM = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 
 
 def count_actions(line: str) -> int:
@@ -98,6 +107,42 @@ def lint(text: str, chat_words: Sequence[str] | None = None) -> list[str]:
         actions = count_actions(line)
         if actions > 1:
             problems.append(f"R5 line {number} holds {actions} actions; put each on its own list item")
+    problems.extend(check_seat_binding(lines))
+    return problems
+
+
+def binding_value_valid(raw: str) -> bool:
+    """One item of the value grammar, optionally inside one pair of double quotes."""
+    value = raw.strip()
+    if len(value) >= 2 and value.startswith('"') and value.endswith('"'):
+        value = value[1:-1]
+    return ITEM.fullmatch(value) is not None
+
+
+def check_seat_binding(lines: Sequence[str]) -> list[str]:
+    """R8: a dispatch with a top-level `profile:` also names its `model:` and `effort:`."""
+    found: dict[str, list[str]] = {"profile": [], "model": [], "effort": []}
+    in_fence = False
+    for line in lines:
+        if line.strip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        matched = TOP_FIELD.fullmatch(line)
+        if matched is not None:
+            found[matched.group(1)].append(matched.group(2))
+    if not found["profile"]:
+        return []
+    problems: list[str] = []
+    if not found["model"]:
+        problems.append("R8 profile: without model:")
+    if not found["effort"]:
+        problems.append("R8 profile: without effort:")
+    for name in ("model", "effort"):
+        values = found[name]
+        if values and (len(values) > 1 or not binding_value_valid(values[0])):
+            problems.append(f"R8 {name}: invalid")
     return problems
 
 
