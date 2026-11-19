@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision01 / receipt under `.worktrees/79-lookup-out/` / owner implementation seat / worktree `.worktrees/79-lookup` / branch `cp/wave3-79-lookup` / baseline the wave-3 branch after ticket 73 is integrated |
+| Agent Context binding | ticket revision02 / receipt under `.worktrees/79-lookup-out/` / owner implementation seat / worktree `.worktrees/79-lookup` / branch `cp/wave3-79-lookup` / baseline the wave-3 branch after ticket 73 is integrated |
 | 實作語言 | Markdown governance text; Python 3.11 for the test（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED`（strict tier; rule-only review before dispatch; after ticket 73, before ticket 71） |
+| 狀態 | `PLANNED`（revision02; strict tier; rule-only review of revision01 CHANGES_REQUESTED; after ticket 73, before ticket 71） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/79-lookup` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/79-lookup-review` |
@@ -45,26 +45,30 @@ Process tier: strict.
 
 The owner decided on 2026-11-20 ("A") to fix this in 0.5.0, before ticket 71, because ticket 77's Codex acceptance would otherwise reproduce it. Version markers on the copies that target projects hold go to wave 4.
 
+**Revision02** answers the rule-only review of revision01 (`doc/reviews/workflow-governance/79-read-only-lookup-goes-to-the-leaf-ticket-review.md`). The exemption is now narrow and fails closed: it covers a read-only lookup and nothing else.
+
+**Copies already in target projects.** The template's build order copies `AGENTS.md` and `Workflow.md` into a target project, and hosts load the target's copy. A project that holds 0.4.x copies therefore keeps the old rule until its copies are replaced. This ticket does not change that. Version markers on those copies go to wave 4. Ticket 77's Codex acceptance builds its target project from 0.5.0 copies, and ticket 71's README tells existing projects to re-copy them.
+
 After this ticket:
 
-1. **`AGENTS.md`, the start order's condition.** The line "在讀取 target source、執行工具或寫入前：" becomes "在改動 target、推進流程或執行會寫入的工具之前：". The five steps stay as they are.
-2. **`AGENTS.md`, a read-only-lookup paragraph** directly after the five steps. An HTML anchor `read-only-lookup` stands on its own line above it. The paragraph says exactly:
+1. **`AGENTS.md`, the start order's condition.** The line "在讀取 target source、執行工具或寫入前：" becomes "除下方唯讀查詢外，在讀取 target source、執行工具或寫入前：". The five steps stay as they are.
+2. **`AGENTS.md`, a read-only-lookup paragraph** goes between step 5 and the paragraph that begins "狀態只保存". An HTML anchor `read-only-lookup` stands on its own line above it, with a blank line before and after the anchor, as with `p0-source-type`. The paragraph says exactly:
 
-   "唯讀查詢（只問某份文件的內容、某張票的狀態或某條規則的寫法，不要求改動）不走上面的啟動順序：從下方「Target project 正式來源」的標準位置，或專案既有的同用途路徑，找到該類文件的索引，一次解析一條路徑到確切的 leaf，讀完即回答。不讀 Workflow、Router 或其他 reference，不載入整棵樹，不寫受據。查詢中發現需要改動時，停下並改走上面的啟動順序。"
+   "唯讀查詢（只問某份文件的內容、某張票的狀態或某條規則的寫法，不要求改動）不走上面的啟動順序；target project 自己的治理檔另有規定時從其規定。P0 照常適用：不讀取或回覆 Secret、正式 Log，不讀 target repository 以外或其他 worktree 的檔案。使用者指名確切檔案時只讀該檔；否則從該類文件的索引一次解析一條路徑到確切的 leaf。規則類查詢以本檔「流程索引」為索引，只讀含該規則的那一份（已安裝的插件版本），並註明檔案與版本。不為定位而讀 Workflow 或 Router，不載入整棵樹，不寫受據。票的狀態以目前 checkout 已提交的 leaf 為準，不以索引列、其他 worktree 或未提交的檔案為準；回答附上 leaf 路徑與 commit；需要受據或佇列才能判定時照實說明，不推斷。找不到該類索引、索引有歧義、leaf 不存在或 revision／digest 不符時，回答找不到並列出已查的路徑，不掃描、不憑記憶補答、不進入 Wayfinder。查詢中發現需要改動時，回報後停下；只有使用者要求改動，才走上面的啟動順序。問下一步、能否派工、整合或核准，屬於推進流程，不是唯讀查詢。"
 
 3. **`SKILL.md`, the trigger description.** The frontmatter `description` becomes exactly:
 
-   "Route an action that changes a software project's workflow state (Wayfinder, architecture, requirements, specification, tickets, implementation, review, handoff, integration) through Johnny's governed workflow. Use when Codex must take over or resume a project, select the next governed stage, dispatch or review an implementer, or apply Johnny workflow policy without adding a runtime dependency to the target project. Not for a read-only question about an existing document, ticket or rule: answer it from that document's index and leaf."
+   "Route an action that changes a software project's workflow state (Wayfinder, architecture, requirements, specification, tickets, implementation, review, handoff, integration, delivery maturity POC/MVP/commercial, staging) through Johnny's governed workflow. Use when Codex must take over or resume a project, select the next governed stage, dispatch or review an implementer, minimize Agent context, or apply Johnny workflow policy without adding a runtime dependency to the target project. Not for a read-only question about an existing document, ticket or rule: answer it as this plugin's AGENTS.md read-only-lookup paragraph says."
 
-4. **`SKILL.md`, the start.** The section `## Start` gains a first step before the current step 1. The current steps are renumbered 2 to 5, with no other change. The new step says exactly:
+4. **`SKILL.md`, the start.** The section `## Start` gains a first step before its current four steps, which are renumbered 2 to 5 with no other change. The new step says exactly:
 
-   "1. A read-only question (the content of a document, the state of a ticket, the wording of a rule) is not a workflow action: resolve it from that document's index to the exact leaf, as the target project's `AGENTS.md` read-only-lookup paragraph says, answer, and stop. Do not read `Workflow.md` for it."
+   "1. A read-only question (the content of a document, the state of a ticket, the wording of a rule) is not a workflow action, unless the target project's own governing files route it otherwise: resolve it as the [read-only-lookup paragraph](../../AGENTS.md#read-only-lookup) of this plugin's `AGENTS.md` says, answer, and stop. Do not read `Workflow.md` for it. Asking for the next step, or whether something can be dispatched, integrated or approved, is a workflow action."
 
-5. **`tests/test_entry_read_only_lookup.py`** pins items 1 to 4:
+5. **`tests/test_entry_read_only_lookup.py`** pins:
    - the condition line;
-   - the anchor and the paragraph, in that place;
+   - the anchor, its blank lines and the paragraph, between step 5 and 「狀態只保存」;
    - the description;
-   - the new first start step, and that the five original steps follow it in order.
+   - the new first start step, followed by the four original steps renumbered 2 to 5, in order.
 
 No other sentence changes. The pins of `tests/test_plugin_publication.py` and `tests/test_governance_consistency.py` on these files keep passing unchanged. A test that breaks is a `CHANGE_DETECTED` return naming the test.
 
@@ -91,8 +95,9 @@ No other sentence changes. The pins of `tests/test_plugin_publication.py` and `t
 
 1. 正常行為: the new test passes on the result, and `tests/test_plugin_publication.py`, `tests/test_governance_consistency.py` and `tests/test_governance_rule_texts.py` pass unchanged.
 2. 規則違反／輸入錯誤: each of these, on a copy, turns the new test red:
-   - the old condition line put back;
+   - the condition line without its carve-out;
    - the paragraph removed;
+   - the P0 sentence or the not-found sentence removed from the paragraph;
    - the anchor moved below the paragraph;
    - the description's last sentence removed;
    - the new start step moved after the original first step.
