@@ -10,13 +10,24 @@
 | Sealed Context binding | `<shared revision/digest + exact feature Context revision/digest>`／不適用 |
 | Agent Context binding | `<ticket revision / receipt / owner / worktree / branch / baseline / side_context_id>` |
 | 實作語言 | 填入 `CONTEXT.md` › `## 實作語言規範` 的**統一後端語言**（不是從清單挑選）。偏離須先滿足該節觸發條件、有實測依據並經需求變更核准。**實作者不得自行決定**；未填不得進入 `implement`，審閱一律 `BLOCKED`。 |
-| 狀態 | `PLANNED`／`IN_PROGRESS`／`BLOCKED`／`DONE`／`SUPERSEDED` |
+| Closure revision | `<revision of the finite Acceptance Closure Set>` |
+| Strict checker | `<command and version>` |
+| Profile / resource | `<semantic profile reference / resource-plan reference>` |
+| XSS classification | `<classification and the exact xss-review.md matrix reference>`／`不適用：<reason>` |
+| 狀態 | `<STATE>`; dispatch=sha256:<64 lower-case hex> (`<repository-relative dispatch path>`)（<optional note>） |
 | 共同基準 | `<docs-only commit SHA>` |
 | 實作者 | `<AI／worktree>` |
 | 審閱者 | `<AI／worktree>` |
 | 責任邊界 | `<In Scope>`；**權威來源是下方 `johnny-boundary` 區塊**，本欄只是給人看的摘要 |
 | 禁止修改 | `<Out of Scope>`；同上，權威來源是 `forbid =` |
 | 環境 | `LOCAL`／`STAGING`／`PRODUCTION` |
+
+**狀態 row.** `<STATE>` is one of the target's eight states: `PLANNED`, `IN_PROGRESS`, `BLOCKED`, `DONE`, `SUPERSEDED`, `REVIEW_APPROVED`, `INTEGRATED` and `CONVERGENCE_REPLANNED`.
+The `dispatch=sha256:` part is the sha256 of the dispatch file's bytes, written as 64 lower-case hex digits. It is written when the ticket is dispatched; a ticket never dispatched carries none. `skills/johnny-project-takeover/scripts/dispatch_lint.py <dispatch> --ticket <ticket>` checks it (rule R7).
+Two deliberate deviations from the target grammar in `template/modules/tickets/TEMPLATE.md`:
+
+- the digest is kept after `INTEGRATED` (owner decision 2026-11-19 "A"), where the target drops it;
+- the receipt path stays in the Agent Context binding row, not in the 狀態 row.
 
 ## 邊界宣告（機器可讀，整合前由閘門讀取）
 
@@ -86,7 +97,7 @@ forbid = <明確禁止的路徑；比上面三欄優先，且比對時不分大�
 3. 外部失敗／fail-closed：`<red test>`
 4. 回歸保護：`<test>`
 
-### 適用的缺陷類別（依 `CodeReview.md` §2.1，逐一列出必要案例，不適用者寫明理由）
+### 適用的缺陷類別（依 `CodeReview.md` §2 與 `skills/johnny-project-takeover/references/review-checks.md` 的「Defect categories」表，逐一列出必要案例，不適用者寫明理由）
 
 | # | 類別 | 是否適用 | 本工單的必要案例 |
 | --- | --- | --- | --- |
