@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `.worktrees/74-rule-texts-out/` / owner implementation seat / worktree `.worktrees/74-rule-texts` / branch `cp/wave3-74-rule-texts` / baseline the wave-3 branch after ticket 67 is integrated |
+| Agent Context binding | ticket revision03 / receipt under `.worktrees/74-rule-texts-out/` / owner implementation seat / worktree `.worktrees/74-rule-texts` / branch `cp/wave3-74-rule-texts` / baseline the wave-3 branch after ticket 67 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）for the test; each document keeps its own language |
-| 狀態 | `PLANNED`（revision02; strict tier; rule-only review of revision01 CHANGES_REQUESTED, revision02 under rule-only review; after ticket 67） |
+| 狀態 | `PLANNED`（revision03; strict tier; rule-only reviews: revision01 and revision02 CHANGES_REQUESTED, revision03 applies the fixes the reviewer named; after ticket 67） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/74-rule-texts` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/74-rule-texts-review` |
@@ -51,11 +51,11 @@ Process tier: strict.
 
 The owner adopted the lessons on 2026-11-18 ("B"). The control plane assigned the rule texts to this ticket on 2026-11-19. S61-03 (dispatch-file path, submitter and worktree on resume, review record path) is not in this ticket. It needs changes to `AGENTS.md` and `template/`, and goes to wave 4.
 
-**Revision02** answers the rule-only review of revision01 (`doc/reviews/workflow-governance/74-wave3-rule-texts-ticket-review.md`).
+**Revision02** answers the rule-only review of revision01, and **revision03** the correction review of revision02 (`doc/reviews/workflow-governance/74-wave3-rule-texts-ticket-review.md`).
 
 **How rules are placed.**
 - Each rule below goes at its named place.
-- An HTML anchor with the rule's id stands on its own line directly above the rule.
+- An HTML anchor with the rule's id stands on its own line directly above the rule. In a new section, the anchor goes below the section heading.
 - A rule's block runs from its anchor to the next anchor or heading, whichever comes first.
 - The seat writes each rule in the language of its document. The block states the content given here and nothing more. Where a rule gives a sentence in quotes, the block carries that sentence's content.
 - No other sentence changes.
@@ -64,16 +64,18 @@ The owner adopted the lessons on 2026-11-18 ("B"). The control plane assigned th
    - "Integrity rests on content digests, never on a commit id that a file would have to name about itself."
    - "A receipt's `candidate:` field, and the `--candidate` that `evidence_gate.py` checks, are the commit its cells ran at."
    - "When the receipt is committed after that commit, the candidate for review and for the merge queue is the commit that adds the receipt, and its diff is the receipt only."
+   - "`USAGE` cells are appended after the candidate is set, in a record commit."
 2. **`rule-seat-residue`** goes in `implementation-authority.md`, section "Allocation and correction", after its last paragraph (L-9).
    - "Every process, scratch directory, clone, lock or port that a seat starts for its run carries the seat's run id, in its name or in an owner file."
    - "Before it returns, the seat removes everything that carries its tag, and lists in its STATEMENT or review record what it removed and anything it left, with the reason."
    - "The allocated worktree, the branch and the receipt directory are not residue: the seat hands them back, and does not remove them."
+   - "Files the seat's own commands write inside its allocated worktree, such as caches, are its own, and the seat removes them."
    - "No seat removes another seat's resource or an untagged one; it reports untagged residue to the control plane."
    - The existing sentence on clearing residue in one's own worktree stays.
 3. **`rule-process-tier`** goes in `specification-ticketing.md`, section "Ticket", after its last paragraph (L-11, L-5). `Workflow.md` §3 gains one sentence after its reference list, linking `#rule-process-tier`: "Every ticket names its process tier." The rule block says:
    - The tier is decided by the kind of change. When a ticket carries several kinds, the strictest kind decides.
-   - A ticket names its tier on the first line of its section 使用者拍板與可觀察結果, as `Process tier: standard` or `Process tier: strict`.
-   - **Records** are not tickets. A record change only appends to the record files: a new review or integration record, a new row, a new completion entry. It edits no existing field or block that a gate reads, such as a state row, `review-verdict`, `convergence-disposition`, a dispatch digest or a receipt path. It edits no recorded decision. The control plane commits it directly. Anything else is a ticket.
+   - A ticket opened after this rule names its tier on the first line of its section 使用者拍板與可觀察結果, as `Process tier: standard` or `Process tier: strict`. The template line and the tickets already open are wave-4 work.
+   - **Records** are not tickets. A record change only appends to the record files: a new review or integration record, a new row, a new completion entry. It edits no existing field or block that a gate reads, such as a state row, `review-verdict`, `convergence-disposition`, a dispatch digest or a receipt path. It edits no recorded decision. Two exceptions are records too: the state-row and index transitions a governance rule assigns to the control plane, and writing or revising a ticket. The transitions are the dispatch digest and receipt at dispatch, `REVIEW_APPROVED` under §5 rule B, and `INTEGRATED` or `DONE`. Writing or revising a ticket is reviewed under that ticket's tier. The control plane commits records directly. Anything else is a ticket.
    - **standard**: code, tests or documents changed within the existing rules. It takes one implementation seat and reviews as `CodeReview.md` §5 sets out.
    - **strict**: a change to a governance rule, to a gate's verdict, grammar or exit codes, or to a security or confinement boundary. Rule-bearing files include:
      - `AGENTS.md`, `Workflow.md`, `CodeReview.md`;
@@ -93,11 +95,11 @@ The owner adopted the lessons on 2026-11-18 ("B"). The control plane assigned th
 5. **`rule-consolidated-correction`** goes in `implementation-authority.md`, section "Allocation and correction", after `rule-seat-residue` (L-20).
    - "A rule changed after dispatch reaches the seat as one consolidated correction that names every earlier sentence it supersedes."
    - "A review request names the sections authoritative for the review and the sentences superseded under this rule."
-6. **`rule-review-label`** goes in `CodeReview.md` §5, after the cadence bullet "同一 Closure revision 最多一次 initial review 加一次 correction review" (S61-07).
+6. **`rule-review-label`** goes in `CodeReview.md` §5, after its last bullet (S61-07).
    - "The first review of a new closure revision is its initial review; the count restarts."
    - "The control plane labels each review in the review request before dispatch: initial or correction, with its closure revision. It never relabels a review after the conclusion."
    - "A conclusion is recorded as returned, including an attached `CONVERGENCE_REVIEW_REQUIRED`."
-7. **`rule-dispatch-authoring`** goes in `specification-ticketing.md`, section "Dispatch normalization", after its last paragraph (S72-05). It applies to the dispatch file that `dispatch_ref` names, not to the envelope.
+7. **`rule-dispatch-authoring`** goes in `specification-ticketing.md`, section "Dispatch normalization", after its last paragraph (S72-05). It applies to the dispatch file whose digest the ticket's state row carries (R4-1), not to the envelope.
    - "In a dispatch file, a commit subject or other literal payload goes in backticks."
    - "Each enumerated item is its own list item."
    - "A rationale clause is dropped or joined with a comma, never placed after `; `."
@@ -134,7 +136,7 @@ A sentence that contradicts one of these rules is a `CHANGE_DETECTED` return nam
    - `rule-smallest-fix`: `rule B` or `規則 B`;
    - `rule-consolidated-correction`: `supersede`;
    - `rule-review-label`: `CONVERGENCE_REVIEW_REQUIRED`;
-   - `rule-dispatch-authoring`: `dispatch_ref`.
+   - `rule-dispatch-authoring`: `dispatch file`.
 
    `Workflow.md` §3 links `#rule-process-tier`.
 2. 規則違反／輸入錯誤: each of these, on a copy, turns its test red:

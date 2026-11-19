@@ -26,8 +26,25 @@ The seat read the ticket, the template, the REQ rows 26–30, the source finding
 | S74R-14 | Low | The runbook is "profile data", not policy | Rule 5 moves to `implementation-authority.md`; the runbook leaves the boundary |
 | S74R-15 | Low | Collision with ticket 67's rewrites | Revision02 states a post-67 placement check before dispatch |
 
+## Revision02 (commit `71d43e6e`), correction rule-only review by the same seat
+
+**verdict: CHANGES_REQUESTED**
+
+All 15 revision01 findings are CLOSED (S74R-04 and S74R-11 with new findings). The seat modified nothing.
+
+| id | severity | finding | revision03 |
+| --- | --- | --- | --- |
+| S74R-16 | Medium | Rule 2 forbade removing untagged residue, while kept sentences require a seat to clear caches in its own worktree | Rule 2: files the seat's own commands write inside its worktree are its own, and it removes them |
+| S74R-17 | High | The records definition made the control plane's own state-row and index transitions, and ticket writing, into tickets | Records include the transitions a governance rule assigns to the control plane, and writing or revising a ticket (reviewed under that ticket's tier) |
+| S74R-18 | Medium | `dispatch_ref` is a bridge-route field, so rule 7 could have no scope | Rule 7 applies to the dispatch file whose digest the state row carries (R4-1); the test term is `dispatch file` |
+| S74R-19 | Medium | Mid-list placement made rule 6's block swallow the rule B bullets, so its term test could not go red | Rule 6 goes after the last bullet of §5 |
+| S74R-20 | Low | No template line, and open tickets lack the tier line | The tier line applies to tickets opened after this rule; the template line and the open tickets are wave-4 work |
+| S74R-21 | Low | Undecided where appended `USAGE` cells go | Rule 1: appended after the candidate is set, in a record commit |
+| S74R-22 | Low | The repository puts anchors above headings, which would empty a new section's block | In a new section, the anchor goes below the heading |
+
 ## Seat token use
 
 | seat | model | input | cache write | cache read | output |
 | --- | --- | --- | --- | --- | --- |
 | rule-only review, revision01 | claude-opus-5-5 | 74 | 107376 | 3880208 | 35183 |
+| correction rule-only review, revision02 | claude-opus-5-5 | 12 | 135594 | 679821 | 12656 |
