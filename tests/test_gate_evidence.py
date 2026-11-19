@@ -13,7 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from unittest import mock
@@ -277,14 +277,15 @@ class DefectCodeTests(GateTestCase):
         self.assertEqual(self.red(*self.fx.good_parts(), extra=["--require-cell", "Z"]), ["NOT_RUN"])
 
     def test_cell_field_missing_each_field(self) -> None:
-        for override, expected in (
-            ({"candidate_line": False}, "candidate"),
-            ({"label": False}, "tool_digest:"),
-            ({"capture_line": False}, "capture"),
-            ({"exit_line": False}, "exit"),
+        for flag, expected in (
+            ("candidate_line", "candidate"),
+            ("label", "tool_digest:"),
+            ("capture_line", "capture"),
+            ("exit_line", "exit"),
         ):
             with self.subTest(expected=expected):
-                spec = self.fx.cell("A", **override)
+                spec = self.fx.cell("A")
+                setattr(spec, flag, False)
                 self.fx.write_receipt(spec.render())
                 code, out, _ = self.fx.run()
                 self.assertEqual(code, 1)
@@ -700,12 +701,12 @@ class DigestLookupTests(GateTestCase):
         asked: list[tuple[list[str], bytes | None]] = []
         real = subprocess.run
 
-        def spy(command: list[str], *args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
-            raw = kwargs.get("input")
+        def spy(command: list[str], *, capture_output: bool = False, input: bytes | None = None, env: Mapping[str, str] | None = None) -> subprocess.CompletedProcess[bytes]:
+            raw = input
             asked.append((list(command), raw if isinstance(raw, bytes) else None))
-            return real(command, *args, **kwargs)
+            return real(command, capture_output=capture_output, input=input, env=env)
 
-        with mock.patch.object(evidence_gate.subprocess, "run", side_effect=spy):
+        with mock.patch.object(subprocess, "run", side_effect=spy):
             code, codes, out, err = self.listed(extra_path)
         self.assertEqual((code, codes, err), (1, ["TOOL_DIGEST_STALE"], ""), out)
         request = (f"{self.fx.candidate}:{extra_path}" + chr(10)).encode("utf-8")
@@ -842,12 +843,12 @@ class DigestLookupTests(GateTestCase):
         asked: list[tuple[list[str], bytes | None]] = []
         real = subprocess.run
 
-        def spy(command: list[str], *args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
-            raw = kwargs.get("input")
+        def spy(command: list[str], *, capture_output: bool = False, input: bytes | None = None, env: Mapping[str, str] | None = None) -> subprocess.CompletedProcess[bytes]:
+            raw = input
             asked.append((list(command), raw if isinstance(raw, bytes) else None))
-            return real(command, *args, **kwargs)
+            return real(command, capture_output=capture_output, input=input, env=env)
 
-        patcher = mock.patch.object(evidence_gate.subprocess, "run", side_effect=spy)
+        patcher = mock.patch.object(subprocess, "run", side_effect=spy)
         patcher.start()
         self.addCleanup(patcher.stop)
         return asked
@@ -904,14 +905,14 @@ class DigestLookupTests(GateTestCase):
     def fail_lookup(self, mode: str, containing: bytes, returncode: int, stdout: bytes, stderr: bytes) -> None:
         real = subprocess.run
 
-        def fake(command: list[str], *args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
-            raw = kwargs.get("input")
+        def fake(command: list[str], *, capture_output: bool = False, input: bytes | None = None, env: Mapping[str, str] | None = None) -> subprocess.CompletedProcess[bytes]:
+            raw = input
             if (gate_arguments(command) or [])[:2] == ["cat-file", mode] and isinstance(raw, bytes) and containing in raw:
                 return subprocess.CompletedProcess(command, returncode, stdout, stderr)
-            return real(command, *args, **kwargs)
+            return real(command, capture_output=capture_output, input=input, env=env)
 
         self.release_lookup_patch()
-        self._lookup_patch = mock.patch.object(evidence_gate.subprocess, "run", side_effect=fake)
+        self._lookup_patch = mock.patch.object(subprocess, "run", side_effect=fake)
         self._lookup_patch.start()
 
     def listed_extra_good(self) -> tuple[int, str, str]:
@@ -1192,12 +1193,11 @@ class GitEnvironmentTests(GateTestCase):
         seen: list[tuple[list[str], dict[str, str]]] = []
         real = subprocess.run
 
-        def spy(command: list[str], *args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
-            env = kwargs.get("env")
+        def spy(command: list[str], *, capture_output: bool = False, input: bytes | None = None, env: Mapping[str, str] | None = None) -> subprocess.CompletedProcess[bytes]:
             seen.append((list(command), dict(env) if isinstance(env, dict) else {}))
-            return real(command, *args, **kwargs)
+            return real(command, capture_output=capture_output, input=input, env=env)
 
-        patcher = mock.patch.object(evidence_gate.subprocess, "run", side_effect=spy)
+        patcher = mock.patch.object(subprocess, "run", side_effect=spy)
         patcher.start()
         self.addCleanup(patcher.stop)
         return seen
@@ -1286,11 +1286,11 @@ class GitExecutableTests(GateTestCase):
         asked: list[list[str]] = []
         real = subprocess.run
 
-        def spy(command: list[str], *args: object, **kwargs: object) -> subprocess.CompletedProcess[bytes]:
+        def spy(command: list[str], *, capture_output: bool = False, input: bytes | None = None, env: Mapping[str, str] | None = None) -> subprocess.CompletedProcess[bytes]:
             asked.append(list(command))
-            return real(command, *args, **kwargs)
+            return real(command, capture_output=capture_output, input=input, env=env)
 
-        with mock.patch.object(evidence_gate.subprocess, "run", side_effect=spy):
+        with mock.patch.object(subprocess, "run", side_effect=spy):
             self.assertEqual(self.fx.run()[0], 0)
         self.assertTrue(asked)
         for command in asked:
@@ -1316,7 +1316,7 @@ class RedBeforeFaultTests(GateTestCase):
 
     def test_git_that_cannot_start_does_not_hide_a_red_that_needs_no_git(self) -> None:
         self.fx.write_receipt(self.fx.cell("A", exit_value="9").render())
-        with mock.patch.object(evidence_gate.subprocess, "run", side_effect=FileNotFoundError("git")):
+        with mock.patch.object(subprocess, "run", side_effect=FileNotFoundError("git")):
             code, out, err = self.fx.run()
         self.assertEqual((code, self.fx.codes(out)), (1, ["EXIT_MISMATCH"]))
         self.assert_fault_lines(err, 1)
@@ -1476,7 +1476,7 @@ class DigestValueBeforeLookupTests(unittest.TestCase):
         if outcome == "root tree cannot be served":
             prune_loose_object(fx.repo, git(fx.repo, "rev-parse", f"{candidate}^{{tree}}").strip())
         if outcome == "git cannot start":
-            with mock.patch.object(evidence_gate.subprocess, "run", side_effect=FileNotFoundError("git")):
+            with mock.patch.object(subprocess, "run", side_effect=FileNotFoundError("git")):
                 return fx.run(candidate=candidate, repo=repo)
         if outcome in ("cat-file exits non-zero", "cat-file answers outside its format"):
             real_run_git = evidence_gate.run_git
@@ -1906,7 +1906,7 @@ class FaultTests(GateTestCase):
 
     def test_git_cannot_start(self) -> None:
         self.fx.write_receipt(*self.fx.good_parts())
-        with mock.patch.object(evidence_gate.subprocess, "run", side_effect=FileNotFoundError("git")):
+        with mock.patch.object(subprocess, "run", side_effect=FileNotFoundError("git")):
             self.run_fault()
 
     def test_capture_unreadable_after_it_exists(self) -> None:

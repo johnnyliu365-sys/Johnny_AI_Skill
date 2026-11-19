@@ -40,7 +40,16 @@ the cell) is ignored. A missing state row, an empty cell, a missing or doubled
 `dispatch=sha256:`, a run of another length, upper-case hex or a different digest is a
 violation (exit 1); its line starts `R7` and names the expected and the found digest. A
 ticket file that cannot be read or is not UTF-8 is exit 3, prints nothing on stdout and is
-decided before R1 to R7 run. Without `--ticket` the output is exactly R1 to R6.
+decided before R1 to R7 run. Without `--ticket` the output is R1 to R6 and R8.
+
+An eighth rule, R8, runs with or without `--ticket`. A dispatch with a top-level `profile:`
+field (a field at column 0, outside a code fence) must also carry top-level `model:` and
+`effort:` fields, each with one non-empty item matching `[A-Za-z0-9][A-Za-z0-9._-]*`,
+optionally inside one pair of double quotes. A list is invalid, and so is a field given
+twice. A missing or invalid field is a violation (exit 1). After the per-line rules the lines
+are, each printed when it applies and in this order: `R8 profile: without model:`,
+`R8 profile: without effort:`, `R8 model: invalid`, `R8 effort: invalid`. A dispatch without a
+top-level `profile:` field is never an R8 case, so its output is unchanged by R8.
 
 Order of use, for a project that binds each dispatch to its ticket:
 
@@ -215,18 +224,23 @@ and it does not count in `cells=N`. Its fields come one per line, in this order:
     seat: seat:<profile>/<run-id>
     profile: <semantic profile reference>
     model: <the model the host reports>
+    effort: <the effort the host reports; optional>
     input_tokens: <integer >= 0>
     cache_write_tokens: <integer >= 0>
     cache_read_tokens: <integer >= 0>
     output_tokens: <integer >= 0>
     source: <where the numbers come from>
 
-A count is decimal digits without a sign or a leading zero. The gate accepts any number of
+A count is decimal digits without a sign or a leading zero. A `model` or `effort` value is one
+item matching `[A-Za-z0-9][A-Za-z0-9._-]*`, or a list of items joined by `,` with no blanks and
+no repeats, in order of first appearance; comparison is case-sensitive. The `effort:` line is
+accepted only directly after `model:`; a cell without it stays valid, so a receipt written
+before the line existed still passes, and the gate prints nothing new for it. The gate accepts any number of
 USAGE cells and never requires one (a receipt is written before the review seats exist;
 `usage_report.py` enforces presence). Defect codes: `USAGE_FIELD_MISSING` (a field is absent),
 `USAGE_FIELD_REPEATED`, `USAGE_FIELD_ORDER` (the fields present are not in the order above),
-`USAGE_FIELD_INVALID` (an unknown field or a line that is not `name: value`; an empty or
-control-character `model` or `source`; a `seat` that is not `seat:<profile>/<run-id>`, a
+`USAGE_FIELD_INVALID` (an unknown field or a line that is not `name: value`; a `model` or
+`effort` that breaks the value grammar; an empty or control-character `source`; a `seat` that is not `seat:<profile>/<run-id>`, a
 `profile` that is not the profile the seat names, or a heading other than `USAGE <seat>`),
 `USAGE_COUNT_INVALID` (a count that is not an integer >= 0), `USAGE_HAS_RUN_FIELDS` (the cell
 carries `candidate:`, `capture:`, `exit:`, `tool_digest:` or a fence) and `USAGE_DUPLICATE_SEAT`
@@ -824,22 +838,31 @@ absolute `PATH` entries only. The configured commands get the same environment.
     python usage_report.py --expectation FILE RECEIPT [RECEIPT ...]
 
 Reads each receipt and the expectation file and prints, for every USAGE cell, one line
-`<seat> <profile> output=<n> processed=<n> <verdict>`; processed is input + cache write + cache
-read. The verdict is `WITHIN`, `OVER_OUTPUT` (output above `output_tokens_max`),
-`OVER_PROCESSED` (processed above `processed_tokens_max`; both words joined by a comma when both
-hold) or `UNKNOWN_PROFILE`. A value equal to its maximum is `WITHIN`. A receipt without a USAGE
-cell prints `NO_USAGE <receipt>`.
+`<seat> <profile> model=<value list> effort=<value list|UNRECORDED> output=<n> processed=<n> <verdict>`;
+processed is input + cache write + cache read. The verdict is a comma-joined list of words in
+this fixed order: `MODEL_MISMATCH` (the cell's model list is not exactly the profile's one
+model), `EFFORT_MISMATCH` (the cell's effort list is not exactly the profile's one effort),
+`OVER_OUTPUT` (output above `output_tokens_max`), `OVER_PROCESSED` (processed above
+`processed_tokens_max`), `EFFORT_UNRECORDED` (the cell has no `effort:` line). `WITHIN` is
+printed only when none of the other words applies. `UNKNOWN_PROFILE` stands alone: no other word
+is appended to it. A value equal to its maximum is not over. A receipt without a USAGE cell
+prints `NO_USAGE <receipt>`.
 
 The expectation file is a JSON object with one entry per semantic profile, each an object with
-exactly `output_tokens_max` and `processed_tokens_max` (integers >= 0); the project template is
-`template/doc/handoffs/governance/usage-expectation.TEMPLATE.json`. Repeated keys, `NaN` and
-`Infinity` are refused.
+exactly `model` and `effort` (each one item matching `[A-Za-z0-9][A-Za-z0-9._-]*`, never a
+list), `output_tokens_max` and `processed_tokens_max` (integers >= 0); the project template is
+`template/doc/handoffs/governance/usage-expectation.TEMPLATE.json`, which holds the placeholders
+`<host-model>` and `<host-effort>`; an unfilled template breaks the value grammar and is a
+schema break (exit 2). Repeated keys, `NaN` and `Infinity` are refused.
 
-Exit 0: every seat is within its expectation. Exit 1: a receipt has no USAGE cell, a profile is
-unknown, or a seat is over its expectation; every one is listed. Exit 2: the expectation file or
+Exit 0: every seat is within its expectation; `EFFORT_UNRECORDED` alone is not a red. Exit 1: a
+receipt has no USAGE cell, a profile is unknown, or a seat has `MODEL_MISMATCH`,
+`EFFORT_MISMATCH`, `OVER_OUTPUT` or `OVER_PROCESSED`; every one is listed. Exit 2: the expectation file or
 a receipt cannot be read, is not UTF-8, is not accepted JSON, or breaks its schema (a USAGE
 cell with a missing, repeated, misordered or malformed field, a run field, or two cells for one
-seat; a profile without one of its two keys); each fault is one line on standard error. Red before
+seat; a `model` or `effort` that breaks the value grammar, in a receipt or in the expectation
+file; an `effort:` line anywhere but directly after `model:`; a profile without one of its four
+keys); each fault is one line on standard error. Red before
 fault, as R4-2 sets it for every gate: when one run meets both a red and a fault, the report
 prints every red it can find, puts each fault on standard error, and exits 1; it exits 2 only
 when it found no red. A fault in the expectation file leaves the `NO_USAGE` reds of the receipts

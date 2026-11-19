@@ -314,7 +314,8 @@ class ExpectationSchemaTests(ReportCase):
         self.fault_for(self.raw('{"%s": {"model": "a-model", "effort": "high", "output_tokens_max": 1e3, "processed_tokens_max": 2}}' % IMPLEMENTATION))
 
     def test_a_top_level_that_is_not_a_non_empty_object_is_exit_two(self) -> None:
-        for value in ([], {}, 5, "x", None):
+        values: tuple[object, ...] = ([], {}, 5, "x", None)
+        for value in values:
             with self.subTest(value=value):
                 self.fault_for(self.write_json(value))
 
@@ -443,7 +444,7 @@ class RedBeforeFaultTests(ReportCase):
 class DecimalCountTests(ReportCase):
     """A count of any length is a value: compared as text, never converted, never an error."""
 
-    def line(self, counts: tuple[str, str, str, str], limits: dict[str, dict[str, int]] | None = None) -> tuple[int, str, str]:
+    def line(self, counts: tuple[str, str, str, str], limits: dict[str, dict[str, object]] | None = None) -> tuple[int, str, str]:
         names = ("input_tokens", "cache_write_tokens", "cache_read_tokens", "output_tokens")
         path = self.receipt(usage(replace=dict(zip(names, counts))))
         expectation = self.write_json(limits, "big.json") if limits is not None else None
@@ -532,6 +533,250 @@ class RecognitionTests(ReportCase):
         code, _, err = self.fault_with(usage(heading="Other name"))
         self.assertEqual(code, 2)
         self.assertIn("heading", err)
+
+
+SONNET = "claude-sonnet-5-5"
+BOUND_LIMITS = {
+    IMPLEMENTATION: {"model": SONNET, "effort": "high", "output_tokens_max": 1000, "processed_tokens_max": 5000},
+    REVIEW: {"model": "claude-opus-5-5", "effort": "high", "output_tokens_max": 800, "processed_tokens_max": 4000},
+}
+
+
+class BindingTests(ReportCase):
+    """The model and the effort are bound to the profile; a mismatch is a red, an absent effort alone is not."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.expectation = self.write_json(BOUND_LIMITS)
+
+    def one(
+        self,
+        model: str = SONNET,
+        effort: str | None = "high",
+        counts: tuple[int, int, int, int] = (100, 200, 300, 400),
+        profile: str = IMPLEMENTATION,
+    ) -> tuple[int, str, str]:
+        drop = ["effort"] if effort is None else []
+        replace = {"model": model}
+        if effort is not None:
+            replace["effort"] = effort
+        return self.report(self.receipt(usage(profile, counts=counts, replace=replace, drop=drop)))
+
+    def words(
+        self,
+        model: str = SONNET,
+        effort: str | None = "high",
+        counts: tuple[int, int, int, int] = (100, 200, 300, 400),
+        profile: str = IMPLEMENTATION,
+    ) -> tuple[int, str]:
+        code, out, err = self.one(model, effort, counts, profile)
+        self.assertEqual(len(out.splitlines()), 1, out + err)
+        return code, out.split(" ")[-1].strip()
+
+    def test_a_cell_matching_its_profile_prints_model_effort_and_within(self) -> None:
+        self.assertEqual(
+            self.one(),
+            (0, f"seat:{IMPLEMENTATION}/run-1 {IMPLEMENTATION} model={SONNET} effort=high output=400 processed=600 WITHIN\n", ""),
+        )
+
+    def test_another_model_is_a_mismatch_and_exit_one(self) -> None:
+        self.assertEqual(self.words(model="claude-opus-5-5"), (1, "MODEL_MISMATCH"))
+
+    def test_a_model_that_only_extends_the_expected_one_is_a_mismatch(self) -> None:
+        self.assertEqual(self.words(model=SONNET + "-fast"), (1, "MODEL_MISMATCH"))
+        self.assertEqual(self.words(model="claude-sonnet-5"), (1, "MODEL_MISMATCH"))
+
+    def test_the_model_is_compared_case_sensitively(self) -> None:
+        self.assertEqual(self.words(model="Claude-Sonnet-5-5"), (1, "MODEL_MISMATCH"))
+
+    def test_two_models_in_one_cell_are_a_mismatch_in_either_order(self) -> None:
+        for model in (f"{SONNET},claude-opus-5-5", f"claude-opus-5-5,{SONNET}"):
+            with self.subTest(model=model):
+                self.assertEqual(self.words(model=model), (1, "MODEL_MISMATCH"))
+
+    def test_another_effort_is_a_mismatch_and_exit_one(self) -> None:
+        self.assertEqual(self.words(effort="medium"), (1, "EFFORT_MISMATCH"))
+
+    def test_the_effort_is_compared_case_sensitively(self) -> None:
+        self.assertEqual(self.words(effort="High"), (1, "EFFORT_MISMATCH"))
+
+    def test_two_efforts_in_one_cell_are_a_mismatch_in_either_order(self) -> None:
+        for effort in ("high,medium", "medium,high"):
+            with self.subTest(effort=effort):
+                self.assertEqual(self.words(effort=effort), (1, "EFFORT_MISMATCH"))
+
+    def test_the_line_prints_the_value_lists_as_written(self) -> None:
+        code, out, _ = self.one(model=f"claude-opus-5-5,{SONNET}", effort="medium,high")
+        self.assertEqual(code, 1)
+        self.assertIn(f" model=claude-opus-5-5,{SONNET} effort=medium,high output=", out)
+
+    def test_every_word_comes_in_the_fixed_order(self) -> None:
+        self.assertEqual(
+            self.words(model="other", effort="low", counts=(6000, 0, 0, 2000)),
+            (1, "MODEL_MISMATCH,EFFORT_MISMATCH,OVER_OUTPUT,OVER_PROCESSED"),
+        )
+        self.assertEqual(self.words(model="other", counts=(6000, 0, 0, 1)), (1, "MODEL_MISMATCH,OVER_PROCESSED"))
+        self.assertEqual(self.words(effort="low", counts=(1, 1, 1, 2000)), (1, "EFFORT_MISMATCH,OVER_OUTPUT"))
+
+    def test_an_unrecorded_effort_alone_prints_the_word_and_is_exit_zero(self) -> None:
+        code, out, err = self.one(effort=None)
+        self.assertEqual(
+            (code, out, err),
+            (0, f"seat:{IMPLEMENTATION}/run-1 {IMPLEMENTATION} model={SONNET} effort=UNRECORDED output=400 processed=600 EFFORT_UNRECORDED\n", ""),
+        )
+
+    def test_within_is_never_printed_beside_an_unrecorded_effort(self) -> None:
+        _, out, _ = self.one(effort=None)
+        self.assertNotIn("WITHIN", out)
+
+    def test_an_unrecorded_effort_comes_last_and_the_other_words_make_the_cell_red(self) -> None:
+        self.assertEqual(self.words(effort=None, counts=(1, 1, 1, 2000)), (1, "OVER_OUTPUT,EFFORT_UNRECORDED"))
+        self.assertEqual(self.words(effort=None, model="other"), (1, "MODEL_MISMATCH,EFFORT_UNRECORDED"))
+        self.assertEqual(
+            self.words(effort=None, model="other", counts=(6000, 0, 0, 2000)),
+            (1, "MODEL_MISMATCH,OVER_OUTPUT,OVER_PROCESSED,EFFORT_UNRECORDED"),
+        )
+
+    def test_an_unknown_profile_stands_alone_with_or_without_an_effort_line(self) -> None:
+        for effort in ("high", "low", None):
+            with self.subTest(effort=effort):
+                code, out, _ = self.one(model="other", effort=effort, counts=(9000, 0, 0, 9000), profile="made-up")
+                self.assertEqual(code, 1)
+                self.assertTrue(out.endswith(" UNKNOWN_PROFILE\n"), out)
+                self.assertEqual(len(out.split(" ")), 7)
+
+    def test_each_profile_has_its_own_model(self) -> None:
+        self.assertEqual(self.words(model="claude-opus-5-5", profile=REVIEW), (0, "WITHIN"))
+        self.assertEqual(self.words(model=SONNET, profile=REVIEW), (1, "MODEL_MISMATCH"))
+
+    def test_every_red_is_listed_not_only_the_first(self) -> None:
+        path = self.receipt(
+            usage(replace={"model": "other"}),
+            usage(REVIEW, "run-2", replace={"model": "claude-opus-5-5"}),
+            usage(REVIEW, "run-3", replace={"model": "claude-opus-5-5", "effort": "low"}),
+        )
+        code, out, _ = self.report(path)
+        self.assertEqual(code, 1)
+        self.assertEqual([line.split(" ")[-1] for line in out.splitlines()], ["MODEL_MISMATCH", "WITHIN", "EFFORT_MISMATCH"])
+
+    def test_a_red_beside_a_broken_receipt_still_prints_and_exits_one(self) -> None:
+        red = self.receipt(usage(replace={"model": "other"}), name="red.md")
+        broken = self.receipt(usage(replace={"effort": "a, b"}), name="broken.md")
+        code, out, err = self.report(red, broken)
+        self.assertEqual(code, 1)
+        self.assertTrue(out.endswith("MODEL_MISMATCH\n"), out)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertIn("effort", err)
+
+
+class ValueGrammarTests(ReportCase):
+    """A value that breaks the grammar is a schema break (exit 2), in a receipt and in the expectation."""
+
+    BAD = ("", "a b", "a, b", "a ,b", "a,", ",a", "a,,b", "a,a", "a,b,a", "-a", "a/b", "a:b")
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.expectation = self.write_json(BOUND_LIMITS)
+
+    def receipt_fault(self, **replace: str) -> str:
+        code, out, err = self.report(self.receipt(usage(replace=replace)))
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        self.assertNotIn("Traceback", err)
+        return err
+
+    def test_a_bad_model_in_a_receipt_is_exit_two(self) -> None:
+        for bad in self.BAD:
+            with self.subTest(bad=bad):
+                self.assertIn("model", self.receipt_fault(model=bad))
+
+    def test_a_bad_effort_in_a_receipt_is_exit_two(self) -> None:
+        for bad in self.BAD:
+            with self.subTest(bad=bad):
+                self.assertIn("effort", self.receipt_fault(effort=bad))
+
+    def test_a_valid_list_in_a_receipt_is_read(self) -> None:
+        code, out, _ = self.report(self.receipt(usage(replace={"model": "a.b_c-d,e", "effort": "x,y,z"})))
+        self.assertEqual(code, 1)
+        self.assertIn(" model=a.b_c-d,e effort=x,y,z ", out)
+
+    def test_the_effort_line_stands_only_directly_after_the_model_line(self) -> None:
+        lines = usage().split("\n")
+        effort = lines.pop(lines.index("effort: high"))
+        before_model = lines.copy()
+        before_model.insert(before_model.index("model: a-model"), effort)
+        after_source = [*lines[:-1], effort, ""]
+        after_input = lines.copy()
+        after_input.insert(after_input.index("cache_write_tokens: 200"), effort)
+        for label, moved in (("before model", before_model), ("after source", after_source), ("later", after_input)):
+            with self.subTest(label):
+                code, out, err = self.report(self.receipt("\n".join(moved)))
+                self.assertEqual((code, out), (2, ""), err)
+                self.assertIn("out of order", err)
+
+    def test_an_effort_line_given_twice_is_exit_two(self) -> None:
+        self.assertIn("more than once", self.receipt_fault_extra("effort: high"))
+
+    def receipt_fault_extra(self, line: str) -> str:
+        code, out, err = self.report(self.receipt(usage(extra=[line])))
+        self.assertEqual((code, out), (2, ""), err)
+        return err
+
+    def entry_fault(self, entry: dict[str, object]) -> str:
+        code, out, err = self.report(self.receipt(usage()), expectation=self.write_json({IMPLEMENTATION: entry}, "entry.json"))
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertEqual(len(err.splitlines()), 1, err)
+        return err
+
+    def good_entry(self) -> dict[str, object]:
+        return {"model": "a-model", "effort": "high", "output_tokens_max": 1, "processed_tokens_max": 1}
+
+    def test_an_expectation_entry_missing_model_or_effort_is_exit_two(self) -> None:
+        for key in ("model", "effort"):
+            with self.subTest(key=key):
+                entry = self.good_entry()
+                del entry[key]
+                self.assertIn(f"lacks {key}", self.entry_fault(entry))
+
+    def test_an_expectation_model_or_effort_that_is_not_one_item_is_exit_two(self) -> None:
+        for key in ("model", "effort"):
+            for bad in (*self.BAD, "a,b", "<host-model>", "<host-effort>", 5, None, True, ["a"]):
+                with self.subTest(key=key, bad=bad):
+                    entry = self.good_entry()
+                    entry[key] = bad
+                    self.assertIn(key, self.entry_fault(entry))
+
+    def test_the_unfilled_template_is_a_schema_break(self) -> None:
+        template = Path(__file__).resolve().parents[1] / "template" / "doc" / "handoffs" / "governance" / "usage-expectation.TEMPLATE.json"
+        code, out, err = self.report(self.receipt(usage()), expectation=template)
+        self.assertEqual((code, out), (2, ""), err)
+        self.assertIn("<host-", err)
+
+    def test_the_template_filled_with_the_fixture_values_gives_within(self) -> None:
+        template = Path(__file__).resolve().parents[1] / "template" / "doc" / "handoffs" / "governance" / "usage-expectation.TEMPLATE.json"
+        text = template.read_text(encoding="utf-8").replace("<host-model>", "a-model").replace("<host-effort>", "high")
+        filled = self.base / "filled.json"
+        filled.write_text(text, encoding="utf-8", newline="\n")
+        code, out, err = self.report(self.receipt(usage(counts=(1, 1, 1, 1))), expectation=filled)
+        self.assertEqual((code, err), (0, ""))
+        self.assertTrue(out.endswith(" WITHIN\n"), out)
+
+    def test_a_list_in_the_expectation_is_refused_even_though_a_receipt_may_hold_one(self) -> None:
+        entry = self.good_entry()
+        entry["model"] = "a-model,b"
+        self.assertIn("model", self.entry_fault(entry))
+
+    def test_the_repository_expectation_file_is_read_and_names_all_three_profiles(self) -> None:
+        repo = Path(__file__).resolve().parents[1]
+        path = repo / "doc" / "handoffs" / "2026" / "workflow-governance" / "usage-expectation.json"
+        limits = usage_report.load_expectation(path)
+        self.assertEqual(set(limits), {IMPLEMENTATION, "implementation-elevated", REVIEW})
+        self.assertEqual((limits[IMPLEMENTATION].model, limits[IMPLEMENTATION].effort), ("claude-sonnet-5-5", "high"))
+        self.assertEqual((limits[REVIEW].model, limits[REVIEW].effort), ("claude-opus-5-5", "high"))
+        self.assertEqual(
+            (limits["implementation-elevated"].model, limits["implementation-elevated"].effort),
+            (limits[REVIEW].model, limits[REVIEW].effort),
+        )
 
 
 class PrintedSubjectTests(unittest.TestCase):
