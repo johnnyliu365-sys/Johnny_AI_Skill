@@ -1,4 +1,4 @@
-"""Behavioural tests for the dispatch_lint gate script (rules R1-R7, exit codes 0/1/3).
+"""Behavioural tests for the dispatch_lint gate script (rules R1-R8, exit codes 0/1/3).
 
 Every fixture is generated in a temporary directory; every expected value is derived
 from the text the fixture wrote.
@@ -607,6 +607,175 @@ class DispatchDigestTests(unittest.TestCase):
                     self.assertEqual(done.stdout, stdout)
                 else:
                     self.assertIn("R7 state row: expected", done.stdout)
+
+
+WITHOUT_MODEL = "R8 profile: without model:"
+WITHOUT_EFFORT = "R8 profile: without effort:"
+MODEL_INVALID = "R8 model: invalid"
+EFFORT_INVALID = "R8 effort: invalid"
+
+
+def bound(*body: str, model: str | None = "claude-sonnet-5-5", effort: str | None = "high") -> str:
+    """A dispatch with a profile field and, unless None, the model and effort fields."""
+    fields = ['profile: "implementation-standard"']
+    if model is not None:
+        fields.append(f"model: {model}")
+    if effort is not None:
+        fields.append(f"effort: {effort}")
+    return dispatch(*fields, *body)
+
+
+def r8(text: str) -> list[str]:
+    return [problem for problem in dispatch_lint.lint(text) if problem.startswith("R8")]
+
+
+class SeatBindingTests(unittest.TestCase):
+    """R8: a dispatch with a top-level profile names its model and effort, each one item."""
+
+    def test_a_bound_dispatch_passes(self) -> None:
+        self.assertEqual(dispatch_lint.lint(bound()), [])
+
+    def test_a_dispatch_without_a_profile_field_is_never_an_r8_case(self) -> None:
+        for text in (dispatch(), dispatch("model: a b"), dispatch("effort: a, b"), dispatch("model: x", "effort: y")):
+            with self.subTest(text):
+                self.assertEqual(r8(text), [])
+
+    def test_each_value_may_stand_inside_one_pair_of_double_quotes(self) -> None:
+        for model, effort in (('"claude-sonnet-5-5"', '"high"'), ("claude-sonnet-5-5", "high"), ('"a.b_c-d"', "X9")):
+            with self.subTest(model=model, effort=effort):
+                self.assertEqual(r8(bound(model=model, effort=effort)), [])
+
+    def test_a_missing_model_field_is_named(self) -> None:
+        self.assertEqual(r8(bound(model=None)), [WITHOUT_MODEL])
+
+    def test_a_missing_effort_field_is_named(self) -> None:
+        self.assertEqual(r8(bound(effort=None)), [WITHOUT_EFFORT])
+
+    def test_both_missing_prints_model_first(self) -> None:
+        self.assertEqual(r8(bound(model=None, effort=None)), [WITHOUT_MODEL, WITHOUT_EFFORT])
+
+    def test_an_invalid_model_value_is_named_for_each_defect_form(self) -> None:
+        for bad in ("", '""', '" "', "a, b", "a,b", "a b", "a,a", '"a', 'a"', '""a""', "'a'", "-a", "a/b", "a:b", "(a)"):
+            with self.subTest(bad=bad):
+                self.assertEqual(r8(bound(model=bad)), [MODEL_INVALID])
+
+    def test_an_invalid_effort_value_is_named_for_each_defect_form(self) -> None:
+        for bad in ("", '""', '" "', "a, b", "a,b", "a b", "a,a", '"a', 'a"', '""a""', "'a'", "-a", "a/b", "a:b", "(a)"):
+            with self.subTest(bad=bad):
+                self.assertEqual(r8(bound(effort=bad)), [EFFORT_INVALID])
+
+    def test_a_list_is_invalid_in_a_dispatch_even_when_it_would_be_a_valid_list(self) -> None:
+        self.assertEqual(r8(bound(model="a,b")), [MODEL_INVALID])
+        self.assertEqual(r8(bound(effort='"a,b"')), [EFFORT_INVALID])
+
+    def test_the_four_lines_come_in_the_fixed_order(self) -> None:
+        self.assertEqual(r8(bound(model=None, effort="a b")), [WITHOUT_MODEL, EFFORT_INVALID])
+        self.assertEqual(r8(bound(model="a b", effort=None)), [WITHOUT_EFFORT, MODEL_INVALID])
+        self.assertEqual(r8(bound(model="", effort="")), [MODEL_INVALID, EFFORT_INVALID])
+
+    def test_a_field_given_twice_is_invalid(self) -> None:
+        self.assertEqual(r8(bound("model: claude-sonnet-5-5")), [MODEL_INVALID])
+        self.assertEqual(r8(bound("effort: high")), [EFFORT_INVALID])
+
+    def test_only_a_field_at_column_zero_outside_a_fence_counts(self) -> None:
+        indented = dispatch('profile: "implementation-standard"', "  model: m", "  effort: e")
+        self.assertEqual(r8(indented), [WITHOUT_MODEL, WITHOUT_EFFORT])
+        listed = dispatch('profile: "implementation-standard"', "- model: m", "- effort: e")
+        self.assertEqual(r8(listed), [WITHOUT_MODEL, WITHOUT_EFFORT])
+        fenced = dispatch('profile: "implementation-standard"', "```", "model: m", "effort: e", "```")
+        self.assertEqual(r8(fenced), [WITHOUT_MODEL, WITHOUT_EFFORT])
+        self.assertEqual(r8(bound("```", "model: a b", "effort: a b", "```")), [])
+
+    def test_a_profile_inside_a_fence_or_indented_is_not_a_profile_field(self) -> None:
+        self.assertEqual(r8(dispatch("```", 'profile: "p"', "```")), [])
+        self.assertEqual(r8(dispatch('  profile: "p"')), [])
+        self.assertEqual(r8(dispatch("- profile: p")), [])
+
+    def test_a_field_whose_name_only_starts_with_model_or_effort_is_another_field(self) -> None:
+        text = dispatch('profile: "implementation-standard"', "model_name: m", "effort_level: e", "models: m", "efforts: e")
+        self.assertEqual(r8(text), [WITHOUT_MODEL, WITHOUT_EFFORT])
+
+    def test_the_fence_rule_matches_the_per_line_rules_after_a_closed_fence(self) -> None:
+        text = bound("```", "free prose", "```", "note: ok")
+        self.assertEqual(dispatch_lint.lint(text), [])
+        text = dispatch("```", "model: m", "```", 'profile: "p"', "model: m", "effort: e")
+        self.assertEqual(r8(text), [])
+
+    def test_r8_follows_the_per_line_rules_and_does_not_replace_them(self) -> None:
+        text = bound("prose line", model=None)
+        problems = dispatch_lint.lint(text)
+        self.assertEqual(rule_ids(problems), ["R2", "R8"])
+        self.assertEqual(problems[-1], WITHOUT_MODEL)
+
+    def test_a_crlf_dispatch_is_read_the_same_way(self) -> None:
+        text = bound(model=None)
+        self.assertEqual(r8(text.replace("\n", "\r\n")), [WITHOUT_MODEL])
+        self.assertEqual(r8(bound().replace("\n", "\r\n")), [])
+
+
+class SeatBindingProcessTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory(prefix="dl-r8-")
+        self.root = Path(self.tmp.name)
+        self.addCleanup(self.tmp.cleanup)
+
+    def run_main(self, argv: list[str]) -> tuple[int, str, str]:
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = dispatch_lint.main(argv)
+        return code, out.getvalue(), err.getvalue()
+
+    def write(self, name: str, text: str) -> Path:
+        path = self.root / name
+        path.write_text(text, encoding="utf-8", newline="\n")
+        return path
+
+    def test_a_missing_field_is_exit_1_with_the_line_and_the_count(self) -> None:
+        path = self.write("d.yaml", bound(model=None, effort=None))
+        self.assertEqual(self.run_main([str(path)]), (1, f"{WITHOUT_MODEL}\n{WITHOUT_EFFORT}\nLINT FAIL (2)\n", ""))
+
+    def test_a_bound_dispatch_is_exit_0(self) -> None:
+        path = self.write("d.yaml", bound())
+        self.assertEqual(self.run_main([str(path)]), (0, "LINT PASS\n", ""))
+
+    def test_r8_runs_with_ticket_and_the_digest_rule_still_runs(self) -> None:
+        text = bound(model="a b")
+        path = self.write("d.yaml", text)
+        digest = digest_of(text.encode("utf-8"))
+        good = self.write("good.md", ticket_text(f"`DONE`; {TOKEN}{digest}"))
+        code, out, _ = self.run_main([str(path), "--ticket", str(good)])
+        self.assertEqual((code, out), (1, f"{MODEL_INVALID}\nLINT FAIL (1)\n"))
+        wrong = self.write("wrong.md", ticket_text(f"`DONE`; {TOKEN}{digest_of(b'x')}"))
+        code, out, _ = self.run_main([str(path), "--ticket", str(wrong)])
+        self.assertEqual(code, 1)
+        self.assertEqual(rule_ids(out.splitlines()), ["R8", "R7", "LINT"])
+
+    def test_r8_alone_with_a_matching_digest_and_a_bound_dispatch_passes(self) -> None:
+        text = bound()
+        path = self.write("d.yaml", text)
+        good = self.write("good.md", ticket_text(f"`DONE`; {TOKEN}{digest_of(text.encode('utf-8'))}"))
+        self.assertEqual(self.run_main([str(path), "--ticket", str(good)]), (0, "LINT PASS\n", ""))
+
+    def test_without_ticket_the_output_is_as_before_for_a_file_without_a_profile_field(self) -> None:
+        text = dispatch("prose", "note: a; b", "model: a b")
+        path = self.write("d.yaml", text)
+        code, out, _ = self.run_main([str(path)])
+        before = [problem for problem in dispatch_lint.lint(text) if not problem.startswith("R8")]
+        self.assertEqual(code, 1)
+        self.assertEqual(out.splitlines(), [*before, f"LINT FAIL ({len(before)})"])
+        self.assertNotIn("R8", out)
+
+    def test_the_docstring_names_r8_and_its_four_lines(self) -> None:
+        doc = dispatch_lint.__doc__ or ""
+        for needle in ("R8", WITHOUT_MODEL, WITHOUT_EFFORT, MODEL_INVALID, EFFORT_INVALID):
+            with self.subTest(needle):
+                self.assertIn(needle, doc)
+
+    def test_the_process_exit_code_is_1_for_a_missing_field(self) -> None:
+        path = self.write("d.yaml", bound(effort=None))
+        done = subprocess.run([sys.executable, "-I", str(SCRIPT), str(path)], capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(done.returncode, 1, done.stdout + done.stderr)
+        self.assertEqual(done.stdout, f"{WITHOUT_EFFORT}\nLINT FAIL (1)\n")
 
 
 if __name__ == "__main__":

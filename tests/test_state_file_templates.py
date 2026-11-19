@@ -69,6 +69,7 @@ USAGE_FIELD_ORDER = (
     "seat",
     "profile",
     "model",
+    "effort",
     "input_tokens",
     "cache_write_tokens",
     "cache_read_tokens",
@@ -93,6 +94,7 @@ USAGE_PLACEHOLDERS = (
     "<seat>",
     "<profile>",
     "<model>",
+    "<effort>",
     "<input-tokens>",
     "<cache-write-tokens>",
     "<cache-read-tokens>",
@@ -152,6 +154,8 @@ README_FILE_NAMES = (
     "usage-expectation.TEMPLATE.json",
     "modules/tickets/TEMPLATE.md",
 )
+USAGE_ENTRY_KEYS = ["model", "effort", "output_tokens_max", "processed_tokens_max"]
+USAGE_HOST_PLACEHOLDERS = {"model": "<host-model>", "effort": "<host-effort>"}
 USAGE_PROFILES = {
     "implementation-standard": (130000, 24000000),
     "implementation-elevated": (130000, 24000000),
@@ -1095,7 +1099,31 @@ class UsageExpectationTemplateTests(unittest.TestCase):
         self.assertEqual(set(value), set(USAGE_PROFILES))
         for profile, (output_max, processed_max) in USAGE_PROFILES.items():
             with self.subTest(profile=profile):
-                self.assertEqual(value[profile], {"output_tokens_max": output_max, "processed_tokens_max": processed_max})
+                self.assertEqual(
+                    value[profile],
+                    {**USAGE_HOST_PLACEHOLDERS, "output_tokens_max": output_max, "processed_tokens_max": processed_max},
+                )
+                entry = value[profile]
+                assert isinstance(entry, dict)
+                self.assertEqual(list(entry), USAGE_ENTRY_KEYS)
+
+    def test_the_expectation_template_names_no_provider_or_model(self) -> None:
+        text = committed_text(USAGE_EXPECTATION_TEMPLATE).lower()
+        for word in ("claude", "sonnet", "opus", "haiku", "fable", "anthropic", "gpt", "gemini", "luna", "terra", "sol"):
+            with self.subTest(word=word):
+                self.assertNotIn(word, text)
+
+    def test_the_receipt_template_names_no_provider_or_model(self) -> None:
+        text = committed_text(RECEIPT_TEMPLATE).lower()
+        for word in ("claude", "sonnet", "opus", "haiku", "fable", "anthropic", "gpt", "gemini"):
+            with self.subTest(word=word):
+                self.assertNotIn(word, text)
+
+    def test_the_usage_block_puts_the_effort_line_directly_after_the_model_line(self) -> None:
+        names = [line.split(":", 1)[0] for line in usage_example(committed_text(RECEIPT_TEMPLATE))]
+        self.assertEqual(names[names.index("model") + 1], "effort")
+        self.assertEqual(names[names.index("effort") + 1], "input_tokens")
+        self.assertEqual(committed_text(RECEIPT_TEMPLATE).count("effort: <effort>"), 1)
 
     def test_the_expectation_template_is_lf_only_with_a_final_newline(self) -> None:
         data = committed_bytes(USAGE_EXPECTATION_TEMPLATE)
@@ -1142,6 +1170,7 @@ class EvidenceGateCrossCheck(unittest.TestCase):
             "<seat>": "seat:implementation-standard/run-1",
             "<profile>": "implementation-standard",
             "<model>": "a-model",
+            "<effort>": "high",
             "<input-tokens>": "1000",
             "<cache-write-tokens>": "2000",
             "<cache-read-tokens>": "3000",
@@ -1192,19 +1221,35 @@ class EvidenceGateCrossCheck(unittest.TestCase):
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
         self.assertIn("cells=1 defects=0", done.stdout)
         expectation = self.work / "usage-expectation.json"
-        expectation.write_bytes(committed_bytes(USAGE_EXPECTATION_TEMPLATE))
-        report = subprocess.run(
+        filled_expectation = committed_text(USAGE_EXPECTATION_TEMPLATE)
+        for token, value in (("<host-model>", "a-model"), ("<host-effort>", "high")):
+            self.assertIn(token, filled_expectation)
+            filled_expectation = filled_expectation.replace(token, value)
+        expectation.write_bytes(filled_expectation.encode("utf-8"))
+        report = self.report(expectation)
+        self.assertEqual(report.returncode, 0, report.stdout + report.stderr)
+        self.assertEqual(
+            report.stdout,
+            "seat:implementation-standard/run-1 implementation-standard model=a-model effort=high output=400 processed=6000 WITHIN\n",
+        )
+
+    def report(self, expectation: Path) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
             [sys.executable, "-I", "-X", "utf8", str(USAGE_REPORT), "--expectation", str(expectation), str(self.evidence / "RETURN.md")],
             capture_output=True,
             text=True,
             encoding="utf-8",
             env=clean_environment(),
         )
-        self.assertEqual(report.returncode, 0, report.stdout + report.stderr)
-        self.assertEqual(
-            report.stdout,
-            "seat:implementation-standard/run-1 implementation-standard output=400 processed=6000 WITHIN\n",
-        )
+
+    def test_the_unfilled_expectation_template_is_a_schema_break_for_the_report(self) -> None:
+        done = self.read({**self.values(), **self.usage_values()}, usage=True)
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        expectation = self.work / "usage-expectation.json"
+        expectation.write_bytes(committed_bytes(USAGE_EXPECTATION_TEMPLATE))
+        report = self.report(expectation)
+        self.assertEqual((report.returncode, report.stdout), (2, ""), report.stderr)
+        self.assertIn("<host-model>", report.stderr)
 
     def test_a_negative_count_in_the_filled_usage_cell_is_refused_by_the_gate(self) -> None:
         values = {**self.values(), **self.usage_values()}
