@@ -221,7 +221,7 @@ class RuleTextsInjection(unittest.TestCase):
         path = self.root / relative
         before = path.read_bytes().decode("utf-8")
         after = change(before)
-        self.assertNotEqual(before, after, "the injection changed nothing")
+        self.assertTrue(before != after, "the injection changed nothing")
         path.write_bytes(after.encode("utf-8"))
 
     def assertRed(self, *fragments: str) -> None:
