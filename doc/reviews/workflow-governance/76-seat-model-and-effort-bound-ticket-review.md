@@ -26,8 +26,25 @@ The seat was started with its model and effort named (`opus`, `high`), as ticket
 | S76R-09 | Low (note) | R8 changes ticket 75's "without `--ticket` as before" regression for files with `profile:` | Stated as an allowed change that the STATEMENT names |
 | S76R-10 | Low (note) | The figure 55 million was the correction seat; receipts were not named | Both 67 figures are given; the observation names the exact receipt directories; 71 has none |
 
+## Revision02 (commit `90a620a4`), correction rule-only review by the same seat
+
+**verdict: APPROVED**
+
+S76R-01 to S76R-10 are CLOSED. The seat checked the observation claims against the named receipts and found them true; ticket 67's two implementation cells processed 31831073 and 55068170 tokens. The edits introduced three Low gaps that do not block dispatch, each with an exact sentence.
+
+| id | severity | finding | revision03 |
+| --- | --- | --- | --- |
+| N1 | Low | The R8 problem lines were open-ended, and list or quote handling in a dispatch value was unstated | The four lines are given exactly, in order; one item, optionally in one pair of double quotes; a list is invalid |
+| N2 | Low | The unfilled template's placeholders break the value grammar, while the existing cross-check expects `WITHIN` | An unfilled template is a schema break; the cross-check fills both placeholders first |
+| N3 | Low | `UNKNOWN_PROFILE` with an absent `effort:` line was undefined | `UNKNOWN_PROFILE` stands alone |
+
+### Control-plane disposition
+
+Revision03 adds only the reviewer's three sentences. The ticket is ready for dispatch after ticket 75 is integrated.
+
 ## Seat token use
 
 | seat | model | effort | input | cache write | cache read | output |
 | --- | --- | --- | --- | --- | --- | --- |
 | rule-only review, revision01 | claude-opus-5-5 | high | 60 | 139319 | 3071707 | 22638 |
+| correction rule-only review, revision02 | claude-opus-5-5 | high | 8 | 16929 | 436959 | 5053 |

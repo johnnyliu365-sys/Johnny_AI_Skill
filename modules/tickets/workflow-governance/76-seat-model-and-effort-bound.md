@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `.worktrees/76-seat-binding-out/` / owner implementation seat / worktree `.worktrees/76-seat-binding` / branch `cp/wave3-76-seat-binding` / baseline the wave-3 branch after ticket 75 is integrated |
+| Agent Context binding | ticket revision03 / receipt under `.worktrees/76-seat-binding-out/` / owner implementation seat / worktree `.worktrees/76-seat-binding` / branch `cp/wave3-76-seat-binding` / baseline the wave-3 branch after ticket 75 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED`（revision02; strict tier; rule-only review of revision01 CHANGES_REQUESTED; after ticket 75） |
+| 狀態 | `PLANNED`（revision03; strict tier; rule-only review of revision01 CHANGES_REQUESTED, revision02 APPROVED; revision03 adds the reviewer's three exact sentences; after ticket 75） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/76-seat-binding` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/76-seat-binding-review` |
@@ -59,7 +59,7 @@ On 2026-11-19 the owner set the direction:
 
 The host transcript records both on every message (`"model"`, `"effort"`), so a program can read them.
 
-**Revision02** answers the rule-only review of revision01 (`doc/reviews/workflow-governance/76-seat-model-and-effort-bound-ticket-review.md`). Model names stay out of shipped files.
+**Revision02** answers the rule-only review of revision01, and **revision03** adds the three sentences the correction review offered (`doc/reviews/workflow-governance/76-seat-model-and-effort-bound-ticket-review.md`). Model names stay out of shipped files.
 
 After this ticket:
 
@@ -86,13 +86,13 @@ After this ticket:
      - `OVER_OUTPUT`;
      - `OVER_PROCESSED`;
      - `EFFORT_UNRECORDED`: the cell has no `effort:` line.
-   - `WITHIN` is printed only when none of the other words applies. `UNKNOWN_PROFILE` is unchanged.
+   - `WITHIN` is printed only when none of the other words applies. `UNKNOWN_PROFILE` is unchanged, and stands alone: no other word is appended to it.
    - `MODEL_MISMATCH`, `EFFORT_MISMATCH` and the `OVER_*` words are reds (exit 1). `EFFORT_UNRECORDED` alone is not.
    - A value in a receipt or in the expectation that breaks the grammar of item 1, and an expectation entry missing `model` or `effort`, are schema breaks (exit 2). Reds print first, as R4-2 sets.
 5. **The dispatch names them (R8).**
    - A dispatch file with a top-level `profile:` field must also carry top-level `model:` and `effort:` fields. Top-level means a field at column 0, outside a code fence.
-   - Each of `model:` and `effort:` must have a non-empty value that obeys item 1, with or without quotes.
-   - A missing or invalid field is red (exit 1). After the per-line rules, one line is printed per missing field: `R8 profile: without model:`, or `R8 profile: without effort:`, or `R8 model: invalid` and the like.
+   - Each of `model:` and `effort:` must have a non-empty value that obeys item 1.
+   - A missing or invalid field is red (exit 1). After the per-line rules, the lines are exactly `R8 profile: without model:`, `R8 profile: without effort:`, `R8 model: invalid` and `R8 effort: invalid`, in that order, each printed when it applies. Each value is one item of item 1, optionally inside one pair of double quotes; a list is invalid in a dispatch.
    - R8 runs with or without ticket 75's `--ticket`. R1 to R7 are unchanged.
    - Ticket 75's regression test "without `--ticket` the output is as before" may change only for files that carry `profile:`. The STATEMENT names each such change.
 6. **The runbook's token-use section** says:
@@ -140,7 +140,8 @@ After this ticket:
 3. 外部失敗／fail-closed: an unreadable expectation or receipt stays exit 2, with reds printed first.
 4. 回歸保護:
    - every existing usage_report, evidence_gate and dispatch-lint test passes, or changes only where the new grammar or report line requires it, with each change named in the STATEMENT;
-   - `tests/test_state_file_templates.py` pins the new template placeholders and field order.
+   - `tests/test_state_file_templates.py` pins the new template placeholders and field order;
+   - an unfilled expectation template is a schema break (exit 2). The cross-check fills both placeholders with the USAGE fixture's model and effort before it runs the report.
 
 ### 適用的缺陷類別
 
