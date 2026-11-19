@@ -139,6 +139,14 @@ reviewer: seat:ticket-review/66-rev01-initial
 reviewed_at: 2026-11-19
 ```
 
+```rework-record
+candidate: c9af77250c0b7af0f60b96526aeec7f92f3cb31f
+round: 1
+kind: INITIAL
+verdict: CHANGES_REQUESTED
+causes: CONTROL_PLANE_RULE,IMPLEMENTATION_DETAIL
+```
+
 ## Revision01 correction review
 
 **Verdict: `APPROVED`.** Correction 1 (`2d11118c`) closes S66-02, S66-04 and S66-05 as asked, and records S66-01 in the STATEMENT.
@@ -244,6 +252,14 @@ candidate: 2d11118c10da4a57e769cafe09d310e64be66070
 verdict: APPROVED
 reviewer: seat:ticket-review/66-rev01-correction
 reviewed_at: 2026-11-19
+```
+
+```rework-record
+candidate: 2d11118c10da4a57e769cafe09d310e64be66070
+round: 2
+kind: CORRECTION
+verdict: APPROVED
+causes:
 ```
 
 ## Seat token use (readiness criterion 5)

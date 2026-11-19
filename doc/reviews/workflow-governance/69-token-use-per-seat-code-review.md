@@ -184,6 +184,14 @@ reviewer: seat:ticket-review/69-rev01-initial
 reviewed_at: 2026-11-18
 ```
 
+```rework-record
+candidate: 393a0e80a6732a306843fe0383ea9a5c0d263a7a
+round: 1
+kind: INITIAL
+verdict: CHANGES_REQUESTED
+causes: IMPLEMENTATION_DETAIL
+```
+
 ## Revision01 correction review
 
 **Verdict: `CONVERGENCE_REVIEW_REQUIRED`, with every open finding non-blocking under CodeReview §5 rule B. No blocking finding remains: no exit-code misclassification, no safety or confinement issue and no P0 issue. The only open finding is S69-08. It is an evidence residue of S69-06: the candidate behaves correctly, but on POSIX the tests do not pin it, and a regression would not let a change pass. It therefore goes to a follow-up hardening ticket. S69-07 is answered by a runbook rule, and the P9 checker itself stays a control-plane follow-up. The control plane may record the rule B convergence disposition (`carried: S69-07, S69-08`).** Correction 1 (`7cc0e08f`) closes every blocking finding of the initial review:
@@ -295,6 +303,14 @@ candidate: 7cc0e08fa5cdf2d573c6c00806d59f09d1778d98
 verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/69-rev01-correction
 reviewed_at: 2026-11-18
+```
+
+```rework-record
+candidate: 7cc0e08fa5cdf2d573c6c00806d59f09d1778d98
+round: 2
+kind: CORRECTION
+verdict: CONVERGENCE_REVIEW_REQUIRED
+causes:
 ```
 
 ## Convergence disposition (control plane, 2026-11-18)

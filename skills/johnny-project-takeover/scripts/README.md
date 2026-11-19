@@ -1,11 +1,11 @@
 # Gate scripts
 
-Eleven stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `preflight.py`, `repair_guard.py`, `integrate.py` and `usage_report.py`) that decide a workflow transition, keep a versioned record or move a reviewed candidate onto the integration branch mechanically.
+Twelve stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `preflight.py`, `repair_guard.py`, `integrate.py`, `usage_report.py` and `rework_report.py`) that decide a workflow transition, keep a versioned record or move a reviewed candidate onto the integration branch mechanically.
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
 usage error. `dispatch_lint.py` reads one dispatch file, and with `--ticket` one ticket file, and has no tool fault (`0`, `1`, `3`). `preflight.py` has no red (`0`, `2`, `3`). `integrate.py` reads `0` as landed, recorded or nothing to do and `1` as an entry bounced or a precondition red. In
-`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `repair_guard.py`, `integrate.py` and `usage_report.py` an unexpected error is also a tool fault
+`receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `repair_guard.py`, `integrate.py`, `usage_report.py` and `rework_report.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red; the wave-2 gates
 report every red they can find even when a fault was met on the way (see each section). The console
@@ -876,3 +876,61 @@ section is a USAGE cell exactly as `evidence_gate.py` reads it: its `cell:` line
 it has no `cell:` line and its heading is `USAGE` or starts with `USAGE `. A section headed USAGE
 whose `cell:` line says anything else, or is absent, breaks the schema (exit 2, or exit 1 beside a
 red) and is never skipped.
+
+## rework_report.py
+
+    python rework_report.py RECORD...
+
+Reads code-review records and sums the review rounds and the causes of rework per ticket. A
+record is `doc/reviews/<feature>/<ticket>-…-code-review.md` and holds exactly one ticket: the ticket
+id is the file name up to its first `-` (so `65-…` and `650-…` are two tickets). A pre-dispatch
+rule-only review (`…-ticket-review.md`) carries no block and counts in no round. Each review section
+of a record ends with a fenced `rework-record` block that directly follows the section's
+`review-verdict` block, and a `CHANGE_DETECTED` return before any review has a `RETURN` block
+before the first review section (`CodeReview.md` section 3). The block holds exactly five lines, in
+this order, each key once:
+
+    candidate: <40 lower-case hex, or none>
+    round: <1, 2, 3 … in order of appearance in the record; no leading zero>
+    kind: INITIAL | CORRECTION | RETURN
+    verdict: APPROVED | CHANGES_REQUESTED | BLOCKED | CONVERGENCE_REVIEW_REQUIRED | CHANGE_DETECTED
+    causes: <empty, or causes joined by "," with no blank and no repeat, in table order>
+
+The causes follow from the findings: `CONTROL_PLANE_RULE` from `TICKET_DEFECT`, `RETURN_UNTRUE` from
+an `EVIDENCE_DEFECT` that cites a return or receipt statement the evidence contradicts,
+`DESIGN_UNFORESEEN` from `REQUIREMENT_CHANGED` and every `RETURN` block, and `IMPLEMENTATION_DETAIL`
+from `IMPLEMENTATION_DEFECT` and every other `EVIDENCE_DEFECT`; `OUT_OF_SCOPE_HARDENING` gives none.
+The cause names are exact and case-sensitive.
+
+Output on standard output, in this order. One line per ticket,
+`<ticket> rounds=<n> CONTROL_PLANE_RULE=<a> RETURN_UNTRUE=<b> DESIGN_UNFORESEEN=<c> IMPLEMENTATION_DETAIL=<d> final=<verdict>`,
+where each cause count is the number of rounds that name the cause (a round with two causes counts
+once under each) and `final` is the last round's `verdict` as recorded. A record that holds a red
+has no ticket line. Then one line
+`TOTAL tickets=<t> rounds=<n> CONTROL_PLANE_RULE=<a> RETURN_UNTRUE=<b> DESIGN_UNFORESEEN=<c> IMPLEMENTATION_DETAIL=<d>`
+over the ticket lines printed. Then one line per red, naming the record, a code and the reason.
+
+Reds (exit 1): `NO_REWORK_RECORD` (a record with no block); `UNCLOSED_FENCE`; `FIELD_MISSING`,
+`FIELD_REPEATED`, `FIELD_ORDER` and `FIELD_UNKNOWN` (a line that is not one of the five fields, a
+blank line included); `VALUE_INVALID` (a value outside its grammar: a candidate that is not 40
+lower-case hex digits, `none` outside a `RETURN` block, a round with a leading zero or no digits, a
+kind or verdict outside its domain, a `RETURN` block whose verdict is not `CHANGE_DETECTED`, causes
+that hold a blank, an empty item, a repeat or are out of table order); `UNKNOWN_CAUSE`;
+`CAUSES_RULE` (causes that break the rule: empty for `APPROVED`; for `CONVERGENCE_REVIEW_REQUIRED`
+empty only when the record holds a `convergence-disposition` for that candidate that says
+`disposition: APPROVED`; not empty for `CHANGES_REQUESTED`, `BLOCKED` and `CHANGE_DETECTED`; a
+`RETURN` block names `DESIGN_UNFORESEEN` and nothing else); `ROUND_SEQUENCE` (rounds that skip,
+repeat or do not start at 1); `VERDICT_MISMATCH` and `CANDIDATE_MISMATCH` (a block whose `verdict`
+or `candidate` differs from the nearest `review-verdict` block before it); `NO_REVIEW_VERDICT` (a
+non-`RETURN` block with no `review-verdict` block before it); `RETURN_AFTER_VERDICT` (a `RETURN`
+block after the first `review-verdict` block). Two more reds belong to the file names:
+`DUPLICATE_TICKET` (two records of one ticket in one run) and `TICKET_ID` (a file name with nothing
+before its first `-`). A block inside another fence is body text, never a block. `integrate.py` reads
+only the `review-verdict` and `convergence-disposition` blocks and ignores every other fence, so the
+block changes no integration decision.
+
+Exit 0: no red and no fault. Exit 1: a red; every red is printed, and each fault goes to standard
+error as one line. Exit 2: no red, but a record is unreadable or not UTF-8. Red before fault, as R4-2
+sets it for every gate: a fault in one record never hides the reds of the others, and a fault never
+exits 1 on its own. Exit 3: no record, an option, or a blank path. Every printed subject is escaped to
+one line, and an unexpected error is a fault (exit 2), never a pass.

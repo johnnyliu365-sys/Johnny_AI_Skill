@@ -134,6 +134,14 @@ reviewer: seat:ticket-review/72-rev01-initial
 reviewed_at: 2026-11-19
 ```
 
+```rework-record
+candidate: fe9b02567f52b89cde4a74ca63de843a9cd4cfdc
+round: 1
+kind: INITIAL
+verdict: CHANGES_REQUESTED
+causes: RETURN_UNTRUE,IMPLEMENTATION_DETAIL
+```
+
 ## Revision01 correction review
 
 **Verdict: `CONVERGENCE_REVIEW_REQUIRED`. Every open finding is non-blocking under rule B.** Correction 1 (`8c770265`) closes S72-01, S72-02 and S72-03 as specified. Each pin is the smallest fix the initial review named, and my RM1, RM2 and RM3 reruns now each turn the new subtest red for the intended reason. The S72-04 README sentence is there. S72-05 is unchanged, on the coordinator's instruction. The correction touches only the test file and the README; the receipt was rebuilt outside the tree. The script and `tests/test_wave2_end_to_end.py` are byte-identical to `fe9b0256`. No existing assertion changed. P9 and E1 pass when I rerun them, and CI run 44369248294 is green on both jobs at the candidate.
@@ -221,6 +229,14 @@ candidate: 8c770265818bc986a20ca9ea50accc16ad56da06
 verdict: CONVERGENCE_REVIEW_REQUIRED
 reviewer: seat:ticket-review/72-rev01-correction
 reviewed_at: 2026-11-19
+```
+
+```rework-record
+candidate: 8c770265818bc986a20ca9ea50accc16ad56da06
+round: 2
+kind: CORRECTION
+verdict: CONVERGENCE_REVIEW_REQUIRED
+causes:
 ```
 
 ## Convergence disposition (control plane, 2026-11-19)

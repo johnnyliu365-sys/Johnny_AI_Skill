@@ -57,6 +57,14 @@ reviewed_at: 2026-11-19T06:25:52Z
 blocking: none
 ```
 
+```rework-record
+candidate: 4943d76c3413f8c4cfbad9c0f70eafc9bb7f8a6c
+round: 1
+kind: INITIAL
+verdict: APPROVED
+causes:
+```
+
 ## Seat token use (readiness criterion 5)
 
 Host-reported usage per seat, summed per unique message id, against the expectation the owner confirmed on 2026-11-18 ("1A"); appended to the receipt as `USAGE` cells at integration.

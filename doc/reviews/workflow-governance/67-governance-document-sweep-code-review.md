@@ -68,6 +68,14 @@ reviewed_at: 2026-11-19T02:45:36Z
 blocking: S67-01, S67-02, S67-03, S67-04
 ```
 
+```rework-record
+candidate: 867ddb53021b79f97afc1ccce3b10d6c6db03555
+round: 1
+kind: INITIAL
+verdict: CHANGES_REQUESTED
+causes: IMPLEMENTATION_DETAIL
+```
+
 ---
 
 ## Correction review (round: correction)
@@ -123,6 +131,14 @@ reviewer: ticket-review seat (claude-opus-5-5), run R67-2
 reviewed_at: 2026-11-19T03:45:52Z
 open_findings: none
 carried_by_control_plane: S67-05, S67-06, S67-07, BridgeCapability.AVAILABLE (wave 4)
+```
+
+```rework-record
+candidate: 0f621d9cfee48bd4e1b0277ace5a19633da55613
+round: 2
+kind: CORRECTION
+verdict: APPROVED
+causes:
 ```
 
 ## Seat token use (readiness criterion 5)
