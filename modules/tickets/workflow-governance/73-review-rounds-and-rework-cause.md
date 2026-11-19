@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `.worktrees/73-rework-out/` / owner implementation seat / worktree `.worktrees/73-rework` / branch `cp/wave3-73-rework` / baseline the wave-3 branch after ticket 76 is integrated |
+| Agent Context binding | ticket revision03 / receipt under `.worktrees/73-rework-out/` / owner implementation seat / worktree `.worktrees/73-rework` / branch `cp/wave3-73-rework` / baseline the wave-3 branch after ticket 76 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED`（revision02; strict tier; rule-only review of revision01 CHANGES_REQUESTED; after ticket 76） |
+| 狀態 | `PLANNED`（revision03; strict tier; rule-only reviews of revision01 and revision02 CHANGES_REQUESTED; revision03 applies the reviewer's exact fixes; after ticket 76） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/73-rework` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/73-rework-review` |
@@ -24,7 +24,6 @@
 modify = CodeReview.md
 modify = skills/johnny-project-takeover/scripts/README.md
 modify = doc/reviews/workflow-governance/
-modify = tests/test_gate_contract.py
 create = skills/johnny-project-takeover/scripts/rework_report.py
 create = tests/test_rework_report.py
 forbid = skills/johnny-project-takeover/scripts/integrate.py
@@ -47,7 +46,7 @@ Process tier: strict.
 
 The owner decided on 2026-11-18 ("B") that each ticket records its review rounds and the cause of each rework.
 
-**Revision02** answers the rule-only review of revision01 (`doc/reviews/workflow-governance/73-review-rounds-and-rework-cause-ticket-review.md`). The changes:
+**Revision02** answers the rule-only review of revision01, and **revision03** the correction review of revision02 (`doc/reviews/workflow-governance/73-review-rounds-and-rework-cause-ticket-review.md`). The changes:
 
 - causes now follow mechanically from the finding classes;
 - the block, the report line and the exit codes are exact;
@@ -58,7 +57,7 @@ After this ticket:
 1. **Scope.** The `rework-record` block appears only in code-review records (`doc/reviews/<feature>/<ticket>-…-code-review.md`).
    - A pre-dispatch rule-only review (`…-ticket-review.md`) carries no block and counts in no round, because it is outside the `CodeReview.md` §5 count.
    - One code-review record holds exactly one ticket. The ticket id is the record's file name up to its first `-`.
-2. **The block.** `CodeReview.md` §3 gains one bullet: each review section of a code-review record ends with a fenced `rework-record` block. The block follows the section's `review-verdict` block, and its `convergence-disposition` block when there is one.
+2. **The block.** `CodeReview.md` §3 gains one bullet: each review section of a code-review record ends with a fenced `rework-record` block that directly follows the section's `review-verdict` block. The report pairs each non-`RETURN` block with the nearest `review-verdict` block before it.
    - **Who writes it.** The reviewer writes the block at the end of its own section.
    - **A `CHANGE_DETECTED` return before any review** is a round too. Its block stands before the first review section; the control plane writes it.
    - **What does not change.** The `review-verdict` and `convergence-disposition` grammar, and `integrate.py`, which reads only those two blocks and ignores any other fence.
@@ -76,8 +75,8 @@ After this ticket:
    - `round` is this record's own counter. It does not replace §5's count, which restarts with each closure revision.
    - `verdict` equals the section's `review-verdict` verdict, and `candidate` equals its candidate. For a `RETURN` block, `verdict` is `CHANGE_DETECTED`.
 3. **Causes, mechanically from the findings.**
-   - The causes are empty if and only if the verdict is `APPROVED` or `CONVERGENCE_REVIEW_REQUIRED`. For the other three verdicts they are not empty.
-   - They come from every finding the section asks to have corrected, which is every §4 class except `OUT_OF_SCOPE_HARDENING`. Each class maps to exactly one cause:
+   - The causes are empty for `APPROVED`. They are empty for `CONVERGENCE_REVIEW_REQUIRED` only when the record has an `APPROVED` `convergence-disposition` for that candidate; otherwise they are not empty. For `CHANGES_REQUESTED`, `BLOCKED` and `CHANGE_DETECTED` they are not empty.
+   - They come from every finding the section asks to have corrected, which is every §4 class except `OUT_OF_SCOPE_HARDENING`. A finding's class is the first §4 class named in its class cell. Each class maps to exactly one cause:
 
      | Cause | Mapped from |
      | --- | --- |
@@ -104,7 +103,9 @@ After this ticket:
      - an unknown cause;
      - causes that break item 3;
      - rounds that skip, repeat or do not start at 1;
-     - a `verdict` or `candidate` that differs from the section's `review-verdict`.
+     - a `verdict` or `candidate` that differs from the paired `review-verdict`;
+     - a non-`RETURN` block with no `review-verdict` block before it;
+     - a `RETURN` block after the first `review-verdict` block.
    - **Exit codes, red before fault as R4-2 states:**
      - when any red is found, the exit is 1; every red is printed, and each fault goes to standard error;
      - when no red is found but a record is unreadable or not UTF-8, the exit is 2;
@@ -149,7 +150,7 @@ After this ticket:
 3. 外部失敗／fail-closed:
    - an undecodable record beside a record with a red gives exit 1, with the fault on standard error;
    - an undecodable record alone gives exit 2.
-4. 回歸保護: `tests/test_integrate.py` and `tests/test_gate_contract.py` pass. The README pin in `test_gate_contract.py` may change only for the "Twelve" introduction and the new name; the STATEMENT names that change.
+4. 回歸保護: `tests/test_integrate.py` and `tests/test_gate_contract.py` pass unchanged; the README pin there is computed from the scripts present.
 
 ### 適用的缺陷類別
 

@@ -34,8 +34,26 @@ It confirmed four points:
 | S73R-16 | Low (note) | The ticket lacks the template rows for closure revision, strict checker, profile and XSS | Not changed; pinning the template is wave-4 work |
 | S73R-17 | Low (note) | The end-of-wave review point is wave-4 work | Not carried by this ticket |
 
+## Revision02 (commit `cfa0deb0`), correction rule-only review by the same seat
+
+**verdict: CHANGES_REQUESTED**
+
+S73R-01 to S73R-15 are CLOSED. The seat checked the cause mapping against the ten records of item 5. Every corrected finding maps by class without judgement, apart from the permitted `RETURN_UNTRUE` test, and both pre-review returns are confirmed at their source lines. The edits introduced three findings and one note, each with an exact fix:
+
+| id | severity | finding | revision03 |
+| --- | --- | --- | --- |
+| S73R-18 | Medium | A block "after the `convergence-disposition`" cannot be placed by the reviewer, because the disposition is a later control-plane section; the cross-check was then undefined | The block directly follows the section's `review-verdict`; pairing is with the nearest `review-verdict` before it; two new reds |
+| S73R-19 | Low | `tests/test_gate_contract.py` need not be opened; its README pin is computed from the scripts present | Dropped from the boundary; the test runs unchanged |
+| S73R-20 | Low | Empty causes on every `CONVERGENCE_REVIEW_REQUIRED` would hide rework when a blocking finding remains | Causes are empty for it only when an `APPROVED` `convergence-disposition` exists for that candidate |
+| S73R-21 | Low (note) | A class cell may name more than one class | The class is the first §4 class named in the cell |
+
+### Control-plane disposition
+
+Revision03 applies only the reviewer's exact fixes. Under the smallest-fix practice (L-19), it does not go to a third rule-only round, as with tickets 67, 74, 75 and 76. Ticket 73 is ready for dispatch after ticket 76 is integrated.
+
 ## Seat token use
 
 | seat | model | effort | input | cache write | cache read | output |
 | --- | --- | --- | --- | --- | --- | --- |
 | rule-only review, revision01 | claude-opus-5-5 | high | 56 | 92600 | 2560344 | 28521 |
+| correction rule-only review, revision02 | claude-opus-5-5 | high | 16 | 36143 | 1061789 | 10374 |
