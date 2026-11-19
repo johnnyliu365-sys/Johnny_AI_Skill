@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision03 / receipt under `.worktrees/76-seat-binding-out/` / owner implementation seat / worktree `.worktrees/76-seat-binding` / branch `cp/wave3-76-seat-binding` / baseline the wave-3 branch after ticket 75 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `REVIEW_APPROVED`; dispatch=sha256:277328602a04edfe8b3847cb58a4126966eb3dd1c4ee895e139990458dcbe426 (`doc/handoffs/2026/workflow-governance/dispatch/JAS-76-1.yaml`)（candidate `78810fa6`; initial review `APPROVED`） |
+| 狀態 | `INTEGRATED`; dispatch=sha256:277328602a04edfe8b3847cb58a4126966eb3dd1c4ee895e139990458dcbe426 (`doc/handoffs/2026/workflow-governance/dispatch/JAS-76-1.yaml`)（candidate `78810fa6` at `82a250a8`; CI run 44505684582 green） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/76-seat-binding` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/76-seat-binding-review` |

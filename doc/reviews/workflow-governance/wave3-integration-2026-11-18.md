@@ -149,3 +149,20 @@ The integration clone `C:/Temp/claude/jas-integ-75` was made from `f42444a4`.
 | USAGE | `.worktrees/75-own-tickets-out/RETURN.md` (sha256 `7b0c3410630ec48be10a1032235af7a7ec54bb2b01f6466e7964114a4b7300c5`) with both seats' cells; E1 gives exit 0 (`cells=7 defects=0`); `usage_report.py` gives both seats `WITHIN`, exit 0 |
 
 From this integration on, the control plane lints every dispatch with `--ticket` before it goes out.
+
+## Ticket 76 (2026-11-19)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 76 seat model and effort bound to the profile; USAGE effort line; mismatch verdicts; dispatch lint R8 | `78810fa6` | revision03 initial review `APPROVED` (S76-01 to S76-05 recorded) | `82a250a8` |
+
+The integration clone `C:/Temp/claude/jas-integ-76` was made from `ecb66083`.
+
+| Check | Result |
+| --- | --- |
+| Full suite under the host lock | 5 failed, 3335 passed, 22 skipped; every failure is a base name, so zero new red |
+| Pushed | `cp/wave3` at `82a250a8`, a fast-forward from `ecb66083` |
+| CI readback | run 44505684582 on `82a250a8`: `test (linux)` and `test (windows)` both `success` |
+| USAGE | `.worktrees/76-seat-binding-out/RETURN.md` (sha256 `15119b07b26f8b5dfdb3a448381f0ccd4cf520dc01a76c51310bba292df467c6`) with both seats' cells, each with an `effort:` line read from the host transcript. E1 with the integrated gate gives exit 0 (`cells=7 defects=0`). The integrated `usage_report.py`, run with the repository's own `doc/handoffs/2026/workflow-governance/usage-expectation.json`, gives `model=claude-sonnet-5-5 effort=high … WITHIN` and `model=claude-opus-5-5 effort=high … WITHIN`, exit 0. |
+
+From this integration on, every USAGE cell the control plane appends carries the seat's effort, and every usage report runs with the repository's own expectation file.
