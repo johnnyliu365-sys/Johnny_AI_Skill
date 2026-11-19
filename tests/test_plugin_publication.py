@@ -885,7 +885,6 @@ class SynchronousDispatchGuidanceTests(unittest.TestCase):
             "wait_agent",
             "without activity/status polling",
             "`NOT_REQUIRED`",
-            "cross-lifetime receipt-bound handoff",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, reference)
@@ -998,19 +997,13 @@ class SynchronousDispatchGuidanceTests(unittest.TestCase):
             self.assertIn(disposition, router)
         self.assertIn("same-lifetime synchronous reviewer-owned", router)
         self.assertIn("does not\nconsume a receipt", router)
-        self.assertIn("cross-lifetime handoff", router)
-        self.assertIn("unavailable bridge must not halt", router)
         self.assertIn("must not invent a receipt issuer", router)
-        self.assertIn("unarmed wake", router)
 
-        self.assertIn("For a cross-lifetime handoff", authority)
         self.assertIn("same-lifetime synchronous lane", authority)
         self.assertIn("absent product/task host\nreadback", authority)
         self.assertIn("three-way normalized-root", authority)
         self.assertIn("fails\nclosed", authority)
 
-        self.assertIn("跨生命週期、receipt-bound", readme)
-        self.assertIn("live pending descriptor 或 handoff receipt", readme)
         self.assertIn(
             "reviewer dispatch → wait → receive → review → guarded integration", readme
         )

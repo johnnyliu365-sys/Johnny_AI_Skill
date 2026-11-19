@@ -6,7 +6,7 @@
 | Lifecycle | `READY` |
 | Public import | `library.local_orchestration.path_containment: resolves_within_root` |
 | Contract source | The exact public import named above |
-| Behavior evidence | Existing worktree-containment regression suite — contained path, sibling escape, redirected child and redirected base cases |
+| Behavior evidence | tests/test_path_containment_short_names.py — contained path, sibling escape, redirected child and redirected base cases |
 | Dependencies | Standard library only; no reusable-module dependency |
 
 ## Public capability
@@ -21,7 +21,7 @@ create, delete, open, lock, serialize, log, or disclose a path.
 
 1. This card.
 2. The exact public import named above.
-3. Its existing worktree-containment regression suite when redirected-path behavior matters.
+3. tests/test_path_containment_short_names.py when redirected-path behavior matters.
 
 ## Required use and prohibited use
 

@@ -43,10 +43,9 @@ only when the declared implementation evidence is complete.
 ## Lifetime and failure boundary
 
 The bridge disposition for this direct lane is `NOT_REQUIRED`. The lane neither
-requires nor creates a handoff receipt, pending descriptor, runner, queue,
+requires nor creates a handoff receipt, runner, queue,
 gateway, durable state, host readback adapter or fabricated native adapter.
-Those mechanisms remain reserved for a cross-lifetime receipt-bound handoff on the bridge route (not the default since R4-1);
-their absence cannot block this already-admitted same-lifetime continuation.
+Their absence cannot block this already-admitted same-lifetime continuation.
 
 If native delegation or the selected ticket/profile capability is unavailable,
 the only result for this lane is `HALT / CODEX_NATIVE_DELEGATION_UNAVAILABLE`.

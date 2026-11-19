@@ -21,7 +21,10 @@ additions ticket 58 lists:
 * N9-05: the precedence sentence is pinned by rule and by place;
 * ticket 68: the SPECs archived under `doc/archive/specs/` are read as `modules/spec/` is read, so an
   archived SPEC keeps its precedence note; a SPEC present at both paths, a repeated archive ID, a
-  malformed archive ID and a dangling or unindexed archive leaf are red (`archive_defects`).
+  malformed archive ID and a dangling or unindexed archive leaf are red (`archive_defects`);
+* ticket 67: `RETIRED_SURFACE`, a closed list of retired router and bridge names, over its own swept set
+  (never a historical file); the bridge exemptions "transitional", "過渡", "until wave 3" and "bridge route"
+  are gone, and the SPEC's frozen R4-1 sentence is honoured only under its wave-3 status note.
 
 Every pattern is data (see PATTERNS and the tables after it), one comment per source finding, and has
 an injection case below: a copy of the routed documents in a temporary directory with one retired
@@ -37,6 +40,7 @@ import unittest
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from unittest import mock
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -75,8 +79,8 @@ VERB = r"\b(mandatory|required|requires?|must|default|keeps?|retains?|reserved|b
 # Bridge-internal sentences that state the Revision 04 rule (ticket 47 D7, unchanged).
 BRIDGE_EXEMPT: tuple[str, ...] = (
     r"\bR4-1\b", r"not the default", r"\bNOT_REQUIRED\b", r"\bnot required\b", r"does not (consume|require)",
-    r"bridge-free", r"until (it retires|wave 3)", r"no receipt, descriptor", r"must not halt",
-    r"is `NOT_REQUIRED`", r"needs no bridge", r"bridge (route|path)", r"transitional", r"過渡", r"\bneither\b",
+    r"bridge-free", r"no receipt, descriptor", r"must not halt",
+    r"is `NOT_REQUIRED`", r"needs no bridge", r"\bneither\b",
     r"requires? no\b", r"nor requires?", r"must not\b", r"\boptional\b",
 )
 # N9-06: only a negation of the executor itself exempts a sentence that names a reviewer next to an
@@ -175,12 +179,12 @@ PATTERNS: tuple[Pattern, ...] = (
             r"(descriptor|bridge|受據綁定|receipt-bound)[^。；|]{0,80}(必須|預設|唯一|保留|僅)"
             r"|(必須|預設|唯一)[^。；|]{0,80}(descriptor|bridge|受據綁定|receipt-bound)"
         ),
-        (r"不是預設", r"不再是預設", r"過渡", r"\bR4-1\b", r"退場", r"僅限過渡"), True,
+        (r"不是預設", r"不再是預設", r"\bR4-1\b"), True,
     ),
     Pattern(
         "e dispatch carries a descriptor", "ticket 47 D7 e; R4-1",
         re.compile(r"dispatch[^.;。；]{0,100}\bdescriptor\b|\bdescriptor\b[^.;。；]{0,100}dispatch", re.I),
-        BRIDGE_EXEMPT + (r"live descriptor 是", r"僅限"), True,
+        BRIDGE_EXEMPT, True,
     ),
     # N9-06: a reviewer who merges, pushes or lands (verbs the D7 a1 pattern never had).
     Pattern(
@@ -406,11 +410,31 @@ def mask_field_lists(unit: str) -> str:
     return FIELD_LIST.sub(lambda match: FIELD_NAME.sub("FIELD", match.group("run")), unit)
 
 
+# Ticket 67 item 4: the governance SPEC keeps its approved R4-1 text verbatim. The sentence that holds this phrase
+# is honoured only in the SPEC, and only while the status note stands directly under the R4-1 heading.
+SPEC_R41_FROZEN = "transitional path until wave 3"
+SPEC_STATUS_NOTE = (
+    "Status (wave 3): the cross-lifetime live descriptor that R4-1 keeps as a transitional path was retired in "
+    "wave 3 (tickets 65 and 66, REQ-20261103-043); no dispatch route uses it."
+)
+
+
+def spec_status_note_present(text: str) -> bool:
+    """The status note is the first non-empty line under the SPEC's R4-1 heading."""
+    lines = text.split("\n")
+    begin = next((i for i, line in enumerate(lines) if SPEC_R41.match(line)), None)
+    if begin is None:
+        return False
+    first = next((line.strip() for line in lines[begin + 1 :] if line.strip()), "")
+    return first == SPEC_STATUS_NOTE
+
+
 def classify(path: str, text: str, historical: bool) -> list[Hit]:
     """Every pattern match of one document, each with its verdict."""
     record = is_record(path)
     scoped = bridge_scoped(text)
     noted = carries_note(text)
+    frozen = path == GOVERNANCE_SPEC and spec_status_note_present(text)
     hits: list[Hit] = []
     for start, raw_unit, section in units(text):
         unit = mask_field_lists(raw_unit)
@@ -428,6 +452,8 @@ def classify(path: str, text: str, historical: bool) -> list[Hit]:
                 if any(re.search(marker, sentence, re.I) for marker in pattern.exempt):
                     continue
                 if pattern.bridge_note_exempts and scoped:
+                    continue
+                if frozen and SPEC_R41_FROZEN in sentence:
                     continue
                 verdict = TOLERATED_NOTE if (historical and noted) else LIVE
                 hits.append(Hit(path, start, pattern.name, sentence.strip()[:220], verdict))
@@ -701,6 +727,81 @@ def precedence_defects(base: Path) -> list[str]:
     return defects
 
 
+# ------------------------------------- ticket 67: RETIRED_SURFACE, the retired router and bridge by name
+
+# Item 1: a closed term list, matched case-sensitively. The bare word "Router" is not on it, and neither is
+# the kept launcher `johnny-router.ps1` with `status` or `uninstall`.
+RETIRED_TERMS: tuple[str, ...] = (
+    r"RouterEngine", r"LangGraph", r"\bTemporal\b", r"profile\.py", r"telemetry_cli", r"TelemetryStorageLockPort",
+    r"Private Router", r"pending descriptor", r"live[- ]descriptor", r"PendingDispatchDescriptor",
+    r"\brunner (start|stop|status|subscribe)\b", r"runner-subscriptions", r"event_runner",
+    r"\b(armed|unarmed) (runner|wake)\b", r"wake-inbox", r"wake-capability",
+    r"dispatch_cli", r"review_cli", r"johnny_router_cli", r"worktree_containment\.py", r"local_orchestration/file_lock",
+)
+RETIRED_SURFACE = re.compile("|".join(f"(?:{term})" for term in RETIRED_TERMS))
+# Item 1: the only exemption is a sentence stating a completed retirement; one that still waits for it is not.
+COMPLETED_RETIREMENT: tuple[str, ...] = (r"\b(was|were) retired\b", r"\bretired (in|by)\b", r"已退場", r"已移除")
+RETIREMENT_PENDING: tuple[str, ...] = (r"退場前", r"until", r"before")
+# Item 2: the swept set. The routed roots without the governance SPEC (item 4 keeps its approved text), plus
+# the plugin README, the commands, the Antigravity rules, the catalog and the library READMEs. Historical
+# files (dated handover runbooks, live-verification records, superseded ADRs, the SPEC archive, the review
+# records) are never read.
+RETIRED_SURFACE_ROOTS: tuple[str, ...] = tuple(root for root in ROUTED_ROOTS if root != GOVERNANCE_SPEC) + (
+    "README.md",
+    "commands",
+    ".agents",
+    "library/catalog",
+    "library/MODULE_CATALOG.md",
+)
+RETIRED_SURFACE_GLOBS: tuple[str, ...] = ("library/*/README.md", "library/功能集群/*/*/README.md")
+RETIRED_HIT = "RETIRED_SURFACE"
+
+
+def retired_surface_files(base: Path, defects: list[str]) -> list[str]:
+    """Repository-relative paths of the swept set; an absent root or a glob that finds nothing is a defect."""
+    files: list[str] = []
+    for root in RETIRED_SURFACE_ROOTS:
+        files.extend(markdown_under(base, root, defects))
+    for pattern in RETIRED_SURFACE_GLOBS:
+        found = sorted(path.relative_to(base).as_posix() for path in base.glob(pattern) if path.is_file())
+        if not found:
+            defects.append(f"EMPTY_ROOT {pattern}")
+        files.extend(found)
+    return sorted(set(files))
+
+
+def states_completed_retirement(sentence: str) -> bool:
+    return any(re.search(form, sentence) for form in COMPLETED_RETIREMENT) and not any(
+        re.search(word, sentence, re.I) for word in RETIREMENT_PENDING
+    )
+
+
+def retired_surface_hits(path: str, text: str) -> list[Hit]:
+    """Every sentence of one swept document that names a retired surface, with the units and `sentence_of` of PATTERNS."""
+    hits: list[Hit] = []
+    for start, unit, _ in units(text):
+        seen: set[str] = set()
+        for match in RETIRED_SURFACE.finditer(unit):
+            sentence = sentence_of(unit, match)
+            if sentence in seen:
+                continue
+            seen.add(sentence)
+            if states_completed_retirement(sentence):
+                continue
+            hits.append(Hit(path, start, RETIRED_HIT, sentence.strip()[:220], LIVE))
+    return hits
+
+
+def retired_surface(base: Path) -> Sweep:
+    result = Sweep([], [])
+    for path in retired_surface_files(base, result.defects):
+        text = read_strict(base, path, result.defects)
+        if text is None:
+            continue
+        result.hits.extend(retired_surface_hits(path, text))
+    return result
+
+
 def handover_citation_defects(base: Path) -> list[str]:
     """Part B: every dated handover runbook cites the Workflow.md section 0 sentence instead of granting itself the waiver."""
     defects: list[str] = []
@@ -723,7 +824,7 @@ def handover_citation_defects(base: Path) -> list[str]:
 
 def copy_documents(destination: Path) -> None:
     """The routed and historical documents (Markdown only) of this checkout, in the same layout."""
-    wanted = list(ROUTED_ROOTS) + [SPEC_DIRECTORY, SPEC_ARCHIVE_DIRECTORY, RUNBOOK_DIRECTORY]
+    wanted = list(ROUTED_ROOTS) + list(RETIRED_SURFACE_ROOTS) + [SPEC_DIRECTORY, SPEC_ARCHIVE_DIRECTORY, RUNBOOK_DIRECTORY]
     for root in wanted:
         source = REPO / root
         if source.is_file():
@@ -734,6 +835,11 @@ def copy_documents(destination: Path) -> None:
                 target = destination / path.relative_to(REPO)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(path, target)
+    for pattern in RETIRED_SURFACE_GLOBS:
+        for path in REPO.glob(pattern):
+            target = destination / path.relative_to(REPO)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(path, target)
 
 
 class TemporaryDocuments(unittest.TestCase):
@@ -847,6 +953,18 @@ class RealTreeTests(unittest.TestCase):
 
     def test_every_dated_handover_runbook_cites_the_workflow_sentence(self) -> None:
         self.assertEqual(handover_citation_defects(REPO), [])
+
+    def test_no_document_of_the_swept_set_names_a_retired_surface(self) -> None:
+        self.maxDiff = None  # the first red run is the authoritative list of hits: print every one
+        result = retired_surface(REPO)
+        self.assertEqual(result.defects, [])
+        self.assertEqual([], [f"{h.path}:{h.line} ({h.pattern}) {h.sentence}" for h in result.live()])
+
+    def test_the_spec_keeps_its_r41_sentence_under_the_status_note(self) -> None:
+        text = read_strict(REPO, GOVERNANCE_SPEC, [])
+        assert text is not None
+        self.assertTrue(spec_status_note_present(text))
+        self.assertIn(SPEC_R41_FROZEN, spec_r41_sentence(text))
 
 
 # ====================================================== injections: part A rules
@@ -1322,6 +1440,236 @@ class InjectionTests(TemporaryDocuments):
         self.assertIn(f"HANDOVER_NOTE_DOES_NOT_CITE_WORKFLOW_SECTION_0 {runbook}", handover_citation_defects(self.base))
 
 
+# ================================================= ticket 67: RETIRED_SURFACE and the frozen SPEC sentence
+
+SKILL = "skills/johnny-project-takeover/SKILL.md"
+ROUTER_CONTROL = "skills/johnny-project-takeover/references/router-control.md"
+WORKFLOW_ROUTER_README = "library/workflow_router/README.md"
+PATH_CONTAINMENT_CARD = "library/功能集群/python/path_containment/README.md"
+DELETED_AGENTS_SENTENCE = "跨生命週期的 live descriptor 是第三波退場前的過渡路徑，不是預設。"
+
+
+def spec_r41_sentence(text: str) -> str:
+    """The SPEC's R4-1 sentence that holds the frozen phrase, as `sentence_of` cuts it."""
+    for _, unit, _ in units(text):
+        match = re.search(re.escape(SPEC_R41_FROZEN), unit)
+        if match is not None:
+            return sentence_of(unit, match).strip()
+    raise AssertionError(f"phrase not present: {SPEC_R41_FROZEN}")
+
+
+class RetiredSurfaceTests(TemporaryDocuments):
+    """Ticket 67 TDD 2 and 3: each retired name restored in a copy of the swept set goes red."""
+
+    def retired_paths(self) -> set[str]:
+        return {hit.path for hit in retired_surface(self.base).live()}
+
+    def test_the_unmodified_copy_names_no_retired_surface(self) -> None:
+        result = retired_surface(self.base)
+        self.assertEqual(result.defects, [])
+        self.assertEqual(result.live(), [])
+
+    INJECTIONS: tuple[tuple[str, str], ...] = (
+        (SKILL, "Check `<runtime root>\\launcher\\johnny-router.ps1 runner status` before a wake."),
+        (AGENTS, DELETED_AGENTS_SENTENCE),
+        (ROUTER_CONTROL, "The `PendingDispatchDescriptor` binds the dispatch."),
+        ("README.md", "Run `wake-capability probe` first."),
+        (WORKFLOW_ROUTER_README, "The `RouterEngine` decides each transition."),
+        # one term in a file under each new root
+        ("commands/johnny-project-takeover.md", "Start the runner with `runner start`."),
+        (".agents/plugins/johnny-ai-skill/rules/worktree-containment.md", "`worktree_containment.py` checks the path."),
+        ("library/catalog/capabilities/README.md", "The lock serves `TelemetryStorageLockPort`."),
+        ("library/MODULE_CATALOG.md", "The Private Router selects one module."),
+        (PATH_CONTAINMENT_CARD, "The `event_runner` uses this predicate."),
+        (SKILL, "until it is retired, the live descriptor stays."),
+    )
+
+    def test_each_injected_retired_name_goes_red_in_its_file(self) -> None:
+        for relative, sentence in self.INJECTIONS:
+            with self.subTest(file=relative, sentence=sentence):
+                self.setUp()
+                self.append(relative, sentence)
+                self.assertIn(relative, self.retired_paths())
+
+    def test_the_kept_words_and_a_completed_retirement_stay_green(self) -> None:
+        for sentence in (
+            "The Router decides each transition.",
+            "Run `<runtime root>\\launcher\\johnny-router.ps1 status` to read the installation.",
+            "Run `<runtime root>\\launcher\\johnny-router.ps1 uninstall` to remove it.",
+            "the live descriptor was retired in wave 3.",
+            "The bridge's `event_runner` was retired by ticket 66.",
+            "live descriptor 已移除。",
+            "The test runner prints each failure.",
+            "The temporal order of the events is kept.",
+        ):
+            for relative in (SKILL, "README.md"):
+                with self.subTest(file=relative, sentence=sentence):
+                    self.setUp()
+                    self.append(relative, sentence)
+                    self.assertEqual(self.retired_paths(), set())
+
+    def test_without_the_exemption_a_completed_retirement_goes_red(self) -> None:
+        self.append(SKILL, "the live descriptor was retired in wave 3.")
+        with mock.patch.object(sys.modules[__name__], "COMPLETED_RETIREMENT", ()):
+            self.assertIn(SKILL, self.retired_paths())
+
+    def test_a_retirement_still_waited_for_exempts_nothing(self) -> None:
+        for sentence in (
+            "The live descriptor was retired in wave 3 until the queue is ready.",
+            "The live descriptor was retired before the queue existed.",
+            "live descriptor 已移除，退場前仍保留。",
+            "live descriptor 已退場前仍是過渡路徑。",
+        ):
+            with self.subTest(sentence=sentence):
+                self.setUp()
+                self.append(SKILL, sentence)
+                self.assertIn(SKILL, self.retired_paths())
+
+    def test_matching_is_case_sensitive(self) -> None:
+        self.append(SKILL, "Temporal persists the events.")
+        self.assertIn(SKILL, self.retired_paths())
+        self.setUp()
+        self.append(SKILL, "The temporal order of the events is kept.")
+        self.assertEqual(self.retired_paths(), set())
+
+    def test_the_swept_set_is_exactly_the_routed_roots_without_the_spec_plus_the_new_roots(self) -> None:
+        files = retired_surface_files(REPO, [])
+        self.assertNotIn(GOVERNANCE_SPEC, files)
+        for relative in (AGENTS, WORKFLOW, CODE_REVIEW, SKILL, ROUTER_CONTROL, ROUTED_RUNBOOK, "template/README.md",
+                         "README.md", "commands/johnny-project-takeover.md",
+                         ".agents/plugins/johnny-ai-skill/rules/worktree-containment.md",
+                         "library/catalog/capabilities/README.md", "library/MODULE_CATALOG.md",
+                         WORKFLOW_ROUTER_README, "library/local_orchestration/README.md", PATH_CONTAINMENT_CARD,
+                         "library/功能集群/python/exclusive_file_lock/README.md"):
+            with self.subTest(file=relative):
+                self.assertIn(relative, files)
+        for path in files:
+            with self.subTest(history=path):
+                self.assertFalse(under(path, "doc/archive") or under(path, "doc/reviews") or under(path, "modules/tickets"))
+                self.assertFalse(under(path, "doc/adr") or Path(path).name.startswith(("handover-", "live-verification")))
+
+    def test_history_and_the_spec_are_never_read(self) -> None:
+        for relative in (GOVERNANCE_SPEC, ARCHIVED_SPEC, "doc/runbooks/handover-2026-08-22-plugin-distribution.md"):
+            with self.subTest(file=relative):
+                self.setUp()
+                self.append(relative, "The `RouterEngine` decides each transition.")
+                self.assertEqual(self.retired_paths(), set())
+
+    def test_a_look_alike_path_is_not_in_the_set_and_a_deeper_readme_is_not_either(self) -> None:
+        (self.base / "library/catalog.md").write_text("The `RouterEngine` decides.\n", encoding="utf-8")
+        deeper = self.base / "library/功能集群/python/path_containment/deeper"
+        deeper.mkdir()
+        (deeper / "README.md").write_text("The `RouterEngine` decides.\n", encoding="utf-8")
+        self.assertEqual(self.retired_paths(), set())
+        (self.base / "library/catalog/new").mkdir()
+        (self.base / "library/catalog/new/README.md").write_text("The `RouterEngine` decides.\n", encoding="utf-8")
+        self.assertEqual(self.retired_paths(), {"library/catalog/new/README.md"})
+
+    def test_an_empty_file_has_no_hit_and_a_missing_or_undecodable_one_is_red(self) -> None:
+        (self.base / "README.md").write_bytes(b"")
+        result = retired_surface(self.base)
+        self.assertEqual((result.defects, result.live()), ([], []))
+        self.setUp()
+        (self.base / "library/MODULE_CATALOG.md").unlink()
+        self.assertIn("MISSING_ROOT library/MODULE_CATALOG.md", retired_surface(self.base).defects)
+        self.setUp()
+        (self.base / "commands/johnny-project-takeover.md").write_bytes(b"\xff\xfe\x00bad")
+        defects = retired_surface(self.base).defects
+        self.assertTrue(any(d.startswith("UNDECODABLE commands/johnny-project-takeover.md") for d in defects), defects)
+        self.setUp()
+        shutil.rmtree(self.base / "library/功能集群")
+        self.assertIn("EMPTY_ROOT library/功能集群/*/*/README.md", retired_surface(self.base).defects)
+
+    # ---- correction 1, S67-04 R1: every term of the closed list is pinned on its own
+    ONE_TERM_SAMPLES: dict[str, str] = {
+        r"RouterEngine": "The RouterEngine decides each transition.",
+        r"LangGraph": "LangGraph composes the transitions.",
+        r"\bTemporal\b": "Temporal persists the events.",
+        r"profile\.py": "Read profile.py first.",
+        r"telemetry_cli": "Run telemetry_cli now.",
+        r"TelemetryStorageLockPort": "The adapter serves TelemetryStorageLockPort.",
+        r"Private Router": "The Private Router owns it.",
+        r"pending descriptor": "The lane creates a pending descriptor.",
+        r"live[- ]descriptor": "The lane binds a live-descriptor.",
+        r"PendingDispatchDescriptor": "The PendingDispatchDescriptor binds it.",
+        r"\brunner (start|stop|status|subscribe)\b": "Call runner subscribe first.",
+        r"runner-subscriptions": "Read runner-subscriptions now.",
+        r"event_runner": "The event_runner wakes it.",
+        r"\b(armed|unarmed) (runner|wake)\b": "An unarmed wake is reported.",
+        r"wake-inbox": "Read the wake-inbox.",
+        r"wake-capability": "Run the wake-capability probe.",
+        r"dispatch_cli": "Call dispatch_cli now.",
+        r"review_cli": "Call review_cli now.",
+        r"johnny_router_cli": "Call johnny_router_cli now.",
+        r"worktree_containment\.py": "Read worktree_containment.py first.",
+        r"local_orchestration/file_lock": "Import local_orchestration/file_lock here.",
+    }
+
+    def test_the_closed_list_is_exactly_the_ticket_list_and_each_term_alone_is_red(self) -> None:
+        self.assertEqual(set(self.ONE_TERM_SAMPLES), set(RETIRED_TERMS))
+        self.assertEqual(len(RETIRED_TERMS), len(set(RETIRED_TERMS)))
+        for term, sentence in self.ONE_TERM_SAMPLES.items():
+            with self.subTest(term=term):
+                others = [other for other in RETIRED_TERMS if other != term and re.search(other, sentence)]
+                self.assertEqual(others, [], "the sample must hold only its own term")
+                self.assertIsNotNone(re.search(term, sentence))
+                self.assertEqual(len(retired_surface_hits("a.md", sentence + "\n")), 1)
+
+    def test_a_sentence_whose_only_listed_term_is_pending_descriptor_is_red_in_a_swept_file(self) -> None:
+        sentence = self.ONE_TERM_SAMPLES[r"pending descriptor"]
+        self.append(SKILL, sentence)
+        self.assertIn(SKILL, self.retired_paths())
+
+    # ---- correction 1, S67-04 R3: an exempt sentence does not end the scan of its unit
+    def test_a_live_sentence_after_a_completed_retirement_in_one_unit_is_red(self) -> None:
+        for unit in (
+            "The live descriptor was retired in wave 3. Run the `wake-capability` probe first.",
+            "The live descriptor was retired in wave 3. The live descriptor still binds the dispatch.",
+            "live descriptor 已移除。`event_runner` 仍會喚醒它。",
+        ):
+            with self.subTest(unit=unit):
+                hits = retired_surface_hits("a.md", unit + "\n")
+                self.assertEqual(len(hits), 1, hits)
+                self.assertNotIn("retired", hits[0].sentence)
+                self.assertNotIn("已移除", hits[0].sentence)
+
+    # ---- item 3: the exemptions are gone, so a transitional bridge sentence is red again
+    def test_a_transitional_cross_lifetime_route_goes_red_on_pattern_b2(self) -> None:
+        self.append(WORKFLOW, "Cross-lifetime handoffs must use the transitional receipt-bound route.")
+        self.assertIn("b2 cross-lifetime requires controls", self.live_names())
+
+    # ---- item 4: the SPEC's R4-1 sentence is exempt only in the SPEC, and only under its status note
+    def test_the_spec_r41_sentence_is_red_outside_the_spec(self) -> None:
+        sentence = spec_r41_sentence((self.base / GOVERNANCE_SPEC).read_text(encoding="utf-8"))
+        self.append(AGENTS, sentence + ".")
+        self.assertIn(AGENTS, {hit.path for hit in sweep(self.base).live()})
+        self.assertIn(AGENTS, self.retired_paths())
+
+    def test_the_spec_r41_sentence_is_red_in_the_spec_without_its_status_note(self) -> None:
+        self.assertEqual([h for h in sweep(self.base).live() if h.path == GOVERNANCE_SPEC], [])
+        self.edit(GOVERNANCE_SPEC, lambda text: InjectionTests.removed(text, SPEC_STATUS_NOTE + "\n\n", ""))
+        live = [h for h in sweep(self.base).live() if h.path == GOVERNANCE_SPEC]
+        self.assertTrue(live and all(SPEC_R41_FROZEN in h.sentence for h in live), live)
+
+    def test_the_frozen_sentence_under_the_status_note_is_red_in_any_file_but_the_spec(self) -> None:
+        """Correction 1, S67-04 R2: SPEC_R41_FROZEN is scoped by path, not only by the note and the heading."""
+        sentence = spec_r41_sentence((self.base / GOVERNANCE_SPEC).read_text(encoding="utf-8"))
+        text = "### R4-1 State lives in files\n\n" + SPEC_STATUS_NOTE + "\n\n- " + sentence + ".\n"
+        self.assertTrue(spec_status_note_present(text))
+        self.assertEqual(classify(GOVERNANCE_SPEC, text, historical=False), [])
+        for relative in (AGENTS, WORKFLOW, "modules/spec/review-assurance.md", "doc/archive/specs/2026/workflow-governance.md"):
+            with self.subTest(file=relative):
+                hits = classify(relative, text, historical=False)
+                self.assertTrue(hits and all(SPEC_R41_FROZEN in h.sentence for h in hits), hits)
+        self.append(AGENTS, "### R4-1 State lives in files\n\n" + SPEC_STATUS_NOTE + "\n\n- " + sentence + ".")
+        self.assertIn(AGENTS, {hit.path for hit in sweep(self.base).live()})
+
+    def test_the_status_note_counts_only_directly_under_the_r41_heading(self) -> None:
+        self.edit(GOVERNANCE_SPEC, lambda text: InjectionTests.removed(text, SPEC_STATUS_NOTE + "\n\n", ""))
+        self.append(GOVERNANCE_SPEC, SPEC_STATUS_NOTE)
+        self.assertTrue([h for h in sweep(self.base).live() if h.path == GOVERNANCE_SPEC])
+
+
 class PatternTableTests(unittest.TestCase):
     """The patterns are data: each one names its source finding and has an injection above."""
 
@@ -1336,6 +1684,19 @@ class PatternTableTests(unittest.TestCase):
         for pattern in PATTERNS:
             with self.subTest(pattern=pattern.name):
                 self.assertTrue(pattern.source)
+
+    def test_the_bridge_exemptions_retired_in_wave_3_are_gone(self) -> None:
+        """Ticket 67 item 3: no exemption hides a transitional or until-wave-3 bridge sentence any more."""
+        by_name = {pattern.name: pattern for pattern in PATTERNS}
+        for marker in (r"until (it retires|wave 3)", r"transitional", r"過渡", r"bridge (route|path)"):
+            with self.subTest(marker=marker):
+                self.assertNotIn(marker, BRIDGE_EXEMPT)
+        for marker in (r"過渡", r"退場", r"僅限過渡"):
+            with self.subTest(pattern="d", marker=marker):
+                self.assertNotIn(marker, by_name["d 過渡路徑為預設 (zh)"].exempt)
+        for marker in (r"live descriptor 是", r"僅限"):
+            with self.subTest(pattern="e", marker=marker):
+                self.assertNotIn(marker, by_name["e dispatch carries a descriptor"].exempt)
 
     def test_no_pattern_of_the_reviewer_family_is_masked_by_the_integration_script_words(self) -> None:
         for pattern in PATTERNS:

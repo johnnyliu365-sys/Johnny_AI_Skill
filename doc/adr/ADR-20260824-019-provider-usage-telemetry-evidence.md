@@ -4,7 +4,7 @@
 - 狀態：`ACCEPTED`
 - 決策者：project owner
 - 關聯需求：[`REQ-20260803-006`](../requirements/active/2026/reusable-platform/REQ-20260803-006.md)
-- 關聯規格：[`modules/spec/context-load-telemetry.md`](../../modules/spec/context-load-telemetry.md) Revision 03
+- 關聯規格：[`doc/archive/specs/2026/context-load-telemetry.md`](../archive/specs/2026/context-load-telemetry.md) Revision 03
 
 ## 背景與問題
 

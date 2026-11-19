@@ -55,10 +55,8 @@ class AdversarialReviewPolicyTests(unittest.TestCase):
                 "BLOCKED",
                 "UNAVAILABLE",
                 "NOT_APPLICABLE",
-                "runner",
                 "queue",
                 "receipt",
-                "live descriptor",
                 "host readback",
                 "NOT_REQUIRED",
             ),
@@ -186,10 +184,8 @@ class AdversarialReviewPolicyTests(unittest.TestCase):
             document,
             (
                 "same-lifetime",
-                "cross-lifetime",
                 "direct",
                 "receipt",
-                "live descriptor",
                 "NOT_REQUIRED",
             ),
         )

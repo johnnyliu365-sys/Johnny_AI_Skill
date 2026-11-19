@@ -43,9 +43,8 @@ poll activity, status or an equivalent progress signal. On return, the
 reviewer receives the typed `ImplementationReturn`, performs the declared
 review and reverse-mutation gates, and only then routes the result onward.
 The direct lane's bridge disposition is `NOT_REQUIRED`: it does not require or
-create a receipt, runner, queue, pending descriptor, gateway or fabricated
-adapter. Cross-lifetime handoffs may still use the receipt-bound route until wave 3; the
-default is the ticket's state row plus the dispatch-file digest (Revision 04 R4-1).
+create a receipt, runner, queue, gateway or fabricated
+adapter. The default is the ticket's state row plus the dispatch-file digest (Revision 04 R4-1).
 
 If native delegation or the selected ticket/profile capability is missing, the
 only result for this lane is `HALT / CODEX_NATIVE_DELEGATION_UNAVAILABLE`.
@@ -110,30 +109,13 @@ same-lifetime Codex native lane above has `NOT_REQUIRED` bridge disposition and 
 runner, subscription or wake probe.
 
 Every other wake, automatic continuation or supervision effect this skill describes is a **protocol**.
-The mechanism that performs it is the installed Johnny runtime, armed for the specific project.
-Before stating that any automatic effect will happen or has happened, verify all four:
-
-1. the per-user runtime root exists (`%LOCALAPPDATA%\JohnnyRouter`, or `JOHNNY_ROOT` when set);
-2. a subscription for this project's exact ref exists (`runner-subscriptions.json`);
-3. a runner is running for it (`<runtime root>\launcher\johnny-router.ps1 runner status` reports
-   `RUNNING`);
-4. a wake capability is proven
-   (`<runtime root>\launcher\johnny-router.ps1 wake-capability probe`).
-
-`<runtime root>` in points 3 and 4 is the exact root resolved in point 1: `JOHNNY_ROOT` when set,
-else `%LOCALAPPDATA%\JohnnyRouter`. Never invoke a bare `johnny-router` name — the launcher is not
-assumed to be on PATH; always invoke the exact derived launcher path instead. An overridden
-`JOHNNY_ROOT` relocates all four checks together, not point 1 alone.
-
-If any of the four is absent, the honest statement is: *the handoff is committed; no automation
-is armed for this project, so the owner must notify the reviewer.* Never report a wake you did
+No runner, subscription or wake capability exists: they were retired in wave 3 (tickets 65 and 66). No automatic effect may be stated. The honest statement is: *the handoff is committed; no automation is armed for this project, so the owner must notify the reviewer.* The kept launcher commands `status` and `uninstall` run through the exact launcher path `<runtime root>\launcher\johnny-router.ps1`, where `<runtime root>` is `JOHNNY_ROOT` when set, else `%LOCALAPPDATA%\JohnnyRouter`; never invoke a bare `johnny-router` name. Never report a wake you did
 not observe: a committed handoff leaf is evidence of a commit, not of a delivery. Reporting an
 unobserved wake manufactures a false completion narrative, which is precisely the failure this
 workflow exists to prevent.
 
 Durable Router state contains metadata only. A pending dispatch is the ticket's state row plus
-the digest of its dispatch file (Revision 04 R4-1); only the transitional bridge path binds a live
-descriptor. The implementation owner returns an `ImplementationReturn`; `CHANGE_DETECTED`
+the digest of its dispatch file (Revision 04 R4-1). The implementation owner returns an `ImplementationReturn`; `CHANGE_DETECTED`
 emits `REQUIREMENT_CHANGED` rather than changing the ticket locally.
 
 ## Minimal implementation handoff

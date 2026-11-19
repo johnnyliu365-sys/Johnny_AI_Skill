@@ -9,8 +9,7 @@ implement an already admitted ticket.
 From workflow-governance SPEC Revision 04 the stage sequence below applies to `GREENFIELD` only;
 `TAKEOVER` and `DELTA` enter from a requirement snapshot. Typed events are records written into
 the receipt by the agent that finished the action; the gate scripts read the state files and
-decide the transition. The live `PendingDispatchDescriptor` path in Dispatch admission is kept
-only for the cross-lifetime bridge until it retires; the default cross-session route is the
+decide the transition. The default cross-session route is the
 ticket's state row plus the digest of its dispatch file (R4-1), and the merge-queue file holds
 integration candidates only. The queue's single-consume and anti-replay invariants are: an entry is keyed by
 (ticket, candidate sha); a key already in `LANDED`, `LANDED_CI_RED`, `CLEARED` or `BOUNCED` is refused; landing requires a
@@ -37,8 +36,8 @@ RouterEvent = INTAKE | WAYFINDER_GO | WAYFINDER_NO_GO
 The executable typed contracts in `library/workflow_router/` are authoritative for field
 shape and validation. The policy invariants below are authoritative for routing behavior:
 
-- `RouterState` binds one `project_id`, stage, authority state, delivery stage, artifact
-  references and at most one live pending dispatch descriptor (transitional bridge path only, R4-1).
+- `RouterState` binds one `project_id`, stage, authority state, delivery stage and artifact
+  references.
 - `RouterDecision` returns one outcome, one continuation, one optional next stage, the
   minimum required source references, one optional `ContextView`, eligible capabilities
   and typed blockers.
@@ -101,29 +100,20 @@ Automatic continuation has a bounded step/time ceiling. Reaching it is `HALT`.
 Dispatch admission has two lifetime-scoped paths. A same-lifetime synchronous reviewer-owned
 lane is direct: the reviewer dispatches, waits, receives and reviews; the integration script (R4-4)
 admitted by that review runs integration (integration script, never the reviewer). It does not
-consume a receipt or require a runner, queue, live descriptor, host gateway or host workspace
-readback, and an unavailable bridge must not halt that lane. The reviewer directly allocates the
+consume a receipt or require a runner, queue, host gateway or host workspace
+readback. The reviewer directly allocates the
 repository-contained owner worktree and binds it to the exact ticket, branch and baseline.
 The synchronous path must not invent a receipt issuer, durable queue or runner.
 
-The receipt-bound bridge remains available for a cross-lifetime handoff until it retires in wave 3;
-it is not the default. The default is the ticket's state row plus the digest of its dispatch file
-(Revision 04 R4-1), with the merge queue carrying integration candidates only (R4-7). In the bridge
-path, the Private Router owns the live `PendingDispatchDescriptor`, and a typed `ApprovedDispatchArtifactRegistry`
-resolves the exact project, ticket, reviewed handoff, ticket and handoff commits, implementation
-owner, task/workspace binding, worktree and expected baseline.
+The default is the ticket's state row plus the digest of its dispatch file
+(Revision 04 R4-1), with the merge queue carrying integration candidates only (R4-7).
 
-On the receipt-bound route (not the default since R4-1), only `IMPLEMENTATION_DISPATCH_CONFIRMED` may consume a matching, unconsumed receipt and create a
-cross-lifetime implementation lane. Missing, copied, forged, replayed or mismatched project,
+Missing, copied, forged, replayed or mismatched project,
 ticket, handoff, owner, task, worktree, branch, baseline, action, question or correlation halts
 before source, capability, receipt, branch or host effect. Caller-provided commits are assertions
-to compare, never authority sources. A cross-lifetime handoff that chose the bridge route and has no proved bridge is `UNAVAILABLE`
-(the default route, R4-1, needs no bridge): it is an unarmed wake and must not be reported as delivered.
+to compare, never authority sources.
 
-Wake capability has exactly three finite dispositions: `NOT_REQUIRED` when the host delivers
-natively (including a same-lifetime synchronous lane), `AVAILABLE` when a cross-lifetime bridge is
-present and actual delivery is proved, and `UNAVAILABLE` when that bridge is absent. These states
-must not be folded together; only a person may relay an `UNAVAILABLE` completion.
+Wake capability has two dispositions: `NOT_REQUIRED` when the host delivers natively (including a same-lifetime synchronous lane), and `UNAVAILABLE` otherwise. These states must not be folded together; only a person may relay an `UNAVAILABLE` completion. The cross-lifetime bridge that an `AVAILABLE` disposition described was retired in wave 3 (tickets 65 and 66).
 
 `TICKETS + APPROVAL_GRANTED -> IMPLEMENT` is a retired transition and always halts. A ticket
 dispatch confirmation is asked once; `ACTION_COMPLETED` must not create a second ceremonial
@@ -168,10 +158,7 @@ the work.
 
 ## Fail-closed execution boundary
 
-- LangGraph composes only validated transitions and persists descriptors, never raw packets.
 - Agent/skill resolution exposes only allowlisted capability references.
-- Temporal persists validated events and descriptors; nondeterministic I/O stays in an
-  activity/adapter boundary.
 - MCP reads only declared source references and normalizes them at the boundary.
 - Missing role, owner, workspace binding, source, capability or verification halts rather
   than widening the search or context.

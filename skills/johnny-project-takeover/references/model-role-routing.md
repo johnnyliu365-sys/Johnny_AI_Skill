@@ -36,9 +36,8 @@ SpecificationReadinessDecision = READY_FOR_SUPERVISION
   dispatch, modify code or perform an external effect.
 
 For same-lifetime use, the reviewer calls the helper directly and waits once for its finite
-return. A runner, queue, receipt, live descriptor or host readback is `NOT_REQUIRED` on that
-route; those controls belong to the cross-lifetime receipt-bound route, which stays available
-until wave 3 and is not the default (workflow-governance Revision 04 R4-1). Missing mandatory
+return. A runner, queue, receipt or host readback is `NOT_REQUIRED` on that
+route. Missing mandatory
 helper evidence is `BLOCKED`, never a fabricated success.
 
 The versioned `ProjectWorkflowProfile` records opaque model references and capability evidence
@@ -78,15 +77,14 @@ The supervisor routes implementation/test/evidence defects through same-ticket c
 Model capability failure is not inferred from one defect. Only after the allowed initial review
 and one bounded correction review both fail against the same complete Closure revision may the
 supervisor return `MODEL_CAPABILITY_INSUFFICIENT`; this marks the architecture owner
-`WAKE_REQUIRED` (delivered by an armed runner, else relayed by the owner) or requests
+`WAKE_REQUIRED` (relayed by the owner) or requests
 an owner-approved Profile change and does not grant the supervisor implementation authority.
 
 ## Mandatory wake triggers
 
 The Router changes the architecture owner to `WAKE_REQUIRED` before further ticket/source/host
 effect when any of these typed conditions is present. `WAKE_REQUIRED` is a state, not a
-delivery: only a runner armed for this project turns it into an actual wake, and when none is
-armed the owner must be told to relay it (SKILL.md § Automation readiness):
+delivery: the owner must be told to relay it (SKILL.md § Automation readiness):
 
 - `SPEC_AMBIGUOUS` or `SPEC_CONTRADICTORY`;
 - `PUBLIC_CONTRACT_UNDEFINED` or an unprovable acceptance criterion;
