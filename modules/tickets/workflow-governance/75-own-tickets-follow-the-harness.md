@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `.worktrees/75-own-tickets-out/` / owner implementation seat / worktree `.worktrees/75-own-tickets` / branch `cp/wave3-75-own-tickets` / baseline the wave-3 branch after ticket 74 is integrated |
+| Agent Context binding | ticket revision03 / receipt under `.worktrees/75-own-tickets-out/` / owner implementation seat / worktree `.worktrees/75-own-tickets` / branch `cp/wave3-75-own-tickets` / baseline the wave-3 branch after ticket 74 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `PLANNED`（revision02; strict tier; rule-only review of revision01 CHANGES_REQUESTED; after ticket 74） |
+| 狀態 | `PLANNED`（revision03; strict tier; rule-only reviews: revision01 and revision02 CHANGES_REQUESTED; revision03 applies the reviewer's exact fixes; after ticket 74） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/75-own-tickets` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/75-own-tickets-review` |
@@ -50,7 +50,7 @@ On 2026-11-19 the owner chose "A":
 
 The owner also asked for the old template to be updated.
 
-**Revision02** answers the rule-only review of revision01 (`doc/reviews/workflow-governance/75-own-tickets-follow-the-harness-ticket-review.md`).
+**Revision02** answers the rule-only review of revision01, and **revision03** the correction review of revision02 (`doc/reviews/workflow-governance/75-own-tickets-follow-the-harness-ticket-review.md`).
 
 After this ticket:
 
@@ -80,12 +80,14 @@ After this ticket:
    - **Usage, exit 3.** An unreadable or non-UTF-8 ticket file gives exit 3, as dispatch_lint already classifies an unreadable dispatch file (`scripts/README.md:7`, `:30`). It prints nothing on stdout and is decided before R1 to R7 run.
    - **The script's own text.** The module docstring, the `USAGE` string, the `## dispatch_lint.py` usage line and the README section describe R7 and the option. The README's line 7 sentence, that dispatch_lint "reads one file", is updated.
    - The spec's exit list for dispatch lint (`modules/spec/workflow-governance.md:171`, `0 / 1 / 2 / 3`) differs from README:7, which says it has no tool fault. That difference is older than this ticket, and goes to wave 4.
-3. **Order and naming of dispatch files.** These go in the README section.
-   - The control plane writes the dispatch file. The file names a base that precedes the commit that records the file and its digest.
-   - The control plane then writes the digest into the ticket's state row, in the control-plane checkout. The ticket leaf in the worktree, at the base, has no digest.
-   - It then runs `dispatch_lint.py <dispatch> --ticket <control-plane ticket>`, and dispatches only on exit 0.
-   - A new dispatch file is named `JAS-<NN>-<n>.yaml`, where `<n>` is the dispatch revision. A file whose digest is recorded is never rewritten. The seven existing `JAS-<NN>.yaml` files keep their names.
-   - Ticket 75's own dispatch is linted without `--ticket`, because R7 does not exist before it lands.
+3. **Order and naming of dispatch files.**
+   - **The README section states only the generic order:**
+     - the dispatch file names a base that precedes the commit that records the file and its digest;
+     - the digest is written into the ticket's state row in the control plane's checkout, not in the worktree leaf at the base;
+     - `dispatch_lint.py <dispatch> --ticket <ticket>` runs next, and the dispatch goes out only on exit 0;
+     - dispatch files are named as R4-1 names them, `<ticket>-<n>.yaml`, where `<n>` is the dispatch revision;
+     - a file whose digest is recorded is never rewritten.
+   - **Repository-specific facts stay out of the plugin README.** The `JAS-` prefix, the seven existing `JAS-<NN>.yaml` files, and ticket 75's own dispatch going out without `--ticket` (R7 does not exist before it lands) are control-plane records. The control plane writes them in the "Dispatch digests" note of `modules/tickets/workflow-governance/README.md`.
 
 ## 實作範圍、依賴與 ticket elements
 
@@ -126,7 +128,7 @@ After this ticket:
 | 1 | 路徑前綴誤匹配 | 否 | no path rule |
 | 2 | null／空字串／陣列 | 是 | an empty 狀態 cell (exit 1); `dispatch=sha256:` with nothing after it (exit 1) |
 | 3 | 權限繞過 | 否 | no permission path |
-| 4 | Token 格式與比較 | 是 | 63 and 65 characters (exit 1); upper-case hex (exit 1); `<hex>x` (exit 1); two `dispatch=` tokens (exit 1); a digest followed by ` (` or `; ` (pass) |
+| 4 | Token 格式與比較 | 是 | 63 and 65 characters (exit 1); upper-case hex (exit 1); `<hex>x` (exit 1); two `dispatch=sha256:` tokens (exit 1); a digest followed by ` (` or `; ` (pass) |
 | 5 | 錯誤碼是否一致 | 是 | 1 for R7; 3 for an unreadable ticket, as dispatch_lint classifies an unreadable dispatch file |
 | 6 | 例外是否會拋出 | 是 | the unreadable-ticket case |
 

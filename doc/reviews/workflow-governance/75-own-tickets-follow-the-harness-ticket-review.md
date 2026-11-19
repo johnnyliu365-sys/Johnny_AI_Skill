@@ -25,8 +25,24 @@ The seat read the ticket, both ticket templates, dispatch_lint and its tests, th
 | S75R-09 | Low | `JAS-NN.yaml` lets a recorded file be rewritten by a later revision | New files are `JAS-<NN>-<n>.yaml`; a recorded file is never rewritten |
 | S75R-10 | Low (note) | The base, the checkout `--ticket` reads, and ticket 75's own dispatch were unstated | All three are stated |
 
+## Revision02 (commit `c5636f19`), correction rule-only review by the same seat
+
+**verdict: CHANGES_REQUESTED**
+
+S75R-01 to S75R-10 are CLOSED. The edits introduced two findings, each with an exact fix.
+
+| id | severity | finding | revision03 |
+| --- | --- | --- | --- |
+| S75R-11 | Medium | Item 3 sent repository-specific text (the `JAS-` prefix, the seven files, ticket 75's own dispatch) into the plugin's script README, which ships to target projects and knows no target project | The README section keeps only the generic order and the R4-1 naming `<ticket>-<n>.yaml`. The repository facts go into the control-plane "Dispatch digests" note. |
+| S75R-12 | Low | The category table said "two `dispatch=` tokens", while item 2 counts `dispatch=sha256:` | The table says "two `dispatch=sha256:` tokens" |
+
+### Control-plane disposition
+
+Revision03 applies the reviewer's exact fixes and changes nothing else. Under the smallest-fix practice (L-19), it does not go to a third rule-only round, as with tickets 67 and 74. Ticket 75 is ready for dispatch after ticket 74 is integrated.
+
 ## Seat token use
 
 | seat | model | input | cache write | cache read | output |
 | --- | --- | --- | --- | --- | --- |
 | rule-only review, revision01 | claude-opus-5-5 | 76 | 103811 | 3905535 | 30756 |
+| correction rule-only review, revision02 | claude-opus-5-5 | 8 | 14417 | 440050 | 4691 |
