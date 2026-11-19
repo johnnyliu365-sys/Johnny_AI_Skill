@@ -2,7 +2,7 @@
 
 Ticket: `modules/tickets/workflow-governance/76-seat-model-and-effort-bound.md`. Process tier: strict. This rule-only review is outside the `CodeReview.md` §5 count. Its `CHANGES_REQUESTED` produces a new ticket revision before dispatch.
 
-## Revision01 (commit `6b738170`), independent `ticket-review` seat
+## Revision01 (commit `4a3d447b`), independent `ticket-review` seat
 
 **verdict: CHANGES_REQUESTED**
 
@@ -26,7 +26,7 @@ The seat was started with its model and effort named (`opus`, `high`), as ticket
 | S76R-09 | Low (note) | R8 changes ticket 75's "without `--ticket` as before" regression for files with `profile:` | Stated as an allowed change that the STATEMENT names |
 | S76R-10 | Low (note) | The figure 55 million was the correction seat; receipts were not named | Both 67 figures are given; the observation names the exact receipt directories; 71 has none |
 
-## Revision02 (commit `90a620a4`), correction rule-only review by the same seat
+## Revision02 (commit `b7bd2161`), correction rule-only review by the same seat
 
 **verdict: APPROVED**
 
@@ -41,6 +41,8 @@ S76R-01 to S76R-10 are CLOSED. The seat checked the observation claims against t
 ### Control-plane disposition
 
 Revision03 adds only the reviewer's three sentences. The ticket is ready for dispatch after ticket 75 is integrated.
+
+> Commit identifiers: the reviews ran on the local commits `6b738170` (revision01) and `90a620a4` (revision02). Those commits were rebased onto the ticket 67 integration before they were pushed, with no change in content, and became `4a3d447b` and `b7bd2161`. The record names the pushed commits.
 
 ## Seat token use
 
