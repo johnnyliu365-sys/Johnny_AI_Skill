@@ -8,9 +8,9 @@
 | PRD 索引 | `PRD-20261103-043` |
 | 需求變更 | `CHG-20261103-043` |
 | Sealed Context binding | 不適用 |
-| Agent Context binding | ticket revision02 / receipt under `.worktrees/67-doc-sweep-out/` / owner implementation seat / worktree `.worktrees/67-doc-sweep` / branch `cp/wave3-67-doc-sweep` / baseline the wave-3 branch named in the dispatch |
+| Agent Context binding | ticket revision03 / receipt under `.worktrees/67-doc-sweep-out/` / owner implementation seat / worktree `.worktrees/67-doc-sweep` / branch `cp/wave3-67-doc-sweep` / baseline the wave-3 branch named in the dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）for the module, the tests and the sweep pattern; the documents stay in their current language |
-| 狀態 | `PLANNED`（revision02; strict tier; rule-only review of revision01 CHANGES_REQUESTED, revision02 under rule-only review） |
+| 狀態 | `PLANNED`（revision03; strict tier; rule-only reviews: revision01 and revision02 CHANGES_REQUESTED; revision03 applies the fixes the reviewer named） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/67-doc-sweep` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/67-doc-sweep-review` |
@@ -74,11 +74,11 @@ The consistency sweep catches none of this, because it exempts every sentence th
 
 The owner decided the retirement on 2026-11-18 ("1A 2A 3A 4A"). On 2026-11-19 the owner chose "A" for the file lock: restore it into the module library rather than retire the card.
 
-**Revision02** answers the rule-only review of revision01 (`doc/reviews/workflow-governance/67-governance-document-sweep-ticket-review.md`). It names the swept set, the term list and the exemption exactly, and requires deletion rather than new text wherever a retired sentence has no replacement.
+**Revision02** answers the rule-only review of revision01, and **revision03** the correction review of revision02 (`doc/reviews/workflow-governance/67-governance-document-sweep-ticket-review.md`). It names the swept set, the term list and the exemption exactly, and requires deletion rather than new text wherever a retired sentence has no replacement.
 
 After this ticket:
 
-1. **`RETIRED_SURFACE`, a closed term list.** `tests/test_governance_consistency.py` gains a check `RETIRED_SURFACE`. It is a separate check, not a row of `PATTERNS`, so it never reads historical files, and `EXPECTED_TOLERATED` does not change. It reports a line of the swept set that matches any of these regexes:
+1. **`RETIRED_SURFACE`, a closed term list.** `tests/test_governance_consistency.py` gains a check `RETIRED_SURFACE`. It is a separate check, not a row of `PATTERNS`, so it never reads historical files, and `EXPECTED_TOLERATED` does not change. It reports a sentence of the swept set, using the same units and `sentence_of` as `PATTERNS`, that matches any of these regexes:
 
    ```text
    RouterEngine   LangGraph   \bTemporal\b   profile\.py   telemetry_cli   TelemetryStorageLockPort
@@ -115,11 +115,13 @@ After this ticket:
    - A constant `SPEC_R41_FROZEN` holds that phrase. The sweep honours it only in `modules/spec/workflow-governance.md`, and only while the status note is present.
 5. **Specific items.** Deletion is the default. New text is allowed only where it is given here.
    - `AGENTS.md`: delete the last sentence of the state paragraph ("跨生命週期的 live descriptor 是第三波退場前的過渡路徑，不是預設。"). Nothing else in the paragraph changes.
-   - `SKILL.md`: delete the readiness-check items that call `runner status` or `wake-capability probe` or name `runner-subscriptions.json`. Fix only the numbering and the lead-in sentence where the deletion leaves them wrong.
+   - `SKILL.md`, readiness check: the text from "The mechanism that performs it is the installed Johnny runtime" through the honest statement "…so the owner must notify the reviewer.*" is replaced by exactly: "No runner, subscription or wake capability exists: they were retired in wave 3 (tickets 65 and 66). No automatic effect may be stated. The honest statement is: *the handoff is committed; no automation is armed for this project, so the owner must notify the reviewer.*" The rest of the section stays.
+   - `Workflow.md:22`: delete "；descriptor 僅限過渡 bridge（R4-1）" from the flow-chart node label.
    - `doc/runbooks/dispatch-model-profile.md`:
      - Delete the "Cross-lifetime receipt-bound dispatch" bullet except its clause "the default cross-lifetime route is the ticket's state row plus the dispatch-file digest (R4-1)". That clause becomes the bullet.
-     - In "Same-lifetime synchronous dispatch" and "最小派工訊息", delete the retired names from the lists of things that are `NOT_REQUIRED` or bridge-only. The remaining list stays.
-   - The skill references, `README.md`, `commands/johnny-project-takeover.md`, `template/README.md` and `Workflow.md`:
+     - In "Same-lifetime synchronous dispatch", delete the words "A live descriptor," and capitalise the following "receipt". The rest of the list stays.
+     - "最小派工訊息" is unchanged.
+   - `SKILL.md`, the skill references, `README.md`, `commands/johnny-project-takeover.md`, `template/README.md` and `Workflow.md`:
      - Delete each sentence or clause that names a retired surface.
      - Where a sentence states a still-valid rule beside a retired path, delete the clause about the retired path and keep the rule.
      - No new rule is written. A sentence whose meaning cannot survive the deletion is a `CHANGE_DETECTED` return naming its file and line.
@@ -133,11 +135,11 @@ After this ticket:
      `library/workflow_router/README.md` already describes the contracts that stay. A `RETIRED_SURFACE` hit in it is deleted.
    - The card `path-containment`: the behaviour-evidence row and the reading path name `tests/test_path_containment_short_names.py`, in plain text, instead of the deleted suite.
    - Tests that pin a retired term:
-     - `tests/test_adversarial_review_policy.py`: the tara2 terms `live descriptor` and `runner` leave the tuple; the others stay.
+     - `tests/test_adversarial_review_policy.py`: the tara2 terms `live descriptor` and `runner` leave the tuple, and the others stay; the tara6 assertion on "live descriptor" in `review-checks.md` is removed.
      - `tests/test_plugin_publication.py`: the assertions on "cross-lifetime receipt-bound handoff", "unavailable bridge must not halt", "unarmed wake", "For a cross-lifetime handoff", "跨生命週期、receipt-bound" and "live pending descriptor 或 handoff receipt" are removed, or point at the text that remains after the deletion.
      - `tests/test_plugin_payload_boundary.py`: the expected set of unresolved tokens loses `runner-subscriptions.json`.
      - `tests/test_antigravity_registration.py` changes only if its assertion breaks.
-     - The STATEMENT names every changed assertion.
+     - In general, an assertion whose text lies in a deleted sentence is removed. The STATEMENT names every changed or removed assertion.
 6. **`exclusive-file-lock` is restored, card `READY`.**
    - `library/功能集群/python/exclusive_file_lock/file_lock.py` is `library/local_orchestration/file_lock.py` as of `c9af7725^`. Only two changes are allowed:
      - the module docstring's references to deleted modules;
@@ -184,7 +186,6 @@ After this ticket:
 - The rule-only review measured these reds on removing the exemptions:
   - `SKILL.md:41` and `:134`;
   - `router-control.md:9` and `:109`;
-  - `Workflow.md:22`, through pattern d;
   - the SPEC R4-1 sentence, which item 4 handles.
 
 ## TDD 設計
@@ -200,14 +201,15 @@ After this ticket:
      - `wake-capability probe` in `README.md`;
      - `RouterEngine` in `library/workflow_router/README.md`;
      - one term in a file under each new root (`commands/`, `.agents/`, `library/catalog/`, `library/MODULE_CATALOG.md`, `library/功能集群/python/path_containment/README.md`);
-     - "until it is retired, the live descriptor stays".
+     - "until it is retired, the live descriptor stays";
+     - with the exemption dropped, "the live descriptor was retired in wave 3".
    - "Cross-lifetime handoffs must use the transitional receipt-bound route.", injected into `Workflow.md`, turns pattern b2 red.
-   - The SPEC phrase of item 4, injected into `AGENTS.md`, turns red; it is exempt only in the SPEC.
+   - The SPEC's R4-1 sentence, injected verbatim into `AGENTS.md`, turns red; it is exempt only in the SPEC.
    - The SPEC with its status note removed turns red.
    - These stay green:
      - "Router" alone;
      - `johnny-router.ps1 status`;
-     - "the bridge was retired in wave 3";
+     - "the live descriptor was retired in wave 3";
      - prose "runner" outside the list.
 3. 外部失敗／fail-closed:
    - a file of the swept set that is missing or not UTF-8 stays a test failure, as today;
@@ -237,7 +239,8 @@ After this ticket:
   - put `transitional` back into `BRIDGE_EXEMPT`;
   - remove `commands/` from the swept set;
   - remove the SPEC status note;
-  - let `退場前` exempt.
+  - let `退場前` exempt;
+  - drop the completed-retirement exemption.
 - **Lock evidence**: `git diff --no-index` of the old and new module, and of the old and new test, attached; each shows only the allowed changes.
 - **CI evidence**: one run on a commit of this branch, with both jobs `success`.
 - **Receipt**: R4-7 cells, passing P9 and E1 (E1 runs last), and the typed return in STATEMENT.

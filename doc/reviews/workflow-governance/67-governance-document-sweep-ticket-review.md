@@ -27,8 +27,31 @@ The seat read the ticket, the template, the REQ rows of 2026-11-18 and 2026-11-1
 | S67R-15 | Low | e7 script: two imports still exist; observation list incomplete | Reworded ("four of its imports"); the first red run is authoritative |
 | S67R-16 | Low | Free text allowed completion rows that the boundary block forbade | The control plane writes the completion rows |
 
+## Revision02 (commit `71d43e6e`), correction rule-only review by the same seat
+
+**verdict: CHANGES_REQUESTED**
+
+The seat re-ran its simulations with the revision02 rules:
+- `RETIRED_SURFACE` finds 38 hits over the 66 swept files, all inside the boundary.
+- Removing the exemptions of patterns d and e turns nothing red outside the boundary.
+- `EXPECTED_TOLERATED` is unchanged.
+
+13 of the 16 revision01 findings are CLOSED. S67R-07 stays OPEN, and S67R-02 and S67R-10 close only with the follow-ups below.
+
+| id | severity | finding | revision03 |
+| --- | --- | --- | --- |
+| S67R-07 | (open) | `Workflow.md:22` stays hidden by pattern d's `R4-1` exemption; the observation claiming it red was false | Item 5 names the exact deletion at `Workflow.md:22`; the false observation is removed |
+| S67R-17 | Medium | Two SKILL.md hits had no authorized edit | `SKILL.md` added to the general deletion bullet |
+| S67R-18 | Medium | The lists of assertions to change were incomplete (tara6; two README pins) | tara6 named; an assertion whose text lies in a deleted sentence is removed and named |
+| S67R-19 | High | Deleting readiness items 2-4 turned a fail-closed check into a permissive one | Item 5 gives the exact replacement: no runner or wake capability exists, no automatic effect may be stated, and the honest statement holds unconditionally |
+| S67R-20 | Low | No test exercised the exemption | Green case "the live descriptor was retired in wave 3"; mutation "drop the exemption" |
+| S67R-21 | Low | The SPEC phrase alone matches no pattern | The injection is the SPEC's R4-1 sentence verbatim |
+| S67R-22 | Low | Line versus sentence | The check reports a sentence, with the units and `sentence_of` of `PATTERNS` |
+| S67R-23 | Low | "Delete the retired names" was undecidable in the runbook | The exact words are named; 最小派工訊息 is unchanged |
+
 ## Seat token use
 
 | seat | model | input | cache write | cache read | output |
 | --- | --- | --- | --- | --- | --- |
 | rule-only review, revision01 | claude-opus-5-5 | 98 | 194381 | 6657194 | 53235 |
+| correction rule-only review, revision02 | claude-opus-5-5 | 28 | 41148 | 2851565 | 22631 |
