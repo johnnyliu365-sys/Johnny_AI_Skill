@@ -117,3 +117,18 @@ The integration clone `C:/Temp/claude/jas-integ-67` was made from `2b787737`.
 | USAGE | `.worktrees/67-doc-sweep-out-c1/RETURN.md` (sha256 `630e88285879fccbe6fa37dda73f08bb7bc0337a7396c90d40f4a953b167b837`) with both seats' cells; E1 gives exit 0 (`cells=8 defects=0`); `usage_report.py` gives the implementation seat `OVER_OUTPUT,OVER_PROCESSED` and the review seat `WITHIN`, exit 1, explained in the review record. The first-pass receipt `.worktrees/67-doc-sweep-out/RETURN.md` (sha256 `3093251db52aa9274555c29ed5eb9a8b354b930cab31c7c8396c34308c3aad2d`) is kept beside it. |
 
 After the integration, the control plane rebased its four unpushed ticket-76 commits onto `b97077e6` before pushing them. The content is unchanged; the old and new commit identifiers are mapped in the ticket-76 review record.
+
+## Ticket 74 (2026-11-19)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 74 wave-3 rule texts at named anchors | `4943d76c` | revision04 initial review `APPROVED` (S74-01 to S74-05 recorded and carried) | `f257bffa` |
+
+The integration clone `C:/Temp/claude/jas-integ-74` was made from `ef87d8ac`.
+
+| Check | Result |
+| --- | --- |
+| Full suite under the host lock | 5 failed, 3240 passed, 22 skipped; every failure is a base name, so zero new red |
+| Pushed | `cp/wave3` at `f257bffa`, a fast-forward from `ef87d8ac` |
+| CI readback | run 44474507317 on `f257bffa`: `test (linux)` and `test (windows)` both `success` |
+| USAGE | `.worktrees/74-rule-texts-out/RETURN.md` (sha256 `b2c33f235f1420c0add13989e551a3b2bef0f273757abea9e509eb583ab4367c`) with both seats' cells; E1 gives exit 0 (`cells=7 defects=0`); `usage_report.py` gives both seats `WITHIN`, exit 0 |
