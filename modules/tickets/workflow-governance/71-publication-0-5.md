@@ -62,11 +62,18 @@ After this ticket:
   - The seat creates the local ref `refs/heads/publication-0.5.0` and pushes nothing.
 - **The publication tests:** `_RELEASE_VERSION` is `0.5.0`. The four base failures pass on the host once the anchor ref exists locally. On CI they pass once the control plane has pushed the anchor ref, so until then they stay registered. Each changed constant is named in the STATEMENT.
 - **The changelog:** `doc/HARNESS-CHANGELOG.md` gains a 0.5.0 entry naming:
-  - the router library retirement (tickets 65, 66, 68);
+  - the router library retirement (tickets 65, 66, 68), and the governance documents cleared of retired surfaces (ticket 67);
   - the gate scripts as the default path;
-  - the `USAGE` cell (ticket 69);
-  - the template follow-ups (ticket 70);
+  - the `USAGE` cell (ticket 69), and the model and effort bound to each profile (ticket 76);
+  - the template follow-ups (ticket 70), and the repository's own ticket template with dispatch lint R7 (ticket 75);
+  - the wave-3 rule texts (ticket 74);
   - the licence alignment.
+
+  The entry also has a section for outside readers, so that a user or a Codex host run does not follow a retired specification. It states:
+  - which surfaces were retired: the flow engine, the private router, the profile, router telemetry, and the cross-lifetime bridge (runner, wake, dispatch and review CLI families, live descriptor);
+  - that the seven router-era SPECs now live in `doc/archive/specs/2026/`, as `ARCH-SPEC-20261118-001` to `007`;
+  - that nine router-era ADRs are marked `SUPERSEDED` in place;
+  - which documents to read instead: `AGENTS.md`, `Workflow.md`, `CodeReview.md` and `modules/spec/workflow-governance.md`.
 - **After review approval and the owner's confirmation**, the control plane does the outward steps, which are not this seat's work:
   1. push the publication commit to `Johnny_AI_Skill_publication` `main`, with tag `plugin-v0.5.0`;
   2. push `refs/heads/publication-0.5.0` to the development repository;
