@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision04 / receipt under `.worktrees/74-rule-texts-out/` / owner implementation seat / worktree `.worktrees/74-rule-texts` / branch `cp/wave3-74-rule-texts` / baseline the wave-3 branch after ticket 67 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）for the test; each document keeps its own language |
-| 狀態 | `REVIEW_APPROVED`; dispatch=sha256:1066881111e914a9af7b4d2da411fa75a66246099477f19ec3eb1898c7973bfb (`doc/handoffs/2026/workflow-governance/dispatch/JAS-74-1.yaml`)（candidate `4943d76c`; correction review `APPROVED`） |
+| 狀態 | `REVIEW_APPROVED`; dispatch=sha256:1066881111e914a9af7b4d2da411fa75a66246099477f19ec3eb1898c7973bfb (`doc/handoffs/2026/workflow-governance/dispatch/JAS-74-1.yaml`)（candidate `4943d76c`; initial review `APPROVED`） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/74-rule-texts` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/74-rule-texts-review` |
