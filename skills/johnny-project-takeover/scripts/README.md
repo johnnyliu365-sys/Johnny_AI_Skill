@@ -4,7 +4,7 @@ Eleven stand-alone Python 3.11 scripts (`dispatch_lint.py`, `receipt_fence_check
 They use only the standard library and carry no knowledge of any target project.
 
 Exit codes are the same everywhere: `0` pass, `1` contract red, `2` tool fault, `3`
-usage error. `dispatch_lint.py` reads one file and has no tool fault (`0`, `1`, `3`). `preflight.py` has no red (`0`, `2`, `3`). `integrate.py` reads `0` as landed, recorded or nothing to do and `1` as an entry bounced or a precondition red. In
+usage error. `dispatch_lint.py` reads one dispatch file, and with `--ticket` one ticket file, and has no tool fault (`0`, `1`, `3`). `preflight.py` has no red (`0`, `2`, `3`). `integrate.py` reads `0` as landed, recorded or nothing to do and `1` as an entry bounced or a precondition red. In
 `receipt_fence_check.py`, `index_pins.py`, `evidence_gate.py`, `requirement_snapshot.py`, `contract_gate.py`, `coverage_map.py`, `repair_guard.py`, `integrate.py` and `usage_report.py` an unexpected error is also a tool fault
 (`2`), never `1`. Each script prints a one-line `usage:` on stderr for exit `3`. A red is
 never reported as a tool fault and a tool fault is never reported as a red; the wave-2 gates
@@ -15,7 +15,7 @@ text holds such a character still exits `1` under a cp950 console.
 
 ## dispatch_lint.py
 
-    python dispatch_lint.py <dispatch-file> [--chat-words WORD[,WORD...]]
+    python dispatch_lint.py <dispatch-file> [--chat-words WORD[,WORD...]] [--ticket <ticket-file>]
 
 Checks that a dispatch is machine-form. Rules: R1 first line is a field; R2 every line
 outside a code fence is a field, list item, table row or indented continuation; R3 no
@@ -27,8 +27,32 @@ over 2000 characters, inside a code fence or outside. A `cmd:` value is a single
 a multi-line block is refused on its continuation line. Prints one line per violation,
 then `LINT PASS` (exit 0) or `LINT FAIL (n)` (exit 1). The default chat-word list is
 Chinese politeness and filler words; replace it with `--chat-words`, which needs at
-least one non-blank word. Exit 3: missing or extra argument, unknown option, a file that
-cannot be read or is not UTF-8, an empty or blank `--chat-words` list.
+least one non-blank word. Exit 3: missing or extra argument, unknown option, a dispatch or
+ticket file that cannot be read or is not UTF-8, an empty or blank `--chat-words` list,
+`--ticket` without a value or given twice.
+
+With `--ticket`, a seventh rule runs after R1 to R6. R7 checks that the ticket's state row
+records the dispatch file's digest. It reads the first table row of the ticket whose first
+cell is exactly `狀態`. That cell must hold exactly one `dispatch=sha256:`; the run of
+letters and digits after it must be 64 characters, all lower-case hex, and equal to the
+sha256 of the dispatch file's bytes. What follows the run (a space, `(`, `;` or the end of
+the cell) is ignored. A missing state row, an empty cell, a missing or doubled
+`dispatch=sha256:`, a run of another length, upper-case hex or a different digest is a
+violation (exit 1); its line starts `R7` and names the expected and the found digest. A
+ticket file that cannot be read or is not UTF-8 is exit 3, prints nothing on stdout and is
+decided before R1 to R7 run. Without `--ticket` the output is exactly R1 to R6.
+
+Order of use, for a project that binds each dispatch to its ticket:
+
+1. The dispatch file names a base that precedes the commit that records the file and its
+   digest.
+2. The digest is written into the ticket's state row in the control plane's checkout, not
+   in the worktree leaf at the base.
+3. `dispatch_lint.py <dispatch> --ticket <ticket>` runs next, and the dispatch goes out only
+   on exit 0.
+4. Dispatch files are named `<ticket>-<n>.yaml`, where `<n>` is the dispatch revision.
+5. A file whose digest is recorded is never rewritten; a changed dispatch is a new file
+   with the next `<n>`.
 
 ## receipt_fence_check.py
 
