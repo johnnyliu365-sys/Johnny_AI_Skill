@@ -100,3 +100,20 @@ The integration clone `C:/Temp/claude/jas-integ-70` was made from `68ace49c`.
 | CI readback | run 44396032169 on `277aa80b`: `test (linux)` and `test (windows)` both `success` |
 | USAGE | `.worktrees/70-templates-out/RETURN.md` (sha256 `de3fb29e913e884922770c02df7d651560acb1d0640ca6ca8fb774d74bf0484c`); E1 gives exit 0 (`cells=6 defects=0`); the implementation seat is `OVER_PROCESSED`, explained in the review record, and the review seat is `WITHIN` |
 
+
+## Ticket 67 (2026-11-19)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 67 governance documents name no retired surface; exclusive-file-lock restored | `0f621d9c` | revision04 correction review `APPROVED` | `b97077e6` |
+
+The integration clone `C:/Temp/claude/jas-integ-67` was made from `2b787737`.
+
+| Check | Result |
+| --- | --- |
+| Full suite under the host lock | 5 failed, 3224 passed, 22 skipped; every failure is a base name, so zero new red |
+| Pushed | `cp/wave3` at `b97077e6`, a fast-forward from `2b787737` |
+| CI readback | run 44455722140 on `b97077e6`: `test (linux)` and `test (windows)` both `success` |
+| USAGE | `.worktrees/67-doc-sweep-out-c1/RETURN.md` (sha256 `630e88285879fccbe6fa37dda73f08bb7bc0337a7396c90d40f4a953b167b837`) with both seats' cells; E1 gives exit 0 (`cells=8 defects=0`); `usage_report.py` gives the implementation seat `OVER_OUTPUT,OVER_PROCESSED` and the review seat `WITHIN`, exit 1, explained in the review record. The first-pass receipt `.worktrees/67-doc-sweep-out/RETURN.md` (sha256 `3093251db52aa9274555c29ed5eb9a8b354b930cab31c7c8396c34308c3aad2d`) is kept beside it. |
+
+After the integration, the control plane rebased its four unpushed ticket-76 commits onto `b97077e6` before pushing them. The content is unchanged; the old and new commit identifiers are mapped in the ticket-76 review record.

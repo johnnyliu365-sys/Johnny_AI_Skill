@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision04 / receipt under `.worktrees/67-doc-sweep-out/` / owner implementation seat / worktree `.worktrees/67-doc-sweep` / branch `cp/wave3-67-doc-sweep` / baseline the wave-3 branch named in the dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language）for the module, the tests and the sweep pattern; the documents stay in their current language |
-| 狀態 | `REVIEW_APPROVED`; dispatch=sha256:89db4177c8495a709372b60fdc9cb820133acedd4d0085a961272963d624cc77 (`doc/handoffs/2026/workflow-governance/dispatch/JAS-67.yaml`)（candidate `0f621d9c`; correction review `APPROVED`） |
+| 狀態 | `INTEGRATED`; dispatch=sha256:89db4177c8495a709372b60fdc9cb820133acedd4d0085a961272963d624cc77 (`doc/handoffs/2026/workflow-governance/dispatch/JAS-67.yaml`)（candidate `0f621d9c` at `b97077e6`; CI run 44455722140 green; S67-05 to S67-07 and `BridgeCapability.AVAILABLE` carried to wave 4） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/67-doc-sweep` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/67-doc-sweep-review` |
