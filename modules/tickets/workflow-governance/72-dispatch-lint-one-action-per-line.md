@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/72-lint-out/` / owner implementation seat / worktree `.worktrees/72-lint` / branch `cp/wave3-72-lint` / baseline the wave-3 branch after ticket 69 is integrated |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `INTEGRATED`（candidate `8c770265` at `fa4019fa`; CI run 44381596401 green; S72-05, S72-06 carried） |
+| 狀態 | `INTEGRATED`; dispatch=sha256:c07fff279f01eaff72e55f37928cf4d92de10d88b825599aa2b21d83fae69c3d (`doc/handoffs/2026/workflow-governance/dispatch/JAS-72.yaml`)（candidate `8c770265` at `fa4019fa`; CI run 44381596401 green; S72-05, S72-06 carried） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/72-lint` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/72-lint-review` |

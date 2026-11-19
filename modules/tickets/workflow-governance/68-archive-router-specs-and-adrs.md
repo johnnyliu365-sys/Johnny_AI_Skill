@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision01 / receipt under `.worktrees/68-archive-specs-out/` / owner implementation seat / worktree `.worktrees/68-archive-specs` / branch `cp/wave3-68-archive-specs` / baseline the wave-3 branch after ticket 65 is integrated |
 | 實作語言 | Markdown documents; Python 3.11 for the test change（CONTEXT.md Implementation language） |
-| 狀態 | `INTEGRATED`（candidate `c3ecdd6b` at `8c4e9a77`; CI run 44390034272 green on `cded7a27`; S68-02 to ticket 67, S68-03 and S68-04 carried） |
+| 狀態 | `INTEGRATED`; dispatch=sha256:5b786f336b7d77294cef7c4ee9ae1e0252a008da09dfb523b5b61d8b9af95bcc (`doc/handoffs/2026/workflow-governance/dispatch/JAS-68.yaml`)（candidate `c3ecdd6b` at `8c4e9a77`; CI run 44390034272 green on `cded7a27`; S68-02 to ticket 67, S68-03 and S68-04 carried） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/68-archive-specs` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/68-archive-specs-review` |

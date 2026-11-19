@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/65-retire-engine-and-private-router-out/` / owner implementation seat / worktree `.worktrees/65-retire-engine-and-private-router` / branch `cp/wave3-65-retire-engine` / baseline the wave-3 branch at dispatch |
 | 實作語言 | Python 3.11（CONTEXT.md Implementation language） |
-| 狀態 | `INTEGRATED`（candidate `b185dea9` at `361ba136`; CI run 44342660977 green on `9b746c97`; S65-03, S65-06 carried） |
+| 狀態 | `INTEGRATED`; dispatch=sha256:3ed40d8062d899a554bb5135575d81782161e4a63236a90c7137647412baf94f (`doc/handoffs/2026/workflow-governance/dispatch/JAS-65.yaml`)（candidate `b185dea9` at `361ba136`; CI run 44342660977 green on `9b746c97`; S65-03, S65-06 carried） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/65-retire-engine-and-private-router` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/65-retire-engine-and-private-router-review` |

@@ -10,7 +10,7 @@
 | Sealed Context binding | 不適用 |
 | Agent Context binding | ticket revision02 / receipt under `.worktrees/70-templates-out/` / owner implementation seat / worktree `.worktrees/70-templates` / branch `cp/wave3-70-templates` / baseline the wave-3 branch after ticket 69 is integrated |
 | 實作語言 | Markdown templates; Python 3.11 for the tests（CONTEXT.md Implementation language） |
-| 狀態 | `INTEGRATED`（candidate `548665e5` at `277aa80b`; CI run 44396032169 green; S70-05 to S70-07 carried） |
+| 狀態 | `INTEGRATED`; dispatch=sha256:a7b4334555f68b6eb9fdc0eebaeb8c1c4a266cf44b850fbac03d29fb1aa82558 (`doc/handoffs/2026/workflow-governance/dispatch/JAS-70.yaml`)（candidate `548665e5` at `277aa80b`; CI run 44396032169 green; S70-05 to S70-07 carried） |
 | 共同基準 | the `cp/wave3` commit named in the dispatch |
 | 實作者 | `implementation-standard` seat, worktree `.worktrees/70-templates` |
 | 審閱者 | `ticket-review` seat, worktree `.worktrees/70-templates-review` |
