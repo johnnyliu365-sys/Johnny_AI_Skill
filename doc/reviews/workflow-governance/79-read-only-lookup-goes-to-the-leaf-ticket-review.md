@@ -31,8 +31,29 @@ Its main point was that the exemption, as written, went far wider than a read-on
 | S79R-13 | Low (note) | The boundary passes; `test_l5_stale_candidate_pin_is_named_before_generation` is already a registered base failure | No change |
 | S79R-14 | Low (note) | The overlap with the reference router's index row is decided by step 1's "and stop" | No change |
 
+## Revision02 (commit `73baf7ec`), correction rule-only review by the same seat
+
+**verdict: CHANGES_REQUESTED**
+
+S79R-01 to S79R-12 are CLOSED. Safety pass on the final paragraph:
+- a mutation, a secret read and an unrequested change are blocked;
+- a gate or test run was still possible (S79R-16).
+
+| id | severity | finding | revision03 |
+| --- | --- | --- | --- |
+| S79R-15 | High | The description's "rule: answer it" has a colon and space, which breaks the YAML frontmatter (PyYAML `ScannerError`); the skill would not register. Also present in revision01 and missed there. | "rule; answer it"; TDD 2 parses the frontmatter. The control plane confirmed that the revision03 text parses. |
+| S79R-16 | Medium | The exemption still allowed running a gate script, tests or another program to answer a state question | "不執行閘門腳本、測試或其他程式" |
+| S79R-17 | Low | "revision／digest 不符" needs a hash computation, a program run | "索引與 leaf 記載的 revision 不符" |
+| S79R-18 | Low (note) | Rule questions about the target project's own rules would always be "not found" | "本插件規則的查詢以…" |
+| S79R-19 | Low (note) | The ticket stated ticket 71's README note and ticket 77's copies as facts | Reworded as control-plane follow-ups |
+
+### Control-plane disposition
+
+Revision03 applies only the reviewer's exact fixes, and does not go to a third rule-only round. This follows the smallest-fix practice (L-19), as with tickets 67, 73 to 76. Ticket 79 is ready for dispatch after ticket 73 is integrated.
+
 ## Seat token use
 
 | seat | model | effort | input | cache write | cache read | output |
 | --- | --- | --- | --- | --- | --- | --- |
 | rule-only review, revision01 | claude-opus-5-5 | high | 36 | 116047 | 1628459 | 26040 |
+| correction rule-only review, revision02 | claude-opus-5-5 | high | 14 | 34042 | 834466 | 8809 |
