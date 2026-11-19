@@ -48,6 +48,26 @@ architecture owner before ticket admission.
 `modules/element/` is an index to target-owned source, types, contracts and tests. It never
 copies production source.
 
+<a id="rule-process-tier"></a>
+
+The process tier is decided by the kind of change. When a ticket carries several kinds, the strictest kind decides.
+
+- A ticket opened after this rule names its tier on the first line of its section 使用者拍板與可觀察結果, as `Process tier: standard` or `Process tier: strict`. The template line and the tickets already open are wave-4 work.
+- **Records** are not tickets. A record change only appends to the record files: a new review or integration record, a new row, a new completion entry. It edits no existing field or block that a gate reads, such as a state row, `review-verdict`, `convergence-disposition`, a dispatch digest or a receipt path. It edits no recorded decision. Two exceptions are records too: the state-row and index transitions a governance rule assigns to the control plane, and writing or revising a ticket. They include the dispatch digest and receipt at dispatch, `REVIEW_APPROVED` under `CodeReview.md` §5 rule B, and `INTEGRATED` or `DONE`, and `BLOCKED` or `SUPERSEDED` under a requirement change (`discovery-change.md`). Writing or revising a ticket is reviewed under that ticket's tier. The control plane commits records directly. Anything else is a ticket.
+- **standard**: code, tests or documents changed within the existing rules. It takes one implementation seat and reviews as `CodeReview.md` §5 sets out.
+- **strict**: a change to a governance rule, to a gate's verdict, grammar or exit codes, or to a security or confinement boundary. Rule-bearing files include:
+  - `AGENTS.md`, `Workflow.md`, `CodeReview.md`;
+  - `skills/johnny-project-takeover/SKILL.md`, its references, scripts/ and scripts/README.md;
+  - the dispatch runbook;
+  - modules/tickets/TEMPLATE.md and `template/`;
+  - .agents/ rules;
+  - ci/registered-failures.json;
+  - modules/spec/workflow-governance.md;
+  - any test that pins a governance rule.
+
+  A strict ticket takes the standard tier plus an independent rule-only review of the ticket before dispatch.
+- The rule-only review of a ticket is not a review in `CodeReview.md` §5's count. Its `CHANGES_REQUESTED` produces a new ticket revision before dispatch.
+
 ## Frontend contract
 
 When a formal UI or design source is involved, also apply `ui-design-handoff.md` before ticket
@@ -95,3 +115,11 @@ verification, safety and return contract from the exact committed ticket. Correc
 If an instruction needs behavior absent from the ticket, update and commit the canonical source
 first. Unreadable, unresolved, mismatched or competing references halt before mutation with
 `HALT / DISPATCH_REFERENCE_INVALID`.
+
+<a id="rule-dispatch-authoring"></a>
+
+This rule applies to the dispatch file whose digest the ticket's state row carries (R4-1), not to the envelope.
+
+- In a dispatch file, a commit subject or other literal payload goes in backticks.
+- Each enumerated item is its own list item.
+- A rationale clause is dropped or joined with a comma, never placed after `; `.

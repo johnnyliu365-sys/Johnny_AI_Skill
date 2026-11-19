@@ -83,6 +83,12 @@ defect。分類固定為：
 5. `OUT_OF_SCOPE_HARDENING`：不違反目前 Closure 的改善；另開後續 `PLANNED`
    ticket，不阻擋本票。
 
+<a id="rule-smallest-fix"></a>
+
+對於依 §5 規則 B 不擋核准的 finding，reviewer 指出能關閉它的最小修正，或提議將它移交至 §4 第 5 項與 §5 規則 B 允許的去處。
+
+修正不新增機制（script、gate、schema 或規則），除非該 finding 非此不能關閉，且 reviewer 說明原因。
+
 ## 5. 結論與收斂
 
 結論只能是 `APPROVED`、`CHANGES_REQUESTED` 或 `BLOCKED`。
@@ -109,3 +115,9 @@ defect。分類固定為：
 - 只有全部 blocking findings 關閉、證據完整，且結論 `APPROVED` 或附有依規則 B 的 `convergence-disposition`，整合腳本才可把候選列入
   guarded integration／handoff（Revision 04 R4-4）。Review approval 不自動授權 push、release、部署、
   付費、正式權限或其他外部 effect。
+
+<a id="rule-review-label"></a>
+
+- 新 closure revision 的第一次 review 是它的 initial review；計數重新開始。
+- 控制面在派工前於 review request 標明每次 review 的標籤：initial 或 correction，連同其 closure revision。結論回來之後，不得改標。
+- 結論依回傳原樣記錄，包括附帶的 `CONVERGENCE_REVIEW_REQUIRED`。

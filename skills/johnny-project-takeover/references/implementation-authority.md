@@ -88,3 +88,18 @@ Create a new branch only with recorded `FRESH_BRANCH_REQUIRED` evidence:
 New defect discovery or a request for more tests is not sufficient. Preserve old branch/commit
 references and use traceable Git transfer with full re-verification. Active owners may clear
 known reproducible residue in their own worktree; no other Agent may edit across worktrees.
+
+<a id="rule-seat-residue"></a>
+
+Every process, scratch directory, clone, lock or port that a seat starts for its run carries the seat's run id, in its name or in an owner file.
+
+- Before it returns, the seat removes everything that carries its tag, and lists in its STATEMENT or review record what it removed and anything it left, with the reason.
+- The allocated worktree, the branch and the receipt directory are not residue: the seat hands them back, and does not remove them.
+- Files the seat's own commands write inside its allocated worktree, such as caches, are its own, and the seat removes them.
+- No seat removes another seat's resource or an untagged one outside its allocated worktree; it reports untagged residue to the control plane.
+
+<a id="rule-consolidated-correction"></a>
+
+A rule changed after dispatch reaches the seat as one consolidated correction that names every earlier sentence it supersedes.
+
+A review request names the sections authoritative for the review and the sentences superseded under this rule.
