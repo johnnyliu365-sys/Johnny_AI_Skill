@@ -132,3 +132,20 @@ The integration clone `C:/Temp/claude/jas-integ-74` was made from `ef87d8ac`.
 | Pushed | `cp/wave3` at `f257bffa`, a fast-forward from `ef87d8ac` |
 | CI readback | run 44474507317 on `f257bffa`: `test (linux)` and `test (windows)` both `success` |
 | USAGE | `.worktrees/74-rule-texts-out/RETURN.md` (sha256 `b2c33f235f1420c0add13989e551a3b2bef0f273757abea9e509eb583ab4367c`) with both seats' cells; E1 gives exit 0 (`cells=7 defects=0`); `usage_report.py` gives both seats `WITHIN`, exit 0 |
+
+## Ticket 75 (2026-11-19)
+
+| Ticket | Approved candidate | Approval | Integration commit |
+| --- | --- | --- | --- |
+| 75 the repository's own ticket template follows the harness; dispatch lint R7 checks the dispatch digest | `dd10fca6` | revision03 initial review `APPROVED` (S75-01 and S75-02 recorded) | `aa5d1d0d` |
+
+The integration clone `C:/Temp/claude/jas-integ-75` was made from `f42444a4`.
+
+| Check | Result |
+| --- | --- |
+| Full suite under the host lock | 5 failed, 3274 passed, 22 skipped; every failure is a base name, so zero new red |
+| Pushed | `cp/wave3` at `aa5d1d0d`, a fast-forward from `f42444a4` |
+| CI readback | run 44491650931 on `aa5d1d0d`: `test (linux)` and `test (windows)` both `success` |
+| USAGE | `.worktrees/75-own-tickets-out/RETURN.md` (sha256 `7b0c3410630ec48be10a1032235af7a7ec54bb2b01f6466e7964114a4b7300c5`) with both seats' cells; E1 gives exit 0 (`cells=7 defects=0`); `usage_report.py` gives both seats `WITHIN`, exit 0 |
+
+From this integration on, the control plane lints every dispatch with `--ticket` before it goes out.
