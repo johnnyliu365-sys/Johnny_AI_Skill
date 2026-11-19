@@ -884,7 +884,7 @@ red) and is never skipped.
 Reads code-review records and sums the review rounds and the causes of rework per ticket. A
 record is `doc/reviews/<feature>/<ticket>-…-code-review.md` and holds exactly one ticket: the ticket
 id is the file name up to its first `-` (so `65-…` and `650-…` are two tickets). A pre-dispatch
-rule-only review (`…-ticket-review.md`) carries no block and counts in no round. Each review section
+rule-only review (a ticket-review record, named `<ticket>-…-ticket-review`) carries no block and counts in no round. Each review section
 of a record ends with a fenced `rework-record` block that directly follows the section's
 `review-verdict` block, and a `CHANGE_DETECTED` return before any review has a `RETURN` block
 before the first review section (`CodeReview.md` section 3). The block holds exactly five lines, in
