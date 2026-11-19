@@ -162,3 +162,13 @@ the work.
 - MCP reads only declared source references and normalizes them at the boundary.
 - Missing role, owner, workspace binding, source, capability or verification halts rather
   than widening the search or context.
+
+## Receipt integrity
+
+<a id="rule-content-digest-only"></a>
+
+Integrity rests on content digests, never on a commit id that a file would have to name about itself.
+
+- A receipt's `candidate:` field, and the `--candidate` that `evidence_gate.py` checks, are the commit its cells ran at.
+- When the receipt is committed after that commit, the candidate for review and for the merge queue is the commit that adds the receipt, and its diff is the receipt only.
+- `USAGE` cells are appended after the candidate is set, in a record commit.

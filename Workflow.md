@@ -215,6 +215,8 @@ SPEC 建立、內容、核准、revision 與 implementation-language gate：
 - [`ui-design-handoff.md`](skills/johnny-project-takeover/references/ui-design-handoff.md)（正式 UI 或 design source 時）
 - [`review-checks.md`](skills/johnny-project-takeover/references/review-checks.md)（設計 TDD matrix 時）
 
+此規則之後開立的每張 ticket 都載明其流程層級（[`specification-ticketing.md#rule-process-tier`](skills/johnny-project-takeover/references/specification-ticketing.md#rule-process-tier)）。
+
 每張 ticket 是單一 implementation owner 可完成、可獨立驗證的使用者可觀察行為。
 不可按前端／後端／資料庫／測試水平切割。
 
