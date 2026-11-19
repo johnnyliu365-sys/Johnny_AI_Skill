@@ -1,0 +1,34 @@
+# Ticket 67 — rule-only review before dispatch
+
+Ticket: `modules/tickets/workflow-governance/67-governance-document-sweep.md`. Process tier: strict. This rule-only review is outside the `CodeReview.md` §5 count. Its `CHANGES_REQUESTED` produces a new ticket revision before dispatch.
+
+## Revision01 (commit `4cf3f7a0`), independent `ticket-review` seat
+
+**verdict: CHANGES_REQUESTED**
+
+The seat read the ticket, the template, the REQ rows of 2026-11-18 and 2026-11-19, the sweep test, the old lock module and test at `c9af7725^`, and the cards. It ran two sweep simulations from scratch scripts outside the repository: one with the four exemptions removed, one with the new roots and term list. The working tree stayed clean.
+
+| id | severity | finding | revision02 |
+| --- | --- | --- | --- |
+| S67R-01 | High | Removing the exemptions turns the SPEC's frozen R4-1 sentence red, while the ticket freezes it and forbids new hits | Item 4: `SPEC_R41_FROZEN`, honoured only in the SPEC while its status note is present; pinned by two tests |
+| S67R-02 | High | `test_plugin_publication.py` and `test_plugin_payload_boundary.py` pin text the ticket must delete, and are outside the boundary | Both added to `modify`, with the assertions named in item 5; card paths in plain text |
+| S67R-03 | High | As a `PATTERNS` row the check would read historical files (live-verification-047 red, `EXPECTED_TOLERATED` from 5 to 19) | Item 1: a separate check, never over historical files; `EXPECTED_TOLERATED` unchanged |
+| S67R-04 | Medium | Unstated whether existing patterns read the new roots | Item 2: the existing patterns keep their roots |
+| S67R-05 | Medium | Open term list; "pending descriptor", Private Router, `runner-subscriptions`, runner subcommands and "armed runner" prose missed | Item 1: closed regex list, with these added |
+| S67R-06 | Medium | `退場` exempted the very AGENTS.md sentence to delete (退場前); `retired` exempted "until it is retired" | Item 1: completed-retirement forms only, with `退場前`/`until`/`before` excluded; injections added |
+| S67R-07 | Medium | Pattern d's own `過渡` exemptions left Workflow.md:22 hidden | Item 3: d and e lose their bridge exemptions |
+| S67R-08 | Medium | Two required mutations had no test that turns red | TDD 2: a b2 injection and one injection per new root |
+| S67R-09 | Medium | "The paragraph states only…" struck still-valid rules in AGENTS.md | Item 5: delete only the last sentence |
+| S67R-10 | Medium | Open invitations to write new rules (SKILL wake sentence, runbook, test replacement, containment base) | Item 5: deletion by default, new text only where given; tara2 `runner` listed |
+| S67R-11 | Low | Lock restore: comment, `patch` targets, `TelemetryStorageLockPort` assertion and counts unspecified | Item 6: each allowed change named; 32 tests and 11 subtests |
+| S67R-12 | Low | The `path-containment` card cites a deleted suite and was outside the boundary | Added to `modify`; names `tests/test_path_containment_short_names.py` |
+| S67R-13 | Low | "README directly under a library package" was ambiguous | Item 2: two globs |
+| S67R-14 | Low | Removing the only row leaves an empty catalog page that MODULE_CATALOG still links | The page and its MODULE_CATALOG row are deleted |
+| S67R-15 | Low | e7 script: two imports still exist; observation list incomplete | Reworded ("four of its imports"); the first red run is authoritative |
+| S67R-16 | Low | Free text allowed completion rows that the boundary block forbade | The control plane writes the completion rows |
+
+## Seat token use
+
+| seat | model | input | cache write | cache read | output |
+| --- | --- | --- | --- | --- | --- |
+| rule-only review, revision01 | claude-opus-5-5 | 98 | 194381 | 6657194 | 53235 |
